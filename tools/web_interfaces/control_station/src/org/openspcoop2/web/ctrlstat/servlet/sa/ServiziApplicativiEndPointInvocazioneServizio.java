@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.sa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -46,6 +47,7 @@ import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.InvocazionePorta;
 import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -58,6 +60,8 @@ import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
@@ -120,18 +124,18 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
-		
+
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 		Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
 		if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
 		Boolean useIdSogg = parentSA == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_SOGGETTO;
 		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 		try {
-			
+
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
-			
+
 			boolean isModalitaCompleta = saHelper.isModalitaCompleta();
-			
+
 			String nomeservizioApplicativo = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
 			String idsil = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
 			int idSilInt = Integer.parseInt(idsil);
@@ -140,13 +144,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String getmsg = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
 			String getmsgUsername = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 			String getmsgPassword = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			
+
 			String invrifRichiesta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
-			
+
 			String risprif = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
-			
+
 			String tipoauthRichiesta = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE);
-			
+
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
 			if(provider == null){
 				provider = "";
@@ -154,51 +158,51 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String idPorta = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_PORTA);
 			if(idPorta == null)
 				idPorta = "";
-			
+
 			String idAsps = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
-			
+
 			String endpointtype = saHelper.readEndPointType();
 			String tipoconn = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
 			String autenticazioneHttp = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
 			String user = null;
 			String password = null;
-			
+
 			String connettoreDebug = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
 
 			// token policy
 			String autenticazioneTokenS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 			boolean autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
 			String token_policy = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY);
-						
+
 			// proxy
 			String proxy_enabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
 			String proxy_hostname = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_HOSTNAME);
 			String proxy_port = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PORT);
 			String proxy_username = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_USERNAME);
 			String proxy_password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_PASSWORD);
-			
+
 			// tempi risposta
 			String tempiRisposta_enabled = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
 			String tempiRisposta_connectionTimeout = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT);
 			String tempiRisposta_readTimeout = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT);
 			String tempiRisposta_tempoMedioRisposta = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA);
-			
+
 			// opzioni avanzate
 			String transfer_mode = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_MODE);
 			String transfer_mode_chunk_size = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE);
 			String redirect_mode = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MODE);
 			String redirect_max_hop = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP);
 			String opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode);
-			
+
 			// http
 			String url = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
 			if(TipiConnettore.HTTP.toString().equals(endpointtype)){
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
-			
+
 			// jms
 			String nome = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
 			String tipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
@@ -211,7 +215,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_USERNAME);
 				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PASSWORD);
 			}
-			
+
 			// https
 			String httpsurl = url;
 			String httpstipologia = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_SSL_TYPE);
@@ -236,7 +240,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				user = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				password = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			}
-			
+
 			// file
 			String requestOutputFileName = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME);
 			String requestOutputFileNameHeaders = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS);
@@ -247,8 +251,11 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			String responseInputFileNameHeaders = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
-			
-			
+
+			String erogazioneServizioApplicativoServerEnabledS = saHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			String erogazioneServizioApplicativoServer = saHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneErogatori = false;
 			if(tipologia!=null) {
@@ -266,22 +273,29 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				accessoDaListaAPS = true;
 			}
 			//}
-			
+
 			boolean fromConfig = (parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)); 
 			String idTab = saHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(fromConfig && !saHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
-			
+
 			// Preparo il menu
 			saHelper.makeMenu();
-			
+
 			String superUser = ServletUtils.getUserLoginFromSession(session);
 
 			// Prendo il sil
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore();
 			PddCore pddCore = new PddCore(saCore);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
+			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+
+			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
+
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String filtroTipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 
 			ServizioApplicativo sa = saCore.getServizioApplicativo(idSilInt);
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
@@ -290,15 +304,129 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			InvocazioneCredenziali cis = is.getCredenziali();
 			Connettore connis = is.getConnettore();
 			List<Property> cp = connis.getPropertyList();
+			String tipoSA = sa.getTipo();
 			
+			
+			String postBackElementName = saHelper.getPostBackElementName();
+			// Controllo se ho modificato l'azione allora ricalcolo il nome
+			if(postBackElementName != null ){
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
+					// se il vecchio SA era di tipo server e ripristino il default allora resetto la creazione del connettore
+					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()) && !erogazioneServizioApplicativoServerEnabled) {
+						// 1. leggo SA di default
+						
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(pa.getServizioApplicativoDefault());
+						IDSoggetto idSoggettoProprietario = new IDSoggetto();
+						idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+						idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+						idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+						sa = saCore.getServizioApplicativo(idSA);
+						invocazionePorta = sa.getInvocazionePorta();
+						is = sa.getInvocazioneServizio();
+						cis = is.getCredenziali();
+						connis = is.getConnettore();
+						cp = connis.getPropertyList();
+						tipoSA = sa.getTipo();
+						
+						// reset dei fields
+						erogazioneServizioApplicativoServer = null;
+						
+						sbustamento = null;
+						sbustamentoInformazioniProtocolloRichiesta = null;
+						getmsg = null;
+						getmsgUsername = null;
+						getmsgPassword = null;
+						invrifRichiesta = null;
+						risprif = null;
+						tipoauthRichiesta = null;
+						endpointtype = saHelper.readEndPointType();
+						tipoconn = null;
+						autenticazioneHttp = null;
+						user = null;
+						password = null;
+						connettoreDebug = null;
+
+						// token policy
+						autenticazioneTokenS = null;
+						autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+						token_policy = null;
+
+						// proxy
+						proxy_enabled = null;
+						proxy_hostname = null;
+						proxy_port = null;
+						proxy_username = null;
+						proxy_password = null;
+
+						// tempi risposta
+						tempiRisposta_enabled = null;
+						tempiRisposta_connectionTimeout = null;
+						tempiRisposta_readTimeout = null;
+						tempiRisposta_tempoMedioRisposta = null;
+
+						// opzioni avanzate
+						transfer_mode = null;
+						transfer_mode_chunk_size = null;
+						redirect_mode = null;
+						redirect_max_hop = null;
+						opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode);
+
+						// http
+						url = null;
+
+						// jms
+						nome = null;
+						tipo = null;
+						initcont = null;
+						urlpgk = null;
+						provurl = null;
+						connfact = null;
+						sendas = null;
+
+						// https
+						httpsurl = url;
+						httpstipologia = null;
+						httpshostverifyS = null;
+						httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+						httpspath = null;
+						httpstipo = null;
+						httpspwd = null;
+						httpsalgoritmo = null;
+						httpsstatoS = null;
+						httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
+						httpskeystore = null;
+						httpspwdprivatekeytrust = null;
+						httpspathkey = null;
+						httpstipokey = null;
+						httpspwdkey = null;
+						httpspwdprivatekey = null;
+						httpsalgoritmokey = null;
+						httpsKeyAlias = null;
+						httpsTrustStoreCRLs = null;
+
+						// file
+						requestOutputFileName = null;
+						requestOutputFileNameHeaders = null;
+						requestOutputParentDirCreateIfNotExists = null;
+						requestOutputOverwriteIfExists = null;
+						responseInputMode = null;
+						responseInputFileName = null;
+						responseInputFileNameHeaders = null;
+						responseInputDeleteAfterRead = null;
+						responseInputWaitTime = null;
+					}
+				}
+			}
+
 			boolean forceEnabled = false;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
 				if(!saHelper.isModalitaStandard() && 
 						( (getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) 
 								||
-						  (getmsg==null && is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage()))
-						)
-					) {
+								(getmsg==null && is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage()))
+								)
+						) {
 					forceEnabled = false;
 				}
 				else {
@@ -313,38 +441,74 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 			}
-			
+
 			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(sa.getTipoSoggettoProprietario());
 			long soggLong = -1;
 			// se ho fatto la add 
 			if(useIdSogg)
 				if(provider != null && !provider.equals("")){
-				soggLong = Long.parseLong(provider);
+					soggLong = Long.parseLong(provider);
+				}
+
+			// Lista dei servizi applicativi per la creazione automatica
+			String [] saSoggetti = null;	
+			if ((provider != null) && !provider.equals("")) {
+				int idErogatore = Integer.parseInt(provider);
+
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), filtroTipoSA);
+
+				// rif bug #45
+				// I servizi applicativi da visualizzare sono quelli che hanno
+				// -Integration Manager (getMessage abilitato)
+				// -connettore != disabilitato
+				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
+				for (ServizioApplicativo saTmp : listaSA) {
+					InvocazioneServizio invServizio = saTmp.getInvocazioneServizio();
+					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
+					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+
+					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
+						// il connettore non e' disabilitato oppure il get
+						// message e' abilitato
+						// Lo aggiungo solo se gia' non esiste tra quelli
+						// aggiunti
+						validSA.add(saTmp);
+					}
+				}
+
+				// Prendo la lista di servizioApplicativo associati al soggetto
+				// e la metto in un array
+				saSoggetti = new String[validSA.size()];
+				//				saSoggetti[0] = "-"; // elemento nullo di default
+				for (int i = 0; i < validSA.size(); i++) {
+					ServizioApplicativo saTmp = validSA.get(i);
+					saSoggetti[i] = saTmp.getNome();
+				}
 			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
-			
+
 			List<ExtendedConnettore> listExtendedConnettore = 
 					ServletExtendedConnettoreUtils.getExtendedConnettore(connis, ConnettoreServletType.SERVIZIO_APPLICATIVO_INVOCAZIONE_SERVIZIO, saHelper, 
 							(endpointtype==null), endpointtype); // uso endpointtype per capire se è la prima volta che entro
-			
-			
+
+
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
-			
+
 			ServiceBinding serviceBinding = null;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				
-				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(soggettiCore);
+
+				AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
 				AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-				
+
 				if(accessoDaListaAPS) {
 					if(!isModalitaCompleta) {
 						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 							labelPerPorta = ErogazioniCostanti.LABEL_ASPS_PORTE_APPLICATIVE_MODIFICA_CONNETTORE;
 						} else {
 							labelPerPorta = PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONNETTORE_DI+
-								saHelper.getLabelIdServizio(asps);
+									saHelper.getLabelIdServizio(asps);
 						}
 					}
 					else {
@@ -352,14 +516,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 				else {
-					PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
-					PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+					
 					labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE,
 							pa);
 				}
-				
+
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
@@ -367,19 +530,19 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			else {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI+nomeservizioApplicativo;
 			}
-			
+
 			if(accessoDaListaAPS) {
 				lstParm.remove(lstParm.size()-1);
 			}
 			lstParm.add(new Parameter(labelPerPorta,null));
-			
+
 			// Se nomehid = null, devo visualizzare la pagina per la
 			// modifica dati
 			if(saHelper.isEditModeInProgress()){
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm);
-				
+
 				// Prendo i dati dal db solo se non sono stati passati
 				// controllo se servizio applicativo appartiene a soggetto con
 				// pdd esterna
@@ -394,7 +557,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 					}
 				}
-				
+
+				if (erogazioneServizioApplicativoServer == null) {
+					// se in configurazione ho selezionato un server
+					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+						erogazioneServizioApplicativoServer = sa.getNome();
+						erogazioneServizioApplicativoServerEnabled = true;
+					}
+				}
+
 				if (sbustamento == null) {
 					if(is.getSbustamentoSoap()!=null)
 						sbustamento = is.getSbustamentoSoap().toString();
@@ -420,7 +591,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						}
 					}
 				}
-				
+
 				if (invrifRichiesta == null) {
 					if(is.getInvioPerRiferimento()!=null)
 						invrifRichiesta = is.getInvioPerRiferimento().toString();
@@ -435,7 +606,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						risprif = CostantiConfigurazione.DISABILITATO.toString();
 					}
 				}
-				
+
 				if ((tipoauthRichiesta == null) && (is != null) && is.getAutenticazione()!=null) {
 					tipoauthRichiesta = is.getAutenticazione().getValue();
 				}
@@ -456,7 +627,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				Map<String, String> props = null;
 				if(is!=null && is.getConnettore()!=null)
 					props = is.getConnettore().getProperties();
-				
+
 				if(connettoreDebug==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_DEBUG);
 					if(v!=null){
@@ -468,12 +639,12 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						}
 					}
 				}
-				
+
 				if(proxy_enabled==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_PROXY_TYPE);
 					if(v!=null && !"".equals(v)){
 						proxy_enabled = Costanti.CHECK_BOX_ENABLED_TRUE;
-						
+
 						// raccolgo anche altre proprietà
 						v = props.get(CostantiDB.CONNETTORE_PROXY_HOSTNAME);
 						if(v!=null && !"".equals(v)){
@@ -493,17 +664,17 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						}
 					}
 				}
-				
+
 				if(tempiRisposta_enabled == null ||
 						tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
 						|| 
 						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
 						|| 
 						tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ){
-					
+
 					ConfigurazioneCore configCore = new ConfigurazioneCore(soggettiCore);
 					ConfigurazioneGenerale configGenerale = configCore.getConfigurazioneControlloTraffico();
-					
+
 					if( props!=null ) {
 						if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) ) {
 							String v = props.get(CostantiDB.CONNETTORE_CONNECTION_TIMEOUT);
@@ -515,7 +686,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								tempiRisposta_connectionTimeout = configGenerale.getTempiRispostaErogazione().getConnectionTimeout().intValue()+"";
 							}
 						}
-						
+
 						if(tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) ) {
 							String v = props.get(CostantiDB.CONNETTORE_READ_CONNECTION_TIMEOUT);
 							if(v!=null && !"".equals(v)){
@@ -526,7 +697,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								tempiRisposta_readTimeout = configGenerale.getTempiRispostaErogazione().getReadTimeout().intValue()+"";
 							}
 						}
-						
+
 						if(tempiRisposta_tempoMedioRisposta==null || "".equals(tempiRisposta_tempoMedioRisposta) ) {
 							String v = props.get(CostantiDB.CONNETTORE_TEMPO_MEDIO_RISPOSTA);
 							if(v!=null && !"".equals(v)){
@@ -550,13 +721,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						}
 					}
 				}
-				
+
 				if(transfer_mode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE);
 					if(v!=null && !"".equals(v)){
-						
+
 						transfer_mode = v.trim();
-						
+
 						if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_DATA_TRANSFER_MODE_CHUNK_SIZE);
@@ -564,21 +735,21 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								transfer_mode_chunk_size = v.trim();
 							}
 						}
-						
+
 					}
 				}
-				
+
 				if(redirect_mode==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_FOLLOW);
 					if(v!=null && !"".equals(v)){
-						
+
 						if("true".equalsIgnoreCase(v.trim()) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v.trim())){
 							redirect_mode = CostantiConfigurazione.ABILITATO.getValue();
 						}
 						else{
 							redirect_mode = CostantiConfigurazione.DISABILITATO.getValue();
 						}					
-						
+
 						if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
 							// raccolgo anche altra proprietà correlata
 							v = props.get(CostantiDB.CONNETTORE_HTTP_REDIRECT_MAX_HOP);
@@ -586,10 +757,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 								redirect_max_hop = v.trim();
 							}
 						}
-						
+
 					}
 				}
-				
+
 				if(token_policy==null && props!=null){
 					String v = props.get(CostantiDB.CONNETTORE_TOKEN_POLICY);
 					if(v!=null && !"".equals(v)){
@@ -597,11 +768,11 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						autenticazioneToken = true;
 					}
 				}
-				
+
 				opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(saHelper, transfer_mode, redirect_mode);
-				
+
 				autenticazioneHttp = saHelper.getAutenticazioneHttp(autenticazioneHttp, endpointtype, user);
-				
+
 				for (int i = 0; i < connis.sizePropertyList(); i++) {
 					Property singlecp = cp.get(i);
 					if (singlecp.getNome().equals(CostantiDB.CONNETTORE_HTTP_LOCATION)) {
@@ -678,7 +849,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 							httpskeystore = ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_RIDEFINISCI;
 					}
 				}
-				
+
 				// default
 				if(httpsalgoritmo==null || "".equals(httpsalgoritmo)){
 					httpsalgoritmo = TrustManagerFactory.getDefaultAlgorithm();
@@ -693,10 +864,10 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					httpshostverifyS = "true";
 					httpshostverify = true;
 				}
-				
+
 				// file
 				if(responseInputMode==null && props!=null){
-					
+
 					requestOutputFileName = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE);	
 					requestOutputFileNameHeaders = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS);	
 					String v = props.get(CostantiDB.CONNETTORE_FILE_REQUEST_OUTPUT_AUTO_CREATE_DIR);
@@ -711,7 +882,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 							requestOutputOverwriteIfExists = Costanti.CHECK_BOX_ENABLED_TRUE;
 						}
 					}	
-					
+
 					v = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_MODE);
 					if(v!=null && !"".equals(v)){
 						if("true".equalsIgnoreCase(v) || CostantiConfigurazione.ABILITATO.getValue().equalsIgnoreCase(v) ){
@@ -729,23 +900,23 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						}						
 						responseInputWaitTime = props.get(CostantiDB.CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);						
 					}
-					
+
 				}
-				
-				
+
+
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled);
 
-//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
-//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
-				
+				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
+				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
+
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
@@ -767,14 +938,17 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
-				
+						nomeProtocollo, false, false
+						, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+						erogazioneServizioApplicativoServer, saSoggetti
+						);
+
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
-				
+
 				pd.setDati(dati);
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 			}
@@ -782,7 +956,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			// Controlli sui campi immessi
 			boolean isOk = saHelper.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
 			if (!isOk) {
-				
+
 				// setto la barra del titolo
 				ServletUtils.setPageDataTitle(pd, lstParm);
 
@@ -790,15 +964,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				Vector<DataElement> dati = new Vector<DataElement>();
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
-				
+
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
-				
-//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
-//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
-				
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled);
+
+				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
+				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
+
 				dati = saHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, null,
 						url, nome,
 						tipo, user, password, initcont, urlpgk, provurl,
@@ -820,135 +994,329 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
-				
+						nomeProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+						erogazioneServizioApplicativoServer, saSoggetti
+						);
+
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 
 				pd.setDati(dati);
-				
+
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				
+
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
 						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
 			}
 
-			// Modifico i dati del servizioApplicativo nel db
-			if(sbustamento==null){
-				is.setSbustamentoSoap(CostantiConfigurazione.DISABILITATO);
-			}else{
-				is.setSbustamentoSoap(StatoFunzionalita.toEnumConstant(sbustamento));
-			}
-			if(sbustamentoInformazioniProtocolloRichiesta==null){
-				is.setSbustamentoInformazioniProtocollo(CostantiConfigurazione.ABILITATO);
-			}else{
-				is.setSbustamentoInformazioniProtocollo(StatoFunzionalita.toEnumConstant(sbustamentoInformazioniProtocolloRichiesta));
-			}
-			is.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
-			is.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
-			is.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
-			if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
-				if (cis == null) {
-					cis = new InvocazioneCredenziali();
+			// rileggo la vecchia configurazione dal db (puo' essere stata riletta durante la postback)
+			sa = saCore.getServizioApplicativo(idSilInt);
+			invocazionePorta = sa.getInvocazionePorta();
+			is = sa.getInvocazioneServizio();
+			cis = is.getCredenziali();
+			connis = is.getConnettore();
+			cp = connis.getPropertyList();
+
+			List<Object> oggettiDaAggiornare = new ArrayList<>();
+			// se ho selezionato un servizio applicativo Server allora devo associarlo alla porta al posto del vecchio 
+			if(erogazioneServizioApplicativoServerEnabled) {
+				// solo se ho cambiato il valore del servizio server oppure ho scelto un server al posto del default
+				if(!erogazioneServizioApplicativoServer.equals(sa.getNome())) {
+					
+					String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
+					
+					// prelevo l'associazione con il vecchio servizio applicativo
+					PortaApplicativaServizioApplicativo paSAtmp = null;
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(sa.getNome())) {
+							paSAtmp = paSA;
+							break;
+						}
+					}
+
+					if(paSAtmp!= null) {
+						// se ho modificato il server che sto utilizzando lo rimuovo
+						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
+							pa.getServizioApplicativoList().remove(paSAtmp); 	
+						} else {
+							// SA di default da conservare
+							pa.getServizioApplicativoList().remove(paSAtmp);
+							pa.setServizioApplicativoDefault(sa.getNome());
+						}
+					}
+
+					// nuovo SA da aggiungere
+					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+					paSA.setNome(erogazioneServizioApplicativoServer);
+					pa.getServizioApplicativoList().add(paSA);
+
+					oggettiDaAggiornare.add(pa);
+					
+					// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+						// lettura delle configurazioni associate
+						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+						listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+						for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+							// scarto il default
+							if(!mappinErogazione.isDefault()) { 
+								PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+								
+								// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+								if((portaApplicativaTmp.getServizioApplicativoDefault() == null && oldServizioApplicativoDefault == null) ||
+								(portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
+										portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
+									 
+									// prelevo l'associazione con il vecchio servizio applicativo
+									PortaApplicativaServizioApplicativo paSAtmpInner = null;
+									for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+										if(paSAInner.getNome().equals(sa.getNome())) {
+											paSAtmpInner = paSAInner;
+											break;
+										}
+									}
+
+									if(paSAtmpInner!= null) {
+										// se ho modificato il server che sto utilizzando lo rimuovo
+										if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
+											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+										} else {
+											// SA di default da conservare
+											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner);
+											portaApplicativaTmp.setServizioApplicativoDefault(sa.getNome());
+										}
+									}
+
+									// nuovo SA da aggiungere
+									PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+									paSAInner.setNome(erogazioneServizioApplicativoServer);
+									portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+									oggettiDaAggiornare.add(portaApplicativaTmp);
+								 }
+							}
+						}
+					}
+					
 				}
-				cis.setUser(user);
-				cis.setPassword(password);
-				is.setCredenziali(cis);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-			}
-			else if(endpointtype.equals(TipiConnettore.JMS.toString())){
-				if(user!=null && password!=null){
+			} else {
+				// caso normale
+				// se avevo salvato un server e ritorno ad una configurazione di default
+				if(pa.getServizioApplicativoDefault() != null) {
+					
+					String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
+					String oldNomeSA = sa.getNome();
+					String oldTipoSA = sa.getTipo();
+					
+					// prelevo l'associazione con il vecchio servizio applicativo server
+					PortaApplicativaServizioApplicativo paSAtmp = null;
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(oldNomeSA)) {
+							paSAtmp = paSA;
+							break;
+						}
+					}
+
+					if(paSAtmp!= null) {
+						// se ho modificato il server che sto utilizzando lo rimuovo
+						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
+							pa.getServizioApplicativoList().remove(paSAtmp); 	
+						}
+					}
+
+					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+					paSA.setNome(oldServizioApplicativoDefault);
+//					paSA.setNome(pa.getNome());
+					pa.getServizioApplicativoList().add(paSA);
+					pa.setServizioApplicativoDefault(null);
+
+					oggettiDaAggiornare.add(pa);
+					
+					// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+						// lettura delle configurazioni associate
+						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+						listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+						for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+							// scarto il default
+							if(!mappinErogazione.isDefault()) { 
+								PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+								
+								// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+								if((portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
+										portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
+									 
+									// prelevo l'associazione con il vecchio servizio applicativo
+									PortaApplicativaServizioApplicativo paSAtmpInner = null;
+									for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+										if(paSAInner.getNome().equals(oldNomeSA)) {
+											paSAtmpInner = paSAInner;
+											break;
+										}
+									}
+
+									if(paSAtmpInner!= null) {
+										// se ho modificato il server che sto utilizzando lo rimuovo
+										if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
+											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+										} 
+									}
+
+									// nuovo SA da aggiungere
+									
+									PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+									paSAInner.setNome(oldServizioApplicativoDefault);
+									portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+									portaApplicativaTmp.setServizioApplicativoDefault(null);
+									oggettiDaAggiornare.add(portaApplicativaTmp);
+								 }
+								
+							}
+						}
+					}
+					
+					// rileggo la vecchia configurazione dal db di default
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setNome(oldServizioApplicativoDefault);
+					IDSoggetto idSoggettoProprietario = new IDSoggetto();
+					idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+					idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+					idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+					sa = saCore.getServizioApplicativo(idSA);
+					invocazionePorta = sa.getInvocazionePorta();
+					is = sa.getInvocazioneServizio();
+					cis = is.getCredenziali();
+					connis = is.getConnettore();
+					cp = connis.getPropertyList();
+				}
+
+				// Modifico i dati del servizioApplicativo nel db
+				if(sbustamento==null){
+					is.setSbustamentoSoap(CostantiConfigurazione.DISABILITATO);
+				}else{
+					is.setSbustamentoSoap(StatoFunzionalita.toEnumConstant(sbustamento));
+				}
+				if(sbustamentoInformazioniProtocolloRichiesta==null){
+					is.setSbustamentoInformazioniProtocollo(CostantiConfigurazione.ABILITATO);
+				}else{
+					is.setSbustamentoInformazioniProtocollo(StatoFunzionalita.toEnumConstant(sbustamentoInformazioniProtocolloRichiesta));
+				}
+				is.setGetMessage(StatoFunzionalita.toEnumConstant(getmsg));
+				is.setInvioPerRiferimento(StatoFunzionalita.toEnumConstant(invrifRichiesta));
+				is.setRispostaPerRiferimento(StatoFunzionalita.toEnumConstant(risprif));
+				if (tipoauthRichiesta!=null && tipoauthRichiesta.equals(CostantiConfigurazione.INVOCAZIONE_SERVIZIO_AUTENTICAZIONE_BASIC.toString())) {
 					if (cis == null) {
 						cis = new InvocazioneCredenziali();
 					}
 					cis.setUser(user);
 					cis.setPassword(password);
+					is.setCredenziali(cis);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
 				}
-				is.setCredenziali(cis);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
-			}
-			else {
-				is.setCredenziali(null);
-				is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
-			}
-			String oldConnT = connis.getTipo();
-			if ((connis.getCustom()!=null && connis.getCustom()) && 
-					!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
-					!connis.getTipo().equals(TipiConnettore.FILE.toString()))
-				oldConnT = TipiConnettore.CUSTOM.toString();
-			saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
-					nome, tipo, user, password,
-					initcont, urlpgk, provurl, connfact,
-					sendas, httpsurl, httpstipologia,
-					httpshostverify, httpspath, httpstipo,
-					httpspwd, httpsalgoritmo, httpsstato,
-					httpskeystore, httpspwdprivatekeytrust,
-					httpspathkey, httpstipokey,
-					httpspwdkey, httpspwdprivatekey,
-					httpsalgoritmokey,
-					httpsKeyAlias, httpsTrustStoreCRLs,
-					proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
-					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-					token_policy,
-					listExtendedConnettore);
-			is.setConnettore(connis);
-			sa.setInvocazioneServizio(is);
+				else if(endpointtype.equals(TipiConnettore.JMS.toString())){
+					if(user!=null && password!=null){
+						if (cis == null) {
+							cis = new InvocazioneCredenziali();
+						}
+						cis.setUser(user);
+						cis.setPassword(password);
+					}
+					is.setCredenziali(cis);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.BASIC);
+				}
+				else {
+					is.setCredenziali(null);
+					is.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
+				}
+				String oldConnT = connis.getTipo();
+				if ((connis.getCustom()!=null && connis.getCustom()) && 
+						!connis.getTipo().equals(TipiConnettore.HTTPS.toString()) && 
+						!connis.getTipo().equals(TipiConnettore.FILE.toString()))
+					oldConnT = TipiConnettore.CUSTOM.toString();
+				saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
+						nome, tipo, user, password,
+						initcont, urlpgk, provurl, connfact,
+						sendas, httpsurl, httpstipologia,
+						httpshostverify, httpspath, httpstipo,
+						httpspwd, httpsalgoritmo, httpsstato,
+						httpskeystore, httpspwdprivatekeytrust,
+						httpspathkey, httpstipokey,
+						httpspwdkey, httpspwdprivatekey,
+						httpsalgoritmokey,
+						httpsKeyAlias, httpsTrustStoreCRLs,
+						proxy_enabled, proxy_hostname, proxy_port, proxy_username, proxy_password,
+						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
+						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+						token_policy,
+						listExtendedConnettore);
+				is.setConnettore(connis);
+				sa.setInvocazioneServizio(is);
 
-			if(StatoFunzionalita.ABILITATO.equals(is.getGetMessage()) ||
-					!TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
-				sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-			}
-			else{
-				sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
-			}
-			
-			// rif bug#45
-			// se il connettore e' disabilitato oppure il Salvataggio in MessageBox e'
-			// disabilitato
-			// bisogna controllare che il servizio applicativo non sia in uso in
-			// porte applicative
-			StringBuffer inUsoMessage = new StringBuffer();
-			ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-			if(inUsoMessage.length()>0) {
-				pd.setMessage(inUsoMessage.toString());
-				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-				return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
-						ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
-			}
-			
-			if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
-				boolean found = false;
-				if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
-					for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
-						Credenziali c = invocazionePorta.getCredenziali(i);
-						if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
-							c.setUser(getmsgUsername);
-							c.setPassword(getmsgPassword);
-							found = true;
+				if(StatoFunzionalita.ABILITATO.equals(is.getGetMessage()) ||
+						!TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+					sa.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+				}
+				else{
+					sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
+				}
+
+				// rif bug#45
+				// se il connettore e' disabilitato oppure il Salvataggio in MessageBox e'
+				// disabilitato
+				// bisogna controllare che il servizio applicativo non sia in uso in
+				// porte applicative
+				StringBuffer inUsoMessage = new StringBuffer();
+				ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				if(inUsoMessage.length()>0) {
+					pd.setMessage(inUsoMessage.toString());
+					ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
+					return ServletUtils.getStrutsForwardGeneralError(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, 
+							ServiziApplicativiCostanti.TIPO_OPERAZIONE_ENDPOINT_INVOCAZIONE_SERVIZIO);
+				}
+
+				if(CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					boolean found = false;
+					if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+						for (int i = 0; i < invocazionePorta.sizeCredenzialiList(); i++) {
+							Credenziali c = invocazionePorta.getCredenziali(i);
+							if(CredenzialeTipo.BASIC.equals(c.getTipo())) {
+								c.setUser(getmsgUsername);
+								c.setPassword(getmsgPassword);
+								found = true;
+							}
 						}
 					}
-				}
-				if(!found) {
-					if(invocazionePorta==null) {
-						sa.setInvocazionePorta(new InvocazionePorta());
-						invocazionePorta = sa.getInvocazionePorta();
+					if(!found) {
+						if(invocazionePorta==null) {
+							sa.setInvocazionePorta(new InvocazionePorta());
+							invocazionePorta = sa.getInvocazionePorta();
+						}
+						Credenziali c = new Credenziali();
+						c.setTipo(CredenzialeTipo.BASIC);
+						c.setUser(getmsgUsername);
+						c.setPassword(getmsgPassword);
+						invocazionePorta.addCredenziali(c);
 					}
-					Credenziali c = new Credenziali();
-					c.setTipo(CredenzialeTipo.BASIC);
-					c.setUser(getmsgUsername);
-					c.setPassword(getmsgPassword);
-					invocazionePorta.addCredenziali(c);
 				}
+
+				oggettiDaAggiornare.add(sa);
 			}
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			saCore.performUpdateOperation(userLogin, saHelper.smista(), sa);
+			if(oggettiDaAggiornare.size() > 0)
+				saCore.performUpdateOperation(userLogin, saHelper.smista(), oggettiDaAggiornare.toArray(new Object[oggettiDaAggiornare.size()]));
 
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-			
+
 			List<ServizioApplicativo> lista = null;
 			int idLista = -1;
 			switch (parentSA) { 
@@ -963,7 +1331,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 						return ServletUtils.getStrutsForwardEditModeFinished(mapping, ErogazioniCostanti.OBJECT_NAME_ASPS_EROGAZIONI, ForwardParams.CHANGE());
 					}
-					
+
 					idLista = Liste.SERVIZI;
 					ricerca = saHelper.checkSearchParameters(idLista, ricerca);
 					if(gestioneErogatori) {
@@ -1006,7 +1374,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			default:
 				idLista = Liste.SERVIZIO_APPLICATIVO;
 				ricerca = saHelper.checkSearchParameters(idLista, ricerca);
-				
+
 				if(saCore.isVisioneOggettiGlobale(superUser)){
 					lista = saCore.soggettiServizioApplicativoList(null, ricerca);
 				}else{
@@ -1022,7 +1390,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if(fromConfig && !saHelper.isModalitaCompleta()) {
 				fwP = PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
-			
+
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI,  fwP);
 
 		} catch (Exception e) {

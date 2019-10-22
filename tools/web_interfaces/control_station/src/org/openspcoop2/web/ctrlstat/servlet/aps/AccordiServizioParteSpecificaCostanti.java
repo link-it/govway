@@ -265,6 +265,8 @@ public class AccordiServizioParteSpecificaCostanti {
 	public final static String PARAMETRO_APS_MODIFICA_API = "modificaAPI";
 	public final static String PARAMETRO_APS_MODIFICA_PROFILO = "modificaProfilo";
 	public final static String PARAMETRO_APS_CONFERMA_MODIFICA_DATI_SERVIZIO = "backToConfermaModificaDatiServizio";
+	public final static String PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
+	public final static String PARAMETRO_APS_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
 	
 	/* ATTRIBUTI SESSIONE */
 	

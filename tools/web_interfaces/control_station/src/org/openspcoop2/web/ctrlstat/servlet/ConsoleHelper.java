@@ -8537,9 +8537,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
-		if( (this.isModalitaCompleta()==false) && 
-				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
-			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+		if(this.core.isApplicativiServerEnabled(this)) {
+			if(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);
+			}
+		} else {
+			if( (this.isModalitaCompleta()==false) && 
+					(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+			}
 		}
 	}
 	

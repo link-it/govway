@@ -387,11 +387,29 @@ public final class ServiziApplicativiAdd extends Action {
 				}
 				
 				if(postBackElementName.equalsIgnoreCase(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA)){
-					if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
-						tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
-					}
-					if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT)) {
-						tipoauthSA = saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					if(isApplicativiServerEnabled) {
+						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+							tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+							ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+						}
+						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT)) {
+							tipoauthSA = saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+							ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
+						}
+					
+						if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE.equals(ruoloSA)){
+							ruoloFruitore = TipologiaFruizione.NORMALE.getValue();
+							ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
+						}
+						else if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE.equals(ruoloSA)){
+							ruoloErogatore = TipologiaErogazione.TRASPARENTE.getValue();
+							ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
+						}
+						else{
+							ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
+							ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
+						}
+					
 					}
 				}
 				
@@ -1083,7 +1101,7 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				invocazionePorta.addCredenziali(credenziali);
 				
-				if(interfacciaAvanzata) {
+				if(interfacciaAvanzata && !isApplicativiServerEnabled) {
 					if(credenziali.getTipo()!=null){
 						sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 					}

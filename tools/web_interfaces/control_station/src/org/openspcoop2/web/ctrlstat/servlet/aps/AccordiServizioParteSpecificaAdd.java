@@ -99,6 +99,7 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -208,6 +209,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	
 	private String tipoProtocollo;
 	
+	private String erogazioneServizioApplicativoServer;
+	private boolean erogazioneServizioApplicativoServerEnabled = false;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -246,7 +250,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.servcorr = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO);
 			// this.servpub = apsHelper.getParameter("servpub");
 			//			this.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
-
+			
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			this.erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			this.erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			
 			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -412,6 +420,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+			
+			
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -425,10 +435,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
+			boolean visualizzaSezioneApplicativiServerEnabled = gestioneErogatori && saCore.isApplicativiServerEnabled(apsHelper);
+			
 			PddTipologia pddTipologiaSoggettoAutenticati = null;
 			if(gestioneErogatori) {
 				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
 			}
+			
+			
 			
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
@@ -597,6 +611,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.providerSoggettoFruitore = null;
 					}
 					
+					this.erogazioneServizioApplicativoServerEnabled = false;
 					this.url = null;
 					
 					this.provider = null;
@@ -613,8 +628,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE)){
 					this.nomeservizio = "";
 					this.url = null;
+					this.erogazioneServizioApplicativoServerEnabled = false;
 				}
 				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_EROGATORE)){
+					this.erogazioneServizioApplicativoServerEnabled = false;
+				}
 			}
 
 			// Lista port-type associati all'accordo di servizio
@@ -999,12 +1018,15 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (visualizzaSezioneApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
+			
 			// Lista dei servizi applicativi per la creazione automatica
 			String [] saSoggetti = null;	
 			if ((this.provider != null) && !this.provider.equals("")) {
 				int idErogatore = Integer.parseInt(this.provider);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), tipoSA);
 
 				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno
@@ -1027,12 +1049,21 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
-				saSoggetti = new String[validSA.size()+1];
-				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i+1] = sa.getNome();
+				if(tipoSA == null) {
+					saSoggetti =  new String[validSA.size()+1];
+					saSoggetti[0] = "-"; // elemento nullo di default
+					for (int i = 0; i < validSA.size(); i++) {
+						ServizioApplicativo sa = validSA.get(i);
+						saSoggetti[i+1] = sa.getNome();
+					}
+				} else {
+					saSoggetti =  new String[validSA.size()];
+					for (int i = 0; i < validSA.size(); i++) {
+						ServizioApplicativo sa = validSA.get(i);
+						saSoggetti[i] = sa.getNome();
+					}
 				}
+				
 			}
 			
 			
@@ -1309,6 +1340,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					break;
 				}
 
+//				this.erogazioneServizioApplicativoServerEnabled = false;
+				if(this.erogazioneServizioApplicativoServer==null)
+					this.erogazioneServizioApplicativoServer = "";
 
 				if(this.erogazioneRuolo==null || "".equals(this.erogazioneRuolo))
 					this.erogazioneRuolo = "-";
@@ -1495,7 +1529,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient);
+							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+							this.erogazioneServizioApplicativoServer, saSoggetti);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1567,7 +1602,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					this.tipoProtocollo, allegatoXacmlPolicy, 
 					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
-					this.autenticazioneToken,this.token_policy);
+					this.autenticazioneToken,this.token_policy,this.erogazioneServizioApplicativoServerEnabled,
+					this.erogazioneServizioApplicativoServer);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1696,7 +1732,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient);
+							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+							this.erogazioneServizioApplicativoServer, saSoggetti);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1944,7 +1981,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								this.tipoProtocollo, forceHttps, forceHttpsClient);
+								this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+								this.erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 
@@ -2067,7 +2105,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, 
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail, 
 					this.protocolProperties, this.consoleOperationType, 
-					apsCore, apsHelper);
+					apsCore, apsHelper, this.erogazioneServizioApplicativoServer);
 
 			// cancello i file temporanei
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);

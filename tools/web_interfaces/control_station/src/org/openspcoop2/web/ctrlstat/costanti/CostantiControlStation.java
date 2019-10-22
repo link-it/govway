@@ -642,6 +642,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	
+	
+	public final static String LABEL_PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "Utilizza Applicativo Server";
+	public final static String LABEL_PARAMETRO_ID_APPLICATIVO_SERVER = "Applicativo";
+	
 	// POLICY RISORSA TIPO
 	
 	public final static boolean USE_SELECT_LIST_SEPARATE_METRICHE = false;
@@ -758,6 +762,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY = "docSicXacmlPol";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA = "autorizzazioneModIPA";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "autorizzazioneModIPAStato";
+	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
+	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	

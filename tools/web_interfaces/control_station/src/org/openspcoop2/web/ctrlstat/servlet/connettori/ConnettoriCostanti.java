@@ -82,6 +82,8 @@ public class ConnettoriCostanti {
 	public final static String LABEL_CONNETTORE_REQUEST_OUTPUT = "Richiesta";
 	public final static String LABEL_CONNETTORE_RESPONSE_INPUT = "Risposta";
 	public final static String LABEL_CONNETTORE_CUSTOM = "Personalizzato";
+	public final static String LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.LABEL_PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
+	public final static String LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER = CostantiControlStation.LABEL_PARAMETRO_ID_APPLICATIVO_SERVER;
 
 	/* PARAMETRI */
 
@@ -95,6 +97,8 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_URL = "url";
 //	public final static String PARAMETRO_CONNETTORE_PROVIDER = "provider";
 	public final static String PARAMETRO_CONNETTORE_PROFILO = "profilo";
+	public final static String PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER;
+	public final static String PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER = CostantiControlStation.PARAMETRO_ID_APPLICATIVO_SERVER;
 	
 	public final static String PARAMETRO_INVOCAZIONE_CREDENZIALI_TIPO_AUTENTICAZIONE = "tipoauthInv";
 	public final static String PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_USERNAME = "utenteInv";

@@ -317,8 +317,10 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	
 	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.getServiziApplicativiByIdErogatore(idErogatore, null);
+	}
+	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getServiziApplicativiWithIdErogatore";
 		DriverControlStationDB driver = null;
@@ -329,7 +331,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore);
+			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore, tipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

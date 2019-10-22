@@ -1426,7 +1426,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		Parameter paConnettoreDaListaAPS = null;
 		IDPortaApplicativa idPA = null;
 		PortaApplicativa paDefault = null;
-		PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo =  null;
+		PortaApplicativaServizioApplicativo paSADefault =  null;
 
 		if(gestioneErogatori) {
 			
@@ -1440,7 +1440,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(!isPddEsterna){
 				idPA = this.porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
 				paDefault = this.porteApplicativeCore.getPortaApplicativa(idPA);
-				portaApplicativaServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
+				paSADefault = paDefault.getServizioApplicativoList().get(0);
 
 				paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
 				paNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA, paDefault.getNome());
@@ -1481,7 +1481,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				
 				if(!mapping.isDefault()) {
 					PortaApplicativaServizioApplicativo portaApplicativaAssociataServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
-					boolean connettoreConfigurazioneRidefinito = portaApplicativaAssociataServizioApplicativo.getNome().equals(paAssociata.getNome());
+					boolean connettoreConfigurazioneRidefinito = this.isConnettoreRidefinito(paDefault, paSADefault, paAssociata, portaApplicativaAssociataServizioApplicativo);
 					if(connettoreConfigurazioneRidefinito) {
 						visualizzaConnettore = false;
 						break;
@@ -1507,17 +1507,17 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				de = new DataElement();
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 				de.setType(DataElementType.TEXT);
-				ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaServizioApplicativo.getId());
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(paSADefault.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
-				String urlConnettore = this.getLabelConnettore(is);
+				String urlConnettore = this.getLabelConnettore(sa,is);
 				de.setValue(urlConnettore);
 				
 				List<Parameter> listParametersConnettore = new ArrayList<>();
 				listParametersConnettore.add(paIdProvider);
 				listParametersConnettore.add(paIdPortaPerSA);
 				listParametersConnettore.add(paIdAsps);
-				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()));
-				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSADefault.getNome()));
+				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSADefault.getId()+""));
 				listParametersConnettore.add(paConnettoreDaListaAPS);
 				
 				image = new DataElementImage();

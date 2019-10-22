@@ -328,5 +328,6 @@ public class CostantiConfigurazione {
 	 /** Servizio Applicativo Tipo */
     public final static String CLIENT = "client";
     public final static String SERVER = "server";
+    public final static String CLIENT_OR_SERVER = "clientORserver";
     
 }

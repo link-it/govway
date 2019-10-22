@@ -947,7 +947,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}
 
 					// aggiunta campi custom
@@ -1094,7 +1094,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							protocollo, forceHttps, forceHttpsClient);
+							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}
 
 				// aggiunta campi custom
@@ -1166,7 +1166,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							protocollo, forceHttps, forceHttpsClient);
+							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 
 					dati = apsHelper.addServiziFruitoriToDatiAsHidden(dati, idSoggettoFruitore, "", "", soggettiList, soggettiListLabel, idServizio,
 							idServizioFruitore, tipoOp, idSoggettoErogatoreDelServizio, "", "", nomeservizio, tiposervizio,  correlato,statoPackage,oldStatoPackage,asps.getStatoPackage(),null,validazioneDocumenti,
@@ -1406,7 +1406,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}
 //					}else{
 //						//spostato nell'helper

@@ -203,6 +203,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_FILTRO_TIPO_QUALSIASI = CostantiControlStation.LABEL_QUALSIASI;
 	public final static String VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER = CostantiConfigurazione.SERVER;
 	public final static String VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT = CostantiConfigurazione.CLIENT;
+	public final static String VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI = CostantiConfigurazione.CLIENT_OR_SERVER;
 	public final static String SERVIZI_APPLICATIVI_TIPO_NON_CONFIGURATO = "Non Configurato";
 	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT = "Client";
 	public final static String LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER = "Server";

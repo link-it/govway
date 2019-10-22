@@ -271,6 +271,9 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 
+			boolean servizioApplicativoServerEnabled = false;
+			String servizioApplicativoServer = null;
+			
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
 				httpshostverify = true;
@@ -618,7 +621,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 					}
 				}
 					
@@ -652,7 +655,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, token_policy,
-						listExtendedConnettore);
+						listExtendedConnettore,servizioApplicativoServerEnabled,servizioApplicativoServer);
 			}
 			
 			if (!isOk) {
@@ -705,7 +708,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateAdd extends
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							protocollo, forceHttps, forceHttpsClient);
+							protocollo, forceHttps, forceHttpsClient, false, servizioApplicativoServerEnabled,servizioApplicativoServer, null);
 				}
 
 				pd.setDati(dati);

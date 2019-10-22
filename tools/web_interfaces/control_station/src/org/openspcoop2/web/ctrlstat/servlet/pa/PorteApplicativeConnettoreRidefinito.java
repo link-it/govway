@@ -232,8 +232,9 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 				idSA.setNome(paSA.getNome());
 				
 				ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
-				
-				listaOggettiDaEliminare.add(sa);
+				// elimino solo i SA non server
+				if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()))
+					listaOggettiDaEliminare.add(sa);
 			}
 			
 			portaApplicativa.getServizioApplicativoList().clear();
@@ -241,6 +242,7 @@ public class PorteApplicativeConnettoreRidefinito extends Action {
 			IDPortaApplicativa idPADefault = porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
 			PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(idPADefault);
 			portaApplicativa.getServizioApplicativoList().addAll(paDefault.getServizioApplicativoList());
+			portaApplicativa.setServizioApplicativoDefault(paDefault.getServizioApplicativoDefault());
 			
 			listaOggettiDaModificare.add(portaApplicativa);
 

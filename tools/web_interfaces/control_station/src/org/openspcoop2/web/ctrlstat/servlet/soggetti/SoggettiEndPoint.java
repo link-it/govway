@@ -509,7 +509,9 @@ public final class SoggettiEndPoint extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, false,
-						protocollo, false, false);
+						protocollo, false, false
+						, false, false, null, null
+						);
 
 				pd.setDati(dati);
 
@@ -558,7 +560,9 @@ public final class SoggettiEndPoint extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, false,
-						protocollo, false, false);
+						protocollo, false, false
+						, false, false, null, null
+						);
 
 				pd.setDati(dati);
 
