@@ -1146,6 +1146,34 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "formato_fault_ultimo_errore";
 			}
 		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRIMO_PRELIEVO_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_primo_prelievo_im";
+			}else{
+				return "data_primo_prelievo_im";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRELIEVO_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_prelievo_im";
+			}else{
+				return "data_prelievo_im";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_PRELIEVI_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".numero_prelievi_im";
+			}else{
+				return "numero_prelievi_im";
+			}
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ELIMINAZIONE_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_eliminazione_im";
+			}else{
+				return "data_eliminazione_im";
+			}
+		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -1633,6 +1661,18 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.FORMATO_FAULT_ULTIMO_ERRORE)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRIMO_PRELIEVO_IM)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_PRELIEVO_IM)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.NUMERO_PRELIEVI_IM)){
+			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
+		}
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_ELIMINAZIONE_IM)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){

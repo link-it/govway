@@ -64,6 +64,12 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="location-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="cluster-id-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="formato-fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-primo-prelievo-im-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-primo-prelievo-im-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-prelievo-im-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-prelievo-im-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-eliminazione-im-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-eliminazione-im-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
@@ -124,6 +130,12 @@ import java.util.Date;
     "locationUltimoErrore",
     "clusterIdUltimoErrore",
     "formatoFaultUltimoErrore",
+    "dataPrimoPrelievoImMin",
+    "dataPrimoPrelievoImMax",
+    "dataPrelievoImMin",
+    "dataPrelievoImMax",
+    "dataEliminazioneImMin",
+    "dataEliminazioneImMax",
     "limit",
     "offset",
     "descOrder"
@@ -599,6 +611,90 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public String getFormatoFaultUltimoErrore(){
 		return this.formatoFaultUltimoErrore;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-primo-prelievo-im-min",required=false,nillable=false)
+	private Date dataPrimoPrelievoImMin;
+	
+	public void setDataPrimoPrelievoImMin(Date dataPrimoPrelievoImMin){
+		this.dataPrimoPrelievoImMin = dataPrimoPrelievoImMin;
+	}
+	
+	public Date getDataPrimoPrelievoImMin(){
+		return this.dataPrimoPrelievoImMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-primo-prelievo-im-max",required=false,nillable=false)
+	private Date dataPrimoPrelievoImMax;
+	
+	public void setDataPrimoPrelievoImMax(Date dataPrimoPrelievoImMax){
+		this.dataPrimoPrelievoImMax = dataPrimoPrelievoImMax;
+	}
+	
+	public Date getDataPrimoPrelievoImMax(){
+		return this.dataPrimoPrelievoImMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-prelievo-im-min",required=false,nillable=false)
+	private Date dataPrelievoImMin;
+	
+	public void setDataPrelievoImMin(Date dataPrelievoImMin){
+		this.dataPrelievoImMin = dataPrelievoImMin;
+	}
+	
+	public Date getDataPrelievoImMin(){
+		return this.dataPrelievoImMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-prelievo-im-max",required=false,nillable=false)
+	private Date dataPrelievoImMax;
+	
+	public void setDataPrelievoImMax(Date dataPrelievoImMax){
+		this.dataPrelievoImMax = dataPrelievoImMax;
+	}
+	
+	public Date getDataPrelievoImMax(){
+		return this.dataPrelievoImMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-eliminazione-im-min",required=false,nillable=false)
+	private Date dataEliminazioneImMin;
+	
+	public void setDataEliminazioneImMin(Date dataEliminazioneImMin){
+		this.dataEliminazioneImMin = dataEliminazioneImMin;
+	}
+	
+	public Date getDataEliminazioneImMin(){
+		return this.dataEliminazioneImMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-eliminazione-im-max",required=false,nillable=false)
+	private Date dataEliminazioneImMax;
+	
+	public void setDataEliminazioneImMax(Date dataEliminazioneImMax){
+		this.dataEliminazioneImMax = dataEliminazioneImMax;
+	}
+	
+	public Date getDataEliminazioneImMax(){
+		return this.dataEliminazioneImMax;
 	}
 	
 	

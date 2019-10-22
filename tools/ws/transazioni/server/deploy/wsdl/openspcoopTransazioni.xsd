@@ -506,6 +506,19 @@
 					
 				</xsd:element>
 				
+				<xsd:element minOccurs="0" name="data-primo-prelievo-im" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-prelievo-im" type="xsd:dateTime">
+					
+				</xsd:element>
+				<xsd:element default="0" minOccurs="0" name="numero-prelievi-im" type="xsd:int">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="data-eliminazione-im" type="xsd:dateTime">
+					
+				</xsd:element>
+				
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

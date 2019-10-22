@@ -4264,11 +4264,23 @@ public class ConnettoriHelper extends ConsoleHelper {
 		return true;
 	}
 	
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			sbCon.append(ConnettoriCostanti.LABEL_SERVER);
+			sbCon.append(": ");
+			sbCon.append(sa.getNome());
+			sbCon.append(CostantiControlStation.TOOLTIP_BREAK_LINE);
+		}
+		sbCon.append(this.getLabelConnettore(is));
+		return sbCon.toString();
+	}
+	
 	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
 		StringBuilder sbCon = new StringBuilder();
 		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-			sbCon.append(sa.getNome());
-			sbCon.append(" ");
+			//sbCon.append(sa.getNome());
+			//sbCon.append(" ");
 		}
 		sbCon.append(this.getLabelConnettore(is));
 		return sbCon.toString();

@@ -259,6 +259,7 @@
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use-as-client" type="xsd:boolean" use="optional" default="false"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>

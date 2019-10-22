@@ -10833,7 +10833,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String labelConnettore, Connettore connettore) throws Exception {
+	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, Connettore connettore) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TEXT);

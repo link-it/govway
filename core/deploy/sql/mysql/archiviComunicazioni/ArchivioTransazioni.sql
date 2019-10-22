@@ -191,7 +191,9 @@ CREATE TABLE transazioni_sa
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,
+	-- Identificativo del messaggio
 	identificativo_messaggio VARCHAR(255),
+	-- Date
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_accettazione_richiesta TIMESTAMP(3) DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
@@ -202,13 +204,13 @@ CREATE TABLE transazioni_sa
 	data_ingresso_risposta TIMESTAMP(3) DEFAULT 0,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes BIGINT,
-	-- Dimensione messaggi gestiti
 	risposta_ingresso_bytes BIGINT,
 	location_connettore TEXT,
 	codice_risposta VARCHAR(10),
-	-- Eventuali FAULT
+	-- Eventuale FAULT
 	fault MEDIUMTEXT,
 	formato_fault VARCHAR(20),
+	-- Tentativi di Consegna
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_primo_tentativo TIMESTAMP(3) DEFAULT 0,
 	numero_tentativi INT DEFAULT 0,
@@ -222,9 +224,16 @@ CREATE TABLE transazioni_sa
 	ultimo_errore MEDIUMTEXT,
 	location_ultimo_errore TEXT,
 	cluster_id_ultimo_errore VARCHAR(100),
-	-- Eventuali FAULT
 	fault_ultimo_errore MEDIUMTEXT,
 	formato_fault_ultimo_errore VARCHAR(20),
+	-- Date relative alla gestione via IntegrationManager
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_primo_prelievo_im TIMESTAMP(3) DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_prelievo_im TIMESTAMP(3) DEFAULT 0,
+	numero_prelievi_im INT DEFAULT 0,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_eliminazione_im TIMESTAMP(3) DEFAULT 0,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

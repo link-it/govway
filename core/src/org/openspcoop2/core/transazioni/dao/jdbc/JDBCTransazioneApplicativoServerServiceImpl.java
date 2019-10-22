@@ -98,6 +98,10 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,false),"?");
 
 		// Insert transazioneApplicativoServer
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getTransazioneApplicativoServerFetch().getKeyGeneratorObject(TransazioneApplicativoServer.model());
@@ -130,7 +134,11 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getLocationUltimoErrore(),TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterIdUltimoErrore(),TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getFaultUltimoErrore(),TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getFormatoFaultUltimoErrore(),TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType())
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getFormatoFaultUltimoErrore(),TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataPrimoPrelievoIm(),TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataPrelievoIm(),TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getNumeroPrelieviIm(),TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(),TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType())
 		);
 		transazioneApplicativoServer.setId(id);
 
@@ -232,6 +240,14 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getFaultUltimoErrore(), TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getFormatoFaultUltimoErrore(), TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataPrimoPrelievoIm(), TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataPrelievoIm(), TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getNumeroPrelieviIm(), TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(), TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()));
 		sqlQueryObjectUpdate.addWhereCondition("id=?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(tableId, Long.class));
 

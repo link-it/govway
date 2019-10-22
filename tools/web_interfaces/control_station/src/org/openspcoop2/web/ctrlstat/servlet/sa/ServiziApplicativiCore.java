@@ -57,8 +57,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	public ServiziApplicativiCore(ControlStationCore core) throws Exception {
 		super(core);
 	}
-	
-	
+		
 	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativo";
@@ -515,4 +514,24 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 	
+	public long getIdServizioApplicativoByConnettore(long idConnettore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIdServizioApplicativoByConnettore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getIdServizioApplicativoByConnettore(idConnettore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

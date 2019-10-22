@@ -22,6 +22,7 @@
  			<xsd:element name="tipologia-erogazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="nome" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="tipo" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="use-as-client" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descrizione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="ora-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />

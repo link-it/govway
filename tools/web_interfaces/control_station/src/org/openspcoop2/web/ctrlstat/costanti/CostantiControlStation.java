@@ -78,6 +78,9 @@ public class CostantiControlStation {
 	/** Debug COSTANT STRING */
 	public static final String DEBUG_STRING = "PDD_CONSOLE_DEBUG";
 	
+	/** Tooltip Utils */
+	public static final String TOOLTIP_BREAK_LINE = "&#10;";
+	
 	/** PLACEHOLDER PROTOCOLLO in creazione automatica endpoint del soggetto */
 	public static final String PLACEHOLDER_SOGGETTO_ENDPOINT_CREAZIONE_AUTOMATICA = "@protocol@";
 	

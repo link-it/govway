@@ -1511,6 +1511,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				String urlConnettore = this.getLabelConnettore(sa,is);
 				de.setValue(urlConnettore);
+				String tooltipConnettore = this.getTooltipConnettore(sa,is);
+				de.setToolTip(tooltipConnettore);
 				
 				List<Parameter> listParametersConnettore = new ArrayList<>();
 				listParametersConnettore.add(paIdProvider);
@@ -1666,6 +1668,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				if(!connettoreStatic) {
 					
 					de.setValue(urlConnettore);
+					de.setToolTip(urlConnettore);
 					
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(pId);

@@ -8,6 +8,8 @@ ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri TEXT;
 ALTER TABLE servizi_applicativi ADD COLUMN tipo VARCHAR(255);
 update servizi_applicativi set tipo='client' where tipologia_fruizione<>'disabilitato';
 
+ALTER TABLE servizi_applicativi ADD COLUMN as_client INT;
+
 CREATE SEQUENCE seq_pa_sa_properties start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 NO CYCLE;
 
 CREATE TABLE pa_sa_properties

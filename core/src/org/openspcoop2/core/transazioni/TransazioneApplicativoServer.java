@@ -66,6 +66,10 @@ import java.io.Serializable;
  * 			&lt;element name="cluster-id-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="formato-fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="data-primo-prelievo-im" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="data-prelievo-im" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="numero-prelievi-im" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
+ * 			&lt;element name="data-eliminazione-im" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -107,7 +111,11 @@ import java.io.Serializable;
   	"locationUltimoErrore",
   	"clusterIdUltimoErrore",
   	"faultUltimoErrore",
-  	"formatoFaultUltimoErrore"
+  	"formatoFaultUltimoErrore",
+  	"dataPrimoPrelievoIm",
+  	"dataPrelievoIm",
+  	"numeroPrelieviIm",
+  	"dataEliminazioneIm"
   }
 )
 
@@ -371,6 +379,38 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.formatoFaultUltimoErrore = formatoFaultUltimoErrore;
   }
 
+  public java.util.Date getDataPrimoPrelievoIm() {
+    return this.dataPrimoPrelievoIm;
+  }
+
+  public void setDataPrimoPrelievoIm(java.util.Date dataPrimoPrelievoIm) {
+    this.dataPrimoPrelievoIm = dataPrimoPrelievoIm;
+  }
+
+  public java.util.Date getDataPrelievoIm() {
+    return this.dataPrelievoIm;
+  }
+
+  public void setDataPrelievoIm(java.util.Date dataPrelievoIm) {
+    this.dataPrelievoIm = dataPrelievoIm;
+  }
+
+  public int getNumeroPrelieviIm() {
+    return this.numeroPrelieviIm;
+  }
+
+  public void setNumeroPrelieviIm(int numeroPrelieviIm) {
+    this.numeroPrelieviIm = numeroPrelieviIm;
+  }
+
+  public java.util.Date getDataEliminazioneIm() {
+    return this.dataEliminazioneIm;
+  }
+
+  public void setDataEliminazioneIm(java.util.Date dataEliminazioneIm) {
+    this.dataEliminazioneIm = dataEliminazioneIm;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -512,5 +552,24 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="formato-fault-ultimo-errore",required=false,nillable=false)
   protected java.lang.String formatoFaultUltimoErrore;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-primo-prelievo-im",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataPrimoPrelievoIm;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-prelievo-im",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataPrelievoIm;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="numero-prelievi-im",required=false,nillable=false,defaultValue="0")
+  protected int numeroPrelieviIm = 0;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-eliminazione-im",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataEliminazioneIm;
 
 }

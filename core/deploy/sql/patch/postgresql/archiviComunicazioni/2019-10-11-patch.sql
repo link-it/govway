@@ -18,20 +18,22 @@ CREATE TABLE transazioni_sa
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,
+	-- Identificativo del messaggio
 	identificativo_messaggio VARCHAR(255),
+	-- Date
 	data_accettazione_richiesta TIMESTAMP,
 	data_uscita_richiesta TIMESTAMP,
 	data_accettazione_risposta TIMESTAMP,
 	data_ingresso_risposta TIMESTAMP,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes BIGINT,
-	-- Dimensione messaggi gestiti
 	risposta_ingresso_bytes BIGINT,
 	location_connettore TEXT,
 	codice_risposta VARCHAR(10),
-	-- Eventuali FAULT
+	-- Eventuale FAULT
 	fault TEXT,
 	formato_fault VARCHAR(20),
+	-- Tentativi di Consegna
 	data_primo_tentativo TIMESTAMP,
 	numero_tentativi INT DEFAULT 0,
 	-- Cluster ID
@@ -43,9 +45,13 @@ CREATE TABLE transazioni_sa
 	ultimo_errore TEXT,
 	location_ultimo_errore TEXT,
 	cluster_id_ultimo_errore VARCHAR(100),
-	-- Eventuali FAULT
 	fault_ultimo_errore TEXT,
 	formato_fault_ultimo_errore VARCHAR(20),
+	-- Date relative alla gestione via IntegrationManager
+	data_primo_prelievo_im TIMESTAMP,
+	data_prelievo_im TIMESTAMP,
+	numero_prelievi_im INT DEFAULT 0,
+	data_eliminazione_im TIMESTAMP,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_transazioni_sa') NOT NULL,
 	-- fk/pk keys constraints

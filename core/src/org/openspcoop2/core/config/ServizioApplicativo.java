@@ -53,6 +53,7 @@ import java.util.List;
  * 		&lt;attribute name="tipologia-erogazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="use-as-client" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
  * &lt;/complexType>
@@ -206,6 +207,18 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
     this.tipo = tipo;
   }
 
+  public boolean isUseAsClient() {
+    return this.useAsClient;
+  }
+
+  public boolean getUseAsClient() {
+    return this.useAsClient;
+  }
+
+  public void setUseAsClient(boolean useAsClient) {
+    this.useAsClient = useAsClient;
+  }
+
   public java.lang.String getDescrizione() {
     return this.descrizione;
   }
@@ -309,6 +322,10 @@ public class ServizioApplicativo extends org.openspcoop2.utils.beans.BaseBean im
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="tipo",required=false)
   protected java.lang.String tipo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="use-as-client",required=false)
+  protected boolean useAsClient = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)

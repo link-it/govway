@@ -161,8 +161,17 @@
 					        			if (type.equals("text")){
 				            				String textValNoEdit = de.getValue() != null && !de.getValue().equals("") ? de.getValue() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 				            				
-				            				String tooltipTitleAttribute = de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-			                				
+				            				String tooltipTextValNoEdit = "";
+											
+				            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
+				            					tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";
+											}
+				            				else if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+												tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
+												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
+												
+											}		
+											
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">
@@ -170,7 +179,7 @@
 												</td>
 												<td class="tdTextRiepilogo <%= stile %>">
 													<div class="<%=classDivNoEdit %>"> 
-						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTitleAttribute %> ><%= textValNoEdit %></span>
+						                				<span class="<%=classSpanNoEdit %>" <%= tooltipTextValNoEdit %> ><%= textValNoEdit %></span>
 						                				<input type="hidden" name="<%= deName %>" value="<%= de.getValue() %>"/>
 					                				
 													<% 
@@ -183,7 +192,7 @@
 																String deTip = !image.getToolTip().equals("") ? " title=\"" + image.getToolTip() + "\"" : "";
 					                							
 					                							String deTarget = " ";
-					                							if (!image.getTarget().equals("")) {
+														  		if (!image.getTarget().equals("")) {
 														  			deTarget = " target=\""+ image.getTarget() +"\"";
 														  		}
 													  			

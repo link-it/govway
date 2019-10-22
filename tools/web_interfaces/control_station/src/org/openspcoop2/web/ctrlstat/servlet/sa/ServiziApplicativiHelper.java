@@ -256,7 +256,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
 			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
 			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato,
-			boolean autenticazioneToken, String tokenPolicy, String tipoSA) throws Exception {
+			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -510,8 +510,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setValues(ServiziApplicativiCostanti.VALUES_SERVIZI_APPLICATIVI_TIPO);
 				de.setPostBack(true);
 			} else {
-				de.setValue(this.getTipo(tipoSA));
+				de.setValue(tipoSA);
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+"__LABEL");
 				de.setType(DataElementType.TEXT);
+				de.setValue(this.getTipo(tipoSA));
 			}
 		} else {
 			de.setType(DataElementType.HIDDEN);
@@ -1012,7 +1019,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					
 			this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 					getmsg, utente, password, true, invrif,risprif,nomeProtocollo,false,true, true,
-					parentSA,null,null,servizioApplicativoServerEnabled);
+					parentSA,null,null,servizioApplicativoServerEnabled,
+					tipoSA, useAsClient);
 			
 			if(!applicativiServerEnabled && TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 					CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -1892,33 +1900,45 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 					}
 					
 					// Tipo
+					boolean isServer = false;
 					if(this.core.isApplicativiServerEnabled(this)) {
 						de = new DataElement();
-						de.setValue(this.getTipo(sa));
+						isServer = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
+						String tipoLabel = this.getTipo(sa);
+						if(sa.isUseAsClient()) {
+							isServer = false;
+							tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+						}
+						de.setValue(tipoLabel);
 						e.addElement(de);
 					}
 
 					if(!this.isModalitaCompleta()) {
 						de = new DataElement();
-						if(useIdSogg){
-							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+						if(isServer) {
+							de.setValue("-");
 						}
-						else{
-							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+						else {
+							if(useIdSogg){
+								de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+							}
+							else{
+								de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+							}
+							if (contaListe) {
+								// BugFix OP-674
+								//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+								Search searchForCount = new Search(true,1);
+								this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
+								//int numRuoli = lista1.size();
+								int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
+								ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+							} else
+								ServletUtils.setDataElementVisualizzaLabel(de);
 						}
-						if (contaListe) {
-							// BugFix OP-674
-							//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-							Search searchForCount = new Search(true,1);
-							this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
-							//int numRuoli = lista1.size();
-							int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
 					}
 					
@@ -2132,14 +2152,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
-			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled) throws Exception{
+			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled,
+			String tipoSA, boolean useAsClient) throws Exception{
 		this.addEndPointToDati(dati, 
 				idsil, nomeservizioApplicativo, sbustamento, sbustamentoInformazioniProtocolloRichiesta, 
 				getmsg, null, null, true, 
 				invrif, risprif, nomeProtocollo, showName, 
 				isInvocazioneServizio, showTitleTrattamentoMessaggio, 
 				parentSA, serviceBinding, 
-				accessoDaAPSParametro, servizioApplicativoServerEnabled);
+				accessoDaAPSParametro, servizioApplicativoServerEnabled,
+				tipoSA, useAsClient);
 	}
 	
 	public void addEndPointToDati(Vector<DataElement> dati,
@@ -2148,7 +2170,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
-			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled) throws Exception{
+			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled, 
+			String tipoSA, boolean useAsClient) throws Exception{
 		
 		if(servizioApplicativoServerEnabled) {
 			this.addEndPointToDatiAsHidden(dati, idsil, nomeservizioApplicativo, sbustamento,
@@ -2369,6 +2392,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de.setSize(this.getSize());
 				de.setRequired(true);
 				dati.addElement(de);
+				
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+					de = new DataElement();
+					de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(useAsClient);
+					dati.addElement(de);
+				}
 			}
 			
 	}
