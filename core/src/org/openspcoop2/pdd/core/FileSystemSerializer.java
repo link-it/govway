@@ -111,6 +111,13 @@ public class FileSystemSerializer {
 		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DUMP);
 	}
 	
+	public void registraTransazioneApplicativoServer(byte[] oggettSerializzato, Date date) throws Exception{
+		this.registra(oggettSerializzato, Costanti.PREFIX_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER, date,getDirTransazioneApplicativoServer());
+	}
+	public File getDirTransazioneApplicativoServer(){
+		return new File(this.directory,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER);
+	}
+	
 	private void registra(byte[] oggettSerializzato, String prefix, Date date, File dir) throws Exception{
 		
 		if(dir.exists()==false){

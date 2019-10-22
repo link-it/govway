@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.transazioni.dao.jdbc.fetch;
 
 import org.openspcoop2.generic_project.beans.IModel;
@@ -38,6 +59,18 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id_transazione", TransazioneApplicativoServer.model().ID_TRANSAZIONE.getFieldType()));
 				setParameter(object, "setServizioApplicativoErogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "servizio_applicativo_erogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
+				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_registrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
+				setParameter(object, "setConsegnaSuccesso", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "consegna_successo", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType()));
+				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dettaglio_esito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
+				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "consegna_im", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()));
+				setParameter(object, "setIdentificativoMessaggio", TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "identificativo_messaggio", TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType()));
+				setParameter(object, "setDataAccettazioneRichiesta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_accettazione_richiesta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()));
 				setParameter(object, "setDataUscitaRichiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_uscita_richiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType()));
 				setParameter(object, "setDataAccettazioneRisposta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
@@ -48,18 +81,36 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "richiesta_uscita_bytes", TransazioneApplicativoServer.model().RICHIESTA_USCITA_BYTES.getFieldType()));
 				setParameter(object, "setRispostaIngressoBytes", TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "risposta_ingresso_bytes", TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType()));
+				setParameter(object, "setLocationConnettore", TransazioneApplicativoServer.model().LOCATION_CONNETTORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "location_connettore", TransazioneApplicativoServer.model().LOCATION_CONNETTORE.getFieldType()));
 				setParameter(object, "setCodiceRisposta", TransazioneApplicativoServer.model().CODICE_RISPOSTA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "codice_risposta", TransazioneApplicativoServer.model().CODICE_RISPOSTA.getFieldType()));
+				setParameter(object, "setFault", TransazioneApplicativoServer.model().FAULT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "fault", TransazioneApplicativoServer.model().FAULT.getFieldType()));
+				setParameter(object, "setFormatoFault", TransazioneApplicativoServer.model().FORMATO_FAULT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "formato_fault", TransazioneApplicativoServer.model().FORMATO_FAULT.getFieldType()));
 				setParameter(object, "setDataPrimoTentativo", TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_primo_tentativo", TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType()));
+				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "numero_tentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType()));
+				setParameter(object, "setClusterId", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType()));
 				setParameter(object, "setDataUltimoErrore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ultimo_errore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType()));
+				setParameter(object, "setDettaglioEsitoUltimoErrore", TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "dettaglio_esito_ultimo_errore", TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType()));
 				setParameter(object, "setCodiceRispostaUltimoErrore", TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "codice_risposta_ultimo_errore", TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE.getFieldType()));
 				setParameter(object, "setUltimoErrore", TransazioneApplicativoServer.model().ULTIMO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "ultimo_errore", TransazioneApplicativoServer.model().ULTIMO_ERRORE.getFieldType()));
-				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "numero_tentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType()));
+				setParameter(object, "setLocationUltimoErrore", TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "location_ultimo_errore", TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE.getFieldType()));
+				setParameter(object, "setClusterIdUltimoErrore", TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id_ultimo_errore", TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE.getFieldType()));
+				setParameter(object, "setFaultUltimoErrore", TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "fault_ultimo_errore", TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType()));
+				setParameter(object, "setFormatoFaultUltimoErrore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "formato_fault_ultimo_errore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType()));
 				return object;
 			}
 			
@@ -86,6 +137,18 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id-transazione"));
 				setParameter(object, "setServizioApplicativoErogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					this.getObjectFromMap(map,"servizio-applicativo-erogatore"));
+				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
+					this.getObjectFromMap(map,"data-registrazione"));
+				setParameter(object, "setConsegnaSuccesso", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType(),
+					this.getObjectFromMap(map,"consegna-successo"));
+				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
+					this.getObjectFromMap(map,"dettaglio-esito"));
+				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
+					this.getObjectFromMap(map,"consegna-integration-manager"));
+				setParameter(object, "setIdentificativoMessaggio", TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType(),
+					this.getObjectFromMap(map,"identificativo-messaggio"));
+				setParameter(object, "setDataAccettazioneRichiesta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType(),
+					this.getObjectFromMap(map,"data-accettazione-richiesta"));
 				setParameter(object, "setDataUscitaRichiesta", TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA.getFieldType(),
 					this.getObjectFromMap(map,"data-uscita-richiesta"));
 				setParameter(object, "setDataAccettazioneRisposta", TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RISPOSTA.getFieldType(),
@@ -96,18 +159,36 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"richiesta-uscita-bytes"));
 				setParameter(object, "setRispostaIngressoBytes", TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES.getFieldType(),
 					this.getObjectFromMap(map,"risposta-ingresso-bytes"));
+				setParameter(object, "setLocationConnettore", TransazioneApplicativoServer.model().LOCATION_CONNETTORE.getFieldType(),
+					this.getObjectFromMap(map,"location-connettore"));
 				setParameter(object, "setCodiceRisposta", TransazioneApplicativoServer.model().CODICE_RISPOSTA.getFieldType(),
 					this.getObjectFromMap(map,"codice-risposta"));
+				setParameter(object, "setFault", TransazioneApplicativoServer.model().FAULT.getFieldType(),
+					this.getObjectFromMap(map,"fault"));
+				setParameter(object, "setFormatoFault", TransazioneApplicativoServer.model().FORMATO_FAULT.getFieldType(),
+					this.getObjectFromMap(map,"formato-fault"));
 				setParameter(object, "setDataPrimoTentativo", TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType(),
 					this.getObjectFromMap(map,"data-primo-tentativo"));
+				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
+					this.getObjectFromMap(map,"numero-tentativi"));
+				setParameter(object, "setClusterId", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id"));
 				setParameter(object, "setDataUltimoErrore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType(),
 					this.getObjectFromMap(map,"data-ultimo-errore"));
+				setParameter(object, "setDettaglioEsitoUltimoErrore", TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType(),
+					this.getObjectFromMap(map,"dettaglio-esito-ultimo-errore"));
 				setParameter(object, "setCodiceRispostaUltimoErrore", TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE.getFieldType(),
 					this.getObjectFromMap(map,"codice-risposta-ultimo-errore"));
 				setParameter(object, "setUltimoErrore", TransazioneApplicativoServer.model().ULTIMO_ERRORE.getFieldType(),
 					this.getObjectFromMap(map,"ultimo-errore"));
-				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
-					this.getObjectFromMap(map,"numero-tentativi"));
+				setParameter(object, "setLocationUltimoErrore", TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE.getFieldType(),
+					this.getObjectFromMap(map,"location-ultimo-errore"));
+				setParameter(object, "setClusterIdUltimoErrore", TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id-ultimo-errore"));
+				setParameter(object, "setFaultUltimoErrore", TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType(),
+					this.getObjectFromMap(map,"fault-ultimo-errore"));
+				setParameter(object, "setFormatoFaultUltimoErrore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType(),
+					this.getObjectFromMap(map,"formato-fault-ultimo-errore"));
 				return object;
 			}
 			

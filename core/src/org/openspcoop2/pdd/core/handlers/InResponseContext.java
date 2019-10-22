@@ -27,6 +27,7 @@ import java.util.Date;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -75,6 +76,17 @@ public class InResponseContext extends BaseContext {
 
 	/** Data dopo aver terminato l'invocazione del connettore */
 	private Date dataTerminataInvocazioneConnettore = null;
+
+	/** Servizio Applicativo Erogatore */
+	private TransazioneApplicativoServer transazioneApplicativoServer = null;
+	
+	public TransazioneApplicativoServer getTransazioneApplicativoServer() {
+		return this.transazioneApplicativoServer;
+	}
+
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+		this.transazioneApplicativoServer = transazioneApplicativoServer;
+	}
 	
 	public Date getDataAccettazioneRisposta() {
 		return this.dataAccettazioneRisposta;

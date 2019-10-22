@@ -1,3 +1,24 @@
+/*
+ * GovWay - A customizable API Gateway 
+ * http://www.govway.org
+ *
+ * from the Link.it OpenSPCoop project codebase
+ * 
+ * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License version 3, as published by
+ * the Free Software Foundation.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
 package org.openspcoop2.core.transazioni.dao.jdbc.converter;
 
 import org.openspcoop2.generic_project.beans.IField;
@@ -61,6 +82,48 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "servizio_applicativo_erogatore";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_registrazione";
+			}else{
+				return "data_registrazione";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegna_successo";
+			}else{
+				return "consegna_successo";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dettaglio_esito";
+			}else{
+				return "dettaglio_esito";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegna_im";
+			}else{
+				return "consegna_im";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".identificativo_messaggio";
+			}else{
+				return "identificativo_messaggio";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_accettazione_richiesta";
+			}else{
+				return "data_accettazione_richiesta";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_uscita_richiesta";
@@ -96,11 +159,32 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "risposta_ingresso_bytes";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().LOCATION_CONNETTORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".location_connettore";
+			}else{
+				return "location_connettore";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().CODICE_RISPOSTA)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".codice_risposta";
 			}else{
 				return "codice_risposta";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FAULT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".fault";
+			}else{
+				return "fault";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FORMATO_FAULT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault";
+			}else{
+				return "formato_fault";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO)){
@@ -110,11 +194,32 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "data_primo_tentativo";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().NUMERO_TENTATIVI)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".numero_tentativi";
+			}else{
+				return "numero_tentativi";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id";
+			}else{
+				return "cluster_id";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_ultimo_errore";
 			}else{
 				return "data_ultimo_errore";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".dettaglio_esito_ultimo_errore";
+			}else{
+				return "dettaglio_esito_ultimo_errore";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE)){
@@ -131,11 +236,32 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "ultimo_errore";
 			}
 		}
-		if(field.equals(TransazioneApplicativoServer.model().NUMERO_TENTATIVI)){
+		if(field.equals(TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".numero_tentativi";
+				return this.toAliasTable(field)+".location_ultimo_errore";
 			}else{
-				return "numero_tentativi";
+				return "location_ultimo_errore";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id_ultimo_errore";
+			}else{
+				return "cluster_id_ultimo_errore";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".fault_ultimo_errore";
+			}else{
+				return "fault_ultimo_errore";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".formato_fault_ultimo_errore";
+			}else{
+				return "formato_fault_ultimo_errore";
 			}
 		}
 
@@ -157,6 +283,24 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_USCITA_RICHIESTA)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
@@ -172,13 +316,31 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().RISPOSTA_INGRESSO_BYTES)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
+		if(field.equals(TransazioneApplicativoServer.model().LOCATION_CONNETTORE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
 		if(field.equals(TransazioneApplicativoServer.model().CODICE_RISPOSTA)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FAULT)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FORMATO_FAULT)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
+		if(field.equals(TransazioneApplicativoServer.model().NUMERO_TENTATIVI)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE)){
@@ -187,7 +349,16 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().ULTIMO_ERRORE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
-		if(field.equals(TransazioneApplicativoServer.model().NUMERO_TENTATIVI)){
+		if(field.equals(TransazioneApplicativoServer.model().LOCATION_ULTIMO_ERRORE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 

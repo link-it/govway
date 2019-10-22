@@ -56,6 +56,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -109,6 +110,7 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.TokenForward;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
@@ -295,6 +297,60 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	public EsitoLib _onMessage(IOpenSPCoopState openspcoopstate,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
+		
+		// Costruisco eventuale oggetto TransazioneServerApplicativo
+		TransazioneApplicativoServer transazioneApplicativoServer = null;
+		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
+		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
+		if(behaviourConsegna!=null && behaviourConsegna.getIdTransazioneApplicativoServer()!=null) {
+			transazioneApplicativoServer = new TransazioneApplicativoServer();
+			transazioneApplicativoServer.setIdTransazione(behaviourConsegna.getIdTransazioneApplicativoServer().getIdTransazione());
+			transazioneApplicativoServer.setServizioApplicativoErogatore(behaviourConsegna.getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
+			transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+			String protocol = (String) consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+			transazioneApplicativoServer.setProtocollo(protocol);
+			transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
+			transazioneApplicativoServer.setIdentificativoMessaggio(consegnaContenutiApplicativiMsg.getBusta().getID());
+			
+			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer);
+		}
+		
+		EsitoLib esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer);
+				
+		if(transazioneApplicativoServer!=null) {
+			
+			if(EsitoLib.OK != esitoLib.getStatoInvocazione()) {
+				if(esitoLib.getMotivazioneErroreNonGestito()!=null && !"".equals(esitoLib.getMotivazioneErroreNonGestito())) {
+					transazioneApplicativoServer.setUltimoErrore(esitoLib.getMotivazioneErroreNonGestito());
+				}
+				else if(esitoLib.getErroreNonGestito()!=null) {
+					Throwable e = Utilities.getInnerNotEmptyMessageException(esitoLib.getErroreNonGestito());
+					if(e!=null) {
+						transazioneApplicativoServer.setUltimoErrore(e.getMessage());
+					}
+					else {
+						transazioneApplicativoServer.setUltimoErrore(esitoLib.getErroreNonGestito().toString());
+					}
+				}
+				else {
+					transazioneApplicativoServer.setUltimoErrore("Errore Generico durante il processamento del messaggio");
+				}
+			}
+			
+			try {
+				GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer);
+			}catch(Throwable t) {
+				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+			}
+		}
+		
+		return esitoLib;
+	}
+	
+	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate,
+			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
+			MsgDiagnostico msgDiag,
+			TransazioneApplicativoServer transazioneApplicativoServer) throws OpenSPCoopStateException {
 
 
 		EsitoLib esito = new EsitoLib();
@@ -1010,6 +1066,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		ConnettoreMsg connettoreMsg = null;
 		boolean consegnaPerRiferimento = false;
 		boolean rispostaPerRiferimento = false;
+		boolean integrationManager = false;
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
 		if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
@@ -1022,6 +1079,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1045,6 +1104,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [AsincronoAsimmetricoPolling]...");
@@ -1065,6 +1126,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.invocazioneServizioConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
@@ -1092,6 +1155,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		connettoreMsg.setGestioneManifest(gestioneManifest);
 		connettoreMsg.setProprietaManifestAttachments(proprietaManifestAttachments);
 		connettoreMsg.setLocalForward(localForward);
+		if(transazioneApplicativoServer!=null) {
+			transazioneApplicativoServer.setConsegnaIntegrationManager(integrationManager);
+			connettoreMsg.setTransazioneApplicativoServer(transazioneApplicativoServer);
+		}
 
 		// Identificativo di una risposta.
 		String idMessageResponse = null;
@@ -1211,6 +1278,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		// Punto di inizio per la transazione.
 		IConnettore connectorSenderForDisconnect = null;
 		String location = "";
+		OpenSPCoop2Message consegnaMessageTrasformato = null;
 		try{	    
 
 
@@ -1416,7 +1484,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------ Trasformazione Richiesta  -------------- */
 			
 			GestoreTrasformazioni gestoreTrasformazioni = null;
-			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
+			consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
 			if(trasformazioni!=null) {
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
@@ -1702,6 +1770,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				// Informazioni messaggio
 				outRequestContext.setMessaggio(consegnaMessageTrasformato);
 				
+				// TransazioneApplicativoServer
+				outRequestContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
+				
 				// Contesto
 				ProtocolContext protocolContext = new ProtocolContext();
 				protocolContext.setIdRichiesta(idMessaggioConsegna);
@@ -1861,6 +1932,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
+			dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer);
 			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessageTrasformato, outRequestContext.getConnettore());
 
 			
@@ -1974,6 +2046,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
 						}
 					}
+					if(transazioneApplicativoServer!=null) {
+						transazioneApplicativoServer.setConsegnaSuccesso(!errorConsegna);
+					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
@@ -2061,6 +2136,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 								dumpConfig);
+						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer);
 						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
 						if(infoConnettoreUscita!=null){
 							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
@@ -2181,6 +2257,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(responseMessage!=null){
 						inResponseContext.setMessaggio(responseMessage);				
 					}
+					
+					// TransazioneApplicativoServer
+					inResponseContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
 					
 					// Informazioni sulla consegna
 					inResponseContext.setErroreConsegna(motivoErroreConsegna);
@@ -2331,6 +2410,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
+					dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer);
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}
 				
@@ -3372,6 +3452,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			openspcoopstate.releaseResource();
 			return esito;
 		}finally{
+			try {
+				if(transazioneApplicativoServer!=null) {
+					if(consegnaMessageTrasformato!=null) {
+						transazioneApplicativoServer.setRichiestaUscitaBytes(consegnaMessageTrasformato.getOutgoingMessageContentLength());
+					}
+					if(responseMessage!=null) {
+						transazioneApplicativoServer.setRispostaIngressoBytes(responseMessage.getIncomingMessageContentLength());
+					}
+				}
+			}catch(Throwable t) {
+				this.log.error("Errore durante la lettura delle dimensioni dei messaggi: "+t.getMessage(),t);
+			}
 			try{
 				if(connectorSenderForDisconnect!=null)
 					connectorSenderForDisconnect.disconnect();

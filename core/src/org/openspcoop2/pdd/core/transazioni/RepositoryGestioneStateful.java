@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.transazioni;
 
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.Date;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
@@ -219,111 +218,7 @@ public class RepositoryGestioneStateful {
 		// OUT OF MEMORY PROBLEM 
 		//repository.add(s);
 		invokeGestoreTransazioniStateful(s,null);
-		
-//		StatefulObject sInfoTraccia = new StatefulObject();
-//		sInfoTraccia.setIdTransazione(idTransazione);
-//		if("Richiesta".equalsIgnoreCase(traccia.getTipoMessaggio().getTipo())){
-//			sInfoTraccia.setObject("Richiesta");
-//			sInfoTraccia.setType(StatefulObjectType.INFORMAZIONI_TRACCIA_RICHIESTA);
-//		}else{
-//			sInfoTraccia.setObject("Risposta");
-//			sInfoTraccia.setType(StatefulObjectType.INFORMAZIONI_TRACCIA_RISPOSTA);
-//		}
-//		TransactionDB tr = invokeGestoreTransazioniStateful_readTransactionDB(idTransazione);
-//		if(tr!=null){
-//			invokeGestoreTransazioniStateful(sInfoTraccia,tr);
-//		}else{
-//			// OUT OF MEMORY PROBLEM 
-//			repository.add(sInfoTraccia);
-//		}
-	}
-	
-	public static void addDataUscitaRichiesta(String protocollo,String idTransazione, Date date) throws TransactionStatefulNotSupportedException {
 
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(date);
-		s.setType(StatefulObjectType.DATA_USCITA_RICHIESTA);
-		repository.add(s);
-	}
-	
-	public static void addDataIngressoRisposta(String protocollo,String idTransazione, Date date) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(date);
-		s.setType(StatefulObjectType.DATA_INGRESSO_RISPOSTA);
-		repository.add(s);
-	}
-	
-	public static void addDimensioneUscitaRichiesta(String protocollo,String idTransazione, Long dimensione) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(dimensione);
-		s.setType(StatefulObjectType.DIMENSIONE_USCITA_RICHIESTA);
-		repository.add(s);
-	}
-	
-	public static void addDimensioneIngressoRisposta(String protocollo,String idTransazione, Long dimensione) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(dimensione);
-		s.setType(StatefulObjectType.DIMENSIONE_INGRESSO_RISPOSTA);
-		repository.add(s);
-	}
-	
-	public static void addScenarioCooperazione(String protocollo,String idTransazione, String scenarioCooperazione) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(scenarioCooperazione);
-		s.setType(StatefulObjectType.SCENARIO_COOPERAZIONE);
-		repository.add(s);
-	}
-	
-	public static void addTipoConnettore(String protocollo,String idTransazione, String tipoConnettore) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(tipoConnettore);
-		s.setType(StatefulObjectType.TIPO_CONNETTORE);
-		repository.add(s);
-	}
-	
-	public static void addLocation(String protocollo,String idTransazione, String location) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(location);
-		s.setType(StatefulObjectType.LOCATION);
-		repository.add(s);
-	}
-	
-	public static void addCodiceTrasportoRichiesta(String protocollo,String idTransazione, String codice) throws TransactionStatefulNotSupportedException {
-
-		checkGestioneAbilitata();
-		
-		StatefulObject s = new StatefulObject(protocollo);
-		s.setIdTransazione(idTransazione);
-		s.setObject(codice);
-		s.setType(StatefulObjectType.CODICE_TRASPORTO_RICHIESTA);
-		repository.add(s);
 	}
 	
 	public static void addOutRequestStatefulObject(String protocollo,String idTransazione, OutRequestStatefulObject object) throws TransactionStatefulNotSupportedException {

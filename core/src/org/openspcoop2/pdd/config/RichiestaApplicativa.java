@@ -30,6 +30,7 @@ import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.utils.beans.BaseBean;
 
 /**
  * Classe contenente i dati di una richiesta applicativa. 
@@ -40,7 +41,7 @@ import org.openspcoop2.core.id.IDSoggetto;
  * @version $Rev$, $Date$
  */
 
-public class RichiestaApplicativa implements java.io.Serializable {
+public class RichiestaApplicativa extends BaseBean implements java.io.Serializable, Cloneable {
 
 	 /**
 	 * serialVersionUID
@@ -187,6 +188,15 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	public void updateIDServizio(IDServizio idServizio) {
 		this.idServizio = idServizio;
 	}
+	
+	// Metodi che servono per il clone
+	public IDServizio getIdServizio() {
+		return this.idServizio;
+	}
+	public void setIdServizio(IDServizio idServizio) {
+		this.idServizio = idServizio;
+	}
+	
 	/**
 	 * Ritorna il nome del Servizio Applicativo che eroga il servizio
 	 *
@@ -232,6 +242,11 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	public boolean isRicevutaAsincrona() {
 		return this.ricevutaAsincrona;
 	}
+	// Metodo che serve per clone
+	public boolean getRicevutaAsincrona() {
+		return this.ricevutaAsincrona;
+	}
+	
 	public Hashtable<String, String> getFiltroProprietaPorteApplicative() {
 		return this.filtroProprietaPorteApplicative;
 	}
@@ -279,6 +294,10 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	}
 	public void setLocalForward(boolean localForward) {
 		this.localForward = localForward;
+	}
+	// metodo che serve per clone
+	public boolean getLocalForward() {
+		return this.localForward;
 	}
 	
 	public IDPortaApplicativa getIdPortaApplicativa() {

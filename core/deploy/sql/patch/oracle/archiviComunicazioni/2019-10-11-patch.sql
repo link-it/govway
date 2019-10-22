@@ -7,12 +7,21 @@ ALTER TABLE transazioni MODIFY servizio_applicativo_erogatore VARCHAR2(2000);
 ALTER TABLE dump_messaggi ADD servizio_applicativo_erogatore VARCHAR2(2000);
 
 
+
 CREATE SEQUENCE seq_transazioni_sa MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 INCREMENT BY 1 CACHE 2 CYCLE;
 
 CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR2(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR2(2000) NOT NULL,
+	data_registrazione TIMESTAMP NOT NULL,
+	-- Esito della Transazione
+	consegna_successo NUMBER,
+	dettaglio_esito NUMBER,
+	-- Consegna via Integration Manager
+	consegna_im NUMBER,
+	identificativo_messaggio VARCHAR2(255),
+	data_accettazione_richiesta TIMESTAMP,
 	data_uscita_richiesta TIMESTAMP,
 	data_accettazione_risposta TIMESTAMP,
 	data_ingresso_risposta TIMESTAMP,
@@ -20,12 +29,25 @@ CREATE TABLE transazioni_sa
 	richiesta_uscita_bytes NUMBER,
 	-- Dimensione messaggi gestiti
 	risposta_ingresso_bytes NUMBER,
+	location_connettore CLOB,
 	codice_risposta VARCHAR2(10),
+	-- Eventuali FAULT
+	fault CLOB,
+	formato_fault VARCHAR2(20),
 	data_primo_tentativo TIMESTAMP,
+	numero_tentativi NUMBER,
+	-- Cluster ID
+	cluster_id VARCHAR2(100),
+	-- Informazioni relative all'ultimo tentativo di consegna fallito
 	data_ultimo_errore TIMESTAMP,
+	dettaglio_esito_ultimo_errore NUMBER,
 	codice_risposta_ultimo_errore VARCHAR2(10),
 	ultimo_errore CLOB,
-	numero_tentativi NUMBER,
+	location_ultimo_errore CLOB,
+	cluster_id_ultimo_errore VARCHAR2(100),
+	-- Eventuali FAULT
+	fault_ultimo_errore CLOB,
+	formato_fault_ultimo_errore VARCHAR2(20),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -35,6 +57,7 @@ CREATE TABLE transazioni_sa
 -- index
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
+ALTER TABLE transazioni_sa MODIFY consegna_successo DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY numero_tentativi DEFAULT 0;
 
 CREATE TRIGGER trg_transazioni_sa

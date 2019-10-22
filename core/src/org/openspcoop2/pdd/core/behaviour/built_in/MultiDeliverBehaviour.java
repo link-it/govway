@@ -27,12 +27,14 @@ import java.util.List;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
@@ -57,46 +59,78 @@ public class MultiDeliverBehaviour implements IBehaviour {
 		
 		try{
 
-			List<IDServizioApplicativo> listaServiziApplicativi = new ArrayList<IDServizioApplicativo>();
+			List<IDServizioApplicativo> listaServiziApplicativi_consegnaSenzaRisposta = new ArrayList<IDServizioApplicativo>();
+			IDServizioApplicativo idServizioApplicativoResponder = null;
+			
 			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
 					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 					idSA.setNome(servizioApplicativo.getNome());
-					listaServiziApplicativi.add(idSA);
+					
+					// TODO proprieta
+					if(idServizioApplicativoResponder==null) {
+						idServizioApplicativoResponder = idSA;
+					}
+					else {
+						listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
+					}
 				}
 			}
 			
-//			if(listaServiziApplicativi.size()<=1) {
-//				Behaviour behaviour = new Behaviour();
-//				BehaviourForwardTo forwardTo = new BehaviourForwardTo();
-//				behaviour.getForwardTo().add(forwardTo);
-//				return behaviour;
-//			}
-			
 			Behaviour behaviour = new Behaviour();
+			behaviour.setApplicativeSyncResponder(idServizioApplicativoResponder);
 			BehaviourForwardTo forwardTo = new BehaviourForwardTo();
 			
+			boolean forceSalvataggioMessaggio = false;
 			
-			if(listaServiziApplicativi.size()>1) {
+			if( (listaServiziApplicativi_consegnaSenzaRisposta.size()==1 && idServizioApplicativoResponder==null) 
+					||
+				(listaServiziApplicativi_consegnaSenzaRisposta.size()==0 && idServizioApplicativoResponder!=null) 
+				) {
 				
-				// Vi e' la presa in carico.
-				
+				// se l'unico servizio applicativo ma comunque richiede la memorizzazione via integration manager devo prenderlo in carico.
+				IDServizioApplicativo idSA = null;
+				if(idServizioApplicativoResponder!=null) {
+					idSA = idServizioApplicativoResponder;
+				}else {
+					idSA = listaServiziApplicativi_consegnaSenzaRisposta.get(0);
+				}
+				ServizioApplicativo sa = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idSA);
+				boolean uniqueSA_integrationManager = ConfigurazionePdDManager.getInstance().invocazioneServizioConGetMessage(sa);
+				boolean uniqueSA_connettore = ConfigurazionePdDManager.getInstance().invocazioneServizioConConnettore(sa);
+				forceSalvataggioMessaggio = uniqueSA_integrationManager && uniqueSA_connettore;
+			}
+			
+			boolean saveMessage = false;
+			if(forceSalvataggioMessaggio) {
+				saveMessage = true;
+			}
+			else {
+				if(idServizioApplicativoResponder!=null) {
+					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>0;
+				}
+				else {
+					saveMessage = listaServiziApplicativi_consegnaSenzaRisposta.size()>1;
+				}
+			}
+			if(saveMessage) {
 				OpenSPCoop2Message msg = gestoreMessaggioRichiesta.getMessage();
 				forwardTo.setMessage(msg);
 				
-				BehaviourResponseTo responseTo = new BehaviourResponseTo();
-				responseTo.setResponseTo(true);
-				behaviour.setResponseTo(responseTo);
-				OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
-				behaviour.getResponseTo().setMessage(replyTo);
+				if(idServizioApplicativoResponder==null) {
+					BehaviourResponseTo responseTo = new BehaviourResponseTo();
+					responseTo.setResponseTo(true);
+					behaviour.setResponseTo(responseTo);
+					OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
+					behaviour.getResponseTo().setMessage(replyTo);
+				}
 			}
-
-			
+						
 			// Indico quali servizi applicativi devono ricevere il messaggio
 			BehaviourForwardToFilter filter = new BehaviourForwardToFilter();
-			for (IDServizioApplicativo idServizioApplicativo : listaServiziApplicativi) {
+			for (IDServizioApplicativo idServizioApplicativo : listaServiziApplicativi_consegnaSenzaRisposta) {
 				filter.getAccessListServiziApplicativi().add(idServizioApplicativo);
 			}
 			forwardTo.setFilter(filter);

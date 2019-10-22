@@ -39,17 +39,33 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="data-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="consegna-successo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
+ * 			&lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
+ * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="data-accettazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-uscita-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-accettazione-risposta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-ingresso-risposta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="richiesta-uscita-bytes" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="risposta-ingresso-bytes" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="location-connettore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="codice-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="fault" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="formato-fault" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-primo-tentativo" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="numero-tentativi" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
+ * 			&lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="dettaglio-esito-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="codice-risposta-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="numero-tentativi" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
+ * 			&lt;element name="location-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cluster-id-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="formato-fault-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -65,17 +81,33 @@ import java.io.Serializable;
   propOrder = {
   	"idTransazione",
   	"servizioApplicativoErogatore",
+  	"dataRegistrazione",
+  	"protocollo",
+  	"consegnaSuccesso",
+  	"dettaglioEsito",
+  	"consegnaIntegrationManager",
+  	"identificativoMessaggio",
+  	"dataAccettazioneRichiesta",
   	"dataUscitaRichiesta",
   	"dataAccettazioneRisposta",
   	"dataIngressoRisposta",
   	"richiestaUscitaBytes",
   	"rispostaIngressoBytes",
+  	"locationConnettore",
   	"codiceRisposta",
+  	"fault",
+  	"formatoFault",
   	"dataPrimoTentativo",
+  	"numeroTentativi",
+  	"clusterId",
   	"dataUltimoErrore",
+  	"dettaglioEsitoUltimoErrore",
   	"codiceRispostaUltimoErrore",
   	"ultimoErrore",
-  	"numeroTentativi"
+  	"locationUltimoErrore",
+  	"clusterIdUltimoErrore",
+  	"faultUltimoErrore",
+  	"formatoFaultUltimoErrore"
   }
 )
 
@@ -113,6 +145,70 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   public void setServizioApplicativoErogatore(java.lang.String servizioApplicativoErogatore) {
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+  }
+
+  public java.util.Date getDataRegistrazione() {
+    return this.dataRegistrazione;
+  }
+
+  public void setDataRegistrazione(java.util.Date dataRegistrazione) {
+    this.dataRegistrazione = dataRegistrazione;
+  }
+
+  public java.lang.String getProtocollo() {
+    return this.protocollo;
+  }
+
+  public void setProtocollo(java.lang.String protocollo) {
+    this.protocollo = protocollo;
+  }
+
+  public boolean isConsegnaSuccesso() {
+    return this.consegnaSuccesso;
+  }
+
+  public boolean getConsegnaSuccesso() {
+    return this.consegnaSuccesso;
+  }
+
+  public void setConsegnaSuccesso(boolean consegnaSuccesso) {
+    this.consegnaSuccesso = consegnaSuccesso;
+  }
+
+  public int getDettaglioEsito() {
+    return this.dettaglioEsito;
+  }
+
+  public void setDettaglioEsito(int dettaglioEsito) {
+    this.dettaglioEsito = dettaglioEsito;
+  }
+
+  public boolean isConsegnaIntegrationManager() {
+    return this.consegnaIntegrationManager;
+  }
+
+  public boolean getConsegnaIntegrationManager() {
+    return this.consegnaIntegrationManager;
+  }
+
+  public void setConsegnaIntegrationManager(boolean consegnaIntegrationManager) {
+    this.consegnaIntegrationManager = consegnaIntegrationManager;
+  }
+
+  public java.lang.String getIdentificativoMessaggio() {
+    return this.identificativoMessaggio;
+  }
+
+  public void setIdentificativoMessaggio(java.lang.String identificativoMessaggio) {
+    this.identificativoMessaggio = identificativoMessaggio;
+  }
+
+  public java.util.Date getDataAccettazioneRichiesta() {
+    return this.dataAccettazioneRichiesta;
+  }
+
+  public void setDataAccettazioneRichiesta(java.util.Date dataAccettazioneRichiesta) {
+    this.dataAccettazioneRichiesta = dataAccettazioneRichiesta;
   }
 
   public java.util.Date getDataUscitaRichiesta() {
@@ -155,12 +251,36 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.rispostaIngressoBytes = rispostaIngressoBytes;
   }
 
+  public java.lang.String getLocationConnettore() {
+    return this.locationConnettore;
+  }
+
+  public void setLocationConnettore(java.lang.String locationConnettore) {
+    this.locationConnettore = locationConnettore;
+  }
+
   public java.lang.String getCodiceRisposta() {
     return this.codiceRisposta;
   }
 
   public void setCodiceRisposta(java.lang.String codiceRisposta) {
     this.codiceRisposta = codiceRisposta;
+  }
+
+  public java.lang.String getFault() {
+    return this.fault;
+  }
+
+  public void setFault(java.lang.String fault) {
+    this.fault = fault;
+  }
+
+  public java.lang.String getFormatoFault() {
+    return this.formatoFault;
+  }
+
+  public void setFormatoFault(java.lang.String formatoFault) {
+    this.formatoFault = formatoFault;
   }
 
   public java.util.Date getDataPrimoTentativo() {
@@ -171,12 +291,36 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.dataPrimoTentativo = dataPrimoTentativo;
   }
 
+  public int getNumeroTentativi() {
+    return this.numeroTentativi;
+  }
+
+  public void setNumeroTentativi(int numeroTentativi) {
+    this.numeroTentativi = numeroTentativi;
+  }
+
+  public java.lang.String getClusterId() {
+    return this.clusterId;
+  }
+
+  public void setClusterId(java.lang.String clusterId) {
+    this.clusterId = clusterId;
+  }
+
   public java.util.Date getDataUltimoErrore() {
     return this.dataUltimoErrore;
   }
 
   public void setDataUltimoErrore(java.util.Date dataUltimoErrore) {
     this.dataUltimoErrore = dataUltimoErrore;
+  }
+
+  public int getDettaglioEsitoUltimoErrore() {
+    return this.dettaglioEsitoUltimoErrore;
+  }
+
+  public void setDettaglioEsitoUltimoErrore(int dettaglioEsitoUltimoErrore) {
+    this.dettaglioEsitoUltimoErrore = dettaglioEsitoUltimoErrore;
   }
 
   public java.lang.String getCodiceRispostaUltimoErrore() {
@@ -195,12 +339,36 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.ultimoErrore = ultimoErrore;
   }
 
-  public int getNumeroTentativi() {
-    return this.numeroTentativi;
+  public java.lang.String getLocationUltimoErrore() {
+    return this.locationUltimoErrore;
   }
 
-  public void setNumeroTentativi(int numeroTentativi) {
-    this.numeroTentativi = numeroTentativi;
+  public void setLocationUltimoErrore(java.lang.String locationUltimoErrore) {
+    this.locationUltimoErrore = locationUltimoErrore;
+  }
+
+  public java.lang.String getClusterIdUltimoErrore() {
+    return this.clusterIdUltimoErrore;
+  }
+
+  public void setClusterIdUltimoErrore(java.lang.String clusterIdUltimoErrore) {
+    this.clusterIdUltimoErrore = clusterIdUltimoErrore;
+  }
+
+  public java.lang.String getFaultUltimoErrore() {
+    return this.faultUltimoErrore;
+  }
+
+  public void setFaultUltimoErrore(java.lang.String faultUltimoErrore) {
+    this.faultUltimoErrore = faultUltimoErrore;
+  }
+
+  public java.lang.String getFormatoFaultUltimoErrore() {
+    return this.formatoFaultUltimoErrore;
+  }
+
+  public void setFormatoFaultUltimoErrore(java.lang.String formatoFaultUltimoErrore) {
+    this.formatoFaultUltimoErrore = formatoFaultUltimoErrore;
   }
 
   private static final long serialVersionUID = 1L;
@@ -232,6 +400,36 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-registrazione",required=true,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataRegistrazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="protocollo",required=false,nillable=false)
+  protected java.lang.String protocollo;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-successo",required=false,nillable=false,defaultValue="false")
+  protected boolean consegnaSuccesso = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="dettaglio-esito",required=false,nillable=false)
+  protected int dettaglioEsito;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-integration-manager",required=false,nillable=false,defaultValue="false")
+  protected boolean consegnaIntegrationManager = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="identificativo-messaggio",required=false,nillable=false)
+  protected java.lang.String identificativoMessaggio;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-accettazione-richiesta",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataAccettazioneRichiesta;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-uscita-richiesta",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUscitaRichiesta;
 
@@ -254,18 +452,42 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   protected java.lang.Long rispostaIngressoBytes;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="location-connettore",required=false,nillable=false)
+  protected java.lang.String locationConnettore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta",required=false,nillable=false)
   protected java.lang.String codiceRisposta;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="fault",required=false,nillable=false)
+  protected java.lang.String fault;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault",required=false,nillable=false)
+  protected java.lang.String formatoFault;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-primo-tentativo",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataPrimoTentativo;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="numero-tentativi",required=false,nillable=false,defaultValue="0")
+  protected int numeroTentativi = 0;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id",required=false,nillable=false)
+  protected java.lang.String clusterId;
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-ultimo-errore",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataUltimoErrore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="dettaglio-esito-ultimo-errore",required=false,nillable=false)
+  protected int dettaglioEsitoUltimoErrore;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="codice-risposta-ultimo-errore",required=false,nillable=false)
@@ -275,8 +497,20 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="ultimo-errore",required=false,nillable=false)
   protected java.lang.String ultimoErrore;
 
-  @javax.xml.bind.annotation.XmlSchemaType(name="int")
-  @XmlElement(name="numero-tentativi",required=false,nillable=false,defaultValue="0")
-  protected int numeroTentativi = 0;
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="location-ultimo-errore",required=false,nillable=false)
+  protected java.lang.String locationUltimoErrore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-ultimo-errore",required=false,nillable=false)
+  protected java.lang.String clusterIdUltimoErrore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="fault-ultimo-errore",required=false,nillable=false)
+  protected java.lang.String faultUltimoErrore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="formato-fault-ultimo-errore",required=false,nillable=false)
+  protected java.lang.String formatoFaultUltimoErrore;
 
 }
