@@ -8,6 +8,8 @@ ALTER TABLE porte_applicative_sa ADD connettore_filtri CLOB;
 ALTER TABLE servizi_applicativi ADD tipo VARCHAR(255);
 update servizi_applicativi set tipo='client' where tipologia_fruizione<>'disabilitato';
 
+ALTER TABLE servizi_applicativi ADD as_client INT;
+
 CREATE TABLE pa_sa_properties
 (
 	id_porta BIGINT NOT NULL,

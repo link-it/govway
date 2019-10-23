@@ -17,20 +17,22 @@ CREATE TABLE transazioni_sa
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BIT DEFAULT 'false',
+	-- Identificativo del messaggio
 	identificativo_messaggio VARCHAR(255),
+	-- Date
 	data_accettazione_richiesta DATETIME2,
 	data_uscita_richiesta DATETIME2,
 	data_accettazione_risposta DATETIME2,
 	data_ingresso_risposta DATETIME2,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes BIGINT,
-	-- Dimensione messaggi gestiti
 	risposta_ingresso_bytes BIGINT,
 	location_connettore VARCHAR(max),
 	codice_risposta VARCHAR(10),
-	-- Eventuali FAULT
+	-- Eventuale FAULT
 	fault VARCHAR(max),
 	formato_fault VARCHAR(20),
+	-- Tentativi di Consegna
 	data_primo_tentativo DATETIME2,
 	numero_tentativi INT DEFAULT 0,
 	-- Cluster ID
@@ -42,9 +44,13 @@ CREATE TABLE transazioni_sa
 	ultimo_errore VARCHAR(max),
 	location_ultimo_errore VARCHAR(max),
 	cluster_id_ultimo_errore VARCHAR(100),
-	-- Eventuali FAULT
 	fault_ultimo_errore VARCHAR(max),
 	formato_fault_ultimo_errore VARCHAR(20),
+	-- Date relative alla gestione via IntegrationManager
+	data_primo_prelievo_im DATETIME2,
+	data_prelievo_im DATETIME2,
+	numero_prelievi_im INT DEFAULT 0,
+	data_eliminazione_im DATETIME2,
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints

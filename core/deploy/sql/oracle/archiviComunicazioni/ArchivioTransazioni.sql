@@ -201,20 +201,22 @@ CREATE TABLE transazioni_sa
 	dettaglio_esito NUMBER,
 	-- Consegna via Integration Manager
 	consegna_im NUMBER,
+	-- Identificativo del messaggio
 	identificativo_messaggio VARCHAR2(255),
+	-- Date
 	data_accettazione_richiesta TIMESTAMP,
 	data_uscita_richiesta TIMESTAMP,
 	data_accettazione_risposta TIMESTAMP,
 	data_ingresso_risposta TIMESTAMP,
 	-- Dimensione messaggi gestiti
 	richiesta_uscita_bytes NUMBER,
-	-- Dimensione messaggi gestiti
 	risposta_ingresso_bytes NUMBER,
 	location_connettore CLOB,
 	codice_risposta VARCHAR2(10),
-	-- Eventuali FAULT
+	-- Eventuale FAULT
 	fault CLOB,
 	formato_fault VARCHAR2(20),
+	-- Tentativi di Consegna
 	data_primo_tentativo TIMESTAMP,
 	numero_tentativi NUMBER,
 	-- Cluster ID
@@ -226,9 +228,13 @@ CREATE TABLE transazioni_sa
 	ultimo_errore CLOB,
 	location_ultimo_errore CLOB,
 	cluster_id_ultimo_errore VARCHAR2(100),
-	-- Eventuali FAULT
 	fault_ultimo_errore CLOB,
 	formato_fault_ultimo_errore VARCHAR2(20),
+	-- Date relative alla gestione via IntegrationManager
+	data_primo_prelievo_im TIMESTAMP,
+	data_prelievo_im TIMESTAMP,
+	numero_prelievi_im NUMBER,
+	data_eliminazione_im TIMESTAMP,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints
@@ -241,6 +247,7 @@ CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 ALTER TABLE transazioni_sa MODIFY consegna_successo DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY consegna_im DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY numero_tentativi DEFAULT 0;
+ALTER TABLE transazioni_sa MODIFY numero_prelievi_im DEFAULT 0;
 
 CREATE TRIGGER trg_transazioni_sa
 BEFORE

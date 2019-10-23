@@ -249,6 +249,11 @@
 				<xsd:element name="fault-ultimo-errore" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="formato-fault-ultimo-errore" type="xsd:string" minOccurs="0"/>
 				
+				<xsd:element name="data-primo-prelievo-im" type="xsd:dateTime" minOccurs="0"/>
+				<xsd:element name="data-prelievo-im" type="xsd:dateTime" minOccurs="0" />
+				<xsd:element name="numero-prelievi-im" type="xsd:int" minOccurs="0" default="0" />
+				<xsd:element name="data-eliminazione-im" type="xsd:dateTime" minOccurs="0" />
+				
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>

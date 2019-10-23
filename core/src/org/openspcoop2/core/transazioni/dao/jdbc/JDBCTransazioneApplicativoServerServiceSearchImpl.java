@@ -500,6 +500,10 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_ULTIMO_ERRORE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addWhereCondition("id=?");
 
 		// Get transazioneApplicativoServer

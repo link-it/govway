@@ -175,7 +175,7 @@ public class PorteDelegateVerificaConnettore extends Action {
 			
 			if(aliases.size()==1 || alias!=null) {
 
-				porteDelegateHelper.addDescrizioneVerificaConnettoreToDati(dati, labelConnettore, connettore);
+				porteDelegateHelper.addDescrizioneVerificaConnettoreToDati(dati, null, labelConnettore, connettore);
 				
 				if (!porteDelegateHelper.isEditModeInProgress()) {
 				

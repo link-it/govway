@@ -35,6 +35,8 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -42,6 +44,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -101,6 +104,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			ConnettoriCore connettoriCore = new ConnettoriCore(porteApplicativeCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
 
 			String tmpIdConnettore = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID);
 			long idConnettore = Long.valueOf(tmpIdConnettore);
@@ -128,6 +132,16 @@ public class PorteApplicativeVerificaConnettore extends Action {
 				connettore = connettoriCore.getConnettoreConfig(idConnettore);
 			}
 			String labelConnettore = porteApplicativeHelper.getLabelConnettore(connettore);
+			
+			long idSA = saCore.getIdServizioApplicativoByConnettore(idConnettore);
+			ServizioApplicativo sa = null;
+			String nomeServer = null;
+			if(idSA>0) {
+				sa = saCore.getServizioApplicativo(idSA);
+				if(CostantiConfigurazione.SERVER.equals(sa.getTipo())) {
+					nomeServer = sa.getNome();
+				}
+			}
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
@@ -172,7 +186,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			
 			if(aliases.size()==1 || alias!=null) {
 
-				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, labelConnettore, connettore);
+				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, nomeServer, labelConnettore, connettore);
 				
 				if (!porteApplicativeHelper.isEditModeInProgress()) {
 				

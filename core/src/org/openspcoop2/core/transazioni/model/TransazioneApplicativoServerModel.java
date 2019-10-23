@@ -71,6 +71,10 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.CLUSTER_ID_ULTIMO_ERRORE = new Field("cluster-id-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.FAULT_ULTIMO_ERRORE = new Field("fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.FORMATO_FAULT_ULTIMO_ERRORE = new Field("formato-fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_PRIMO_PRELIEVO_IM = new Field("data-primo-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_PRELIEVO_IM = new Field("data-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.NUMERO_PRELIEVI_IM = new Field("numero-prelievi-im",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_ELIMINAZIONE_IM = new Field("data-eliminazione-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -107,6 +111,10 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.CLUSTER_ID_ULTIMO_ERRORE = new ComplexField(father,"cluster-id-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.FAULT_ULTIMO_ERRORE = new ComplexField(father,"fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.FORMATO_FAULT_ULTIMO_ERRORE = new ComplexField(father,"formato-fault-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_PRIMO_PRELIEVO_IM = new ComplexField(father,"data-primo-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_PRELIEVO_IM = new ComplexField(father,"data-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.NUMERO_PRELIEVI_IM = new ComplexField(father,"numero-prelievi-im",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_ELIMINAZIONE_IM = new ComplexField(father,"data-eliminazione-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -169,6 +177,14 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	public IField FAULT_ULTIMO_ERRORE = null;
 	 
 	public IField FORMATO_FAULT_ULTIMO_ERRORE = null;
+	 
+	public IField DATA_PRIMO_PRELIEVO_IM = null;
+	 
+	public IField DATA_PRELIEVO_IM = null;
+	 
+	public IField NUMERO_PRELIEVI_IM = null;
+	 
+	public IField DATA_ELIMINAZIONE_IM = null;
 	 
 
 	@Override

@@ -10,6 +10,7 @@
 	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri TEXT;
 
 	ALTER TABLE servizi_applicativi ADD COLUMN tipo VARCHAR(255); 
+	ALTER TABLE servizi_applicativi ADD COLUMN as_client INT;
 
 	Nuove tabelle 'pa_sa_properties' e 'pa_behaviour_props'.
 

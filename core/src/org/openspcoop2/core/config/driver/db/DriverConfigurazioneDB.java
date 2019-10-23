@@ -7193,6 +7193,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				// descrizione
 				sa.setDescrizione(rs.getString("descrizione"));
 
+				int as_client = rs.getInt("as_client");
+				sa.setUseAsClient(CostantiDB.TRUE == as_client);
+				
 				//tipologia fruizione
 				String tipoFruizione = rs.getString("tipologia_fruizione")!=null && !"".equals(rs.getString("tipologia_fruizione")) ? rs.getString("tipologia_fruizione") : TipologiaFruizione.DISABILITATO.toString();
 				String tipoErogazione = rs.getString("tipologia_erogazione")!=null && !"".equals(rs.getString("tipologia_erogazione"))? rs.getString("tipologia_erogazione") : TipologiaErogazione.DISABILITATO.toString();
@@ -17704,8 +17707,14 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".superuser = ?");
 			if(credenziale!=null)
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipoauth = ?");
-			if(tipoSA!=null)
-				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+			if(tipoSA!=null) {
+				if(CostantiConfigurazione.CLIENT.equals(tipoSA)) {
+					sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+				}
+				else {
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+				}
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			sqlQueryObject.addOrderBy("nome");
 			sqlQueryObject.setSortType(true);
@@ -17718,8 +17727,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++, superuser);
 			if(credenziale!=null)
 				stmt.setString(index++, credenziale.getValue());
-			if(tipoSA!=null)
+			if(tipoSA!=null) {
 				stmt.setString(index++, tipoSA);
+				if(CostantiConfigurazione.CLIENT.equals(tipoSA)) {
+					stmt.setInt(index++, CostantiDB.TRUE);
+				}
+			}
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {
@@ -17867,10 +17880,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo))
-						sqlQueryObject.addWhereCondition(false, "tipo =?", "tipo=?");
-					else 
-						sqlQueryObject.addWhereCondition("tipo=?");
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -17901,10 +17919,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo))
-						sqlQueryObject.addWhereCondition(false, "tipo =?", "tipo=?");
-					else 
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else { 
 						sqlQueryObject.addWhereCondition("tipo=?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -17933,6 +17956,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					stmt.setString(index++, CostantiConfigurazione.CLIENT);
 				} else {
 					stmt.setString(index++, filterTipoServizioApplicativo);
+					if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						stmt.setInt(index++, CostantiDB.TRUE);
+					}
 				}
 			}
 			risultato = stmt.executeQuery();
@@ -17976,10 +18002,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo))
-						sqlQueryObject.addWhereCondition(false, "tipo =?", "tipo=?");
-					else 
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else { 
 						sqlQueryObject.addWhereCondition("tipo=?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
@@ -18021,10 +18052,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo=?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo))
-						sqlQueryObject.addWhereCondition(false, "tipo =?", "tipo=?");
-					else 
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else { 
 						sqlQueryObject.addWhereCondition("tipo=?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQueryObject.addOrderBy("nome");
@@ -18057,8 +18093,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
 					stmt.setString(index++, CostantiConfigurazione.SERVER);
 					stmt.setString(index++, CostantiConfigurazione.CLIENT);
-				} else {
+				} 
+				else {
 					stmt.setString(index++, filterTipoServizioApplicativo);
+					if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						stmt.setInt(index++, CostantiDB.TRUE);
+					}
 				}
 			}
 			risultato = stmt.executeQuery();
@@ -18187,7 +18227,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+					}
 				}
 				sqlQueryObject.addWhereLikeCondition(CostantiDB.SERVIZI_APPLICATIVI+".nome", search, true, true);
 				sqlQueryObject.setANDLogicOperator(true);
@@ -18210,7 +18258,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(true, "tipologia_erogazione is not null", "tipologia_erogazione<>?");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+					}
 				}
 				sqlQueryObject.setANDLogicOperator(true);
 				queryString = sqlQueryObject.createSQLQuery();
@@ -18227,7 +18283,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++, tipologiaErogazione.getValue());
 			}
 			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-				stmt.setString(index++, filterTipoServizioApplicativo);
+				if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+					stmt.setString(index++, CostantiConfigurazione.SERVER);
+					stmt.setString(index++, CostantiConfigurazione.CLIENT);
+				} 
+				else {
+					stmt.setString(index++, filterTipoServizioApplicativo);
+					if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						stmt.setInt(index++, CostantiDB.TRUE);
+					}
+				}
 			}
 			risultato = stmt.executeQuery();
 			if (risultato.next())
@@ -18267,7 +18332,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addOrderBy("tipo_soggetto");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+					}
 				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -18302,7 +18375,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addOrderBy("tipo_soggetto");
 				}
 				if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-					sqlQueryObject.addWhereCondition(true, "tipo is not null", "tipo=?");
+					if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo =?", CostantiDB.SERVIZI_APPLICATIVI+".tipo=?");
+					}
+					else if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						sqlQueryObject.addWhereCondition(false, CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?", CostantiDB.SERVIZI_APPLICATIVI+".as_client = ?");
+					}
+					else {
+						sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
+					}
 				}
 				sqlQueryObject.setSortType(true);
 				sqlQueryObject.setLimit(limit);
@@ -18321,7 +18402,16 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				stmt.setString(index++, tipologiaErogazione.getValue());
 			}
 			if(filterTipoServizioApplicativo!=null && !"".equals(filterTipoServizioApplicativo)) {
-				stmt.setString(index++, filterTipoServizioApplicativo);
+				if(CostantiConfigurazione.CLIENT_OR_SERVER.equals(filterTipoServizioApplicativo)) {
+					stmt.setString(index++, CostantiConfigurazione.SERVER);
+					stmt.setString(index++, CostantiConfigurazione.CLIENT);
+				} 
+				else {
+					stmt.setString(index++, filterTipoServizioApplicativo);
+					if(CostantiConfigurazione.CLIENT.equals(filterTipoServizioApplicativo)) {
+						stmt.setInt(index++, CostantiDB.TRUE);
+					}
+				}
 			}
 			risultato = stmt.executeQuery();
 
@@ -26783,6 +26873,66 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			List<org.openspcoop2.core.mapping.FiltroRicercaProtocolProperty> l = new ArrayList<>();
 			l.addAll(list);
 			DBProtocolPropertiesUtils.setProtocolPropertiesForSearch(stmt, index, l, proprietario, this.tipoDB, this.log);
+		}
+	}
+	
+	public long getIdServizioApplicativoByConnettore(long idConnettore) throws DriverConfigurazioneException {
+		String nomeMetodo = "getIdServizioApplicativoByConnettore";
+
+		Connection con = null;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getProtocolProperty");
+
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(), e);
+
+			}
+
+		} else {
+			con = this.globalConnection;
+		}
+
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("id_connettore_inv=?");
+			sqlQueryObject.addWhereCondition("id_connettore_risp=?");
+			sqlQueryObject.setANDLogicOperator(false);
+			String queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			stmt.setLong(1, idConnettore);
+			stmt.setLong(2, idConnettore);
+			risultato = stmt.executeQuery();
+			long idSA = -1;
+			if (risultato.next()) {
+				idSA = risultato.getLong("id");
+			}			
+			return idSA;
+
+		} catch (Exception se) {
+			throw new DriverConfigurazioneException("[DriverConfigurazioneException::" + nomeMetodo + "] Exception: " + se.getMessage());
+		} finally {
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
 		}
 	}
 	

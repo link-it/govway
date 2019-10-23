@@ -1641,6 +1641,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Identificativo del messaggio]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Identificativo del messaggio]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
@@ -1652,6 +1653,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Date]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui la richiesta è processata dalla Porta]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
@@ -1709,7 +1711,6 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-comment><![CDATA[Dimensione messaggi gestiti]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Dimensione del messaggio di risposta ricevuto sulla Porta]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
@@ -1746,7 +1747,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping medium-text="true"/>
-								<linkit:sql-column-comment><![CDATA[Eventuali FAULT]]></linkit:sql-column-comment>
+								<linkit:sql-column-comment><![CDATA[Eventuale FAULT]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Fault]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
 							</linkit:generator>
@@ -1771,6 +1772,7 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Tentativi di Consegna]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio di richiesta è stato inoltrato dalla Porta per la prima volta]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
@@ -1876,7 +1878,6 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping medium-text="true"/>
-								<linkit:sql-column-comment><![CDATA[Eventuali FAULT]]></linkit:sql-column-comment>
 								<linkit:sql-ddl-column-comment><![CDATA[Fault relativo all'ultimo tentativo di consegna fallito]]></linkit:sql-ddl-column-comment>
 								<linkit:ws-field-mapping filter="false" />
 							</linkit:generator>
@@ -1890,6 +1891,52 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 								xmlns:linkit="http://www.link.it/project_generator">
 								<linkit:sql-column-mapping varchar="20"/>
 								<linkit:sql-ddl-column-comment><![CDATA[Indicazione sul tipo di fault (es. SOAP11, JSON, BINARY)]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
+				<xsd:element name="data-primo-prelievo-im" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-comment><![CDATA[Date relative alla gestione via IntegrationManager]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio è stato prelevato via IntegrationManager per la prima volta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-prelievo-im" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio è stato prelevato via IntegrationManager per l'ultima volta]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="numero-prelievi-im" type="xsd:int" minOccurs="0" default="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di prelievi effettuati via IntegrationManager]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="data-eliminazione-im" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Intervallo temporale in cui il messaggio è stato elimivato via IntegrationManager]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

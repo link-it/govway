@@ -912,7 +912,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
-						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -968,7 +969,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
-						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);

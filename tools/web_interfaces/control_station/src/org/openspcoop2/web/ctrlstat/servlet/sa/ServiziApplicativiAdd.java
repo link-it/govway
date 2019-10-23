@@ -160,12 +160,17 @@ public final class ServiziApplicativiAdd extends Action {
 			String ruoloSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
 			String tipoSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
 			
+			boolean useAsClient = false;
+			
 			if(isApplicativiServerEnabled) {
 				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA)) {
 					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
 				}
 				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
 					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+					
+					String tmp = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					useAsClient = ServletUtils.isCheckBoxEnabled(tmp);
 				}
 			}
 			
@@ -781,7 +786,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy, tipoSA);
+						autenticazioneToken,token_policy, tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -889,7 +894,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy, tipoSA);
+						autenticazioneToken,token_policy, tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -959,6 +964,7 @@ public final class ServiziApplicativiAdd extends Action {
 					tipoSA = null;
 				
 				sa.setTipo(tipoSA);
+				sa.setUseAsClient(useAsClient);
 				
 				if(saCore.isRegistroServiziLocale()){
 					sa.setIdSoggetto(soggettoRegistro.getId());

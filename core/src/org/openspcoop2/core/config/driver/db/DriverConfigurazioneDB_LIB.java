@@ -3683,6 +3683,7 @@ public class DriverConfigurazioneDB_LIB {
 
 		try {
 			String tipoSA = aSA.getTipo();
+			int useAsClient = aSA.getUseAsClient() ? CostantiDB.TRUE : CostantiDB.FALSE;
 			String descrizione = aSA.getDescrizione();
 			DriverConfigurazioneDB_LIB.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"]");
 			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
@@ -3708,6 +3709,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addInsertField("nome", "?");
 				sqlQueryObject.addInsertField("tipo", "?");
+				sqlQueryObject.addInsertField("as_client", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
 				sqlQueryObject.addInsertField("sbustamentorisp", "?");
 				sqlQueryObject.addInsertField("sbustamento_protocol_info_risp", "?");
@@ -3785,6 +3787,7 @@ public class DriverConfigurazioneDB_LIB {
 				
 				stm.setString(index++, nomeSA);
 				stm.setString(index++, tipoSA);
+				stm.setInt(index++, useAsClient);
 				stm.setString(index++, descrizione);
 
 				// RicezioneRisposta
@@ -3999,6 +4002,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addUpdateField("tipo", "?");
+				sqlQueryObject.addUpdateField("as_client", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				sqlQueryObject.addUpdateField("sbustamentorisp", "?");
 				sqlQueryObject.addUpdateField("sbustamento_protocol_info_risp", "?");
@@ -4109,6 +4113,7 @@ public class DriverConfigurazioneDB_LIB {
 				index = 1;
 				
 				stm.setString(index++, tipoSA);
+				stm.setInt(index++, useAsClient);
 				stm.setString(index++, descrizione);
 
 				// RicezioneRisposta

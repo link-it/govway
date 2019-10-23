@@ -142,6 +142,8 @@ public class ServiziApplicativiCostanti {
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_ACTION = "action";
 	public final static String PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "correlato";
 	
+	public final static String PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT = "useAsClient";
+	
 	
 	/* LABEL PARAMETRI */
 	
@@ -161,6 +163,7 @@ public class ServiziApplicativiCostanti {
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_FAULT_PREFIX = "Prefix Fault Code";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO = "Invio per Riferimento";
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO = "Risposta per Riferimento";
+	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT = "Utilizzabile come Client";
 	
 	public final static String LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RUOLI_CORRELATO = "Servizio Correlato";
 	

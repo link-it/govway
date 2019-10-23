@@ -48,6 +48,12 @@
  			<xsd:element name="location-ultimo-errore" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="cluster-id-ultimo-errore" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="formato-fault-ultimo-errore" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-primo-prelievo-im-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-primo-prelievo-im-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-prelievo-im-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-prelievo-im-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-eliminazione-im-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-eliminazione-im-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descOrder" type="xsd:boolean" minOccurs="0" maxOccurs="1" />

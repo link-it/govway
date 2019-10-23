@@ -175,12 +175,17 @@ public final class ServiziApplicativiChange extends Action {
 			String ruoloSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
 			String tipoSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
 			
+			boolean useAsClient = false;
+			
 			if(isApplicativiServerEnabled) {
 				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA)) {
 					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
 				}
 				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
 					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+					
+					String tmp = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					useAsClient = ServletUtils.isCheckBoxEnabled(tmp);
 				}
 			}
 			
@@ -811,8 +816,10 @@ public final class ServiziApplicativiChange extends Action {
 					ruoloErogatore=sa.getTipologiaErogazione();
 				}
 				
-				if(tipoSA == null)
+				if(tipoSA == null) {
 					tipoSA = sa.getTipo();
+					useAsClient = sa.isUseAsClient();
+				}
 				
 				if(tipoSA == null)
 					tipoSA = "";
@@ -1186,7 +1193,7 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy,tipoSA);
+						autenticazioneToken,token_policy,tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1291,7 +1298,7 @@ public final class ServiziApplicativiChange extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy,tipoSA);
+						autenticazioneToken,token_policy,tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiConfig(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);
@@ -1320,10 +1327,11 @@ public final class ServiziApplicativiChange extends Action {
 			sa.setTipologiaFruizione(ruoloFruitore);
 			sa.setTipologiaErogazione(ruoloErogatore);
 			sa.setTipo(tipoSA);
+			sa.setUseAsClient(useAsClient);
 			
 			
 			// *** Invocazione Porta ***
-			boolean showInvocazionePortaStep1 = (interfacciaAvanzata || !TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
+			boolean showInvocazionePortaStep1 = ( (interfacciaAvanzata && !isApplicativiServerEnabled) || !TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
 			boolean showInvocazionePortaStep2 = !showInvocazionePortaStep1 && (interfacciaStandard && TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
 			
 //			if(isApplicativiServerEnabled) {

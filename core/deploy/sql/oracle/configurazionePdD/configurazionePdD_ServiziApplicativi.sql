@@ -6,6 +6,7 @@ CREATE TABLE servizi_applicativi
 (
 	nome VARCHAR2(2000) NOT NULL,
 	tipo VARCHAR2(255),
+	as_client NUMBER,
 	descrizione VARCHAR2(255),
 	-- * Risposta Asincrona *
 	-- valori 0/1 indicano rispettivamente FALSE/TRUE

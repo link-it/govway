@@ -2239,7 +2239,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				boolean erogazioneServizioApplicativoServerEnabled = false;
 				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
-						null,null,protocollo,false,true, showSection, null,null, null, erogazioneServizioApplicativoServerEnabled);
+						null,null,protocollo,false,true, showSection, null,null, null, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 							
 				boolean forceEnabled = true; // non ha senso non fornire un connettore a meno che non vi sia la possibilita' di utilizzare l'integration manager
 				boolean showSectionTitle = false;

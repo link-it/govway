@@ -111,6 +111,14 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "fault_ultimo_errore", TransazioneApplicativoServer.model().FAULT_ULTIMO_ERRORE.getFieldType()));
 				setParameter(object, "setFormatoFaultUltimoErrore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "formato_fault_ultimo_errore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType()));
+				setParameter(object, "setDataPrimoPrelievoIm", TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_primo_prelievo_im", TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType()));
+				setParameter(object, "setDataPrelievoIm", TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_prelievo_im", TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType()));
+				setParameter(object, "setNumeroPrelieviIm", TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "numero_prelievi_im", TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()));
+				setParameter(object, "setDataEliminazioneIm", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_eliminazione_im", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()));
 				return object;
 			}
 			
@@ -189,6 +197,14 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"fault-ultimo-errore"));
 				setParameter(object, "setFormatoFaultUltimoErrore", TransazioneApplicativoServer.model().FORMATO_FAULT_ULTIMO_ERRORE.getFieldType(),
 					this.getObjectFromMap(map,"formato-fault-ultimo-errore"));
+				setParameter(object, "setDataPrimoPrelievoIm", TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType(),
+					this.getObjectFromMap(map,"data-primo-prelievo-im"));
+				setParameter(object, "setDataPrelievoIm", TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType(),
+					this.getObjectFromMap(map,"data-prelievo-im"));
+				setParameter(object, "setNumeroPrelieviIm", TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType(),
+					this.getObjectFromMap(map,"numero-prelievi-im"));
+				setParameter(object, "setDataEliminazioneIm", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType(),
+					this.getObjectFromMap(map,"data-eliminazione-im"));
 				return object;
 			}
 			

@@ -2742,6 +2742,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(mapping.isDefault()) {
 							if(visualizzazioneTabs) {
 								de.setValue(this.getLabelConnettore(sa,is));
+								String tooltipConnettore = this.getTooltipConnettore(sa,is);
+								de.setToolTip(tooltipConnettore);
 							}
 							else {
 								ServletUtils.setDataElementVisualizzaLabel(de);
@@ -2773,7 +2775,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								else {
 									de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT); 
 								}
-								de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT);
+								String tooltipConnettore = this.getTooltipConnettore(sa, is);
+								de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 							} else {
 								
 								ridefinito = true;
@@ -2785,7 +2788,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								else {
 									de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO);
 								}
-								de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO);
+								String tooltipConnettore = this.getTooltipConnettore(sa, is);
+								de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 							}
 							de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
 							
@@ -4392,7 +4396,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_RIDEFINITO);
 									}
 									de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO);
+									String tooltipConnettore = this.getLabelConnettore(connettore);
+									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_RIDEFINITO+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 								} else {
 									servletConnettore = PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CONNETTORE_DEFAULT;
 									if(visualizzazioneTabs) {
@@ -4402,7 +4407,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_CONNETTORE_DEFAULT);
 									}
 									de.setUrl(servletConnettore, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
-									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT);
+									String tooltipConnettore = this.getLabelConnettore(fru.getConnettore());
+									de.setToolTip(ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT+CostantiControlStation.TOOLTIP_BREAK_LINE+tooltipConnettore);
 									
 									connettore = fru.getConnettore();
 								}

@@ -2978,6 +2978,7 @@ public class DBOggettiInUsoUtils  {
 			List<String> autorizzazionePA_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_MAPPING_PA);
 			List<String> autorizzazionePA_list = whereIsInUso.get(ErrorsHandlerCostant.AUTORIZZAZIONE_PA);
 			List<String> porte_applicative_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE);
+			List<String> porte_applicative_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA);
 			List<String> ct_list = whereIsInUso.get(ErrorsHandlerCostant.CONTROLLO_TRAFFICO);
 			List<String> trasformazionePD_mapping_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_MAPPING_PD);
 			List<String> trasformazionePD_list = whereIsInUso.get(ErrorsHandlerCostant.TRASFORMAZIONE_PD);
@@ -3003,6 +3004,10 @@ public class DBOggettiInUsoUtils  {
 			if (porte_applicative_list == null) {
 				porte_applicative_list = new ArrayList<String>();
 				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_PORTE_APPLICATIVE, porte_applicative_list);
+			}
+			if (porte_applicative_mapping_list == null) {
+				porte_applicative_mapping_list = new ArrayList<String>();
+				whereIsInUso.put(ErrorsHandlerCostant.IN_USO_IN_MAPPING_EROGAZIONE_PA, porte_applicative_mapping_list);
 			}
 			if (ct_list == null) {
 				ct_list = new ArrayList<String>();
@@ -3093,9 +3098,15 @@ public class DBOggettiInUsoUtils  {
 			stmt.setLong(1, idServizioApplicativoLong);
 			risultato = stmt.executeQuery();
 			while (risultato.next()){
+				String nome = risultato.getString("nome_porta");
+				ResultPorta resultPorta = formatPortaApplicativa(nome, tipoDB, con, normalizeObjectIds);
+				if(resultPorta.mapping) {
+					porte_applicative_mapping_list.add(resultPorta.label);
+				}
+				else {
+					porte_applicative_list.add(resultPorta.label);
+				}
 				isInUso = true;
-
-				porte_applicative_list.add(risultato.getString("nome_porta"));
 			}
 			risultato.close();
 			stmt.close();
@@ -3305,22 +3316,27 @@ public class DBOggettiInUsoUtils  {
 			switch (key) {
 			case AUTORIZZAZIONE_MAPPING:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nel Controllo degli Accessi (Fruitori Autorizzati) delle Fruizioni: " + formatList(messages,separator) + separator;
+					msg += "utilizzato nel Controllo degli Accessi (Richiedenti Autorizzati) delle Fruizioni: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case AUTORIZZAZIONE:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Fruitori Autorizzati): " + formatList(messages,separator) + separator;
+					msg += "utilizzato nelle Porte Outbound (Controllo degli Accessi - Richiedenti Autorizzati): " + formatList(messages,separator) + separator;
 				}
 				break;
 			case AUTORIZZAZIONE_MAPPING_PA:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nel Controllo degli Accessi (Fruitori Autorizzati) delle Erogazioni: " + formatList(messages,separator) + separator;
+					msg += "utilizzato nel Controllo degli Accessi (Richiedenti Autorizzati) delle Erogazioni: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case AUTORIZZAZIONE_PA:
 				if ( messages!=null && messages.size() > 0) {
-					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Fruitori Autorizzati): " + formatList(messages,separator) + separator;
+					msg += "utilizzato nelle Porte Inbound (Controllo degli Accessi - Richiedenti Autorizzati): " + formatList(messages,separator) + separator;
+				}
+				break;
+			case IN_USO_IN_MAPPING_EROGAZIONE_PA:
+				if ( messages!=null && messages.size() > 0 ) {
+					msg += "utilizzato come applicativo server nei connettori delle Erogazioni: " + formatList(messages,separator) + separator;
 				}
 				break;
 			case IN_USO_IN_PORTE_APPLICATIVE:
