@@ -1817,6 +1817,14 @@ public class CostantiControlStation {
 	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
 	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
 	
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Configurazione Connettori Multipli {0}";
+	
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI = "list_alt";
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP = "Elenco Connettori";
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Elenco Connettori {0}";
+	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";
 	

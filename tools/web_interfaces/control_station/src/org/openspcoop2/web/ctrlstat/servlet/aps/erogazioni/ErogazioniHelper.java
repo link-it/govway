@@ -1474,6 +1474,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			boolean visualizzaConnettore = true;
 			boolean checkConnettore = false;
+			boolean connettoreMultiploEnabled = false;
 			long idConnettore = 1;
 			for (int i = 0; i < listaPorteApplicativeAssociate.size(); i++) {
 				PortaApplicativa paAssociata = listaPorteApplicativeAssociate.get(i);
@@ -1512,22 +1513,24 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				String urlConnettore = this.getLabelConnettore(sa,is);
 				de.setValue(urlConnettore);
 				
-				List<Parameter> listParametersConnettore = new ArrayList<>();
-				listParametersConnettore.add(paIdProvider);
-				listParametersConnettore.add(paIdPortaPerSA);
-				listParametersConnettore.add(paIdAsps);
-				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSADefault.getNome()));
-				listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSADefault.getId()+""));
-				listParametersConnettore.add(paConnettoreDaListaAPS);
-				
-				image = new DataElementImage();
-				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
-				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
-				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
-						listParametersConnettore.toArray(new Parameter[1]));
-				de.addImage(image);
+				if(!connettoreMultiploEnabled) {
+					List<Parameter> listParametersConnettore = new ArrayList<>();
+					listParametersConnettore.add(paIdProvider);
+					listParametersConnettore.add(paIdPortaPerSA);
+					listParametersConnettore.add(paIdAsps);
+					listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSADefault.getNome()));
+					listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSADefault.getId()+""));
+					listParametersConnettore.add(paConnettoreDaListaAPS);
+					
+					image = new DataElementImage();
+					image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
+					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+					image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, 
+							listParametersConnettore.toArray(new Parameter[1]));
+					de.addImage(image);
+				}
 
-				if(checkConnettore) {
+				if(checkConnettore && !connettoreMultiploEnabled) {
 					List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
 					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
 					listParametersVerificaConnettore.add(paIdSogg);
@@ -1544,6 +1547,35 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, 
 							listParametersVerificaConnettore.toArray(new Parameter[1]));
 					de.addImage(image);
+				}
+				
+				// link alla configurazione connettori multipli e alla lista dei connettori multipli
+				if(this.core.isConnettoriMultipliEnabled()) {
+					List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
+					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+					listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
+					listParametersConfigutazioneConnettoriMultipli.add(paIdPorta);
+					listParametersConfigutazioneConnettoriMultipli.add(paIdAsps);
+					listParametersConfigutazioneConnettoriMultipli.add(paConnettoreDaListaAPS);
+					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""));
+					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "false"));
+					listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+					
+					image = new DataElementImage();
+					image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
+					image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
+							listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
+					de.addImage(image);
+					
+					if(connettoreMultiploEnabled) {
+						image = new DataElementImage();
+						image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP);
+						image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_ELENCO_CONNETTORI_MULTIPLI);
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, 
+								listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
+						de.addImage(image);
+					}
 				}
 				
 				dati.addElement(de);
