@@ -290,9 +290,15 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			PddCore pddCore = new PddCore(saCore);
 			SoggettiCore soggettiCore = new SoggettiCore(saCore);
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
-			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+			PortaApplicativa pa = null;
+			if(StringUtils.isNotBlank(idPorta)) {
+				pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta));
+			}
 
 			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
+			if(!isApplicativiServerEnabled) {
+				erogazioneServizioApplicativoServerEnabled = false;
+			}
 
 			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
 			String filtroTipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
@@ -558,7 +564,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					}
 				}
 
-				if (erogazioneServizioApplicativoServer == null) {
+				if (erogazioneServizioApplicativoServer == null && isApplicativiServerEnabled) {
 					// se in configurazione ho selezionato un server
 					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
 						erogazioneServizioApplicativoServer = sa.getNome();
@@ -1104,98 +1110,102 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					
 				}
 			} else {
-				// caso normale
-				// se avevo salvato un server e ritorno ad una configurazione di default
-				if(pa.getServizioApplicativoDefault() != null) {
-					
-					String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
-					String oldNomeSA = sa.getNome();
-					String oldTipoSA = sa.getTipo();
-					
-					// prelevo l'associazione con il vecchio servizio applicativo server
-					PortaApplicativaServizioApplicativo paSAtmp = null;
-					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
-						if(paSA.getNome().equals(oldNomeSA)) {
-							paSAtmp = paSA;
-							break;
-						}
-					}
-
-					if(paSAtmp!= null) {
-						// se ho modificato il server che sto utilizzando lo rimuovo
-						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
-							pa.getServizioApplicativoList().remove(paSAtmp); 	
-						}
-					}
-
-					PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
-					paSA.setNome(oldServizioApplicativoDefault);
-//					paSA.setNome(pa.getNome());
-					pa.getServizioApplicativoList().add(paSA);
-					pa.setServizioApplicativoDefault(null);
-
-					oggettiDaAggiornare.add(pa);
-					
-					// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-					if(mappingErogazionePortaApplicativa.isDefault()) {
-						List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
-						// lettura delle configurazioni associate
-						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
-						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-						listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
-						for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
-							// scarto il default
-							if(!mappinErogazione.isDefault()) { 
-								PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
-								
-								// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
-								if((portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
-										portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
-									 
-									// prelevo l'associazione con il vecchio servizio applicativo
-									PortaApplicativaServizioApplicativo paSAtmpInner = null;
-									for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
-										if(paSAInner.getNome().equals(oldNomeSA)) {
-											paSAtmpInner = paSAInner;
-											break;
-										}
-									}
-
-									if(paSAtmpInner!= null) {
-										// se ho modificato il server che sto utilizzando lo rimuovo
-										if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
-											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
-										} 
-									}
-
-									// nuovo SA da aggiungere
-									
-									PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
-									paSAInner.setNome(oldServizioApplicativoDefault);
-									portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
-									portaApplicativaTmp.setServizioApplicativoDefault(null);
-									oggettiDaAggiornare.add(portaApplicativaTmp);
-								 }
-								
+				
+				if(isApplicativiServerEnabled) {
+				
+					// caso normale
+					// se avevo salvato un server e ritorno ad una configurazione di default
+					if(pa.getServizioApplicativoDefault() != null) {
+						
+						String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
+						String oldNomeSA = sa.getNome();
+						String oldTipoSA = sa.getTipo();
+						
+						// prelevo l'associazione con il vecchio servizio applicativo server
+						PortaApplicativaServizioApplicativo paSAtmp = null;
+						for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+							if(paSA.getNome().equals(oldNomeSA)) {
+								paSAtmp = paSA;
+								break;
 							}
 						}
+	
+						if(paSAtmp!= null) {
+							// se ho modificato il server che sto utilizzando lo rimuovo
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
+								pa.getServizioApplicativoList().remove(paSAtmp); 	
+							}
+						}
+	
+						PortaApplicativaServizioApplicativo paSA = new PortaApplicativaServizioApplicativo();
+						paSA.setNome(oldServizioApplicativoDefault);
+	//					paSA.setNome(pa.getNome());
+						pa.getServizioApplicativoList().add(paSA);
+						pa.setServizioApplicativoDefault(null);
+	
+						oggettiDaAggiornare.add(pa);
+						
+						// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+						if(mappingErogazionePortaApplicativa.isDefault()) {
+							List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+							// lettura delle configurazioni associate
+							AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+							AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+							listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+							for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+								// scarto il default
+								if(!mappinErogazione.isDefault()) { 
+									PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+									
+									// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+									if((portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
+											portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
+										 
+										// prelevo l'associazione con il vecchio servizio applicativo
+										PortaApplicativaServizioApplicativo paSAtmpInner = null;
+										for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+											if(paSAInner.getNome().equals(oldNomeSA)) {
+												paSAtmpInner = paSAInner;
+												break;
+											}
+										}
+	
+										if(paSAtmpInner!= null) {
+											// se ho modificato il server che sto utilizzando lo rimuovo
+											if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
+												portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+											} 
+										}
+	
+										// nuovo SA da aggiungere
+										
+										PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+										paSAInner.setNome(oldServizioApplicativoDefault);
+										portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+										portaApplicativaTmp.setServizioApplicativoDefault(null);
+										oggettiDaAggiornare.add(portaApplicativaTmp);
+									 }
+									
+								}
+							}
+						}
+						
+						// rileggo la vecchia configurazione dal db di default
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(oldServizioApplicativoDefault);
+						IDSoggetto idSoggettoProprietario = new IDSoggetto();
+						idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+						idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+						idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+						sa = saCore.getServizioApplicativo(idSA);
+						invocazionePorta = sa.getInvocazionePorta();
+						is = sa.getInvocazioneServizio();
+						cis = is.getCredenziali();
+						connis = is.getConnettore();
+						cp = connis.getPropertyList();
 					}
-					
-					// rileggo la vecchia configurazione dal db di default
-					IDServizioApplicativo idSA = new IDServizioApplicativo();
-					idSA.setNome(oldServizioApplicativoDefault);
-					IDSoggetto idSoggettoProprietario = new IDSoggetto();
-					idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
-					idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
-					idSA.setIdSoggettoProprietario(idSoggettoProprietario );
-					sa = saCore.getServizioApplicativo(idSA);
-					invocazionePorta = sa.getInvocazionePorta();
-					is = sa.getInvocazioneServizio();
-					cis = is.getCredenziali();
-					connis = is.getConnettore();
-					cp = connis.getPropertyList();
 				}
 
 				// Modifico i dati del servizioApplicativo nel db

@@ -514,7 +514,41 @@
                             <linkit:generator
                                 xmlns:linkit="http://www.link.it/project_generator">
                                 <linkit:sql-column-mapping name="NOME_PORTA" />
+                                <linkit:sql-column-comment><![CDATA[Informazioni relative alla consegna con threads]]></linkit:sql-column-comment>
                                 <linkit:sql-ddl-column-comment>Nome della porta (delegata o applicativa) da utilizzare per la consegna in caso di profili asincroni</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="lock_consegna" type="xsd:dateTime" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="LOCK_CONSEGNA"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se vi è una consegna in corso e quando è stata presa in carico il messaggio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="cluster_id" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="CLUSTER_ID"/>
+                                <linkit:sql-ddl-column-comment>Id del nodo del cluster che sta gestendo questo messaggio</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="attesa_esito" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ATTESA_ESITO"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il messaggio non è consegnabile fino a che non si attende l'esito</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>

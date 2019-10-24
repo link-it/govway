@@ -21,6 +21,8 @@
  */
 package org.openspcoop2.pdd.core;
 
+import java.util.Date;
+
 /**
  * MessaggioServizioApplicativo
  *
@@ -30,17 +32,47 @@ package org.openspcoop2.pdd.core;
  */
 public class MessaggioServizioApplicativo {
 
+	private String idTransazione;
 	private String idMessaggio;
 	private String servizioApplicativo;
 	private boolean sbustamentoSoap;
 	private boolean sbustamentoInformazioniProtocollo;
 	private String nomePorta;
 	
+	private boolean attesaEsitoTransazioneCapostipite;
+	private Date dataPresaInConsegna;
+	private String clusterIdPresaInConsegna;
+	
+	public boolean isAttesaEsitoTransazioneCapostipite() {
+		return this.attesaEsitoTransazioneCapostipite;
+	}
+	public void setAttesaEsitoTransazioneCapostipite(boolean attesaEsitoTransazioneCapostipite) {
+		this.attesaEsitoTransazioneCapostipite = attesaEsitoTransazioneCapostipite;
+	}
+	public Date getDataPresaInConsegna() {
+		return this.dataPresaInConsegna;
+	}
+	public void setDataPresaInConsegna(Date dataPresaInConsegna) {
+		this.dataPresaInConsegna = dataPresaInConsegna;
+	}
+	public String getClusterIdPresaInConsegna() {
+		return this.clusterIdPresaInConsegna;
+	}
+	public void setClusterIdPresaInConsegna(String clusterIdPresaInConsegna) {
+		this.clusterIdPresaInConsegna = clusterIdPresaInConsegna;
+	}
+
 	public String getNomePorta() {
 		return this.nomePorta;
 	}
 	public void setNomePorta(String nomePorta) {
 		this.nomePorta = nomePorta;
+	}
+	public String getIdTransazione() {
+		return this.idTransazione;
+	}
+	public void setIdTransazione(String idTransazione) {
+		this.idTransazione = idTransazione;
 	}
 	public String getIdMessaggio() {
 		return this.idMessaggio;

@@ -68,7 +68,11 @@ CREATE TABLE MSG_SERVIZI_APPLICATIVI
 	ERRORE_PROCESSAMENTO CLOB,
 	-- data dalla quale il msg puo' essere rispedito in caso di errori
 	RISPEDIZIONE TIMESTAMP NOT NULL,
+	-- Informazioni relative alla consegna con threads
 	NOME_PORTA VARCHAR2(255),
+	LOCK_CONSEGNA TIMESTAMP,
+	CLUSTER_ID VARCHAR2(255),
+	ATTESA_ESITO NUMBER,
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_MSG_SERVIZI_APPLICATIVI_1 CHECK (TIPO IN ('INBOX','OUTBOX')),

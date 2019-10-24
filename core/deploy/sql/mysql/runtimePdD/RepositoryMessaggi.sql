@@ -69,7 +69,12 @@ CREATE TABLE MSG_SERVIZI_APPLICATIVI
 	-- data dalla quale il msg puo' essere rispedito in caso di errori
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	RISPEDIZIONE TIMESTAMP(3) NOT NULL DEFAULT 0,
+	-- Informazioni relative alla consegna con threads
 	NOME_PORTA VARCHAR(255),
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	LOCK_CONSEGNA TIMESTAMP(3) DEFAULT 0,
+	CLUSTER_ID VARCHAR(255),
+	ATTESA_ESITO INT,
 	-- fk/pk columns
 	-- check constraints
 	CONSTRAINT chk_MSG_SERVIZI_APPLICATIVI_1 CHECK (TIPO IN ('INBOX','OUTBOX')),

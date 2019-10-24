@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,8 +50,13 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @version $Rev$, $Date$
  */
 
-public class SoggettoVirtuale  {
+public class SoggettoVirtuale implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private List<SoggettoVirtualeServizioApplicativo> soggettoVirtuale_serviziApplicativi = new ArrayList<SoggettoVirtualeServizioApplicativo>();
 	private int count = 0;
 

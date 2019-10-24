@@ -34,6 +34,9 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.threads.GestoreCodaRunnable;
+import org.openspcoop2.utils.threads.RunnableLogger;
 
 /**
  * Thread per la gestione del Threshold
@@ -43,7 +46,7 @@ import org.openspcoop2.utils.Utilities;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class TimerConsegnaContenutiApplicativiThread extends Thread{
+public class TimerConsegnaContenutiApplicativiThread extends GestoreCodaRunnable{
 
     /** Variabile che indica il Nome del modulo dell'architettura di OpenSPCoop rappresentato da questa classe */
     public final static String ID_MODULO = "TimerConsegnaContenutiApplicativi";
@@ -59,34 +62,15 @@ public class TimerConsegnaContenutiApplicativiThread extends Thread{
 	private MsgDiagnostico msgDiag;
 	
 	/** Logger utilizzato per debug. */
-	private Logger logTimer = null;
+	private Logger log = null;
 
-	/** Indicazione se deve essere effettuato il log delle query */
-	private boolean logQuery = false;
+	/** Indicazione se deve essere effettuato il debug */
+	private boolean debug = false;
 	/** Numero di messaggi prelevati sulla singola query */
 	private int limit = CostantiPdD.LIMIT_MESSAGGI_GESTORI;
-	/** Indicazione se deve essere effettuato l'order by nelle query */
-	private boolean orderByQuery = false;
-	
-	private RegistroServiziManager registroServiziReader;
-	private ConfigurazionePdDManager configurazionePdDReader;
-	
-    
-    // VARIABILE PER STOP
-	private boolean stop = false;
-	
-	public boolean isStop() {
-		return this.stop;
-	}
+		
 
-	public void setStop(boolean stop) {
-		this.stop = stop;
-	}
-	
-	
-	
-	/** Costruttore */
-	public TimerConsegnaContenutiApplicativiThread() throws TimerException{
+	private static String getModuleId() throws TimerException {
 		
 		// Aspetto inizializzazione di OpenSPCoop (aspetto mezzo minuto e poi segnalo errore)
 		int attesa = 90;
@@ -98,39 +82,68 @@ public class TimerConsegnaContenutiApplicativiThread extends Thread{
 		if(secondi>= 90){
 			throw new TimerException("Riscontrata inizializzazione OpenSPCoop non effettuata");
 		}   
-
-		this.logTimer = OpenSPCoop2Logger.getLoggerOpenSPCoopTimers();
+		
+		return ID_MODULO;
+	}
+	
+	private static MsgDiagnostico msgDiag_staticInstance = null; 
+	private static synchronized MsgDiagnostico getMsgDiagnostico() throws TimerException {
+		if(msgDiag_staticInstance==null) {
+			try {
+				msgDiag_staticInstance = MsgDiagnostico.newInstance(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+				msgDiag_staticInstance.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI);
+				msgDiag_staticInstance.addKeyword(CostantiPdD.KEY_TIMER, ID_MODULO);
+			} catch (Exception e) {
+				String msgErrore = "Riscontrato Errore durante l'inizializzazione del MsgDiagnostico";
+				throw new TimerException(msgErrore,e);
+			}
+		}
+		return msgDiag_staticInstance;
+	}
+	
+	private static TimerConsegnaContenutiApplicativi newTimerConsegnaContenutiApplicativi() throws TimerException {
+		return new TimerConsegnaContenutiApplicativi(getMsgDiagnostico(), 
+				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug())), 
+				new RunnableLogger(ID_MODULO, OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenutiSql(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug())), 
+				OpenSPCoop2Properties.getInstance(), 
+				ConfigurazionePdDManager.getInstance(),
+				RegistroServiziManager.getInstance());
+	}
+	
+	
+	/** Costruttore */
+	public TimerConsegnaContenutiApplicativiThread() throws TimerException, UtilsException{
+		
+		super(getModuleId(), 
+				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiThreadsPoolSize(),
+				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiThreadsQueueSize(),
+				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiLimit(),
+				OpenSPCoop2Properties.getInstance().getTimerConsegnaContenutiApplicativiInterval(),
+				newTimerConsegnaContenutiApplicativi(),
+				OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(OpenSPCoop2Properties.getInstance().isTimerConsegnaContenutiApplicativiDebug()));
+			
+		this.propertiesReader = OpenSPCoop2Properties.getInstance();
+		
+		this.debug = this.propertiesReader.isTimerConsegnaContenutiApplicativiDebug();
+		
+		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopConsegnaContenuti(this.debug);
 		
 		try {
-			this.msgDiag = MsgDiagnostico.newInstance(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
-			this.msgDiag.setPrefixMsgPersonalizzati(MsgDiagnosticiProperties.MSG_DIAG_TIMER_CONSEGNA_CONTENUTI_APPLICATIVI);
-			this.msgDiag.addKeyword(CostantiPdD.KEY_TIMER, ID_MODULO);
+			this.msgDiag = getMsgDiagnostico();
 		} catch (Exception e) {
 			String msgErrore = "Riscontrato Errore durante l'inizializzazione del MsgDiagnostico";
-			this.logTimer.error(msgErrore,e);
+			this.log.error(msgErrore,e);
 			throw new TimerException(msgErrore,e);
 		}
 
 		this.msgDiag.logPersonalizzato("avvioInCorso");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
+		this.log.info(this.msgDiag.getMessaggio_replaceKeywords("avvioInCorso"));
 		
-		try {
-			this.propertiesReader = OpenSPCoop2Properties.getInstance();
-		} catch (Exception e) {
-			this.msgDiag.logErroreGenerico(e,"InizializzazioneTimer");
-			String msgErrore = "Riscontrato errore durante l'inizializzazione del Reader delle Properties di OpenSPCoop: "+e.getMessage();
-			this.logTimer.error(msgErrore,e);
-			throw new TimerException(msgErrore,e);
-		}
-
 		this.timeout = this.propertiesReader.getTimerConsegnaContenutiApplicativiInterval();
 		String s = "secondi";
 		if(this.timeout == 1)
 			s = "secondo";
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIMEOUT, this.timeout+" "+s);
-		
-		this.logQuery = this.propertiesReader.isTimerConsegnaContenutiApplicativiAbilitatoLog();
-		this.orderByQuery = this.propertiesReader.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy();
 		
 		this.limit = this.propertiesReader.getTimerConsegnaContenutiApplicativiLimit();
 		if(this.limit<=0){
@@ -138,48 +151,8 @@ public class TimerConsegnaContenutiApplicativiThread extends Thread{
 		}
 		this.msgDiag.addKeyword(CostantiPdD.KEY_LIMIT, this.limit+"");
 		
-		this.registroServiziReader = RegistroServiziManager.getInstance();
-		this.configurazionePdDReader = ConfigurazionePdDManager.getInstance();
-		
 		this.msgDiag.logPersonalizzato("avvioEffettuato");
-		this.logTimer.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
+		this.log.info(this.msgDiag.getMessaggio_replaceKeywords("avvioEffettuato"));
 	}
 	
-	/**
-	 * Metodo che fa partire il Thread. 
-	 *
-	 */
-	@Override
-	public void run(){
-		
-		while(this.stop == false){
-			
-			try{
-				// Prendo la gestione
-				TimerConsegnaContenutiApplicativi timerLib = 
-						new TimerConsegnaContenutiApplicativi(this.msgDiag,this.logTimer,this.propertiesReader,this.logQuery,this.limit,this.orderByQuery,
-								this.configurazionePdDReader, this.registroServiziReader, this.timeout);
-				
-				timerLib.check();
-				
-			}catch(Exception e){
-				this.msgDiag.logErroreGenerico(e,"TimerGestorePuliziaMessaggiAnomaliLib.check()");
-				this.logTimer.error("Errore generale: "+e.getMessage(),e);
-			}finally{
-			}
-			
-					
-			// CheckInterval
-			if(this.stop==false){
-				int i=0;
-				while(i<this.timeout){
-					Utilities.sleep(1000);
-					if(this.stop){
-						break; // thread terminato, non lo devo far piu' dormire
-					}
-					i++;
-				}
-			}
-		} 
-	}
 }

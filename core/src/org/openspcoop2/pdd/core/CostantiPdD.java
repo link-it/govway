@@ -255,6 +255,8 @@ public class CostantiPdD {
     
     /** Intervallo per riconsegna messaggi verso ConsegnaContenutiApplicativi */
     public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL = 60; 
+    public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE = 1800; 
+    public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE = "CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE";
     
     /** Tempi di gestione dei lock da parte del Timer */
     public final static int TIMER_LOCK_MAX_LIFE = -1; 
@@ -330,6 +332,9 @@ public class CostantiPdD {
     
     /** Limit messaggi processati dai Gestori */
     public static final int LIMIT_MESSAGGI_GESTORI = 50;
+    
+    /** Limit thread pool size per ConsegnaContenuti */
+    public static final int CONSEGNA_CONTENUTI_THREADS_POOL_SIZE = 10;
     
     /** Tipo WSDL */
     public final static String SCHEMA_XSD = "Schema xsd dei messaggi";
