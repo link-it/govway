@@ -836,14 +836,17 @@ public class OpenSPCoop2Properties {
 			}
 			
 			this.isTimerConsegnaContenutiApplicativiAbilitato();
-			this.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy();
-			this.isTimerConsegnaContenutiApplicativiAbilitatoLog();
+			this.isTimerConsegnaContenutiApplicativiDebug();
+			this.getTimerConsegnaContenutiApplicativiThreadsPoolSize();
+			this.getTimerConsegnaContenutiApplicativiThreadsQueueSize();
 			this.getTimerConsegnaContenutiApplicativiLimit();
 			this.getTimerConsegnaContenutiApplicativiInterval();
+			this.getTimerConsegnaContenutiApplicativiMinIntervalResend();
 			if(this.isTimerLockByDatabase()) {
 				this.getTimerConsegnaContenutiApplicativi_lockMaxLife();
 				this.getTimerConsegnaContenutiApplicativi_lockIdleTime();
 			}
+			this.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife();
 				
 			
 			
@@ -4564,61 +4567,80 @@ public class OpenSPCoop2Properties {
 	}
 	
 	/**
-	 * Restituisce l'indicazione se usare l'order by nelle queries
+	 * Restituisce l'indicazione se attuare una gestione in debug mode
 	 *
-	 * @return Restituisce indicazione se usare l'order by nelle queries
+	 * @return Restituisce indicazione se attuare una gestione in debug mode
 	 * 
 	 */
-	private static Boolean isTimerConsegnaContenutiApplicativiAbilitatoOrderBy = null;
-	public boolean isTimerConsegnaContenutiApplicativiAbilitatoOrderBy(){
-		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy==null){
+	private static Boolean isTimerConsegnaContenutiApplicativiDebug = null;
+	public boolean isTimerConsegnaContenutiApplicativiDebug(){
+		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.orderBy"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug"); 
 				if(value!=null){
 					value = value.trim();
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy = Boolean.parseBoolean(value);
+					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = Boolean.parseBoolean(value);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.orderBy' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = false;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.orderBy', viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.debug', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug = false;
 			}
 		}
 
-		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoOrderBy;
+		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiDebug;
+	}
+
+
+	private static Integer getTimerConsegnaContenutiApplicativiThreadsPoolSize = null;
+	public int getTimerConsegnaContenutiApplicativiThreadsPoolSize(){
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize"); 
+
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = Integer.parseInt(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize' non impostata, viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.poolSize', viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
+			}
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsPoolSize;
 	}
 	
-	/**
-	 * Restituisce l'indicazione se registrare su log le queries
-	 *
-	 * @return Restituisce indicazione se registrare su log le queries
-	 * 
-	 */
-	private static Boolean isTimerConsegnaContenutiApplicativiAbilitatoLog = null;
-	public boolean isTimerConsegnaContenutiApplicativiAbilitatoLog(){
-		if(OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoLog==null){
+	private static Integer getTimerConsegnaContenutiApplicativiThreadsQueueSize = null;
+	public int getTimerConsegnaContenutiApplicativiThreadsQueueSize(){
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize==null){
 			try{  
-				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.logQuery"); 
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize"); 
+
 				if(value!=null){
 					value = value.trim();
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoLog = Boolean.parseBoolean(value);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = Integer.parseInt(value);
 				}else{
-					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.logQuery' non impostata, viene utilizzato il default=false");
-					OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoLog = false;
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize' non impostata, viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
 				}
 
 			}catch(java.lang.Exception e) {
-				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.logQuery', viene utilizzato il default=false, errore:"+e.getMessage(),e);
-				OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoLog = false;
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.threads.queueSize', viene utilizzato il default="+CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize = CostantiPdD.CONSEGNA_CONTENUTI_THREADS_POOL_SIZE;
 			}
 		}
 
-		return OpenSPCoop2Properties.isTimerConsegnaContenutiApplicativiAbilitatoLog;
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiThreadsQueueSize;
 	}
-
+	
 	/**
 	 * Restituisce l'indicazione sul numero di messaggi alla volta processati
 	 *
@@ -4677,6 +4699,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiInterval;
 	}
 	
+	private static Integer getTimerConsegnaContenutiApplicativiMinIntervalResend = null;
+	public int getTimerConsegnaContenutiApplicativiMinIntervalResend() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna");
+
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.intervalloMinimoRiconsegna' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL;
+			}  
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend;
+	}
+	
 	private static Integer getTimerConsegnaContenutiApplicativi_lockMaxLife = null;
 	public int getTimerConsegnaContenutiApplicativi_lockMaxLife() {	
 		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_lockMaxLife==null){
@@ -4729,6 +4774,33 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_lockIdleTime;
+	}
+	
+	private static Integer getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = null;
+	public int getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife() {	
+		if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife");
+
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = java.lang.Integer.parseInt(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE);
+					OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
+			}  
+			if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife!=null && OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_lockMaxLife>0) {
+				// trasformo in millisecondi l'informazione fornita in secondi
+				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife *1000;
+			}
+		}
+
+		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife;
 	}
 	
 	

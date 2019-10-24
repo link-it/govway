@@ -22,6 +22,8 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.Serializable;
+
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDSoggetto;
 
@@ -32,8 +34,13 @@ import org.openspcoop2.core.id.IDSoggetto;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class SoggettoVirtualeServizioApplicativo {
+public class SoggettoVirtualeServizioApplicativo implements Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private IDSoggetto idSoggettoReale;
 	private String nomeServizioApplicativo;
 	private PortaApplicativa portaApplicativa;

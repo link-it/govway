@@ -27,7 +27,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.DefaultBehaviour;
-import org.openspcoop2.pdd.core.behaviour.built_in.MultiDeliverBehaviour;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.resources.Loader;
 

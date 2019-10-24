@@ -22,27 +22,28 @@
 
 package org.openspcoop2.utils.threads;
 
+import java.util.List;
+import java.util.Map;
+
 import org.openspcoop2.utils.UtilsException;
 
 /**
- * IRunnableInstance
+ * IGestoreCodaRunnableInstance
  *  
  * @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IRunnableInstance {
+public interface IGestoreCodaRunnableInstance {
 
-	default public String getIdentifier() {
-		return null;
-	}
+	public void initialize(RunnableLogger log) throws UtilsException;
 	
-	default public void initialize(RunnableLogger log) throws UtilsException{}
+	default public void logCheckInProgress(Map<String, Object> context) {}
 	
-	default public boolean isContinuousRunning() {
-		return true;
-	}
+	default public void logRegisteredThreads(Map<String, Object> context, int nuoviThreadsAttivati) {}
 	
-	public void check() throws UtilsException;
+	default public void logCheckFinished(Map<String, Object> context) {}
+	
+	public List<Runnable> nextRunnable(int limit) throws UtilsException;
 	
 }

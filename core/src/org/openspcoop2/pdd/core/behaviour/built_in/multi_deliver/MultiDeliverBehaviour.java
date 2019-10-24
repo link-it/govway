@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.behaviour.built_in;
+package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +59,8 @@ public class MultiDeliverBehaviour implements IBehaviour {
 		
 		try{
 
+			ConfigurazioneMultiDeliver configurazione = ConfigurazioneMultiDeliver.read(pa);
+			
 			List<IDServizioApplicativo> listaServiziApplicativi_consegnaSenzaRisposta = new ArrayList<IDServizioApplicativo>();
 			IDServizioApplicativo idServizioApplicativoResponder = null;
 			
@@ -69,8 +71,13 @@ public class MultiDeliverBehaviour implements IBehaviour {
 					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 					idSA.setNome(servizioApplicativo.getNome());
 					
-					// TODO proprieta
-					if(idServizioApplicativoResponder==null) {
+					String nomeConnettore = null;
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+					}
+					
+					if(configurazione.getTransazioneSincrona_nomeConnettore()!=null && 
+							configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
 						idServizioApplicativoResponder = idSA;
 					}
 					else {
