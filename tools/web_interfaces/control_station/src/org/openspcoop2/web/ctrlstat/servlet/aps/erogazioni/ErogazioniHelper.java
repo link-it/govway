@@ -1500,6 +1500,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				Connettore connettore = sa.getInvocazioneServizio().getConnettore();
 				idConnettore = connettore.getId();
 				checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+				
+				connettoreMultiploEnabled = paDefault.getBehaviour() != null;
 			}
 
 			// Connettore
@@ -1511,11 +1513,17 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(paSADefault.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				String urlConnettore = this.getLabelConnettore(sa,is);
-				de.setValue(urlConnettore);
-				String tooltipConnettore = this.getTooltipConnettore(sa,is);
-				de.setToolTip(tooltipConnettore);
 				
-				if(!connettoreMultiploEnabled) {
+				if(!connettoreMultiploEnabled) {	
+					de.setValue(urlConnettore);
+					String tooltipConnettore = this.getTooltipConnettore(sa,is);
+					de.setToolTip(tooltipConnettore);
+				} else {
+					de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paDefault));
+				}
+				
+				boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );
+				if(!visualizzaLinkConfigurazioneConnettore) {
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(paIdProvider);
 					listParametersConnettore.add(paIdPortaPerSA);
@@ -1532,7 +1540,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					de.addImage(image);
 				}
 
-				if(checkConnettore && !connettoreMultiploEnabled) {
+				boolean visualizzaLinkCheckConnettore = checkConnettore && (!this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled ));
+				if(visualizzaLinkCheckConnettore) {
 					List<Parameter> listParametersVerificaConnettore = new ArrayList<>();
 					paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
 					listParametersVerificaConnettore.add(paIdSogg);

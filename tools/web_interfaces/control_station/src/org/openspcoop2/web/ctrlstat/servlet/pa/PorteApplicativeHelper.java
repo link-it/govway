@@ -47,6 +47,7 @@ import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -82,6 +83,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -100,6 +102,7 @@ import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementImage;
 import org.openspcoop2.web.lib.mvc.DataElementInfo;
@@ -199,13 +202,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if(behaviour!=null && !"".equals(behaviour)){
-				if (behaviour.indexOf(" ") != -1 || behaviour.indexOf(",") != -1 ) {
-					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR);
-					return false;
-				}
-				if(this.checkLength255(behaviour, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR)==false) {
-					return false;
+			if(!this.core.isConnettoriMultipliEnabled()) {
+				if(behaviour!=null && !"".equals(behaviour)){
+					if (behaviour.indexOf(" ") != -1 || behaviour.indexOf(",") != -1 ) {
+						this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_BEHAVIOUR);
+						return false;
+					}
+					if(this.checkLength255(behaviour, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR)==false) {
+						return false;
+					}
 				}
 			}
 			
@@ -1742,7 +1747,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
 		de.setValue(behaviour);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
-		if (!this.isModalitaAvanzata() || (isConfigurazione && !datiAltro)) {
+		if(this.core.isConnettoriMultipliEnabled()) {
+			de.setType(DataElementType.HIDDEN);
+			dati.addElement(de);
+		} else if (!this.isModalitaAvanzata() || (isConfigurazione && !datiAltro)) {
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
 		}
@@ -6296,5 +6304,698 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
 		}
+	}
+	
+	
+	
+	public Vector<DataElement> addConnettoriMultipliConfigurazioneToDati(Vector<DataElement> dati,
+			TipoOperazione tipoOp, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
+			int numeroProprietaCustom, String servletProprietaCustom, List<Parameter> listaParametriServletProprietaCustom, boolean visualizzaLinkProprietaCustom,
+			String loadBalanceStrategia) {
+		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
+		
+		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(accessoDaAPSParametro);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
+		de.setType(DataElementType.SELECT);
+		String [] statoLabels = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
+		String [] statoValues = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
+		de.setValues(statoValues);
+		de.setLabels(statoLabels);
+		de.setPostBack(true);
+		de.setSelected(stato);
+		dati.addElement(de);
+		
+		
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA);
+		
+		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {	
+			de.setType(DataElementType.SELECT);
+			 
+			String [] modalitaLabels = {
+					BehaviourType.CONSEGNA_MULTIPLA.getLabel(),
+					BehaviourType.CONSEGNA_LOAD_BALANCE.getLabel(),
+					BehaviourType.CONSEGNA_CONDIZIONALE.getLabel(),
+					BehaviourType.CUSTOM.getLabel()
+					};
+			String [] modalitaValues = {
+					BehaviourType.CONSEGNA_MULTIPLA.getValue(),
+					BehaviourType.CONSEGNA_LOAD_BALANCE.getValue(),
+					BehaviourType.CONSEGNA_CONDIZIONALE.getValue(),
+					BehaviourType.CUSTOM.getValue()
+					};
+			
+			de.setValues(modalitaValues);
+			de.setLabels(modalitaLabels);
+			de.setPostBack(true);
+			de.setSelected(modalitaConsegna);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modalitaConsegna);
+		}
+		dati.addElement(de);
+			
+		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
+			
+			// custom
+			if(modalitaConsegna.equals(BehaviourType.CUSTOM.getValue())) {
+				// campo tipo e link proprieta
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				de.setValue(tipoCustom);
+				dati.addElement(de);
+				
+				// Link
+				if(visualizzaLinkProprietaCustom){
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setUrl(servletProprietaCustom,listaParametriServletProprietaCustom.toArray(new Parameter[listaParametriServletProprietaCustom.size()]));
+					if (contaListe)
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA +"(" + numeroProprietaCustom + ")");
+					else
+						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA);
+					dati.addElement(de);
+				}
+			} else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue())) {
+				// select list con strategia
+//				de = new DataElement();
+//				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+//				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+//				de.setType(DataElementType.SELECT);
+//				 
+//				String [] strategiaLabels = PorteApplicativeCostanti.LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
+//				String [] strategiaValues = PorteApplicativeCostanti.VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
+//				
+//				de.setValues(strategiaValues);
+//				de.setLabels(strategiaLabels);
+//				de.setSelected(loadBalanceStrategia);
+//				dati.addElement(de);
+				
+			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
+				// form
+//				de = new DataElement();
+//				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE);
+//				de.setType(DataElementType.SUBTITLE);
+//				dati.addElement(de);
+				
+				// selezione connettore by
+				
+				// condizione
+				
+				
+			}
+		} 
+		
+		return dati;
+	}
+	
+	public boolean connettoriMultipliConfigurazioneCheckData(TipoOperazione tipoOp, String stato, String modalitaConsegna, String tipoCustom, String loadBalanceStrategia) throws Exception{
+		
+		if (StringUtils.isEmpty(stato)) {
+			this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO+" non pu&ograve; essere vuoto");
+			return false;
+		}
+		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
+			if (StringUtils.isEmpty(modalitaConsegna)) {
+				this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA+" non pu&ograve; essere vuoto");
+				return false;
+			}
+			
+			// custom
+			if(modalitaConsegna.equals(BehaviourType.CUSTOM.getValue())) {
+				if (StringUtils.isEmpty(tipoCustom)) {
+					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO+" non pu&ograve; essere vuoto");
+					return false;
+				}
+				if (tipoCustom.indexOf(" ") != -1 || tipoCustom.indexOf(",") != -1 ) {
+					this.pd.setMessage(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_INSERIRE_NE_SPAZI_NE_NEL_CAMPO_TIPO);
+					return false;
+				}
+				if(this.checkLength255(tipoCustom, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO)==false) {
+					return false;
+				}
+			} else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue())) {
+				// select list con strategia
+//				if (StringUtils.isEmpty(loadBalanceStrategia)) {
+//					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA+" non pu&ograve; essere vuoto");
+//					return false;
+//				}
+				
+			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
+				// form
+			}
+		}
+		
+		return true;
+	}
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, List<PortaApplicativaServizioApplicativo> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String idPorta = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
+			Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			
+			String idTabP = this.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			
+			String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
+			String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi);
+			String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
+			
+			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreAccesso, pAccessoDaAPS, pIdTab);
+			
+			this.pd.setCustomListViewName(PorteApplicativeCostanti.PORTE_APPLICATIVE_NOME_VISTA_CUSTOM_CONNETTORI_MULTIPLI);
+			
+			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+			int limit = ricerca.getPageSize(idLista);
+			int offset = ricerca.getIndexIniziale(idLista);
+			
+			this.pd.setIndex(offset);
+			this.pd.setPageSize(limit);
+			this.pd.setSearch("");
+			
+			// applico il filtro per nome
+			String filtroNome = ricerca.getSearchString(idLista);
+			if(lista.size()>1) {
+				PortaApplicativaServizioApplicativo saContenenteNome = getFiltroNomeConnettore(filtroNome, lista);
+				if(saContenenteNome!=null) {
+					int tab = -1;
+					for (int i = 0; i < lista.size(); i++) {
+						if(lista.get(i).getNome().equals(saContenenteNome.getNome())) {
+							tab = i;
+							break;
+						}
+					}
+					if(tab>=0) {
+						ServletUtils.setObjectIntoSession(this.session, tab+"", CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+					}
+				}
+				
+				this.pd.setLabelBottoneFiltra(CostantiControlStation.LABEL_BOTTONE_INDIVIDUA_CONNETTORE);
+				//this.pd.setLabelBottoneRipulsci("Ripulisci Selezione");
+			}
+			
+			if(lista.size()<=1) {
+				ServletUtils.disabledPageDataSearch(this.pd);
+			}
+			
+			boolean accessoDaListaAPS = false;
+			
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+				accessoDaListaAPS = true;
+			}
+			
+			boolean isModalitaCompleta = this.isModalitaCompleta();
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			
+			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			long idAspsLong = Long.parseLong(idAsps);
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+			
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				if(accessoDaListaAPS) {
+					if(!isModalitaCompleta) {
+						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+						} else {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+
+									this.getLabelIdServizio(asps);
+						}
+					}
+					else {
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+					}
+				}
+				else {
+					labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
+							pa);
+				}
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+nomePorta;
+			}
+			
+			if(accessoDaListaAPS) {
+				lstParam.remove(lstParam.size()-1);
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,  null));
+			
+			// setto la barra del titolo
+			ServletUtils.setPageDataTitle(this.pd, lstParam );	
+			
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+			Iterator<PortaApplicativaServizioApplicativo> it = lista.iterator();
+			
+			PortaApplicativaServizioApplicativo paSA = null;
+			int idTab = 0;
+			
+			
+//			if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
+//				pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro);
+//			}
+			
+			Parameter pConfigurazioneDatiGenerali = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pConfigurazioneProperties = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPERTIES, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
+			
+			while (it.hasNext()) {
+				paSA = it.next();
+				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+				
+				Vector<DataElement> e = new Vector<DataElement>();
+				
+				Parameter pIdTAb = new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, ""+idTab);
+				Parameter pNomePaSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA, paSA.getNome());
+				
+				// nome e stato
+				
+				String nomeConnettore =  datiConnettore != null ? datiConnettore.getNome() : CostantiControlStation.LABEL_DEFAULT;
+				StatoFunzionalita stato = datiConnettore != null ? datiConnettore.getStato() : StatoFunzionalita.ABILITATO;
+				boolean statoPA = stato.equals(StatoFunzionalita.ABILITATO);
+				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP;
+				boolean urlCambiaStato = true;
+				
+				boolean connettoreDefault = this.isConnettoreDefault(paSA);
+				
+				// stato del default?
+//				if(mapping.isDefault() && allActionRedefined) {
+//					statoPA = false;
+//					urlCambiaStato = false;
+//				}
+				
+				// Nome / Stato
+				if(lista.size()>1) {
+					
+					DataElement de = new DataElement();
+					
+					de.setWidthPx(10);
+					de.setType(DataElementType.CHECKBOX);
+					
+					de.setStatusToolTip(statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
+//					if(statoPAallRedefined!=null) {
+//						de.setStatusType(statoPAallRedefined);
+//					}
+//					else {
+						de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
+//					}
+					
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
+					de.setValue(nomeConnettore);
+					de.setStatusValue(nomeConnettore);
+					
+					if(!connettoreDefault) {
+						DataElementImage image = new DataElementImage();
+						
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali);
+						image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
+						image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+						
+						de.addImage(image );
+					}
+							
+					if(!connettoreDefault) 
+						de.setIdToRemove(paSA.getNome());
+					
+					if(urlCambiaStato) {
+						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita);
+						
+						DataElementImage image = new DataElementImage();
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita);
+						image.setToolTip(statoMapping);
+						image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
+						
+						de.addImage(image);
+					}
+					
+					e.addElement(de);
+					
+				}
+				
+				// Descrizione
+				String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : " ";
+				DataElement de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
+				int length = 150;
+				String descrizione = null;
+				if(descrizioneOrig !=null && descrizioneOrig.length()>length) {
+					descrizione = descrizioneOrig.substring(0, (length-4)) + " ...";
+				}
+				else {
+					descrizione = descrizioneOrig;
+				}
+				de.setValue(descrizione);
+				de.setToolTip(descrizioneOrig);
+				
+				DataElementImage image = new DataElementImage();
+				
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione);
+				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
+				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+				
+				de.addImage(image );
+				
+				e.addElement(de);
+				
+				// Connettore
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE);
+				
+				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				idServizioApplicativo.setNome(paSA.getNome());
+				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
+				org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
+				org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
+				
+				de.setValue(this.getLabelConnettore(sa,is));
+				String tooltipConnettore = this.getTooltipConnettore(sa,is);
+				de.setToolTip(tooltipConnettore);
+				
+				image = new DataElementImage();
+				
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneConnettore);
+				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
+				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+				
+				de.addImage(image );
+				
+				boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
+//				if(checkConnettore) {
+//					if(!mapping.isDefault() && !ridefinito) {
+//						checkConnettore = false;
+//					}
+//				}
+				
+				if(checkConnettore) {
+					long idConnettore = connettore.getId();
+					image = new DataElementImage();
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, pIdSogg, pIdPorta, pIdAsps,pIdTAb,
+							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
+							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
+							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
+					image.setImage(CostantiControlStation.ICONA_VERIFICA);
+					
+					de.addImage(image);
+				}
+				
+				e.addElement(de);
+				
+				// Filtri
+				if(beaBehaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+					de = new DataElement();
+					de.setType(DataElementType.BUTTON);
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
+					List<String> labelsGruppi = new ArrayList<String>();
+					List<String> valuesGruppi = new ArrayList<String>();
+					
+					if(paSA.getDatiConnettore() != null) {
+						// colleziono i tags registrati
+//						List<String> tagsDisponibili = paSA.getDatiConnettore().getFiltroList();
+						
+						for (int i = 0; i < paSA.getDatiConnettore().sizeFiltroList(); i++) {
+							String filtro = paSA.getDatiConnettore().getFiltro(i);
+							
+//							int indexOf = tagsDisponibili.indexOf(gruppo.getNome());
+//							if(indexOf == -1)
+//								indexOf = 0;
+//							
+//							indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
+							
+							labelsGruppi.add(filtro);
+							valuesGruppi.add("label-info-"+0);
+						}
+					}	
+					
+					de.setLabels(labelsGruppi);
+					de.setValues(valuesGruppi);
+					
+					image = new DataElementImage();
+					
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneFiltro);
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI));
+					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+					
+					de.addImage(image);
+					
+					e.addElement(de);
+				}
+				
+				// Proprieta
+				de = new DataElement();
+				de.setType(DataElementType.TEXT);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA);
+				int sizeProprietaList = paSA.getDatiConnettore() != null ? paSA.getDatiConnettore().sizeProprietaList() : 0;
+				setStatoProprieta(de, sizeProprietaList);
+				
+				image = new DataElementImage();
+				
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneProperties);
+				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA));
+				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+				
+				de.addImage(image );
+				
+				e.addElement(de);
+				
+				dati.addElement(e);
+				idTab ++;
+			}
+			
+			this.pd.setDati(dati);
+			this.pd.setSelect(true);
+			this.pd.setAddButton(true);
+			if(lista.size() > 1)
+				this.pd.setRemoveButton(true);
+			else 
+				this.pd.setRemoveButton(false);
+			
+		}  catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	private PortaApplicativaServizioApplicativo getFiltroNomeConnettore(String filtroNome, List<PortaApplicativaServizioApplicativo> lista) {
+		for (PortaApplicativaServizioApplicativo paSA : lista) {
+			String nome = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+			
+			if(nome != null) {
+				if(nome.toLowerCase().contains(filtroNome.toLowerCase()))
+					return paSA;
+			}
+		}
+		
+		return null;
+	}
+	
+	private boolean isConnettoreDefault(PortaApplicativaServizioApplicativo paSA) {
+		String nome = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+		return CostantiControlStation.LABEL_DEFAULT.equals(nome);
+	}
+	
+	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
+			BehaviourType beaBehaviourType, String nomeSAConnettore,
+			String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore, String vProprieta) {
+		
+		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setLabel("");
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(nomeSAConnettore);
+		dati.add(de);
+		
+		// Nome
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
+		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
+		
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setValue(nome);
+			de.setRequired(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(nome);
+		}
+		dati.add(de);
+		
+		// Stato
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
+		
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
+			de.setType(DataElementType.SELECT);
+			String [] values = { StatoFunzionalita.ABILITATO.getValue() , StatoFunzionalita.DISABILITATO.getValue()};
+			de.setValues(values);			
+			de.setSelected(stato);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(stato);
+		}
+		dati.add(de);
+		
+		// Descrizione
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
+		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
+			
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
+			de.setType(DataElementType.TEXT_AREA);
+			de.setValue(descrizione);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(descrizione);
+		}
+		dati.add(de);
+		
+		// filtri
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
+		if(beaBehaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+			boolean visualizzaFiltri = ServletUtils.isCheckBoxEnabled(vFiltri);
+			
+			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaFiltri)) {
+				de.setType(DataElementType.TEXT_EDIT);
+				de.enableTags();
+				de.setValue(filtri);
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(filtri);
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(filtri);
+		}
+		dati.add(de);
+		
+		
+		return dati;
+	}
+	
+	public boolean connettoriMultipliCheckData(TipoOperazione tipoOp, PortaApplicativa pa , BehaviourType beaBehaviourType, String nomeSAConnettore,
+			String oldNome, String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore, String vProprieta) throws Exception{
+		try{
+			boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
+			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
+				
+				if(StringUtils.isEmpty(nome)) {
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
+					return false;
+				}
+				
+				// Controllo che non ci siano spazi nei campi di testo
+				if ((nome.indexOf(" ") != -1)) {
+					this.pd.setMessage(CostantiControlStation.MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO);
+					return false;
+				}
+				
+				// Check Lunghezza
+				if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME)==false) {
+					return false;
+				}
+				
+				if(StringUtils.isEmpty(stato)) {
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO));
+					return false;
+				}
+			}
+			
+			boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
+			
+			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
+				if(StringUtils.isNotEmpty(descrizione)) {
+					if(this.checkLength4000(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE)==false) {
+						return false;
+					}
+				}
+			}
+			
+			// check univocita' del nome
+			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
+				
+				List<PortaApplicativaServizioApplicativo> servizioApplicativoList = pa.getServizioApplicativoList();
+				
+				if(tipoOp.equals(TipoOperazione.ADD)) {
+					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
+						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+						if(nome.equals(nomePaSA)) {
+							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
+							return false;
+						}
+					}
+				}
+				
+				// solo se ho cambiato il nome
+				if(tipoOp.equals(TipoOperazione.CHANGE) && !nome.equals(oldNome)) {
+					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
+						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+						if(nome.equals(nomePaSA)) {
+							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
+							return false;
+						}
+					}
+				}
+			}
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+		return true;
 	}
 }

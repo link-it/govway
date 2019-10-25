@@ -134,6 +134,7 @@ public class CostantiControlStation {
 	public final static String LABEL_EMPTY = "&nbsp;";
 	
 	public final static String LABEL_BOTTONE_INDIVIDUA_GRUPPO = "Individua Gruppo";
+	public final static String LABEL_BOTTONE_INDIVIDUA_CONNETTORE = "Individua Connettore";
 	
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE_COLUMN = "Non standard";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE = "Configurazione non visualizzabile";
@@ -416,6 +417,8 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
 	public final static String LABEL_VERIFICA_CONNETTORE_VALORE_LINK = "verifica";
 	public final static String LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI = "Verifica su tutti i nodi";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "Configurazione Connettori Multipli";
+	public final static String LABEL_ELENCO_CONNETTORI_MULTIPLI = "Elenco Connettori";
 	
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = "Caching Risposta";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI = "Caching Risposta di ";
@@ -829,6 +832,8 @@ public class CostantiControlStation {
 	
 	public final static String PARAMETRO_ID_TAB = "idTab";
 	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
+	public final static String PARAMETRO_ID_CONN_TAB = "idConnTab";
+	public final static String PARAMETRO_RESET_ID_CONN_TAB = "rIdConnTab";
 	
 	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
 	

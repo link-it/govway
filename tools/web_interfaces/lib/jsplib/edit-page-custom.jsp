@@ -75,6 +75,8 @@ if (mime) {
 				<jsp:include page="/jsp/form/api.jsp" flush="true"/>
 			<% } else if(customListViewName.equals("configurazione")){ %>
 				<jsp:include page="/jsp/form/configurazione.jsp" flush="true"/>
+			<% }  else if(customListViewName.equals("connettoriMultipli")){ %>
+				<jsp:include page="/jsp/form/connettoriMultipli.jsp" flush="true"/>
 			<% }  %>
 		</table>
 	</form>

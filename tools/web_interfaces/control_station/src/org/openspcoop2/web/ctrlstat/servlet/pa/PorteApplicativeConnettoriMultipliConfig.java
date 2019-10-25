@@ -34,29 +34,15 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Filtri;
-import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.id.IDServizioApplicativo;
-import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
-import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
-import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
+import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -64,13 +50,12 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 
 /**     
- * PorteApplicativeConnettoreRidefinito
+ * PorteApplicativeConnettoriMultipliConfig
  *
- * @author Pintori Giuliano (pintori@link.it)
+ * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -94,69 +79,85 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 		if(parentPA == null) parentPA = PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE;
 
 		try {
-
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
+			
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 			
 			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
 			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
 			if(idAsps == null) 
 				idAsps = "";
+			
+			// Prendo il nome della porta
+			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			
+			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
+			String idporta = portaApplicativa.getNome();
+			
+			AccordoServizioParteSpecifica asps = null;
+			
+			String stato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
+			String modalitaConsegna = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA);
+			String tipoCustom = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO);
+			String loadBalanceStrategia = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+			
+			boolean accessoDaListaAPS = false;
+			String accessoDaAPSParametro = null;
+			// nell'erogazione vale sempre
+			accessoDaAPSParametro = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+				accessoDaListaAPS = true;
+			}
 			
 			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
 			
-			// Prendo il nome della porta
-			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
-			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
-			
-			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
-			String idporta = portaApplicativa.getNome();
-			
-			AccordoServizioParteSpecifica asps = null;
-			IDServizio idServizio = null;
-			if(idAsps!=null && !"".equals(idAsps)) {
-				asps = apsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));
-				idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			int numeroProprietaCustom = portaApplicativa.getBehaviour() != null ? portaApplicativa.getBehaviour().sizeProprietaList() : 0;
+			String servletProprietaCustom = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_LIST;
+			List<Parameter> listaParametriServletProprietaCustom = new ArrayList<Parameter>();
+			boolean visualizzaLinkProprietaCustom = false;
+			if(portaApplicativa.getBehaviour() != null) {
+				BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				visualizzaLinkProprietaCustom = behaviourType.equals(BehaviourType.CUSTOM);
 			}
-			else {
-				idServizio = IDServizioFactory.getInstance().getIDServizioFromValues(portaApplicativa.getServizio().getTipo(), 
-						portaApplicativa.getServizio().getNome(), 
-						new IDSoggetto(portaApplicativa.getTipoSoggettoProprietario(), portaApplicativa.getNomeSoggettoProprietario()), 
-						portaApplicativa.getServizio().getVersione());
-			}
-			IDSoggetto idSoggetto = idServizio.getSoggettoErogatore();
-			
-			String modalita = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE);
-			
-			String [] modalitaLabels = { PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO };
-			String [] modalitaValues = { PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT, PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO };
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
-			String connettoreLabelDi = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO_DI;
-			String connettoreLabel = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO;
-			if(!porteApplicativeHelper.isModalitaCompleta()) {
-				connettoreLabelDi = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI;
-				connettoreLabel = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
-			}
-			
 			String labelPerPorta = null;
 			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
-				labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
-						connettoreLabelDi,
-						connettoreLabel,
-						portaApplicativa);
+				if(accessoDaListaAPS) {
+					if(!isModalitaCompleta) {
+						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG;
+						} else {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI+
+									porteApplicativeHelper.getLabelIdServizio(asps);
+						}
+					}
+					else {
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG;
+					}
+				}
+				else {
+					labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG,
+							portaApplicativa);
+				}
 			}
 			else {
-				labelPerPorta = connettoreLabelDi+idporta;
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI+idporta;
+			}
+			
+			if(accessoDaListaAPS) {
+				lstParam.remove(lstParam.size()-1);
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,  null));
@@ -164,22 +165,24 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			// setto la barra del titolo
 			ServletUtils.setPageDataTitle(pd, lstParam);
 			
-			PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = portaApplicativa.getServizioApplicativoList().get(0);
-			String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
-			Parameter[] parametriServletConnettore = {
-				new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps),
-				new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, portaApplicativa.getIdSoggetto() + ""),
-				new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+portaApplicativa.getId()),
-				new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
-				new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+"")
-			};
-			
 			if(	porteApplicativeHelper.isEditModeInProgress()){
 				
-				if(modalita == null) {
-					modalita = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO;
+				if(stato == null) {
+					if(portaApplicativa.getBehaviour() == null) {
+						stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
+						modalitaConsegna = BehaviourType.CONSEGNA_MULTIPLA.getValue();
+					} else {
+						stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO;
+						
+						BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+					
+						modalitaConsegna = behaviourType.getValue();
+						if(behaviourType.equals(BehaviourType.CUSTOM)) {
+							visualizzaLinkProprietaCustom = true;
+							tipoCustom = portaApplicativa.getBehaviour().getNome();
+						}
+					}
 				}
-				
 				
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
@@ -187,22 +190,19 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 				
-				dati = porteApplicativeHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,true,servletConnettore,parametriServletConnettore);
+				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia);
 
 				pd.setDati(dati);
 				
-				if(modalita.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_RIDEFINITO)) {
-					pd.disableOnlyButton();
-				}
-				
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 				// Forward control to the specified success URI
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO, 
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, 
 						ForwardParams.OTHER(""));
 			}
 			
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.connettoreDefaultRidefinitoCheckData(TipoOperazione.OTHER, modalita);
+			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia);
 			
 			if(!isOk) {
 				// preparo i campi
@@ -210,7 +210,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addConnettoreDefaultRidefinitoToDati(dati,TipoOperazione.OTHER, modalita, modalitaValues,modalitaLabels,true,servletConnettore,parametriServletConnettore);
+				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -219,115 +220,80 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
 				return ServletUtils.getStrutsForwardEditModeCheckError(mapping,
-						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO,
+						PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI,
 						ForwardParams.OTHER(""));
 			}
 
-			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
-			
-			for (PortaApplicativaServizioApplicativo paSA : portaApplicativa.getServizioApplicativoList()) {
-				IDServizioApplicativo idSA = new IDServizioApplicativo();
-				idSA.setIdSoggettoProprietario(idSoggetto);
-				idSA.setNome(paSA.getNome());
+			if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
+				PortaApplicativaBehaviour behaviour = new PortaApplicativaBehaviour();
 				
-				ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
-				// elimino solo i SA non server
-				if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()))
-					listaOggettiDaEliminare.add(sa);
+				BehaviourType behaviourType = BehaviourType.toEnumConstant(modalitaConsegna);
+				
+				switch (behaviourType) {
+				case CONSEGNA_CONDIZIONALE:
+					behaviour.setNome(modalitaConsegna);
+					break;
+				case CONSEGNA_LOAD_BALANCE:
+					behaviour.setNome(modalitaConsegna);
+					break;
+				case CONSEGNA_MULTIPLA:
+					behaviour.setNome(modalitaConsegna);
+					break;
+				case CUSTOM:
+					behaviour.setNome(tipoCustom);
+					break;
+				}
+				
+				portaApplicativa.setBehaviour(behaviour);
+			} else {
+				portaApplicativa.setBehaviour(null);
 			}
 			
-			portaApplicativa.getServizioApplicativoList().clear();
-			
-			IDPortaApplicativa idPADefault = porteApplicativeCore.getIDPortaApplicativaAssociataDefault(idServizio);
-			PortaApplicativa paDefault = porteApplicativeCore.getPortaApplicativa(idPADefault);
-			portaApplicativa.getServizioApplicativoList().addAll(paDefault.getServizioApplicativoList());
-			portaApplicativa.setServizioApplicativoDefault(paDefault.getServizioApplicativoDefault());
-			
-			listaOggettiDaModificare.add(portaApplicativa);
-
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaModificare.toArray());
-			porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray());
+			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), portaApplicativa);
 			
-			// Preparo la lista
-			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-
-			List<PortaApplicativa> lista = null;
-			int idLista = -1;
+			// rileggo la configurazione
+			portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 			
-		
-			switch (parentPA) {
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
+			visualizzaLinkProprietaCustom = false;
+			if(portaApplicativa.getBehaviour() == null)
+				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
+			else {
+				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO;
 				
-				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-				if(datiInvocazione) {
-					idLista = Liste.SERVIZI;
-					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-					
-					String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
-					if(tipologia!=null) {
-						if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_EROGAZIONE.equals(tipologia)) {
-							ricerca.addFilter(idLista, Filtri.FILTRO_DOMINIO, SoggettiCostanti.SOGGETTO_DOMINIO_OPERATIVO_VALUE);
-						}
-					}
-					
-					boolean [] permessi = new boolean[2];
-					PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-					permessi[0] = pu.isServizi();
-					permessi[1] = pu.isAccordiCooperazione();
-					List<AccordoServizioParteSpecifica> listaS = null;
-					String superUser   = ServletUtils.getUserLoginFromSession(session);
-					if(apsCore.isVisioneOggettiGlobale(superUser)){
-						listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
-					}else{
-						listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
-					}
-					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-					apsHelper.prepareServiziList(ricerca, listaS);
+				BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
+				modalitaConsegna = behaviourType.getValue();
+				
+				if(behaviourType.equals(BehaviourType.CUSTOM)) {
+					visualizzaLinkProprietaCustom = true;
+					tipoCustom = portaApplicativa.getBehaviour().getNome();
 				}
-				else {			
-					idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-					ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-					int idServizioInt = Integer.parseInt(idAsps);
-					asps = apsCore.getAccordoServizioParteSpecifica(idServizioInt);
-					idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-					Long idSoggetto2 = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-					List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(),ricerca);
-					AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-					apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto2+"", ricerca);
-				}
-				break;
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
-				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
-				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteApplicativeCore.porteAppList(soggInt, ricerca);
-				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
-				break;
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE:
-			default:
-				idLista = Liste.PORTE_APPLICATIVE;
-				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteApplicativeCore.porteAppList(null, ricerca);
-				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
-				break;
 			}
+			
+			// preparo i campi
+			Vector<DataElement> dati = new Vector<DataElement>();
+			
+			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
+					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia);
+			
+			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
+
+			pd.setDati(dati);
+			
+			pd.setMessage(CostantiControlStation.LABEL_AGGIORNAMENTO_EFFETTUATO_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			//pd.disableEditMode();
+			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
-			ForwardParams fwP = ForwardParams.OTHER("");
-			if(!porteApplicativeHelper.isModalitaCompleta()) {
-				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
-			}
+
 			
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO, fwP);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, ForwardParams.OTHER(""));
 			
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORE_RIDEFINITO , 
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI , 
 					ForwardParams.OTHER(""));
 		} 
 	}

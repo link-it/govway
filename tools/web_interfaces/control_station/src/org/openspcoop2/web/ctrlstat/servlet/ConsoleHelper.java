@@ -76,6 +76,7 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaTracciamento;
@@ -14352,5 +14353,24 @@ public class ConsoleHelper implements IConsoleHelper {
 		dati.addElement(de);
 				
 		return dati;
+	}
+	
+	public String getStatoConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
+		boolean connettoreMultiploEnabled = paAssociata.getBehaviour() != null;
+		return connettoreMultiploEnabled ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString();
+	}
+	
+	public String getNomiConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
+		StringBuilder sbConnettoriMultipli = new StringBuilder();
+		for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
+			if(sbConnettoriMultipli.length() >0)
+				sbConnettoriMultipli.append(", ");
+			if(paSA.getDatiConnettore() == null) {
+				sbConnettoriMultipli.append(CostantiControlStation.LABEL_DEFAULT);
+			} else {
+				sbConnettoriMultipli.append(paSA.getDatiConnettore().getNome());
+			}
+		}
+		return sbConnettoriMultipli.toString();
 	}
 }
