@@ -14,7 +14,7 @@ then
 	IS_SNAPSHOT="$2"
 fi
 
-OPENSPCOOP_VERSION="3.1"
+OPENSPCOOP_VERSION="3.2"
 #utilizzare per le versioni di svn >= 1.8
 #OPENSPCOOP_VERSION="$(svn info | grep 'URL: svn' | cut -d '/' -f 7)"
 
