@@ -73,7 +73,11 @@ public class HttpServletCredential extends Credential implements Serializable {
 			String [] decodeAuthSplit = decodeAuth.split(":");
 			if(decodeAuthSplit.length>1){
 				this.username = decodeAuthSplit[0];
-				this.password = decodeAuthSplit[1];
+				try {
+					this.password = decodeAuth.substring(decodeAuth.indexOf(":")+1, decodeAuth.length());
+				}catch(Throwable e) {
+					log.error("Password non estraibile dalla stringa ricevuta '"+decodeAuth+"'");
+				}
 			}
 			if(debug && log!=null){
 				log.info("BasicAuthentication presente nella richiesta, username ["+this.username+"] e password ["+this.password+"]");

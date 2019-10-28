@@ -130,14 +130,24 @@
 		<!-- TIPO DATABASE -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="db.tipoDatabase"/>
+			<param name="token" value="db.config.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tracce.tipoDatabase"/>
 			<param name="value" value="${antinstaller_tipo_database}"/>
 		</antcall>
 		
 		<!-- DATASOURCE -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="db.dataSource"/>
+			<param name="token" value="db.config.dataSource"/>
+			<param name="value" value="${datasource_console_name}"/>
+		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tracce.dataSource"/>
 			<param name="value" value="${datasource_console_name}"/>
 		</antcall>
 				

@@ -22,6 +22,8 @@
 
 package org.openspcoop2.utils.jaxrs;
 
+import java.util.TimeZone;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -36,8 +38,9 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  */
 public class JacksonJsonProvider extends com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider {
 
-	public static ObjectMapper getObjectMapper(boolean prettyPrint) {
+	public static ObjectMapper getObjectMapper(boolean prettyPrint, TimeZone timeZone) {
 		ObjectMapper mapper = new ObjectMapper();
+		mapper.setTimeZone(timeZone);
 		mapper.registerModule(new JodaModule());
 		mapper.configure(com.fasterxml.jackson.databind.SerializationFeature.
 			    WRITE_DATES_AS_TIMESTAMPS , false);
@@ -50,10 +53,17 @@ public class JacksonJsonProvider extends com.fasterxml.jackson.jaxrs.json.Jackso
 	}
 	
 	public JacksonJsonProvider() {
-		super(getObjectMapper(false));
+		super(getObjectMapper(false, TimeZone.getDefault()));
 	}
 	public JacksonJsonProvider(boolean prettyPrint) {
-		super(getObjectMapper(prettyPrint));
+		super(getObjectMapper(prettyPrint, TimeZone.getDefault()));
+	}
+	
+	public JacksonJsonProvider(String timeZoneId) {
+		super(getObjectMapper(false, TimeZone.getTimeZone(timeZoneId)));
+	}
+	public JacksonJsonProvider(String timeZoneId, boolean prettyPrint) {
+		super(getObjectMapper(prettyPrint, TimeZone.getTimeZone(timeZoneId)));
 	}
 	
 }

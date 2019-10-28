@@ -110,8 +110,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionTracce();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesTracce();
 				EventiService eventiService = new EventiService(connection, true, smp, LoggerProperties.getLoggerDAO());
 				
 				ServerProperties serverProperties = ServerProperties.getInstance();
@@ -153,7 +153,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		        return ret;
 			}
 			finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionTracce(connection);
 			}
      
 		}
@@ -463,8 +463,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionTracce();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesTracce();
 				EventiService eventiService = new EventiService(connection, true, smp, LoggerProperties.getLoggerDAO());
 				
 				EventoBean eventoDB = eventiService.findById(id);
@@ -476,7 +476,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		        return evento;
 			}
 			finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionTracce(connection);
 			}
      
 		}
@@ -512,8 +512,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionTracce();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesTracce();
 				TransazioniService transazioniService = new TransazioniService(connection, true, smp, LoggerProperties.getLoggerDAO());
 				TransazioneBean transazioneDB = transazioniService.findByIdTransazione(id.toString());
 				if(transazioneDB==null) {
@@ -526,7 +526,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				return transazione;
 			}
 			finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionTracce(connection);
 			}
 		}
 		catch(javax.ws.rs.WebApplicationException e) {

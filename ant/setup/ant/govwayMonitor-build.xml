@@ -156,7 +156,15 @@
 
 # ----- Personalizzazione Setup GovWay -------------
 		</concat>
+
+		<!-- WORKING DIR -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="confDirectory"/>
+			<param name="value" value="${work_dir}"/>
+		</antcall>
 			
+		<!-- TIPO CONNESSIONE -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="db.tipo"/>

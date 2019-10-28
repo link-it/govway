@@ -21,8 +21,8 @@ function(t){ java.lang.Thread.sleep(t) }
 * def getDate =
 """
 function() {
-var now = java.time.LocalDateTime.now();
-var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss+02:00");
+var now = java.time.ZonedDateTime.now();
+var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 var formatDateTime = now.format(formatter);
 return formatDateTime;
 } 
@@ -31,8 +31,8 @@ return formatDateTime;
 * def getDateMinuteZero =
 """
 function() {
-var now = java.time.LocalDateTime.now().withMinute(0);
-var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm+02:00");
+var now = java.time.ZonedDateTime.now().withMinute(0);
+var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmXXX");
 var formatDateTime = now.format(formatter);
 return formatDateTime;
 } 

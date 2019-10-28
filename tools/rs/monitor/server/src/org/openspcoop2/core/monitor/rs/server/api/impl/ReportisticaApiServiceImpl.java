@@ -121,8 +121,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp,
 						LoggerProperties.getLoggerDAO());
 				SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
@@ -146,7 +146,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				return report;
 
 			} finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionConfig(connection);
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
@@ -178,8 +178,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp,
 						LoggerProperties.getLoggerDAO());
 				MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
@@ -201,7 +201,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				context.getLogger().info("Invocazione completata con successo");
 				return report;
 			} finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionConfig(connection);
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
@@ -234,8 +234,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp,
 						LoggerProperties.getLoggerDAO());
 
@@ -267,7 +267,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				context.getLogger().info("Invocazione completata con successo");
 				return ret;
 			} finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionConfig(connection);
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
@@ -1266,8 +1266,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp,
 						LoggerProperties.getLoggerDAO());
 
@@ -1292,7 +1292,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				context.getLogger().info("Invocazione completata con successo");
 				return info;
 			} finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionConfig(connection);
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
@@ -1323,8 +1323,8 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			DBManager dbManager = DBManager.getInstance();
 			Connection connection = null;
 			try {
-				connection = dbManager.getConnection();
-				ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+				connection = dbManager.getConnectionConfig();
+				ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 				ConfigurazioniGeneraliService configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp,
 						LoggerProperties.getLoggerDAO());
 
@@ -1347,7 +1347,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				context.getLogger().info("Invocazione completata con successo");
 				return riepilogo;
 			} finally {
-				dbManager.releaseConnection(connection);
+				dbManager.releaseConnectionConfig(connection);
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {

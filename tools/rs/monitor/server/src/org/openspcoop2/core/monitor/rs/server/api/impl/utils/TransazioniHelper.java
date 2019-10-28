@@ -339,9 +339,9 @@ public class TransazioniHelper {
 		DBManager dbManager = DBManager.getInstance();
 		Connection connection = null;
 		try {
-			connection = dbManager.getConnection();
+			connection = dbManager.getConnectionTracce();
 			ServerProperties serverProperties = ServerProperties.getInstance();
-			ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesTracce();
 			TransazioniService transazioniService = new TransazioniService(connection, true, smp,
 					LoggerProperties.getLoggerDAO());
 			transazioniService.setSearch(search);
@@ -381,7 +381,7 @@ public class TransazioniHelper {
 			env.context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} finally {
-			dbManager.releaseConnection(connection);
+			dbManager.releaseConnectionTracce(connection);
 		}
 	}
 }

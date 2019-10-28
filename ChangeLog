@@ -1,3 +1,13 @@
+2019-10-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, Utils]
+	Risolto Bug OP-913
+	Autenticazione 'http-basic' non funzionava con password che conteneva ':'. Il problema è stato risolto.
+	Nell'intervento sono anche stati corretti alcuni problemi presenti nei servizi REST di configurazione e monitoraggio:
+	- impostato il time zone di default del sistema
+	- è adesso configurabile un database delle tracce differente da quello delle configurazioni per il servizio di monitoraggio.
+	- al riavvio dell'application server, eventuali tags associati alle api vengono adesso preservate.
+
 2019-10-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

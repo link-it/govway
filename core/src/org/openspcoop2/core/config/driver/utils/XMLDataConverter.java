@@ -907,9 +907,14 @@ public class XMLDataConverter {
 				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 				if( (reset==false) && this.gestoreCRUD.existsSoggetto(idSoggetto)){
 					if(aggiornamentoSoggetti){
-						this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
-						this.gestoreCRUD.updateSoggetto(soggetto);
-						this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						if(updateEnabled) {
+							this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
+							this.gestoreCRUD.updateSoggetto(soggetto);
+							this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						}
+						else {
+							this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" non aggiornato (aggiornamento disabilitato).");
+						}
 					}
 				}else{
 					this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
@@ -956,6 +961,9 @@ public class XMLDataConverter {
 							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
 							this.gestoreCRUD.updatePortaDelegata(pd);
 							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						}
+						else {
+							this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" non aggiornato (aggiornamento disabilitato).");
 						}
 					}else{
 						this.log.info("Porta delegata ["+pd.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
@@ -1106,6 +1114,9 @@ public class XMLDataConverter {
 							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
 							this.gestoreCRUD.updatePortaApplicativa(pa);
 							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+						}
+						else {
+							this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" non aggiornato (aggiornamento disabilitato).");
 						}
 					}else{
 						this.log.info("Porta applicativa ["+pa.getNome()+"] del Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
@@ -1260,6 +1271,9 @@ public class XMLDataConverter {
 							this.gestoreCRUD.updateRoutingTable(this.sorgenteConfigurazione.getConfigurazione().getRoutingTable());
 							this.log.info("Routing Table, aggiornamento effettuato.");
 						}
+						else {
+							this.log.info("Routing Table, non aggiornato (aggiornamento disabilitato).");
+						}
 					}
 				}
 				
@@ -1281,6 +1295,9 @@ public class XMLDataConverter {
 						if(updateEnabled) {
 							this.gestoreCRUD.updateAccessoRegistro(this.sorgenteConfigurazione.getConfigurazione().getAccessoRegistro());
 							this.log.info("Accesso registro, aggiornamento effettuato.");
+						}
+						else {
+							this.log.info("Accesso registro, non aggiornato (aggiornamento disabilitato).");
 						}
 					}						
 				}
@@ -1305,6 +1322,9 @@ public class XMLDataConverter {
 						if(updateEnabled) {
 							this.gestoreCRUD.updateGestioneErroreComponenteCooperazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteCooperazione());
 							this.log.info("GestioneErrore, aggiornamento effettuato.");
+						}
+						else {
+							this.log.info("GestioneErrore, non aggiornato (aggiornamento disabilitato).");
 						}
 					}
 								
@@ -1332,6 +1352,9 @@ public class XMLDataConverter {
 							this.gestoreCRUD.updateGestioneErroreComponenteIntegrazione(this.sorgenteConfigurazione.getConfigurazione().getGestioneErrore().getComponenteIntegrazione());
 							this.log.info("GestioneErrore, aggiornamento effettuato.");
 						}
+						else {
+							this.log.info("GestioneErrore, non aggiornato (aggiornamento disabilitato).");
+						}
 					}
 				}
 
@@ -1353,6 +1376,9 @@ public class XMLDataConverter {
 						if(updateEnabled) {
 							this.gestoreCRUD.updateConfigurazione(this.sorgenteConfigurazione.getConfigurazione());
 							this.log.info("Configurazione, aggiornamento effettuato.");
+						}
+						else {
+							this.log.info("Configurazione, non aggiornato (aggiornamento disabilitato).");
 						}
 					}
 				}
@@ -1853,6 +1879,9 @@ public class XMLDataConverter {
 				
 				this.gestoreCRUD.updateServizioApplicativo(servizioApplicativo);
 				this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" aggiornato.");
+			}
+			else {
+				this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" non aggiornato (aggiornamento disabilitato).");
 			}
 		}else{
 			this.log.info("Servizio Applicativo ["+servizioApplicativo.getNome()+"]"+pos+" del Soggetto "+soggettoProprietario.getTipo()+"/"+soggettoProprietario.getNome()+" creazione in corso...");

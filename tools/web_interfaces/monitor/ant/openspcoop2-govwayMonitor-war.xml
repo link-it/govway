@@ -16,18 +16,18 @@
 	<target name="war_openspcoop2_govwayMonitor" depends="css_openspcoop2_govwayMonitor">
 
 		<!-- Properties -->
-		<copy file="${properties_govwayMonitor}/daoFactory_local.properties" todir="${build_govwayMonitor}/tmp" />
+		<copy file="${properties_govwayMonitor}/daoFactory.properties" todir="${build_govwayMonitor}/tmp" />
 		<copy file="${properties_govwayMonitor}/monitor.properties" todir="${build_govwayMonitor}/tmp" />
 				
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes" >
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory.properties" append="yes" >
 
 # ----- Personalizzazione Tomcat -------------
 				</concat>
 				<antcall target="set_property">
-				    <param name="file" value="${build_govwayMonitor}/tmp/daoFactory_local.properties"/>
+				    <param name="file" value="${build_govwayMonitor}/tmp/daoFactory.properties"/>
 					<param name="token" value="db.datasource.jndiName"/>
 					<param name="value" value="java:/comp/env/org.govway.datasource.console"/>
 				</antcall>
@@ -42,11 +42,11 @@
 				<equals arg1="${plugins.classpath.properties.dao}" arg2=""/>
 			</not>
 			<then>
-				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes" >
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory.properties" append="yes" >
 
 # ----- Personalizzazione Plugins -------------
 				</concat>
-				<concat destfile="${build_govwayMonitor}/tmp/daoFactory_local.properties" append="yes">
+				<concat destfile="${build_govwayMonitor}/tmp/daoFactory.properties" append="yes">
 					<filelist dir="${plugins_govwayMonitor}" files="${plugins.classpath.properties.dao}"/>
 				</concat>
 			</then>
@@ -134,7 +134,7 @@
 				<include name="messages_it.properties" />
 			</classes>
 			<classes dir="${build_govwayMonitor}/tmp">
-				<include name="daoFactory_local.properties" />
+				<include name="daoFactory.properties" />
 				<include name="monitor.properties" />
 			</classes>
 			<lib dir="${required_lib_govwayMonitor}/commons">

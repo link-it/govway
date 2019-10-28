@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -60,11 +61,21 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 		this.realname = realname;
 	}
 	
-	public void fillResponse(AuthenticationException authException, HttpServletResponse httpResponse) {
-		AbstractBasicAuthenticationEntryPoint.fillResponse(httpResponse, getPayload(authException, httpResponse));
+	private TimeZone timeZone = TimeZone.getDefault();
+	private String timeZoneId = null;
+	public String getTimeZoneId() {
+		return this.timeZoneId;
+	}
+	public void setTimeZoneId(String timeZoneId) {
+		this.timeZoneId = timeZoneId;
+		this.timeZone = TimeZone.getTimeZone(timeZoneId);
 	}
 	
-	public static void fillResponse(HttpServletResponse httpResponse, Response response) {
+	public void fillResponse(AuthenticationException authException, HttpServletResponse httpResponse) {
+		AbstractBasicAuthenticationEntryPoint.fillResponse(httpResponse, getPayload(authException, httpResponse), this.timeZone);
+	}
+	
+	public static void fillResponse(HttpServletResponse httpResponse, Response response, TimeZone timeZone) {
 		ByteArrayInputStream bais = null;
 		ServletOutputStream outputStream = null;
 		try{
@@ -89,7 +100,7 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 				}
 			}
 
-			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper(false);
+			ObjectMapper mapper = JacksonJsonProvider.getObjectMapper(false, timeZone);
 			String fault = mapper.writeValueAsString(response.getEntity());
 			bais = new ByteArrayInputStream(fault.getBytes());
 

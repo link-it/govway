@@ -137,8 +137,9 @@ public class Startup implements ServletContextListener {
 			Startup.log.info("Inizializzazione DBManager in corso...");
 			try{
 				DatasourceProperties dbProperties = DatasourceProperties.getInstance();
-				DBManager.initialize(dbProperties.getDbDataSource(), dbProperties.getDbDataSourceContext(),
-						dbProperties.getDbTipoDatabase(), dbProperties.isShowSql());
+				DBManager.initialize(dbProperties.getConfigDataSource(), dbProperties.getConfigDataSourceContext(), dbProperties.getConfigTipoDatabase(),
+						dbProperties.getTracceDataSource(), dbProperties.getTracceDataSourceContext(), dbProperties.getTracceTipoDatabase(),
+						dbProperties.isShowSql());
 			}catch(Exception e){
 				throw new RuntimeException(e.getMessage(),e);
 			}

@@ -339,7 +339,7 @@
 
 		<!-- dao properties -->
 		<fileset dir="${plugins_govwayMonitor}" id="plugins.properties.dao">
-			<include name="**/daoFactory_local.properties.adjunct" />
+			<include name="**/daoFactory.properties.adjunct" />
 		</fileset>
 		<pathconvert pathsep=" " property="plugins.classpath.properties.dao" refid="plugins.properties.dao">
 			<map from="${plugins_govwayMonitor}/" to="" />

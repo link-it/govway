@@ -22,6 +22,7 @@
 package org.openspcoop2.utils.service.authentication.handler.jaxrs;
 
 import java.io.IOException;
+import java.util.TimeZone;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -42,9 +43,19 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
  */
 public class DefaultAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
+	private TimeZone timeZone = TimeZone.getDefault();
+	private String timeZoneId = null;
+	public String getTimeZoneId() {
+		return this.timeZoneId;
+	}
+	public void setTimeZoneId(String timeZoneId) {
+		this.timeZoneId = timeZoneId;
+		this.timeZone = TimeZone.getTimeZone(timeZoneId);
+	}
+	
 	@Override
 	public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse res, AuthenticationException exception) throws IOException, ServletException {
-		AbstractBasicAuthenticationEntryPoint.fillResponse(res, getPayload(exception, res));
+		AbstractBasicAuthenticationEntryPoint.fillResponse(res, getPayload(exception, res), this.timeZone);
 	}
 
 	public Response getPayload(AuthenticationException authException, HttpServletResponse httpResponse) {

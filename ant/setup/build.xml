@@ -1477,7 +1477,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/log4j2.properties"/>
 		</antcall>
 		<antcall target="govwayMonitor_datasource_properties_settings">
-		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/daoFactory_local.properties"/>
+		    <param name="file" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes/daoFactory.properties"/>
 		</antcall>
 		<antcall target="dos2unix">
 			<param name="dir" value="${tmp_archivi}/govwayMonitor.war/WEB-INF/classes"/>

@@ -22,10 +22,12 @@
 
 package org.openspcoop2.utils.date;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
 /**     
@@ -306,5 +308,69 @@ public class DateUtils {
 			throw new UtilsException("Found time '"+fullTime+"' has wrong format (see RFC 3339, section 5.6): "+e.getMessage(),e);
 		}
 	}
+	
+	
+	
+	
+
+	/** FORMAT Simple Date Format */
+	
+	public static final String SIMPLE_DATE_FORMAT_MS = Utilities.SIMPLE_DATE_FORMAT_MS;
+	public static SimpleDateFormat getSimpleDateFormatMs() {
+		return Utilities.getSimpleDateFormatMs();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ = Utilities.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ;
+	public static SimpleDateFormat getSimpleDateFormatMs_ISO_8601_TZ() {
+		return Utilities.getSimpleDateFormatMs_ISO_8601_TZ();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_SECOND = Utilities.SIMPLE_DATE_FORMAT_SECOND;
+	public static SimpleDateFormat getSimpleDateFormatSecond() {
+		return Utilities.getSimpleDateFormatSecond();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ = Utilities.SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ;
+	public static SimpleDateFormat getSimpleDateFormatSecond_ISO_8601_TZ() {
+		return Utilities.getSimpleDateFormatSecond_ISO_8601_TZ();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_MINUTE = Utilities.SIMPLE_DATE_FORMAT_MINUTE;
+	public static SimpleDateFormat getSimpleDateFormatMinute() {
+		return Utilities.getSimpleDateFormatMinute();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ = Utilities.SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ;
+	public static SimpleDateFormat getSimpleDateFormatMinute_ISO_8601_TZ() {
+		return Utilities.getSimpleDateFormatMinute_ISO_8601_TZ();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_HOUR = Utilities.SIMPLE_DATE_FORMAT_HOUR;
+	public static SimpleDateFormat getSimpleDateFormatHour() {
+		return Utilities.getSimpleDateFormatHour();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ = Utilities.SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ;
+	public static SimpleDateFormat getSimpleDateFormatHour_ISO_8601_TZ() {
+		return Utilities.getSimpleDateFormatHour_ISO_8601_TZ();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_DAY = Utilities.SIMPLE_DATE_FORMAT_DAY;
+	public static SimpleDateFormat getSimpleDateFormatDay() {
+		return Utilities.getSimpleDateFormatDay();
+	}
+	
+	public static final String SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ = Utilities.SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ;
+	public static SimpleDateFormat getSimpleDateFormatDay_ISO_8601_TZ() {
+		return Utilities.getSimpleDateFormatDay_ISO_8601_TZ();
+	}
+
+	public static Date parseDate(String dateParam) throws ParseException {
+		return Utilities.parseDateRFC3339_sec5_6(dateParam);
+	} 
+	public static Date parseDateRFC3339_sec5_6(String dateParam) throws ParseException {
+		return Utilities.parseDateRFC3339_sec5_6(dateParam);
+	} 
+	
 	
 }

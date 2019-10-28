@@ -535,12 +535,12 @@ public class ReportisticaHelper {
 		StatisticheGiornaliereService statisticheService = null;
 		ServiceManagerProperties smp = null;
 		try {
-			connection = dbManager.getConnection();
-			smp = dbManager.getServiceManagerProperties();
+			connection = dbManager.getConnectionTracce();
+			smp = dbManager.getServiceManagerPropertiesTracce();
 			statisticheService = new StatisticheGiornaliereService(connection, true, smp,
 					LoggerProperties.getLoggerDAO());
 		} catch (Exception e) {
-			dbManager.releaseConnection(connection);
+			dbManager.releaseConnectionTracce(connection);
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 
@@ -549,7 +549,7 @@ public class ReportisticaHelper {
 		} catch (Exception e) {
 			throw FaultCode.NOT_FOUND.toException(e);
 		} finally {
-			dbManager.releaseConnection(connection);
+			dbManager.releaseConnectionTracce(connection);
 		}
 	}
 

@@ -51,23 +51,45 @@ public class DBManager {
 
 	private static boolean initialized = false;
 
-	private ServiceManagerProperties serviceManagerProperties;
-	public ServiceManagerProperties getServiceManagerProperties() {
-		return this.serviceManagerProperties;
+	/** DataSource dove attingere connessioni della configurazione */
+
+	private ServiceManagerProperties serviceManagerPropertiesConfig;
+	public ServiceManagerProperties getServiceManagerPropertiesConfig() {
+		return this.serviceManagerPropertiesConfig;
+	}
+	
+	private DataSource dataSourceConfig = null;
+
+	private String dataSourceConfigName = null;
+	private java.util.Properties dataSourceConfigContext = null;
+	public String getDataSourceConfigName() {
+		return this.dataSourceConfigName;
 	}
 
-	/** DataSource dove attingere connessioni */
-	private DataSource dataSource = null;
+	public java.util.Properties getDataSourceConfigContext() {
+		return this.dataSourceConfigContext;
+	}
+	
+	/** DataSource dove attingere connessioni delle tracce */
+	
+	private ServiceManagerProperties serviceManagerPropertiesTracce;
+	public ServiceManagerProperties getServiceManagerPropertiesTracce() {
+		return this.serviceManagerPropertiesTracce;
+	}
+	
+	private DataSource dataSourceTracce = null;
 
-	private String dataSourceName = null;
-	private java.util.Properties dataSourceContext = null;
-	public String getDataSourceName() {
-		return this.dataSourceName;
+	private String dataSourceTracceName = null;
+	private java.util.Properties dataSourceTracceContext = null;
+	public String getDataSourceTracceName() {
+		return this.dataSourceTracceName;
 	}
 
-	public java.util.Properties getDataSourceContext() {
-		return this.dataSourceContext;
+	public java.util.Properties getDataSourceTracceContext() {
+		return this.dataSourceTracceContext;
 	}
+	
+	
 	
 	/**
 	 * Viene chiamato in causa per istanziare il datasource
@@ -77,37 +99,73 @@ public class DBManager {
 	 * @param context
 	 *            Contesto JNDI da utilizzare
 	 */
-	private DBManager(String jndiName, java.util.Properties context, 
-			String tipoDB, boolean debug) throws Exception {
+	private DBManager(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
+			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 
+			boolean debug) throws Exception {
 		try {
 			DBManager.log = LoggerProperties.getLoggerCore();
-			this.dataSourceName = jndiName;
-			this.dataSourceContext = context;
 			
-			if (context != null) {
-				DBManager.log.info("Proprieta' di contesto:" + context.size());
-				Enumeration<?> en = context.keys();
+			
+			/** DataSource dove attingere connessioni della configurazione */
+			
+			this.dataSourceConfigName = jndiNameConfig;
+			this.dataSourceConfigContext = contextConfig;
+			
+			if (this.dataSourceConfigContext != null) {
+				DBManager.log.info("Proprieta' di contesto:" + this.dataSourceConfigContext.size());
+				Enumeration<?> en = this.dataSourceConfigContext.keys();
 				while (en.hasMoreElements()) {
 					String key = (String) en.nextElement();
-					DBManager.log.info("\tNome[" + key + "] Valore[" + context.getProperty(key) + "]");
+					DBManager.log.info("\tNome[" + key + "] Valore[" + this.dataSourceConfigContext.getProperty(key) + "]");
 				}
 			} else {
 				DBManager.log.info("Proprieta' di contesto non fornite");
 			}
 
-			DBManager.log.info("Nome dataSource:" + jndiName);
+			DBManager.log.info("Nome dataSource:" + this.dataSourceConfigName);
 
 			InitialContext initC = null;
-			if (context != null && context.size() > 0)
-				initC = new InitialContext(context);
+			if (this.dataSourceConfigContext != null && this.dataSourceConfigContext.size() > 0)
+				initC = new InitialContext(this.dataSourceConfigContext);
 			else
 				initC = new InitialContext();
-			this.dataSource = (DataSource) initC.lookup(jndiName);
+			this.dataSourceConfig = (DataSource) initC.lookup(this.dataSourceConfigName);
 			initC.close();
 			
-			this.serviceManagerProperties = new ServiceManagerProperties();
-			this.serviceManagerProperties.setDatabaseType(tipoDB);
-			this.serviceManagerProperties.setShowSql(debug);
+			this.serviceManagerPropertiesConfig = new ServiceManagerProperties();
+			this.serviceManagerPropertiesConfig.setDatabaseType(tipoDBConfig);
+			this.serviceManagerPropertiesConfig.setShowSql(debug);
+			
+			
+			/** DataSource dove attingere connessioni per le tracce */
+			
+			this.dataSourceTracceName = jndiNameTracce;
+			this.dataSourceTracceContext = contextTracce;
+			
+			if (this.dataSourceTracceContext != null) {
+				DBManager.log.info("Proprieta' di contesto:" + this.dataSourceTracceContext.size());
+				Enumeration<?> en = this.dataSourceTracceContext.keys();
+				while (en.hasMoreElements()) {
+					String key = (String) en.nextElement();
+					DBManager.log.info("\tNome[" + key + "] Valore[" + this.dataSourceTracceContext.getProperty(key) + "]");
+				}
+			} else {
+				DBManager.log.info("Proprieta' di contesto non fornite");
+			}
+
+			DBManager.log.info("Nome dataSource:" + this.dataSourceTracceName);
+
+			initC = null;
+			if (this.dataSourceTracceContext != null && this.dataSourceTracceContext.size() > 0)
+				initC = new InitialContext(this.dataSourceTracceContext);
+			else
+				initC = new InitialContext();
+			this.dataSourceTracce = (DataSource) initC.lookup(this.dataSourceTracceName);
+			initC.close();
+			
+			this.serviceManagerPropertiesTracce = new ServiceManagerProperties();
+			this.serviceManagerPropertiesTracce.setDatabaseType(tipoDBTracce);
+			this.serviceManagerPropertiesTracce.setShowSql(debug);
 
 		} catch (Exception e) {
 			DBManager.log.error("Lookup datasource non riuscita", e);
@@ -123,11 +181,14 @@ public class DBManager {
 	 * @param context
 	 *            Contesto JNDI da utilizzare
 	 */
-	public static boolean initialize(String jndiName, java.util.Properties context, 
-			String tipoDB, boolean debug) throws Exception {
+	public static boolean initialize(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
+			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 
+			boolean debug) throws Exception {
 		try {
 			if (DBManager.manager == null) {
-				DBManager.manager = new DBManager(jndiName, context, tipoDB, debug);
+				DBManager.manager = new DBManager(jndiNameConfig, contextConfig, tipoDBConfig, 
+						jndiNameTracce, contextTracce, tipoDBTracce,
+						debug);
 			}
 			DBManager.setInitialized(true);
 			return true;
@@ -150,16 +211,16 @@ public class DBManager {
 	/**
 	 * Viene chiamato in causa per ottenere una connessione al DB
 	 */
-	public java.sql.Connection getConnection() {
-		if (this.dataSource == null) {
+	public java.sql.Connection getConnectionConfig() {
+		if (this.dataSourceConfig == null) {
 			return null;
 		}
 
 		Connection connectionDB = null;
 		try {
-			connectionDB = this.dataSource.getConnection();
+			connectionDB = this.dataSourceConfig.getConnection();
 		} catch (Exception e) {
-			DBManager.log.error("getConnection from db", e);
+			DBManager.log.error("getConnectionConfig from db", e);
 			return null;
 		}
 
@@ -173,13 +234,49 @@ public class DBManager {
 	 * @param connectionDB
 	 *            Connessione da rilasciare.
 	 */
-	public void releaseConnection(java.sql.Connection connectionDB) {
+	public void releaseConnectionConfig(java.sql.Connection connectionDB) {
 		try {
 			if (connectionDB != null) {
 				connectionDB.close();
 			}
 		} catch (SQLException e) {
-			DBManager.log.error("closeConnection db", e);
+			DBManager.log.error("closeConnection config db", e);
+		}
+	}
+	
+	/**
+	 * Viene chiamato in causa per ottenere una connessione al DB
+	 */
+	public java.sql.Connection getConnectionTracce() {
+		if (this.dataSourceTracce == null) {
+			return null;
+		}
+
+		Connection connectionDB = null;
+		try {
+			connectionDB = this.dataSourceTracce.getConnection();
+		} catch (Exception e) {
+			DBManager.log.error("getConnectionTracce from db", e);
+			return null;
+		}
+
+		return connectionDB;
+	}
+
+	/**
+	 * Viene chiamato in causa per rilasciare una connessione al DB, effettuando
+	 * precedentemente un commit
+	 * 
+	 * @param connectionDB
+	 *            Connessione da rilasciare.
+	 */
+	public void releaseConnectionTracce(java.sql.Connection connectionDB) {
+		try {
+			if (connectionDB != null) {
+				connectionDB.close();
+			}
+		} catch (SQLException e) {
+			DBManager.log.error("closeConnection tracce db", e);
 		}
 	}
 

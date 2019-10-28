@@ -749,9 +749,14 @@ public class XMLDataConverter {
 				impostaInformazioniRegistroDB_PortaDominio(pdd);
 				
 				if( (reset==false) && this.gestoreCRUD.existsPortaDominio(pdd.getNome())){
-					this.log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento in corso...");
-					this.gestoreCRUD.updatePortaDominio(pdd);
-					this.log.info("Porta di Dominio "+pdd.getNome()+" aggiornata.");
+					if(updateEnabled) {
+						this.log.info("Porta di Dominio "+pdd.getNome()+" aggiornamento in corso...");
+						this.gestoreCRUD.updatePortaDominio(pdd);
+						this.log.info("Porta di Dominio "+pdd.getNome()+" aggiornata.");
+					}
+					else {
+						this.log.info("Porta di Dominio "+pdd.getNome()+" non aggiornata (aggiornamento disabilitato).");
+					}
 				}else{
 					this.log.info("Porta di Dominio "+pdd.getNome()+" creazione in corso...");
 					this.gestoreCRUD.createPortaDominio(pdd);
@@ -785,13 +790,18 @@ public class XMLDataConverter {
 				
 				IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
 				if( (reset==false) && this.gestoreCRUD.existsGruppo(idGruppo)){
-					this.log.info("Gruppo "+gruppo.getNome()+" aggiornamento in corso...");
-					this.gestoreCRUD.updateGruppo(gruppo);
-					this.log.info("Gruppo "+gruppo.getNome()+" aggiornata.");
+					if(updateEnabled) {
+						this.log.info("Gruppo "+gruppo.getNome()+" aggiornamento in corso...");
+						this.gestoreCRUD.updateGruppo(gruppo);
+						this.log.info("Gruppo "+gruppo.getNome()+" aggiornato.");
+					}
+					else {
+						this.log.info("Gruppo "+gruppo.getNome()+" non aggiornato (aggiornamento disabilitato).");
+					}
 				}else{
 					this.log.info("Gruppo "+gruppo.getNome()+" creazione in corso...");
 					this.gestoreCRUD.createGruppo(gruppo);
-					this.log.info("Gruppo "+gruppo.getNome()+" creata.");				
+					this.log.info("Gruppo "+gruppo.getNome()+" creato.");				
 				}
 				
 			}
@@ -815,13 +825,18 @@ public class XMLDataConverter {
 				
 				IDRuolo idRuolo = new IDRuolo(ruolo.getNome());
 				if( (reset==false) && this.gestoreCRUD.existsRuolo(idRuolo)){
-					this.log.info("Ruolo "+ruolo.getNome()+" aggiornamento in corso...");
-					this.gestoreCRUD.updateRuolo(ruolo);
-					this.log.info("Ruolo "+ruolo.getNome()+" aggiornata.");
+					if(updateEnabled) {
+						this.log.info("Ruolo "+ruolo.getNome()+" aggiornamento in corso...");
+						this.gestoreCRUD.updateRuolo(ruolo);
+						this.log.info("Ruolo "+ruolo.getNome()+" aggiornato.");
+					}
+					else {
+						this.log.info("Ruolo "+ruolo.getNome()+" non aggiornato (aggiornamento disabilitato).");
+					}
 				}else{
 					this.log.info("Ruolo "+ruolo.getNome()+" creazione in corso...");
 					this.gestoreCRUD.createRuolo(ruolo);
-					this.log.info("Ruolo "+ruolo.getNome()+" creata.");				
+					this.log.info("Ruolo "+ruolo.getNome()+" creato.");				
 				}
 				
 			}
@@ -846,13 +861,18 @@ public class XMLDataConverter {
 				
 				IDScope idScope = new IDScope(scope.getNome());
 				if( (reset==false) && this.gestoreCRUD.existsScope(idScope)){
-					this.log.info("Scope "+scope.getNome()+" aggiornamento in corso...");
-					this.gestoreCRUD.updateScope(scope);
-					this.log.info("Scope "+scope.getNome()+" aggiornata.");
+					if(updateEnabled) {
+						this.log.info("Scope "+scope.getNome()+" aggiornamento in corso...");
+						this.gestoreCRUD.updateScope(scope);
+						this.log.info("Scope "+scope.getNome()+" aggiornato.");
+					}
+					else {
+						this.log.info("Scope "+scope.getNome()+" non aggiornato (aggiornamento disabilitato).");
+					}
 				}else{
 					this.log.info("Scope "+scope.getNome()+" creazione in corso...");
 					this.gestoreCRUD.createScope(scope);
-					this.log.info("Scope "+scope.getNome()+" creata.");				
+					this.log.info("Scope "+scope.getNome()+" creato.");				
 				}
 				
 			}
@@ -871,7 +891,7 @@ public class XMLDataConverter {
 			
 			for(int i=0; i<this.sorgenteRegistro.sizeSoggettoList(); i++){
 				Soggetto soggetto = this.sorgenteRegistro.getSoggetto(i);
-				this.gestioneSoggetto(soggetto, reset, aggiornamentoSoggetti,pddConfig.getPddOperativaCtrlstatSinglePdd());
+				this.gestioneSoggetto(soggetto, reset, aggiornamentoSoggetti,pddConfig.getPddOperativaCtrlstatSinglePdd(), updateEnabled);
 			}
 			
 		}catch(Exception e){
@@ -890,7 +910,7 @@ public class XMLDataConverter {
 					ac.setStatoPackage(statoAccordo.toString());
 				}
 				
-				this.gestioneAccordoCooperazione(ac, reset);
+				this.gestioneAccordoCooperazione(ac, reset, updateEnabled);
 			}
 			
 		}catch(Exception e){
@@ -912,7 +932,7 @@ public class XMLDataConverter {
 				}
 				
 				if(as.getServizioComposto()==null){
-					this.gestioneAccordoServizioParteComune(as, reset);
+					this.gestioneAccordoServizioParteComune(as, reset, updateEnabled);
 				}else{
 					String idAccordoServizioComposto = this.idAccordoFactory.getUriFromAccordo(as);
 					this.log.debug("AccordoServizio ["+idAccordoServizioComposto+"] e' un accordo di servizio composto, verra posticipata la gestione dopo la creazione dei servizi");
@@ -950,7 +970,7 @@ public class XMLDataConverter {
 					
 					boolean servizioComposto = accordiServizioCompostiID.contains(servizio.getAccordoServizioParteComune());
 					if(!servizioComposto){
-						this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo);
+						this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo, updateEnabled);
 					}else{
 						String uri = this.idServizioFactory.getUriFromAccordo(servizio);
 						this.log.debug("Servizio ["+uri+"] e' un servizio composto, verra posticipata la gestione dopo la creazione degli accordi di servizio composti");
@@ -969,7 +989,7 @@ public class XMLDataConverter {
 		try{
 			while(accordiServizioComposti.size()>0){
 				AccordoServizioParteComune as = accordiServizioComposti.remove(0);
-				this.gestioneAccordoServizioParteComune(as, reset);
+				this.gestioneAccordoServizioParteComune(as, reset, updateEnabled);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -981,7 +1001,7 @@ public class XMLDataConverter {
 			while(servizioComposti.size()>0){
 				AccordoServizioParteSpecifica servizio = servizioComposti.remove(0);
 				Soggetto soggetto = servizioComposti_Soggetti.remove(0);
-				this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo);
+				this.gestioneServizio(servizio, soggetto, reset, mantieniFruitoriEsistenti,statoAccordo, updateEnabled);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -1503,7 +1523,7 @@ public class XMLDataConverter {
 		}
 	}
 	
-	private void gestioneSoggetto(Soggetto soggetto,boolean reset,boolean aggiornamentoSoggetti,String pddOperativaCtrlstatSinglePdd) throws Exception{
+	private void gestioneSoggetto(Soggetto soggetto,boolean reset,boolean aggiornamentoSoggetti,String pddOperativaCtrlstatSinglePdd, boolean updateEnabled) throws Exception{
 		soggetto.setSuperUser(this.superUser);
 		IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(),soggetto.getNome());
 		
@@ -1522,11 +1542,16 @@ public class XMLDataConverter {
 		
 		if( (reset==false) && this.gestoreCRUD.existsSoggetto(idSoggetto)){
 			if(aggiornamentoSoggetti){
-				this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
-				Soggetto old = ((IDriverRegistroServiziGet)this.gestoreCRUD).getSoggetto(idSoggetto);
-				impostaInformazioniRegistroDB_Soggetto_update(soggetto, old);
-				this.gestoreCRUD.updateSoggetto(soggetto);
-				this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+				if(updateEnabled) {
+					this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornamento in corso...");
+					Soggetto old = ((IDriverRegistroServiziGet)this.gestoreCRUD).getSoggetto(idSoggetto);
+					impostaInformazioniRegistroDB_Soggetto_update(soggetto, old);
+					this.gestoreCRUD.updateSoggetto(soggetto);
+					this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" aggiornato.");
+				}
+				else {
+					this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" non aggiornato (aggiornamento disabilitato).");
+				}
 			}
 		}else{
 			this.log.info("Soggetto "+soggetto.getTipo()+"/"+soggetto.getNome()+" creazione in corso...");
@@ -1535,7 +1560,7 @@ public class XMLDataConverter {
 		}
 	}
 	
-	private void gestioneAccordoCooperazione(AccordoCooperazione ac,boolean reset) throws Exception {
+	private void gestioneAccordoCooperazione(AccordoCooperazione ac,boolean reset, boolean updateEnabled) throws Exception {
 		ac.setSuperUser(this.superUser);
 		// bytes
 		for(int k=0; k<ac.sizeAllegatoList();k++){
@@ -1567,9 +1592,14 @@ public class XMLDataConverter {
 		IDAccordoCooperazione idAccordo = this.idAccordoCooperazioneFactory.getIDAccordoFromAccordo(ac);
 		String uriAC = this.idAccordoCooperazioneFactory.getUriFromIDAccordo(idAccordo);
 		if( (reset==false) && this.gestoreCRUD.existsAccordoCooperazione(idAccordo)){
-			this.log.info("Accordo di Cooperazione "+uriAC+" aggiornamento in corso...");
-			this.gestoreCRUD.updateAccordoCooperazione(ac);
-			this.log.info("Accordo di Cooperazione "+uriAC+" aggiornato");
+			if(updateEnabled) {
+				this.log.info("Accordo di Cooperazione "+uriAC+" aggiornamento in corso...");
+				this.gestoreCRUD.updateAccordoCooperazione(ac);
+				this.log.info("Accordo di Cooperazione "+uriAC+" aggiornato.");
+			}
+			else {
+				this.log.info("Accordo di Cooperazione "+uriAC+" non aggiornato (aggiornamento disabilitato).");
+			}
 		}else{
 			this.log.info("Accordo di Cooperazione "+uriAC+" creazione in corso...");
 			this.gestoreCRUD.createAccordoCooperazione(ac);
@@ -1652,7 +1682,7 @@ public class XMLDataConverter {
 		}
 	}
 	
-	private void gestioneAccordoServizioParteComune(AccordoServizioParteComune as,boolean reset) throws Exception{
+	private void gestioneAccordoServizioParteComune(AccordoServizioParteComune as,boolean reset, boolean updateEnabled) throws Exception{
 		as.setSuperUser(this.superUser);
 		if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
 			impostaInformazioniRegistroDB_AccordoServizioParteComune(as);
@@ -1752,9 +1782,14 @@ public class XMLDataConverter {
 		IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(as.getNome(),BeanUtilities.getSoggettoReferenteID(as.getSoggettoReferente()),as.getVersione());
 		String uriAS = this.idAccordoFactory.getUriFromIDAccordo(idAccordo);
 		if( (reset==false) && this.gestoreCRUD.existsAccordoServizioParteComune(idAccordo)){
-			this.log.info("Accordo di Servizio "+uriAS+" aggiornamento in corso...");
-			this.gestoreCRUD.updateAccordoServizioParteComune(as);
-			this.log.info("Accordo di Servizio "+uriAS+" aggiornato");
+			if(updateEnabled) {
+				this.log.info("Accordo di Servizio "+uriAS+" aggiornamento in corso...");
+				this.gestoreCRUD.updateAccordoServizioParteComune(as);
+				this.log.info("Accordo di Servizio "+uriAS+" aggiornato.");
+			}
+			else {
+				this.log.info("Accordo di Servizio "+uriAS+" non aggiornato (aggiornamento disabilitato).");
+			}
 		}else{
 			this.log.info("Accordo di Servizio "+uriAS+" creazione in corso...");
 			this.gestoreCRUD.createAccordoServizioParteComune(as);
@@ -1857,7 +1892,8 @@ public class XMLDataConverter {
 		}
 	}
 	
-	private void gestioneServizio(AccordoServizioParteSpecifica servizio,Soggetto soggetto,boolean reset,boolean mantieniFruitoriEsistenti,StatiAccordo statoAccordo) throws Exception{
+	private void gestioneServizio(AccordoServizioParteSpecifica servizio,Soggetto soggetto,boolean reset,
+			boolean mantieniFruitoriEsistenti,StatiAccordo statoAccordo, boolean updateEnabled) throws Exception{
 		servizio.setSuperUser(this.superUser);
 		servizio.setTipoSoggettoErogatore(soggetto.getTipo());
 		servizio.setNomeSoggettoErogatore(soggetto.getNome());
@@ -1926,18 +1962,23 @@ public class XMLDataConverter {
 		IDServizio idServizio = this.idServizioFactory.getIDServizioFromValues(servizio.getTipo(), servizio.getNome(), idSoggetto, servizio.getVersione());
 		String uri = this.idServizioFactory.getUriFromIDServizio(idServizio);
 		if( (reset==false) && (this.gestoreCRUD.existsAccordoServizioParteSpecifica(idServizio)) ){
-			this.log.info("Servizio "+uri+" aggiornamento in corso...");
-			
-			AccordoServizioParteSpecifica old = ((IDriverRegistroServiziGet)this.gestoreCRUD).getAccordoServizioParteSpecifica(idServizio);
-			impostaInformazioniRegistro_AccordoServizioParteSpecifica_update(servizio, old, mantieniFruitoriEsistenti);
-			
-			// stato package
-			if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
-				aggiornatoStatoFruitori(servizio, statoAccordo);
+			if(updateEnabled) {
+				this.log.info("Servizio "+uri+" aggiornamento in corso...");
+				
+				AccordoServizioParteSpecifica old = ((IDriverRegistroServiziGet)this.gestoreCRUD).getAccordoServizioParteSpecifica(idServizio);
+				impostaInformazioniRegistro_AccordoServizioParteSpecifica_update(servizio, old, mantieniFruitoriEsistenti);
+				
+				// stato package
+				if(CostantiConfigurazione.REGISTRO_DB.equals(this.tipoBEDestinazione)){
+					aggiornatoStatoFruitori(servizio, statoAccordo);
+				}
+				this.gestoreCRUD.updateAccordoServizioParteSpecifica(servizio);
+				
+				this.log.info("Servizio "+uri+" aggiornato.");
 			}
-			this.gestoreCRUD.updateAccordoServizioParteSpecifica(servizio);
-			
-			this.log.info("Servizio "+uri+" aggiornato.");
+			else {
+				this.log.info("Servizio "+uri+" non aggiornato (aggiornamento disabilitato).");
+			}
 		}else{
 			this.log.info("Servizio "+uri+" creazione in corso...");
 			// stato package

@@ -176,7 +176,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					<ui:include src="/transazioni/includes/transazioniGrid.xhtml">
 						<ui:param value="#{transazioniDM}" name="value" />
 						<ui:param value="Lista #{(searchFormTransazioni.modalitaRicercaStorico == 'intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico == 'idApplicativo') ? 
-											 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : 'Fruizioni')
+											 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : (searchFormTransazioni.tipologiaRicerca eq 'uscita' ? 'Fruizioni' :'Transazioni'))
 											 :
 											 'Transazioni' }" name="headerText" />
 						<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />

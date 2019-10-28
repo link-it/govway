@@ -75,8 +75,8 @@ public class AuthenticationProvider implements org.springframework.security.auth
 		DBManager dbManager = DBManager.getInstance();
 		Connection connection = null;
 		try {
-			connection = dbManager.getConnection();
-			ServiceManagerProperties smp = dbManager.getServiceManagerProperties();
+			connection = dbManager.getConnectionConfig();
+			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
 			DBLoginDAO loginService = new DBLoginDAO(connection, true, smp, LoggerProperties.getLoggerDAO());
 		
 			UserDetailsBean u = null;
@@ -142,7 +142,7 @@ public class AuthenticationProvider implements org.springframework.security.auth
 			return userAuth;
 		}
 		finally {
-			dbManager.releaseConnection(connection);
+			dbManager.releaseConnectionConfig(connection);
 		}
 
 	}

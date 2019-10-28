@@ -156,21 +156,37 @@ public class DatasourceProperties {
 	
 	/* ----- DB -------- */
 	
-	public String getDbDataSource() throws UtilsException{
-		return this.readProperty(true, "db.dataSource");
-	}
-	
-	public Properties getDbDataSourceContext() throws UtilsException{
-		return this.reader.readProperties_convertEnvProperties("db.dataSource.property.");
-	}
-	
-	public String getDbTipoDatabase() throws UtilsException{
-		return this.readProperty(true, "db.tipoDatabase");
-	}
-	
 	public boolean isShowSql() throws UtilsException{
 		return Boolean.parseBoolean(this.readProperty(true, "db.showSql"));
 	}
 	
+	
+	
+	public String getConfigDataSource() throws UtilsException{
+		return this.readProperty(true, "db.config.dataSource");
+	}
+	
+	public Properties getConfigDataSourceContext() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("db.config.dataSource.property.");
+	}
+	
+	public String getConfigTipoDatabase() throws UtilsException{
+		return this.readProperty(true, "db.config.tipoDatabase");
+	}
+	
+	
+	public String getTracceDataSource() throws UtilsException{
+		return this.readProperty(true, "db.tracce.dataSource");
+	}
+	
+	public Properties getTracceDataSourceContext() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("db.tracce.dataSource.property.");
+	}
+	
+	public String getTracceTipoDatabase() throws UtilsException{
+		return this.readProperty(true, "db.tracce.tipoDatabase");
+	}
+	
+
 
 }
