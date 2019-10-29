@@ -6605,6 +6605,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneProperties = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPERTIES, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
 			while (it.hasNext()) {
 				paSA = it.next();
@@ -6715,9 +6716,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 				image = new DataElementImage();
 				
-				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,pIdProvider, pIdPortaPerSA, pIdAsps, pIdTAb, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSA.getNome()),
-						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSA.getId()+""));
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneConnettore, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
+//				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,pIdProvider, pIdPortaPerSA, pIdAsps, pIdTAb, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
+//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSA.getNome()),
+//						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSA.getId()+""));
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
@@ -6821,10 +6823,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			BehaviourType beaBehaviourType, String nomeSAConnettore,
 			String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore, String vProprieta) {
 		
+		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
+		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
+		boolean visualizzaFiltri = ServletUtils.isCheckBoxEnabled(vFiltri);
+		
 		DataElement de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI);
-		de.setType(DataElementType.TITLE);
-		dati.add(de);
+		
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (visualizzaDatiGenerali || visualizzaDescrizione || visualizzaFiltri))) {
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI);
+			de.setType(DataElementType.TITLE);
+			dati.add(de);
+		}
 		
 		de = new DataElement();
 		de.setLabel("");
@@ -6837,7 +6846,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
-		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
+		
 		
 		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
 			de.setType(DataElementType.TEXT_EDIT);
@@ -6869,7 +6878,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
-		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
+		
 			
 		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDescrizione)) {
 			de.setType(DataElementType.TEXT_AREA);
@@ -6885,7 +6894,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
 		if(beaBehaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
-			boolean visualizzaFiltri = ServletUtils.isCheckBoxEnabled(vFiltri);
+			
 			
 			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaFiltri)) {
 				de.setType(DataElementType.TEXT_EDIT);
@@ -6901,6 +6910,59 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		dati.add(de);
 		
+		dati = this.addInformazioniGruppiAsHiddenToDati(tipoOp, dati, vDatiGenerali, vDescrizione, vProprieta, vConnettore, vFiltri);
+		
+		return dati;
+	}
+	
+	public Vector<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, Vector<DataElement> dati,	
+			String visualizzaDatiGenerali, String visualizzaDescrizione, String visualizzaProperties, String visualizzaConnettore, String visualizzaFiltri) {
+		
+//		Parameter pConfigurazioneDatiGenerali = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, visualizzaDatiGenerali);
+//		Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE, visualizzaDescrizione);
+//		Parameter pConfigurazioneProperties = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPERTIES, visualizzaProperties);
+//		Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, visualizzaFiltri);
+//		Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, visualizzaConnettore);
+		
+		if(visualizzaDatiGenerali != null) {
+			DataElement de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(visualizzaDatiGenerali);
+			dati.add(de);
+		}
+		
+		if(visualizzaDescrizione != null) {
+			DataElement de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(visualizzaDescrizione);
+			dati.add(de);
+		}
+		
+		if(visualizzaProperties != null) {
+			DataElement de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPERTIES);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(visualizzaProperties);
+			dati.add(de);
+		}
+		
+		if(visualizzaFiltri != null) {
+			DataElement de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(visualizzaFiltri);
+			dati.add(de);
+		}
+		
+		if(visualizzaConnettore != null) {
+			DataElement de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(visualizzaConnettore);
+			dati.add(de);
+		}
 		
 		return dati;
 	}
