@@ -105,6 +105,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
 import org.openspcoop2.core.config.CorsConfigurazioneMethods;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -9668,6 +9669,124 @@ public abstract class AbstractSerializer {
 	 */
 	public String toString(Scope scope,boolean prettyPrint) throws SerializerException {
 		return this.objToXml(Scope.class, scope, prettyPrint).toString();
+	}
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-consegna-applicativi
+	 =================================================================================
+	*/
+	
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, false);
+	}
+	/**
+	 * Serialize to file system in <var>fileName</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param fileName Xml file to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(String fileName,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi,boolean prettyPrint) throws SerializerException {
+		this.objToXml(fileName, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SerializerException {
+		this.objToXml(file, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, false);
+	}
+	/**
+	 * Serialize to file system in <var>file</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param file Xml file to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(File file,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi,boolean prettyPrint) throws SerializerException {
+		this.objToXml(file, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, prettyPrint);
+	}
+	
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SerializerException {
+		this.objToXml(out, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, false);
+	}
+	/**
+	 * Serialize to output stream <var>out</var> the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param out OutputStream to serialize the object <var>accessoDatiConsegnaApplicativi</var>
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized in xml file <var>fileName</var>
+	 * @param prettyPrint if true output the XML with indenting
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public void write(OutputStream out,AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi,boolean prettyPrint) throws SerializerException {
+		this.objToXml(out, AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, prettyPrint);
+	}
+			
+	/**
+	 * Serialize to byte array the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SerializerException {
+		return this.objToXml(AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, false).toByteArray();
+	}
+	/**
+	 * Serialize to byte array the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized in byte array
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public byte[] toByteArray(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, prettyPrint).toByteArray();
+	}
+	
+	/**
+	 * Serialize to String the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) throws SerializerException {
+		return this.objToXml(AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, false).toString();
+	}
+	/**
+	 * Serialize to String the object <var>accessoDatiConsegnaApplicativi</var> of type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param accessoDatiConsegnaApplicativi Object to be serialized
+	 * @param prettyPrint if true output the XML with indenting
+	 * @return Object to be serialized as String
+	 * @throws SerializerException The exception that is thrown when an error occurs during serialization
+	 */
+	public String toString(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi,boolean prettyPrint) throws SerializerException {
+		return this.objToXml(AccessoDatiConsegnaApplicativi.class, accessoDatiConsegnaApplicativi, prettyPrint).toString();
 	}
 	
 	

@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -181,7 +182,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 					
 						modalitaConsegna = behaviourType.getValue();
-						if(behaviourType.equals(BehaviourType.CUSTOM)) {
+						if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+							loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(portaApplicativa.getBehaviour());
+						}
+						else if(behaviourType.equals(BehaviourType.CUSTOM)) {
 							visualizzaLinkProprietaCustom = true;
 							tipoCustom = portaApplicativa.getBehaviour().getNome();
 						}
@@ -239,6 +243,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					break;
 				case CONSEGNA_LOAD_BALANCE:
 					behaviour.setNome(modalitaConsegna);
+					ConfigurazioneLoadBalancer.addLoadBalancerType(behaviour, loadBalanceStrategia);
 					break;
 				case CONSEGNA_MULTIPLA:
 					behaviour.setNome(modalitaConsegna);

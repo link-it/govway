@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.mdb;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -84,6 +85,7 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 	 * Behaviour
 	 */
 	private ConsegnaContenutiApplicativiBehaviourMessage behaviour = null;
+	private BehaviourLoadBalancer loadBalancer;
 	
 
 	/* ********  C O S T R U T T O R E  ******** */
@@ -167,6 +169,10 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		this.behaviour = behaviour;
 	}
 	
+	public void setLoadBalancer(BehaviourLoadBalancer loadBalancer) {
+		this.loadBalancer = loadBalancer;
+	}
+	
 
 
 	/* ********  G E T T E R   ******** */
@@ -236,6 +242,9 @@ public class ConsegnaContenutiApplicativiMessage implements GenericMessage {
 		return this.behaviour;
 	}
 
+	public BehaviourLoadBalancer getLoadBalancer() {
+		return this.loadBalancer;
+	}
 
 }
 

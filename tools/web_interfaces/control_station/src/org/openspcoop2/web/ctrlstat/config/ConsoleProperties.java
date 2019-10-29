@@ -732,6 +732,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.disabilitaServizioIntegrationManager");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaGestioneConsegnaApplicativi");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
 	}

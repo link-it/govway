@@ -75,3 +75,13 @@ end;
 
 
 
+ALTER TABLE configurazione ADD consegna_statocache VARCHAR2(255);
+ALTER TABLE configurazione ADD consegna_dimensionecache VARCHAR2(255);
+ALTER TABLE configurazione ADD consegna_algoritmocache VARCHAR2(255);
+ALTER TABLE configurazione ADD consegna_idlecache VARCHAR2(255);
+ALTER TABLE configurazione ADD consegna_lifecache VARCHAR2(255);
+
+UPDATE configurazione set consegna_statocache='abilitato';
+UPDATE configurazione set consegna_dimensionecache='10000';
+UPDATE configurazione set consegna_algoritmocache='lru';
+UPDATE configurazione set consegna_lifecache='-1';

@@ -35,6 +35,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
@@ -55,7 +56,7 @@ import org.w3c.dom.Element;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ServizioApplicativoContentBasedBehaviour implements IBehaviour {
+public class ServizioApplicativoContentBasedBehaviour extends AbstractCore implements IBehaviour {
 
 	private static final String PATTERN_GENERICO = "pattern";
 	private static final String PATTERN_MODE_NOT_FOUND = "notFound";

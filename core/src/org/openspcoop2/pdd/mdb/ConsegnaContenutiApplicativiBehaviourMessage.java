@@ -57,6 +57,7 @@ public class ConsegnaContenutiApplicativiBehaviourMessage implements Serializabl
 
 	/* ********  C O S T R U T T O R E  ******** */
 
+
 	/**
 	 * Costruttore. 
 	 *
@@ -92,6 +93,7 @@ public class ConsegnaContenutiApplicativiBehaviourMessage implements Serializabl
 	public void setIdTransazioneApplicativoServer(IdTransazioneApplicativoServer idTransazioneApplicativoServer) {
 		this.idTransazioneApplicativoServer = idTransazioneApplicativoServer;
 	}
+	
 }
 
 

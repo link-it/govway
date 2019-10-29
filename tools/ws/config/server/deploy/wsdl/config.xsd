@@ -872,6 +872,7 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-autenticazione" type="accesso-dati-autenticazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-gestione-token" type="accesso-dati-gestione-token"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-keystore" type="accesso-dati-keystore"/>
+			<xsd:element maxOccurs="1" minOccurs="0" name="accesso-dati-consegna-applicativi" type="accesso-dati-consegna-applicativi"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="multitenant" type="configurazione-multitenant"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="url-invocazione" type="configurazione-url-invocazione"/>
 			<xsd:element maxOccurs="1" minOccurs="0" name="validazione-buste" type="validazione-buste"/>
@@ -997,7 +998,14 @@
 			<xsd:element maxOccurs="1" minOccurs="0" name="crl-item-life-second" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>
-
+	
+	<!-- Informazioni per la consegna agli applicativi -->
+	<xsd:complexType name="accesso-dati-consegna-applicativi">
+		<xsd:sequence>
+			<xsd:element maxOccurs="1" minOccurs="0" name="cache" type="cache"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
 	<!-- Configurazione Multitenant -->
 	<xsd:complexType name="configurazione-multitenant">
 		<xsd:attribute default="disabilitato" name="stato" type="StatoFunzionalita"/>

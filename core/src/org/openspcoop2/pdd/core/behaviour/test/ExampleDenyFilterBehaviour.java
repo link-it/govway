@@ -25,6 +25,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
@@ -40,7 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExampleDenyFilterBehaviour implements IBehaviour {
+public class ExampleDenyFilterBehaviour extends AbstractCore implements IBehaviour {
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,

@@ -39,6 +39,15 @@ public class Behaviour {
 	private IDServizioApplicativo applicativeSyncResponder;
 	private List<BehaviourForwardTo> forwardTo = new ArrayList<BehaviourForwardTo>();
 	
+	private BehaviourLoadBalancer loadBalancer;
+	
+	public BehaviourLoadBalancer getLoadBalancer() {
+		return this.loadBalancer;
+	}
+	public void setLoadBalancer(BehaviourLoadBalancer loadBalancer) {
+		this.loadBalancer = loadBalancer;
+	}
+	
 	public boolean isResponseTo() {
 		return this.responseTo!=null && this.responseTo.isResponseTo();
 	}
@@ -62,4 +71,6 @@ public class Behaviour {
 	public void setApplicativeSyncResponder(IDServizioApplicativo applicativeSyncResponder) {
 		this.applicativeSyncResponder = applicativeSyncResponder;
 	}
+	
+	
 }

@@ -6402,18 +6402,21 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			} else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue())) {
 				// select list con strategia
-//				de = new DataElement();
-//				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
-//				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
-//				de.setType(DataElementType.SELECT);
-//				 
-//				String [] strategiaLabels = PorteApplicativeCostanti.LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
-//				String [] strategiaValues = PorteApplicativeCostanti.VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
-//				
-//				de.setValues(strategiaValues);
-//				de.setLabels(strategiaLabels);
-//				de.setSelected(loadBalanceStrategia);
-//				dati.addElement(de);
+				de = new DataElement();
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+				de.setType(DataElementType.SELECT);
+				 
+				String [] strategiaLabels = PorteApplicativeCostanti.LABELS_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
+				String [] strategiaValues = PorteApplicativeCostanti.VALUES_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA;
+				
+				de.setValues(strategiaValues);
+				de.setLabels(strategiaLabels);
+				de.setSelected(loadBalanceStrategia);
+				DataElementInfo dInfo = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA);
+				dInfo.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_INFO);
+				de.setInfo(dInfo);
+				dati.addElement(de);
 				
 			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
 				// form

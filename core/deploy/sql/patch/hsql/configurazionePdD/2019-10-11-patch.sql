@@ -54,3 +54,13 @@ CREATE INDEX INDEX_PA_BEHAVIOUR_PROP ON pa_behaviour_props (id_porta);
 CREATE TABLE pa_behaviour_props_init_seq (id BIGINT);
 INSERT INTO pa_behaviour_props_init_seq VALUES (NEXT VALUE FOR seq_pa_behaviour_props);
 
+ALTER TABLE configurazione ADD COLUMN consegna_statocache VARCHAR(255);
+ALTER TABLE configurazione ADD COLUMN consegna_dimensionecache VARCHAR(255);
+ALTER TABLE configurazione ADD COLUMN consegna_algoritmocache VARCHAR(255);
+ALTER TABLE configurazione ADD COLUMN consegna_idlecache VARCHAR(255);
+ALTER TABLE configurazione ADD COLUMN consegna_lifecache VARCHAR(255);
+
+UPDATE configurazione set consegna_statocache='abilitato';
+UPDATE configurazione set consegna_dimensionecache='10000';
+UPDATE configurazione set consegna_algoritmocache='lru';
+UPDATE configurazione set consegna_lifecache='-1';

@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.behaviour.test;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
@@ -37,7 +38,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExampleResponseToDefaultBehaviour implements IBehaviour {
+public class ExampleResponseToDefaultBehaviour extends AbstractCore implements IBehaviour {
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,

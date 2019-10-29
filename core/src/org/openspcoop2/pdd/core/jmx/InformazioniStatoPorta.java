@@ -62,6 +62,7 @@ public class InformazioniStatoPorta {
 				null,null,
 				null,null,
 				null,null,
+				null,
 				informazioniInstallazione,
 				cache);
 	}
@@ -83,6 +84,7 @@ public class InformazioniStatoPorta {
 			String statoConnessioniDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoConnessioniPD, String statoConnessioniPA, 
+			String statoPoolThread,
 			String informazioniInstallazione,
 			InformazioniStatoPortaCache ... cache){
 		
@@ -296,6 +298,16 @@ public class InformazioniStatoPorta {
 			bf.append("=========================================================================\n");
 			bf.append("\n");
 			bf.append(statoConnessioniPA);
+			bf.append("\n");
+			bf.append("\n");
+		}
+		
+		if(statoPoolThread!=null){
+			bf.append("=========================================================\n");
+			bf.append("Stato Thread Pool per la Consegna agli Applicativi\n");
+			bf.append("=========================================================\n");
+			bf.append("\n");
+			bf.append(statoPoolThread);
 			bf.append("\n");
 			bf.append("\n");
 		}

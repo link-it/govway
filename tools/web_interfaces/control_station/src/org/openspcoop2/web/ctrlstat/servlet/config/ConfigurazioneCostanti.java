@@ -482,6 +482,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
 	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI = "Cache (Load Balancer)";
+	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime";
@@ -507,6 +509,7 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP = "Connessioni HTTP Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
@@ -701,6 +704,12 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE = "idlecacheRisposte";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE = "lifecacheRisposte";
 	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONSEGNA = "statocacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONSEGNA = "dimensionecacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONSEGNA = "algoritmocacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA = "idlecacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA = "lifecacheConsegna";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
@@ -729,6 +738,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO = "transazioniIDProt";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
