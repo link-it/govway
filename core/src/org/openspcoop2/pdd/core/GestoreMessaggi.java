@@ -1307,8 +1307,8 @@ public class GestoreMessaggi  {
 				String columnErroreProcessamento = "";
 				String valueErroreProcessamento = "";
 				if(impostaPerConsegnaTimerContenutiApplicativi) {
-					columnErroreProcessamento = ",ERRORE_PROCESSAMENTO";
-					valueErroreProcessamento = ", ?";
+					columnErroreProcessamento = ",ERRORE_PROCESSAMENTO,ERRORE_PROCESSAMENTO_COMPACT";
+					valueErroreProcessamento = ", ? , ?";
 				}
 				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA,ATTESA_ESITO"+columnErroreProcessamento+
 						") VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?"+valueErroreProcessamento+")");
@@ -1341,6 +1341,7 @@ public class GestoreMessaggi  {
 					pstmt.setInt(index++,CostantiDB.FALSE);
 				
 				if(impostaPerConsegnaTimerContenutiApplicativi) {
+					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 				}
 
@@ -1578,18 +1579,25 @@ public class GestoreMessaggi  {
 						query.append(GestoreMessaggi.MESSAGGI);
 					else
 						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(" SET ERRORE_PROCESSAMENTO=? WHERE ID_MESSAGGIO = ?");
+					query.append(" SET ERRORE_PROCESSAMENTO=?, ERRORE_PROCESSAMENTO_COMPACT=? WHERE ID_MESSAGGIO = ?");
 					if(servizioApplicativo!=null)
 						query.append(" AND SERVIZIO_APPLICATIVO=?");
 					else
 						query.append(" AND TIPO=?");
 					pstmt = connectionDB.prepareStatement(query.toString());
-					pstmt.setString(1,prefix+motivoErrore);
-					pstmt.setString(2,this.idBusta);
+					int index = 1;
+					pstmt.setString(index++,prefix+motivoErrore);
+					if(motivoErrore!=null && motivoErrore.length()>=200) { // per evitare anche caratteri strani che occupano maggiore spazio
+						pstmt.setString(index++,motivoErrore.substring(0, 200)+" ...");
+					}
+					else {
+						pstmt.setString(index++,motivoErrore);
+					}
+					pstmt.setString(index++,this.idBusta);
 					if(servizioApplicativo!=null)
-						pstmt.setString(3,servizioApplicativo);
+						pstmt.setString(index++,servizioApplicativo);
 					else
-						pstmt.setString(3,this.tipo);
+						pstmt.setString(index++,this.tipo);
 
 					pstmt.execute();
 					pstmt.close();
@@ -1762,7 +1770,7 @@ public class GestoreMessaggi  {
 					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 				else
 					query.append(GestoreMessaggi.MESSAGGI);
-				query.append(" SET RISPEDIZIONE=?, ERRORE_PROCESSAMENTO=? WHERE  ID_MESSAGGIO = ?");
+				query.append(" SET RISPEDIZIONE=?, ERRORE_PROCESSAMENTO=? WHERE  ID_MESSAGGIO = ?"); // non devo aggiornare ERRORE_PROCESSAMENTO_COMPACT poichè li non vi è l'informazione sulla rispedizione.
 				if(servizioApplicativo!=null)
 					query.append(" AND SERVIZIO_APPLICATIVO=?");
 				else
@@ -4342,7 +4350,7 @@ public class GestoreMessaggi  {
 					query.append(" ").append(GestoreMessaggi.MESSAGGI).append(".TIPO=? AND ").
 						  append(GestoreMessaggi.MESSAGGI).append(".PROPRIETARIO=? ");
 					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".TIPO_CONSEGNA=? ");
-					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO is not null "); // per non intralciare con la "prima" consegna
+					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null "); // per non intralciare con la "prima" consegna
 					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
 					query.append(" AND (").
 						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA is null ").
@@ -4381,7 +4389,7 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addWhereCondition("m.TIPO=?");
 					sqlQueryObject.addWhereCondition("m.PROPRIETARIO=?");
 					sqlQueryObject.addWhereCondition("sa.TIPO_CONSEGNA=?");
-					sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO is not null"); // per non intralciare con la "prima" consegna
+					sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null"); // per non intralciare con la "prima" consegna
 					sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
 					sqlQueryObject.addWhereCondition(false, "sa.LOCK_CONSEGNA is null", "sa.LOCK_CONSEGNA < ?");
 					sqlQueryObject.addWhereCondition(false, "sa.ATTESA_ESITO is null", "sa.ATTESA_ESITO <> ?");
@@ -4569,7 +4577,7 @@ public class GestoreMessaggi  {
 
 				// Costruzione Query Update
 				String condition = (clusterId==null || "".equals(clusterId)) ? "CLUSTER_ID is null" : " CLUSTER_ID=?";
-				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE "+condition;
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE "+condition+" AND LOCK_CONSEGNA is not null";
 				//log.debug("Query: "+query);
 				pstmt= connectionDB.prepareStatement(query);
 				int index = 1;

@@ -385,6 +385,18 @@
                             <linkit:sql-table-index-field name="tipo_consegna"/>
                             <linkit:sql-table-index-field name="integration_manager"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="MSG_SERV_APPL_ACQUIRE_SEND">
+                            <linkit:sql-table-index-field name="id_messaggio"/>
+                            <linkit:sql-table-index-field name="tipo_consegna"/>
+                            <linkit:sql-table-index-field name="errore_processamento_compact"/>
+                            <linkit:sql-table-index-field name="rispedizione" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="lock_consegna" ignoreTypeCompatibility="true"/>
+                            <linkit:sql-table-index-field name="attesa_esito"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="MSG_SERV_APPL_RELEASE_SEND">
+                            <linkit:sql-table-index-field name="cluster_id"/>
+                            <linkit:sql-table-index-field name="lock_consegna" ignoreTypeCompatibility="true"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -481,6 +493,17 @@
                                 <linkit:sql-column-comment><![CDATA[Assume il valore 'Connettore' se la consegna avviente tramite un connettore,
 'ConnectionReply' se viene ritornato tramite connectionReply,
 'IntegrationManager' se e' solo ottenibile tramite IntegrationManager]]></linkit:sql-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="errore_processamento_compact" type="xsd:string" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="ERRORE_PROCESSAMENTO_COMPACT" varchar="255"/>
+                                <linkit:sql-ddl-column-comment>Eventuale dettaglio dell'errore avvenuto durante la consegna del messaggio al servizio applicativo</linkit:sql-ddl-column-comment>
                             </linkit:generator>
                         </xsd:appinfo>
                     </xsd:annotation>
