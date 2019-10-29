@@ -21,10 +21,15 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
+import org.slf4j.Logger;
 
 /**
- * Costanti
+ * ConfigurazioneLoadBalancer
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
@@ -32,8 +37,82 @@ import org.openspcoop2.core.config.PortaApplicativaBehaviour;
  */
 public class ConfigurazioneLoadBalancer  {
 
-	public ConfigurazioneLoadBalancer(PortaApplicativaBehaviour behaviour) {
-		
+	public static void addLoadBalancerType(PortaApplicativaBehaviour paBehaviour, String type) {
+		Proprieta p = new Proprieta();
+		p.setNome(Costanti.LOAD_BALANCER_TYPE);
+		p.setValore(type);
+		paBehaviour.addProprieta(p);
 	}
+	public static String readLoadBalancerType(PortaApplicativaBehaviour paBehaviour) {
+		if(paBehaviour!=null && paBehaviour.sizeProprietaList()>0) {
+			for (Proprieta p : paBehaviour.getProprietaList()) {
+				if(Costanti.LOAD_BALANCER_TYPE.equals(p.getNome())) {
+					return p.getValore();
+				}
+			}
+		}
+		return null;
+	}	
 	
+	
+	public static void addLoadBalancerWeight(PortaApplicativaServizioApplicativo paSA, String weight) {
+		Proprieta p = new Proprieta();
+		p.setNome(Costanti.LOAD_BALANCER_WEIGHT);
+		p.setValore(weight);
+		paSA.getDatiConnettore().addProprieta(p);
+	}
+	public static String readLoadBalancerType(PortaApplicativaServizioApplicativo paSA) {
+		if(paSA!=null && paSA.getDatiConnettore()!=null && paSA.getDatiConnettore().sizeProprietaList()>0) {
+			for (Proprieta p : paSA.getDatiConnettore().getProprietaList()) {
+				if(Costanti.LOAD_BALANCER_WEIGHT.equals(p.getNome())) {
+					return p.getValore();
+				}
+			}
+		}
+		return null;
+	}	
+	
+	
+	
+	public static ConfigurazioneLoadBalancer read(PortaApplicativa pa, Logger log) throws CoreException {
+		ConfigurazioneLoadBalancer config = new ConfigurazioneLoadBalancer();
+		if(pa.getBehaviour()==null || pa.getBehaviour().sizeProprietaList()<=0) {
+			throw new CoreException("Load Balancer type undefined");
+		}
+		String type = null;
+		for (Proprieta p : pa.getBehaviour().getProprietaList()) {
+			if(Costanti.LOAD_BALANCER_TYPE.equals(p.getNome())) {
+				type = p.getValore();
+			}
+		}
+		if(type==null) {
+			throw new CoreException("Load Balancer type undefined");
+		}
+		LoadBalancerType enumType = LoadBalancerType.toEnumConstant(type);
+		if(enumType==null) {
+			throw new CoreException("Load Balancer type '"+type+"' unknown");
+		}
+		config.setType(enumType);
+		
+		config.setPool(GestoreLoadBalancerCaching.getLoadBalancerPool(pa, log));
+
+		return config;
+	}
+
+	private LoadBalancerType type;
+	private LoadBalancerPool pool;
+	
+	public LoadBalancerPool getPool() {
+		return this.pool;
+	}
+	public void setPool(LoadBalancerPool pool) {
+		this.pool = pool;
+	}
+	public LoadBalancerType getType() {
+		return this.type;
+	}
+	public void setType(LoadBalancerType type) {
+		this.type = type;
+	}
+
 }

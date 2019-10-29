@@ -32,6 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
@@ -50,7 +51,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ExampleMultipleMessageWithResponseAndFilterToBehaviour implements IBehaviour {
+public class ExampleMultipleMessageWithResponseAndFilterToBehaviour extends AbstractCore implements IBehaviour {
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,

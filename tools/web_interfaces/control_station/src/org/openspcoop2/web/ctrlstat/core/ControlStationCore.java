@@ -950,6 +950,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
 	private Map<String, List<String>> jmxPdD_caches_prefill = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
@@ -1193,6 +1195,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -1782,6 +1790,8 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager = core.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager;
+		this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = core.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus = core.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
@@ -2154,6 +2164,8 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioPortaApplicativa(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_abilitaServizioIntegrationManager(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_disabilitaServizioIntegrationManager(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));

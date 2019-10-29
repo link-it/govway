@@ -110,6 +110,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoDatiConsegnaApplicativi }
+     */
+    public AccessoDatiConsegnaApplicativi createAccessoDatiConsegnaApplicativi() {
+        return new AccessoDatiConsegnaApplicativi();
+    }
+
+    /**
      * Create an instance of {@link ValidazioneBuste }
      */
     public ValidazioneBuste createValidazioneBuste() {

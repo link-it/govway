@@ -8548,7 +8548,7 @@ public class DriverConfigurazioneDB_LIB {
 			}
 		}
 		
-		ResponseCachingConfigurazioneGenerale responseCachingConfigurazone = config.getResponseCaching();
+		ResponseCachingConfigurazioneGenerale responseCachingConfigurazione = config.getResponseCaching();
 		
 		String response_cache_stato = null;
 		Integer response_cache_seconds = null;
@@ -8563,49 +8563,49 @@ public class DriverConfigurazioneDB_LIB {
 		boolean response_cache_maxAge = true;
 		boolean response_cache_noStore = true;
 		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
-		if(responseCachingConfigurazone!=null && responseCachingConfigurazone.getConfigurazione()!=null) {
-			response_cache_stato = getValue(responseCachingConfigurazone.getConfigurazione().getStato());
-			response_cache_seconds = responseCachingConfigurazone.getConfigurazione().getCacheTimeoutSeconds();
-			response_cache_max_msg_size = responseCachingConfigurazone.getConfigurazione().getMaxMessageSize();
-			if(responseCachingConfigurazone.getConfigurazione().getControl()!=null) {
-				response_cache_noCache = responseCachingConfigurazone.getConfigurazione().getControl().getNoCache();
-				response_cache_maxAge = responseCachingConfigurazone.getConfigurazione().getControl().getMaxAge();
-				response_cache_noStore = responseCachingConfigurazone.getConfigurazione().getControl().getNoStore();
+		if(responseCachingConfigurazione!=null && responseCachingConfigurazione.getConfigurazione()!=null) {
+			response_cache_stato = getValue(responseCachingConfigurazione.getConfigurazione().getStato());
+			response_cache_seconds = responseCachingConfigurazione.getConfigurazione().getCacheTimeoutSeconds();
+			response_cache_max_msg_size = responseCachingConfigurazione.getConfigurazione().getMaxMessageSize();
+			if(responseCachingConfigurazione.getConfigurazione().getControl()!=null) {
+				response_cache_noCache = responseCachingConfigurazione.getConfigurazione().getControl().getNoCache();
+				response_cache_maxAge = responseCachingConfigurazione.getConfigurazione().getControl().getMaxAge();
+				response_cache_noStore = responseCachingConfigurazione.getConfigurazione().getControl().getNoStore();
 			}
-			if(responseCachingConfigurazone.getConfigurazione().getHashGenerator()!=null) {
-				response_cache_hash_url = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getRequestUri());
+			if(responseCachingConfigurazione.getConfigurazione().getHashGenerator()!=null) {
+				response_cache_hash_url = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getRequestUri());
 				
-				response_cache_hash_query = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters());
-				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters())) {
-					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
+				response_cache_hash_query = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters())) {
+					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
 						StringBuffer bf = new StringBuffer();
-						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
+						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
-							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameter(i));
+							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameter(i));
 						}
 						response_cache_hash_query_list = bf.toString();
 					}
 				}
 				
-				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
-				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders())) {
-					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
+				response_cache_hash_headers = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders())) {
+					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
 						StringBuffer bf = new StringBuffer();
-						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
+						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
-							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeader(i));
+							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeader(i));
 						}
 						response_cache_hash_headers_list = bf.toString();
 					}
 				}
 				
-				response_cache_hash_payload = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getPayload());
+				response_cache_hash_payload = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getPayload());
 			}
-			response_cache_regole = responseCachingConfigurazone.getConfigurazione().getRegolaList();
+			response_cache_regole = responseCachingConfigurazione.getConfigurazione().getRegolaList();
 		}
 		
 		Cache responseCaching_cache = null;
@@ -8614,8 +8614,8 @@ public class DriverConfigurazioneDB_LIB {
 		String responseCaching_idleCache = null;
 		String responseCaching_lifeCache = null;
 		String responseCaching_statoCache = null;
-		if(responseCachingConfigurazone !=null){
-			responseCaching_cache = responseCachingConfigurazone.getCache();
+		if(responseCachingConfigurazione !=null){
+			responseCaching_cache = responseCachingConfigurazione.getCache();
 
 		}
 		responseCaching_statoCache = (responseCaching_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
@@ -8624,6 +8624,25 @@ public class DriverConfigurazioneDB_LIB {
 			responseCaching_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(responseCaching_cache.getAlgoritmo());
 			responseCaching_idleCache = responseCaching_cache.getItemIdleTime();
 			responseCaching_lifeCache = responseCaching_cache.getItemLifeSecond();
+		}
+		
+		
+		Cache consegna_cache = null;
+		String consegna_dimensioneCache = null;
+		String consegna_algoritmoCache = null;
+		String consegna_idleCache = null;
+		String consegna_lifeCache = null;
+		String consegna_statoCache = null;
+		if(config.getAccessoDatiConsegnaApplicativi() !=null){
+			consegna_cache = config.getAccessoDatiConsegnaApplicativi().getCache();
+
+		}
+		consegna_statoCache = (consegna_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (consegna_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			consegna_dimensioneCache = consegna_cache.getDimensione();
+			consegna_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(consegna_cache.getAlgoritmo());
+			consegna_idleCache = consegna_cache.getItemIdleTime();
+			consegna_lifeCache = consegna_cache.getItemLifeSecond();
 		}
 		
 		String utilizzoIndTelematico = null;
@@ -8921,6 +8940,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addInsertField("response_cache_idlecache", "?");
 				sqlQueryObject.addInsertField("response_cache_lifecache", "?");
+				// consegna applicativi cache
+				sqlQueryObject.addInsertField("consegna_statocache", "?");
+				sqlQueryObject.addInsertField("consegna_dimensionecache", "?");
+				sqlQueryObject.addInsertField("consegna_algoritmocache", "?");
+				sqlQueryObject.addInsertField("consegna_idlecache", "?");
+				sqlQueryObject.addInsertField("consegna_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -9035,6 +9060,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, responseCaching_algoritmoCache);
 				updateStmt.setString(index++, responseCaching_idleCache);
 				updateStmt.setString(index++, responseCaching_lifeCache);
+				// consegna applicativi cache
+				updateStmt.setString(index++, consegna_statoCache);
+				updateStmt.setString(index++, consegna_dimensioneCache);
+				updateStmt.setString(index++, consegna_algoritmoCache);
+				updateStmt.setString(index++, consegna_idleCache);
+				updateStmt.setString(index++, consegna_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -9063,7 +9094,8 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();
@@ -9550,6 +9582,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("response_cache_idlecache", "?");
 				sqlQueryObject.addUpdateField("response_cache_lifecache", "?");
+				// consegna applicativi cache
+				sqlQueryObject.addUpdateField("consegna_statocache", "?");
+				sqlQueryObject.addUpdateField("consegna_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("consegna_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("consegna_idlecache", "?");
+				sqlQueryObject.addUpdateField("consegna_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -9664,6 +9702,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, responseCaching_algoritmoCache);
 				updateStmt.setString(index++, responseCaching_idleCache);
 				updateStmt.setString(index++, responseCaching_lifeCache);
+				// consegna applicativi cache
+				updateStmt.setString(index++, consegna_statoCache);
+				updateStmt.setString(index++, consegna_dimensioneCache);
+				updateStmt.setString(index++, consegna_algoritmoCache);
+				updateStmt.setString(index++, consegna_idleCache);
+				updateStmt.setString(index++, consegna_lifeCache);
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -9690,7 +9734,8 @@ public class DriverConfigurazioneDB_LIB {
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();

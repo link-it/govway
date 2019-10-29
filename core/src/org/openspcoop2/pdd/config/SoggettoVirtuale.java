@@ -32,12 +32,14 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 
 
@@ -96,7 +98,8 @@ public class SoggettoVirtuale implements Serializable  {
 		return list;
 	}
 	
-	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo) throws Exception{
+	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception{
 		List<String> list = new ArrayList<String>();
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 
@@ -106,7 +109,8 @@ public class SoggettoVirtuale implements Serializable  {
 				
 				if(sa.getPortaApplicativa().getBehaviour()!=null && sa.getPortaApplicativa().getBehaviour().getNome()!=null){
 					
-					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null);
+					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null,
+							pddContext, protocolFactory);
 					
 					Busta bustaConSoggettiReali = busta.clone();
 					// Inverto mitt-dest

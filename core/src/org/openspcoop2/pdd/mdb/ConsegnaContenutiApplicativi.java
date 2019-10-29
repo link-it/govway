@@ -89,6 +89,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
@@ -314,8 +315,38 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer);
 		}
+		BehaviourLoadBalancer loadBalancer = null;
+		if(consegnaContenutiApplicativiMsg!=null && consegnaContenutiApplicativiMsg.getLoadBalancer()!=null) {
+			loadBalancer = consegnaContenutiApplicativiMsg.getLoadBalancer();
+		}
 		
-		EsitoLib esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer);
+		EsitoLib esitoLib = null;
+		try {
+			if(loadBalancer!=null) {
+				try {
+					loadBalancer.getLoadBalancerPool().addActiveConnection(loadBalancer.getConnectorName());
+				}catch(Throwable t) {
+					String prefix = "";
+					if(transazioneApplicativoServer!=null) {
+						prefix = "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] " ;
+					}
+					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
+				}
+			}
+			esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer);
+		}finally {
+			if(loadBalancer!=null) {
+				try {
+					loadBalancer.getLoadBalancerPool().removeActiveConnection(loadBalancer.getConnectorName());
+				}catch(Throwable t) {
+					String prefix = "";
+					if(transazioneApplicativoServer!=null) {
+						prefix = "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] " ;
+					}
+					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
+				}
+			}
+		}
 				
 		if(transazioneApplicativoServer!=null) {
 			

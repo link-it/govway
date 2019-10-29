@@ -25,10 +25,13 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.DefaultBehaviour;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.resources.Loader;
 
 /**
@@ -40,7 +43,8 @@ import org.openspcoop2.utils.resources.Loader;
  */
 public class BehaviourLoader {
 
-	public static IBehaviour newInstance(PortaApplicativaBehaviour behaviour, MsgDiagnostico msgDiag) throws CoreException{
+	public static IBehaviour newInstance(PortaApplicativaBehaviour behaviour, MsgDiagnostico msgDiag,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws CoreException{
 		
 		if(behaviour==null || behaviour.getNome()==null || "".equals(behaviour.getNome())) {
 			throw new CoreException("Behaviour undefined");
@@ -58,6 +62,15 @@ public class BehaviourLoader {
 				tipoDiagBehaviour = bt.getLabel();
 				
 				break;
+				
+			case CONSEGNA_LOAD_BALANCE:
+				
+				behaviourImpl = new LoadBalancerBehaviour();
+				
+				tipoDiagBehaviour = bt.getLabel();
+				
+				break;
+				
 			case CUSTOM:
 				
 				String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(behaviour.getNome());
@@ -78,6 +91,9 @@ public class BehaviourLoader {
 		if(msgDiag!=null) {
 			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_BEHAVIOUR, tipoDiagBehaviour);
 		}
+		
+		behaviourImpl.init(pddContext, protocolFactory);
+		
 		return behaviourImpl;
 		
 	} 

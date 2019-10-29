@@ -127,6 +127,28 @@ public enum LoadBalancerType implements IEnumeration , Serializable , Cloneable 
 	
 	/** Utilities */
 	
+	public static String[] getValues(){
+		return toArray();
+	}
+	public static String[] getLabels(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (LoadBalancerType tmp : values()) {
+			res[i]=tmp.getLabel();
+			i++;
+		}
+		return res;
+	}
+	public static String[] getDescrizioni(){
+		String[] res = new String[values().length];
+		int i=0;
+		for (LoadBalancerType tmp : values()) {
+			res[i]=tmp.getDescrizione();
+			i++;
+		}
+		return res;
+	}
+	
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;

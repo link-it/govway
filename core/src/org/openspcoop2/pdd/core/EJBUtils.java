@@ -66,6 +66,7 @@ import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
@@ -1487,7 +1488,8 @@ public class EJBUtils {
 			// pa is null nel caso di soggetto virtuale
 			if(pa!=null && pa.getBehaviour()!=null && pa.getBehaviour().getNome()!=null && !"".equals(pa.getBehaviour().getNome())){
 				
-				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag);
+				IBehaviour behaviourImpl = BehaviourLoader.newInstance(pa.getBehaviour(), this.msgDiag,
+						this.pddContext, this.protocolFactory);
 				
 				gestoreMessaggi.setPortaDiTipoStateless(stateless);
 				behaviour = behaviourImpl.behaviour(gestoreMessaggi, busta, pa, requestInfo);
@@ -1502,7 +1504,7 @@ public class EJBUtils {
 					if(behaviour.getForwardTo().size()>1){
 						registraNuoviMessaggiViaBehaviour = true;
 						if(behaviourResponseTo==false){
-							throw new Exception("La consegna di messaggi multipli via custom behaviour (tipo:"+pa.getBehaviour()+
+							throw new Exception("La consegna di messaggi multipli via custom behaviour (tipo:"+pa.getBehaviour().getNome()+
 									") e' permessa solo se viene abilita anche la funzione 'responseTo'");
 						}
 						for (int i=0; i<behaviour.getForwardTo().size(); i++) {
@@ -1511,7 +1513,7 @@ public class EJBUtils {
 								forwardTo.setDescription("ForwardTo["+i+"]");
 							}
 							if(forwardTo.getMessage()==null){
-								throw new Exception("La consegna di messaggi multipli via custom behaviour (tipo:"+pa.getBehaviour()+
+								throw new Exception("La consegna di messaggi multipli via custom behaviour (tipo:"+pa.getBehaviour().getNome()+
 										") richiede che vengano definiti tutti i messaggi da inoltrare. Trovato un elemento ForwardTo ("+
 										forwardTo.getDescription()+") che non contiene alcun messaggio");
 							}
@@ -1578,7 +1580,7 @@ public class EJBUtils {
 					// se non devo registrare alcun messaggio, e sono in stateless, ma e' stata configurata una replyTo
 					// ritorno errore, poiche' deve essere configurato un messaggio da inoltrare.
 					if(stateless && behaviourResponseTo){
-						throw new Exception("La definizione dell'elemento 'responseTo', via custom behaviour (tipo:"+pa.getBehaviour()+
+						throw new Exception("La definizione dell'elemento 'responseTo', via custom behaviour (tipo:"+pa.getBehaviour().getNome()+
 								"), in una porta applicativa stateless richiede la definizione almeno di un elemento forwardTo contenente un messaggio da inoltrare.");
 					}
 				}
@@ -1616,7 +1618,8 @@ public class EJBUtils {
 								this.msgDiag.getCodice(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"servizioApplicativoNonDefinito"));
 					}
 					boolean GESTISCI_BEHAVIOUR = true;
-					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta, requestInfo);
+					List<String> idServiziApplicativiVirtuali = soggettiVirtuali.getIdServiziApplicativi(GESTISCI_BEHAVIOUR,gestoreMessaggi,busta, requestInfo,
+							this.pddContext, this.protocolFactory);
 					if(idServiziApplicativiVirtuali.size()>0){
 						serviziApplicativiConfigurazione = idServiziApplicativiVirtuali.toArray(new String[1]);
 					}
@@ -1692,7 +1695,8 @@ public class EJBUtils {
 						richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
 						null,null,stateless,this.openSPCoopState,
 						null,
-						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE);
+						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
+						behaviour!=null ? behaviour.getLoadBalancer() : null);
 			}
 			else{
 				
@@ -1710,7 +1714,8 @@ public class EJBUtils {
 							richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
 							null,null,stateless,this.openSPCoopState,
 							null,
-							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE);
+							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
+							null);
 				}
 				
 				List<BehaviourForwardTo> forwardTo = behaviour.getForwardTo();
@@ -1745,7 +1750,7 @@ public class EJBUtils {
 							stateBehaviour.setIDCorrelazioneApplicativa(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativa());
 							stateBehaviour.setIDCorrelazioneApplicativaRisposta(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativaRisposta());
 							stateBehaviour.setPddContext(((OpenSPCoopStateless)this.openSPCoopState).getPddContext());
-							stateBehaviour.initResource(this.identitaPdD, "EJBUtils.behaviour_"+pa.getBehaviour(), idTransazione);
+							stateBehaviour.initResource(this.identitaPdD, "EJBUtils.behaviour_"+pa.getBehaviour().getNome(), idTransazione);
 						}
 					
 						// registrazione messaggio
@@ -1775,7 +1780,8 @@ public class EJBUtils {
 								richiestaApplicativa, localForwardRichiestaDelegata, gestoreNewMessaggio, bustaNewMessaggio, pa, repositoryBusteNewMessaggio,
 								busta.getID(),behaviourForwardTo.getConfig(),stateless,stateNuoviMessaggi,
 								behaviourForwardTo.getMessage(),
-								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire);
+								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire,
+								null);
 						
 						// Applico modifiche effettuate dal modulo Consegna
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
@@ -1822,7 +1828,8 @@ public class EJBUtils {
 			String idBustaPreBehaviourNewMessage,BehaviourForwardToConfiguration behaviourForwardToConfiguration,
 			boolean stateless,IOpenSPCoopState state,
 			OpenSPCoop2Message requestMessageNullable,
-			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire) throws Exception{
+			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire,
+			BehaviourLoadBalancer loadBalancer) throws Exception{
 		
 		// Eventuale indicazione per la registrazione via stateless
 		boolean registrazioneMessaggioPerStatelessEffettuata = false;
@@ -1884,6 +1891,10 @@ public class EJBUtils {
 				
 				// aggiorno pddContext per evitare che eventuali salvataggi influenzino la transazione
 				consegnaMSG.setPddContext(this.pddContext!=null ? (PdDContext) this.pddContext.clone() : null);
+			}
+			
+			if(loadBalancer!=null) {
+				consegnaMSG.setLoadBalancer(loadBalancer);
 			}
 			
 			// Aggiungo costante servizio applicativo

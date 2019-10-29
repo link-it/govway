@@ -103,6 +103,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.CorsConfigurazioneOrigin;
 import org.openspcoop2.core.config.CorsConfigurazioneMethods;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.TipoFiltroAbilitazioneServizi;
 import org.openspcoop2.core.config.StatoServiziPddPortaApplicativa;
 import org.openspcoop2.core.config.MessaggiDiagnostici;
@@ -5192,6 +5193,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public Scope readScopeFromString(String in) throws DeserializerException {
 		return (Scope) this.xmlToObj(in.getBytes(), Scope.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: accesso-dati-consegna-applicativi
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiConsegnaApplicativi readAccessoDatiConsegnaApplicativi(String fileName) throws DeserializerException {
+		return (AccessoDatiConsegnaApplicativi) this.xmlToObj(fileName, AccessoDatiConsegnaApplicativi.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiConsegnaApplicativi readAccessoDatiConsegnaApplicativi(File file) throws DeserializerException {
+		return (AccessoDatiConsegnaApplicativi) this.xmlToObj(file, AccessoDatiConsegnaApplicativi.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiConsegnaApplicativi readAccessoDatiConsegnaApplicativi(InputStream in) throws DeserializerException {
+		return (AccessoDatiConsegnaApplicativi) this.xmlToObj(in, AccessoDatiConsegnaApplicativi.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiConsegnaApplicativi readAccessoDatiConsegnaApplicativi(byte[] in) throws DeserializerException {
+		return (AccessoDatiConsegnaApplicativi) this.xmlToObj(in, AccessoDatiConsegnaApplicativi.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @return Object type {@link org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public AccessoDatiConsegnaApplicativi readAccessoDatiConsegnaApplicativiFromString(String in) throws DeserializerException {
+		return (AccessoDatiConsegnaApplicativi) this.xmlToObj(in.getBytes(), AccessoDatiConsegnaApplicativi.class);
 	}	
 	
 	

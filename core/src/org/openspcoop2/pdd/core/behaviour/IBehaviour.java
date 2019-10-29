@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.behaviour;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.ICore;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 
@@ -34,7 +35,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public interface IBehaviour {
+public interface IBehaviour extends ICore {
 
 	Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
 			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException;

@@ -19,24 +19,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
+package org.openspcoop2.pdd.core.behaviour;
+
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
 
 /**
- * Costanti
+ * Behaviour
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Costanti  {
+public class BehaviourLoadBalancer {
 
-	public static final String ROUND_ROBIN = "roundRobin";
-	public static final String RANDOM = "random";
-	public static final String WEIGHT_RANDOM = "weightRandom";
-	public static final String WEIGHT_ROUND_ROBIN = "weightRoundRobin";
-	public static final String IP_HASH = "ipHash";
-	public static final String LEAST_CONNECTIONS = "leastConnections";
+	private LoadBalancerPool loadBalancerPool;
+	private String connectorName;
 	
-	public static final String LOAD_BALANCER_TYPE = "type";
-	public static final String LOAD_BALANCER_WEIGHT = "weight";
+	public LoadBalancerPool getLoadBalancerPool() {
+		return this.loadBalancerPool;
+	}
+	public void setLoadBalancerPool(LoadBalancerPool loadBalancerPool) {
+		this.loadBalancerPool = loadBalancerPool;
+	}
+	public String getConnectorName() {
+		return this.connectorName;
+	}
+	public void setConnectorName(String connectorName) {
+		this.connectorName = connectorName;
+	}
 }

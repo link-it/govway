@@ -283,7 +283,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
 		de.setName(nomeParametroStatoCache);
-		if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
+		if(view && 
+				!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione) &&
+				!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStatoCache);
 			de.setSelected(statocache);
@@ -342,7 +344,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(value>0){
 				de.setValue(value+"");
 			}
-			if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
+			if(view && 
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione) &&
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
 				//de.setRequired(true);
 			}
@@ -356,7 +360,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
 			de.setValue(idlecache);
-			if(view){
+			if(view &&
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
 				if(!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE.equals(intestazioneSezione)){
 					de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
@@ -2260,6 +2265,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			if(this.datiGestoreConsegnaApplicativiCheckDataCache()==false){
+				return false;
+			}
+			
 			// validazione URL Invocazione
 			if(!this.checkDataURLInvocazione()) {
 				return false;
@@ -2378,6 +2387,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiGestoreConsegnaApplicativiCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_KEYSTORE);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_KEYSTORE);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_KEYSTORE);
+
+			return checkDatiCache(CostantiPdD.JMX_GESTORE_CONSEGNA_APPLICATIVI, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -5611,6 +5638,56 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(6);
 		de.setCols(80);
 		dati.addElement(de);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
+			if(this.isErroreHttp(stato, "stato del thread pool per la consegna agli applicativi")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
 		
 
 		return dati;

@@ -19,17 +19,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.keystore;
+package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.security.keystore.CRLCertstore;
-import org.openspcoop2.security.keystore.MerlinKeystore;
-import org.openspcoop2.security.keystore.MerlinTruststore;
-import org.openspcoop2.security.keystore.MultiKeystore;
-import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.slf4j.Logger;
@@ -41,10 +41,10 @@ import org.slf4j.Logger;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class GestoreKeystoreCaching {
+public class GestoreLoadBalancerCaching {
 
 	/** Chiave della cache */
-	private static final String KEYSTORE_CACHE_NAME = "keystore";
+	private static final String LOAD_BALANCER_CACHE_NAME = "consegnaApplicativi";
 	/** Cache */
 	private static Cache cache = null;
 	
@@ -59,7 +59,7 @@ public class GestoreKeystoreCaching {
 				cache.clear();
 			}
 		}catch(Exception e){
-			throw new Exception("Reset della cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Reset della cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static String printStatsCache(String separator) throws Exception{
@@ -72,7 +72,7 @@ public class GestoreKeystoreCaching {
 						
 						StringBuilder bf = new StringBuilder();
 						bf.append("CRLsLifeTime:");
-						long lifeTime = GestoreKeystoreCaching.getItemCrlLifeSecond();
+						long lifeTime = GestoreLoadBalancerCaching.getItemCrlLifeSecond();
 						if(lifeTime>0){
 							bf.append(Utilities.convertSystemTimeIntoString_millisecondi(lifeTime*1000,false));
 						}
@@ -96,7 +96,7 @@ public class GestoreKeystoreCaching {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new Exception("Visualizzazione Statistiche riguardante la cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Visualizzazione Statistiche riguardante la cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache() throws Exception{
@@ -104,10 +104,10 @@ public class GestoreKeystoreCaching {
 			if(cache!=null)
 				throw new Exception("Cache gia' abilitata");
 			else{
-				cache = new Cache(KEYSTORE_CACHE_NAME);
+				cache = new Cache(LOAD_BALANCER_CACHE_NAME);
 			}
 		}catch(Exception e){
-			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void abilitaCache(Long dimensioneCache,Boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond, Logger log) throws Exception{
@@ -122,7 +122,7 @@ public class GestoreKeystoreCaching {
 				initCache(dimensione, algoritmoCacheLRU, itemIdleTime, itemLifeSecond, log);
 			}
 		}catch(Exception e){
-			throw new Exception("Abilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Abilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	public static void disabilitaCache() throws Exception{
@@ -134,7 +134,7 @@ public class GestoreKeystoreCaching {
 				cache = null;
 			}
 		}catch(Exception e){
-			throw new Exception("Disabilitazione cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Disabilitazione cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}	
 	public static String listKeysCache(String separator) throws Exception{
@@ -149,7 +149,7 @@ public class GestoreKeystoreCaching {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new Exception("Visualizzazione chiavi presenti nella cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Visualizzazione chiavi presenti nella cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	
@@ -170,7 +170,7 @@ public class GestoreKeystoreCaching {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new Exception("Visualizzazione oggetto presente nella cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Visualizzazione oggetto presente nella cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	
@@ -186,7 +186,7 @@ public class GestoreKeystoreCaching {
 				throw new Exception("Cache non abilitata");
 			}
 		}catch(Exception e){
-			throw new Exception("Rimozione oggetto presente nella cache per i dati contenenti i keystore non riuscita: "+e.getMessage(),e);
+			throw new Exception("Rimozione oggetto presente nella cache per i dati contenenti i dati di bilanciamento del carico non riuscita: "+e.getMessage(),e);
 		}
 	}
 	
@@ -194,11 +194,11 @@ public class GestoreKeystoreCaching {
 	/*----------------- INIZIALIZZAZIONE --------------------*/
 
 	public static void initialize(Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(false, -1,null,-1l,-1l, log);
+		GestoreLoadBalancerCaching.initialize(false, -1,null,-1l,-1l, log);
 	}
 	public static void initialize(int dimensioneCache,String algoritmoCache,
 			long idleTime, long itemLifeSecond, Logger log) throws Exception{
-		GestoreKeystoreCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
+		GestoreLoadBalancerCaching.initialize(true, dimensioneCache,algoritmoCache,idleTime,itemLifeSecond, log);
 	}
 
 	private static void initialize(boolean cacheAbilitata,int dimensioneCache,String algoritmoCache,
@@ -206,7 +206,7 @@ public class GestoreKeystoreCaching {
 
 		// Inizializzazione Cache
 		if(cacheAbilitata){
-			GestoreKeystoreCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
+			GestoreLoadBalancerCaching.initCache(dimensioneCache, algoritmoCache, idleTime, itemLifeSecond, log);
 		}
 
 	}
@@ -216,7 +216,7 @@ public class GestoreKeystoreCaching {
 	
 	private static void initCache(Integer dimensioneCache,boolean algoritmoCacheLRU,Long itemIdleTime,Long itemLifeSecond,Logger alog) throws Exception{
 		
-		cache = new Cache(KEYSTORE_CACHE_NAME);
+		cache = new Cache(LOAD_BALANCER_CACHE_NAME);
 	
 		// dimensione
 		if(dimensioneCache!=null && dimensioneCache>0){
@@ -287,13 +287,13 @@ public class GestoreKeystoreCaching {
 	}
 	
 	
-	private static GestoreKeystoreCaching staticInstance = null;
+	private static GestoreLoadBalancerCaching staticInstance = null;
 	public static synchronized void initialize() throws Exception{
 		if(staticInstance==null){
-			staticInstance = new GestoreKeystoreCaching();
+			staticInstance = new GestoreLoadBalancerCaching();
 		}
 	}
-	public static GestoreKeystoreCaching getInstance() throws Exception{
+	public static GestoreLoadBalancerCaching getInstance() throws Exception{
 		if(staticInstance==null){
 			throw new Exception("GestoreKeystore non inizializzato");
 		}
@@ -303,7 +303,7 @@ public class GestoreKeystoreCaching {
 	@SuppressWarnings("unused")
 	private Logger log;
 	
-	public GestoreKeystoreCaching() throws Exception{
+	public GestoreLoadBalancerCaching() throws Exception{
 		this.log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 	}
 	
@@ -317,39 +317,90 @@ public class GestoreKeystoreCaching {
 	
 	/* ********************** ENGINE ************************** */
 	
-	public static MerlinTruststore getMerlinTruststore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(propertyFilePath);
-	}
-	public static MerlinTruststore getMerlinTruststore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinTruststore(pathStore, tipoStore, passwordStore);
-	}
+	public static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, Logger log) throws CoreException{
+    	
+    	if(GestoreLoadBalancerCaching.cache==null){
+    		throw new CoreException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
+		}
+    	else{
+    		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
+
+			synchronized (GestoreLoadBalancerCaching.cache) {
+
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:getLoadBalancerPool) in cache.");
+						return (LoadBalancerPool) response.getObject();
+					}else if(response.getException()!=null){
+						log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:getLoadBalancerPool) in cache.");
+						throw new CoreException( (Exception) response.getException() );
+					}else{
+						log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				// Effettuo la query
+				log.debug("oggetto con chiave ["+keyCache+"] (method:getLoadBalancerPool) ricerco nella configurazione...");
+				LoadBalancerPool pool = readLoadBalancerPool(pa);
+				
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				if(pool!=null){
+					log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject(pool);
+						GestoreLoadBalancerCaching.cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+					}
+					return pool;
+				}else{
+					throw new CoreException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
+				}
+			}
+    	}
+    	
+    }
 	
 	
-	public static MerlinKeystore getMerlinKeystore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(propertyFilePath);
-	}
-	public static MerlinKeystore getMerlinKeystore(String propertyFilePath,String passwordPrivateKey) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(propertyFilePath, passwordPrivateKey);
-	}
-	public static MerlinKeystore getMerlinKeystore(String pathStore,String tipoStore,String passwordStore) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(pathStore, tipoStore, passwordStore);
-	}
-	public static MerlinKeystore getMerlinKeystore(String pathStore,String tipoStore,String passwordStore,String passwordPrivateKey) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMerlinKeystore(pathStore, tipoStore, passwordStore, passwordPrivateKey);
-	}
-	
-	
-	public static SymmetricKeystore getSymmetricKeystore(String alias,String key,String algoritmo) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getSymmetricKeystore(key, alias, algoritmo);
-	}
-	
-	
-	public static MultiKeystore getMultiKeystore(String propertyFilePath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getMultiKeystore(propertyFilePath);
-	}
-	
-	
-	public static CRLCertstore getCRLCertstore(String crlPath) throws SecurityException{
-		return org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.getCRLCertstore(crlPath);
+	private static LoadBalancerPool readLoadBalancerPool(PortaApplicativa pa) throws CoreException {
+		LoadBalancerPool pool = new LoadBalancerPool();
+		if(pa.sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
+				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
+						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
+					int weight = -1;
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
+						String weightDefined = null;
+						for (Proprieta p : servizioApplicativo.getDatiConnettore().getProprietaList()) {
+							if(Costanti.LOAD_BALANCER_WEIGHT.equals(p.getNome())) {
+								weightDefined = p.getValore();
+							}
+						}
+						if(weightDefined!=null) {
+							try {
+								weight = Integer.valueOf(weightDefined);
+							}catch(Exception e) {}
+						}
+					}
+					String nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+					if(nomeConnettore==null) {
+						nomeConnettore = org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
+					}
+					if(weight>0) {
+						pool.addConnector(nomeConnettore, weight);
+					}
+					else {
+						pool.addConnector(nomeConnettore);
+					}
+				}
+			}
+		}
+		return pool;
 	}
 }

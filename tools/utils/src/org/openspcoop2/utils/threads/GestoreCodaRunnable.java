@@ -81,7 +81,7 @@ public class GestoreCodaRunnable extends Thread{
 		if(this.threadsPool instanceof ThreadPoolExecutor) {
 			ThreadPoolExecutor tpe = (ThreadPoolExecutor) this.threadsPool;
 			return
-	                String.format("[monitor] (queue:%d) [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
+	                String.format("(queue:%d) [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
 	                		this.threads.size(),
 	                		tpe.getPoolSize(),
 	                		tpe.getCorePoolSize(),
