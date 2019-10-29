@@ -95,10 +95,10 @@ import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCor
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
-import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.CheckboxStatusType;
@@ -119,7 +119,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class PorteApplicativeHelper extends ConnettoriHelper {
+public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 	public PorteApplicativeHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {
@@ -6311,7 +6311,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 	public Vector<DataElement> addConnettoriMultipliConfigurazioneToDati(Vector<DataElement> dati,
 			TipoOperazione tipoOp, String accessoDaAPSParametro, String stato, String modalitaConsegna, String tipoCustom,
 			int numeroProprietaCustom, String servletProprietaCustom, List<Parameter> listaParametriServletProprietaCustom, boolean visualizzaLinkProprietaCustom,
-			String loadBalanceStrategia) {
+			String loadBalanceStrategia,boolean modificaStatoAbilitata) {
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		DataElement de = new DataElement();
@@ -6330,13 +6330,18 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
-		de.setType(DataElementType.SELECT);
-		String [] statoLabels = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
-		String [] statoValues = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
-		de.setValues(statoValues);
-		de.setLabels(statoLabels);
-		de.setPostBack(true);
-		de.setSelected(stato);
+		if(modificaStatoAbilitata) {
+			de.setType(DataElementType.SELECT);
+			String [] statoLabels = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
+			String [] statoValues = {PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO , PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO };
+			de.setValues(statoValues);
+			de.setLabels(statoLabels);
+			de.setPostBack(true);
+			de.setSelected(stato);
+		} else {
+			de.setType(DataElementType.TEXT);
+			de.setValue(stato);
+		}
 		dati.addElement(de);
 		
 		
@@ -6482,6 +6487,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
 			Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
 			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			Parameter pIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, idPorta);
+			Parameter pIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, idsogg);
 			
 			String idTabP = this.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
@@ -6491,9 +6498,11 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
 			Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi);
 			String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
-			Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
+			Parameter pConnettoreRegistro = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
+			Parameter pConnettoreAccessoCM = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI, "true");
 			
-			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreAccesso, pAccessoDaAPS, pIdTab);
+			
+			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI, pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pAccessoDaAPS, pIdTab);
 			
 			this.pd.setCustomListViewName(PorteApplicativeCostanti.PORTE_APPLICATIVE_NOME_VISTA_CUSTOM_CONNETTORI_MULTIPLI);
 			
@@ -6594,7 +6603,6 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			
 			Parameter pConfigurazioneDatiGenerali = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneDescrizione = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DESCRIZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
-			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneProperties = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPERTIES, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
@@ -6608,20 +6616,13 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				Parameter pNomePaSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA, paSA.getNome());
 				
 				// nome e stato
-				
-				String nomeConnettore =  datiConnettore != null ? datiConnettore.getNome() : CostantiControlStation.LABEL_DEFAULT;
+				String nomeConnettore =  this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 				StatoFunzionalita stato = datiConnettore != null ? datiConnettore.getStato() : StatoFunzionalita.ABILITATO;
 				boolean statoPA = stato.equals(StatoFunzionalita.ABILITATO);
 				String statoMapping = statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP;
 				boolean urlCambiaStato = true;
 				
 				boolean connettoreDefault = this.isConnettoreDefault(paSA);
-				
-				// stato del default?
-//				if(mapping.isDefault() && allActionRedefined) {
-//					statoPA = false;
-//					urlCambiaStato = false;
-//				}
 				
 				// Nome / Stato
 				if(lista.size()>1) {
@@ -6631,13 +6632,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					de.setWidthPx(10);
 					de.setType(DataElementType.CHECKBOX);
 					
-					de.setStatusToolTip(statoPA ? CostantiControlStation.LABEL_PARAMETRO_PORTA_ABILITATO_TOOLTIP_NO_ACTION : CostantiControlStation.LABEL_PARAMETRO_PORTA_DISABILITATO_TOOLTIP_NO_ACTION);
-//					if(statoPAallRedefined!=null) {
-//						de.setStatusType(statoPAallRedefined);
-//					}
-//					else {
-						de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
-//					}
+					de.setStatusToolTip(statoPA ? PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO_TOOLTIP_NO_ACTION : PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO_TOOLTIP_NO_ACTION);
+					de.setStatusType(statoPA ? CheckboxStatusType.ABILITATO : CheckboxStatusType.DISABILITATO);
 					
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
 					de.setValue(nomeConnettore);
@@ -6646,7 +6642,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					if(!connettoreDefault) {
 						DataElementImage image = new DataElementImage();
 						
-						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali);
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali,
+								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM	);
 						image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
 						image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 						
@@ -6658,10 +6655,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					if(urlCambiaStato) {
 						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita);
-						
 						DataElementImage image = new DataElementImage();
-						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita);
+						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita,
+								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 						image.setToolTip(statoMapping);
 						image.setImage(statoPA ? CostantiControlStation.ICONA_MODIFICA_TOGGLE_ON : CostantiControlStation.ICONA_MODIFICA_TOGGLE_OFF);
 						
@@ -6673,7 +6669,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				}
 				
 				// Descrizione
-				String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : " ";
+				String descrizioneOrig = (datiConnettore != null && datiConnettore.getDescrizione() != null) ? datiConnettore.getDescrizione() : "";
 				DataElement de = new DataElement();
 				de.setType(DataElementType.TEXT);
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
@@ -6685,12 +6681,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				else {
 					descrizione = descrizioneOrig;
 				}
+				if(StringUtils.isBlank(descrizione))
+					descrizione = " ";
+				
 				de.setValue(descrizione);
 				de.setToolTip(descrizioneOrig);
 				
 				DataElementImage image = new DataElementImage();
 				
-				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione);
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneDescrizione, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
@@ -6716,26 +6715,22 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				
 				image = new DataElementImage();
 				
-				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneConnettore);
+				image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,pIdProvider, pIdPortaPerSA, pIdAsps, pIdTAb, pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM,
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSA.getNome()),
+						new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSA.getId()+""));
 				image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 				image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 				
 				de.addImage(image );
 				
 				boolean checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
-//				if(checkConnettore) {
-//					if(!mapping.isDefault() && !ridefinito) {
-//						checkConnettore = false;
-//					}
-//				}
 				
 				if(checkConnettore) {
 					long idConnettore = connettore.getId();
 					image = new DataElementImage();
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_VERIFICA_CONNETTORE, pIdSogg, pIdPorta, pIdAsps,pIdTAb,
 							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID, idConnettore+""),
-							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, "true"),
-							new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, "false"));
+							pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE));
 					image.setImage(CostantiControlStation.ICONA_VERIFICA);
 					
@@ -6753,20 +6748,10 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					List<String> valuesGruppi = new ArrayList<String>();
 					
 					if(paSA.getDatiConnettore() != null) {
-						// colleziono i tags registrati
-//						List<String> tagsDisponibili = paSA.getDatiConnettore().getFiltroList();
-						
 						for (int i = 0; i < paSA.getDatiConnettore().sizeFiltroList(); i++) {
 							String filtro = paSA.getDatiConnettore().getFiltro(i);
-							
-//							int indexOf = tagsDisponibili.indexOf(gruppo.getNome());
-//							if(indexOf == -1)
-//								indexOf = 0;
-//							
-//							indexOf = indexOf % CostantiControlStation.NUMERO_GRUPPI_CSS;
-							
 							labelsGruppi.add(filtro);
-							valuesGruppi.add("label-info-"+0);
+							valuesGruppi.add("label-info-default");
 						}
 					}	
 					
@@ -6775,7 +6760,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneFiltro);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb,pConfigurazioneFiltro,pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
@@ -6821,7 +6806,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 	
 	private PortaApplicativaServizioApplicativo getFiltroNomeConnettore(String filtroNome, List<PortaApplicativaServizioApplicativo> lista) {
 		for (PortaApplicativaServizioApplicativo paSA : lista) {
-			String nome = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+			String nome = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 			
 			if(nome != null) {
 				if(nome.toLowerCase().contains(filtroNome.toLowerCase()))
@@ -6830,11 +6815,6 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		}
 		
 		return null;
-	}
-	
-	private boolean isConnettoreDefault(PortaApplicativaServizioApplicativo paSA) {
-		String nome = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
-		return CostantiControlStation.LABEL_DEFAULT.equals(nome);
 	}
 	
 	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
@@ -6972,7 +6952,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				
 				if(tipoOp.equals(TipoOperazione.ADD)) {
 					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
-						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+						String nomePaSA = getLabelNomePortaApplicativaServizioApplicativo(paSA);
 						if(nome.equals(nomePaSA)) {
 							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
 							return false;
@@ -6983,9 +6963,24 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 				// solo se ho cambiato il nome
 				if(tipoOp.equals(TipoOperazione.CHANGE) && !nome.equals(oldNome)) {
 					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
-						String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+						String nomePaSA = getLabelNomePortaApplicativaServizioApplicativo(paSA);
 						if(nome.equals(nomePaSA)) {
 							this.pd.setMessage("&Egrave; gi&agrave; presente un Connettore con nome '"+nome+"'.");
+							return false;
+						}
+					}
+				}
+			}
+			
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				String erogazioneServizioApplicativoServerEnabledS = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+				boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+				String erogazioneServizioApplicativoServer = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+				if(erogazioneServizioApplicativoServerEnabled) {
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						if(paSA.getNome().equals(erogazioneServizioApplicativoServer)) {
+							String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
+							this.pd.setMessage("L'Applicativo '"+erogazioneServizioApplicativoServer+"' &egrave; gi&agrave; utilizzato nel connettore '"+nomeConfigurazione+"'.");
 							return false;
 						}
 					}

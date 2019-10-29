@@ -123,9 +123,13 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			String servletProprietaCustom = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_LIST;
 			List<Parameter> listaParametriServletProprietaCustom = new ArrayList<Parameter>();
 			boolean visualizzaLinkProprietaCustom = false;
+			boolean modificaStatoAbilitata = true;
 			if(portaApplicativa.getBehaviour() != null) {
 				BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 				visualizzaLinkProprietaCustom = behaviourType.equals(BehaviourType.CUSTOM);
+				
+				if(portaApplicativa.sizeServizioApplicativoList() > 1)
+					modificaStatoAbilitata = false;
 			}
 			
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -191,7 +195,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 				
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
-						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia);
+						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata);
 
 				pd.setDati(dati);
 				
@@ -211,7 +215,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
-						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia);
+						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
 
@@ -275,7 +279,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			Vector<DataElement> dati = new Vector<DataElement>();
 			
 			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
-					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia);
+					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata);
 			
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 

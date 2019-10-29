@@ -14373,4 +14373,91 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return sbConnettoriMultipli.toString();
 	}
+	
+	public Vector<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, Vector<DataElement> dati,	
+			String idTabGruppo, String idTabConnettoriMultipli, String accessoDaAPS, String connettoreAccessoDaGruppi, String connettoreRegistro, String connettoreAccessoDaListaConnettoriMultipli) {
+		
+		if(idTabGruppo != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_ID_TAB);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idTabGruppo);
+			dati.add(de);
+		}
+		
+		if(idTabConnettoriMultipli != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idTabConnettoriMultipli);
+			dati.add(de);
+		}
+		
+		if(accessoDaAPS != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(accessoDaAPS);
+			dati.add(de);
+		}
+		
+		if(connettoreAccessoDaGruppi != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreAccessoDaGruppi);
+			dati.add(de);
+		}
+		
+		if(connettoreRegistro != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreRegistro);
+			dati.add(de);
+		}
+		
+		if(connettoreAccessoDaListaConnettoriMultipli != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreAccessoDaListaConnettoriMultipli);
+			dati.add(de);
+		}
+		
+		return dati;
+	}
+	
+	public boolean isConnettoreDefault(PortaApplicativaServizioApplicativo paSA) {
+		return CostantiControlStation.LABEL_DEFAULT.equals(this.getLabelNomePortaApplicativaServizioApplicativo(paSA));
+	}
+	
+	public String getLabelNomePortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo paSA) {
+		String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+		return nomePaSA;
+	}
+	
+	public int getIdxNuovoConnettoreMultiplo(PortaApplicativa pa) {
+		int idxConfigurazione = 0;
+		int listaMappingErogazioneSize = pa.sizeServizioApplicativoList();
+		
+		for (int i = 0; i < listaMappingErogazioneSize; i++) {
+			PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(i);
+			if(!this.isConnettoreDefault(paSA)) {
+				int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
+				if(idx > -1) {
+					String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+					int idxMax = -1;
+					try {
+						idxMax = Integer.parseInt(idxTmp);
+					}catch(Exception e) {
+						idxMax = 0;
+					}
+					idxConfigurazione = Math.max(idxConfigurazione, idxMax);
+				}
+			}
+		}
+				
+		return ( ++ idxConfigurazione);
+	}
 }

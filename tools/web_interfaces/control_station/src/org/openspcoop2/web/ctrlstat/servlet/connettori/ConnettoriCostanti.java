@@ -210,6 +210,8 @@ public class ConnettoriCostanti {
 	public final static String PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA = CostantiControlStation.PARAMETRO_ID_PORTA;
 	
 	
+	public final static String PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX = "__SA";
+	
 	
 	/* LABEL PARAMETRI */
 

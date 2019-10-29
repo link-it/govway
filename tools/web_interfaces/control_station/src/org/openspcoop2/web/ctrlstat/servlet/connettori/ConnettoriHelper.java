@@ -4347,5 +4347,4 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		return urlConnettore;
 	}
-
 }

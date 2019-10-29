@@ -36,11 +36,11 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
+import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -104,32 +104,36 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 				// nome = de.getValue();
 				nome = idsToRemove.get(i);
 
-				for (int j = 0; j < pa.sizeProprietaList(); j++) {
-					Proprieta ssp = pa.getProprieta(j);
-					if (nome.equals(ssp.getNome())) {
-						pa.removeProprieta(j);
+				for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+					PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
+					if (nome.equals(paSA.getNome())) {
+						pa.removeServizioApplicativo(j);
 						break;
 					}
 				}
 			}
-
+			
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-
+			
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
-
+						
+			// ricarico la configurazione
+			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-			int idLista = Liste.PORTE_APPLICATIVE_PROP;
-
+	
+			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+	
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-
-			List<Proprieta> lista = porteApplicativeCore.porteAppPropList(Integer.parseInt(idPorta), ricerca);
-
-			porteApplicativeHelper.preparePorteAppPropList(pa.getNome(), ricerca, lista);
+			
+			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
+						
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

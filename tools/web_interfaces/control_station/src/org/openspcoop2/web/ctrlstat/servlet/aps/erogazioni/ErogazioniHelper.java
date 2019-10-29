@@ -1508,22 +1508,24 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			if(visualizzaConnettore) {
 				
 				de = new DataElement();
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+				
 				de.setType(DataElementType.TEXT);
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(paSADefault.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				String urlConnettore = this.getLabelConnettore(sa,is);
 				
 				if(!connettoreMultiploEnabled) {	
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 					de.setValue(urlConnettore);
 					String tooltipConnettore = this.getTooltipConnettore(sa,is);
 					de.setToolTip(tooltipConnettore);
 				} else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI);
 					de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paDefault));
 				}
 				
 				boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );
-				if(!visualizzaLinkConfigurazioneConnettore) {
+				if(visualizzaLinkConfigurazioneConnettore) {
 					List<Parameter> listParametersConnettore = new ArrayList<>();
 					listParametersConnettore.add(paIdProvider);
 					listParametersConnettore.add(paIdPortaPerSA);

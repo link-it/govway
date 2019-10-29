@@ -2876,8 +2876,14 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						String servletConnettore = ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT;
 						PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo = paAssociata.getServizioApplicativoList().get(0);
 						
-						if(visualizzazioneTabs)
-							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+						boolean connettoreMultiploEnabled = paAssociata.getBehaviour() != null;
+						
+						if(visualizzazioneTabs) {
+							if(!connettoreMultiploEnabled)
+								de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
+							else 
+								de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI);
+						}
 						
 						IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 						idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paAssociata.getTipoSoggettoProprietario(), paAssociata.getNomeSoggettoProprietario()));
@@ -2886,7 +2892,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						org.openspcoop2.core.config.InvocazioneServizio is = sa.getInvocazioneServizio();
 						org.openspcoop2.core.config.Connettore connettore = is.getConnettore();
 						
-						boolean connettoreMultiploEnabled = paAssociata.getBehaviour() != null;
+						
 						
 						boolean ridefinito = false;
 						boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );

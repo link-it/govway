@@ -829,6 +829,7 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI = "connettoreAccessoDaGruppi";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_REGISTRO = "connettoreRegistro";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_NODO = "connettoreNodo";
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI = "connettoreAccessoDaCM";
 	
 	public final static String PARAMETRO_ID_TAB = "idTab";
 	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
@@ -836,6 +837,10 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_RESET_ID_CONN_TAB = "rIdConnTab";
 	
 	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
+	public final static String PARAMETRO_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO = "resCacheStato";

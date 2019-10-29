@@ -279,6 +279,21 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if(fromConfig && !saHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
+			
+			String idConnTab = saHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			if(StringUtils.isNotEmpty(idConnTab)) {
+				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			}
+			
+			String connettoreAccessoGruppi = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			String connettoreRegistro = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			
+			boolean accessoDaListaConnettoriMultipli = false;
+			String accessoDaListaConnettoriMultipliParametro = null;
+			accessoDaListaConnettoriMultipliParametro = saHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaListaConnettoriMultipliParametro)) {
+				accessoDaListaConnettoriMultipli = true;
+			}
 
 			// Preparo il menu
 			saHelper.makeMenu();
@@ -312,7 +327,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			List<Property> cp = connis.getPropertyList();
 			String tipoSA = sa.getTipo();
 			
-			
 			String postBackElementName = saHelper.getPostBackElementName();
 			// Controllo se ho modificato l'azione allora ricalcolo il nome
 			if(postBackElementName != null ){
@@ -321,19 +335,21 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()) && !erogazioneServizioApplicativoServerEnabled) {
 						// 1. leggo SA di default
 						
-						IDServizioApplicativo idSA = new IDServizioApplicativo();
-						idSA.setNome(pa.getServizioApplicativoDefault());
-						IDSoggetto idSoggettoProprietario = new IDSoggetto();
-						idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
-						idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
-						idSA.setIdSoggettoProprietario(idSoggettoProprietario );
-						sa = saCore.getServizioApplicativo(idSA);
-						invocazionePorta = sa.getInvocazionePorta();
-						is = sa.getInvocazioneServizio();
-						cis = is.getCredenziali();
-						connis = is.getConnettore();
-						cp = connis.getPropertyList();
-						tipoSA = sa.getTipo();
+						if(!accessoDaListaConnettoriMultipli) {
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setNome(pa.getServizioApplicativoDefault());
+							IDSoggetto idSoggettoProprietario = new IDSoggetto();
+							idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+							idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+							idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+							sa = saCore.getServizioApplicativo(idSA);
+							invocazionePorta = sa.getInvocazionePorta();
+							is = sa.getInvocazioneServizio();
+							cis = is.getCredenziali();
+							connis = is.getConnettore();
+							cp = connis.getPropertyList();
+							tipoSA = sa.getTipo();
+						}
 						
 						// reset dei fields
 						erogazioneServizioApplicativoServer = null;
@@ -540,6 +556,72 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			if(accessoDaListaAPS) {
 				lstParm.remove(lstParm.size()-1);
 			}
+			
+			if(accessoDaListaConnettoriMultipli) {
+				String labelListaConnettoriMultipli = null;
+				if(parentSA!=null && (parentSA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+					
+					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+					AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+					
+					if(accessoDaListaAPS) {
+						if(!isModalitaCompleta) {
+							if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+								labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+							} else {
+								labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+
+										saHelper.getLabelIdServizio(asps);
+							}
+						}
+						else {
+							labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+						}
+					}
+					else {
+						labelListaConnettoriMultipli = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI,
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
+								pa);
+					}
+				}
+				else {
+					labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+pa.getNome();
+				}
+				
+				List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
+				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
+				Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, pa.getNome());
+				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, provider);
+				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+				String idTabP = saHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+				Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+				Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
+				
+				Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi);
+				Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
+				
+				listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
+				listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+				listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
+				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
+				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
+				
+				lstParm.add(new Parameter(labelListaConnettoriMultipli,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
+				
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(sa.getNome())) {
+						paSA = paSATmp;
+						break;
+					}
+				}
+				
+				labelPerPorta = saHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+			}
+			
 			lstParm.add(new Parameter(labelPerPorta,null));
 
 			// Se nomehid = null, devo visualizzare la pagina per la
@@ -920,6 +1002,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false);
+				
+				dati = saHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.ADD, dati, idTab, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, accessoDaListaConnettoriMultipliParametro);
 
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -977,6 +1062,9 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
 						null, false);
+				
+				dati = saHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.ADD, dati, idTab, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, accessoDaListaConnettoriMultipliParametro);
 
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
