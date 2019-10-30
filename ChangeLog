@@ -1,3 +1,13 @@
+2019-10-30  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-914
+	In presenza di multitenant, durante la creazione di una erogazione o fruizione, 
+	se non si era selezionato il soggetto del dominio in gestione (in alto a destra), 
+	la selezione della API reimpostava il soggetto erogatore scelto in precedenza nel form.
+	Il problema è stato risolto insieme ad un'altra anomalia rilevata durante l'utilizzo della console in modalità avanzata, 
+	dove nella sezione delle cache era presente un link errato che portava alle regole di proxy pass.
+
 2019-10-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, Utils]

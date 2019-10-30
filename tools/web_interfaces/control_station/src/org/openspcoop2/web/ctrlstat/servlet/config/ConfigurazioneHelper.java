@@ -3716,15 +3716,17 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setValue(urlInvocazionePD);
 		dati.addElement(de);
 		
-		de = new DataElement();
-		de.setType(DataElementType.LINK);
-		de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
-		boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
-		if (contaListeFromSession)
-			de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS+" (" + numeroRegoleProxyPass + ")");
-		else
-			de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
-		dati.addElement(de);
+		if(!allHidden) {
+			de = new DataElement();
+			de.setType(DataElementType.LINK);
+			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_PROXY_PASS_REGOLA_LIST);
+			boolean contaListeFromSession = ServletUtils.getContaListeFromSession(this.session) != null ? ServletUtils.getContaListeFromSession(this.session) : false;
+			if (contaListeFromSession)
+				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS+" (" + numeroRegoleProxyPass + ")");
+			else
+				de.setValue(ConfigurazioneCostanti.LABEL_REGOLE_PROXY_PASS);
+			dati.addElement(de);
+		}
 		
 		
 		// Configuriazione CORS

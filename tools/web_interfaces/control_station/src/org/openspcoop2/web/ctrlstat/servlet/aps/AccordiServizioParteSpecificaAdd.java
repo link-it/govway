@@ -98,6 +98,7 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -412,6 +413,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
 			ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
+			PddCore pddCore = new PddCore(apsCore);
 
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
@@ -582,6 +584,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String postBackElementName = apsHelper.getPostBackElementName();
 
 			// Controllo se ho modificato l'accordo, se si allora suggerisco il referente dell'accordo
+			AccordoServizioParteComuneSintetico as = null;
 			if(postBackElementName != null ){
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO) ||
 						postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROTOCOLLO)){
@@ -599,7 +602,28 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					
 					this.url = null;
 					
-					this.provider = null;
+					if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO) && this.tipoProtocollo!=null) {
+						boolean showReferente = apcCore.isSupportatoSoggettoReferente(this.tipoProtocollo);
+						if(showReferente) {
+							boolean annullaProvider = true;
+							if (!gestioneFruitori && this.accordo != null && !"".equals(this.accordo)) {
+								as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
+								if(as.getSoggettoReferente()!=null) {
+									Soggetto s = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome()));
+									if(pddCore.isPddEsterna(s.getPortaDominio())) {
+										annullaProvider = false;
+									}
+								}
+							} 
+							if(annullaProvider) {
+								this.provider = null;
+							}
+						}
+					}
+					else {
+						this.provider = null;
+					}
+					
 					this.tiposervizio = null;
 					
 					// reset protocol properties
@@ -618,17 +642,18 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 			// Lista port-type associati all'accordo di servizio
-			AccordoServizioParteComuneSintetico as = null;
 			boolean forceHttps = false;
 			boolean forceHttpsClient = false;
-			if (this.accordo != null && !"".equals(this.accordo)) {
-				as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
-			} else {
-				if (accordiList != null){
-					if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
-						as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordiList[accordoPrimoAccesso]));
-					if(as!=null)
-						this.accordo = as.getId() + "";
+			if(as==null) {
+				if (this.accordo != null && !"".equals(this.accordo)) {
+					as = apcCore.getAccordoServizioSintetico(Long.parseLong(this.accordo));
+				} else {
+					if (accordiList != null){
+						if(accordoPrimoAccesso >= 0 && accordoPrimoAccesso < accordiList.length)
+							as = apcCore.getAccordoServizioSintetico(Long.parseLong(accordiList[accordoPrimoAccesso]));
+						if(as!=null)
+							this.accordo = as.getId() + "";
+					}
 				}
 			}
 			if(as!=null){
