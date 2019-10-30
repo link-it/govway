@@ -341,6 +341,7 @@
 		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="notifica" type="xsd:boolean" use="optional"/>
 		<xsd:attribute default="abilitato" name="stato" type="StatoFunzionalita"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->

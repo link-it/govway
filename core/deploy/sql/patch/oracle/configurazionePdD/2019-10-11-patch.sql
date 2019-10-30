@@ -1,6 +1,7 @@
 ALTER TABLE porte_applicative ADD id_sa_default NUMBER;
 
 ALTER TABLE porte_applicative_sa ADD connettore_nome VARCHAR2(255);
+ALTER TABLE porte_applicative_sa ADD connettore_notifica NUMBER;
 ALTER TABLE porte_applicative_sa ADD connettore_descrizione VARCHAR2(4000);
 ALTER TABLE porte_applicative_sa ADD connettore_stato VARCHAR2(255);
 ALTER TABLE porte_applicative_sa ADD connettore_filtri CLOB;

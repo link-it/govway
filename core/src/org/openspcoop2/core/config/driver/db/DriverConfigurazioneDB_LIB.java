@@ -5156,6 +5156,7 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 				sqlQueryObject.addInsertField("connettore_nome", "?");
+				sqlQueryObject.addInsertField("connettore_notifica", "?");
 				sqlQueryObject.addInsertField("connettore_descrizione", "?");
 				sqlQueryObject.addInsertField("connettore_stato", "?");
 				sqlQueryObject.addInsertField("connettore_filtri", "?");
@@ -5187,6 +5188,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setLong(indexSA++, idPortaApplicativa);
 					stm.setLong(indexSA++, idSA);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
+					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
 					
@@ -6196,6 +6198,7 @@ public class DriverConfigurazioneDB_LIB {
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
 					sqlQueryObject.addInsertField("connettore_nome", "?");
+					sqlQueryObject.addInsertField("connettore_notifica", "?");
 					sqlQueryObject.addInsertField("connettore_descrizione", "?");
 					sqlQueryObject.addInsertField("connettore_stato", "?");
 					sqlQueryObject.addInsertField("connettore_filtri", "?");
@@ -6206,6 +6209,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setLong(indexSA++, idPortaApplicativa);
 					stm.setLong(indexSA++, idSA);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
+					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
 					

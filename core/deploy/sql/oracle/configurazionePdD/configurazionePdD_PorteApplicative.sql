@@ -155,6 +155,7 @@ CREATE TABLE porte_applicative_sa
 	id_servizio_applicativo NUMBER NOT NULL,
 	-- Dati Connettore
 	connettore_nome VARCHAR2(255),
+	connettore_notifica NUMBER,
 	connettore_descrizione VARCHAR2(4000),
 	connettore_stato VARCHAR2(255),
 	connettore_filtri CLOB,

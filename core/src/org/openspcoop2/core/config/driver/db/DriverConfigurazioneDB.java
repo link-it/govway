@@ -19495,6 +19495,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					idSA = rs.getLong("id_servizio_applicativo");
 
 					String nomeConnettore = rs.getString("connettore_nome");
+					int notificaConnettore = rs.getInt("connettore_notifica");
 					String descrizioneConnettore = rs.getString("connettore_descrizione");
 					String statoConnettore = rs.getString("connettore_stato");
 					String filtriConnettore = rs.getString("connettore_filtri");
@@ -19522,6 +19523,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							if(nomeConnettore!=null && !"".equals(nomeConnettore)) {
 								servizioApplicativo.setDatiConnettore(new PortaApplicativaServizioApplicativoConnettore());
 								servizioApplicativo.getDatiConnettore().setNome(nomeConnettore);
+								servizioApplicativo.getDatiConnettore().setNotifica(notificaConnettore == CostantiDB.TRUE);
 								servizioApplicativo.getDatiConnettore().setDescrizione(descrizioneConnettore);
 								servizioApplicativo.getDatiConnettore().setStato(DriverConfigurazioneDB_LIB.getEnumStatoFunzionalita(statoConnettore));
 								

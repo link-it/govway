@@ -46,6 +46,7 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new Field("proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.NOTIFICA = new Field("notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 	
 	}
@@ -58,6 +59,7 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 		this.PROPRIETA = new org.openspcoop2.core.config.model.ProprietaModel(new ComplexField(father,"proprieta",org.openspcoop2.core.config.Proprieta.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
+		this.NOTIFICA = new ComplexField(father,"notifica",boolean.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-applicativa-servizio-applicativo-connettore",PortaApplicativaServizioApplicativoConnettore.class);
 	
 	}
@@ -71,6 +73,8 @@ public class PortaApplicativaServizioApplicativoConnettoreModel extends Abstract
 	public IField NOME = null;
 	 
 	public IField DESCRIZIONE = null;
+	 
+	public IField NOTIFICA = null;
 	 
 	public IField STATO = null;
 	 

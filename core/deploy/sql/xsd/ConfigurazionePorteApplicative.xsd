@@ -1152,6 +1152,17 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         </xsd:appinfo>
                     </xsd:annotation>
                 </xsd:element>
+                <xsd:element name="connettore_notifica" type="xsd:int" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <linkit:generator
+                                xmlns:linkit="http://www.link.it/project_generator">
+                                <linkit:sql-column-mapping name="connettore_notifica"/>
+                                <linkit:sql-ddl-column-comment>Indicazione se il connettore è stato creato per le notifiche (1=true, 0=false)</linkit:sql-ddl-column-comment>
+                            </linkit:generator>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
                 <xsd:element name="connettore_descrizione" type="xsd:string" minOccurs="0">
                     <xsd:annotation>
                         <xsd:appinfo>
