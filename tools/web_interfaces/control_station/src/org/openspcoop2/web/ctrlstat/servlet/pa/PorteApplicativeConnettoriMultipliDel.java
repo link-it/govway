@@ -37,10 +37,15 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.id.IDServizioApplicativo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -95,8 +100,11 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 			// Prendo la porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
+			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 
+			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
@@ -106,16 +114,35 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 				for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
 					PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
-					if (nome.equals(paSA.getNome())) {
+					if (nome.equals(paSA.getNome()) && !porteApplicativeHelper.isConnettoreDefault(paSA)) {
 						pa.removeServizioApplicativo(j);
+						
+						// se non sto utilizzando un SA Server lo elimino
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(paSA.getNome());
+						IDSoggetto idSoggettoProprietario = new IDSoggetto();
+						idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+						idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+						idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+						ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
+						
+						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+							listaOggettiDaEliminare.add(sa);
+						}
+						
 						break;
 					}
 				}
+				
+				
 			}
 			
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
+			if(!listaOggettiDaEliminare.isEmpty())
+				porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
+
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			
 			// Preparo il menu

@@ -2613,7 +2613,15 @@
             <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
         </action>
   
-    	
+    	<!--  Porte Applicative (Connettori Multipli Load Balance) -->
+    	 
+    	<action path="/porteApplicativeConnettoriMultipliConfigLoadBalance" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigLoadBalance"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceError" path="/jsplib/info.jsp"/>
+        </action>
     
     	<!--  Configurazione (Generale) -->
     	

@@ -5223,7 +5223,7 @@ public class DriverConfigurazioneDB_LIB {
 					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
 					
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 						sqlQueryObject.addSelectField("id");
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
@@ -5232,10 +5232,11 @@ public class DriverConfigurazioneDB_LIB {
 						long idSA = idsPA_SA.get(i);
 						
 						long idPA_SA = -1;
+						sqlQuery = sqlQueryObject.createSQLQuery();
 						stm = con.prepareStatement(sqlQuery);
-						rs = stm.executeQuery();
 						stm.setLong(1, idPortaApplicativa);
 						stm.setLong(2, idSA);
+						rs = stm.executeQuery();
 						if(rs.next()) {
 							idPA_SA = rs.getLong("id");
 						}
@@ -5252,6 +5253,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
 						
 						int j = 0;
@@ -6147,7 +6149,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQuery = sqlQueryObject.createSQLDelete();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(1, idsapa);
 						n=stm.executeUpdate();
 						stm.close();
 						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
@@ -6246,19 +6248,20 @@ public class DriverConfigurazioneDB_LIB {
 					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
 					
 						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
-						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
 						sqlQueryObject.addSelectField("id");
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
 						sqlQueryObject.setANDLogicOperator(true);
+						sqlQuery = sqlQueryObject.createSQLQuery();
 						
 						long idSA = idsPA_SA.get(i);
 						
 						long idPA_SA = -1;
 						stm = con.prepareStatement(sqlQuery);
-						rs = stm.executeQuery();
 						stm.setLong(1, idPortaApplicativa);
 						stm.setLong(2, idSA);
+						rs = stm.executeQuery();
 						if(rs.next()) {
 							idPA_SA = rs.getLong("id");
 						}
@@ -6275,6 +6278,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addInsertField("id_porta", "?");
 						sqlQueryObject.addInsertField("nome", "?");
 						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
 						stm = con.prepareStatement(sqlQuery);
 						
 						int j = 0;
@@ -6914,7 +6918,7 @@ public class DriverConfigurazioneDB_LIB {
 						sqlQueryObject.addWhereCondition("id_porta=?");
 						sqlQuery = sqlQueryObject.createSQLDelete();
 						stm = con.prepareStatement(sqlQuery);
-						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(1, idsapa);
 						n=stm.executeUpdate();
 						stm.close();
 						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");

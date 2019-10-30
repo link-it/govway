@@ -6035,6 +6035,14 @@ public class ControlStationCore {
 		return "'"+groupName+"'";
 	}
 	
+	public String convertPrefixConfigDelConnettore(String prefix) {
+		String key = " di ";
+		if(prefix.endsWith(key)) {
+			return prefix.substring(0, prefix.length()-key.length())+CostantiControlStation.LABEL_DEL_CONNETTORE;
+		}
+		return prefix;
+	}
+	
 	public org.openspcoop2.core.registry.constants.ServiceBinding fromMessageServiceBinding(ServiceBinding serviceBinding) {
 		if(serviceBinding == null)
 			return null;

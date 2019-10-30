@@ -516,7 +516,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.ADD, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null, null);
+						nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps, dati);
 				
@@ -565,7 +565,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 
 			// Controlli sui campi immessi 
 			boolean isOk = porteApplicativeHelper.connettoriMultipliCheckData(TipoOperazione.ADD, pa, beaBehaviourType, nomeSAConnettore,
-					null, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null, null);
+					null, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null);
 			
 			if(isOk) {
 				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
@@ -597,7 +597,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
 				dati = porteApplicativeHelper.addConnettoriMultipliToDati(dati, TipoOperazione.ADD, beaBehaviourType, nomeSAConnettore,
-						nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null, null);
+						nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore, null, null, null, null);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
 				

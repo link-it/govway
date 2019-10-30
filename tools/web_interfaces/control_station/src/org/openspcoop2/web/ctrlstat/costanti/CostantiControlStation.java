@@ -265,6 +265,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
 	public final static String LABEL_PARAMETRO_PORTE_NOME_GRUPPO = "Nome Gruppo";
 	public final static String LABEL_DEL_GRUPPO = " del gruppo ";
+	public final static String LABEL_DEL_CONNETTORE = " del connettore ";
 	public final static String LABEL_PARAMETRO_PORTA_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTA_RISORSA_MODALITA = "Modalità Identificazione Risorsa";
 	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
