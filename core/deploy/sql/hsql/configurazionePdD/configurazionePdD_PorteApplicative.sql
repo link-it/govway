@@ -148,6 +148,7 @@ CREATE TABLE porte_applicative_sa
 	id_servizio_applicativo BIGINT NOT NULL,
 	-- Dati Connettore
 	connettore_nome VARCHAR(255),
+	connettore_notifica INT,
 	connettore_descrizione VARCHAR(4000),
 	connettore_stato VARCHAR(255),
 	connettore_filtri VARCHAR(65535),

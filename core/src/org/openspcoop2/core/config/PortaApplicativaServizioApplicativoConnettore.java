@@ -46,6 +46,7 @@ import java.util.List;
  * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
  * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
+ * 		&lt;attribute name="notifica" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * &lt;/complexType>
  * </pre>
@@ -148,6 +149,18 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
     this.descrizione = descrizione;
   }
 
+  public boolean isNotifica() {
+    return this.notifica;
+  }
+
+  public boolean getNotifica() {
+    return this.notifica;
+  }
+
+  public void setNotifica(boolean notifica) {
+    this.notifica = notifica;
+  }
+
   public void set_value_stato(String value) {
     this.stato = (StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString(value);
   }
@@ -243,6 +256,10 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="descrizione",required=false)
   protected java.lang.String descrizione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="notifica",required=false)
+  protected boolean notifica;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_stato;
