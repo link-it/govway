@@ -6643,23 +6643,23 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setValue(nomeConnettore);
 					de.setStatusValue(nomeConnettore);
 					
-					if(!connettoreDefault) {
-						DataElementImage image = new DataElementImage();
-						
-						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali,
-								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM	);
-						image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
-						image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
-						
-						de.addImage(image );
-					}
+//					if(!connettoreDefault) { 
+					DataElementImage image = new DataElementImage();
+					
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CHANGE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pConfigurazioneDatiGenerali,
+							pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM	);
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME));
+					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+					
+					de.addImage(image );
+//					}
 							
 					if(!connettoreDefault) 
 						de.setIdToRemove(paSA.getNome());
 					
 					if(urlCambiaStato) {
 						Parameter pAbilita = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA,  (statoPA ? Costanti.CHECK_BOX_DISABLED : Costanti.CHECK_BOX_ENABLED_TRUE));
-						DataElementImage image = new DataElementImage();
+						image = new DataElementImage();
 						image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, pIdSogg, pNomePorta, pIdPorta,pIdAsps,  pNomePaSA, pIdTAb, pAbilita,
 								pAccessoDaAPS, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pConnettoreAccessoCM);
 						image.setToolTip(statoMapping);

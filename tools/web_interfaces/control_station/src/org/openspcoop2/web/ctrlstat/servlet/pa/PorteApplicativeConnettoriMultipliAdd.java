@@ -643,6 +643,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			List<Object> listaOggettiDaModificare = new ArrayList<Object>();
 			
 			PortaApplicativaServizioApplicativoConnettore datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
+			datiConnettore.setNotifica(true); // connettore notifica
 			datiConnettore.setNome(nomeConnettore);
 			datiConnettore.setDescrizione(descrizioneConnettore);
 			if(statoConnettore.equals(StatoFunzionalita.ABILITATO.getValue()))

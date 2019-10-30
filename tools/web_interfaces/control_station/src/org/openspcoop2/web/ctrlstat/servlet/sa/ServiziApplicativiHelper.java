@@ -48,17 +48,22 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -71,11 +76,13 @@ import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.archivi.ExporterUtils;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
+import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.ruoli.RuoliCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
@@ -2877,5 +2884,109 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		return lstParam;
 	}
 	
-	
+	public void impostaSADefaultAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(String idAsps, PortaApplicativa pa, ServizioApplicativo sa, List<Object> oggettiDaAggiornare) throws DriverConfigurazioneException, Exception,
+			DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneNotFound {
+		// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+		MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		if(mappingErogazionePortaApplicativa.isDefault()) {
+			String nomeSA = sa.getNome();
+			String tipoSA = sa.getTipo();
+			String servizioApplicativoDefault = pa.getServizioApplicativoDefault();
+			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+			// lettura delle configurazioni associate
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				// scarto il default
+				if(!mappinErogazione.isDefault()) { 
+					PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+					
+					// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+					if((portaApplicativaTmp.getServizioApplicativoDefault() != null && servizioApplicativoDefault != null &&
+							portaApplicativaTmp.getServizioApplicativoDefault().equals(servizioApplicativoDefault) ) ){ 
+						 
+						// prelevo l'associazione con il vecchio servizio applicativo
+						PortaApplicativaServizioApplicativo paSAtmpInner = null;
+						for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+							if(paSAInner.getNome().equals(nomeSA)) {
+								paSAtmpInner = paSAInner;
+								break;
+							}
+						}
+
+						if(paSAtmpInner!= null) {
+							// se ho modificato il server che sto utilizzando lo rimuovo
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)){
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+							} 
+						}
+
+						// nuovo SA da aggiungere
+						
+						PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+						paSAInner.setNome(servizioApplicativoDefault);
+						portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+						portaApplicativaTmp.setServizioApplicativoDefault(null);
+						oggettiDaAggiornare.add(portaApplicativaTmp);
+					 }
+					
+				}
+			}
+		}
+	}
+
+	public void impostaSAServerAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(String idAsps, String nuovoSAServer, PortaApplicativa pa, ServizioApplicativo sa,
+			List<Object> oggettiDaAggiornare)
+			throws DriverConfigurazioneException, Exception, DriverRegistroServiziNotFound,
+			DriverRegistroServiziException, DriverConfigurazioneNotFound {
+		// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+		MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		if(mappingErogazionePortaApplicativa.isDefault()) {
+			String servizioApplicativoDefault = pa.getServizioApplicativoDefault();
+			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+			// lettura delle configurazioni associate
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				// scarto il default
+				if(!mappinErogazione.isDefault()) { 
+					PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+					
+					// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+					if((portaApplicativaTmp.getServizioApplicativoDefault() == null && servizioApplicativoDefault == null) ||
+					(portaApplicativaTmp.getServizioApplicativoDefault() != null && servizioApplicativoDefault != null &&
+							portaApplicativaTmp.getServizioApplicativoDefault().equals(servizioApplicativoDefault) ) ){ 
+						 
+						// prelevo l'associazione con il vecchio servizio applicativo
+						PortaApplicativaServizioApplicativo paSAtmpInner = null;
+						for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+							if(paSAInner.getNome().equals(sa.getNome())) {
+								paSAtmpInner = paSAInner;
+								break;
+							}
+						}
+
+						if(paSAtmpInner!= null) {
+							// se ho modificato il server che sto utilizzando lo rimuovo
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+							} else {
+								// SA di default da conservare
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner);
+								portaApplicativaTmp.setServizioApplicativoDefault(sa.getNome());
+							}
+						}
+
+						// nuovo SA da aggiungere
+						PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+						paSAInner.setNome(nuovoSAServer);
+						portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+						oggettiDaAggiornare.add(portaApplicativaTmp);
+					 }
+				}
+			}
+		}
+	}
 }

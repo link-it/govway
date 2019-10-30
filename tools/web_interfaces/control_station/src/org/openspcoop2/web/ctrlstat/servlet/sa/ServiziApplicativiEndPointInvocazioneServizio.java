@@ -1030,8 +1030,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				// solo se ho cambiato il valore del servizio server oppure ho scelto un server al posto del default
 				if(!erogazioneServizioApplicativoServer.equals(sa.getNome())) {
 					
-					String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
-					
 					// prelevo l'associazione con il vecchio servizio applicativo
 					PortaApplicativaServizioApplicativo paSAtmp = null;
 					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
@@ -1059,54 +1057,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 					oggettiDaAggiornare.add(pa);
 					
-					// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
-					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-					if(mappingErogazionePortaApplicativa.isDefault()) {
-						List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
-						// lettura delle configurazioni associate
-						AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
-						AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-						IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-						listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
-						for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
-							// scarto il default
-							if(!mappinErogazione.isDefault()) { 
-								PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
-								
-								// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
-								if((portaApplicativaTmp.getServizioApplicativoDefault() == null && oldServizioApplicativoDefault == null) ||
-								(portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
-										portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
-									 
-									// prelevo l'associazione con il vecchio servizio applicativo
-									PortaApplicativaServizioApplicativo paSAtmpInner = null;
-									for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
-										if(paSAInner.getNome().equals(sa.getNome())) {
-											paSAtmpInner = paSAInner;
-											break;
-										}
-									}
-
-									if(paSAtmpInner!= null) {
-										// se ho modificato il server che sto utilizzando lo rimuovo
-										if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
-											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
-										} else {
-											// SA di default da conservare
-											portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner);
-											portaApplicativaTmp.setServizioApplicativoDefault(sa.getNome());
-										}
-									}
-
-									// nuovo SA da aggiungere
-									PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
-									paSAInner.setNome(erogazioneServizioApplicativoServer);
-									portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
-									oggettiDaAggiornare.add(portaApplicativaTmp);
-								 }
-							}
-						}
-					}
+					saHelper.impostaSAServerAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(idAsps, erogazioneServizioApplicativoServer, pa, sa, oggettiDaAggiornare);
 					
 				}
 			} else {
@@ -1145,52 +1096,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 	
 						oggettiDaAggiornare.add(pa);
 						
-						// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
-						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-						if(mappingErogazionePortaApplicativa.isDefault()) {
-							List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
-							// lettura delle configurazioni associate
-							AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
-							AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-							IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
-							listaMappingErogazionePortaApplicativa = apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
-							for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
-								// scarto il default
-								if(!mappinErogazione.isDefault()) { 
-									PortaApplicativa portaApplicativaTmp = porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
-									
-									// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
-									if((portaApplicativaTmp.getServizioApplicativoDefault() != null && oldServizioApplicativoDefault != null &&
-											portaApplicativaTmp.getServizioApplicativoDefault().equals(oldServizioApplicativoDefault) ) ){ 
-										 
-										// prelevo l'associazione con il vecchio servizio applicativo
-										PortaApplicativaServizioApplicativo paSAtmpInner = null;
-										for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
-											if(paSAInner.getNome().equals(oldNomeSA)) {
-												paSAtmpInner = paSAInner;
-												break;
-											}
-										}
-	
-										if(paSAtmpInner!= null) {
-											// se ho modificato il server che sto utilizzando lo rimuovo
-											if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)){
-												portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
-											} 
-										}
-	
-										// nuovo SA da aggiungere
-										
-										PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
-										paSAInner.setNome(oldServizioApplicativoDefault);
-										portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
-										portaApplicativaTmp.setServizioApplicativoDefault(null);
-										oggettiDaAggiornare.add(portaApplicativaTmp);
-									 }
-									
-								}
-							}
-						}
+						saHelper.impostaSADefaultAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(idAsps, pa, sa, oggettiDaAggiornare);
 						
 						// rileggo la vecchia configurazione dal db di default
 						IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -1411,4 +1317,5 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 		} 
 
 	}
+	
 }

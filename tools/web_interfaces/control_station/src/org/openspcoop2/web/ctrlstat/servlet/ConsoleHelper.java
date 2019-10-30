@@ -14429,7 +14429,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public boolean isConnettoreDefault(PortaApplicativaServizioApplicativo paSA) {
-		return CostantiControlStation.LABEL_DEFAULT.equals(this.getLabelNomePortaApplicativaServizioApplicativo(paSA));
+		return paSA.getDatiConnettore()!= null ? !paSA.getDatiConnettore().isNotifica() : true;
 	}
 	
 	public String getLabelNomePortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo paSA) {

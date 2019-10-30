@@ -6209,7 +6209,7 @@ public class DriverConfigurazioneDB_LIB {
 					stm.setLong(indexSA++, idPortaApplicativa);
 					stm.setLong(indexSA++, idSA);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
-					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : null);
+					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
 					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
 					
