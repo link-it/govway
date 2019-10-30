@@ -14460,4 +14460,5 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		return ( ++ idxConfigurazione);
 	}
+
 }

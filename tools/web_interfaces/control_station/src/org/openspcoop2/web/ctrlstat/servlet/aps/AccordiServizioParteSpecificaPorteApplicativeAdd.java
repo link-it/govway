@@ -338,6 +338,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String[] listaMappingValues = mappingInfo.getListaMappingValues();
 			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
 			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
+			boolean paMappingSelezionatoMulti = mappingInfo.isPaMappingSelezionatoMulti();
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
@@ -664,7 +665,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPA, mappingLabel, nomeSA, saSoggetti, 
+							mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 							controlloAccessiStato,
 							erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -754,7 +755,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPA, mappingLabel, nomeSA, saSoggetti, 
+						mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 						controlloAccessiStato,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 

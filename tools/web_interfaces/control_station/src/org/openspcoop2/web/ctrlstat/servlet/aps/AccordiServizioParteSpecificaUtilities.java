@@ -1407,6 +1407,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 		MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
+		boolean paMappingSelezionatoMulti=false;
 		
 		String mappingLabel = "";
 		String[] listaMappingLabels = null;
@@ -1429,9 +1430,11 @@ public class AccordiServizioParteSpecificaUtilities {
 				mappingSelezionato = mappingDefault;
 			}
 
+			PortaApplicativa paMappingTmp = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+			paMappingSelezionatoMulti = paMappingTmp.getBehaviour() != null;
+			
 			if(!mappingSelezionato.isDefault()) {
-				PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,Integer.MAX_VALUE);
+				mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMappingTmp,Integer.MAX_VALUE);
 			}
 			
 			listaMappingLabels = new String[listaMappingErogazioneSize];
@@ -1472,7 +1475,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		
 		nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + ( ++ idxConfigurazione);
-
+		
 		AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = new AccordiServizioParteSpecificaPorteApplicativeMappingInfo();
 		mappingInfo.setListaMappingErogazione(listaMappingErogazione);
 		mappingInfo.setMappingSelezionato(mappingSelezionato);
@@ -1482,6 +1485,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		mappingInfo.setListaMappingValues(listaMappingValues);
 		mappingInfo.setAzioniOccupate(azioniOccupate);
 		mappingInfo.setNomeNuovaConfigurazione(nomeNuovaConfigurazione);
+		mappingInfo.setPaMappingSelezionatoMulti(paMappingSelezionatoMulti);
 		
 		return mappingInfo;
 	}
@@ -1821,14 +1825,35 @@ public class AccordiServizioParteSpecificaUtilities {
 				}
 			}
 			else {
-				
-				// assegno sempre il connettore della pa di default in caso di eredita'
-				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
-					PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
-					paSa.setNome(paSADefault.getNome());
-					portaApplicativa.getServizioApplicativoList().add(paSa);
+				// se ho clonato una porta applicativa multi connettore devo clonare tutti i conettori associati
+				if(portaApplicativaDaCopiare.getBehaviour() != null) {
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDaCopiare.getServizioApplicativoList()) {
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setDatiConnettore(paSADefault.getDatiConnettore());
+						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
+						idServizioApplicativoDefault.setNome(paSADefault.getNome());
+						idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDaCopiare.getTipoSoggettoProprietario(), portaApplicativaDaCopiare.getNomeSoggettoProprietario()));
+						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
+						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saDefault.getTipo())) {
+							ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
+							String nuovoNomeSA = portaApplicativa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
+									apsHelper.getIdxNuovoConnettoreMultiplo(portaApplicativa);
+							sa.setNome(nuovoNomeSA);
+							paSa.setNome(sa.getNome());
+							listaOggettiDaCreare.add(sa);
+						} else {
+							paSa.setNome(paSADefault.getNome());
+						}
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+					}
+				} else {
+					// assegno sempre il connettore della pa di default in caso di eredita'
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(paSADefault.getNome());
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+					}
 				}
-				
 			}
 		}
 		

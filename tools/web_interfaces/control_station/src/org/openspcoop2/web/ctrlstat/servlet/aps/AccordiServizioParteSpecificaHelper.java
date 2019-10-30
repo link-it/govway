@@ -1835,6 +1835,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								listParametersConfigutazioneConnettoriMultipli.add(pIdConnettore);
 								listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 								listParametersConfigutazioneConnettoriMultipli.add(pConnettoreVerificaAccesso);
+								listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 								
 								de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, 
 										listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1]));
@@ -3050,6 +3051,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								listParametersConfigutazioneConnettoriMultipli.add(pIdTAb);
 								listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
 								listParametersConfigutazioneConnettoriMultipli.add(pConnettoreVerificaRegistro);
+								listParametersConfigutazioneConnettoriMultipli.add(new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 								
 								image = new DataElementImage();
 								image.setToolTip(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP);
@@ -3065,7 +3067,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 								deConfiguraConnettoriMultipli.setValue(this.getStatoConnettoriMultipliPortaApplicativa(paAssociata));
 								deConfiguraConnettoriMultipli.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, paIdSogg, pIdPorta, pIdAsps,
 										pConnettoreAccessoDaGruppi,
-										pConnettoreVerificaRegistro);
+										pConnettoreVerificaRegistro,new Parameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB, "0"));
 							} else {
 								deConfiguraConnettoriMultipli.setValue("-");
 							}
@@ -8010,7 +8012,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			String[] azioni, String[] azioniDisponibiliList, String[] azioniDisponibiliLabelList, 
 			String idAsps, String idSoggettoErogatoreDelServizio, String identificazione, 
 			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding, String modeCreazione, String modeCreazioneConnettore,
-			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, String nomeSA, String [] saSoggetti, 
+			String[] listaMappingLabels, String[] listaMappingValues, String mapping, String mappingLabel, boolean paMappingSelezionatoMulti, String nomeSA, String [] saSoggetti, 
 			String controlloAccessiStato,
 			String erogazioneAutenticazione, String erogazioneAutenticazioneOpzionale, TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal, List<String> erogazioneAutenticazioneParametroList, boolean erogazioneIsSupportatoAutenticazioneSoggetti,
 			String erogazioneAutorizzazione, String erogazioneAutorizzazioneAutenticati, String erogazioneAutorizzazioneRuoli,
@@ -8081,6 +8083,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		de.setPostBack(true, true);
 		dati.addElement(de);
 		
+		
+		boolean showModeConnettore = !this.isModalitaStandard();
 		// 	modo creazione: se erediti la configurazione da una precedente allora devi solo sezionarla, altrimenti devi compilare le sezioni SA e controllo accessi
 		if(modeCreazione.equals(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA)) {
 			// mapping
@@ -8094,20 +8098,21 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MAPPING);
 			de.setPostBack(true);
 			dati.addElement(de);
+			
+			showModeConnettore = showModeConnettore && !paMappingSelezionatoMulti;
 		} 
 		
 		// mode Connettore
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CREAZIONE_CONNETTORE);
-		if(this.isModalitaStandard()) {
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(modeCreazione);
-		}
-		else {
+		if(showModeConnettore) {
 			de.setType(DataElementType.CHECKBOX);
 			de.setSelected(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore));
 			de.setPostBack(true);
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(modeCreazione);
 		}
 		dati.addElement(de);
 		

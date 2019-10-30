@@ -1023,6 +1023,9 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA ="Si sta disabilitando la configurazione relativa alle azioni:{0}Procedere?";
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_PORTA_DEFAULT ="Si sta disabilitando la configurazione di default, procedere?";
 	
+	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE ="Procedere con l''abilitazione del connettore ''{0}''?"; 
+	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE ="Procedere con la disabilitazione del connettore ''{0}''?"; 
+	
 
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}"; 

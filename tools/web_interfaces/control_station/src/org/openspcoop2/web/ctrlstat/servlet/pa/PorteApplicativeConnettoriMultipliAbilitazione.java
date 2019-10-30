@@ -36,31 +36,19 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
-import org.openspcoop2.core.id.IDPortaApplicativa;
-import org.openspcoop2.core.id.IDServizio;
-import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
-import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
-import org.openspcoop2.core.registry.driver.IDAccordoFactory;
-import org.openspcoop2.core.registry.driver.IDServizioFactory;
-import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
-import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaHelper;
-import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniHelper;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
 import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
-import org.openspcoop2.web.lib.mvc.TipoOperazione;
-import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 
 /**
  * PorteApplicativeConnettoriMultipliAbilitazione
@@ -95,15 +83,11 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			String changeAbilitato = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ABILITA);
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
-			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
-			int soggInt = Integer.parseInt(idsogg);
-			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
-			if(idAsps == null)
-				idAsps = "";
+			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
 			
-			String idTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
-			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
-				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
+			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			if(StringUtils.isNotEmpty(idConnTab)) {
+				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			}
 			
 			String fromAPIPageInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO);
@@ -120,19 +104,20 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			porteApplicativeHelper.makeMenu();
 
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
-			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
-			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			// Prendo la porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			
-			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
-			AccordoServizioParteComuneSintetico aspc = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
-			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
+			PortaApplicativaServizioApplicativo oldPaSA = null;
+			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+				if(paSATmp.getNome().equals(nomeSAConnettore)) {
+					oldPaSA = paSATmp;					
+				}
+			}
 			
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaMappingErogazionePortaApplicativa(fromApi, pa, serviceBinding, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(fromApi, oldPaSA, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
 
 				pd.setMessage(messaggio, MessageType.CONFIRM);
 				
@@ -153,95 +138,64 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
 				// Prendo la porta applicativa
 				pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-				// Modifico i dati della porta applicativa nel db
-				pa.setNome(nomePorta);
-				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-				oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
-				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+				
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(nomeSAConnettore)) {
+						paSA = paSATmp;					
+					}
+				}
+				
+				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
+				
+				if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
+					datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
+					datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
+				}
+				
+				paSA.setDatiConnettore(datiConnettore);
+				
+//				// Modifico i dati della porta applicativa nel db
+//				pa.setNome(nomePorta);
+//				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+//				oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
+//				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
 				
 				 // cambio solo la modalita'
 	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-	                pa.setStato(StatoFunzionalita.ABILITATO);
+	            	datiConnettore.setStato(StatoFunzionalita.ABILITATO);
 	            }
 	            else{
-	                pa.setStato(StatoFunzionalita.DISABILITATO);
+	            	datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
 	            }
 				
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 	
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			}
+			
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-
-
-			List<PortaApplicativa> lista = null;
-			int idLista = -1;
+	
+			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+	
+			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
+	
+			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			
-		
-			switch (parentPA) {
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
-				
-				if(fromApi) {
-					ErogazioniHelper apsHelper = new ErogazioniHelper(request, pd, session);
-					apsHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);	
-				}
-				else {
-				
-					boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-					if(datiInvocazione) {
-						idLista = Liste.SERVIZI;
-						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-						boolean [] permessi = new boolean[2];
-						PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
-						permessi[0] = pu.isServizi();
-						permessi[1] = pu.isAccordiCooperazione();
-						List<AccordoServizioParteSpecifica> listaS = null;
-						String superUser   = ServletUtils.getUserLoginFromSession(session);
-						if(apsCore.isVisioneOggettiGlobale(superUser)){
-							listaS = apsCore.soggettiServizioList(null, ricerca,permessi,session);
-						}else{
-							listaS = apsCore.soggettiServizioList(superUser, ricerca,permessi,session);
-						}
-						AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-						apsHelper.prepareServiziList(ricerca, listaS);
-					}
-					else {			
-						idLista = Liste.CONFIGURAZIONE_EROGAZIONE;
-						ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-						IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
-						Long idSoggetto = asps.getIdSoggetto() != null ? asps.getIdSoggetto() : -1L;
-						List<MappingErogazionePortaApplicativa> lista2 = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(),ricerca);
-						AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
-						apsHelper.prepareServiziConfigurazioneList(lista2, idAsps, idSoggetto+"", ricerca);
-					}
-					
-				}
-					
-				break;
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_SOGGETTO:
-				idLista = Liste.PORTE_APPLICATIVE_BY_SOGGETTO;
-				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteApplicativeCore.porteAppList(soggInt, ricerca);
-				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
-				break;
-			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE:
-			default:
-				idLista = Liste.PORTE_APPLICATIVE;
-				ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-				lista = porteApplicativeCore.porteAppList(null, ricerca);
-				porteApplicativeHelper.preparePorteAppList(ricerca, lista,idLista);
-				break;
-			}
-
+			List<PortaApplicativaServizioApplicativo> lista = portaApplicativa.getServizioApplicativoList();
+			
+			// filtro
+	
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, lista);
+	
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			
-			ForwardParams fwP = porteApplicativeHelper.isModalitaCompleta() ? ForwardParams.OTHER("") : PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE, fwP);
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, ForwardParams.OTHER(""));
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_ABILITAZIONE,
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE,
 					ForwardParams.OTHER(""));
 
 		} 

@@ -6889,7 +6889,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO);
 		
-		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaDatiGenerali)) {
+		if(tipoOp.equals(TipoOperazione.ADD)) {
 			de.setType(DataElementType.SELECT);
 			String [] values = { StatoFunzionalita.ABILITATO.getValue() , StatoFunzionalita.DISABILITATO.getValue()};
 			de.setValues(values);			
@@ -7096,6 +7096,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 			}
 			
+			if(tipoOp.equals(TipoOperazione.CHANGE)) {
+				String erogazioneServizioApplicativoServerEnabledS = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+				boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+				String erogazioneServizioApplicativoServer = this.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+				if(erogazioneServizioApplicativoServerEnabled) {
+					for (PortaApplicativaServizioApplicativo paSA : pa.getServizioApplicativoList()) {
+						// usato da un altro PASA che non sia quello in corso di modifica
+						if(!paSA.getNome().equals(nomeSAConnettore) &&   paSA.getNome().equals(erogazioneServizioApplicativoServer) ) {
+							String nomeConfigurazione = getLabelNomePortaApplicativaServizioApplicativo(paSA);
+							this.pd.setMessage("L'Applicativo '"+erogazioneServizioApplicativoServer+"' &egrave; gi&agrave; utilizzato nel connettore '"+nomeConfigurazione+"'.");
+							return false;
+						}
+					}
+				}
+			}
+			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -7146,4 +7162,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 		return prefix+this.core.getLabelGroup(this.getLabelNomePortaApplicativaServizioApplicativo(paSA));
 	}
+	
+	public String getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(boolean fromAPI, PortaApplicativaServizioApplicativo paSA, boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+		boolean connettoreDefault = this.isConnettoreDefault(paSA);
+		String nomeConnettore = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+		return this.getMessaggioConfermaModificaStatoConnettore(fromAPI, connettoreDefault, nomeConnettore, abilitazione, multiline, listElement);
+	}
+	
+	
+	public String getMessaggioConfermaModificaStatoConnettore(boolean fromAPI, boolean isDefault, String connettore,
+			boolean abilitazione, boolean multiline,boolean listElement) throws DriverConfigurazioneException {
+		String pre = Costanti.HTML_MODAL_SPAN_PREFIX;
+		String post = Costanti.HTML_MODAL_SPAN_SUFFIX;
+		
+		return pre + ( abilitazione ? MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE,connettore) : MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE,connettore) )  + post;
+	}
+	
 }

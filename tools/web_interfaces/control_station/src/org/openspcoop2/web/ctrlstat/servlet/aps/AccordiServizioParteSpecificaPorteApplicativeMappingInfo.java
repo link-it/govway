@@ -44,6 +44,7 @@ public class AccordiServizioParteSpecificaPorteApplicativeMappingInfo {
 	private String[] listaMappingValues = null;
 	private List<String> azioniOccupate = new ArrayList<>();
 	private String nomeNuovaConfigurazione = null;
+	private boolean paMappingSelezionatoMulti = false;
 	
 	public List<MappingErogazionePortaApplicativa> getListaMappingErogazione() {
 		return this.listaMappingErogazione;
@@ -92,5 +93,11 @@ public class AccordiServizioParteSpecificaPorteApplicativeMappingInfo {
 	}
 	public void setNomeNuovaConfigurazione(String nomeNuovaConfigurazione) {
 		this.nomeNuovaConfigurazione = nomeNuovaConfigurazione;
+	}
+	public boolean isPaMappingSelezionatoMulti() {
+		return paMappingSelezionatoMulti;
+	}
+	public void setPaMappingSelezionatoMulti(boolean paMappingSelezionatoMulti) {
+		this.paMappingSelezionatoMulti = paMappingSelezionatoMulti;
 	}
 }
