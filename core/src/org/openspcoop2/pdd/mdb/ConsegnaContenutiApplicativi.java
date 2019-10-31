@@ -369,7 +369,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			try {
-				GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer);
+				GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer, true);
 			}catch(Throwable t) {
 				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -2078,7 +2078,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						}
 					}
 					if(transazioneApplicativoServer!=null) {
-						transazioneApplicativoServer.setConsegnaSuccesso(!errorConsegna);
+						transazioneApplicativoServer.setConsegnaTerminata(!errorConsegna);
 					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();

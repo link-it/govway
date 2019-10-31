@@ -1295,7 +1295,7 @@ public class UtilityTransazioni {
 			esitoNumber = searchForm.getEsitoGruppo();
 		}
 		esito.setCodice(new BigInteger(esitoNumber+""));
-		esito.setValue(UtilityTransazioni.escapeXmlValue(esitoUtils.getEsitoLabelFromValue(esitoNumber)));
+		esito.setValue(UtilityTransazioni.escapeXmlValue(esitoUtils.getEsitoLabelFromValue(esitoNumber,false)));
 		transazione.setEsito(esito);
 		
 		org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Contesto contesto = new org.openspcoop2.web.monitor.transazioni.core.search.TransazioneType.Contesto();

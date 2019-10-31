@@ -46,7 +46,7 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_REGISTRAZIONE = new Field("data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.CONSEGNA_SUCCESSO = new Field("consegna-successo",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_TERMINATA = new Field("consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new Field("dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new Field("consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -86,7 +86,7 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_REGISTRAZIONE = new ComplexField(father,"data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.CONSEGNA_SUCCESSO = new ComplexField(father,"consegna-successo",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_TERMINATA = new ComplexField(father,"consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new ComplexField(father,"dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new ComplexField(father,"consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -128,7 +128,7 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	 
 	public IField PROTOCOLLO = null;
 	 
-	public IField CONSEGNA_SUCCESSO = null;
+	public IField CONSEGNA_TERMINATA = null;
 	 
 	public IField DETTAGLIO_ESITO = null;
 	 

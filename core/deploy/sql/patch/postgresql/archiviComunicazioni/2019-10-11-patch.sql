@@ -3,6 +3,7 @@ ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
 ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO TYPE VARCHAR(2000);
 
 ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore TYPE VARCHAR(2000);
+ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
 
@@ -14,7 +15,7 @@ CREATE TABLE transazioni_sa
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Transazione
-	consegna_successo BOOLEAN DEFAULT false,
+	consegna_terminata BOOLEAN DEFAULT false,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,

@@ -183,6 +183,10 @@ Context, Cloneable {
 		}
 	}
 
+	public List<SelectItem> getEsitiDettaglio() {
+		return super.getEsitiDettaglio(false);
+	}
+	
 	public boolean isIntegrationManagerEnabled() {
 		return this.integrationManagerEnabled;
 	}

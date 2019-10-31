@@ -61,8 +61,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "servizio_applicativo_erogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
 				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_registrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
-				setParameter(object, "setConsegnaSuccesso", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "consegna_successo", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType()));
+				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "consegna_terminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dettaglio_esito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
@@ -147,8 +147,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"servizio-applicativo-erogatore"));
 				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"data-registrazione"));
-				setParameter(object, "setConsegnaSuccesso", TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType(),
-					this.getObjectFromMap(map,"consegna-successo"));
+				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
+					this.getObjectFromMap(map,"consegna-terminata"));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					this.getObjectFromMap(map,"dettaglio-esito"));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),

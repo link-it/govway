@@ -38,6 +38,7 @@ CREATE TABLE transazioni
 	ruolo_transazione INT NOT NULL,
 	-- Esito della Transazione
 	esito INT,
+	consegne_multiple INT,
 	esito_contesto VARCHAR(20),
 	-- Protocollo utilizzato per la transazione
 	protocollo VARCHAR(20) NOT NULL,
@@ -178,8 +179,8 @@ CREATE TABLE transazioni_sa
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
-	-- Esito della Transazione
-	consegna_successo BOOLEAN DEFAULT false,
+	-- Esito della Consegna
+	consegna_terminata BOOLEAN DEFAULT false,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,

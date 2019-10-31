@@ -59,6 +59,8 @@ public class EsitoUtils {
 	public final static Integer ALL_PERSONALIZZATO_VALUE = -5;
 	public final static Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
 	
+	public final static String LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA = "Consegna Multipla";
+	
 	private Logger logger;
 	private EsitiProperties esitiProperties;
 	public EsitoUtils(Logger logger,String protocollo) throws ProtocolException{
@@ -158,6 +160,14 @@ public class EsitoUtils {
 		else if(ALL_ERROR_FAULT_APPLICATIVO_LABEL.equals(label)){
 			return ALL_ERROR_FAULT_APPLICATIVO_VALUE;
 		}
+		else if(LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA.equals(label)) {
+			try{
+				return this.esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+			}catch(Exception e){
+				this.logger.error("Conversione non riuscita: "+e.getMessage(),e);
+				return null;
+			}
+		}
 		
 		try{
 			return this.esitiProperties.convertLabelToCode(label);
@@ -167,7 +177,7 @@ public class EsitoUtils {
 		}
 	}
 	
-	public String getEsitoLabelFromValue(Object value){
+	public String getEsitoLabelFromValue(Object value, boolean statistica){
 		if(value instanceof Integer){
 			
 			if(ALL_VALUE == ((Integer)value)){
@@ -190,7 +200,14 @@ public class EsitoUtils {
 			}
 			
 			try{
-				return this.esitiProperties.getEsitoLabel((Integer)value);
+				int valueInt = (Integer)value;
+				if(statistica) {
+					int consegnaMultipla = this.esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+					if(consegnaMultipla == valueInt) {
+						return LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA;
+					}
+				}
+				return this.esitiProperties.getEsitoLabel(valueInt);
 			}catch(Exception e){
 				this.logger.error("Conversione non riuscita: "+e.getMessage(),e);
 				return "Conversione non riuscita";

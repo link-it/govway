@@ -61,7 +61,7 @@ public class FSRecoveryTransazioniApplicativoServerImpl extends AbstractFSRecove
 	public void insertObject(File file, Connection connection) throws Exception {
 		JaxbDeserializer deserializer = new JaxbDeserializer();
 		TransazioneApplicativoServer transazioneApplicativoServer = deserializer.readTransazioneApplicativoServer(file);
-		TransactionServerUtils.save(this.transazioniSM.getTransazioneApplicativoServerService(), transazioneApplicativoServer);
+		TransactionServerUtils.recover(this.transazioniSM.getTransazioneApplicativoServerService(), transazioneApplicativoServer);
 	}
 
 

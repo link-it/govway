@@ -149,6 +149,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().STATO);
     		fields.add(Transazione.model().RUOLO_TRANSAZIONE);
     		fields.add(Transazione.model().ESITO);
+    		fields.add(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO);
     		fields.add(Transazione.model().ESITO_CONTESTO);
     		fields.add(Transazione.model().PROTOCOLLO);
     		fields.add(Transazione.model().TIPO_RICHIESTA);
@@ -592,13 +593,13 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 				}
 				if(itemAlreadySaved_!=null){
 					itemObj_.setId(itemAlreadySaved_.getId());
-					if(itemObj_.getAllegatoList()!=null){
-						List<org.openspcoop2.core.transazioni.DumpAllegato> listObj_dumpMessaggio = itemObj_.getAllegatoList();
-						for(org.openspcoop2.core.transazioni.DumpAllegato itemObj_dumpMessaggio : listObj_dumpMessaggio){
-							org.openspcoop2.core.transazioni.DumpAllegato itemAlreadySaved_dumpMessaggio = null;
-							if(itemAlreadySaved_.getAllegatoList()!=null){
-								List<org.openspcoop2.core.transazioni.DumpAllegato> listImgSaved_dumpMessaggio = itemAlreadySaved_.getAllegatoList();
-								for(org.openspcoop2.core.transazioni.DumpAllegato itemImgSaved_dumpMessaggio : listImgSaved_dumpMessaggio){
+					if(itemObj_.getMultipartHeaderList()!=null){
+						List<org.openspcoop2.core.transazioni.DumpMultipartHeader> listObj_dumpMessaggio = itemObj_.getMultipartHeaderList();
+						for(org.openspcoop2.core.transazioni.DumpMultipartHeader itemObj_dumpMessaggio : listObj_dumpMessaggio){
+							org.openspcoop2.core.transazioni.DumpMultipartHeader itemAlreadySaved_dumpMessaggio = null;
+							if(itemAlreadySaved_.getMultipartHeaderList()!=null){
+								List<org.openspcoop2.core.transazioni.DumpMultipartHeader> listImgSaved_dumpMessaggio = itemAlreadySaved_.getMultipartHeaderList();
+								for(org.openspcoop2.core.transazioni.DumpMultipartHeader itemImgSaved_dumpMessaggio : listImgSaved_dumpMessaggio){
 									boolean objEqualsToImgSaved_dumpMessaggio = false;
 									// TODO verify equals
 									// objEqualsToImgSaved_dumpMessaggio = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio.getXXX(),itemImgSaved_dumpMessaggio.getXXX()) &&
@@ -638,6 +639,98 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 							}
 						}
 					}
+					if(itemObj_.getAllegatoList()!=null){
+						List<org.openspcoop2.core.transazioni.DumpAllegato> listObj_dumpMessaggio = itemObj_.getAllegatoList();
+						for(org.openspcoop2.core.transazioni.DumpAllegato itemObj_dumpMessaggio : listObj_dumpMessaggio){
+							org.openspcoop2.core.transazioni.DumpAllegato itemAlreadySaved_dumpMessaggio = null;
+							if(itemAlreadySaved_.getAllegatoList()!=null){
+								List<org.openspcoop2.core.transazioni.DumpAllegato> listImgSaved_dumpMessaggio = itemAlreadySaved_.getAllegatoList();
+								for(org.openspcoop2.core.transazioni.DumpAllegato itemImgSaved_dumpMessaggio : listImgSaved_dumpMessaggio){
+									boolean objEqualsToImgSaved_dumpMessaggio = false;
+									// TODO verify equals
+									// objEqualsToImgSaved_dumpMessaggio = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio.getXXX(),itemImgSaved_dumpMessaggio.getXXX()) &&
+									// 						 			...
+									//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio.getYYY(),itemImgSaved_dumpMessaggio.getYYY());
+									if(objEqualsToImgSaved_dumpMessaggio){
+										itemAlreadySaved_dumpMessaggio=itemImgSaved_dumpMessaggio;
+										break;
+									}
+								}
+							}
+							if(itemAlreadySaved_dumpMessaggio!=null){
+								itemObj_dumpMessaggio.setId(itemAlreadySaved_dumpMessaggio.getId());
+								if(itemObj_dumpMessaggio.getHeaderList()!=null){
+									List<org.openspcoop2.core.transazioni.DumpHeaderAllegato> listObj_dumpMessaggio_allegato = itemObj_dumpMessaggio.getHeaderList();
+									for(org.openspcoop2.core.transazioni.DumpHeaderAllegato itemObj_dumpMessaggio_allegato : listObj_dumpMessaggio_allegato){
+										org.openspcoop2.core.transazioni.DumpHeaderAllegato itemAlreadySaved_dumpMessaggio_allegato = null;
+										if(itemAlreadySaved_dumpMessaggio.getHeaderList()!=null){
+											List<org.openspcoop2.core.transazioni.DumpHeaderAllegato> listImgSaved_dumpMessaggio_allegato = itemAlreadySaved_dumpMessaggio.getHeaderList();
+											for(org.openspcoop2.core.transazioni.DumpHeaderAllegato itemImgSaved_dumpMessaggio_allegato : listImgSaved_dumpMessaggio_allegato){
+												boolean objEqualsToImgSaved_dumpMessaggio_allegato = false;
+												// TODO verify equals
+												// objEqualsToImgSaved_dumpMessaggio_allegato = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio_allegato.getXXX(),itemImgSaved_dumpMessaggio_allegato.getXXX()) &&
+												// 						 			...
+												//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio_allegato.getYYY(),itemImgSaved_dumpMessaggio_allegato.getYYY());
+												if(objEqualsToImgSaved_dumpMessaggio_allegato){
+													itemAlreadySaved_dumpMessaggio_allegato=itemImgSaved_dumpMessaggio_allegato;
+													break;
+												}
+											}
+										}
+										if(itemAlreadySaved_dumpMessaggio_allegato!=null){
+											itemObj_dumpMessaggio_allegato.setId(itemAlreadySaved_dumpMessaggio_allegato.getId());
+										}
+									}
+								}
+							}
+						}
+					}
+					if(itemObj_.getContenutoList()!=null){
+						List<org.openspcoop2.core.transazioni.DumpContenuto> listObj_dumpMessaggio = itemObj_.getContenutoList();
+						for(org.openspcoop2.core.transazioni.DumpContenuto itemObj_dumpMessaggio : listObj_dumpMessaggio){
+							org.openspcoop2.core.transazioni.DumpContenuto itemAlreadySaved_dumpMessaggio = null;
+							if(itemAlreadySaved_.getContenutoList()!=null){
+								List<org.openspcoop2.core.transazioni.DumpContenuto> listImgSaved_dumpMessaggio = itemAlreadySaved_.getContenutoList();
+								for(org.openspcoop2.core.transazioni.DumpContenuto itemImgSaved_dumpMessaggio : listImgSaved_dumpMessaggio){
+									boolean objEqualsToImgSaved_dumpMessaggio = false;
+									// TODO verify equals
+									// objEqualsToImgSaved_dumpMessaggio = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio.getXXX(),itemImgSaved_dumpMessaggio.getXXX()) &&
+									// 						 			...
+									//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_dumpMessaggio.getYYY(),itemImgSaved_dumpMessaggio.getYYY());
+									if(objEqualsToImgSaved_dumpMessaggio){
+										itemAlreadySaved_dumpMessaggio=itemImgSaved_dumpMessaggio;
+										break;
+									}
+								}
+							}
+							if(itemAlreadySaved_dumpMessaggio!=null){
+								itemObj_dumpMessaggio.setId(itemAlreadySaved_dumpMessaggio.getId());
+							}
+						}
+					}
+				}
+			}
+		}
+		if(obj.getTransazioneApplicativoServerList()!=null){
+			List<org.openspcoop2.core.transazioni.TransazioneApplicativoServer> listObj_ = obj.getTransazioneApplicativoServerList();
+			for(org.openspcoop2.core.transazioni.TransazioneApplicativoServer itemObj_ : listObj_){
+				org.openspcoop2.core.transazioni.TransazioneApplicativoServer itemAlreadySaved_ = null;
+				if(imgSaved.getTransazioneApplicativoServerList()!=null){
+					List<org.openspcoop2.core.transazioni.TransazioneApplicativoServer> listImgSaved_ = imgSaved.getTransazioneApplicativoServerList();
+					for(org.openspcoop2.core.transazioni.TransazioneApplicativoServer itemImgSaved_ : listImgSaved_){
+						boolean objEqualsToImgSaved_ = false;
+						// TODO verify equals
+						// objEqualsToImgSaved_ = org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getXXX(),itemImgSaved_.getXXX()) &&
+						// 						 			...
+						//						 			org.openspcoop2.generic_project.utils.Utilities.equals(itemObj_.getYYY(),itemImgSaved_.getYYY());
+						if(objEqualsToImgSaved_){
+							itemAlreadySaved_=itemImgSaved_;
+							break;
+						}
+					}
+				}
+				if(itemAlreadySaved_!=null){
+					itemObj_.setId(itemAlreadySaved_.getId());
 				}
 			}
 		}
@@ -700,6 +793,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().STATO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RUOLO_TRANSAZIONE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_CONTESTO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PROTOCOLLO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_RICHIESTA,true));

@@ -41,7 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="data-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="consegna-successo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
+ * 			&lt;element name="consegna-terminata" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -87,7 +87,7 @@ import java.io.Serializable;
   	"servizioApplicativoErogatore",
   	"dataRegistrazione",
   	"protocollo",
-  	"consegnaSuccesso",
+  	"consegnaTerminata",
   	"dettaglioEsito",
   	"consegnaIntegrationManager",
   	"identificativoMessaggio",
@@ -171,16 +171,16 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.protocollo = protocollo;
   }
 
-  public boolean isConsegnaSuccesso() {
-    return this.consegnaSuccesso;
+  public boolean isConsegnaTerminata() {
+    return this.consegnaTerminata;
   }
 
-  public boolean getConsegnaSuccesso() {
-    return this.consegnaSuccesso;
+  public boolean getConsegnaTerminata() {
+    return this.consegnaTerminata;
   }
 
-  public void setConsegnaSuccesso(boolean consegnaSuccesso) {
-    this.consegnaSuccesso = consegnaSuccesso;
+  public void setConsegnaTerminata(boolean consegnaTerminata) {
+    this.consegnaTerminata = consegnaTerminata;
   }
 
   public int getDettaglioEsito() {
@@ -448,8 +448,8 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   protected java.lang.String protocollo;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="consegna-successo",required=false,nillable=false,defaultValue="false")
-  protected boolean consegnaSuccesso = false;
+  @XmlElement(name="consegna-terminata",required=false,nillable=false,defaultValue="false")
+  protected boolean consegnaTerminata = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="dettaglio-esito",required=false,nillable=false)
