@@ -3,6 +3,7 @@ ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
 ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO VARCHAR(2000);
 
 ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
 
@@ -15,7 +16,7 @@ CREATE TABLE transazioni_sa
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Transazione
-	consegna_successo BOOLEAN,
+	consegna_terminata BOOLEAN,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN,
@@ -62,7 +63,7 @@ CREATE TABLE transazioni_sa
 -- index
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
-ALTER TABLE transazioni_sa ALTER COLUMN consegna_successo SET DEFAULT false;
+ALTER TABLE transazioni_sa ALTER COLUMN consegna_terminata SET DEFAULT false;
 ALTER TABLE transazioni_sa ALTER COLUMN numero_tentativi SET DEFAULT 0;
 
 CREATE TABLE transazioni_sa_init_seq (id BIGINT);

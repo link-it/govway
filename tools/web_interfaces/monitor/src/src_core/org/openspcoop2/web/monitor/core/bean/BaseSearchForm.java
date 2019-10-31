@@ -1271,12 +1271,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
 			
-			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE,false)));
 	
 			return list;
 		}catch(Exception e){
@@ -1292,13 +1292,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE != this.esitoGruppo) && !this.isShowDettaglioPersonalizzato();
 	}
 
-	public List<SelectItem> getEsitiDettaglio() {
+	public List<SelectItem> getEsitiDettaglio(boolean statistiche) {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
 			
-			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE, statistiche)));
 
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 
@@ -1333,7 +1333,17 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
-				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito));
+				if(statistiche &&
+						(
+								EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName)
+								||
+								EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA.equals(esitoTransactionName)
+							)
+					) {
+					continue;
+				}
+				
+				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito, statistiche));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
 				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				

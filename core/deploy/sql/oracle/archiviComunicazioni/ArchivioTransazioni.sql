@@ -52,6 +52,7 @@ CREATE TABLE transazioni
 	ruolo_transazione NUMBER NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER,
+	consegne_multiple NUMBER,
 	esito_contesto VARCHAR2(20),
 	-- Protocollo utilizzato per la transazione
 	protocollo VARCHAR2(20) NOT NULL,
@@ -196,8 +197,8 @@ CREATE TABLE transazioni_sa
 	id_transazione VARCHAR2(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR2(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
-	-- Esito della Transazione
-	consegna_successo NUMBER,
+	-- Esito della Consegna
+	consegna_terminata NUMBER,
 	dettaglio_esito NUMBER,
 	-- Consegna via Integration Manager
 	consegna_im NUMBER,
@@ -244,7 +245,7 @@ CREATE TABLE transazioni_sa
 -- index
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
-ALTER TABLE transazioni_sa MODIFY consegna_successo DEFAULT 0;
+ALTER TABLE transazioni_sa MODIFY consegna_terminata DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY consegna_im DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY numero_tentativi DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY numero_prelievi_im DEFAULT 0;

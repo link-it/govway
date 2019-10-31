@@ -74,6 +74,9 @@ import org.openspcoop2.monitor.sdk.constants.StatisticType;
 import org.openspcoop2.monitor.sdk.exceptions.StatisticException;
 import org.openspcoop2.monitor.sdk.plugins.IStatisticProcessing;
 import org.openspcoop2.monitor.sdk.statistic.StatisticResourceFilter;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 
 
 
@@ -1001,7 +1004,29 @@ public abstract class AbstractStatistiche {
 		
 		statisticaBase.setGruppi(stat.getGruppo());
 		
-		statisticaBase.setEsito(stat.getEsito());
+		if(stat.getDestinatario()!=null && stat.getDestinatario().getTipo()!=null) {
+			EsitiProperties esitiProperties = null;
+			int esitoConsegnaMultipla = -1;
+			int esitoConsegnaMultiplaFallita = -1;
+			int esitoConsegnaMultiplaCompletata = -1;
+			try {
+				esitiProperties = EsitiProperties.getInstance(this.logger, ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(stat.getDestinatario().getTipo()));
+				esitoConsegnaMultipla = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+				esitoConsegnaMultiplaFallita = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA);
+				esitoConsegnaMultiplaCompletata = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA);
+				if(stat.getEsito().intValue() == esitoConsegnaMultiplaFallita || stat.getEsito().intValue() == esitoConsegnaMultiplaCompletata) {
+					statisticaBase.setEsito(esitoConsegnaMultipla);
+				}
+				else {
+					statisticaBase.setEsito(stat.getEsito());
+				}
+			}catch(Exception er) {
+				throw new StatisticException(er.getMessage(),er);
+			}
+		}
+		else {
+			statisticaBase.setEsito(stat.getEsito());
+		}
 		statisticaBase.setEsitoContesto(stat.getEsitoContesto());
 		
 		statisticaBase.setNumeroTransazioni((int)stat.getRichieste());

@@ -82,6 +82,10 @@ public class Costanti {
 	public final static String CORS_PREFLIGHT_REQUEST_VIA_GATEWAY = "CORS_PREFLIGHT_REQUEST_VIA_GATEWAY";
 	public final static String CORS_PREFLIGHT_REQUEST_TRASPARENTE = "CORS_PREFLIGHT_REQUEST_TRASPARENTE";
 	
+	public final static String CONSEGNA_MULTIPLA_SINCRONO = "CONSEGNA_MULTIPLA_SINCRONO";
+	public final static String CONSEGNA_MULTIPLA = "CONSEGNA_MULTIPLA";
+	public final static String CONSEGNA_MULTIPLA_CONNETTORI = "CONSEGNA_MULTIPLA_CONNETTORI";
+	
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,

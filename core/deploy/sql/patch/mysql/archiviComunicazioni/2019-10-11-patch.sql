@@ -3,6 +3,7 @@ ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
 ALTER TABLE MSG_SERVIZI_APPLICATIVI MODIFY COLUMN SERVIZIO_APPLICATIVO VARCHAR(2000);
 
 ALTER TABLE transazioni MODIFY COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
 
@@ -14,7 +15,7 @@ CREATE TABLE transazioni_sa
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Esito della Transazione
-	consegna_successo BOOLEAN DEFAULT false,
+	consegna_terminata BOOLEAN DEFAULT false,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,

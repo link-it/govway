@@ -212,7 +212,7 @@ public class TransazioneBean extends Transazione{
 	public java.lang.String getEsitoLabel() {
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoLabelFromValue(this.esito);
+			return esitoUtils.getEsitoLabelFromValue(this.esito, false);
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
 			return "Conversione non riuscita";

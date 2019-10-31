@@ -26,6 +26,7 @@ import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
+import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.utils.date.DateManager;
 
 /**     
@@ -39,7 +40,46 @@ public class TransactionServerUtils {
 
 	// *** SAVE ***
 	
-	public static void save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam) throws Exception {
+	public static boolean recover(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam) throws Exception {
+		
+		String idTransazione = serverInfoParam.getIdTransazione();
+		if(idTransazione==null) {
+			throw new CoreException("IdTransazione non esistente nel contesto");
+		}
+		
+		String servizioApplicativoErogatore = serverInfoParam.getServizioApplicativoErogatore();
+		if(servizioApplicativoErogatore==null) {
+			throw new CoreException("Id servizioApplicativoErogatore non esistente nel contesto");
+		}
+		
+		boolean firstEntry = serverInfoParam.getDataUscitaRichiesta()==null && serverInfoParam.getDataPrelievoIm()==null && serverInfoParam.getDataEliminazioneIm()==null;
+		
+		if(firstEntry) {
+			return save(transazioneService, serverInfoParam, false);		
+		}
+		else {
+			IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
+			idTransazioneApplicativoServer.setIdTransazione(idTransazione);
+			idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativoErogatore);
+			if(transazioneService.exists(idTransazioneApplicativoServer)) {
+				
+				TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
+				if(!transazioneApplicativoServer.isConsegnaTerminata() && transazioneApplicativoServer.getDataEliminazioneIm()==null) {
+					return save(transazioneService, serverInfoParam, true);
+				}
+				// else ho già registrato l'ultima informazione, è inutile fare update delle informazioni parziali.
+				else {
+					return false;
+				}
+			}
+			else {
+				throw new Exception("In attesa della registrazione dell'informazione capostipite");
+			}
+		}
+		
+	}
+	
+	public static boolean save(ITransazioneApplicativoServerService transazioneService, TransazioneApplicativoServer serverInfoParam, boolean update) throws Exception {
 		
 		String idTransazione = serverInfoParam.getIdTransazione();
 		if(idTransazione==null) {
@@ -62,86 +102,99 @@ public class TransactionServerUtils {
 		
 		
 		
-		if(transazioneService.exists(idTransazioneApplicativoServer)) {
+		if(update) {
 			
-			TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
+			// inefficente: fa 2 query
+			// TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.get(idTransazioneApplicativoServer);
 			
-			// ** successivi invii **
+			IExpression expression = transazioneService.newExpression();
+			expression.equals(TransazioneApplicativoServer.model().ID_TRANSAZIONE, idTransazione);
+			expression.and();
+			expression.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE, servizioApplicativoErogatore);
+			TransazioneApplicativoServer transazioneApplicativoServer = transazioneService.find(expression);
 			
-			// id transazione, servizio applicativo erogatore e data registrazione non sono da aggiornare
-						
-			// protocollo
-			transazioneApplicativoServer.setProtocollo(protocol);
+			if(transazioneApplicativoServer.getDataPrelievoIm()==null && !transazioneApplicativoServer.isConsegnaTerminata()) {
 			
-			// esito
-			transazioneApplicativoServer.setConsegnaSuccesso(serverInfoParam.isConsegnaSuccesso());
-			transazioneApplicativoServer.setDettaglioEsito(serverInfoParam.getDettaglioEsito());
+				// ** successivi invii **
+				
+				// id transazione, servizio applicativo erogatore e data registrazione non sono da aggiornare
+							
+				// protocollo
+				transazioneApplicativoServer.setProtocollo(protocol);
+				
+				// esito
+				transazioneApplicativoServer.setConsegnaTerminata(serverInfoParam.isConsegnaTerminata());
+				transazioneApplicativoServer.setDettaglioEsito(serverInfoParam.getDettaglioEsito());
+				
+				// esito im
+				transazioneApplicativoServer.setConsegnaIntegrationManager(serverInfoParam.isConsegnaIntegrationManager());
+				
+				// identificativo messaggio
+				transazioneApplicativoServer.setIdentificativoMessaggio(serverInfoParam.getIdentificativoMessaggio());
+				
+				// date
+				transazioneApplicativoServer.setDataAccettazioneRichiesta(serverInfoParam.getDataAccettazioneRichiesta());
+				transazioneApplicativoServer.setDataUscitaRichiesta(serverInfoParam.getDataUscitaRichiesta());
+				transazioneApplicativoServer.setDataAccettazioneRisposta(serverInfoParam.getDataAccettazioneRisposta());
+				transazioneApplicativoServer.setDataIngressoRisposta(serverInfoParam.getDataIngressoRisposta());
+				
+				// dimensioni
+				transazioneApplicativoServer.setRichiestaUscitaBytes(serverInfoParam.getRichiestaUscitaBytes());
+				transazioneApplicativoServer.setRispostaIngressoBytes(serverInfoParam.getRispostaIngressoBytes());
 			
-			// esito im
-			transazioneApplicativoServer.setConsegnaIntegrationManager(serverInfoParam.isConsegnaIntegrationManager());
-			
-			// identificativo messaggio
-			transazioneApplicativoServer.setIdentificativoMessaggio(serverInfoParam.getIdentificativoMessaggio());
-			
-			// date
-			transazioneApplicativoServer.setDataAccettazioneRichiesta(serverInfoParam.getDataAccettazioneRichiesta());
-			transazioneApplicativoServer.setDataUscitaRichiesta(serverInfoParam.getDataUscitaRichiesta());
-			transazioneApplicativoServer.setDataAccettazioneRisposta(serverInfoParam.getDataAccettazioneRisposta());
-			transazioneApplicativoServer.setDataIngressoRisposta(serverInfoParam.getDataIngressoRisposta());
-			
-			// dimensioni
-			transazioneApplicativoServer.setRichiestaUscitaBytes(serverInfoParam.getRichiestaUscitaBytes());
-			transazioneApplicativoServer.setRispostaIngressoBytes(serverInfoParam.getRispostaIngressoBytes());
-		
-			// location e codice risposta
-			transazioneApplicativoServer.setLocationConnettore(serverInfoParam.getLocationConnettore());
-			transazioneApplicativoServer.setCodiceRisposta(serverInfoParam.getCodiceRisposta());
-			
-			// fault
-			transazioneApplicativoServer.setFault(serverInfoParam.getFault());
-			transazioneApplicativoServer.setFormatoFault(serverInfoParam.getFormatoFault());
-			
-			// data primo tentativo
-			if(transazioneApplicativoServer.getDataPrimoTentativo()==null) {
-				if(serverInfoParam.getDataUscitaRichiesta()!=null) {
-					transazioneApplicativoServer.setDataPrimoTentativo(serverInfoParam.getDataUscitaRichiesta()); // primo tentativo di consegna
+				// location e codice risposta
+				transazioneApplicativoServer.setLocationConnettore(serverInfoParam.getLocationConnettore());
+				transazioneApplicativoServer.setCodiceRisposta(serverInfoParam.getCodiceRisposta());
+				
+				// fault
+				transazioneApplicativoServer.setFault(serverInfoParam.getFault());
+				transazioneApplicativoServer.setFormatoFault(serverInfoParam.getFormatoFault());
+				
+				// data primo tentativo
+				if(transazioneApplicativoServer.getDataPrimoTentativo()==null) {
+					if(serverInfoParam.getDataUscitaRichiesta()!=null) {
+						transazioneApplicativoServer.setDataPrimoTentativo(serverInfoParam.getDataUscitaRichiesta()); // primo tentativo di consegna
+					}
 				}
+				
+				// numero tentativi
+				transazioneApplicativoServer.setNumeroTentativi(transazioneApplicativoServer.getNumeroTentativi()+1);	
+	
+				// cluster id
+				transazioneApplicativoServer.setClusterId(serverInfoParam.getClusterId());
+				
+				
+				// aggiorno errore e fault se ho uno stato non ok
+				
+				if(!serverInfoParam.isConsegnaTerminata()) {
+					
+					if(serverInfoParam.getDataUscitaRichiesta()!=null) {
+						transazioneApplicativoServer.setDataUltimoErrore(serverInfoParam.getDataUscitaRichiesta());
+					}
+					else {
+						transazioneApplicativoServer.setDataUltimoErrore(serverInfoParam.getDataAccettazioneRichiesta());
+					}
+					
+					transazioneApplicativoServer.setDettaglioEsitoUltimoErrore(serverInfoParam.getDettaglioEsito());
+					
+					transazioneApplicativoServer.setCodiceRispostaUltimoErrore(serverInfoParam.getCodiceRisposta());
+					
+					transazioneApplicativoServer.setUltimoErrore(serverInfoParam.getUltimoErrore());
+					
+					transazioneApplicativoServer.setLocationUltimoErrore(serverInfoParam.getLocationConnettore());
+					
+					transazioneApplicativoServer.setClusterIdUltimoErrore(serverInfoParam.getClusterId());
+									
+					transazioneApplicativoServer.setFaultUltimoErrore(serverInfoParam.getFault());
+					transazioneApplicativoServer.setFormatoFaultUltimoErrore(serverInfoParam.getFormatoFault());
+				}
+				
+				transazioneService.update(idTransazioneApplicativoServer, transazioneApplicativoServer);
+				
+				return true;
+				
 			}
 			
-			// numero tentativi
-			transazioneApplicativoServer.setNumeroTentativi(transazioneApplicativoServer.getNumeroTentativi()+1);	
-
-			// cluster id
-			transazioneApplicativoServer.setClusterId(serverInfoParam.getClusterId());
-			
-			
-			// aggiorno errore e fault se ho uno stato non ok
-			
-			if(!serverInfoParam.isConsegnaSuccesso()) {
-				
-				if(serverInfoParam.getDataUscitaRichiesta()!=null) {
-					transazioneApplicativoServer.setDataUltimoErrore(serverInfoParam.getDataUscitaRichiesta());
-				}
-				else {
-					transazioneApplicativoServer.setDataUltimoErrore(serverInfoParam.getDataAccettazioneRichiesta());
-				}
-				
-				transazioneApplicativoServer.setDettaglioEsitoUltimoErrore(serverInfoParam.getDettaglioEsito());
-				
-				transazioneApplicativoServer.setCodiceRispostaUltimoErrore(serverInfoParam.getCodiceRisposta());
-				
-				transazioneApplicativoServer.setUltimoErrore(serverInfoParam.getUltimoErrore());
-				
-				transazioneApplicativoServer.setLocationUltimoErrore(serverInfoParam.getLocationConnettore());
-				
-				transazioneApplicativoServer.setClusterIdUltimoErrore(serverInfoParam.getClusterId());
-								
-				transazioneApplicativoServer.setFaultUltimoErrore(serverInfoParam.getFault());
-				transazioneApplicativoServer.setFormatoFaultUltimoErrore(serverInfoParam.getFormatoFault());
-			}
-			
-			// AGGIORNO
-			transazioneService.update(idTransazioneApplicativoServer, transazioneApplicativoServer);
 		}
 		else {
 			
@@ -167,8 +220,12 @@ public class TransactionServerUtils {
 							
 			// CREO
 			transazioneService.create(transazioneApplicativoServer);
+			
+			return true;
 		}
 		
+		
+		return false;
 	}
 	
 }

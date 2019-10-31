@@ -3,6 +3,7 @@ ALTER TABLE msgdiagnostici ADD applicativo VARCHAR(2000);
 ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO SET DATA TYPE VARCHAR(2000);
 
 ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore SET DATA TYPE VARCHAR(2000);
+ALTER TABLE transazioni ADD consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD servizio_applicativo_erogatore VARCHAR(2000);
 
@@ -13,7 +14,7 @@ CREATE TABLE transazioni_sa
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Transazione
-	consegna_successo SMALLINT DEFAULT 0,
+	consegna_terminata SMALLINT DEFAULT 0,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im SMALLINT DEFAULT 0,

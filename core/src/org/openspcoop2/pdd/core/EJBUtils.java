@@ -1704,6 +1704,8 @@ public class EJBUtils {
 				
 				if(behaviour_idSA_SyncResponder!=null) {
 					
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONO, "true");
+					
 					attendiEsitoTransazioneSincronaPrimaDiSpedire = true;
 					
 					// TODO CHECK QUA O SOPRA RIGUARDANTE IL CASO INTEGRATINO MANAGER ???? NON PERMESSO ESSENDO SINCRONO???
@@ -1739,6 +1741,9 @@ public class EJBUtils {
 						throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 					}
 					
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA, "true");
+										
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					OpenSPCoopStateless stateBehaviour = null;
 					try{
@@ -2132,6 +2137,34 @@ public class EJBUtils {
 			
 			msgDiag.setServizioApplicativo(servizioApplicativo);
 			
+			// Preparo TransazioneApplicativoServer transazioneApplicativoServer
+			TransazioneApplicativoServer transazioneApplicativoServer = null;
+			if(consegnaMSG.getBehaviour()!=null && consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer()!=null) {
+				
+				transazioneApplicativoServer = new TransazioneApplicativoServer();
+				transazioneApplicativoServer.setIdTransazione(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getIdTransazione());
+				transazioneApplicativoServer.setServizioApplicativoErogatore(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
+				transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+				transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+				transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
+				if(requestMessageNullable!=null) {
+					transazioneApplicativoServer.setRichiestaUscitaBytes(requestMessageNullable.getOutgoingMessageContentLength());
+				}
+				transazioneApplicativoServer.setIdentificativoMessaggio(consegnaMSG.getBusta().getID());
+				transazioneApplicativoServer.setClusterId(propertiesReader.getClusterId(false));
+				transazioneApplicativoServer.setConsegnaIntegrationManager(getMessageAbilitato);
+			
+				if(transazioneApplicativoServer!=null) {
+					
+					try {
+						GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer, false);
+					}catch(Throwable t) {
+						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+					}
+					
+				}
+			}
+			
 			
 			// Spedisco al modulo ConsegnaContenutiApplicativi, solo se e' presente una definizione di servizio-applicativo
 			if(servizioApplicativoConConnettore){
@@ -2173,8 +2206,7 @@ public class EJBUtils {
 						}
 					}
 				}
-
-
+				
 			}else{
 				
 				if( !registrazioneDestinatarioEffettuataPerViaBehaviour && (state instanceof OpenSPCoopStateless) && (oneWayVersione11==false) ){
@@ -2193,31 +2225,7 @@ public class EJBUtils {
 							nomePorta, false, false);
 					gestoreMessaggi.setOneWayVersione11(false);
 				}
-				
-				
-				if(consegnaMSG.getBehaviour()!=null && consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer()!=null) {
-					
-					TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
-					transazioneApplicativoServer.setIdTransazione(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getIdTransazione());
-					transazioneApplicativoServer.setServizioApplicativoErogatore(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
-					transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
-					transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
-					transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
-					if(requestMessageNullable!=null) {
-						transazioneApplicativoServer.setRichiestaUscitaBytes(requestMessageNullable.getOutgoingMessageContentLength());
-					}
-					transazioneApplicativoServer.setIdentificativoMessaggio(consegnaMSG.getBusta().getID());
-					transazioneApplicativoServer.setConsegnaIntegrationManager(true);
-					transazioneApplicativoServer.setClusterId(propertiesReader.getClusterId(false));
-					
-					try {
-						GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer);
-					}catch(Throwable t) {
-						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
-					}
-					
-				}
-				
+
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"integrationManager.messaggioDisponibile");
 				
 			}

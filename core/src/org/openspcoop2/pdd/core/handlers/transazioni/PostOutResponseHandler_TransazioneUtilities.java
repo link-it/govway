@@ -141,7 +141,33 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			Transazione transactionDTO = new Transazione();
 
-
+			// Consegna Multipla
+			boolean consegnaMultipla = false;
+			int connettoriMultipli = -1;
+			boolean connettoreSync = false;
+			Object oConsegnaMultipla = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA );
+			if (oConsegnaMultipla!=null && oConsegnaMultipla instanceof Boolean){
+				consegnaMultipla = (Boolean) oConsegnaMultipla;
+			}
+			else if (oConsegnaMultipla!=null && oConsegnaMultipla instanceof String){
+				consegnaMultipla = Boolean.valueOf( (String) oConsegnaMultipla );
+			}
+			if(consegnaMultipla) {
+				Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI );
+				if (oConnettori!=null && oConnettori instanceof Integer){
+					connettoriMultipli = (Integer) oConnettori;
+				}
+				
+				Object oConnettoreSync = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONO );
+				if (oConnettoreSync!=null && oConnettoreSync instanceof Boolean){
+					connettoreSync = (Boolean) oConnettoreSync;
+				}
+				else if (oConnettoreSync!=null && oConnettoreSync instanceof String){
+					connettoreSync = Boolean.valueOf( (String) oConnettoreSync );
+				}
+			}
+			
+			
 			// ** Identificativo di transazione **
 			String idTransazione = null;
 			if (context.getPddContext().getObject(Costanti.ID_TRANSAZIONE)!=null){
@@ -177,6 +203,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				if(context.getEsito().getCode()!=null){
 					transactionDTO.setEsito(context.getEsito().getCode());
 				}
+				transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);
 				transactionDTO.setEsitoContesto(context.getEsito().getContextType());
 			}
 
@@ -279,12 +306,16 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// dimensione_uscita_richiesta
 			if (context.getOutputRequestMessageSize()!=null && context.getOutputRequestMessageSize()>0){
-				transactionDTO.setRichiestaUscitaBytes(context.getOutputRequestMessageSize().longValue());
+				if(transactionDTO.getDataUscitaRichiesta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+					transactionDTO.setRichiestaUscitaBytes(context.getOutputRequestMessageSize().longValue());
+				}
 			}
 
 			// dimensione_ingresso_risposta
 			if (context.getInputResponseMessageSize()!=null && context.getInputResponseMessageSize()>0){
-				transactionDTO.setRispostaIngressoBytes(context.getInputResponseMessageSize().longValue());
+				if(transactionDTO.getDataIngressoRisposta()!=null) { // altrimenti non ha senso, poichè non c'è stato un vero inoltro verso il backend
+					transactionDTO.setRispostaIngressoBytes(context.getInputResponseMessageSize().longValue());
+				}
 			}
 
 			// dimensione_uscita_risposta

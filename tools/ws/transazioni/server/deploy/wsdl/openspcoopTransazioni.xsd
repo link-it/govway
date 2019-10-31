@@ -60,6 +60,11 @@
 			        
 			    </xsd:element>
 				
+				<!-- Esito di una transazione con consegna multipla -->
+				<xsd:element minOccurs="0" name="consegne-multiple-in-corso" type="xsd:int">
+					
+				</xsd:element> 
+				
 				<!-- Contesto di una transazione -->
 				<xsd:element minOccurs="0" name="esito-contesto" type="xsd:string">
 						
@@ -418,7 +423,7 @@
 					
 				</xsd:element>
 				
-				<xsd:element default="false" minOccurs="0" name="consegna-successo" type="xsd:boolean">
+				<xsd:element default="false" minOccurs="0" name="consegna-terminata" type="xsd:boolean">
 					
 				</xsd:element>
 				<xsd:element minOccurs="0" name="dettaglio-esito" type="xsd:int">

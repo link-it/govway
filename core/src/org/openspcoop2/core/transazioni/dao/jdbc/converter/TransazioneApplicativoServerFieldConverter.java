@@ -89,11 +89,11 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "data_registrazione";
 			}
 		}
-		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO)){
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".consegna_successo";
+				return this.toAliasTable(field)+".consegna_terminata";
 			}else{
-				return "consegna_successo";
+				return "consegna_terminata";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
@@ -314,7 +314,7 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
-		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO)){
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){

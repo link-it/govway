@@ -18,7 +18,7 @@
  			<xsd:element name="data-registrazione-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="consegna-successo" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="consegna-terminata" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="consegna-integration-manager" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="identificativo-messaggio" type="xsd:string" minOccurs="0" maxOccurs="1" />

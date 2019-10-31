@@ -427,6 +427,19 @@ integrationManager (7)]]></linkit:sql-ddl-column-comment>
 			        </xsd:annotation>
 			    </xsd:element>
 				
+				<!-- Esito di una transazione con consegna multipla -->
+				<xsd:element name="consegne-multiple-in-corso" type="xsd:int" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="consegne_multiple"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Numero di consegne multiple in corso]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element> 
+				
 				<!-- Contesto di una transazione -->
 				<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
@@ -1601,13 +1614,13 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 				
-				<xsd:element name="consegna-successo" type="xsd:boolean" default="false" minOccurs="0">
+				<xsd:element name="consegna-terminata" type="xsd:boolean" default="false" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-column-comment>
-								<linkit:sql-ddl-column-comment><![CDATA[Esito della Transazione]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-column-comment><![CDATA[Esito della Consegna]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Esito della Consegna]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>

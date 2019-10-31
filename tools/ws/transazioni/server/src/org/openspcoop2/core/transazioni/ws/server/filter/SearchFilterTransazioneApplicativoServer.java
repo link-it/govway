@@ -34,7 +34,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="data-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="consegna-successo" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
+ *         &lt;element name="consegna-terminata" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -100,7 +100,7 @@ import java.util.Date;
     "dataRegistrazioneMin",
     "dataRegistrazioneMax",
     "protocollo",
-    "consegnaSuccesso",
+    "consegnaTerminata",
     "dettaglioEsito",
     "consegnaIntegrationManager",
     "identificativoMessaggio",
@@ -213,15 +213,15 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
-  @XmlElement(name="consegna-successo",required=false,nillable=false,defaultValue="false")
-	private Boolean consegnaSuccesso = Boolean.valueOf("false");
+  @XmlElement(name="consegna-terminata",required=false,nillable=false,defaultValue="false")
+	private Boolean consegnaTerminata = Boolean.valueOf("false");
 	
-	public void setConsegnaSuccesso(Boolean consegnaSuccesso){
-		this.consegnaSuccesso = consegnaSuccesso;
+	public void setConsegnaTerminata(Boolean consegnaTerminata){
+		this.consegnaTerminata = consegnaTerminata;
 	}
 	
-	public Boolean getConsegnaSuccesso(){
-		return this.consegnaSuccesso;
+	public Boolean getConsegnaTerminata(){
+		return this.consegnaTerminata;
 	}
 	
 	

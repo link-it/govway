@@ -62,6 +62,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "ruolo_transazione", Transazione.model().RUOLO_TRANSAZIONE.getFieldType()));
 				setParameter(object, "setEsito", Transazione.model().ESITO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "esito", Transazione.model().ESITO.getFieldType()));
+				setParameter(object, "setConsegneMultipleInCorso", Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "consegne_multiple", Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldType()));
 				setParameter(object, "setEsitoContesto", Transazione.model().ESITO_CONTESTO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "esito_contesto", Transazione.model().ESITO_CONTESTO.getFieldType()));
 				setParameter(object, "setProtocollo", Transazione.model().PROTOCOLLO.getFieldType(),
@@ -274,6 +276,8 @@ public class TransazioneFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"ruolo-transazione"));
 				setParameter(object, "setEsito", Transazione.model().ESITO.getFieldType(),
 					this.getObjectFromMap(map,"esito"));
+				setParameter(object, "setConsegneMultipleInCorso", Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldType(),
+					this.getObjectFromMap(map,"consegne-multiple-in-corso"));
 				setParameter(object, "setEsitoContesto", Transazione.model().ESITO_CONTESTO.getFieldType(),
 					this.getObjectFromMap(map,"esito-contesto"));
 				setParameter(object, "setProtocollo", Transazione.model().PROTOCOLLO.getFieldType(),

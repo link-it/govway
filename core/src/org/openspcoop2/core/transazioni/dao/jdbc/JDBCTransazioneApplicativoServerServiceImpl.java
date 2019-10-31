@@ -73,7 +73,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,false),"?");
 		// NONSERIALIZZATO SU DB sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,false),"?");
@@ -110,7 +110,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getServizioApplicativoErogatore(),TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataRegistrazione(),TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()),
 			// NONSERIALIZZATO SU DB new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getProtocollo(),TransazioneApplicativoServer.model().PROTOCOLLO.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaSuccesso(),TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaTerminata(),TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDettaglioEsito(),TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaIntegrationManager(),TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getIdentificativoMessaggio(),TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType()),
@@ -147,25 +147,42 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, IdTransazioneApplicativoServer oldId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
-		ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
-		Long longIdByLogicId = this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObjectUpdate.newSQLQueryObject(), oldId, true);
-		Long tableId = transazioneApplicativoServer.getId();
-		if(tableId != null && tableId.longValue() > 0) {
-			if(tableId.longValue() != longIdByLogicId.longValue()) {
-				throw new Exception("Ambiguous parameter: transazioneApplicativoServer.id ["+tableId+"] does not match logic id ["+longIdByLogicId+"]");
+		
+		boolean efficente = true;
+		
+		if(efficente) {
+		
+			this._update(jdbcProperties, log, connection, sqlQueryObject, -1, transazioneApplicativoServer, idMappingResolutionBehaviour, oldId);
+			
+		}
+		else {
+		
+			ISQLQueryObject sqlQueryObjectUpdate = sqlQueryObject.newSQLQueryObject();
+			Long longIdByLogicId = this.findIdTransazioneApplicativoServer(jdbcProperties, log, connection, sqlQueryObjectUpdate.newSQLQueryObject(), oldId, true);
+			Long tableId = transazioneApplicativoServer.getId();
+			if(tableId != null && tableId.longValue() > 0) {
+				if(tableId.longValue() != longIdByLogicId.longValue()) {
+					throw new Exception("Ambiguous parameter: transazioneApplicativoServer.id ["+tableId+"] does not match logic id ["+longIdByLogicId+"]");
+				}
+			} else {
+				tableId = longIdByLogicId;
+				transazioneApplicativoServer.setId(tableId);
 			}
-		} else {
-			tableId = longIdByLogicId;
-			transazioneApplicativoServer.setId(tableId);
+			if(tableId==null || tableId<=0){
+				throw new Exception("Retrieve tableId failed");
+			}
+	
+			this.update(jdbcProperties, log, connection, sqlQueryObject, tableId, transazioneApplicativoServer, idMappingResolutionBehaviour);
+			
 		}
-		if(tableId==null || tableId<=0){
-			throw new Exception("Retrieve tableId failed");
-		}
-
-		this.update(jdbcProperties, log, connection, sqlQueryObject, tableId, transazioneApplicativoServer, idMappingResolutionBehaviour);
 	}
 	@Override
 	public void update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, long tableId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, NotImplementedException, ServiceException, Exception {
+		this._update(jdbcProperties, log, connection, sqlQueryObject, tableId, transazioneApplicativoServer, idMappingResolutionBehaviour, null);
+	}
+	private void _update(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, 
+			long tableId, TransazioneApplicativoServer transazioneApplicativoServer, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour,
+			IdTransazioneApplicativoServer idLogico) throws NotFoundException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -190,8 +207,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataRegistrazione(), TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
 		// NONSERIALIZZATO SU DB sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,false), "?");
 		// NONSERIALIZZATO SU DB lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getProtocollo(), TransazioneApplicativoServer.model().PROTOCOLLO.getFieldType()));
-		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO,false), "?");
-		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConsegnaSuccesso(), TransazioneApplicativoServer.model().CONSEGNA_SUCCESSO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConsegnaTerminata(), TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDettaglioEsito(), TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false), "?");
@@ -248,8 +265,17 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getNumeroPrelieviIm(), TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(), TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()));
-		sqlQueryObjectUpdate.addWhereCondition("id=?");
-		lstObjects_transazioneApplicativoServer.add(new JDBCObject(tableId, Long.class));
+		if(idLogico!=null) {
+			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().ID_TRANSAZIONE,false)+ "=?");
+			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false)+ "=?");
+			sqlQueryObjectUpdate.setANDLogicOperator(true);
+			lstObjects_transazioneApplicativoServer.add(new JDBCObject(idLogico.getIdTransazione(), String.class));
+			lstObjects_transazioneApplicativoServer.add(new JDBCObject(idLogico.getServizioApplicativoErogatore(), String.class));
+		}
+		else {
+			sqlQueryObjectUpdate.addWhereCondition("id=?");
+			lstObjects_transazioneApplicativoServer.add(new JDBCObject(tableId, Long.class));
+		}
 
 		if(isUpdate_transazioneApplicativoServer) {
 			// Update transazioneApplicativoServer

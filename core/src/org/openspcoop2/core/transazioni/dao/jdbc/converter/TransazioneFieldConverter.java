@@ -96,6 +96,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "esito";
 			}
 		}
+		if(field.equals(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegne_multiple";
+			}else{
+				return "consegne_multiple";
+			}
+		}
 		if(field.equals(Transazione.model().ESITO_CONTESTO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".esito_contesto";
@@ -971,11 +978,11 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "data_registrazione";
 			}
 		}
-		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_SUCCESSO)){
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_TERMINATA)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".consegna_successo";
+				return this.toAliasTable(field)+".consegna_terminata";
 			}else{
-				return "consegna_successo";
+				return "consegna_terminata";
 			}
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO)){
@@ -1211,6 +1218,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().ESITO)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().ESITO_CONTESTO)){
@@ -1588,7 +1598,7 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DATA_REGISTRAZIONE)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
-		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_SUCCESSO)){
+		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.CONSEGNA_TERMINATA)){
 			return this.toTable(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_APPLICATIVO_SERVER.DETTAGLIO_ESITO)){

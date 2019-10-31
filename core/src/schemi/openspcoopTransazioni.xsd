@@ -44,6 +44,9 @@
 			    <!-- Esito di una transazione -->
 			    <xsd:element name="esito" type="xsd:int" minOccurs="0"/>
 				
+				<!-- Esito di una transazione con consegna multipla -->
+				<xsd:element name="consegne-multiple-in-corso" type="xsd:int" minOccurs="0"/> 
+				
 				<!-- Contesto di una transazione -->
 				<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0"/>
 								    
@@ -178,7 +181,7 @@
 				<!-- informazioni dell'api -->
 				<xsd:element name="tipo-api" type="xsd:int" minOccurs="0"/>
 				<xsd:element name="gruppi" type="xsd:string" minOccurs="0"/>
-
+				
 				<!-- Dump Messaggi -->
 				<xsd:element ref="dump-messaggio" minOccurs="0" maxOccurs="unbounded"/>
 				
@@ -213,7 +216,7 @@
 				
 				<xsd:element name="protocollo" type="xsd:string" minOccurs="0"/> <!-- informazione non serializzata su database -->
 				
-				<xsd:element name="consegna-successo" type="xsd:boolean" default="false" minOccurs="0"/>
+				<xsd:element name="consegna-terminata" type="xsd:boolean" default="false" minOccurs="0"/>
 				<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0"/>
 				
 				<xsd:element name="consegna-integration-manager" type="xsd:boolean" default="false" minOccurs="0"/>
