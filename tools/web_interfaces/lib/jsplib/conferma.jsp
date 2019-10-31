@@ -31,11 +31,12 @@ PageData pd = (PageData) session.getAttribute("PageData");
 String message = pd.getMessage();
 String messageType = pd.getMessageType();
 String [][] bottoni = pd.getBottoni();
+String messageTitle = pd.getMessageTitle();
 
 // messaggio in cima alla pagina solo se non e' un messaggio di conferma
 if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
   %>
-  	<div id="confermaModal" title="Conferma Operazione">
+  	<div id="confermaModal" title="<%=messageTitle %>">
   		<div id="confermaModalBody" class="contenutoModal">
   			<%= message %>
  		</div>

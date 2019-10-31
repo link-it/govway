@@ -23,6 +23,7 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,22 +85,22 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 			String nomePorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME_PORTA);
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
-			
+
 			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isNotEmpty(idConnTab)) {
 				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			}
-			
+
 			String fromAPIPageInfo = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_API_PAGE_INFO);
 			boolean fromApi = Costanti.CHECK_BOX_ENABLED_TRUE.equalsIgnoreCase(fromAPIPageInfo);
-			
+
 			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
-			
+
 			// check su oldNomePD
-			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
-			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
-			oldNomePA = (((oldNomePA != null) && !oldNomePA.equals("")) ? oldNomePA : nomePorta);
-			
+			//			PageData pdOld =  ServletUtils.getPageDataFromSession(session);
+			//			String oldNomePA = pdOld.getHidden(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_OLD_NOME_PA);
+			//			oldNomePA = (((oldNomePA != null) && !oldNomePA.equals("")) ? oldNomePA : nomePorta);
+
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -107,90 +108,125 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 
 			// Prendo la porta applicativa
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			
+
 			PortaApplicativaServizioApplicativo oldPaSA = null;
 			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
 				if(paSATmp.getNome().equals(nomeSAConnettore)) {
 					oldPaSA = paSATmp;					
 				}
 			}
-			
+
 			// in progress segnalo l'azione che si sta effettuando
 			if(actionConferma == null) {
-				String messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(fromApi, oldPaSA, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+				boolean eseguiOperazione = true;
 
-				pd.setMessage(messaggio, MessageType.CONFIRM);
+				// solo per i casi in cui sto disabilitando
+				if(!ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+					// controllare che almeno un connettore rimanga abilitato
+					int numeroAbilitati = 0;
+					for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+						if(!paSATmp.getNome().equals(nomeSAConnettore)) { // controllo che tutti gli altri non siano disabilitati
+							boolean abilitato = paSATmp.getDatiConnettore()	!= null ? 	paSATmp.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+
+							if(abilitato)
+								numeroAbilitati ++;
+						}
+					}
+					
+					
+					if(numeroAbilitati < 1) {
+						eseguiOperazione = false;
+					}
+				}
+
+				String messaggio = null;
+				String title = null;
 				
-				String[][] bottoni = { 
-						{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
-							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
-							Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
-							
-						},
-						{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
-							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
-							Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
+				if(eseguiOperazione) {
+					messaggio = porteApplicativeHelper.getMessaggioConfermaModificaRegolaStatoConnettoreMultiplo(fromApi, oldPaSA, ServletUtils.isCheckBoxEnabled(changeAbilitato), true,true);
+					String[][] bottoni = { 
+							{ Costanti.LABEL_MONITOR_BUTTON_ANNULLA, 
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
 
-				pd.setBottoni(bottoni );
+							},
+							{ Costanti.LABEL_MONITOR_BUTTON_CONFERMA,
+								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
+					pd.setBottoni(bottoni );
+				} else {
+					messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO,
+							porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA));
+					title = "Attenzione";
+					String[][] bottoni = { 
+							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+
+							}
+							};
+					pd.setBottoni(bottoni );
+				}
+				pd.setMessage(messaggio, title, MessageType.CONFIRM);
 			} 
 
 			// se ho confermato effettuo la modifica altrimenti torno direttamente alla lista
 			if(actionConferma != null && actionConferma.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK)) {
 				// Prendo la porta applicativa
 				pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-				
+
 				PortaApplicativaServizioApplicativo paSA = null;
 				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
 					if(paSATmp.getNome().equals(nomeSAConnettore)) {
 						paSA = paSATmp;					
 					}
 				}
-				
+
 				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
-				
+
 				if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
 					datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
 					datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
 				}
-				
+
 				paSA.setDatiConnettore(datiConnettore);
-				
-//				// Modifico i dati della porta applicativa nel db
-//				pa.setNome(nomePorta);
-//				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
-//				oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
-//				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
-				
-				 // cambio solo la modalita'
-	            if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-	            	datiConnettore.setStato(StatoFunzionalita.ABILITATO);
-	            }
-	            else{
-	            	datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
-	            }
-				
+
+				//				// Modifico i dati della porta applicativa nel db
+				//				pa.setNome(nomePorta);
+				//				IDPortaApplicativa oldIDPortaApplicativaForUpdate = new IDPortaApplicativa();
+				//				oldIDPortaApplicativaForUpdate.setNome(oldNomePA);
+				//				pa.setOldIDPortaApplicativaForUpdate(oldIDPortaApplicativaForUpdate);
+
+
+				// cambio solo la modalita'
+				if(ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
+					datiConnettore.setStato(StatoFunzionalita.ABILITATO);
+				}
+				else{
+					datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
+				}
+
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
-	
 				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			}
-			
+
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-	
+
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
-	
+
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-	
+
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			
+
 			List<PortaApplicativaServizioApplicativo> lista = portaApplicativa.getServizioApplicativoList();
-			
+
 			// filtro
-	
+
 			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, lista);
-	
+
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
-			
+
 			// Forward control to the specified success URI
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE, ForwardParams.OTHER(""));
 		} catch (Exception e) {

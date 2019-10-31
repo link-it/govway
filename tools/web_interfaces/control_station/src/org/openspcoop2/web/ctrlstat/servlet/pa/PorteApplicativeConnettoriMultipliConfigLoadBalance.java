@@ -189,7 +189,7 @@ public final class PorteApplicativeConnettoriMultipliConfigLoadBalance extends A
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 
 			// Label diversa in base all'operazione
-			String labelPagina = porteApplicativeHelper.getLabelLoadBalanceNomePortaApplicativaServizioApplicativo(
+			String labelPagina = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(
 					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE_DI,
 					PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE,
 					oldPaSA);

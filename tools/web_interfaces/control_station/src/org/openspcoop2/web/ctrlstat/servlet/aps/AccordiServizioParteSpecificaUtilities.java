@@ -1830,20 +1830,24 @@ public class AccordiServizioParteSpecificaUtilities {
 					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDaCopiare.getServizioApplicativoList()) {
 						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
 						paSa.setDatiConnettore(paSADefault.getDatiConnettore());
+						paSa.setNome(paSADefault.getNome());
+						
 						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
 						idServizioApplicativoDefault.setNome(paSADefault.getNome());
 						idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDaCopiare.getTipoSoggettoProprietario(), portaApplicativaDaCopiare.getNomeSoggettoProprietario()));
 						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
 						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saDefault.getTipo())) {
 							ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
-							String nuovoNomeSA = portaApplicativa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
-									apsHelper.getIdxNuovoConnettoreMultiplo(portaApplicativa);
-							sa.setNome(nuovoNomeSA);
+							sa.setNome(portaApplicativa.getNome());
+							if(!apsHelper.isConnettoreDefault(paSa)) {
+								String nuovoNomeSA = portaApplicativa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
+										apsHelper.getIdxNuovoConnettoreMultiplo(portaApplicativa);
+								sa.setNome(nuovoNomeSA);
+							} 
 							paSa.setNome(sa.getNome());
+							
 							listaOggettiDaCreare.add(sa);
-						} else {
-							paSa.setNome(paSADefault.getNome());
-						}
+						} 
 						portaApplicativa.getServizioApplicativoList().add(paSa);
 					}
 				} else {

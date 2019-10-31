@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
@@ -38,17 +39,20 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
+import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -79,7 +83,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
- 
+
 
 		try {
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
@@ -95,71 +99,120 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			// while (objTok.hasMoreElements()) {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
+			
+			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			if(StringUtils.isNotEmpty(idConnTab)) {
+				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			}
 
 			String nome = "";
+			String actionConferma = porteApplicativeHelper.getParameter(Costanti.PARAMETRO_ACTION_CONFIRM);
 
 			// Prendo la porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
-			
+
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 
 			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
-			for (int i = 0; i < idsToRemove.size(); i++) {
+			boolean eseguiOperazione = true;
 
-				// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
-				// .elementAt(idToRemove[i])).elementAt(0);
-				// nome = de.getValue();
-				nome = idsToRemove.get(i);
+			int numeroAbilitati = 0;
+			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+				PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
 
-				for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
-					PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
-					if (nome.equals(paSA.getNome()) && !porteApplicativeHelper.isConnettoreDefault(paSA)) {
-						pa.removeServizioApplicativo(j);
-						
-						// se non sto utilizzando un SA Server lo elimino
-						IDServizioApplicativo idSA = new IDServizioApplicativo();
-						idSA.setNome(paSA.getNome());
-						IDSoggetto idSoggettoProprietario = new IDSoggetto();
-						idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
-						idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
-						idSA.setIdSoggettoProprietario(idSoggettoProprietario );
-						ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
-						
-						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
-							listaOggettiDaEliminare.add(sa);
-						}
-						
+				boolean toDel = false;
+				for (int i = 0; i < idsToRemove.size(); i++) {
+					nome = idsToRemove.get(i);
+					if (nome.equals(paSA.getNome())) {
+						toDel = true;
 						break;
 					}
 				}
-				
-				
-			}
-			
-			
-			String userLogin = ServletUtils.getUserLoginFromSession(session);
-			
-			if(!listaOggettiDaEliminare.isEmpty())
-				porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
 
-			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
-			
+				if(!toDel) {
+					boolean abilitato = paSA.getDatiConnettore()	!= null ? paSA.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+
+					if(abilitato)
+						numeroAbilitati ++;
+				}
+			}
+
+			if(numeroAbilitati < 1) {
+				eseguiOperazione = false;
+			}
+
+			if(!eseguiOperazione) {
+				if(actionConferma == null) {
+					String messaggio =PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO;
+					String title = "Attenzione";
+					String[][] bottoni = { 
+							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_PREFIX +
+								Costanti.LABEL_MONITOR_BUTTON_ANNULLA_CONFERMA_SUFFIX
+
+							}
+					};
+					pd.setBottoni(bottoni );
+					pd.setMessage(messaggio, title, MessageType.CONFIRM);
+				}
+			}
+
+			if(eseguiOperazione) {
+				for (int i = 0; i < idsToRemove.size(); i++) {
+
+					// DataElement de = (DataElement) ((Vector<?>) pdold.getDati()
+					// .elementAt(idToRemove[i])).elementAt(0);
+					// nome = de.getValue();
+					nome = idsToRemove.get(i);
+
+					for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+						PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
+						if (nome.equals(paSA.getNome()) && !porteApplicativeHelper.isConnettoreDefault(paSA)) {
+							pa.removeServizioApplicativo(j);
+
+							// se non sto utilizzando un SA Server lo elimino
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setNome(paSA.getNome());
+							IDSoggetto idSoggettoProprietario = new IDSoggetto();
+							idSoggettoProprietario.setTipo(pa.getTipoSoggettoProprietario());
+							idSoggettoProprietario.setNome(pa.getNomeSoggettoProprietario());
+							idSA.setIdSoggettoProprietario(idSoggettoProprietario );
+							ServizioApplicativo sa = saCore.getServizioApplicativo(idSA);
+
+							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+								listaOggettiDaEliminare.add(sa);
+							}
+
+							break;
+						}
+					}
+				}
+
+
+				String userLogin = ServletUtils.getUserLoginFromSession(session);
+
+				if(!listaOggettiDaEliminare.isEmpty())
+					porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
+
+				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+			} 
+
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
-						
+
 			// ricarico la configurazione
 			pa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
-			
+
 			// Preparo la lista
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
-	
+
 			int idLista = Liste.PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
-	
+
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
-			
+
 			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
-						
+
 			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, lista);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);

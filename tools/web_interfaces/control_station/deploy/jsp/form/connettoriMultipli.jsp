@@ -147,6 +147,9 @@ function RemoveEntries() {
   // controllo se il tasto rimuovi e' visibile
   var isHidden = $('#rem_btn_2').is(':hidden');
   
+  var parametroIdConnTab = '&<%=CostantiControlStation.PARAMETRO_ID_CONN_TAB %>='+idTabSelezionato;
+ 
+  
 //   if (n > 1) {
 //     for (var j = 0; j < n; j++) {
 //       if (document.form.selectcheckbox[j].checked) {
@@ -164,9 +167,9 @@ function RemoveEntries() {
   if (!isHidden && elemToRemove != '') {
     nr = 1;
     if (formatPar != null && formatPar != "")
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params;
+        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?'+formatPar+'&obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
       else
-        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params;
+        document.location='<%= request.getContextPath() %>/'+nomeServletDel+'?obj='+elemToRemove+'&iddati='+iddati+params+parametroIdConnTab;
   }
 };
 
@@ -985,7 +988,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Crea Nuova' /><%
+									  %><input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Crea Nuovo' /><%
 									}
 									
 									%>

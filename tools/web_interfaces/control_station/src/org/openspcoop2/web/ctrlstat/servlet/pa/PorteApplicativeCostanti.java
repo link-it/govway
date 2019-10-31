@@ -107,7 +107,8 @@ public class PorteApplicativeCostanti {
 	public final static ForwardParams TIPO_OPERAZIONE_VERIFICA_CONNETTORE = ForwardParams.OTHER("");
 	
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipli";
-	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES = "porteApplicativeConnettoriMultipliCustomProperties";
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES = "porteApplicativeConnettoriMultipliProperties";
+	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = "porteApplicativeConnettoriMultipliConfigProperties";
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "porteApplicativeConnettoriMultipliConfig";
 	public final static ForwardParams TIPO_OPERAZIONE_CONFIGURAZIONE_CONNETTORI_MULTIPLI = ForwardParams.OTHER("");
 	public final static String OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE = "porteApplicativeConnettoriMultipliAbilitazione";
@@ -389,15 +390,19 @@ public class PorteApplicativeCostanti {
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"Del.do";
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI+"List.do";
 	
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES+"Add.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES+"Del.do";
-	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES+"List.do";
-	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES = new Vector<String>();
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES+"List.do";
+	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES = new Vector<String>();
 	static{
-		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_ADD);
-		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_DELETE);
-		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CUSTOM_PROPERTIES_LIST);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_ADD);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_DELETE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPERTIES_LIST);
 	}
+	
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_ADD = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"Add.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_DELETE = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"Del.do";
+	public final static String SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES+"List.do";
 	public final static Vector<String> SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI = new Vector<String>();
 	static{
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ADD);
@@ -406,6 +411,9 @@ public class PorteApplicativeCostanti {
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_ABILITAZIONE);
 		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_ADD);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_DELETE);
+		PorteApplicativeCostanti.SERVLET_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI.add(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST);
 	}
 	
 	public final static String SERVLET_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING = PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_RESPONSE_CACHING +".do"; 
@@ -561,6 +569,7 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_PROP = "nomeProp";
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -927,6 +936,7 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE = "Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI = "Filtri";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA = "Propriet&agrave;";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA_DI = "Propriet&agrave; di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE = "Load Balance";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT = "Peso";
@@ -948,6 +958,9 @@ public class PorteApplicativeCostanti {
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE_DI = "Configurazione Load Balance di ";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_LOAD_BALANCE = "Configurazione Load Balance";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA = "Propriet&agrave; Modalit&agrave; Consegna";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_PROPRIETA_DI = "Propriet&agrave; Modalit&agrave; Consegna di ";
 	
 	/* DEFAULT VALUE PARAMETRI */
 	
@@ -1026,6 +1039,8 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_CONFERMA_ABILITAZIONE_CONNETTORE ="Procedere con l''abilitazione del connettore ''{0}''?"; 
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE ="Procedere con la disabilitazione del connettore ''{0}''?"; 
 	
+	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile disabilitare il connettore ''{0}'', deve rimanare almento un connettore abilitato";
+	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile eliminare i connettori selezionati.<br/>Deve rimanare almento un connettore abilitato";
 
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}"; 
@@ -1035,7 +1050,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_ALL_INIZIO_O_ALLA_FINE_DEI_VALORI = "Non inserire spazi all'inizio o alla fine dei valori";
 	public static final String MESSAGGIO_ERRORE_LA_PROPRIETA_DI_MESSAGE_SECURITY_XX_E_GIA_STATO_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY = "La propriet&agrave; di message-security {0} &egrave; gi&agrave; stata associata alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_NOMI = "Non inserire spazi nei nomi";
-	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY = "La property {0} &egrave; gi&agrave; stata associata alla porta applicativa {1}";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_PORTA_APPLICATIVA_YY = "La propriet&agrave; ''{0}'' &egrave; gi&agrave; stata associata alla porta applicativa ''{1}''";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}";
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_PORTA_APPLICATIVA_YY = "Il Soggetto ''{0}'' &egrave; gi&agrave; stato associato alla porta applicativa {1}";
 	public static final String MESSAGGIO_ERRORE_IL_SOGGETTO_XX_EGRAVE_GIA_STATO_ASSOCIATO_ALLA_TRASFORMAZIONE = "Il Soggetto ''{0}'' &egrave; gi&agrave; stato associato alla trasformazione";
@@ -1056,7 +1071,9 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_PER_IL_SERVIZIO_XX_CON_AZIONE_YY_EROGATO_DAL_SOGGETTO_ZZ = "Esiste gi&agrave; una Porta Applicativa per il Servizio [{0}] con Azione [{1}] erogato dal Soggetto{2} [{3}]";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_APPLICATIVA_XX_APPARTENENTE_AL_SOGGETTO_YY = "Esiste gi&agrave; una Porta Applicativa [{0}] appartenente al Soggetto [{1}]";
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE = "Non &egrave; possibile eliminare tutte le azioni associate alla configurazione";
-	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY = "La property {0} &egrave; gi&agrave; stata associata alla configurazione {1}";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE_YY = "La propriet&agrave; ''{0}'' &egrave; gi&agrave; stata associata alla configurazione ''{1}''";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_AL_CONNETTORE_YY = "La propriet&agrave; ''{0}'' &egrave; gi&agrave; stata associata al connettore ''{1}''";
+	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE = "La propriet&agrave; ''{0}'' &egrave; gi&agrave; stata associata alla configurazione connettori multipli di tipo custom";
 	public static final String MESSAGGIO_ERRRORE_FORMATO_NUMERICO_XX_NON_VALIDO = "Il valore inserito nel campo {0} non &egrave; di tipo numerico";
 	public static final String MESSAGGIO_ERRRORE_MIN_XX_NON_VALIDO = "Il valore inserito nel campo {0} deve essere maggiore di {1}"; 
 	

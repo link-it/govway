@@ -2586,6 +2586,26 @@
             <forward name="porteApplicativeConnettoriMultipliConfigError" path="/jsplib/info.jsp"/>
         </action>
         
+        <!--  Porte Applicative (Configurazione Connettori Multipli Proprieta) -->
+
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        
         <!--  Porte Applicative (Connettori Multipli) -->
                
         <action path="/porteApplicativeConnettoriMultipliAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliAdd"
@@ -2611,6 +2631,26 @@
             scope="request" validate="true">
             <forward name="porteApplicativeConnettoriMultipliDel" path="/jsplib/addElement.jsp"/>
             <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli Proprieta) -->
+
+        <action path="/porteApplicativeConnettoriMultipliPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
         </action>
   
     	<!--  Porte Applicative (Connettori Multipli Load Balance) -->

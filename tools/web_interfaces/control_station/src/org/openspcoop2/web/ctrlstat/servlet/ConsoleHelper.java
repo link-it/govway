@@ -14035,7 +14035,6 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	
-	
 	// ****** PROFILO MODI PA ******
 	
 	public boolean isProfiloModIPA(String protocollo) {

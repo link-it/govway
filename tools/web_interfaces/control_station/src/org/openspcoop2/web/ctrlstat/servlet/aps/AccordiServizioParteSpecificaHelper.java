@@ -2534,6 +2534,9 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					break;
 				}
 			}
+			
+			boolean isPaDefaultMulti = paAssociataDefault.getBehaviour() != null;
+			
 			// setto le label delle colonne
 			List<String> listaLabel = new ArrayList<String>();
 
@@ -2977,13 +2980,28 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									}
 								}
 							}
-							if(visualizzaLinkConfigurazioneConnettore)
-								de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
+							if(visualizzaLinkConfigurazioneConnettore) {
+								if(!isPaDefaultMulti) {
+									de.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps);
+								}else {
+									// solo modifica non ridefinizione
+									de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,
+											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+											new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+								}
+							}
 							
 							if(visualizzazioneTabs) {
 								if(visualizzaLinkConfigurazioneConnettore) {
 									DataElementImage image = new DataElementImage();
-									image.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps,pIdTAb);
+									if(!isPaDefaultMulti) {
+										image.setUrl(servletConnettore, pIdSogg, pIdPorta, pIdAsps,pIdTAb);
+									}else {
+										image.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT, pIdProvider, pIdPortaPerSA, pIdAsps,pIdTAb,
+												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getNome()),
+												new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, portaApplicativaServizioApplicativo.getId()+""));
+									}
+									
 									image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE));
 									image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 									
