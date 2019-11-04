@@ -14,8 +14,9 @@ CREATE TABLE transazioni_sa
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
-	-- Esito della Transazione
+	-- Esito della Consegna
 	consegna_terminata BOOLEAN DEFAULT false,
+	data_messaggio_scaduto TIMESTAMP,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,
@@ -38,7 +39,8 @@ CREATE TABLE transazioni_sa
 	data_primo_tentativo TIMESTAMP,
 	numero_tentativi INT DEFAULT 0,
 	-- Cluster ID
-	cluster_id VARCHAR(100),
+	cluster_id_in_coda VARCHAR(100),
+	cluster_id_consegna VARCHAR(100),
 	-- Informazioni relative all'ultimo tentativo di consegna fallito
 	data_ultimo_errore TIMESTAMP,
 	dettaglio_esito_ultimo_errore INT,
@@ -53,6 +55,8 @@ CREATE TABLE transazioni_sa
 	data_prelievo_im TIMESTAMP,
 	numero_prelievi_im INT DEFAULT 0,
 	data_eliminazione_im TIMESTAMP,
+	cluster_id_prelievo_im VARCHAR(100),
+	cluster_id_eliminazione_im VARCHAR(100),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_transazioni_sa') NOT NULL,
 	-- fk/pk keys constraints

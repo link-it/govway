@@ -13,8 +13,9 @@ CREATE TABLE transazioni_sa
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	data_registrazione DATETIME2 NOT NULL,
-	-- Esito della Transazione
+	-- Esito della Consegna
 	consegna_terminata BIT DEFAULT 'false',
+	data_messaggio_scaduto DATETIME2,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BIT DEFAULT 'false',
@@ -37,7 +38,8 @@ CREATE TABLE transazioni_sa
 	data_primo_tentativo DATETIME2,
 	numero_tentativi INT DEFAULT 0,
 	-- Cluster ID
-	cluster_id VARCHAR(100),
+	cluster_id_in_coda VARCHAR(100),
+	cluster_id_consegna VARCHAR(100),
 	-- Informazioni relative all'ultimo tentativo di consegna fallito
 	data_ultimo_errore DATETIME2,
 	dettaglio_esito_ultimo_errore INT,
@@ -52,6 +54,8 @@ CREATE TABLE transazioni_sa
 	data_prelievo_im DATETIME2,
 	numero_prelievi_im INT DEFAULT 0,
 	data_eliminazione_im DATETIME2,
+	cluster_id_prelievo_im VARCHAR(100),
+	cluster_id_eliminazione_im VARCHAR(100),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- fk/pk keys constraints

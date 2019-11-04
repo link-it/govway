@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 			&lt;element name="dati-connettore" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
+ * 		&lt;attribute name="id-servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -93,6 +94,14 @@ public class PortaApplicativaServizioApplicativo extends org.openspcoop2.utils.b
     this.nome = nome;
   }
 
+  public java.lang.Long getIdServizioApplicativo() {
+    return this.idServizioApplicativo;
+  }
+
+  public void setIdServizioApplicativo(java.lang.Long idServizioApplicativo) {
+    this.idServizioApplicativo = idServizioApplicativo;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -106,5 +115,8 @@ public class PortaApplicativaServizioApplicativo extends org.openspcoop2.utils.b
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="nome",required=true)
   protected java.lang.String nome;
+
+  @javax.xml.bind.annotation.XmlTransient
+  protected java.lang.Long idServizioApplicativo;
 
 }

@@ -299,9 +299,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
 		
+		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
+		IDPortaApplicativa idApplicativa = null;
+		if(consegnaContenutiApplicativiMsg.getRichiestaApplicativa()!=null) {
+			idApplicativa = consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa();
+		}
+		
 		// Costruisco eventuale oggetto TransazioneServerApplicativo
 		TransazioneApplicativoServer transazioneApplicativoServer = null;
-		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
 		if(behaviourConsegna!=null && behaviourConsegna.getIdTransazioneApplicativoServer()!=null) {
 			transazioneApplicativoServer = new TransazioneApplicativoServer();
@@ -313,7 +318,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
 			transazioneApplicativoServer.setIdentificativoMessaggio(consegnaContenutiApplicativiMsg.getBusta().getID());
 			
-			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer);
+			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer, idApplicativa);
 		}
 		BehaviourLoadBalancer loadBalancer = null;
 		if(consegnaContenutiApplicativiMsg!=null && consegnaContenutiApplicativiMsg.getLoadBalancer()!=null) {
@@ -369,7 +374,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			try {
-				GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer, true);
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa);
 			}catch(Throwable t) {
 				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -1189,6 +1194,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		if(transazioneApplicativoServer!=null) {
 			transazioneApplicativoServer.setConsegnaIntegrationManager(integrationManager);
 			connettoreMsg.setTransazioneApplicativoServer(transazioneApplicativoServer);
+			connettoreMsg.setIdPortaApplicativa(idPA);
 		}
 
 		// Identificativo di una risposta.
@@ -1963,7 +1969,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
-			dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer);
+			if(transazioneApplicativoServer!=null) {
+				dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+			}
 			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessageTrasformato, outRequestContext.getConnettore());
 
 			
@@ -2167,7 +2175,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 								dumpConfig);
-						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer);
+						if(transazioneApplicativoServer!=null) {
+							dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+						}
 						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
 						if(infoConnettoreUscita!=null){
 							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
@@ -2441,7 +2451,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
-					dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer);
+					if(transazioneApplicativoServer!=null) {
+						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+					}
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}
 				

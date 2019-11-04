@@ -35,6 +35,8 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="data-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="consegna-terminata" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
+ *         &lt;element name="data-messaggio-scaduto-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="data-messaggio-scaduto-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -55,7 +57,8 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="formato-fault" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-primo-tentativo-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-primo-tentativo-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id-presa-in-carico" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id-consegna" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-ultimo-errore-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-ultimo-errore-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="dettaglio-esito-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
@@ -70,6 +73,8 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="data-prelievo-im-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-eliminazione-im-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-eliminazione-im-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id-prelievo-im" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="cluster-id-eliminazione-im" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="descOrder" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
@@ -101,6 +106,8 @@ import java.util.Date;
     "dataRegistrazioneMax",
     "protocollo",
     "consegnaTerminata",
+    "dataMessaggioScadutoMin",
+    "dataMessaggioScadutoMax",
     "dettaglioEsito",
     "consegnaIntegrationManager",
     "identificativoMessaggio",
@@ -121,7 +128,8 @@ import java.util.Date;
     "formatoFault",
     "dataPrimoTentativoMin",
     "dataPrimoTentativoMax",
-    "clusterId",
+    "clusterIdPresaInCarico",
+    "clusterIdConsegna",
     "dataUltimoErroreMin",
     "dataUltimoErroreMax",
     "dettaglioEsitoUltimoErrore",
@@ -136,6 +144,8 @@ import java.util.Date;
     "dataPrelievoImMax",
     "dataEliminazioneImMin",
     "dataEliminazioneImMax",
+    "clusterIdPrelievoIm",
+    "clusterIdEliminazioneIm",
     "limit",
     "offset",
     "descOrder"
@@ -222,6 +232,34 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public Boolean getConsegnaTerminata(){
 		return this.consegnaTerminata;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-messaggio-scaduto-min",required=false,nillable=false)
+	private Date dataMessaggioScadutoMin;
+	
+	public void setDataMessaggioScadutoMin(Date dataMessaggioScadutoMin){
+		this.dataMessaggioScadutoMin = dataMessaggioScadutoMin;
+	}
+	
+	public Date getDataMessaggioScadutoMin(){
+		return this.dataMessaggioScadutoMin;
+	}
+	
+	
+	@javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-messaggio-scaduto-max",required=false,nillable=false)
+	private Date dataMessaggioScadutoMax;
+	
+	public void setDataMessaggioScadutoMax(Date dataMessaggioScadutoMax){
+		this.dataMessaggioScadutoMax = dataMessaggioScadutoMax;
+	}
+	
+	public Date getDataMessaggioScadutoMax(){
+		return this.dataMessaggioScadutoMax;
 	}
 	
 	
@@ -496,15 +534,28 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	
 	@javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="cluster-id",required=false,nillable=false)
-	private String clusterId;
+  @XmlElement(name="cluster-id-presa-in-carico",required=false,nillable=false)
+	private String clusterIdPresaInCarico;
 	
-	public void setClusterId(String clusterId){
-		this.clusterId = clusterId;
+	public void setClusterIdPresaInCarico(String clusterIdPresaInCarico){
+		this.clusterIdPresaInCarico = clusterIdPresaInCarico;
 	}
 	
-	public String getClusterId(){
-		return this.clusterId;
+	public String getClusterIdPresaInCarico(){
+		return this.clusterIdPresaInCarico;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-consegna",required=false,nillable=false)
+	private String clusterIdConsegna;
+	
+	public void setClusterIdConsegna(String clusterIdConsegna){
+		this.clusterIdConsegna = clusterIdConsegna;
+	}
+	
+	public String getClusterIdConsegna(){
+		return this.clusterIdConsegna;
 	}
 	
 	
@@ -695,6 +746,32 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public Date getDataEliminazioneImMax(){
 		return this.dataEliminazioneImMax;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-prelievo-im",required=false,nillable=false)
+	private String clusterIdPrelievoIm;
+	
+	public void setClusterIdPrelievoIm(String clusterIdPrelievoIm){
+		this.clusterIdPrelievoIm = clusterIdPrelievoIm;
+	}
+	
+	public String getClusterIdPrelievoIm(){
+		return this.clusterIdPrelievoIm;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-eliminazione-im",required=false,nillable=false)
+	private String clusterIdEliminazioneIm;
+	
+	public void setClusterIdEliminazioneIm(String clusterIdEliminazioneIm){
+		this.clusterIdEliminazioneIm = clusterIdEliminazioneIm;
+	}
+	
+	public String getClusterIdEliminazioneIm(){
+		return this.clusterIdEliminazioneIm;
 	}
 	
 	

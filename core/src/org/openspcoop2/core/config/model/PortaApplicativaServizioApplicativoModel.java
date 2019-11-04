@@ -44,6 +44,7 @@ public class PortaApplicativaServizioApplicativoModel extends AbstractModel<Port
 	
 		this.DATI_CONNETTORE = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoConnettoreModel(new Field("dati-connettore",org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class));
 		this.NOME = new Field("nome",java.lang.String.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class);
+		this.ID_SERVIZIO_APPLICATIVO = new Field("id-servizio-applicativo",java.lang.Long.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class);
 	
 	}
 	
@@ -53,6 +54,7 @@ public class PortaApplicativaServizioApplicativoModel extends AbstractModel<Port
 	
 		this.DATI_CONNETTORE = new org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoConnettoreModel(new ComplexField(father,"dati-connettore",org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class));
 		this.NOME = new ComplexField(father,"nome",java.lang.String.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class);
+		this.ID_SERVIZIO_APPLICATIVO = new ComplexField(father,"id-servizio-applicativo",java.lang.Long.class,"porta-applicativa-servizio-applicativo",PortaApplicativaServizioApplicativo.class);
 	
 	}
 	
@@ -61,6 +63,8 @@ public class PortaApplicativaServizioApplicativoModel extends AbstractModel<Port
 	public org.openspcoop2.core.config.model.PortaApplicativaServizioApplicativoConnettoreModel DATI_CONNETTORE = null;
 	 
 	public IField NOME = null;
+	 
+	public IField ID_SERVIZIO_APPLICATIVO = null;
 	 
 
 	@Override

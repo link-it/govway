@@ -74,6 +74,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,false),"?");
 		// NONSERIALIZZATO SU DB sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,false),"?");
@@ -89,7 +90,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FORMATO_FAULT,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_TENTATIVI,false),"?");
-		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE,false),"?");
@@ -102,6 +104,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM,false),"?");
 
 		// Insert transazioneApplicativoServer
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getTransazioneApplicativoServerFetch().getKeyGeneratorObject(TransazioneApplicativoServer.model());
@@ -111,6 +115,7 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataRegistrazione(),TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()),
 			// NONSERIALIZZATO SU DB new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getProtocollo(),TransazioneApplicativoServer.model().PROTOCOLLO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaTerminata(),TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataMessaggioScaduto(),TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDettaglioEsito(),TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaIntegrationManager(),TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getIdentificativoMessaggio(),TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType()),
@@ -126,7 +131,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getFormatoFault(),TransazioneApplicativoServer.model().FORMATO_FAULT.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataPrimoTentativo(),TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getNumeroTentativi(),TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterId(),TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterIdPresaInCarico(),TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterIdConsegna(),TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataUltimoErrore(),TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDettaglioEsitoUltimoErrore(),TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getCodiceRispostaUltimoErrore(),TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE.getFieldType()),
@@ -138,7 +144,9 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataPrimoPrelievoIm(),TransazioneApplicativoServer.model().DATA_PRIMO_PRELIEVO_IM.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataPrelievoIm(),TransazioneApplicativoServer.model().DATA_PRELIEVO_IM.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getNumeroPrelieviIm(),TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(),TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType())
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(),TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterIdPrelievoIm(),TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getClusterIdEliminazioneIm(),TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM.getFieldType())
 		);
 		transazioneApplicativoServer.setId(id);
 
@@ -209,6 +217,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		// NONSERIALIZZATO SU DB lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getProtocollo(), TransazioneApplicativoServer.model().PROTOCOLLO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConsegnaTerminata(), TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataMessaggioScaduto(), TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDettaglioEsito(), TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false), "?");
@@ -239,8 +249,10 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataPrimoTentativo(), TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_TENTATIVI,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getNumeroTentativi(), TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType()));
-		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID,false), "?");
-		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getClusterId(), TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getClusterIdPresaInCarico(), TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getClusterIdConsegna(), TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataUltimoErrore(), TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE,false), "?");
@@ -265,6 +277,10 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getNumeroPrelieviIm(), TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataEliminazioneIm(), TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getClusterIdPrelievoIm(), TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getClusterIdEliminazioneIm(), TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM.getFieldType()));
 		if(idLogico!=null) {
 			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().ID_TRANSAZIONE,false)+ "=?");
 			sqlQueryObjectUpdate.addWhereCondition(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false)+ "=?");

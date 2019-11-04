@@ -42,6 +42,7 @@ import java.io.Serializable;
  * 			&lt;element name="data-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="consegna-terminata" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
+ * 			&lt;element name="data-messaggio-scaduto" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -57,7 +58,8 @@ import java.io.Serializable;
  * 			&lt;element name="formato-fault" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-primo-tentativo" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="numero-tentativi" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
- * 			&lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cluster-id-presa-in-carico" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cluster-id-consegna" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dettaglio-esito-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="codice-risposta-ultimo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -70,6 +72,8 @@ import java.io.Serializable;
  * 			&lt;element name="data-prelievo-im" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="numero-prelievi-im" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="0"/>
  * 			&lt;element name="data-eliminazione-im" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cluster-id-prelievo-im" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="cluster-id-eliminazione-im" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -88,6 +92,7 @@ import java.io.Serializable;
   	"dataRegistrazione",
   	"protocollo",
   	"consegnaTerminata",
+  	"dataMessaggioScaduto",
   	"dettaglioEsito",
   	"consegnaIntegrationManager",
   	"identificativoMessaggio",
@@ -103,7 +108,8 @@ import java.io.Serializable;
   	"formatoFault",
   	"dataPrimoTentativo",
   	"numeroTentativi",
-  	"clusterId",
+  	"clusterIdPresaInCarico",
+  	"clusterIdConsegna",
   	"dataUltimoErrore",
   	"dettaglioEsitoUltimoErrore",
   	"codiceRispostaUltimoErrore",
@@ -115,7 +121,9 @@ import java.io.Serializable;
   	"dataPrimoPrelievoIm",
   	"dataPrelievoIm",
   	"numeroPrelieviIm",
-  	"dataEliminazioneIm"
+  	"dataEliminazioneIm",
+  	"clusterIdPrelievoIm",
+  	"clusterIdEliminazioneIm"
   }
 )
 
@@ -181,6 +189,14 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   public void setConsegnaTerminata(boolean consegnaTerminata) {
     this.consegnaTerminata = consegnaTerminata;
+  }
+
+  public java.util.Date getDataMessaggioScaduto() {
+    return this.dataMessaggioScaduto;
+  }
+
+  public void setDataMessaggioScaduto(java.util.Date dataMessaggioScaduto) {
+    this.dataMessaggioScaduto = dataMessaggioScaduto;
   }
 
   public int getDettaglioEsito() {
@@ -307,12 +323,20 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.numeroTentativi = numeroTentativi;
   }
 
-  public java.lang.String getClusterId() {
-    return this.clusterId;
+  public java.lang.String getClusterIdPresaInCarico() {
+    return this.clusterIdPresaInCarico;
   }
 
-  public void setClusterId(java.lang.String clusterId) {
-    this.clusterId = clusterId;
+  public void setClusterIdPresaInCarico(java.lang.String clusterIdPresaInCarico) {
+    this.clusterIdPresaInCarico = clusterIdPresaInCarico;
+  }
+
+  public java.lang.String getClusterIdConsegna() {
+    return this.clusterIdConsegna;
+  }
+
+  public void setClusterIdConsegna(java.lang.String clusterIdConsegna) {
+    this.clusterIdConsegna = clusterIdConsegna;
   }
 
   public java.util.Date getDataUltimoErrore() {
@@ -411,6 +435,22 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.dataEliminazioneIm = dataEliminazioneIm;
   }
 
+  public java.lang.String getClusterIdPrelievoIm() {
+    return this.clusterIdPrelievoIm;
+  }
+
+  public void setClusterIdPrelievoIm(java.lang.String clusterIdPrelievoIm) {
+    this.clusterIdPrelievoIm = clusterIdPrelievoIm;
+  }
+
+  public java.lang.String getClusterIdEliminazioneIm() {
+    return this.clusterIdEliminazioneIm;
+  }
+
+  public void setClusterIdEliminazioneIm(java.lang.String clusterIdEliminazioneIm) {
+    this.clusterIdEliminazioneIm = clusterIdEliminazioneIm;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -450,6 +490,11 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="consegna-terminata",required=false,nillable=false,defaultValue="false")
   protected boolean consegnaTerminata = false;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-messaggio-scaduto",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataMessaggioScaduto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="dettaglio-esito",required=false,nillable=false)
@@ -517,8 +562,12 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   protected int numeroTentativi = 0;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="cluster-id",required=false,nillable=false)
-  protected java.lang.String clusterId;
+  @XmlElement(name="cluster-id-presa-in-carico",required=false,nillable=false)
+  protected java.lang.String clusterIdPresaInCarico;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-consegna",required=false,nillable=false)
+  protected java.lang.String clusterIdConsegna;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
@@ -571,5 +620,13 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-eliminazione-im",required=false,nillable=false,type=java.lang.String.class)
   protected java.util.Date dataEliminazioneIm;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-prelievo-im",required=false,nillable=false)
+  protected java.lang.String clusterIdPrelievoIm;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="cluster-id-eliminazione-im",required=false,nillable=false)
+  protected java.lang.String clusterIdEliminazioneIm;
 
 }

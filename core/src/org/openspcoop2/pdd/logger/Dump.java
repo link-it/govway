@@ -34,6 +34,7 @@ import java.util.List;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -138,8 +139,10 @@ public class Dump {
 	
 	/** -----------------Impostazione TransazioneApplicativoServer ---------------- */
 	private TransazioneApplicativoServer transazioneApplicativoServer;
-	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+	private IDPortaApplicativa idPortaApplicativa;
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPortaApplicativa) {
 		this.transazioneApplicativoServer = transazioneApplicativoServer;
+		this.idPortaApplicativa = idPortaApplicativa;
 	}
 	
 	/**
@@ -681,7 +684,7 @@ public class Dump {
 					// forzo
 					messaggio.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
-					GestoreConsegnaMultipla.getInstance().safeSave(messaggio);
+					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa);
 				}catch(Throwable t) {
 					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();
 					this.loggerDump.error(msgError,t);

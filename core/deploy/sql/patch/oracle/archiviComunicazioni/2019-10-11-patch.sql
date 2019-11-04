@@ -16,8 +16,9 @@ CREATE TABLE transazioni_sa
 	id_transazione VARCHAR2(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR2(2000) NOT NULL,
 	data_registrazione TIMESTAMP NOT NULL,
-	-- Esito della Transazione
+	-- Esito della Consegna
 	consegna_terminata NUMBER,
+	data_messaggio_scaduto TIMESTAMP,
 	dettaglio_esito NUMBER,
 	-- Consegna via Integration Manager
 	consegna_im NUMBER,
@@ -40,7 +41,8 @@ CREATE TABLE transazioni_sa
 	data_primo_tentativo TIMESTAMP,
 	numero_tentativi NUMBER,
 	-- Cluster ID
-	cluster_id VARCHAR2(100),
+	cluster_id_in_coda VARCHAR2(100),
+	cluster_id_consegna VARCHAR2(100),
 	-- Informazioni relative all'ultimo tentativo di consegna fallito
 	data_ultimo_errore TIMESTAMP,
 	dettaglio_esito_ultimo_errore NUMBER,
@@ -55,6 +57,8 @@ CREATE TABLE transazioni_sa
 	data_prelievo_im TIMESTAMP,
 	numero_prelievi_im NUMBER,
 	data_eliminazione_im TIMESTAMP,
+	cluster_id_prelievo_im VARCHAR2(100),
+	cluster_id_eliminazione_im VARCHAR2(100),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

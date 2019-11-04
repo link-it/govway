@@ -154,8 +154,11 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 						this.logSql.getLog(),msgDiag,null);
 				pddContext = messaggioDaInviare.getPdDContext(); // aggiorno
 	
-				IDSoggetto soggettoFruitore = new IDSoggetto(bustaToSend.getTipoMittente(),
-						bustaToSend.getMittente());
+				IDSoggetto soggettoFruitore = null;
+				if(bustaToSend.getMittente()!=null) {
+					soggettoFruitore = new IDSoggetto(bustaToSend.getTipoMittente(),
+							bustaToSend.getMittente());
+				}
 	
 				IDServizio servizioBusta = IDServizioFactory.getInstance().getIDServizioFromValues(bustaToSend.getTipoServizio(),
 						bustaToSend.getServizio(),

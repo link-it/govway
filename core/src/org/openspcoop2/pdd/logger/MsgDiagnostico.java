@@ -435,8 +435,10 @@ public class MsgDiagnostico {
 	
 	/** -----------------Impostazione TransazioneApplicativoServer ---------------- */
 	private TransazioneApplicativoServer transazioneApplicativoServer;
-	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+	private IDPortaApplicativa idPortaApplicativa;
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPortaApplicativa) {
 		this.transazioneApplicativoServer = transazioneApplicativoServer;
+		this.idPortaApplicativa = idPortaApplicativa;
 	}
 	
 	
@@ -2131,7 +2133,7 @@ public class MsgDiagnostico {
 				// forzo
 				msgDiag.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 				msgDiag.setApplicativo(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
-				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag);
+				GestoreConsegnaMultipla.getInstance().safeSave(msgDiag, this.idPortaApplicativa);
 			}catch(Throwable t) {
 				logError("Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 				gestioneErroreDiagnostica(t);

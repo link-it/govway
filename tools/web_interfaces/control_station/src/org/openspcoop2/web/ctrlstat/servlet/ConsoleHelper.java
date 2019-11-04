@@ -154,6 +154,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
@@ -10016,10 +10017,21 @@ public class ConsoleHelper implements IConsoleHelper {
 				for (Integer esito : listOk) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
 					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+										
 					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
+					if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
+						de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
+					}
+					else {
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+					}
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
@@ -10118,6 +10130,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				for (Integer esito : listFalliteSenzaMax) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
 					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
 					
 					de = new DataElement();

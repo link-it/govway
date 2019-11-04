@@ -19,6 +19,8 @@
  			<xsd:element name="data-registrazione-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="consegna-terminata" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-messaggio-scaduto-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="data-messaggio-scaduto-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="consegna-integration-manager" type="xsd:boolean" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="identificativo-messaggio" type="xsd:string" minOccurs="0" maxOccurs="1" />
@@ -39,7 +41,8 @@
  			<xsd:element name="formato-fault" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-primo-tentativo-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-primo-tentativo-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
- 			<xsd:element name="cluster-id" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cluster-id-presa-in-carico" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cluster-id-consegna" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ultimo-errore-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-ultimo-errore-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="dettaglio-esito-ultimo-errore" type="xsd:int" minOccurs="0" maxOccurs="1" />
@@ -54,6 +57,8 @@
  			<xsd:element name="data-prelievo-im-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-eliminazione-im-min" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="data-eliminazione-im-max" type="xsd:dateTime" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cluster-id-prelievo-im" type="xsd:string" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="cluster-id-eliminazione-im" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="limit" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="offset" type="xsd:integer" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="descOrder" type="xsd:boolean" minOccurs="0" maxOccurs="1" />

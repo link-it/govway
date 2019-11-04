@@ -161,6 +161,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		fields.add(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE);
     		// NONSERIALIZZATO SU DB fields.add(TransazioneApplicativoServer.model().PROTOCOLLO);
     		fields.add(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA);
+    		fields.add(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO);
     		fields.add(TransazioneApplicativoServer.model().DETTAGLIO_ESITO);
     		fields.add(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER);
     		fields.add(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO);
@@ -176,7 +177,8 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		fields.add(TransazioneApplicativoServer.model().FORMATO_FAULT);
     		fields.add(TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO);
     		fields.add(TransazioneApplicativoServer.model().NUMERO_TENTATIVI);
-    		fields.add(TransazioneApplicativoServer.model().CLUSTER_ID);
+    		fields.add(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO);
+    		fields.add(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA);
     		fields.add(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE);
     		fields.add(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE);
     		fields.add(TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE);
@@ -189,6 +191,8 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
     		fields.add(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM);
     		fields.add(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM);
     		fields.add(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM);
+    		fields.add(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM);
+    		fields.add(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM);
         	
     		List<Map<String, Object>> returnMap = null;
     		try{
@@ -564,6 +568,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,true));
 		// NONSERIALIZZATO SU DB sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,true));
@@ -579,7 +584,8 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().FORMATO_FAULT,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_TENTATIVI,true));
-		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CODICE_RISPOSTA_ULTIMO_ERRORE,true));
@@ -592,6 +598,8 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_PRELIEVO_IM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addWhereCondition("id=?");
 
 		// Get transazioneApplicativoServer

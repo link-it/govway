@@ -633,7 +633,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 
 				for (int i = 0; i < pa.sizeServizioApplicativoList(); i++) {
 					PortaApplicativaServizioApplicativo tmpSA = pa.getServizioApplicativo(i);
-					if (idSA == tmpSA.getId()) {
+					if (idSA == tmpSA.getIdServizioApplicativo()) {
 						giaRegistrato = true;
 						break;
 					}
@@ -6784,7 +6784,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image = new DataElementImage();
 					
-					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb);
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					

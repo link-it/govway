@@ -64,7 +64,7 @@ import org.openspcoop2.web.lib.mvc.TipoOperazione;
  * @version $Rev$, $Date$
  * 
  */
-public final class PorteApplicativeConnettoriMultipliConfigLoadBalance extends Action {
+public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends Action {
 
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
@@ -226,7 +226,7 @@ public final class PorteApplicativeConnettoriMultipliConfigLoadBalance extends A
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE,
+				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,
 						ForwardParams.OTHER(""));
 			}
 
@@ -251,7 +251,7 @@ public final class PorteApplicativeConnettoriMultipliConfigLoadBalance extends A
 
 				ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 
-				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE, 
+				return ServletUtils.getStrutsForwardEditModeCheckError(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM, 
 						ForwardParams.OTHER(""));
 			}
 
@@ -312,11 +312,11 @@ public final class PorteApplicativeConnettoriMultipliConfigLoadBalance extends A
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI
-			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE, 
+			return ServletUtils.getStrutsForwardEditModeFinished(mapping, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM, 
 					ForwardParams.OTHER(""));
 		} catch (Exception e) {
 			return ServletUtils.getStrutsForwardError(ControlStationCore.getLog(), e, pd, session, gd, mapping, 
-					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_LOAD_BALANCE,
+					PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,
 					ForwardParams.OTHER(""));
 		}  
 	}

@@ -63,6 +63,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_registrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
 				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "consegna_terminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()));
+				setParameter(object, "setDataMessaggioScaduto", TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_messaggio_scaduto", TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dettaglio_esito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
@@ -93,8 +95,10 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_primo_tentativo", TransazioneApplicativoServer.model().DATA_PRIMO_TENTATIVO.getFieldType()));
 				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "numero_tentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType()));
-				setParameter(object, "setClusterId", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType(),
-					jdbcParameterUtilities.readParameter(rs, "cluster_id", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType()));
+				setParameter(object, "setClusterIdPresaInCarico", TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id_in_coda", TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO.getFieldType()));
+				setParameter(object, "setClusterIdConsegna", TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id_consegna", TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA.getFieldType()));
 				setParameter(object, "setDataUltimoErrore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_ultimo_errore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType()));
 				setParameter(object, "setDettaglioEsitoUltimoErrore", TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType(),
@@ -119,6 +123,10 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "numero_prelievi_im", TransazioneApplicativoServer.model().NUMERO_PRELIEVI_IM.getFieldType()));
 				setParameter(object, "setDataEliminazioneIm", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_eliminazione_im", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType()));
+				setParameter(object, "setClusterIdPrelievoIm", TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id_prelievo_im", TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM.getFieldType()));
+				setParameter(object, "setClusterIdEliminazioneIm", TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "cluster_id_eliminazione_im", TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM.getFieldType()));
 				return object;
 			}
 			
@@ -149,6 +157,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-registrazione"));
 				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
 					this.getObjectFromMap(map,"consegna-terminata"));
+				setParameter(object, "setDataMessaggioScaduto", TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType(),
+					this.getObjectFromMap(map,"data-messaggio-scaduto"));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					this.getObjectFromMap(map,"dettaglio-esito"));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
@@ -179,8 +189,10 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-primo-tentativo"));
 				setParameter(object, "setNumeroTentativi", TransazioneApplicativoServer.model().NUMERO_TENTATIVI.getFieldType(),
 					this.getObjectFromMap(map,"numero-tentativi"));
-				setParameter(object, "setClusterId", TransazioneApplicativoServer.model().CLUSTER_ID.getFieldType(),
-					this.getObjectFromMap(map,"cluster-id"));
+				setParameter(object, "setClusterIdPresaInCarico", TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id-presa-in-carico"));
+				setParameter(object, "setClusterIdConsegna", TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id-consegna"));
 				setParameter(object, "setDataUltimoErrore", TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE.getFieldType(),
 					this.getObjectFromMap(map,"data-ultimo-errore"));
 				setParameter(object, "setDettaglioEsitoUltimoErrore", TransazioneApplicativoServer.model().DETTAGLIO_ESITO_ULTIMO_ERRORE.getFieldType(),
@@ -205,6 +217,10 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"numero-prelievi-im"));
 				setParameter(object, "setDataEliminazioneIm", TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM.getFieldType(),
 					this.getObjectFromMap(map,"data-eliminazione-im"));
+				setParameter(object, "setClusterIdPrelievoIm", TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id-prelievo-im"));
+				setParameter(object, "setClusterIdEliminazioneIm", TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM.getFieldType(),
+					this.getObjectFromMap(map,"cluster-id-eliminazione-im"));
 				return object;
 			}
 			

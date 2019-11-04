@@ -2653,14 +2653,14 @@
             <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
         </action>
   
-    	<!--  Porte Applicative (Connettori Multipli Load Balance) -->
+    	<!--  Porte Applicative (Connettori Multipli ProprietaForm) -->
     	 
-    	<action path="/porteApplicativeConnettoriMultipliConfigLoadBalance" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigLoadBalance"
+    	<action path="/porteApplicativeConnettoriMultipliConfigProprietaForm" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaForm"
             scope="request" validate="true">
-            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceForm" path="/jsplib/addElement.jsp"/>
-            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceOk" path="/jsplib/addElement.jsp"/>
-            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceCheckError" path="/jsplib/addElement.jsp"/>
-            <forward name="porteApplicativeConnettoriMultipliConfigLoadBalanceError" path="/jsplib/info.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormError" path="/jsplib/info.jsp"/>
         </action>
         
         <!--  Porte Applicative (Connettori Multipli Abilitazione) -->

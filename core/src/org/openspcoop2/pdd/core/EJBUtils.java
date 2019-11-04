@@ -2151,13 +2151,13 @@ public class EJBUtils {
 					transazioneApplicativoServer.setRichiestaUscitaBytes(requestMessageNullable.getOutgoingMessageContentLength());
 				}
 				transazioneApplicativoServer.setIdentificativoMessaggio(consegnaMSG.getBusta().getID());
-				transazioneApplicativoServer.setClusterId(propertiesReader.getClusterId(false));
+				transazioneApplicativoServer.setClusterIdPresaInCarico(propertiesReader.getClusterId(false));
 				transazioneApplicativoServer.setConsegnaIntegrationManager(getMessageAbilitato);
 			
 				if(transazioneApplicativoServer!=null) {
 					
 					try {
-						GestoreConsegnaMultipla.getInstance().safeSave(transazioneApplicativoServer, false);
+						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa());
 					}catch(Throwable t) {
 						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
@@ -2205,6 +2205,13 @@ public class EJBUtils {
 							log.debug("Invocato ConsegnaContenutiApplicativi per ["+busta.getID()+"] con esito: "+result.getStatoInvocazione(),result.getErroreNonGestito());
 						}
 					}
+				}
+				else {
+					
+					if(transazioneApplicativoServer!=null) {
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"queue.messaggioSchedulato");
+					}
+					
 				}
 				
 			}else{

@@ -19518,6 +19518,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 							// setto solo il nome come da specifica
 							servizioApplicativo = new PortaApplicativaServizioApplicativo();
 							servizioApplicativo.setId(idSA_PA);
+							servizioApplicativo.setIdServizioApplicativo(idSA); 
 							servizioApplicativo.setNome(rs1.getString("nome"));
 							
 							if(nomeConnettore!=null && !"".equals(nomeConnettore)) {

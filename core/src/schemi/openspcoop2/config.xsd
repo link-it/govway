@@ -751,7 +751,19 @@
 				</xsd:annotation>
 			</xsd:element>
 		</xsd:sequence>
-		<xsd:attribute name="nome" type="xsd:string" use="required"/>		
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>	
+		<!-- start-extensions -->
+		<xsd:attribute name="id-servizio-applicativo" type="xsd:unsignedLong" use="optional">
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping transient="true"/>
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
+		<!-- end-extensions -->
 	</xsd:complexType>
 	<xsd:complexType name="porta-applicativa-servizio-applicativo-connettore">
 		<xsd:sequence>

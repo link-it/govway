@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
@@ -109,6 +110,7 @@ public class ConnettoreMsg  {
 	private IState state;
 	
 	private TransazioneApplicativoServer transazioneApplicativoServer;
+	private IDPortaApplicativa idPortaApplicativa;
 	
 
 
@@ -481,5 +483,11 @@ public class ConnettoreMsg  {
 	}
 	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
 		this.transazioneApplicativoServer = transazioneApplicativoServer;
+	}
+	public IDPortaApplicativa getIdPortaApplicativa() {
+		return this.idPortaApplicativa;
+	}
+	public void setIdPortaApplicativa(IDPortaApplicativa idPortaApplicativa) {
+		this.idPortaApplicativa = idPortaApplicativa;
 	}
 }

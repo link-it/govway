@@ -14,8 +14,10 @@ CREATE TABLE transazioni_sa
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
-	-- Esito della Transazione
+	-- Esito della Consegna
 	consegna_terminata BOOLEAN DEFAULT false,
+	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
+	data_messaggio_scaduto TIMESTAMP(3) DEFAULT 0,
 	dettaglio_esito INT,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,
@@ -43,7 +45,8 @@ CREATE TABLE transazioni_sa
 	data_primo_tentativo TIMESTAMP(3) DEFAULT 0,
 	numero_tentativi INT DEFAULT 0,
 	-- Cluster ID
-	cluster_id VARCHAR(100),
+	cluster_id_in_coda VARCHAR(100),
+	cluster_id_consegna VARCHAR(100),
 	-- Informazioni relative all'ultimo tentativo di consegna fallito
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_ultimo_errore TIMESTAMP(3) DEFAULT 0,
@@ -62,6 +65,8 @@ CREATE TABLE transazioni_sa
 	numero_prelievi_im INT DEFAULT 0,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_eliminazione_im TIMESTAMP(3) DEFAULT 0,
+	cluster_id_prelievo_im VARCHAR(100),
+	cluster_id_eliminazione_im VARCHAR(100),
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- fk/pk keys constraints

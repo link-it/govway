@@ -980,6 +980,7 @@ public class JDBCTransazioneServiceSearch implements ITransazioneServiceSearch, 
 
 	}
 	
+
 	public void disableSelectForUpdate() throws ServiceException,NotImplementedException {
 		this.jdbcSqlObjectFactory.setSelectForUpdate(false);
 	}

@@ -257,7 +257,7 @@ public final class PorteApplicativeChange extends Action {
 				if(servizioApplicativo==null || "".equals(servizioApplicativo)){
 					if(numSA==1){
 						servizioApplicativo = pa.getServizioApplicativo(0).getNome();
-						idSa = pa.getServizioApplicativo(0).getId();
+						idSa = pa.getServizioApplicativo(0).getIdServizioApplicativo();
 					}
 					else{
 						servizioApplicativo = "-";

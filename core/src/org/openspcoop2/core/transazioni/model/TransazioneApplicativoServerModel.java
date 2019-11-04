@@ -47,6 +47,7 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.DATA_REGISTRAZIONE = new Field("data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_TERMINATA = new Field("consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_MESSAGGIO_SCADUTO = new Field("data-messaggio-scaduto",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new Field("dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new Field("consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -62,7 +63,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.FORMATO_FAULT = new Field("formato-fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_PRIMO_TENTATIVO = new Field("data-primo-tentativo",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.NUMERO_TENTATIVI = new Field("numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.CLUSTER_ID = new Field("cluster-id",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_PRESA_IN_CARICO = new Field("cluster-id-presa-in-carico",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_CONSEGNA = new Field("cluster-id-consegna",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ULTIMO_ERRORE = new Field("data-ultimo-errore",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO_ULTIMO_ERRORE = new Field("dettaglio-esito-ultimo-errore",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA_ULTIMO_ERRORE = new Field("codice-risposta-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -75,6 +77,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.DATA_PRELIEVO_IM = new Field("data-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.NUMERO_PRELIEVI_IM = new Field("numero-prelievi-im",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ELIMINAZIONE_IM = new Field("data-eliminazione-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_PRELIEVO_IM = new Field("cluster-id-prelievo-im",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_ELIMINAZIONE_IM = new Field("cluster-id-eliminazione-im",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -87,6 +91,7 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.DATA_REGISTRAZIONE = new ComplexField(father,"data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_TERMINATA = new ComplexField(father,"consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.DATA_MESSAGGIO_SCADUTO = new ComplexField(father,"data-messaggio-scaduto",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new ComplexField(father,"dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new ComplexField(father,"consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -102,7 +107,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.FORMATO_FAULT = new ComplexField(father,"formato-fault",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_PRIMO_TENTATIVO = new ComplexField(father,"data-primo-tentativo",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.NUMERO_TENTATIVI = new ComplexField(father,"numero-tentativi",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
-		this.CLUSTER_ID = new ComplexField(father,"cluster-id",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_PRESA_IN_CARICO = new ComplexField(father,"cluster-id-presa-in-carico",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_CONSEGNA = new ComplexField(father,"cluster-id-consegna",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ULTIMO_ERRORE = new ComplexField(father,"data-ultimo-errore",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO_ULTIMO_ERRORE = new ComplexField(father,"dettaglio-esito-ultimo-errore",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CODICE_RISPOSTA_ULTIMO_ERRORE = new ComplexField(father,"codice-risposta-ultimo-errore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -115,6 +121,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 		this.DATA_PRELIEVO_IM = new ComplexField(father,"data-prelievo-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.NUMERO_PRELIEVI_IM = new ComplexField(father,"numero-prelievi-im",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ELIMINAZIONE_IM = new ComplexField(father,"data-eliminazione-im",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_PRELIEVO_IM = new ComplexField(father,"cluster-id-prelievo-im",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CLUSTER_ID_ELIMINAZIONE_IM = new ComplexField(father,"cluster-id-eliminazione-im",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 	
 	}
 	
@@ -129,6 +137,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	public IField PROTOCOLLO = null;
 	 
 	public IField CONSEGNA_TERMINATA = null;
+	 
+	public IField DATA_MESSAGGIO_SCADUTO = null;
 	 
 	public IField DETTAGLIO_ESITO = null;
 	 
@@ -160,7 +170,9 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	 
 	public IField NUMERO_TENTATIVI = null;
 	 
-	public IField CLUSTER_ID = null;
+	public IField CLUSTER_ID_PRESA_IN_CARICO = null;
+	 
+	public IField CLUSTER_ID_CONSEGNA = null;
 	 
 	public IField DATA_ULTIMO_ERRORE = null;
 	 
@@ -185,6 +197,10 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	public IField NUMERO_PRELIEVI_IM = null;
 	 
 	public IField DATA_ELIMINAZIONE_IM = null;
+	 
+	public IField CLUSTER_ID_PRELIEVO_IM = null;
+	 
+	public IField CLUSTER_ID_ELIMINAZIONE_IM = null;
 	 
 
 	@Override

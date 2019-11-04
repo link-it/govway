@@ -96,6 +96,13 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "consegna_terminata";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_messaggio_scaduto";
+			}else{
+				return "data_messaggio_scaduto";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".dettaglio_esito";
@@ -201,11 +208,18 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "numero_tentativi";
 			}
 		}
-		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID)){
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO)){
 			if(appendTablePrefix){
-				return this.toAliasTable(field)+".cluster_id";
+				return this.toAliasTable(field)+".cluster_id_in_coda";
 			}else{
-				return "cluster_id";
+				return "cluster_id_in_coda";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id_consegna";
+			}else{
+				return "cluster_id_consegna";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE)){
@@ -292,6 +306,20 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "data_eliminazione_im";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id_prelievo_im";
+			}else{
+				return "cluster_id_prelievo_im";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".cluster_id_eliminazione_im";
+			}else{
+				return "cluster_id_eliminazione_im";
+			}
+		}
 
 
 		return super.toColumn(field,returnAlias,appendTablePrefix);
@@ -315,6 +343,9 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
@@ -362,7 +393,10 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().NUMERO_TENTATIVI)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
-		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID)){
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_PRESA_IN_CARICO)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_CONSEGNA)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ULTIMO_ERRORE)){
@@ -399,6 +433,12 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_ELIMINAZIONE_IM)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_PRELIEVO_IM)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CLUSTER_ID_ELIMINAZIONE_IM)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 

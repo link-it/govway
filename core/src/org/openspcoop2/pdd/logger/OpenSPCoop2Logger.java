@@ -951,7 +951,7 @@ public class OpenSPCoop2Logger {
 				showMsg.append(" SA:"+servizioApplicativo);
 			}
 		}
-		if( fruitore!=null ){
+		if( fruitore!=null && fruitore.getNome()!=null ){
 			showMsg.append(" FR:");
 			String fruitoreLabel = fruitore.toString();
 			if(formatValues) {

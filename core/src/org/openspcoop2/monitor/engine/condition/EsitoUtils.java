@@ -59,7 +59,7 @@ public class EsitoUtils {
 	public final static Integer ALL_PERSONALIZZATO_VALUE = -5;
 	public final static Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
 	
-	public final static String LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA = "Consegna Multipla";
+	public final static String LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI = "Consegna Multipla";
 	
 	private Logger logger;
 	private EsitiProperties esitiProperties;
@@ -160,7 +160,7 @@ public class EsitoUtils {
 		else if(ALL_ERROR_FAULT_APPLICATIVO_LABEL.equals(label)){
 			return ALL_ERROR_FAULT_APPLICATIVO_VALUE;
 		}
-		else if(LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA.equals(label)) {
+		else if(LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI.equals(label)) {
 			try{
 				return this.esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 			}catch(Exception e){
@@ -177,7 +177,7 @@ public class EsitoUtils {
 		}
 	}
 	
-	public String getEsitoLabelFromValue(Object value, boolean statistica){
+	public String getEsitoLabelFromValue(Object value, boolean consegnaMultiplaSenzaVariStati){
 		if(value instanceof Integer){
 			
 			if(ALL_VALUE == ((Integer)value)){
@@ -201,10 +201,10 @@ public class EsitoUtils {
 			
 			try{
 				int valueInt = (Integer)value;
-				if(statistica) {
+				if(consegnaMultiplaSenzaVariStati) {
 					int consegnaMultipla = this.esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
 					if(consegnaMultipla == valueInt) {
-						return LABEL_ESITO_CONSEGNA_MULTIPLA_STATISTICA;
+						return LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI;
 					}
 				}
 				return this.esitiProperties.getEsitoLabel(valueInt);

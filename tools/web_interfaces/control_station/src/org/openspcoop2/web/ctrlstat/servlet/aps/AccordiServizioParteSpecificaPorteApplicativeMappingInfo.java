@@ -95,7 +95,7 @@ public class AccordiServizioParteSpecificaPorteApplicativeMappingInfo {
 		this.nomeNuovaConfigurazione = nomeNuovaConfigurazione;
 	}
 	public boolean isPaMappingSelezionatoMulti() {
-		return paMappingSelezionatoMulti;
+		return this.paMappingSelezionatoMulti;
 	}
 	public void setPaMappingSelezionatoMulti(boolean paMappingSelezionatoMulti) {
 		this.paMappingSelezionatoMulti = paMappingSelezionatoMulti;

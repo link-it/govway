@@ -1625,6 +1625,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 						</xsd:appinfo>
 					</xsd:annotation>
 				</xsd:element>
+				<xsd:element name="data-messaggio-scaduto" type="xsd:dateTime" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Data in cui il messaggio è stato eliminato perchè scaduto]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" filter-interval="true"/>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -1805,14 +1816,25 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 				</xsd:element>
 				
 				
-				<xsd:element name="cluster-id" type="xsd:string" minOccurs="0">
+				<xsd:element name="cluster-id-presa-in-carico" type="xsd:string" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
 							<linkit:generator
 								xmlns:linkit="http://www.link.it/project_generator">
-								<linkit:sql-column-mapping name="cluster_id" varchar="100" />
+								<linkit:sql-column-mapping name="cluster_id_in_coda" varchar="100" />
 								<linkit:sql-column-comment><![CDATA[Cluster ID]]></linkit:sql-column-comment>
-								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID]]></linkit:sql-ddl-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID Presa in Carico]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+				<xsd:element name="cluster-id-consegna" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="cluster_id_consegna" varchar="100" />
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID dell'ultima Consegna]]></linkit:sql-ddl-column-comment>
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>			        
@@ -1953,6 +1975,28 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 							</linkit:generator>
 						</xsd:appinfo>
 					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="cluster-id-prelievo-im" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="100" />
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID dell'ultimo prelievo]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
+				</xsd:element>
+				<xsd:element name="cluster-id-eliminazione-im" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping varchar="100" />
+								<linkit:sql-ddl-column-comment><![CDATA[Cluster ID dell'eliminazione]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>			        
 				</xsd:element>
 				
 			</xsd:sequence>

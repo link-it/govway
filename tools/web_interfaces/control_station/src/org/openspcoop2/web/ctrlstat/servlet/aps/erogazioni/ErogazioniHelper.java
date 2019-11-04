@@ -1492,25 +1492,21 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			}
 			
 			if(visualizzaConnettore) {
-				PortaApplicativaServizioApplicativo paDefautServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
+				//PortaApplicativaServizioApplicativo paDefautServizioApplicativo = paDefault.getServizioApplicativoList().get(0);
 				IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 				idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()));
-				idServizioApplicativo.setNome(paDefautServizioApplicativo.getNome());
+				idServizioApplicativo.setNome(paSADefault.getNome());
 				ServizioApplicativo sa = this.saCore.getServizioApplicativo(idServizioApplicativo);
 				Connettore connettore = sa.getInvocazioneServizio().getConnettore();
 				idConnettore = connettore.getId();
 				checkConnettore = org.openspcoop2.pdd.core.connettori.ConnettoreCheck.checkSupported(connettore);
 				
 				connettoreMultiploEnabled = paDefault.getBehaviour() != null;
-			}
 
-			// Connettore
-			if(visualizzaConnettore) {
 				
 				de = new DataElement();
 				
 				de.setType(DataElementType.TEXT);
-				ServizioApplicativo sa = this.saCore.getServizioApplicativo(paSADefault.getId());
 				InvocazioneServizio is = sa.getInvocazioneServizio();
 				String urlConnettore = this.getLabelConnettore(sa,is);
 				
@@ -1531,7 +1527,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 					listParametersConnettore.add(paIdPortaPerSA);
 					listParametersConnettore.add(paIdAsps);
 					listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO, paSADefault.getNome()));
-					listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSADefault.getId()+""));
+					listParametersConnettore.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO, paSADefault.getIdServizioApplicativo()+""));
 					listParametersConnettore.add(paConnettoreDaListaAPS);
 					
 					image = new DataElementImage();
@@ -2814,7 +2810,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE);
 							gruppoVector.addElement(de);
 
-							ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaAssociataServizioApplicativo.getId());
+							ServizioApplicativo sa = this.saCore.getServizioApplicativo(portaApplicativaAssociataServizioApplicativo.getIdServizioApplicativo());
 							InvocazioneServizio is = sa.getInvocazioneServizio();
 							Connettore connis = is.getConnettore();
 

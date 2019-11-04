@@ -426,6 +426,9 @@
 				<xsd:element default="false" minOccurs="0" name="consegna-terminata" type="xsd:boolean">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="data-messaggio-scaduto" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="dettaglio-esito" type="xsd:int">
 					
 				</xsd:element>
@@ -481,7 +484,10 @@
 				</xsd:element>
 				
 				
-				<xsd:element minOccurs="0" name="cluster-id" type="xsd:string">
+				<xsd:element minOccurs="0" name="cluster-id-presa-in-carico" type="xsd:string">
+								        
+				</xsd:element>
+				<xsd:element minOccurs="0" name="cluster-id-consegna" type="xsd:string">
 								        
 				</xsd:element>
 				
@@ -522,6 +528,12 @@
 				</xsd:element>
 				<xsd:element minOccurs="0" name="data-eliminazione-im" type="xsd:dateTime">
 					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="cluster-id-prelievo-im" type="xsd:string">
+								        
+				</xsd:element>
+				<xsd:element minOccurs="0" name="cluster-id-eliminazione-im" type="xsd:string">
+								        
 				</xsd:element>
 				
 			</xsd:sequence>
