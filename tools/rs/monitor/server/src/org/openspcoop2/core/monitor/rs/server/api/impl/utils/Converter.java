@@ -186,6 +186,35 @@ public class Converter {
 		}
 		TransazioneExt transazione = converter.toTransazioneExt(transazioneDB, credenzialiMittente, null, null, null);
 	
+		// elimino i campi non previsti in un ItemTransazione
+		if(transazione.getRichiesta()!=null) {
+			transazione.getRichiesta().setContenutiIngresso(null);
+			transazione.getRichiesta().setContenutiUscita(null);
+			transazione.getRichiesta().setDuplicatiMessaggio(null);
+			transazione.getRichiesta().setTraccia(null);
+		}
+		if(transazione.getRisposta()!=null) {
+			transazione.getRisposta().setContenutiIngresso(null);
+			transazione.getRisposta().setContenutiUscita(null);
+			transazione.getRisposta().setDuplicatiMessaggio(null);
+			transazione.getRisposta().setTraccia(null);
+			transazione.getRisposta().setFaultConsegna(null);
+			transazione.getRisposta().setFaultConsegnaFormato(null);
+			transazione.getRisposta().setFaultRicezione(null);
+			transazione.getRisposta().setFaultRicezioneFormato(null);
+			transazione.getRisposta().setDettagliErrore(null);
+		}
+		if(transazione.getApi()!=null) {
+			transazione.getApi().setProfiloCollaborazione(null);
+			transazione.getApi().setIdAsincrono(null);
+		}
+		if(transazione.getMittente()!=null) {
+			transazione.getMittente().setCredenziali(null);
+			transazione.getMittente().setToken(null);
+			transazione.getMittente().setInformazioniToken(null);
+		}
+		
+		// aggiunto campi supplementari
 		ItemTransazione item = new ItemTransazione();
 		if(transazione.getRichiesta()!=null) {
 			item.setData(transazione.getRichiesta().getDataRicezione());
