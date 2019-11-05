@@ -1833,7 +1833,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(idAccordoServizio!=null){
 					protocolContext.setIdAccordo(idAccordoServizio);
 				}
-				else if(idServizio.getUriAccordoServizioParteComune()!=null){
+				else if(idServizio!=null && idServizio.getUriAccordoServizioParteComune()!=null){
 					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordoServizioParteComune()));
 				}
 				String profiloCollorazioneValue = null;

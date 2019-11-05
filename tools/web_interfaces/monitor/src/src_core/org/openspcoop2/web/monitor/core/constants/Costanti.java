@@ -81,6 +81,7 @@ public class Costanti {
 	public static final String ICONA_ID_MESSAGGIO = "message";
 	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
 
+	public static final String LABEL_DOMINIO = "@";
 	
 	
 	

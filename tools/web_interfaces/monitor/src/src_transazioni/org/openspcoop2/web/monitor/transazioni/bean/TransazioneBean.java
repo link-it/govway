@@ -22,14 +22,29 @@
 package org.openspcoop2.web.monitor.transazioni.bean;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdSoggetto;
+import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.CostantiDB;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -40,12 +55,16 @@ import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
+import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
+import org.slf4j.Logger;
 
 /**
  * TransazioneBean
@@ -67,6 +86,7 @@ public class TransazioneBean extends Transazione{
 	private Long latenzaPorta = null;
 
 	private java.lang.String trasportoMittenteLabel = null;
+	private java.lang.String tipoTrasportoMittenteLabel = null;
 	private java.lang.String tokenIssuerLabel = null;
 	private java.lang.String tokenClientIdLabel = null;
 	private java.lang.String tokenSubjectLabel = null;
@@ -74,18 +94,25 @@ public class TransazioneBean extends Transazione{
 	private java.lang.String tokenMailLabel = null;
 	private java.lang.String eventiLabel = null;
 	private java.lang.String gruppiLabel = null;
+	private java.lang.String operazioneLabel;
 
+	private String soggettoPddMonitor;
+	
 	public TransazioneBean() {
 		super();
 	}
 
-	public TransazioneBean(Transazione transazione){
+	public TransazioneBean(Transazione transazione, String soggettoPddMonitor){
+		
+		this.soggettoPddMonitor = soggettoPddMonitor;
+		
 		List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(
 				0);
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaPorta", Long.class));
 		metodiEsclusi.add(new BlackListElement("setTrasportoMittenteLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTipoTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenIssuerLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenClientIdLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenSubjectLabel", String.class));
@@ -93,6 +120,7 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
 
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
@@ -213,6 +241,26 @@ public class TransazioneBean extends Transazione{
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
 			return esitoUtils.getEsitoLabelFromValue(this.esito, false);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
+			return "Conversione non riuscita";
+		}
+	}
+	
+	public java.lang.String getEsitoLabelSyntetic() {
+		try{
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
+			return esitiProperties.getEsitoLabelSyntetic(this.esito);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
+			return "Conversione non riuscita";
+		}
+	}
+	
+	public java.lang.String getEsitoLabelDescription() {
+		try{
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
+			return getEsitoLabel() + " - " + esitiProperties.getEsitoDescription(this.esito);
 		}catch(Exception e){
 			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
 			return "Conversione non riuscita";
@@ -549,6 +597,14 @@ public class TransazioneBean extends Transazione{
 		this.trasportoMittenteLabel = trasportoMittenteLabel;
 	}
 
+	public java.lang.String getTipoTrasportoMittenteLabel() {
+		return this.tipoTrasportoMittenteLabel;
+	}
+
+	public void setTipoTrasportoMittenteLabel(java.lang.String tipoTrasportoMittenteLabel) {
+		this.tipoTrasportoMittenteLabel = tipoTrasportoMittenteLabel;
+	}
+	
 	public java.lang.String getTokenIssuerLabel() {
 		return this.tokenIssuerLabel;
 	}
@@ -714,6 +770,10 @@ public class TransazioneBean extends Transazione{
 		}
 	}
 	
+	public boolean isShowProfiloCollaborazione() {
+		return TipoAPI.SOAP.getValoreAsInt() == this.getTipoApi();
+	}
+	
 	public String getPddRuoloToolTip() {
 		PddRuolo pddRuolo = this.getPddRuolo();
 		if(pddRuolo!=null) {
@@ -748,5 +808,298 @@ public class TransazioneBean extends Transazione{
 		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
 	}
 	
+	public void normalizeRichiedenteInfo(Transazione t, TransazioneBean transazioneBean, TransazioniService transazioniService) throws ServiceException, MultipleResultException, NotImplementedException {
+		
+		// 1) Username del Token
+		String sTokenUsername = getTokenUsername();
+		if(StringUtils.isNotEmpty(sTokenUsername)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(transazioneBean, t);
+			return;
+		}
+		
+		// 2) Subject/Issuer del Token
+		String sTokenSubject = getTokenSubject();
+		if(StringUtils.isNotEmpty(sTokenSubject)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
+			String sTokenIssuer = getTokenIssuer();
+			if(StringUtils.isNotEmpty(sTokenIssuer)) {
+				transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
+			}
+			return;
+		}
+		
+		// 3) Applicativo Fruitore
+		String sApplicativoFruitore = getServizioApplicativoFruitore();
+		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
+			return;
+		}
+		
+		// 4) Credenziali dell'autenticazione di trasporto
+		String sTrasportoMittente = getTrasportoMittente();
+		if(StringUtils.isNotEmpty(sTrasportoMittente)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, t);
+			return;
+		}
+		
+		// 5) Client ID, per il caso di ClientCredential
+		String sTokenClientId = getTokenClientId();
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
+			return;
+		}
+
+	}
+	
+	public String getRichiedente() {
+				
+		// 1) Username del Token
+		String sTokenUsername = getTokenUsernameLabel();
+		if(StringUtils.isNotEmpty(sTokenUsername)) {
+			return sTokenUsername;
+		}
+		
+		// 2) Subject/Issuer del Token
+		String sTokenSubject = getTokenSubjectLabel();
+		if(StringUtils.isNotEmpty(sTokenSubject)) {
+			
+			String sTokenIssuer = getTokenIssuerLabel();
+			if(StringUtils.isNotEmpty(sTokenIssuer)) {
+				return sTokenSubject + org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO + sTokenIssuer;
+			}
+			else {
+				return sTokenSubject;
+			}
+		}
+		
+		// 3) Applicativo Fruitore
+		String sApplicativoFruitore = getServizioApplicativoFruitore();
+		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
+			return sApplicativoFruitore;
+		}
+		
+		// 4) Credenziali dell'autenticazione di trasporto
+		// volutamente uso l'id autenticato.
+		// se l'api è pubblica non deve essere visualizzata questa informazione!
+		String sTrasportoMittente = getTrasportoMittenteLabel();
+		String sTipoTrasportoMittente = getTipoTrasportoMittenteLabel();
+		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
+			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
+				try {
+					Hashtable<String, List<String>> l = CertificateUtils.getPrincipalIntoHashtable(sTrasportoMittente, PrincipalType.subject);
+					if(l!=null && !l.isEmpty()) {
+						List<String> cnList = l.get("CN");
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("cn");
+						}
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("Cn");
+						}
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("cN");
+						}						
+						if(cnList!=null && cnList.size()>0) {
+							StringBuffer bfList = new StringBuffer();
+							for (String s : cnList) {
+								if(bfList.length()>0) {
+									bfList.append(", ");
+								}
+								bfList.append(s);
+							}
+							return bfList.toString();
+						}
+					}
+					return sTrasportoMittente;
+				}catch(Throwable t) {	
+					return sTrasportoMittente;
+				}
+			}
+			else {
+				return sTrasportoMittente;
+			}
+		}
+		
+		// 5) Client ID, per il caso di ClientCredential
+		String sTokenClientId = getTokenClientIdLabel();
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			return sTokenClientId;
+		}
+		
+		return null;
+		
+	}
+	
+	public String getLabelRichiedenteConFruitore() throws Exception {
+		StringBuffer bf = new StringBuffer();
+		
+		String richiedente = getRichiedente();
+		if(StringUtils.isNotEmpty(richiedente)) {
+			bf.append(richiedente);	
+		}
+		
+		
+		String sFruitore = getSoggettoFruitore();
+		if(StringUtils.isNotEmpty(sFruitore)) {
+		
+			boolean addFruitore = true;
+			
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
+					IDSoggetto idSoggettoFruitore = new IDSoggetto(this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
+					addFruitore = !this.soggettoPddMonitor.equals(idSoggettoFruitore.toString());
+				}
+			}
+			
+			if(addFruitore) {
+				if(bf.length()>0) {
+					bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
+				}
+				
+				bf.append(sFruitore);	
+			}
+		}
+		
+		return bf.toString();
+	}
+	
+	public String getLabelAPIConErogatore() throws Exception {
+		StringBuffer bf = new StringBuffer();
+		
+		String api = getServizio();
+		if(StringUtils.isNotEmpty(api)) {
+			bf.append(api);	
+		}
+		else {
+			return "API non individuata";
+		}
+		
+		
+		String sErogatore = getSoggettoErogatore();
+		if(StringUtils.isNotEmpty(sErogatore)) {
+		
+			boolean addErogatore = true;
+			
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
+				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoErogatore()) && StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
+					IDSoggetto idSoggettoErogatore = new IDSoggetto(this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
+					addErogatore = !this.soggettoPddMonitor.equals(idSoggettoErogatore.toString());
+				}
+			}
+			
+			if(addErogatore) {
+				
+				if(bf.length()>0) {
+					if(api.contains(" ")) {
+						String [] split = api.split(" ");
+						if(split!=null && split.length==2) {
+							bf = new StringBuffer();
+							bf.append(split[0]);
+							bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
+							bf.append(sErogatore);
+							bf.append(" ");
+							bf.append(split[1]);
+						}
+						else {
+							bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
+							bf.append(sErogatore);	
+						}
+					}
+					else {
+						bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
+						bf.append(sErogatore);	
+					}
+				}
+				else {
+					bf.append(sErogatore);	
+				}
+			}
+		}
+		
+		return bf.toString();
+	}
+	
+	public java.lang.String getTipoOperazioneLabel() {
+		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
+			return "Risorsa";
+		}
+		else {
+			return "Azione";
+		}
+	}
+	
+	public java.lang.String getOperazioneLabel() {
+		return this.operazioneLabel;
+	}
+
+	public void setOperazioneLabel(java.lang.String operazioneLabel) {
+		this.operazioneLabel = operazioneLabel;
+	}
+	
+	public void normalizeOperazioneInfo(org.openspcoop2.core.commons.search.dao.IServiceManager service, Logger log) {
+		
+		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
+			
+			String uriAPI = this.getUriAccordoServizio();
+			String op = getAzione();
+			try {
+			
+				if(StringUtils.isNotEmpty(uriAPI) && StringUtils.isNotEmpty(op)) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAPI);
+					IdAccordoServizioParteComune idAPI = new IdAccordoServizioParteComune();
+					idAPI.setIdSoggetto(new IdSoggetto());
+					idAPI.getIdSoggetto().setTipo(idAccordo.getSoggettoReferente().getTipo());
+					idAPI.getIdSoggetto().setNome(idAccordo.getSoggettoReferente().getNome());
+					idAPI.setVersione(idAccordo.getVersione());
+					idAPI.setNome(idAccordo.getNome());
+					
+					
+					IResourceServiceSearch resourceServiceSearch = service.getResourceServiceSearch();
+					IPaginatedExpression pagExpr = resourceServiceSearch.newPaginatedExpression();
+					pagExpr.equals(Resource.model().NOME, op).
+						and().
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome());
+					List<Map<String,Object>> l = service.getResourceServiceSearch().select(pagExpr, Resource.model().HTTP_METHOD, Resource.model().PATH);
+					if(l!=null && l.size()==1) {
+						Map<String,Object> map = l.get(0);
+						String method = (String) map.get(Resource.model().HTTP_METHOD.getFieldName());
+						String path = (String) map.get(Resource.model().PATH.getFieldName());
+						//System.out.println("LETTO ["+method+"] ["+path+"]");
+						StringBuffer bf = new StringBuffer();
+						if(!CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(method)) {
+							bf.append(method);
+							bf.append(" ");
+						}
+						if(!CostantiDB.API_RESOURCE_PATH_ALL_VALUE.equals(path)) {
+							bf.append(path);
+							this.operazioneLabel = bf.toString();
+							return ;
+						}
+					}
+				}
+				
+			}catch(Exception e) {
+				log.error("Normalizzazione operazione '"+op+"' per api '"+uriAPI+"' non riuscita: "+e.getMessage(),e);
+			}
+			
+		}
+		
+		this.operazioneLabel = getAzione();
+	}
+	
+	public String getLabelOperazioneConGestioneNonPresenza() throws Exception {
+		
+		String op = getOperazioneLabel();
+		if(StringUtils.isNotEmpty(op)) {
+			
+			return this.getOperazioneLabel();
+			
+		}
+		else {
+			return "-";
+		}
+		
+	}
 
 }

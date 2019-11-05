@@ -4502,9 +4502,13 @@ public class RicezioneBuste {
 			idServizio.setAzione(null);
 		}
 		boolean bustaDiServizio = validatore.isBustaDiServizio();
-		if(validatore.getInfoServizio()!=null){
+		if(validatore.getInfoServizio()!=null && validatore.getInfoServizio().getIdAccordo()!=null){
 			this.msgContext.getProtocol().setIdAccordo(validatore.getInfoServizio().getIdAccordo());
 			richiestaApplicativa.setIdAccordo(validatore.getInfoServizio().getIdAccordo());
+		}
+		else if(infoServizio!=null && infoServizio.getIdAccordo()!=null){
+			this.msgContext.getProtocol().setIdAccordo(infoServizio.getIdAccordo());
+			richiestaApplicativa.setIdAccordo(infoServizio.getIdAccordo());
 		}
 		
 		

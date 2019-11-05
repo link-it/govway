@@ -52,6 +52,7 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
@@ -3241,7 +3242,7 @@ public class RicezioneContenutiApplicativi {
 		infoServizio.setCorrelato(isServizioCorrelato);
 		this.msgContext.getProtocol().setProfiloCollaborazione(infoServizio.getProfiloDiCollaborazione(),null); // il valore verra' serializzato solo successivamente nella busta
 		msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, traduttore.toString(infoServizio.getProfiloDiCollaborazione()));
-		if(infoServizio!=null){
+		if(infoServizio!=null && infoServizio.getIdAccordo()!=null){
 			this.msgContext.getProtocol().setIdAccordo(infoServizio.getIdAccordo());
 			richiestaDelegata.setIdAccordo(infoServizio.getIdAccordo());
 			try{

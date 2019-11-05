@@ -56,6 +56,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -2025,6 +2026,9 @@ public class InoltroBuste extends GenericLib{
 				}
 				if(idAccordoServizio!=null){
 					protocolContext.setIdAccordo(idAccordoServizio);
+				}
+				else if(idServizio!=null && idServizio.getUriAccordoServizioParteComune()!=null){
+					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordoServizioParteComune()));
 				}
 				if(bustaRichiesta!=null){
 					protocolContext.setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());

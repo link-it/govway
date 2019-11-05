@@ -219,8 +219,8 @@
 					<f:facet name="header">
 						<h:outputText id="outServErogatore1" value="#{msg['commons.servizio.label']}" />
 					</f:facet>
-					<h:outputText id="outServErogatore2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
-					<rich:toolTip for="outServErogatore2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+					<h:outputText id="outServErogatore2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+					<rich:toolTip for="outServErogatore2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 					<h:outputText id="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 					<rich:toolTip for="outServErogatore3" value="[IM] #{item.servizioApplicativoErogatore} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 				</rich:column>
@@ -235,8 +235,8 @@
 					<f:facet name="header">
 						<h:outputText id="outAzione1" value="Operazione" />
 					</f:facet>
-					<h:outputText id="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-					<rich:toolTip for="outAzione2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+					<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+					<rich:toolTip for="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 					<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
 					<rich:toolTip for="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER' and not empty item.operazioneIm}"/>
 				</rich:column>
@@ -253,12 +253,13 @@
 					<f:facet name="header">
 						<h:outputText id="outServizioApplicativoFruitore1" value="Mittente" />
 					</f:facet>
-					<h:outputText id="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-					<rich:toolTip for="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-					<h:outputText id="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-					<rich:toolTip for="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-					<h:outputText id="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
-					<rich:toolTip for="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
+					<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+					<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+					<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+						<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
+							<h:outputText value="Richiesta Anonima" />
+						</rich:toolTip>
+					</h:graphicImage>
 				</rich:column>
 				<rich:column id="colLatenzaTotale" sortable="true" sortBy="#{item.latenzaTotale}" sortOrder="#{value.sortOrders['latenzaTotale']}" label="Latenza Totale" width="120px">
 					<f:facet name="header">

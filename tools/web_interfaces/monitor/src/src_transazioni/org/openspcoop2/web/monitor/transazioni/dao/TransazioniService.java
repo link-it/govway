@@ -481,7 +481,12 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -521,7 +526,12 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -621,7 +631,12 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -679,7 +694,12 @@ public class TransazioniService implements ITransazioniService {
 
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					listaBean.add(bean);
 				}
 
@@ -795,10 +815,11 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			Transazione t = this.transazioniSearchDAO.find(expr);
-			TransazioneBean transazioneBean = new TransazioneBean(t);
+			TransazioneBean transazioneBean = new TransazioneBean(t, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 			
 			// Integrazione dei dati delle credenziali
 			this.normalizeInfoTransazioniFromCredenzialiMittente(transazioneBean, t);
+			transazioneBean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 						
 			return transazioneBean; 
 		} catch (NotFoundException nre) {
@@ -830,6 +851,7 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(trasportoMittente));
 				transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
+				transazioneBean.setTipoTrasportoMittenteLabel(credenzialeMittente.getTipo());
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -842,7 +864,21 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	public void normalizeInfoTransazioniFromCredenzialiMittenteToken(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
-			
+	
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
+	
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenMail(transazioneBean, t);
+		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+		
 		// Token Issuer
 		String tokenIssuer = t.getTokenIssuer();
 		if(StringUtils.isNotEmpty(tokenIssuer)) {
@@ -858,6 +894,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Client ID
 		String tokenClientID = t.getTokenClientId();
 		if(StringUtils.isNotEmpty(tokenClientID)) {
@@ -873,6 +913,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Subject
 		String tokenSubject = t.getTokenSubject();
 		if(StringUtils.isNotEmpty(tokenSubject)) {
@@ -888,6 +932,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Username
 		String tokenUsername = t.getTokenUsername();
 		if(StringUtils.isNotEmpty(tokenUsername)) {
@@ -903,6 +951,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenMail(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Mail
 		String tokenMail = t.getTokenMail();
 		if(StringUtils.isNotEmpty(tokenMail)) {
@@ -1450,7 +1502,7 @@ public class TransazioniService implements ITransazioniService {
 
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 					listaBean.add(bean);
 				}
 
@@ -1518,7 +1570,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
-			return new TransazioneBean(this.transazioniSearchDAO.find(expr));
+			return new TransazioneBean(this.transazioniSearchDAO.find(expr), this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);

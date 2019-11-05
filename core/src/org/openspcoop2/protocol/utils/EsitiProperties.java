@@ -735,6 +735,28 @@ public class EsitiProperties {
 		}
 	}
 	
+	private Hashtable<String,String> esitoLabelSyntetic= null;
+	public String getEsitoLabelSyntetic(Integer codeEsito) throws ProtocolException {
+		if(this.esitoLabelSyntetic == null){
+			this.initEsitoLabelSyntetic(); 
+		}
+		if(this.esitoLabelSyntetic.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoLabelSyntetic for code ["+codeEsito+"] not found");
+		}
+		return this.esitoLabelSyntetic.get(codeEsito+"");
+	}
+	private synchronized void initEsitoLabelSyntetic() throws ProtocolException {
+		if(this.esitoLabelSyntetic == null){
+			this.esitoLabelSyntetic = new Hashtable<String, String>();
+			List<Integer> codes = getEsitiCode();
+			for (Integer code : codes) {
+				String label = getProperty("esito."+code+".label.syntetic");
+				label = filterByProtocol(label, code);
+				this.esitoLabelSyntetic.put(code+"", label);
+			}    
+		}
+	}
+	
 	private Hashtable<String,EsitoIdentificationMode> esitoIdentificationMode= null;
 	public EsitoIdentificationMode getEsitoIdentificationMode(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationMode == null){

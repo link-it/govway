@@ -554,8 +554,8 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<f:facet name="header">
 									<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
 								</f:facet>
-								<h:outputText id="outServLive2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
-								<rich:toolTip for="outServLive2" value="#{item.servizio} (#{item.soggettoErogatore})" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER' and not empty item.nomeServizio}"/>
+								<h:outputText id="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 								<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 								<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 							</rich:column>
@@ -563,8 +563,8 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<f:facet name="header">
 									<h:outputText id="outAzioneLive1" value="Operazione" />
 								</f:facet>
-								<h:outputText id="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="outAzioneLive2" value="#{item.azione}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<h:outputText id="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 								<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 								<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 							</rich:column>
@@ -572,20 +572,21 @@ xmlns="http://www.w3.org/1999/xhtml"
 								<f:facet name="header">
 									<h:outputText id="outFruitoreLive1" value="Mittente" />
 								</f:facet>
-								<h:outputText id="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-								<rich:toolTip for="outServizioApplicativoFruitore2" value="#{item.servizioApplicativoFruitore} (#{item.nomeSoggettoFruitore})" rendered="#{(not empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-								<h:outputText id="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-								<rich:toolTip for="outServizioApplicativoFruitore3" value="#{item.servizioApplicativoFruitore}" rendered="#{(empty item.nomeSoggettoFruitore) and (not empty item.servizioApplicativoFruitore)}"/>
-								<h:outputText id="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
-								<rich:toolTip for="outServizioApplicativoFruitore4" value="#{item.nomeSoggettoFruitore}" rendered="#{(not empty item.nomeSoggettoFruitore) and (empty item.servizioApplicativoFruitore)}"/>
+								<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+								<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+								<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+									<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
+										<h:outputText value="Richiesta Anonima" />
+									</rich:toolTip>
+								</h:graphicImage>
 							</rich:column>
 							<rich:column id="colEsitoLive">
 								<f:facet name="header">
 									<h:outputText id="outEsitoLive1" value="Esito" />
 								</f:facet>
-								<h:outputText id="outEsitoLive2" value="#{item.esitoLabel}" />
+								<h:outputText id="outEsitoLive2" value="#{item.esitoLabelSyntetic}" />
 								<rich:toolTip for="outEsitoLive2">
-									<h:outputText value="#{item.esitoLabel}" />
+									<h:outputText value="#{item.esitoLabelDescription}" />
 								</rich:toolTip>
 							</rich:column>
 						</rich:dataTable>
