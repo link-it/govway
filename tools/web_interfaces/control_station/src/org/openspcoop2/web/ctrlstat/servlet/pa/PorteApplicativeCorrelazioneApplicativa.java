@@ -101,8 +101,12 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 			String tracciamentoEsitiSelezionePersonalizzataOk = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
 			String tracciamentoEsitiSelezionePersonalizzataFault = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
 			String tracciamentoEsitiSelezionePersonalizzataFallite = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+			String tracciamentoEsitiSelezionePersonalizzataScartate = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
 			String tracciamentoEsitiSelezionePersonalizzataMax = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
 			String tracciamentoEsitiSelezionePersonalizzataCors = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+
+			String tracciamentoEsitiSelezionePersonalizzataAll = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			boolean selectAll = ServletUtils.isCheckBoxEnabled(tracciamentoEsitiSelezionePersonalizzataAll);
 			
 			String statoDiagnostici = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_RIDEFINITO);
 			String severita = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA);
@@ -175,6 +179,13 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 							config = porteApplicativeCore.getConfigurazioneGenerale();
 						}
 						nuovaConfigurazioneEsiti = config.getTracciamento()!=null ? config.getTracciamento().getEsiti() : null;
+						if(nuovaConfigurazioneEsiti == null || "".equals(nuovaConfigurazioneEsiti.trim())){
+							StringBuffer bf = new StringBuffer();
+							porteApplicativeHelper.getRegistrazioneEsiti(nuovaConfigurazioneEsiti, bf);
+							if(bf.length()>0){
+								nuovaConfigurazioneEsiti = bf.toString();
+							}
+						}
 					}
 				}
 				if(tracciamentoEsitiSelezionePersonalizzataOk==null) {
@@ -191,9 +202,11 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 					
 					EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 					
+					boolean isOkTotale = false;
 					List<Integer> listOk = porteApplicativeHelper.getListaEsitiOkSenzaCors(esiti);
 					if(porteApplicativeHelper.isCompleteEnabled(attivi, listOk)) {
 						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isOkTotale = true;
 					}
 					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listOk)) {
 						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -202,9 +215,11 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 						tracciamentoEsitiSelezionePersonalizzataOk = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
+					boolean isFaultTotale = false;
 					List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
 					if(porteApplicativeHelper.isCompleteEnabled(attivi, listFault)) {
 						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isFaultTotale = true;
 					}
 					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listFault)) {
 						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -213,9 +228,11 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 						tracciamentoEsitiSelezionePersonalizzataFault = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
-					List<Integer> listFalliteSenzaMax = porteApplicativeHelper.getListaEsitiFalliteSenzaMaxThreads(esiti);
+					boolean isFalliteSenza_MaxThreads_Scartate_Totale = false;
+					List<Integer> listFalliteSenzaMax = porteApplicativeHelper.getListaEsitiFalliteSenza_MaxThreads_Scartate(esiti);
 					if(porteApplicativeHelper.isCompleteEnabled(attivi, listFalliteSenzaMax)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isFalliteSenza_MaxThreads_Scartate_Totale = true;
 					}
 					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listFalliteSenzaMax)) {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -224,16 +241,33 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 						tracciamentoEsitiSelezionePersonalizzataFallite = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
 					
+					boolean isScartateTotale = false;
+					List<Integer> listScartate = esiti.getEsitiCodeRichiestaScartate();
+					if(porteApplicativeHelper.isCompleteEnabled(attivi, listScartate)) {
+						tracciamentoEsitiSelezionePersonalizzataScartate = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isScartateTotale = true;
+					}
+					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listScartate)) {
+						tracciamentoEsitiSelezionePersonalizzataScartate = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
+					}
+					else {
+						tracciamentoEsitiSelezionePersonalizzataScartate = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
+					}
+					
+					boolean isMaxThreads = false;
 					if(attivi.contains((esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS)+""))) {
 						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isMaxThreads = true;
 					}	
 					else {
 						tracciamentoEsitiSelezionePersonalizzataMax = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
 					}
 					
+					boolean isCorsTotale = false;
 					List<Integer> listCors = porteApplicativeHelper.getListaEsitiCors(esiti);
 					if(porteApplicativeHelper.isCompleteEnabled(attivi, listCors)) {
 						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO;
+						isCorsTotale = true;
 					}
 					else if(porteApplicativeHelper.isCompleteDisabled(attivi, listCors)) {
 						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO;
@@ -241,6 +275,10 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 					else {
 						tracciamentoEsitiSelezionePersonalizzataCors = ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO;
 					}
+					
+					selectAll = isOkTotale && isFaultTotale && 
+							isFalliteSenza_MaxThreads_Scartate_Totale && isScartateTotale && isMaxThreads && 
+							isMaxThreads && isCorsTotale;
 					
 				}
 			}
@@ -302,9 +340,10 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 
 				porteApplicativeHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+						selectAll,
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
-						tracciamentoEsitiSelezionePersonalizzataCors); 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate, 
+						tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				porteApplicativeHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 				
@@ -329,9 +368,10 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 
 				porteApplicativeHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 						tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+						selectAll,
 						tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
-						tracciamentoEsitiSelezionePersonalizzataCors); 
+						tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate, 
+						tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 				
 				porteApplicativeHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 				
@@ -406,9 +446,10 @@ public class PorteApplicativeCorrelazioneApplicativa extends Action {
 
 			porteApplicativeHelper.addToDatiRegistrazioneEsiti(dati, TipoOperazione.OTHER, 
 					tracciamentoEsitiStato, nuovaConfigurazioneEsiti, 
+					selectAll,
 					tracciamentoEsitiSelezionePersonalizzataOk, tracciamentoEsitiSelezionePersonalizzataFault, 
-					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataMax,
-					tracciamentoEsitiSelezionePersonalizzataCors); 
+					tracciamentoEsitiSelezionePersonalizzataFallite, tracciamentoEsitiSelezionePersonalizzataScartate, 
+					tracciamentoEsitiSelezionePersonalizzataMax, tracciamentoEsitiSelezionePersonalizzataCors); 
 			
 			porteApplicativeHelper.addPortaSeveritaMessaggiDiagnosticiToDati(statoDiagnostici, severita, dati);
 			

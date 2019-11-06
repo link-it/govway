@@ -285,7 +285,7 @@ public class RicezioneContenutiApplicativiService {
 									get5XX_ErroreProcessamento(msg,CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
 								IntegrationError.INTERNAL_ERROR, e, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
 						// nel caso di wsdl request non emetto la transazione
-						//RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
+						//RicezioneContenutiApplicativiServiceUtils.emitTransaction(context,logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfo);
 					}
 					return;
 				}
@@ -295,7 +295,7 @@ public class RicezioneContenutiApplicativiService {
 					ConnectorDispatcherErrorInfo cInfoError =  ConnectorDispatcherUtils.doError(requestInfo, this.generatoreErrore,
 							ErroriIntegrazione.ERRORE_439_FUNZIONALITA_NOT_SUPPORTED_BY_PROTOCOL.getErrore439_FunzionalitaNotSupportedByProtocol(msg, protocolFactory),
 							IntegrationError.BAD_REQUEST, null, null, res, logCore, ConnectorDispatcherUtils.GENERAL_ERROR);
-					RicezioneContenutiApplicativiServiceUtils.emitTransaction(logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
+					RicezioneContenutiApplicativiServiceUtils.emitTransaction(context,logCore, req, pddContextFromServlet, dataAccettazioneRichiesta, cInfoError);
 					return;
 				}
 			}

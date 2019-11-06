@@ -611,10 +611,12 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "Operazione";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = "Registra qualsiasi esito";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "Completate con successo";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "Fault Applicativo";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = "Fallite - Fault Applicativo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = "Scartate";
 	
 	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE = "Numero Richieste";
 	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE_SIMULTANEE = "Numero Richieste Simultanee";

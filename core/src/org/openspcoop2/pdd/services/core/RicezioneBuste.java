@@ -1600,6 +1600,8 @@ public class RicezioneBuste {
 			}
 			if(throwFault) {
 			
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+				
 				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_403_AZIONE_NON_IDENTIFICATA.getErroreIntegrazione(),e,
 						"identificazioneDinamicaAzionePortaAplicativa");
@@ -1642,6 +1644,8 @@ public class RicezioneBuste {
 					}
 				}
 			}else {
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
+				
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");	
 				
@@ -1839,6 +1843,8 @@ public class RicezioneBuste {
 				if(idServizio.getAzione()!=null) {
 					azione = "(azione:"+ idServizio.getAzione()+ ") ";
 				}
+				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
 				
 				setSOAPFault_processamento(IntegrationError.BAD_REQUEST,logCore,msgDiag,
 						ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
@@ -2769,7 +2775,12 @@ public class RicezioneBuste {
 					}
 			
 					if(fineGestione) {
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
+						if(esitoPresenzaToken.isPresente()) {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
+						}
+						else {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_NON_PRESENTE, "true");
+						}
 						msgDiag.logPersonalizzato("gestioneTokenFallita");
 						
 						List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenNonValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
@@ -3186,7 +3197,7 @@ public class RicezioneBuste {
 						}
 						
 						if (erroreIntegrazione != null || erroreCooperazione!=null) {
-							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE_TOKEN, "true");
 						}
 						else {
 							msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							

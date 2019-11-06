@@ -2322,6 +2322,7 @@ public class TransazioniService implements ITransazioniService {
 				this.searchForm.getEsitoDettaglio(),
 				this.searchForm.getEsitoDettaglioPersonalizzato(),
 				this.searchForm.getEsitoContesto(),
+				this.searchForm.isEscludiRichiesteScartate(),
 				Transazione.model().ESITO, Transazione.model().ESITO_CONTESTO,
 				this.transazioniSearchDAO.newExpression());
 		

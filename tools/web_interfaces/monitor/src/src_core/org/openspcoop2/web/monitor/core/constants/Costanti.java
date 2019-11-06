@@ -79,10 +79,7 @@ public class Costanti {
 	public static final String ICONA_ANDAMENTO_TEMPORALE = "timelapse";
 	public static final String ICONA_ID_APPLICATIVO = "apps";
 	public static final String ICONA_ID_MESSAGGIO = "message";
-	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";
-
-	public static final String LABEL_DOMINIO = "@";
-	
+	public static final String ICONA_ID_TRANSAZIONE = "swap_horiz";	
 	
 	
 	/* costanti properties file messages_it.properties*/ 

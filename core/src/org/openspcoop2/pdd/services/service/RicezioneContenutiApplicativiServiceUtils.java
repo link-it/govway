@@ -64,7 +64,9 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.date.DateManager;
@@ -100,13 +102,23 @@ public class RicezioneContenutiApplicativiServiceUtils {
 		try{
 			idPD = serviceIdentificationReader.findPortaDelegata(protocolContext, true);
 		}catch(RegistryNotFound notFound){
+			if(pddContextNullable!=null) {
+				pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
+			}
 			// Non ha senso nel contesto di porta delegata
 			//if(bindingConfig.existsContextUrlMapping()==false){
 			logCore.error("Porta Delegata non trovata: "+notFound.getMessage(),notFound);
 			msgDiag.addKeywordErroreProcessamento(notFound);
 			msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI,"portaDelegataNonEsistente");
-			return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+			ConnectorDispatcherInfo c = ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
 					IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+			try {
+				EsitoTransazione esito = requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.API_NON_INDIVIDUATA);
+				c.setEsitoTransazione(esito);
+			}catch(Throwable t) {
+				logCore.error("Errore durante l'impostazione dell'esito 'API_NON_INDIVIDUATA'");
+			}
+			return c;
 			//}
 		}
 		if(idPD!=null){

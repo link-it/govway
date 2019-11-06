@@ -3931,7 +3931,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoDump);
 			de.setSelected(dumpApplicativo);
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 		}
 		else{
 			de.setType(DataElementType.HIDDEN);

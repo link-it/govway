@@ -298,4 +298,39 @@ public class NamingUtils {
 		}
 		
 	}
+	
+	
+	// API con DOMINIO
+	
+	public static final String LABEL_DOMINIO = "@";
+	
+	public static String getLabelServizioConDominioErogatore(String servizio, String erogatore) {
+		if(servizio.contains(" ")) {
+			String [] split = servizio.split(" ");
+			if(split!=null && split.length==2) {
+				StringBuffer bf = new StringBuffer();
+				bf.append(split[0]);
+				bf.append(LABEL_DOMINIO);
+				bf.append(erogatore);
+				bf.append(" ");
+				bf.append(split[1]);
+				return bf.toString();
+			}
+			else {
+				StringBuffer bf = new StringBuffer();
+				bf.append(servizio);
+				bf.append(LABEL_DOMINIO);
+				bf.append(erogatore);	
+				return bf.toString();
+			}
+		}
+		else {
+			StringBuffer bf = new StringBuffer();
+			bf.append(servizio);
+			bf.append(LABEL_DOMINIO);
+			bf.append(erogatore);	
+			return bf.toString();
+		}
+
+	}
 }

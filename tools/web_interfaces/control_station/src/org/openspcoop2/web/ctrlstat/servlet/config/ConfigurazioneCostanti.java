@@ -515,10 +515,12 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE;
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
@@ -746,9 +748,11 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
 	public final static String PARAMETRO_CONFIGURAZIONE_FIRST_TIME = "ConfigurazioneFirstTime";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RIDEFINITO = "RecEsitiStatoRidefinito";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = "RecEsitiStatoAll";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "RecEsitiStatoOk";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = "RecEsitiStatoScartate";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "RecEsitiStatoCORS";
 	
