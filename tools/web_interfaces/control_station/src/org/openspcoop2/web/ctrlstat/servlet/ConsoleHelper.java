@@ -8693,7 +8693,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, this.idServizioFactory.getIDServizioFromAccordo(asps));
 	}
 	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, IDServizio idServizio) throws Exception{
-		String labelServizio = this.getLabelIdServizio(protocollo, idServizio);
+		//String labelServizio = this.getLabelIdServizio(protocollo, idServizio);
+		String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
+		String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
+		String labelServizio = NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
 		boolean showSoggettoFruitoreInFruizioni = this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		if(showSoggettoFruitoreInFruizioni) {
@@ -8711,7 +8714,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		boolean showSoggettoErogatoreInErogazioni = this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		if(showSoggettoErogatoreInErogazioni) {
-			return this.getLabelIdServizio(protocollo, idServizio);
+			//return this.getLabelIdServizio(protocollo, idServizio);
+			String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
+			String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
+			return NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
 		}
 		else {
 			return this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
@@ -9897,17 +9903,35 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public List<Integer> getListaEsitiFalliteSenzaMaxThreads(EsitiProperties esiti) throws ProtocolException{
+	public List<Integer> getListaEsitiFalliteSenza_MaxThreads_Scartate(EsitiProperties esiti) throws ProtocolException{
 		List<Integer> listFallite = esiti.getEsitiCodeKo_senzaFaultApplicativo();
+		
+		List<Integer> listDaScartare = new ArrayList<>();
+		listDaScartare.addAll(esiti.getEsitiCodeRichiestaScartate());
 		int esitoViolazione = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
-		List<Integer> listFalliteSenzaMax = new ArrayList<>(); 
+		listDaScartare.add(esitoViolazione);
+		
+		List<Integer> listFalliteSenzaMax_e_scartate = new ArrayList<>(); 
 		int i = 0;
 		for (; i < listFallite.size(); i++) {
-			if(listFallite.get(i).intValue() != esitoViolazione) {
-				listFalliteSenzaMax.add(listFallite.get(i));
+			boolean findDaScartare = false;
+			for (Integer daScartare : listDaScartare) {
+				if(listFallite.get(i).intValue() == daScartare.intValue()) {
+					findDaScartare = true;
+					break;
+				}
+			}
+			if(!findDaScartare) {
+				
+				boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listFallite.get(i).intValue()));
+				if(statiConsegnaMultipla) {
+					continue; // non vengono gestiti in questa configurazione
+				}
+				
+				listFalliteSenzaMax_e_scartate.add(listFallite.get(i));
 			}
 		}
-		return listFalliteSenzaMax;
+		return listFalliteSenzaMax_e_scartate;
 	}
 	
 	public List<Integer> getListaEsitiOkSenzaCors(EsitiProperties esiti) throws ProtocolException{
@@ -9917,6 +9941,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		List<Integer> listOkSenzaCors = new ArrayList<>(); 
 		int i = 0;
 		for (; i < listOk.size(); i++) {
+			
+			boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listOk.get(i).intValue()));
+			if(statiConsegnaMultipla) {
+				continue; // non vengono gestiti in questa configurazione
+			}
+			
 			if((listOk.get(i).intValue() != esitoCorsGateway) && (listOk.get(i).intValue() != esitoCorsTrasparente)) {
 				listOkSenzaCors.add(listOk.get(i));
 			}
@@ -9936,9 +9966,10 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
 			String tracciamentoEsitiStato,
 			String nuovaConfigurazioneEsiti,
+			boolean selectAll,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
-			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataMax,
-			String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
+			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataScartate, 
+			String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
 		
 	
 		DataElement de = new DataElement();
@@ -9957,7 +9988,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(tracciamentoEsitiStato);
 			de.setLabels(labelsStato);
 			de.setValues(valuesStato); 
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 		}
 		
@@ -9967,6 +9998,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 			de.setType(DataElementType.NOTE);
 			dati.addElement(de);
+			
 			
 			List<String> attivi = new ArrayList<String>();
 			if(nuovaConfigurazioneEsiti!=null){
@@ -9991,29 +10023,49 @@ public class ConsoleHelper implements IConsoleHelper {
 			values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			
 			
+			// select all
+			
+			de = new DataElement();
+			de.setLabelRight(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(selectAll);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+			
 			// ok
 			
 			List<Integer> listOk = getListaEsitiOkSenzaCors(esiti);
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
+					selectAll) {
 				for (Integer esito : listOk) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
@@ -10059,31 +10111,40 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-			de.setType(DataElementType.SELECT);
-			if(listFault.size()>1) {
-				de.setValues(values);
-				de.setLabels(values);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				if(listFault.size()>1) {
+					de.setValues(values);
+					de.setLabels(values);
+				}
+				else {
+					de.setValues(values_senza_personalizzato);
+					de.setLabels(values_senza_personalizzato);
+				}
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
+				de.setPostBack_viaPOST(true);
 			}
 			else {
-				de.setValues(values_senza_personalizzato);
-				de.setLabels(values_senza_personalizzato);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataFault);
 			}
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
-			de.setPostBack(true);
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
+					selectAll) {
 				for (Integer esito : listFault) {
 					de = new DataElement();
 					de.setLabelRight(esiti.getEsitoLabel(esito));
@@ -10106,28 +10167,37 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// fallite
 			
-			List<Integer> listFalliteSenzaMax = getListaEsitiFalliteSenzaMaxThreads(esiti);
+			List<Integer> listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_MaxThreads_Scartate(esiti);
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataFallite);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-				for (Integer esito : listFalliteSenzaMax) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
+					selectAll) {
+				for (Integer esito : listFalliteSenza_MaxThreads_Scartate) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
 					
@@ -10160,17 +10230,87 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.addElement(de);
 				}
 			}
+			
+			
+			
+			// Scartate
+			
+			List<Integer> listScartate = esiti.getEsitiCodeRichiestaScartate();
+			
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+					
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataScartate);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataScartate);
+			}
+			dati.addElement(de);
+					
+			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+					selectAll) {
+				for (Integer esito : listScartate) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+	//						de.setNote(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
+						if(integrationManagerSpecific && this.isModalitaStandard()) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.addElement(de);
+				}
+			}
 					
 			
 			
 			
 			// max
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 			
 			String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
 			
@@ -10178,14 +10318,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values_senza_personalizzato);
-			de.setLabels(values_senza_personalizzato);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values_senza_personalizzato);
+				de.setLabels(values_senza_personalizzato);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataMax);
+			}
 			dati.addElement(de);
 			
-			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax)) {
+			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax) ||
+					selectAll) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
 				de.setType(DataElementType.HIDDEN);
@@ -10198,25 +10345,34 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// cors
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataCors);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
+					selectAll) {
 				
 				List<Integer> listCors = this.getListaEsitiCors(esiti);
 				

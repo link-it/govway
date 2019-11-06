@@ -864,7 +864,7 @@ public class TransazioneBean extends Transazione{
 			
 			String sTokenIssuer = getTokenIssuerLabel();
 			if(StringUtils.isNotEmpty(sTokenIssuer)) {
-				return sTokenSubject + org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO + sTokenIssuer;
+				return sTokenSubject + NamingUtils.LABEL_DOMINIO + sTokenIssuer;
 			}
 			else {
 				return sTokenSubject;
@@ -951,7 +951,7 @@ public class TransazioneBean extends Transazione{
 			
 			if(addFruitore) {
 				if(bf.length()>0) {
-					bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
+					bf.append(NamingUtils.LABEL_DOMINIO);
 				}
 				
 				bf.append(sFruitore);	
@@ -987,30 +987,9 @@ public class TransazioneBean extends Transazione{
 			
 			if(addErogatore) {
 				
-				if(bf.length()>0) {
-					if(api.contains(" ")) {
-						String [] split = api.split(" ");
-						if(split!=null && split.length==2) {
-							bf = new StringBuffer();
-							bf.append(split[0]);
-							bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
-							bf.append(sErogatore);
-							bf.append(" ");
-							bf.append(split[1]);
-						}
-						else {
-							bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
-							bf.append(sErogatore);	
-						}
-					}
-					else {
-						bf.append(org.openspcoop2.web.monitor.core.constants.Costanti.LABEL_DOMINIO);
-						bf.append(sErogatore);	
-					}
-				}
-				else {
-					bf.append(sErogatore);	
-				}
+				bf = new StringBuffer();
+				bf.append(NamingUtils.getLabelServizioConDominioErogatore(api, sErogatore));
+				
 			}
 		}
 		

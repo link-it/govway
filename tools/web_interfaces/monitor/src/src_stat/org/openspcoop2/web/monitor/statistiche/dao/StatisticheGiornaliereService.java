@@ -1137,6 +1137,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.andamentoTemporaleSearch.getEsitoDettaglio(),
 						this.andamentoTemporaleSearch.getEsitoDettaglioPersonalizzato(),
 						this.andamentoTemporaleSearch.getEsitoContesto(),
+						this.andamentoTemporaleSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO, 
 						dao.newExpression());
 			}
@@ -1810,6 +1811,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -1902,6 +1904,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2041,6 +2044,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2169,6 +2173,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2352,6 +2357,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -2447,6 +2453,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -2752,6 +2759,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -3034,6 +3042,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -3622,6 +3631,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribServizioSearch.getEsitoDettaglio(),
 					this.distribServizioSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribServizioSearch.getEsitoContesto(),
+					this.distribServizioSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -3989,6 +3999,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribAzioneSearch.getEsitoDettaglio(),
 					this.distribAzioneSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribAzioneSearch.getEsitoContesto(),
+					this.distribAzioneSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -5155,6 +5166,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSaSearch.getEsitoDettaglio(),
 					this.distribSaSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSaSearch.getEsitoContesto(),
+					this.distribSaSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -6271,6 +6283,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.statistichePersonalizzateSearch.getEsitoDettaglio(),
 					this.statistichePersonalizzateSearch.getEsitoDettaglioPersonalizzato(),
 					this.statistichePersonalizzateSearch.getEsitoContesto(),
+					this.statistichePersonalizzateSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 

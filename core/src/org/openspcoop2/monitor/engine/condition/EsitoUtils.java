@@ -49,6 +49,8 @@ public class EsitoUtils {
 	public final static String ALL_FAULT_APPLICATIVO_LABEL  = "Fault Applicativo";
 	public final static String ALL_PERSONALIZZATO_LABEL  = "Personalizzato";
 	public final static String ALL_ERROR_FAULT_APPLICATIVO_LABEL  = "Fallite - Fault Applicativo";
+	public final static String ALL_ERROR_CONSEGNA_LABEL  = "Errori di Consegna";
+	public final static String ALL_ERROR_RICHIESTE_SCARTATE_LABEL  = "Richieste Scartate";
 	
 	public final static String ALL_VALUE_AS_STRING = "-";
 	
@@ -58,6 +60,10 @@ public class EsitoUtils {
 	public final static Integer ALL_FAULT_APPLICATIVO_VALUE = -4;
 	public final static Integer ALL_PERSONALIZZATO_VALUE = -5;
 	public final static Integer ALL_ERROR_FAULT_APPLICATIVO_VALUE = -6;
+	public final static Integer ALL_ERROR_CONSEGNA_VALUE = -7;
+	public final static Integer ALL_ERROR_RICHIESTE_SCARTATE_VALUE = -8;
+	
+	public final static boolean DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE = true;
 	
 	public final static String LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI = "Consegna Multipla";
 	
@@ -68,16 +74,16 @@ public class EsitoUtils {
 		this.esitiProperties = EsitiProperties.getInstance(this.logger,protocollo);
 	}
 	
-	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato, String contesto, 
+	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato, String contesto , boolean escludiRichiesteScartate, 
 			IField fieldEsito, IField fieldContesto, IExpression newExpression) throws ProtocolException,ExpressionException, ExpressionNotImplementedException, ServiceException, NotImplementedException{
 			
-		this.setExpression(expr, esitoGruppo, esitoDettaglio, esitoDettaglioPersonalizzato, fieldEsito, newExpression);
+		this.setExpression(expr, esitoGruppo, esitoDettaglio, esitoDettaglioPersonalizzato, escludiRichiesteScartate, fieldEsito, newExpression);
 		
 		this.setExpressionContesto(expr, fieldContesto, contesto);
 
 	}
 	
-	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato,
+	public void setExpression(IExpression expr,Integer esitoGruppo, Integer esitoDettaglio, Integer[] esitoDettaglioPersonalizzato, boolean escludiRichiesteScartate,
 			IField fieldEsito, IExpression newExpression) throws ProtocolException,ExpressionException, ExpressionNotImplementedException, ServiceException, NotImplementedException{
 			
 		boolean senzaFiltro = (EsitoUtils.ALL_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
@@ -86,7 +92,13 @@ public class EsitoUtils {
 		boolean soloErrori = (EsitoUtils.ALL_ERROR_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
 		boolean personalizzato = (EsitoUtils.ALL_PERSONALIZZATO_VALUE == esitoGruppo);
 		boolean soloErroriPiuFaultApplicativi = (EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
-
+		boolean soloErroriConsegna = (EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
+		boolean soloRichiesteScartate = (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == esitoGruppo) && (EsitoUtils.ALL_VALUE == esitoDettaglio);
+		
+		if(senzaFiltro && escludiRichiesteScartate) {
+			senzaFiltro = false;
+		}
+		
 		if(!senzaFiltro){
 			
 			if(personalizzato){
@@ -118,6 +130,27 @@ public class EsitoUtils {
 				}
 				exprOk.and().in(fieldEsito, esitiOk);
 				expr.and().not(exprOk);
+				
+				if(escludiRichiesteScartate) {
+					List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
+					IExpression exprRichiesteMalformate = newExpression;
+					exprRichiesteMalformate.and().in(fieldEsito, esitiRichiesteMalformate);
+					expr.and().not(exprRichiesteMalformate);
+				}
+			}
+			else if(soloErroriConsegna) {
+				List<Integer> esitiErroriConsegna = this.esitiProperties.getEsitiCodeErroriConsegna();
+				expr.and().in(fieldEsito, esitiErroriConsegna);
+			}
+			else if(soloRichiesteScartate) {
+				List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
+				expr.and().in(fieldEsito, esitiRichiesteMalformate);
+			}
+			else if(escludiRichiesteScartate) {
+				List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
+				IExpression exprRichiesteMalformate = newExpression;
+				exprRichiesteMalformate.and().in(fieldEsito, esitiRichiesteMalformate);
+				expr.and().not(exprRichiesteMalformate);
 			}
 			else{
 				if(esitoDettaglio == ALL_FAULT_APPLICATIVO_VALUE){
@@ -160,6 +193,12 @@ public class EsitoUtils {
 		else if(ALL_ERROR_FAULT_APPLICATIVO_LABEL.equals(label)){
 			return ALL_ERROR_FAULT_APPLICATIVO_VALUE;
 		}
+		else if(ALL_ERROR_CONSEGNA_LABEL.equals(label)){
+			return ALL_ERROR_CONSEGNA_VALUE;
+		}
+		else if(ALL_ERROR_RICHIESTE_SCARTATE_LABEL.equals(label)){
+			return ALL_ERROR_RICHIESTE_SCARTATE_VALUE;
+		}
 		else if(LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI.equals(label)) {
 			try{
 				return this.esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
@@ -198,6 +237,13 @@ public class EsitoUtils {
 			else if(ALL_ERROR_FAULT_APPLICATIVO_VALUE == ((Integer)value)){
 				return ALL_ERROR_FAULT_APPLICATIVO_LABEL;
 			}
+			else if(ALL_ERROR_CONSEGNA_VALUE == ((Integer)value)){
+				return ALL_ERROR_CONSEGNA_LABEL;
+			}
+			else if(ALL_ERROR_RICHIESTE_SCARTATE_VALUE == ((Integer)value)){
+				return ALL_ERROR_RICHIESTE_SCARTATE_LABEL;
+			}
+			
 			
 			try{
 				int valueInt = (Integer)value;
