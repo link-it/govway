@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -1040,4 +1041,18 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 		return null;
 	}
+	
+	
+	public List<TransazioneBean> getListaConsegne() {
+		try {
+			return this.transazioniService.findAll(0, 5);
+		}catch (Exception e) {
+			log.error("Errore durante la lettura delle consegne: " + e.getMessage(),e);
+		}
+		
+		return new ArrayList<TransazioneBean>();
+	}
+	public void setListaConsegne(List<TransazioneBean> listaConsegne) {
+	}
+
 }

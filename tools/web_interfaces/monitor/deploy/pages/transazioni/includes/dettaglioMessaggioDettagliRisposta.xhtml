@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniDettagliRisposta">
+    	<h:panelGrid id="panelDettaglioDiagnostici" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+	 		
+			<h:outputLabel id="diag-iconLabel" value="Diagnostici" styleClass="outputFieldLabel icon-show-diagnostici"/>
+			<h:panelGroup id="panelGroupDiag">
+				<h:form id="formDiag">
+					<h:panelGrid id="panelDiag" columns="3">
+						<a4j:htmlCommandLink id="diag-iconLink" styleClass="icon-details" action="visualizzaDiagnostici" value="Visualizza">
+                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{diagnosticiBean.idTransazione}"/>
+                    		<a4j:actionparam value="#{dettagliBean.idEgov}" assignTo="#{diagnosticiBean.idEgov}"/>
+                    		<a4j:actionparam value="#{dettagliBean.identificativoPorta}" assignTo="#{diagnosticiBean.identificativoPorta}"/>
+                    	</a4j:htmlCommandLink>
+                    	<h:outputLabel value="&#160;|&#160;" />	                    	
+                    	<a4j:htmlCommandLink id="exportDiagnostici-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveDiagnostici}">
+							<h:outputText id="outEsporta" value="Esporta" />
+						</a4j:htmlCommandLink>
+                   	</h:panelGrid>
+				</h:form>
+			</h:panelGroup>
+								
+		</h:panelGrid>
+    </a4j:outputPanel>
+    
+ 
+</ui:composition>

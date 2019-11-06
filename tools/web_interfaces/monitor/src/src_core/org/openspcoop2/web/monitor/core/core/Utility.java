@@ -96,7 +96,7 @@ public class Utility {
 		//		Utility.loginBean = loginBean;
 	}
 
-	public static LoginBean getLoginBean() {
+	public static LoginBean getLoginBean() { 
 		FacesContext fc = FacesContext.getCurrentInstance();
 		if(fc!= null){
 			ExternalContext ec = fc.getExternalContext();
@@ -863,5 +863,15 @@ public class Utility {
 		}
 		
 		return label;
+	}
+	
+	public static List<String> getListaNomiGruppi(){
+		LoginBean lb = getLoginBean();
+
+		if(lb!= null && lb.isLoggedIn()){
+			return lb.getListaNomiGruppi();
+		}
+
+		return new ArrayList<String>();
 	}
 }

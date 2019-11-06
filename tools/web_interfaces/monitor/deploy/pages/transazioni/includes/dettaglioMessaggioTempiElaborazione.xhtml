@@ -1,0 +1,174 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniTempiElaborazione">
+ 		<h:panelGrid id="panelTempiElaborazione" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth270,valueAllineataSx" >
+						
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneToken" value="Token" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneToken}" />
+			<h:outputText id="outTempiElaborazioneToken" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneToken}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneToken}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneAutenticazione" value="Autenticazione" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazione}" />
+			<h:outputText id="outTempiElaborazioneAutenticazione" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazione}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazione}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneAutenticazioneToken" value="Autenticazione Token" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazioneToken}" />
+			<h:outputText id="outTempiElaborazioneAutenticazioneToken" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazioneToken}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutenticazioneToken}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneAutorizzazione" value="Autorizzazione" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazione}" />
+			<h:outputText id="outTempiElaborazioneAutorizzazione" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazione}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazione}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneAutorizzazioneContenuti" value="Autorizzazione Contenuti" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" />
+			<h:outputText id="outTempiElaborazioneAutorizzazioneContenuti" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneAutorizzazioneContenuti}" />
+	
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_maxRequests" value="Controllo Traffico (Richieste Complessive)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
+			<h:outputText id="outTempiElaborazioneControlloTraffico_maxRequests" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_maxRequests}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneControlloTraffico_rateLimiting" value="ControlloTraffico (Rate Limiting)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
+			<h:outputText id="outTempiElaborazioneControlloTraffico_rateLimiting" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneControlloTraffico_rateLimiting}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingCalcoloDigest" value="Caching Risposta (Calcolo Digest)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" />
+			<h:outputText id="outTempiElaborazioneResponseCachingCalcoloDigest" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingCalcoloDigest}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingReadFromCache" value="Caching Risposta (Lettura Cache)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" />
+			<h:outputText id="outTempiElaborazioneResponseCachingReadFromCache" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingReadFromCache}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneResponseCachingSaveInCache" value="Caching Risposta (Scrittura Cache)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" />
+			<h:outputText id="outTempiElaborazioneResponseCachingSaveInCache" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneResponseCachingSaveInCache}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneValidazioneRichiesta" value="Validazione (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRichiesta}" />
+			<h:outputText id="outTempiElaborazioneValidazioneRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneValidazioneRisposta" value="Validazione (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" />
+			<h:outputText id="outTempiElaborazioneValidazioneRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneValidazioneRisposta}" />
+										
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneSicurezzaMessaggioRichiesta" value="Sicurezza Messaggio (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRichiesta}" />
+			<h:outputText id="outTempiElaborazioneSicurezzaMessaggioRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneSicurezzaMessaggioRisposta" value="Sicurezza Messaggio (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRisposta}" />
+			<h:outputText id="outTempiElaborazioneSicurezzaMessaggioRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneSicurezzaMessaggioRisposta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneGestioneAttachmentsRichiesta" value="MTOM (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRichiesta}" />
+			<h:outputText id="outTempiElaborazioneGestioneAttachmentsRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneGestioneAttachmentsRisposta" value="MTOM (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRisposta}" />
+			<h:outputText id="outTempiElaborazioneGestioneAttachmentsRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneGestioneAttachmentsRisposta}" />
+	
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneTrasformazioneRichiesta" value="Trasformazione (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRichiesta}" />
+			<h:outputText id="outTempiElaborazioneTrasformazioneRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneTrasformazioneRisposta" value="Trasformazione (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRisposta}" />
+			<h:outputText id="outTempiElaborazioneTrasformazioneRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTrasformazioneRisposta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneCorrelazioneApplicativaRichiesta" value="Correlazione Applicativa (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRichiesta}" />
+			<h:outputText id="outTempiElaborazioneCorrelazioneApplicativaRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneCorrelazioneApplicativaRisposta" value="Correlazione Applicativa (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRisposta}" />
+			<h:outputText id="outTempiElaborazioneCorrelazioneApplicativaRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneCorrelazioneApplicativaRisposta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneTracciamentoRichiesta" value="Tracciamento (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRichiesta}" />
+			<h:outputText id="outTempiElaborazioneTracciamentoRichiesta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRichiesta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRichiesta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneTracciamentoRisposta" value="Tracciamento (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRisposta}" />
+			<h:outputText id="outTempiElaborazioneTracciamentoRisposta" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRisposta}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneTracciamentoRisposta}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpRichiestaIngresso" value="Dump Ingresso (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaIngresso}" />
+			<h:outputText id="outTempiElaborazioneDumpRichiestaIngresso" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaIngresso}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaIngresso}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpRichiestaUscita" value="Dump Uscita (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaUscita}" />
+			<h:outputText id="outTempiElaborazioneDumpRichiestaUscita" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaUscita}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRichiestaUscita}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpRispostaIngresso" value="Dump Ingresso (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaIngresso}" />
+			<h:outputText id="outTempiElaborazioneDumpRispostaIngresso" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaIngresso}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaIngresso}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpRispostaUscita" value="Dump Uscita (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaUscita}" />
+			<h:outputText id="outTempiElaborazioneDumpRispostaUscita" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaUscita}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpRispostaUscita}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpBinarioRichiestaIngresso" value="Dump Binario Ingresso (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaIngresso}" />
+			<h:outputText id="outTempiElaborazioneDumpBinarioRichiestaIngresso" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaIngresso}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaIngresso}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpBinarioRichiestaUscita" value="Dump Binario Uscita (Richiesta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaUscita}" />
+			<h:outputText id="outTempiElaborazioneDumpBinarioRichiestaUscita" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaUscita}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRichiestaUscita}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpBinarioRispostaIngresso" value="Dump Binario Ingresso (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaIngresso}" />
+			<h:outputText id="outTempiElaborazioneDumpBinarioRispostaIngresso" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaIngresso}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaIngresso}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpBinarioRispostaUscita" value="Dump Binario Uscita (Risposta)" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaUscita}" />
+			<h:outputText id="outTempiElaborazioneDumpBinarioRispostaUscita" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaUscita}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpBinarioRispostaUscita}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneDumpIntegrationManager" value="Dump Message Box" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpIntegrationManager}" />
+			<h:outputText id="outTempiElaborazioneDumpIntegrationManager" value="#{dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpIntegrationManager}" 
+				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneDumpIntegrationManager}" />
+			
+		</h:panelGrid>
+    
+    </a4j:outputPanel>
+    
+ 
+</ui:composition>

@@ -1291,3 +1291,81 @@ input.rich-spinner-input {
 	width: 384px;
 	border-right: none;
 }
+
+
+/* TABS */
+.rich-tabpanel {
+	width: 100%;
+}
+
+
+.rich-tab-bottom-line {
+	border: none;
+    height: 56px;
+    padding-bottom: 8px;
+}
+
+.rich-tabhdr-side-border {
+    background: none;
+}
+
+.rich-tabhdr-side-cell {
+	border: none;	
+}
+
+.rich-tabhdr-cell-disabled,.rich-tabhdr-cell-inactive {
+    padding-top: 0px;
+}
+
+.rich-tab-inactive {
+	background: none;
+	padding-bottom: 16px; 
+	border: none;
+	border-bottom: 2px solid ${table.thead.background.color}; 
+	color:  ${table.thead.background.color}; 
+    cursor: pointer;
+}
+
+.rich-tab-inactive:hover,
+.rich-tab-active:hover {
+	border-bottom: 2px solid ${a.hover.color} !important;
+	color: ${a.hover.color};
+	cursor: pointer;
+}
+
+.rich-tab-active {
+	background: none;
+	border: none;
+	padding-bottom: 16px; 
+	border-bottom: 2px solid ${a.hover.color};
+	color: ${body.color}; 
+}
+
+.rich-tabhdr-cell-active table {
+	top: 0px !important;
+}
+
+.rich-tabpanel-content-position{
+	padding: 0px 0px 0px 0px;  
+	display: block; 
+	border: none; 
+	background: none; 
+	position: relative;
+}
+.rich-tabpanel-content {
+	padding: 0px 0px 0px 0px;  
+	display: block; 
+	border: none; 
+	background: none; 
+	font-family: 'Roboto';
+	font-size: 14px;
+}
+
+
+#msgDt_tbl td.rich-table-cell {
+	border: 1px solid ${table.thead.action.menu.background.color};
+	font-family: 'Roboto';
+    padding: 0px;
+    font-size: 14px;
+	color: ${table.thead.action.menu.color};
+}

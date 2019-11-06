@@ -1,0 +1,448 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniDettagliRichiesta">
+ 		<link:fieldset legend="Dettagli Richiesta"
+			rendered="#{true}" collapsible="false" closed="false">
+								 
+				<h:panelGrid id="panelGridDettRich" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx">
+				
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdEgovRich" value="ID Messaggio" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRichiesta}"/>
+					<h:outputText id="outIdEgovRich" value="#{dettagliBean.dettaglio.idMessaggioRichiesta}" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRichiesta}"/>
+								
+					<h:outputLabel value="Data Accettazione" id="dataAccR-iconLabel" styleClass="outputFieldLabel icon-date" 
+						rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}"/>
+					<h:outputText id="outDataAccettazioneRich" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}" 
+						rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRichiesta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>	
+								
+					<h:outputLabel value="Data Ingresso" id="dataInR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}"/>
+					<h:outputText id="outDataIngressoRich" value="#{dettagliBean.dettaglio.dataIngressoRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRichiesta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>	
+					
+					<h:outputLabel value="Data Uscita" id="dataOR-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}"/>
+					<h:outputText id="outDataUscitaRich" value="#{dettagliBean.dettaglio.dataUscitaRichiesta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRichiesta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>
+					
+					<h:outputLabel value="Bytes Ingresso" id="dimInR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+					<h:outputText value="#{empty dettagliBean.dettaglio.richiestaIngressoBytes ? 'n.d.' : dettagliBean.dettaglio.richiestaIngressoBytes}" converter="fileSizeConverter"/>
+					
+					<h:outputLabel value="Bytes Uscita" id="dimOutR-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+					<h:outputText value="#{empty dettagliBean.dettaglio.richiestaUscitaBytes ? 'n.d.' : dettagliBean.dettaglio.richiestaUscitaBytes}" converter="fileSizeConverter"/>										
+																					
+					<h:outputLabel id="req-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRichiesta}"/>
+					<h:panelGroup id="panelGroupReq" rendered="#{dettagliBean.existsTracciaRichiesta}">
+						<h:form id="formTracciaReq">
+							<h:panelGrid id="panelGridTracciaReq" columns="3">
+								<a4j:htmlCommandLink id="tracciaReq-iconLink" 
+                   						styleClass="icon-details" 
+                   						action="visualizzaTraccia" 
+                   						value="Visualizza" 
+                   						actionListener="#{dettagliBean.tracciaListener}">
+		                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+		                    		<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+			                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+			                    	<f:setPropertyActionListener value="#{false}" target="#{dettagliBean.isRisposta}"/>
+		                    	</a4j:htmlCommandLink>
+		                    	<h:outputLabel value="&#160;|&#160;" />	 
+		                    	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
+		                    		<f:setPropertyActionListener value="#{false}" target="#{dettagliBean.isRisposta}"/>
+									<h:outputText id="outEsportaReq" value="Esporta" />
+								</h:commandLink>
+							</h:panelGrid>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="req-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"/>
+					<h:panelGroup id="panelGroupDumpMessaggiReqIngresso" rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}">
+						<h:form id="formDumpMessaggiReqIngresso">
+							<a4j:htmlCommandLink id="dumpMessaggiIngresso-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpRichiestaIngresso or dettagliBean.hasHeaderTrasportoRichiestaIngresso}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+		                    	<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpMessaggiReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpMessaggiReqIngresso" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="req-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"/>
+					<h:panelGroup id="panelGroupDumpMessaggiReqUscita" rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}">
+						<h:form id="formDumpMessaggiReqUscita">
+							<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpRichiestaUscita or dettagliBean.hasHeaderTrasportoRichiestaUscita}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="req-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Ingresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"/>
+					<h:panelGroup id="panelGroupDumpBinarioReqIngresso" rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}">
+						<h:form id="formDumpBinarioReqIngresso">
+							<a4j:htmlCommandLink id="dumpBinarioIngresso-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpBinarioRichiestaIngresso or dettagliBean.hasHeaderTrasportoBinarioRichiestaIngresso}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+		                    	<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpBinarioReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpBinarioReqIngresso" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="req-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Uscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"/>
+					<h:panelGroup id="panelGroupDumpBinarioReqUscita" rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}">
+						<h:form id="formDumpBinarioReqUscita">
+							<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpBinarioRichiestaUscita or dettagliBean.hasHeaderTrasportoBinarioRichiestaUscita}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpBinarioReqUscita" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel value="Duplicato" id="bustaDupR-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+									rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}"/>
+					<h:form id="formDuplicaRich" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}">
+						<a4j:commandLink id="details"  
+											actionListener="#{dettagliBean.showOriginaleSelected}" 
+											reRender="panelDettaglioTransazione"
+											rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta==-1 and not empty dettagliBean.transazioneOriginaleRichiesta}">
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+							<h:outputText id="visualizzaTransOrig" value="Visualizza Transazione Originale" />
+						</a4j:commandLink>
+					</h:form>
+					
+					<h:outputLabel value="Duplicati" id="bustaDupReq-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+									rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
+					<h:panelGroup id="panelGroupDuplicatiReq" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
+						<h:form id="formDuplicatiReq">										
+							<h:outputLink id="hideDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" style="display: none;">
+	                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
+	                    		<rich:effect id="blindUpHideDups" for="hideDups-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDiv" params="duration:0.8"/>
+	                    		<rich:effect id="fadeHideDups" for="hideDups-iconLink" event="onclick" type="Fade" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
+	                    		<rich:effect id="appearHideDups" for="hideDups-iconLink" event="onclick" type="Appear" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
+	                    	</h:outputLink>
+	                    	<h:outputLink id="showDups-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}">
+	                    		<h:outputText id="outVisualizzaDuplicati" value="Visualizza (#{dettagliBean.dettaglio.duplicatiRichiesta})" />
+	                    		<rich:effect id="blindDownShowDups" for="showDups-iconLink" event="onclick" type="BlindDown" targetId="duplicatiDiv" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
+	                    		<rich:effect id="appearShowDups1" for="showDups-iconLink" event="onclick" type="Appear" targetId="duplicatiDiv" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+	                    		<rich:effect id="fadeShowDups" for="showDups-iconLink" event="onclick" type="Fade" targetId="showDups-iconLink" params="delay:0.0,duration:0.0"/>
+	                    		<rich:effect id="appearShowDups2" for="showDups-iconLink" event="onclick" type="Appear" targetId="hideDups-iconLink" params="delay:0.0,duration:0.0"/>
+	                    	</h:outputLink>
+						</h:form>
+					</h:panelGroup>	
+					
+				</h:panelGrid>
+
+				<!-- Originale, visualizza duplicati: Tabella -->
+				<rich:spacer id="spacerDuplicatiDivReq" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}"/>
+				<h:panelGroup id="duplicatiDiv" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRichiesta and dettagliBean.dettaglio.duplicatiRichiesta>0}" switchType="client">
+					<a4j:form id="formDupsReq">
+						<link:dataTable id="dupsReqDt" 
+								value="#{transazioniDuplicatiDMRichiesta}"
+								headerText="Lista Transazioni Duplicate"
+								topScrollerAlign="left"
+								width="416px"
+								showSelectAll="false"
+								enableDelete="false">
+								<rich:column id="colData">
+									<f:facet name="header">
+										<h:outputText id="outData" value="Data" />
+									</f:facet>
+									<a4j:commandLink id="details-iconLink" styleClass="icon-details" actionListener="#{dettagliBean.showDuplicatoSelected}" reRender="panelDettaglioTransazione">
+										<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+										<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
+										<f:setPropertyActionListener value="#{item.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+										<h:outputText id="outDataIngrRich" value="#{item.dataIngressoRichiesta}">
+											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
+												timeZone="Europe/Rome" />
+										</h:outputText>
+									</a4j:commandLink>
+								</rich:column>
+						</link:dataTable>
+					</a4j:form>						
+				</h:panelGroup>
+		
+		</link:fieldset>
+		
+		<rich:spacer id="spacerRisposta" height="10px"/>
+		
+		<link:fieldset legend="Dettagli Risposta"
+			rendered="#{true}" collapsible="false" closed="false">
+			
+				<h:panelGrid id="panelGridDettagliRisp" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+					
+					<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdEgovRisp" value="ID Messaggio" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRisposta and dettagliBean.existsTracciaRisposta}"/>
+					<h:outputText id="outIdEgovRisp" value="#{dettagliBean.dettaglio.idMessaggioRisposta}" rendered="#{not empty dettagliBean.dettaglio.idMessaggioRisposta and dettagliBean.existsTracciaRisposta}"/>
+					
+					<h:outputLabel value="Data Accettazione" id="dataAccResp-iconLabel" styleClass="outputFieldLabel icon-date" 
+						rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}"/>
+					<h:outputText id="outDataAccettazioneRisp" value="#{dettagliBean.dettaglio.dataAccettazioneRisposta}" 
+						rendered="#{dettagliBean.visualizzaDataAccettazione and not empty dettagliBean.dettaglio.dataAccettazioneRisposta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>
+							
+					<h:outputLabel value="Data Ingresso" id="dataInResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}"/>
+					<h:outputText id="outDataIngressoRisp" value="#{dettagliBean.dettaglio.dataIngressoRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataIngressoRisposta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>
+					
+					<h:outputLabel value="Data Uscita" id="dataOResp-iconLabel" styleClass="outputFieldLabel icon-date" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}"/>
+					<h:outputText id="outDataUscitaRisp" value="#{dettagliBean.dettaglio.dataUscitaRisposta}" rendered="#{not empty dettagliBean.dettaglio.dataUscitaRisposta}">
+						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+					</h:outputText>
+					
+					<h:outputLabel value="Bytes Ingresso" id="dimInRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+					<h:outputText value="#{empty dettagliBean.dettaglio.rispostaIngressoBytes ? 'n.d.' : dettagliBean.dettaglio.rispostaIngressoBytes}" converter="fileSizeConverter"/>
+					
+					<h:outputLabel value="Bytes Uscita" id="dimOutRes-iconLabel" styleClass="outputFieldLabel icon-compress"/>
+					<h:outputText value="#{empty dettagliBean.dettaglio.rispostaUscitaBytes ? 'n.d.' : dettagliBean.dettaglio.rispostaUscitaBytes}" converter="fileSizeConverter"/>
+					
+					<h:outputLabel id="risp-iconLabel" styleClass="outputFieldLabel icon-show-traccia" value="Traccia" rendered="#{dettagliBean.existsTracciaRisposta}"/>
+					<h:panelGroup id="panelGroupIdEgovRisp" rendered="#{dettagliBean.existsTracciaRisposta}">
+						<h:form id="formTracciaResp">
+							<a4j:htmlCommandLink id="tracciaResp-iconLink" 
+		                   			styleClass="icon-details" 
+		                   			action="visualizzaTraccia" 
+		                   			value="Visualizza"
+		                   			actionListener="#{dettagliBean.tracciaListener}">
+		                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+		                    	<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+		                   	</a4j:htmlCommandLink>
+		                   	<h:outputLabel value="&#160;|&#160;" />	 
+		                   	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
+		                    	<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+								<h:outputText id="outEsportaResp" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
+					<h:panelGroup id="panelGroupFaultCooperazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+						<h:form id="formFaultCooperazione">
+                                      <a4j:htmlCommandLink id="faultCooperazione-iconLink"
+                                                                       styleClass="icon-details"
+                                                                       value="Visualizza"
+                                                                       rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}" 
+                                                                       action="fault">
+                                       <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                                       <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+                                       <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+									<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultCooperazione}"/>
+                             			</a4j:htmlCommandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
+					<h:panelGroup id="panelGroupFaultIntegrazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
+						<h:form id="formFaultIntegrazione">
+                                      <a4j:htmlCommandLink id="faultIntegrazione-iconLink"
+                                                                       styleClass="icon-details"
+                                                                       value="Visualizza"
+                                                                       rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"
+                                                                       action="fault">
+                                       <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                                       <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+                                       <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+									<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultIntegrazione}"/>
+                             			</a4j:htmlCommandLink>
+						</h:form>
+					</h:panelGroup>								
+					
+					<h:outputLabel id="res-dumpMessaggiIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"/>
+					<h:panelGroup id="panelGroupDumpMessaggiResIngresso" rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}">
+						<h:form id="formDumpMessaggiResIngresso">
+							<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpRispostaIngresso or dettagliBean.hasHeaderTrasportoRispostaIngresso}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpMessaggiResIngresso" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="res-dumpMessaggiUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Contenuti Uscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"/>
+					<h:panelGroup id="panelGroupDumpMessaggiResUscita" rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}">
+						<h:form id="formDumpMessaggiResUscita">
+							<a4j:htmlCommandLink id="dumpMessaggiResUscita-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpRispostaUscita or dettagliBean.hasHeaderTrasportoRispostaUscita}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpMessaggiResUscita" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="res-dumpBinarioIngresso-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Ingresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"/>
+					<h:panelGroup id="panelGroupDumpBinarioResIngresso" rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}">
+						<h:form id="formDumpBinarioResIngresso">
+							<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpBinarioRispostaIngresso or dettagliBean.hasHeaderTrasportoBinarioRispostaIngresso}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpBinarioResIngresso" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel id="res-dumpBinarioUscita-iconLabel" styleClass="outputFieldLabel icon-xml" value="Dati Raw Uscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"/>
+					<h:panelGroup id="panelGroupDumpBinarioResUscita" rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}">
+						<h:form id="formDumpBinarioResUscita">
+							<a4j:htmlCommandLink id="dumpBinarioResUscita-iconLink"
+	                    						 styleClass="icon-details"
+	                    						 value="Visualizza"
+	                    						 rendered="#{dettagliBean.hasDumpBinarioRispostaUscita or dettagliBean.hasHeaderTrasportoBinarioRispostaUscita}"
+	                    						 action="dettaglioDump">
+	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+	                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                    	</a4j:htmlCommandLink>
+	                    	<h:outputLabel value="&#160;|&#160;" />	 
+	                    	<h:commandLink id="exportDumpBinarioResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
+	                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliBean.exportContenuto}"/>
+								<h:outputText id="outEsportaDumpBinarioResUscita" value="Esporta" />
+							</h:commandLink>
+						</h:form>
+					</h:panelGroup>
+					
+					<h:outputLabel value="Duplicato" id="bustaDupResp-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+									rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}"/>
+					<h:form id="formDuplicaRisp" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}">
+						<a4j:commandLink id="detailsRisposta"  
+											actionListener="#{dettagliBean.showOriginaleSelected}" 
+											reRender="panelDettaglioTransazione"
+											rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta==-1 and not empty dettagliBean.transazioneOriginaleRisposta}">
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idMessaggioRisposta}" target="#{dettagliBean.idEgov}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+							<h:outputText id="visualizzaTransOrig" value="Visualizza Transazione Originale" />
+						</a4j:commandLink>
+					</h:form>
+					
+					<h:outputLabel value="Duplicati" id="bustaDupRes-iconLabel" styleClass="outputFieldLabel icon-busta-duplicata" style="font-weight:bold;" 
+									rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
+					<h:panelGroup id="panelGroupDuplicatiRes" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
+						<h:form id="formDuplicatiRes">										
+							<h:outputLink id="hideDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" style="display: none;">
+	                    		<h:outputText id="outNascondiDuplicati" value="Nascondi" />
+	                    		<rich:effect id="blindUpHideDups" for="hideDupsResp-iconLink" event="onclick" type="BlindUp" targetId="duplicatiDivResp" params="duration:0.8"/>
+	                    		<rich:effect id="fadeHideDups" for="hideDupsResp-iconLink" event="onclick" type="Fade" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+	                    		<rich:effect id="appearHideDups" for="hideDupsResp-iconLink" event="onclick" type="Appear" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+	                    	</h:outputLink>
+	                    	<h:outputLink id="showDupsResp-iconLink" styleClass="icon-details" value="#" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}">
+	                    		<h:outputText id="outVisualizzaDuplicati" value="Visualizza (#{dettagliBean.dettaglio.duplicatiRisposta})" />
+	                    		<rich:effect id="blindDownShowDups" for="showDupsResp-iconLink" event="onclick" type="BlindDown" targetId="duplicatiDivResp" params="delay:0.1,duration:1.0,from:0.0,to:1.0"/>
+	                    		<rich:effect id="appearShowDups1" for="showDupsResp-iconLink" event="onclick" type="Appear" targetId="duplicatiDivResp" params="delay:0.1,duration:0.5,from:0.0,to:1.0"/>
+	                    		<rich:effect id="fadeShowDups" for="showDupsResp-iconLink" event="onclick" type="Fade" targetId="showDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+	                    		<rich:effect id="appearShowDups2" for="showDupsResp-iconLink" event="onclick" type="Appear" targetId="hideDupsResp-iconLink" params="delay:0.0,duration:0.0"/>
+	                    	</h:outputLink>
+						</h:form>
+					</h:panelGroup>	
+					
+				</h:panelGrid>
+
+				<rich:spacer id="spacerDuplicatiDivRes" height="5px" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}"/>
+				<h:panelGroup id="duplicatiDivResp" layout="block" style="display: none;" rendered="#{not empty dettagliBean.dettaglio.duplicatiRisposta and dettagliBean.dettaglio.duplicatiRisposta>0}" switchType="client">
+					<a4j:form id="formDupsRes">
+						<link:dataTable id="dupsResDt" 
+								value="#{transazioniDuplicatiDMRisposta}"
+								headerText="Lista Transazioni Duplicate"
+								topScrollerAlign="left"
+								width="416px"
+								showSelectAll="false"
+								enableDelete="false">
+								<rich:column id="colDataRes">
+									<f:facet name="header">
+										<h:outputText id="outDataRes" value="Data" />
+									</f:facet>
+									<a4j:commandLink id="detailsRes-iconLink" styleClass="icon-details" actionListener="#{dettagliBean.showDuplicatoSelected}" reRender="panelDettaglioTransazione">
+										<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+										<f:setPropertyActionListener value="#{item.idMessaggioRisposta}" target="#{dettagliBean.idEgov}"/>
+										<f:setPropertyActionListener value="#{item.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+										<h:outputText id="outDataIngrRisp" value="#{item.dataIngressoRichiesta}">
+											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
+												timeZone="Europe/Rome" />
+										</h:outputText>
+									</a4j:commandLink>
+								</rich:column>
+						</link:dataTable>
+					</a4j:form>						
+				</h:panelGroup>
+
+			
+		</link:fieldset>
+    
+    </a4j:outputPanel>
+    
+ 
+</ui:composition>

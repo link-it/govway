@@ -416,3 +416,132 @@ span.iconLinkie{
 .divNoEdit {
 	padding-top: 6px;
 }
+
+
+/* CLASSI VISTA CUSTOM TRANSAZIONI */
+
+
+.col-esito-ok{
+	background-color: ${transazioni.stato.ok.esito.background.color};
+}
+.col-latenza-ok{
+	background-color: ${transazioni.stato.ok.latenza.background.color};
+}
+
+.col-esito-fault{
+	background-color: ${transazioni.stato.fault.esito.background.color};
+}
+.col-latenza-fault{
+	background-color: ${transazioni.stato.fault.latenza.background.color};
+}
+
+.col-esito-errore{
+	color: ${transazioni.stato.errore.esito.color};
+	background-color: ${transazioni.stato.errore.esito.background.color};
+}
+.col-latenza-errore{
+	background-color: ${transazioni.stato.errore.latenza.background.color};
+}
+
+
+.divNoEdit.titoloTags {
+    display: inline-flex;
+    padding-top: 0px;
+}
+
+.rowTransazione {
+	cursor: pointer;
+/* 	padding: 8px; */
+	display: flex;
+}
+
+.infoColDXTransazione{
+	display: flex;
+	margin-left: auto;
+}
+
+.entryTransazione {
+	padding: 8px;
+}
+
+
+.entryEsitoTransazione {
+/* 	text-align: center;  */
+    padding: 0px 8px 0px 0px;
+	display: inline-block;
+}
+
+.entryIconeTransazione {
+	display: inline-block;
+	vertical-align: 8px;
+	background-color: ${transazioni.ruolo.background.color};
+	color: ${transazioni.ruolo.color};
+}
+
+.entryRuoloTransazione {
+/* 	text-align: center;  */
+    padding: 24px;
+/* 	display: inline-block; */
+}
+
+.entryDatiTransazione {
+    padding: 20px;
+}
+
+.entryDatiTransazione .titoloEntry {
+	padding: 4px 4px 4px 0px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.entryDatiTransazione .metadatiEntry {
+	padding: 4px 4px 4px 0px;
+	color: ${body.secondary.color};
+}
+
+.entryDatiTransazione .titoloTags {
+	display: inline-block;
+}
+
+
+.entryInfoEsitoTransazione{
+	padding: 16px;
+	width: 180px;
+}
+
+.entryInfoEsitoTransazione .titoloEntry {
+	padding: 4px 4px 4px 0px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.entryInfoEsitoTransazione .metadatiEntry {
+	padding: 4px 4px 4px 0px;
+	font-weight: bold;
+/* 	color: ${body.secondary.color}; */
+}
+
+.entryInfoLatenzaTransazione{
+	padding: 16px;
+	width: 80px;
+}
+
+.entryInfoLatenzaTransazione .titoloEntry {
+	padding: 4px 4px 4px 0px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.entryInfoLatenzaTransazione .metadatiEntry {
+	padding: 4px 4px 4px 0px;
+/* 	color: ${body.secondary.color}; */
+}
+
+
+
+
+
+
+
+
+

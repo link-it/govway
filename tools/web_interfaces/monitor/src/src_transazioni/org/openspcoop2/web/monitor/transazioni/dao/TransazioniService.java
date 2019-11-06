@@ -486,6 +486,7 @@ public class TransazioniService implements ITransazioniService {
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
 					listaBean.add(bean);
 				}
@@ -531,6 +532,8 @@ public class TransazioniService implements ITransazioniService {
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
 					listaBean.add(bean);
 				}
@@ -636,6 +639,8 @@ public class TransazioniService implements ITransazioniService {
 					// Integrazione dei dati delle credenziali
 					bean.normalizeRichiedenteInfo(transazione, bean, this);
 					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
 					
 					listaBean.add(bean);
 				}

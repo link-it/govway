@@ -818,7 +818,13 @@ public class PddMonitorProperties {
 	}
 	
 
+	public boolean isAttivoUtilizzaVisualizzazioneCustomTransazioni() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.enabled", true, true));
+	}
 	
+	public boolean isAttivoUtilizzaVisualizzazioneCustomLive() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.enabled", true, true));
+	}
 	
 	/* Properties gestione della paginazione delle liste con le count */
 	

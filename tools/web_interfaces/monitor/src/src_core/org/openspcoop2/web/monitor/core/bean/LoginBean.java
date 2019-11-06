@@ -101,6 +101,8 @@ public class LoginBean extends AbstractLoginBean {
 	
 	private Configurazione configurazioneGenerale = null;
 	
+	private List<String> listaNomiGruppi = null;
+	
 	public LoginBean(boolean initDao){
 		super(initDao);
 		this.caricaProperties();
@@ -905,4 +907,17 @@ public class LoginBean extends AbstractLoginBean {
 		} 
 		return true;
 	}
+	
+	
+	public List<String> getListaNomiGruppi(){
+		if(this.listaNomiGruppi == null) {
+		try {
+			this.listaNomiGruppi = DynamicPdDBeanUtils.getInstance(LoggerManager.getPddMonitorCoreLogger()).getListaNomiGruppi();
+		} catch (Exception e) {
+			this.listaNomiGruppi =new ArrayList<String>();
+		}
+		} 
+		return this.listaNomiGruppi;
+	}
+	
 }

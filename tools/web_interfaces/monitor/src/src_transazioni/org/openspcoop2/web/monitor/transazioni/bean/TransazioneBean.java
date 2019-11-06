@@ -58,6 +58,7 @@ import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
@@ -121,6 +122,7 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setListaGruppi", List.class));
 
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
@@ -739,7 +741,51 @@ public class TransazioneBean extends Transazione{
 		this.gruppiLabel = gruppiLabel;
 	}
 	
+	public List<Gruppo> getListaGruppi(){
+		String tmp = this.getGruppi();
+		List<Gruppo> gruppiObj = new ArrayList<Gruppo>();
+		if(tmp!=null){
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = Utility.getListaNomiGruppi();
+			
+			tmp = tmp.trim();
+			
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					for (String nomeGruppo : split) {
+						Gruppo gruppo = new Gruppo();
+						gruppo.setLabel(nomeGruppo);
+						gruppiObj.add(gruppo);
+						
+						int indexOf = tagsDisponibili.indexOf(nomeGruppo);
+						if(indexOf == -1)
+							indexOf = 0;
+						
+						indexOf = indexOf % TransazioniCostanti.NUMERO_GRUPPI_CSS;
+						
+						gruppo.setValue("label-info-"+indexOf);
+					}
+				}
+			}else {
+				Gruppo gruppo = new Gruppo();
+				gruppo.setLabel(tmp);
+				int indexOf = tagsDisponibili.indexOf(tmp);
+				if(indexOf == -1)
+					indexOf = 0;
+				
+				indexOf = indexOf % TransazioniCostanti.NUMERO_GRUPPI_CSS;
+				
+				gruppo.setValue("label-info-"+indexOf);
+				
+				gruppiObj.add(gruppo);
+			}
+		}
+		
+		return gruppiObj;
+	}
 	
+	public void setListaGruppi(List<Gruppo> lista) {}
 	
 	
 	public TempiElaborazioneBean getTempiElaborazioneObject() {
@@ -1102,4 +1148,25 @@ public class TransazioneBean extends Transazione{
 		
 	}
 
+	public String getCssColonnaEsito() {
+		if(this.isEsitoOk())
+			return "col-esito-ok";
+		if(this.isEsitoFaultApplicativo())
+			return "col-esito-fault";
+		if(this.isEsitoKo())
+			return "col-esito-errore";
+		
+		return "col-esito-errore";
+	}
+	
+	public String getCssColonnaLatenza() {
+		if(this.isEsitoOk())
+			return "col-latenza-ok";
+		if(this.isEsitoFaultApplicativo())
+			return "col-latenza-fault";
+		if(this.isEsitoKo())
+			return "col-latenza-errore";
+		
+		return "col-latenza-errore";
+	}
 }
