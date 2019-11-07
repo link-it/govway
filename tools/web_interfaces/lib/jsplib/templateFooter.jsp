@@ -46,5 +46,6 @@ GeneralData gd = (GeneralData) session.getAttribute(gdString);
 				<img src="images/tema_link/logo_link_footer.png" />
 			</a>
 		</div>
+		<jsp:include page="/jsplib/status.jsp" flush="true" />
 	</td>
 </tr>

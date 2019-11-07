@@ -1731,4 +1731,35 @@ span.controlset-cb-info {
   color: 	 ${option.active.color};
 }
 
+/* Status */
+
+.rich-mpnl-mask-div {
+    position: fixed;
+    top: 0;
+    left: 0;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    border-style: none;
+    background-color: #d0d0d0;
+}
+
+.mainStatusStartStyle{
+	z-index: 121;
+	opacity: 0.8;
+	background-color: ${mainStatus.background.color};
+}
+
+.mainStatusStartStyleInner {
+	z-index: 129;
+	position: absolute; 
+	top: 50%;
+	left: 50%;
+	margin-top: -160px;
+	margin-left: -160px;
+	display: inline-block;
+}
+
 

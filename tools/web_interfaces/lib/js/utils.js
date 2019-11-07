@@ -36,6 +36,7 @@
  	 	        }
  	      ,
  	        "Conferma Rimozione": function() {
+ 	        	visualizzaAjaxStatus();
  	        	RemoveEntries();
  	        	$( this ).dialog( "close" );
  	        }
