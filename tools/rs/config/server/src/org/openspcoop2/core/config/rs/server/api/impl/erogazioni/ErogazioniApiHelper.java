@@ -225,7 +225,6 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.ConsoleOperationType;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -910,10 +909,11 @@ public class ErogazioniApiHelper {
         final APIImplAutorizzazioneNew authz = impl.getAutorizzazione();
         final APIImplAutenticazioneNew authn = impl.getAutenticazione();
         
-        // Se sono in modalità SPCoop non posso specificare l'autenticazione
-        if ( env.profilo == ProfiloEnum.SPCOOP && generaPortaApplicativa && authn != null ) {
-        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
-        }
+        // Vincolo rilasciato
+//        // Se sono in modalità SPCoop non posso specificare l'autenticazione
+//        if ( env.profilo == ProfiloEnum.SPCOOP && generaPortaApplicativa && authn != null ) {
+//        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
+//        }
         
         APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
         APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        

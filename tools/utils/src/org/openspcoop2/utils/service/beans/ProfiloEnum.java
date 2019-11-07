@@ -35,6 +35,8 @@ import javax.xml.bind.annotation.XmlEnumValue;
 public enum ProfiloEnum {
   @XmlEnumValue("APIGateway")
 APIGATEWAY("APIGateway"),
+    @XmlEnumValue("ModIPA")
+MODIPA("ModIPA"),
     @XmlEnumValue("SPCoop")
 SPCOOP("SPCoop"),
     @XmlEnumValue("FatturaPA")

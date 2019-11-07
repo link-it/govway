@@ -259,7 +259,10 @@ public class Converter {
 			}
 			if(this.profilo) {
 				ProfiloEnum profilo = ProfiloEnum.APIGATEWAY;
-				if(transazioneDB.getProtocollo().equals("spcoop")) {
+				if(transazioneDB.getProtocollo().equals("modipa")) {
+					profilo = ProfiloEnum.MODIPA;
+				}
+				else if(transazioneDB.getProtocollo().equals("spcoop")) {
 					profilo = ProfiloEnum.SPCOOP;
 				}
 				else if(transazioneDB.getProtocollo().equals("sdi")) {

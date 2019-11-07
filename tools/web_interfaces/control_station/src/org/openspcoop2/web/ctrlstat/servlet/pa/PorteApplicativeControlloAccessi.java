@@ -413,7 +413,7 @@ public class PorteApplicativeControlloAccessi extends Action {
 				if(autorizzazioneContenutiStato==null){
 					autorizzazioneContenuti = pa.getAutorizzazioneContenuto();
 					
-					if(autorizzazioneContenuti == null) {
+					if(autorizzazioneContenuti == null || "".equals(autorizzazioneContenuti)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
 					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();

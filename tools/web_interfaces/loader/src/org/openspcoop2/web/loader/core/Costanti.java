@@ -106,8 +106,8 @@ public class Costanti {
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_LINKIT_WEB = "http://www.link.it";
-	public final static String LABEL_OPENSPCOOP2_WEB = "http://www.govway.org";
+	public final static String LABEL_LINKIT_WEB = "https://www.link.it";
+	public final static String LABEL_OPENSPCOOP2_WEB = "https://www.govway.org";
 	
 	public final static String LABEL_CONFIGURAZIONI_XML = "Strumenti";
 	public final static String LABEL_TIPOLOGIA_XML = "Tipologia";

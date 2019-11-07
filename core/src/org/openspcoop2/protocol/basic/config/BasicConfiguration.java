@@ -218,6 +218,11 @@ public class BasicConfiguration extends BasicComponentFactory implements org.ope
 	}
 	
 	@Override
+	public boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni() {
+		return this.registroManifest.getOrganization().getInboundOrganizationAuthorizationWithoutAuthentication();
+	}
+	
+	@Override
 	public boolean isSupportoCodiceIPA() {
 		return this.registroManifest.getOrganization().isCodeIPA();
 	}

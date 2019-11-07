@@ -41,6 +41,7 @@ import java.io.Serializable;
  * 		&lt;/sequence>
  * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
  * 		&lt;attribute name="inboundApplicativeAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
+ * 		&lt;attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
  * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
@@ -98,6 +99,18 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
     this.inboundApplicativeAuthentication = inboundApplicativeAuthentication;
   }
 
+  public boolean isInboundOrganizationAuthorizationWithoutAuthentication() {
+    return this.inboundOrganizationAuthorizationWithoutAuthentication;
+  }
+
+  public boolean getInboundOrganizationAuthorizationWithoutAuthentication() {
+    return this.inboundOrganizationAuthorizationWithoutAuthentication;
+  }
+
+  public void setInboundOrganizationAuthorizationWithoutAuthentication(boolean inboundOrganizationAuthorizationWithoutAuthentication) {
+    this.inboundOrganizationAuthorizationWithoutAuthentication = inboundOrganizationAuthorizationWithoutAuthentication;
+  }
+
   public boolean isCodeDomain() {
     return this.codeDomain;
   }
@@ -148,6 +161,10 @@ public class Organization extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="inboundApplicativeAuthentication",required=false)
   protected boolean inboundApplicativeAuthentication = true;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="inboundOrganizationAuthorizationWithoutAuthentication",required=false)
+  protected boolean inboundOrganizationAuthorizationWithoutAuthentication = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="codeDomain",required=false)

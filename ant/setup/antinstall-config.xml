@@ -13,8 +13,8 @@
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
         <comment explanatoryText="Per maggiori informazioni sul prodotto:"/>
-        <comment explanatoryText="       http://www.govway.org" bold="true"/>
-        <comment explanatoryText="       http://www.link.it" bold="true"/>
+        <comment explanatoryText="       https://www.govway.org" bold="true"/>
+        <comment explanatoryText="       https://www.link.it" bold="true"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->

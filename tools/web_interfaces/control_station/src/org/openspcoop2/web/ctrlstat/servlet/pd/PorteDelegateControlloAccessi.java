@@ -365,7 +365,7 @@ public class PorteDelegateControlloAccessi extends Action {
 				if(autorizzazioneContenutiStato==null){
 					autorizzazioneContenuti = portaDelegata.getAutorizzazioneContenuto();
 					
-					if(autorizzazioneContenuti == null) {
+					if(autorizzazioneContenuti == null || "".equals(autorizzazioneContenuti)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.DISABILITATO.getValue();
 					} else if(autorizzazioneContenuti.equals(CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN)) {
 						autorizzazioneContenutiStato = StatoFunzionalita.ABILITATO.getValue();

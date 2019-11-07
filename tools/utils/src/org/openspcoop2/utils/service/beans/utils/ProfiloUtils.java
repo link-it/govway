@@ -40,6 +40,7 @@ public class ProfiloUtils {
 	private static final Map<ProfiloEnum,String> MAP_PROFILO_TO_PROTOCOLLO = new HashMap<ProfiloEnum,String>();
 	static {
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.APIGATEWAY, "trasparente");
+		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.MODIPA, "modipa");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.SPCOOP, "spcoop");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.FATTURAPA, "sdi");
 		MAP_PROFILO_TO_PROTOCOLLO.put(ProfiloEnum.EDELIVERY, "as4");

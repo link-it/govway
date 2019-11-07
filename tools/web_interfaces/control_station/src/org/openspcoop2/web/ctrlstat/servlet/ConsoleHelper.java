@@ -4575,18 +4575,31 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)==false){
 			
 				boolean autorizzazione_autenticazione =  false;
+				boolean isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione = this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo);
+				
 							
 				if(AutorizzazioneUtilities.STATO_ABILITATO.equals(autorizzazione)){
 				
 					if(!allHidden) {
-						if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){   
+						if( !isSupportatoAutenticazione 
+								|| 
+								(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) 
+								||
+								isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione
+								){   
 							de = new DataElement();
 							de.setType(DataElementType.SUBTITLE);
 							if(isPortaDelegata){
 								de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SERVIZI_APPLICATIVI);
 							}
 							else{
-								String labelSoggetti = (isSupportatoAutenticazione && (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
+								String labelSoggetti = (isSupportatoAutenticazione && 
+										(
+												(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) 
+												||
+												isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione
+										) 
+										) ? CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE_SOGGETTI : CostantiControlStation.LABEL_PARAMETRO_SOGGETTI;
 								de.setLabel(labelSoggetti);
 							}
 							dati.addElement(de);
@@ -4598,7 +4611,12 @@ public class ConsoleHelper implements IConsoleHelper {
 					de = new DataElement();
 					de.setLabel(CostantiControlStation.LABEL_ABILITATO);
 					de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTORIZZAZIONE_AUTENTICAZIONE);
-					if( !isSupportatoAutenticazione ||  (autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) ){
+					if( !isSupportatoAutenticazione 
+							|| 
+							(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) 
+							||
+							isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione
+							){   
 						if(allHidden) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(autorizzazione_autenticazione+"");
@@ -4619,9 +4637,12 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 				if(TipoOperazione.CHANGE.equals(tipoOperazione)){
 					
-					if( !isSupportatoAutenticazione || 
-							(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione))
-							) {
+					if( !isSupportatoAutenticazione 
+							|| 
+							(autenticazione!=null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) 
+							||
+							isSupportatoAutorizzazioneRichiedentiSenzaAutenticazione
+							){   
 					
 						if(urlAutorizzazioneAutenticati!=null && autorizzazione_autenticazione && (old_autorizzazione_autenticazione || CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTORIZZAZIONE_CUSTOM.equals(old_autorizzazione)) ){
 							de = new DataElement();
@@ -5284,17 +5305,19 @@ public class ConsoleHelper implements IConsoleHelper {
 						ServletUtils.isCheckBoxEnabled(autorizzazioneRuoli)==false){
 					// Se l'autorizzazione è solamente basata sull'autenticazione dei chiamanti, una autenticazione DEVE essere presente e non deve essere opzionale
 					if(isSupportatoAutenticazione){
-						if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
-							this.pd.setMessage(MessageFormat.format(
-									CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_DEVE_ESSERE_INDICATA_ANCHE_UNA_MODALITA_DI_AUTENTICAZIONE_YY,
-									labelAutenticati));
-							return false;
-						}
-						if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
-							this.pd.setMessage(MessageFormat.format(
-									CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
-									labelAutenticati));
-							return false;
+						if(isPortaDelegata || !this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(protocollo)) {
+							if(TipoAutenticazione.DISABILITATO.equals(autenticazione)){
+								this.pd.setMessage(MessageFormat.format(
+										CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_DEVE_ESSERE_INDICATA_ANCHE_UNA_MODALITA_DI_AUTENTICAZIONE_YY,
+										labelAutenticati));
+								return false;
+							}
+							if(ServletUtils.isCheckBoxEnabled(autenticazioneOpzionale)){
+								this.pd.setMessage(MessageFormat.format(
+										CostantiControlStation.MESSAGGIO_ERRORE_CON_LA_SOLA_MODALITA_DI_AUTORIZZAZIONE_XX_NON_E_POSSIBILE_ASSOCIATA_UNA_MODALITÀ_DI_AUTENTICAZIONE_OPZIONALE,
+										labelAutenticati));
+								return false;
+							}
 						}
 					}
 				}

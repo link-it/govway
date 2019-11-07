@@ -198,6 +198,13 @@ public interface IProtocolConfiguration extends IComponentFactory {
 	public boolean isSupportoAutenticazioneApplicativiErogazioni();
 	
 	/**
+	 * Ritorna l'indicazione se l'autorizzazione puntuale sui richiedenti è abilitata senza l'autenticazione
+	 * 
+	 * @return True se l'autorizzazione puntuale sui richiedenti è abilitata senza l'autenticazione
+	 */
+	public boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni();
+	
+	/**
 	 * Ritorna l'indicazione se il codice IPA viene supportato dal protocollo
 	 * 
 	 * @return True se il codice IPA viene supportato dal protocollo

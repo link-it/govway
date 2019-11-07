@@ -1,3 +1,15 @@
+2019-11-07  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayCore, ProtocolloSPCoop]
+	Aggiunta funzionalità OP-919
+	Per le erogazioni nel profilo SPCoop è adesso possibile autenticare i soggetti mittenti.
+	Nel caso sia abilitata l'autenticazione, il Gateway controlla che il soggetto identificato corrisponda al soggetto indicato nella busta.
+
+2019-11-07  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Aggiunto controllo grafico che, avviata un'operazione, disabilita gli elementi grafici sulla console fino al completamento dell'operazione.
+
 2019-11-04  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

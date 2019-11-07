@@ -68,7 +68,7 @@ public class GeneralData {
 		this.logoHeaderTitolo= "";
 	}
 	public GeneralData() {
-		this("http://www.link.it");
+		this("https://www.link.it");
 	}
 
 	public void setProduct(String p) {

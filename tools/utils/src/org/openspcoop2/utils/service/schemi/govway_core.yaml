@@ -10,6 +10,7 @@ components:
       description: |-
             Indica la modalità operativa del Gateway, a scelta tra:
               * APIGateway;
+              * ModIPA;
               * SPCoop;
               * FatturaPA;
               * eDelivery.
@@ -317,7 +318,7 @@ components:
     
     ProfiloEnum:
       type: string
-      enum: ['APIGateway', 'SPCoop', 'FatturaPA', 'eDelivery']
+      enum: ['APIGateway', 'ModIPA', 'SPCoop', 'FatturaPA', 'eDelivery']
       default: APIGateway
 
     ProfiloCollaborazioneEnum:
