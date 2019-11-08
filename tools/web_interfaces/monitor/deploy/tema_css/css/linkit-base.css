@@ -455,22 +455,6 @@ span.iconLinkie{
 	display: flex;
 }
 
-.infoColDXTransazione{
-	display: flex;
-	margin-left: auto;
-}
-
-.entryTransazione {
-	padding: 8px;
-}
-
-
-.entryEsitoTransazione {
-/* 	text-align: center;  */
-    padding: 0px 8px 0px 0px;
-	display: inline-block;
-}
-
 .entryIconeTransazione {
 	display: inline-block;
 	vertical-align: 8px;
@@ -478,70 +462,87 @@ span.iconLinkie{
 	color: ${transazioni.ruolo.color};
 }
 
-.entryRuoloTransazione {
-/* 	text-align: center;  */
-    padding: 24px;
-/* 	display: inline-block; */
-}
-
 .entryDatiTransazione {
-    padding: 20px;
+	width: 100%;
 }
 
-.entryDatiTransazione .titoloEntry {
-	padding: 4px 4px 4px 0px;
+.entryDatiTransazioneRiga1 {
+	display: flex;
+}
+
+.entryDatiTransazioneRiga1 .divTitoloEntry {
+	padding: 16px 20px 4px 20px;
     font-weight: bold;
     font-size: 16px;
 }
 
-.entryDatiTransazione .metadatiEntry {
-	padding: 4px 4px 4px 0px;
-	color: ${body.secondary.color};
-}
-
-.entryDatiTransazione .titoloTags {
+.entryDatiTransazioneRiga1 .titoloTags {
 	display: inline-block;
 }
 
+.infoColDXTransazioneRiga1 {
+	display: flex;
+	margin-left: auto;
+}
 
-.entryInfoEsitoTransazione{
-	padding: 16px;
+.infoColDXTransazioneRiga1 .entryInfoEsitoTransazione{
+	padding: 16px 20px 4px 20px;
 	width: 180px;
 }
 
-.entryInfoEsitoTransazione .titoloEntry {
+.infoColDXTransazioneRiga1 .entryInfoEsitoTransazione .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
 }
 
-.entryInfoEsitoTransazione .metadatiEntry {
-	padding: 4px 4px 4px 0px;
-	font-weight: bold;
-/* 	color: ${body.secondary.color}; */
-}
-
-.entryInfoLatenzaTransazione{
-	padding: 16px;
+.infoColDXTransazioneRiga1 .entryInfoLatenzaTransazione{
+	padding: 16px 20px 4px 20px;
 	width: 80px;
 }
 
-.entryInfoLatenzaTransazione .titoloEntry {
+.infoColDXTransazioneRiga1 .entryInfoLatenzaTransazione .titoloEntry {
 	padding: 4px 4px 4px 0px;
     font-weight: bold;
     font-size: 16px;
 }
 
-.entryInfoLatenzaTransazione .metadatiEntry {
-	padding: 4px 4px 4px 0px;
-/* 	color: ${body.secondary.color}; */
+.entryDatiTransazioneRiga2 {
+	display: flex;
 }
 
+.entryDatiTransazioneRiga2 .divSottotitoloEntry {
+	padding: 4px 20px 16px 20px;
+	color: ${body.secondary.color};
+}
 
+.entryDatiTransazioneRiga2 .metadatiEntry {
+}
 
+.infoColDXTransazioneRiga2 {
+	display: flex;
+	margin-left: auto;
+}
 
+.infoColDXTransazioneRiga2 .entryInfoEsitoTransazione{
+	padding: 4px 20px 16px 20px;
+	width: 180px;
+}
 
+.infoColDXTransazioneRiga2 .entryInfoEsitoTransazione .metadatiEntry {
+	font-weight: bold;
+}
 
+.infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione{
+	padding: 4px 20px 16px 20px;
+	width: 80px;
+}
 
+.infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione .metadatiEntry {
+}
+
+.entryRuoloTransazione {
+    padding: 24px 16px;
+}
 
 
