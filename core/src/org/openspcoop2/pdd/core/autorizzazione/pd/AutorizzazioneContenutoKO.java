@@ -27,7 +27,6 @@ package org.openspcoop2.pdd.core.autorizzazione.pd;
 import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
@@ -35,19 +34,19 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 /**
  * Esempio di AutorizzazioneContenutoKO
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli <apoli@link.oit>
  * @author $Author$
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenutoKO extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
+public class AutorizzazioneContenutoKO extends AbstractAutorizzazioneContenutoBase {
 
 	@Override
 	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 
 		EsitoAutorizzazionePortaDelegata esito = new EsitoAutorizzazionePortaDelegata();
     	
-    	// Autorizzazzione servizio applicativo
+    	// Autorizzazzione servizio applicativoo
     	try{
     		ByteArrayOutputStream bout = new ByteArrayOutputStream();
     		msg.writeTo(bout, false);

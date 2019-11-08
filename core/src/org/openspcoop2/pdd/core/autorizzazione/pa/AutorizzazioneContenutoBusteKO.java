@@ -29,7 +29,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -43,7 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenutoBusteKO extends AbstractCore implements IAutorizzazioneContenutoPortaApplicativa {
+public class AutorizzazioneContenutoBusteKO extends AbstractAutorizzazioneContenutoBase {
 
 	@Override
 	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {

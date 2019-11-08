@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.beans.JMXConstants;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.utils.Costanti;
 import org.openspcoop2.utils.jmx.CostantiJMX;
 
@@ -686,6 +687,17 @@ public class CostantiPdD {
     
     /** Costante che identifica una keyword per rappresentare dettagli */
     public final static String KEY_DETAILS = "@DETAILS@";
+    
+    /** Costante che identifica una keyword per rappresentare l'informazione in cache */
+    private final static String KEY_INFO_IN_CACHE = "@INFO_IN_CACHE@";
+    private final static String KEY_INFO_IN_CACHE_VALUE = " (in cache)";
+    public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache) {
+    	if(isEsitoPresenteInCache){
+			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, CostantiPdD.KEY_INFO_IN_CACHE_VALUE);
+		}else{
+			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, "");
+		}
+    }
    
 }
 

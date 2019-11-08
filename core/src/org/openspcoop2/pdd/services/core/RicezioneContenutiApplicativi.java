@@ -102,7 +102,6 @@ import org.openspcoop2.pdd.core.autorizzazione.container.AutorizzazioneHttpServl
 import org.openspcoop2.pdd.core.autorizzazione.container.IAutorizzazioneSecurityContainer;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
-import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
@@ -2119,6 +2118,7 @@ public class RicezioneContenutiApplicativi {
 							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, 
 									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
 									pddContext, protocolFactory, requestMessage); 
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{
@@ -2872,6 +2872,7 @@ public class RicezioneContenutiApplicativi {
 				try {						
 					EsitoAutorizzazionePortaDelegata esito = 
 							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore); 
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{
@@ -3677,51 +3678,23 @@ public class RicezioneContenutiApplicativi {
 				Exception eAutorizzazione = null;
 				boolean detailsSet = false;
 				try {
-	//				if (RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.containsKey(tipoAutorizzazioneContenuto) == false)
-	//					RicezioneContenutiApplicativi.aggiornaListaGestoreAutorizzazioneContenuto(
-	//							tipoAutorizzazioneContenuto, className,propertiesReader, logCore);
-	//				IAutorizzazioneContenuto auth = RicezioneContenutiApplicativi.gestoriAutorizzazioneContenuto.get(tipoAutorizzazioneContenuto);
-					
-					// Inizializzo IGestoreAutorizzazione new Type
-					String classType = null;
-					IAutorizzazioneContenutoPortaDelegata auth = null;
-					try {
-						classType = className.getAutorizzazioneContenutoPortaDelegata(tipoAutorizzazioneContenuto);
-						auth = ((IAutorizzazioneContenutoPortaDelegata) loader.newInstance(classType));
-						AbstractCore.init(auth, pddContext, protocolFactory);
-					} catch (Exception e) {
-						throw new Exception(
-								"Riscontrato errore durante il caricamento della classe ["+ classType
-										+ "] da utilizzare per la gestione dell'autorizzazione contenuto di tipo ["+ tipoAutorizzazioneContenuto + "]: " + e.getMessage());
+					// Controllo Autorizzazione
+					EsitoAutorizzazionePortaDelegata esito = 
+							GestoreAutorizzazione.verificaAutorizzazioneContenutoPortaDelegata(tipoAutorizzazioneContenuto, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore);
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
+					if(esito.getDetails()==null){
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
+					}else{
+						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
 					}
-					
-					if (auth != null) {
-						try {
-							// Controllo Autorizzazione
-							EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione,requestMessage);
-							if(esito.getDetails()==null){
-								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
-							}else{
-								msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, " ("+esito.getDetails()+")");
-							}
-							detailsSet = true;
-							if (esito.isAutorizzato() == false) {
-								errore = esito.getErroreIntegrazione();
-								eAutorizzazione = esito.getEccezioneProcessamento();
-								pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
-							}
-							else{
-								msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
-							}
-						}finally {
-				    		if(requestMessage!=null) {
-				    			auth.cleanPostAuth(requestMessage);
-				    		}
-				    	}
-					} else {
-						errore = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-								get5XX_ErroreProcessamento("gestore ["
-										+ tipoAutorizzazioneContenuto + "] non inizializzato", CodiceErroreIntegrazione.CODICE_542_AUTORIZZAZIONE_CONTENUTO);
+					detailsSet = true;
+					if (esito.isAutorizzato() == false) {
+						errore = esito.getErroreIntegrazione();
+						eAutorizzazione = esito.getEccezioneProcessamento();
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTORIZZAZIONE, "true");
+					}
+					else{
+						msgDiag.logPersonalizzato("autorizzazioneContenutiApplicativiEffettuata");
 					}
 				} catch (Exception e) {
 					String msgErroreAutorizzazione = "processo di autorizzazione ["

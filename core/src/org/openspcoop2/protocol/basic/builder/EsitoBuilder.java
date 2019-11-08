@@ -288,6 +288,15 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 						}
 					}
 				}
+				
+				// Eventuale possibilità di definire un errore generico sulle classi custom (es. handler)
+				Object p = context.get(org.openspcoop2.core.constants.Costanti.ERRORE_GENERICO);
+				if(p!=null && p instanceof String){
+					String pS = (String) p;
+					if("true".equalsIgnoreCase(pS)) {
+						return esitoErrore5xx;
+					}
+				}
 			}
 			
 			

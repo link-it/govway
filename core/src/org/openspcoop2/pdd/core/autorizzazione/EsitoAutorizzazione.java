@@ -53,6 +53,8 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 		
 	private Exception eccezioneProcessamento;
 	
+	private boolean esitoPresenteInCache = false;
+	
 	private boolean noCache = false;
 	
 	private OpenSPCoop2Message errorMessage;
@@ -114,6 +116,13 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 		else{
 			return "NON_AUTORIZZATO";
 		}
+	}
+	
+	public boolean isEsitoPresenteInCache() {
+		return this.esitoPresenteInCache;
+	}
+	public void setEsitoPresenteInCache(boolean esitoPresenteInCache) {
+		this.esitoPresenteInCache = esitoPresenteInCache;
 	}
 	
 	public boolean isNoCache() {

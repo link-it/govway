@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneContenutiBuiltIn;
@@ -43,7 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenutoBuiltIn extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
+public class AutorizzazioneContenutoBuiltIn extends AbstractAutorizzazioneContenutoBase {
 
 	@Override
 	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {

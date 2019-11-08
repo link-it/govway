@@ -1459,8 +1459,9 @@ public class HTTPS {
 				msg2 = msg2.replace(":@AZIONE@", "");
 				msg2 = msg2.replace("_@AZIONE@", "");
 				msg2 = msg2.replace("@PDD@", "");
+				String msg2_inCache = msg2.replace(" fallita", " fallita (in cache)");
 				Reporter.log("Controllo Messaggio (id:"+id+") msg["+msg2+"]");
-				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg2));
+				Assert.assertTrue(dataMsg.isTracedMessaggio(id, msg2) || dataMsg.isTracedMessaggio(id, msg2_inCache));
 				
 			}
 			
@@ -1651,8 +1652,15 @@ public class HTTPS {
 				msg2 = msg2.replace("@PDD@", " credenzialiMittente ( SSL-Subject 'CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it' )");
 				String XML = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [CN=Soggetto2, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it])";
 				String DB = msg2 + " (subject estratto dal certificato client [CN=Soggetto1, OU=test, O=openspcoop.org, L=Pisa, ST=Italy, C=IT, EMAILADDRESS=apoli@link.it] diverso da quello registrato per la porta di dominio PdDSoggetto2 del mittente [/l=Pisa/st=Italy/ou=test/emailaddress=apoli@link.it/o=openspcoop.org/c=IT/cn=Soggetto2/])";
+				String XML_inCache = XML.replace(" fallita", " fallita (in cache)");
+				String DB_inCache = DB.replace(" fallita", " fallita (in cache)");
 				Reporter.log("Controllo Messaggio (id:"+id+") msgXML["+XML+"] msgDB["+DB+"]");
-				Assert.assertTrue( dataMsg.isTracedMessaggio(id, XML) || dataMsg.isTracedMessaggio(id, DB)  );
+				Assert.assertTrue( 
+						dataMsg.isTracedMessaggio(id, XML) || 
+						dataMsg.isTracedMessaggio(id, DB)  ||
+						dataMsg.isTracedMessaggio(id, XML_inCache) || 
+						dataMsg.isTracedMessaggio(id, DB_inCache)  
+						);
 			}
 			
 		}catch(Exception e){

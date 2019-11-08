@@ -22,30 +22,29 @@
 
 
 
-package org.openspcoop2.pdd.core.autorizzazione;
+package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.ICore;
+import org.openspcoop2.pdd.core.AbstractCore;
 
 /**
- * Interfaccia che definisce un processo di autorizzazione dei contenuti
+ * AbstractAutorizzazioneContenutoBase
  *
  * @author Andrea Poli <apoli@link.it>
  * @author $Author$
  * @version $Rev$, $Date$
  */
 
-public interface IAutorizzazioneContenuto extends ICore {
+public abstract class AbstractAutorizzazioneContenutoBase extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
 
-    /**
-     * Indicazione se il risultato deve essere salvato in cache
-     * 
-     * @return Indicazione se il risultato deve essere salvato in cache
-     */
-    public boolean saveAuthorizationResultInCache();
-	
-    public default void cleanPostAuth(OpenSPCoop2Message message) {
-    	// nop
-    }
-    
+	@Override
+	public boolean saveAuthorizationResultInCache() {
+		return false;
+	}
+
+	@Override
+	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) {
+		return null;
+	}
 }
+

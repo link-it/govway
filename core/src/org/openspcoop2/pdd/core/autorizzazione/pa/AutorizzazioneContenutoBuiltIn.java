@@ -29,7 +29,6 @@ import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazioneContenutiBuiltIn;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -44,7 +43,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenutoBuiltIn extends AbstractCore implements IAutorizzazioneContenutoPortaApplicativa {
+public class AutorizzazioneContenutoBuiltIn extends AbstractAutorizzazioneContenutoBase {
 
 	@Override
 	public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException {

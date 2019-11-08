@@ -1,3 +1,11 @@
+2019-11-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-921
+	Nelle autorizzazioni per contenuti custom è adesso possibile utilizzare la cache fornita sul gateway e dedicata alle autorizzazioni.
+	E' stata inoltre aggiunta l'informazione nei diagnostici se l'esito dell'autenticazione, dell'autorizzazione e 
+	dell'autorizzazione per contenuti è stata prelevata dalla cache o è stata elaborata durante la transazione stessa.
+
 2019-11-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayCore, ProtocolloSPCoop]

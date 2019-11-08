@@ -47,9 +47,11 @@ import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.autorizzazione.pa.DatiInvocazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.EsitoAutorizzazionePortaApplicativa;
+import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazioneContenutoPortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pa.IAutorizzazionePortaApplicativa;
 import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
+import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
@@ -299,8 +301,15 @@ public class GestoreAutorizzazione {
 
 	}
 	
+	
+	
+	
+	
+	
+	
+	/*----------------- AUTORIZZAZIONE --------------------*/
+	
 
-	// NOTA: le chiamate ad autorizzazione per contenuto non possono essere cachete, poiche' variano sempre i contenuti.
 	public static EsitoAutorizzazionePortaDelegata verificaAutorizzazionePortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
 	 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg, Logger log) throws Exception{
 		
@@ -362,7 +371,9 @@ public class GestoreAutorizzazione {
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
-							return (EsitoAutorizzazionePortaDelegata) response.getObject();
+							EsitoAutorizzazionePortaDelegata esito = (EsitoAutorizzazionePortaDelegata) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
 						}else if(response.getException()!=null){
 							GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
 							throw (Exception) response.getException();
@@ -478,7 +489,9 @@ public class GestoreAutorizzazione {
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
-							return (EsitoAutorizzazionePortaApplicativa) response.getObject();
+							EsitoAutorizzazionePortaApplicativa esito = (EsitoAutorizzazionePortaApplicativa) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
 						}else if(response.getException()!=null){
 							GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
 							throw (Exception) response.getException();
@@ -930,5 +943,230 @@ public class GestoreAutorizzazione {
 		
     	
     	return esito;
+    }
+    
+    
+    
+    
+    
+    
+    
+    /*----------------- AUTORIZZAZIONE CONTENUTO --------------------*/
+	
+
+	// NOTA: le chiamate ad autorizzazione per contenuto possono essere cachate solamente se viene definito un suffix, 
+    //       poiche' altrimenti variano sempre i contenuti e non finiscono nella chiave di cache.
+	public static EsitoAutorizzazionePortaDelegata verificaAutorizzazioneContenutoPortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
+	 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg, Logger log) throws Exception{
+		
+		checkDatiPortaDelegataAuthContenuto(datiInvocazione, msg);
+    	
+		EsitoAutorizzazionePortaDelegata esito = _verificaAutorizzazioneContenutoPortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, msg);
+    	if(esito.isAutorizzato()==false) {
+    		return esito;
+    	}
+		
+    	return esito;
+    	
+	}
+	
+    private static EsitoAutorizzazionePortaDelegata _verificaAutorizzazioneContenutoPortaDelegata(String tipoAutorizzazione, DatiInvocazionePortaDelegata datiInvocazione,
+ 		  PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+    	
+    	IAutorizzazioneContenutoPortaDelegata auth = newInstanceAuthContenutoPortaDelegata(tipoAutorizzazione, pddContext, protocolFactory);
+    	
+    	try {
+	    	if(GestoreAutorizzazione.cacheAutorizzazione==null || !auth.saveAuthorizationResultInCache()){
+	    		return auth.process(datiInvocazione, msg);
+			}
+	    	else{
+	    		String keyCache = buildCacheKeyContenuto(true, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione, msg) );
+	
+				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+							EsitoAutorizzazionePortaDelegata esito = (EsitoAutorizzazionePortaDelegata) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
+						}else if(response.getException()!=null){
+							GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
+	
+					// Effettuo la query
+					GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) ricerco nella configurazione...");
+					EsitoAutorizzazionePortaDelegata esito = auth.process(datiInvocazione, msg);
+	
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esito!=null){
+						if(!esito.isNoCache()){
+							GestoreAutorizzazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esito);
+								GestoreAutorizzazione.cacheAutorizzazione.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreAutorizzazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+						return esito;
+					}else{
+						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaDelegata.process) ha ritornato un valore di esito null");
+					}
+				}
+	    	}
+    	}finally {
+    		if(msg!=null) {
+    			auth.cleanPostAuth(msg);
+    		}
+    	}
+    }
+	
+    public static EsitoAutorizzazionePortaApplicativa verificaAutorizzazioneContenutoPortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg, Logger log) throws Exception{
+    	  
+    	checkDatiPortaApplicativaAuthContenuto(datiInvocazione, msg);
+    
+    	EsitoAutorizzazionePortaApplicativa esito = _verificaAutorizzazioneContenutoPortaApplicativa(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, msg);
+    	if(esito.isAutorizzato()==false) {
+    		return esito;
+    	}
+    	
+    	return esito;
+    	
+    }
+    private static EsitoAutorizzazionePortaApplicativa _verificaAutorizzazioneContenutoPortaApplicativa(String tipoAutorizzazione, DatiInvocazionePortaApplicativa datiInvocazione,
+    		PdDContext pddContext,IProtocolFactory<?> protocolFactory, OpenSPCoop2Message msg) throws Exception{
+    	
+    	IAutorizzazioneContenutoPortaApplicativa auth = newInstanceAuthContenutoPortaApplicativa(tipoAutorizzazione, pddContext, protocolFactory);
+    	
+    	try {
+	    	if(GestoreAutorizzazione.cacheAutorizzazione==null || !auth.saveAuthorizationResultInCache()){
+	    		return auth.process(datiInvocazione, msg);
+			}
+	    	else{
+	    		String keyCache = buildCacheKeyContenuto(false, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione, msg));
+	
+				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+							EsitoAutorizzazionePortaApplicativa esito = (EsitoAutorizzazionePortaApplicativa) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
+						}else if(response.getException()!=null){
+							GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+							throw (Exception) response.getException();
+						}else{
+							GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
+	
+					// Effettuo la query
+					GestoreAutorizzazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) ricerco nella configurazione...");
+					EsitoAutorizzazionePortaApplicativa esito = auth.process(datiInvocazione, msg);
+	
+					// Aggiungo la risposta in cache (se esiste una cache)	
+					// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+					// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+					// - impostare il noCache a true
+					if(esito!=null){
+						if(!esito.isNoCache()){
+							GestoreAutorizzazione.logger.info("Aggiungo oggetto ["+keyCache+"] in cache");
+							try{	
+								org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+								responseCache.setObject(esito);
+								GestoreAutorizzazione.cacheAutorizzazione.put(keyCache,responseCache);
+							}catch(UtilsException e){
+								GestoreAutorizzazione.logger.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+							}
+						}
+						return esito;
+					}else{
+						throw new AutorizzazioneException("Metodo (GestoreAutorizzazione.autorizzazionePortaApplicativa.process) ha ritornato un valore di esito null");
+					}
+				}
+	    	}
+    	}finally {
+    		if(msg!=null) {
+    			auth.cleanPostAuth(msg);
+    		}
+    	}
+    }
+    
+    private static void checkDatiPortaDelegataAuthContenuto(DatiInvocazionePortaDelegata datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException{
+    	
+    	checkDatiPortaDelegata(datiInvocazione);
+		
+    }
+    
+    private static void checkDatiPortaApplicativaAuthContenuto(DatiInvocazionePortaApplicativa datiInvocazione, OpenSPCoop2Message msg) throws AutorizzazioneException{
+    	
+    	checkDatiPortaApplicativa(datiInvocazione);
+    	
+    }
+    
+    private static String buildCacheKeyContenuto(boolean portaDelegata, String tipoAutorizzazione, String keyCache, String suffixKeyCache) throws AutorizzazioneException{
+    	StringBuffer bf = new StringBuffer();
+    	
+    	if(portaDelegata)
+    		bf.append("PD ");
+    	else
+    		bf.append("PA ");
+    	
+    	bf.append(" AuthContenuti:").append(tipoAutorizzazione).append(" ");
+    	
+    	bf.append(keyCache);
+    	
+    	if(suffixKeyCache!=null && !"".equals(suffixKeyCache)){
+    		bf.append(" ");
+    		bf.append(suffixKeyCache);
+    	}
+    	else {
+    		throw new AutorizzazioneException("Per salvare in cache l'esito dell'autorizzazione sui contenuti è richiesta la definizione di un suffisso per la chiave");
+    	}
+    	
+    	return bf.toString();
+    }
+    
+    private static IAutorizzazioneContenutoPortaDelegata newInstanceAuthContenutoPortaDelegata(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
+    	String classType = null; 
+		IAutorizzazioneContenutoPortaDelegata auth = null;
+		try{
+			classType = GestoreAutorizzazione.className.getAutorizzazioneContenutoPortaDelegata(tipoAutorizzazione);
+			auth = (IAutorizzazioneContenutoPortaDelegata) Loader.getInstance().newInstance(classType);
+			AbstractCore.init(auth, pddContext, protocolFactory);
+			return auth;
+		}catch(Exception e){
+			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
+					"] da utilizzare per l'autorizzazione dei contenuti via PD: "+e.getMessage(),e);
+		}
+    }
+    
+    private static IAutorizzazioneContenutoPortaApplicativa newInstanceAuthContenutoPortaApplicativa(String tipoAutorizzazione,PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws AutorizzazioneException{
+    	String classType = null; 
+    	IAutorizzazioneContenutoPortaApplicativa auth = null;
+		try{
+			classType = GestoreAutorizzazione.className.getAutorizzazioneContenutoPortaApplicativa(tipoAutorizzazione);
+			auth = (IAutorizzazioneContenutoPortaApplicativa) Loader.getInstance().newInstance(classType);
+			AbstractCore.init(auth, pddContext, protocolFactory);
+			return auth;
+		}catch(Exception e){
+			throw new AutorizzazioneException("Riscontrato errore durante il caricamento della classe ["+classType+
+					"] da utilizzare per l'autorizzazione dei contenuti delle buste via PA: "+e.getMessage(),e);
+		}
     }
 }

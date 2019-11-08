@@ -27,7 +27,6 @@ package org.openspcoop2.pdd.core.autorizzazione.pd;
 import java.io.ByteArrayOutputStream;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 
@@ -39,7 +38,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
  * @version $Rev$, $Date$
  */
 
-public class AutorizzazioneContenutoOK extends AbstractCore implements IAutorizzazioneContenutoPortaDelegata {
+public class AutorizzazioneContenutoOK extends AbstractAutorizzazioneContenutoBase {
 
 	@Override
 	public EsitoAutorizzazionePortaDelegata process(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {

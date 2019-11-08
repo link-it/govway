@@ -49,4 +49,11 @@ public interface IAutorizzazioneContenutoPortaApplicativa extends IAutorizzazion
      */
     public EsitoAutorizzazionePortaApplicativa process(DatiInvocazionePortaApplicativa datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
     
+    /**
+     * Permette di personalizzare la chiave utilizzata per salvare il risultato nella cache
+     * 
+     * @param datiInvocazione Dati di invocazione
+     * @return Suffisso che viene aggiunto alla chiave
+     */
+    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
 }

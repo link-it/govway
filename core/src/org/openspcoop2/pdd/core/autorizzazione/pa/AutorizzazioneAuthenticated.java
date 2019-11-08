@@ -82,7 +82,10 @@ public class AutorizzazioneAuthenticated extends AbstractAutorizzazioneBase {
     		}
     		else {
     		
-    			if(this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
+    			boolean isSupportoAutenticazioneSoggetti = this.getProtocolFactory().createProtocolConfiguration().isSupportoAutenticazioneSoggetti();
+    			boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni = this.getProtocolFactory().createProtocolConfiguration().isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni();
+    			
+    			if(isSupportoAutenticazioneSoggetti && !isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazioni) {
     				
     				esito.setAutorizzato(true);
     			

@@ -351,7 +351,9 @@ public class GestoreAutenticazione {
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
-							return (EsitoAutenticazionePortaDelegata) response.getObject();
+							EsitoAutenticazionePortaDelegata esito = (EsitoAutenticazionePortaDelegata) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
 						}else if(response.getException()!=null){
 							GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
 							throw (Exception) response.getException();
@@ -415,7 +417,9 @@ public class GestoreAutenticazione {
 					if(response != null){
 						if(response.getObject()!=null){
 							GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
-							return (EsitoAutenticazionePortaApplicativa) response.getObject();
+							EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) response.getObject();
+							esito.setEsitoPresenteInCache(true);
+							return esito;
 						}else if(response.getException()!=null){
 							GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
 							throw (Exception) response.getException();
