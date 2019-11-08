@@ -1,3 +1,8 @@
+2019-11-08  Andrea Poli <apoli@link.it>
+
+	Corrette configurazioni esistenti SPCoop, poichè è stata aggiunta la possibilità di impostare l'autenticazione sulle erogazioni.
+	UPDATE porte_applicative SET autenticazione='none' WHERE (autenticazione='' OR autenticazione is null) AND tipo_servizio IN ('spc','test','url','wsdl','ldap','uddi','ebXMLRegistry');
+
 2019-09-25  Andrea Poli <apoli@link.it>
 
 	Aggiunte informazioni associate ad una transazione

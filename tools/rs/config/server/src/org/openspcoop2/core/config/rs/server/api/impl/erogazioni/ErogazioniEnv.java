@@ -70,6 +70,7 @@ public class ErogazioniEnv extends Environment {
 	public final List<Soggetto> soggettiCompatibili = null;
 	  
 	public final boolean isSupportatoAutenticazioneSoggetti;
+	public final boolean isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione;
 	public final IDAccordoFactory idAccordoFactory;
 	public final IDServizioFactory idServizioFactory;	
 	
@@ -92,6 +93,7 @@ public class ErogazioniEnv extends Environment {
 		this.erogazioniHelper = new ErogazioniHelper(this.stationCore, this.requestWrapper, this.pd, req.getSession());
 		
 		this.isSupportatoAutenticazioneSoggetti = this.soggettiCore.isSupportatoAutenticazioneSoggetti(this.tipo_protocollo);
+		this.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione = this.soggettiCore.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione(this.tipo_protocollo);
 		this.idAccordoFactory = IDAccordoFactory.getInstance();
 		this.idServizioFactory = IDServizioFactory.getInstance();
 

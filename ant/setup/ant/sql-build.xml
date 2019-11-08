@@ -189,7 +189,7 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 </concat>
 
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '001-001:Versione Precedente:antinstaller_versione_precedente', '@VALORE@');
-				</concat>
+</concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_versione_precedente}"/>
 			</then>
 		</if>

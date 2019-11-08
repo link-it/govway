@@ -984,8 +984,12 @@ public class ErogazioniApiHelper {
         if (isRichiedente) {
         	
             // Se ho abilitata l'autorizzazione puntuale, devo aver anche abilitata l'autenticazione
-        	if ( env.isSupportatoAutenticazioneSoggetti && (authn == null || authn.getTipo() == TipoAutenticazioneNewEnum.DISABILITATO) )
-        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE);
+        	if ( env.isSupportatoAutenticazioneSoggetti && 
+        			(authn == null || authn.getTipo() == TipoAutenticazioneNewEnum.DISABILITATO) ) {
+        		if(!generaPortaApplicativa || !env.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione) {
+        			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE);
+        		}
+        	}
        	
         	if ( !StringUtils.isEmpty(configAuthz.getSoggetto()) ) {
         		

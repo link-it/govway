@@ -364,11 +364,11 @@ public class SoggettiHelper extends ConnettoriHelper {
 		if (!isSupportatoIdentificativoPorta) {
 			de.setType(DataElementType.HIDDEN);
 		}else{
-			if (this.isModalitaStandard()) {
-				de.setType(DataElementType.HIDDEN);
-			}else{
-				de.setType(DataElementType.TEXT_EDIT);
-			}
+//			if (this.isModalitaStandard()) {
+//				de.setType(DataElementType.HIDDEN);
+//			}else{
+			de.setType(DataElementType.TEXT_EDIT);
+			//}
 		}
 		de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_CODICE_PORTA);
 		de.setSize(this.getSize());

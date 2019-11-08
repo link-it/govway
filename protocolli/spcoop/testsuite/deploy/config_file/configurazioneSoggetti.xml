@@ -4064,14 +4064,14 @@
             <servizio tipo="spc" nome="PortTypeOneWay" />
             <azione nome="testOneWay" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="onewayLoopbackPortType">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="onewayLoopbackPortType">
             <servizio tipo="spc" nome="PortTypeOneWay" />
             <azione nome="testOneWay" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4090,7 +4090,7 @@
         
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono_InvocazionePerRifMsg">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioSincrono_InvocazionePerRifMsg">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -4492,7 +4492,7 @@
         <!-- Profili di Collaborazione OneWay/Sincrono/AsincronoSimmetrico/AsincronoAsimmetrico -->
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -4503,7 +4503,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay stateless -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneStateless" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneStateless" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="stateless" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4511,7 +4511,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="OnewayCompletamenteNullRisposta" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="OnewayCompletamenteNullRisposta" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="OnewayCompletamenteNullRisposta" />
             <servizio-applicativo nome="govwayTestSuite_InputOnly" />
@@ -4519,7 +4519,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_StatelessAffidabile" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_StatelessAffidabile" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="statelessConRiscontri" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4529,7 +4529,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioSincrono" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -4552,7 +4552,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono stateful -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincronoStateful" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioSincronoStateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="stateful" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4564,7 +4564,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato"
             stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -4578,7 +4578,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_Stateful" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_Stateful" 
             ricevuta-asincrona-simmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -4592,7 +4592,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona"
             stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincrona" />
@@ -4605,7 +4605,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_Stateful"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_Stateful"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincronaStateful" />
@@ -4618,7 +4618,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato"
             stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -4632,7 +4632,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_Stateful" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_Stateful" 
             ricevuta-asincrona-asimmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -4646,7 +4646,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona"
             stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincrona" />
@@ -4659,7 +4659,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_Stateful"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_Stateful"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincronaStateful" />
@@ -4673,7 +4673,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaAsincrona" />
@@ -4687,7 +4687,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -4714,7 +4714,7 @@
         <!-- Profili di Collaborazione OneWay/Sincrono/AsincronoSimmetrico/AsincronoAsimmetrico per port types e operation -->
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeOneWay">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeOneWay">
             <servizio tipo="spc" nome="PortTypeOneWay" />
             <azione nome="testOneWay" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4724,7 +4724,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeSincrono">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeSincrono">
             <servizio tipo="spc" nome="PortTypeSincrono" />
             <azione nome="testSincrono" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4736,7 +4736,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoSimmetricoRichiesta_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoSimmetricoRichiesta_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="PortTypeAsincronoSimmetricoRichiesta" />
             <azione nome="testAsincronoSimmetrico_richiestaAsincrona" />
@@ -4749,7 +4749,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoSimmetricoRichiesta_richiestaSincrona">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoSimmetricoRichiesta_richiestaSincrona">
             <servizio tipo="spc" nome="PortTypeAsincronoSimmetricoRichiesta" />
             <azione nome="testAsincronoSimmetrico_richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAS_Sincrono" />
@@ -4761,7 +4761,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetricoRichiesta_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetricoRichiesta_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="PortTypeAsincronoAsimmetricoRichiesta" />
             <azione nome="testAsincronoAsimmetrico_richiestaAsincrona" />
@@ -4774,7 +4774,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetricoRichiesta_richiestaSincrona">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetricoRichiesta_richiestaSincrona">
             <servizio tipo="spc" nome="PortTypeAsincronoAsimmetricoRichiesta" />
             <azione nome="testAsincronoAsimmetrico_richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -4787,7 +4787,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="PortTypeAsincronoAsimmetrico" />
             <azione nome="testAsincronoAsimmetrico_richiestaAsincrona" />
@@ -4801,7 +4801,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_PortTypeAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona">
             <servizio tipo="spc" nome="PortTypeAsincronoAsimmetrico" />
             <azione nome="testAsincronoAsimmetrico_richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -4831,7 +4831,7 @@
         <!-- Consegna Affidabile (utilizzo dei riscontri)
             Funzionalità utilizzabile solo con il profilo di collaborazione OneWay
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabile">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabile">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Affidabile" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -4841,7 +4841,7 @@
         </porta-applicativa>
         
         <!-- Filtro Duplicati -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneConFiltroDuplicati">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneConFiltroDuplicati">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicati" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4851,7 +4851,7 @@
         </porta-applicativa>
         
         <!-- ConsegnaAffidabile + FiltroDuplicati per consegna ESATTAMENTE UNA VOLTA -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConFiltroDuplicati">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConFiltroDuplicati">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConFiltroDuplicati" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4861,7 +4861,7 @@
         </porta-applicativa>
         
         <!-- Consegna in ordine, funzionalita' utilizzabile solo con il profilo di collaborazione OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="consegnaInOrdine">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="consegnaInOrdine">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="ConsegnaInOrdine" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4871,7 +4871,7 @@
         </porta-applicativa>
         
         <!-- Scadenza Busta -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConScadenza">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConScadenza">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConScadenza" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4881,7 +4881,7 @@
         </porta-applicativa>
         
         <!-- IDCollaborazione -->
-        <porta-applicativa gestione-manifest="abilitato" nome="idCollaborazione">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="idCollaborazione">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="Collaborazione" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4902,7 +4902,7 @@
         <!-- message-security  -->
         
         <!-- Funzionalita' Timestamp/Encrypt/Signature, HelloWorld -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSS_HelloWorld">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSS_HelloWorld">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="WSS" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4927,7 +4927,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' Timestamp/Encrypt/Signature, HelloWorld non autorizzato -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSS_HelloWorldNonAutorizzato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSS_HelloWorldNonAutorizzato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="WSSNonAutorizzato" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4952,7 +4952,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' di Timestamp -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSTimestamp">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSTimestamp">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSTimestamp" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -4976,7 +4976,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' di Encrypt -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5005,7 +5005,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptP12">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5032,7 +5032,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5063,7 +5063,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContent">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContent">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsContent" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -5094,7 +5094,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElement">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElement">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsElement" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5125,7 +5125,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContentOp2Format">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsContentOp2Format">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsContentOp2Format" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5156,7 +5156,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElementOp2Format">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsElementOp2Format">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsElementOp2Format" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5187,7 +5187,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsOp2FormatOneOnly">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptAttachmentsOp2FormatOneOnly">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptAttachmentsOp2FormatOneOnly" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5218,7 +5218,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptP12Attachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptP12Attachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptP12Attachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5247,7 +5247,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptLocalForwardSoloRichiesta">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptLocalForwardSoloRichiesta">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptLocalForwardSoloRichiesta" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -5267,7 +5267,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' di Signature -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5298,7 +5298,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureP12">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5329,7 +5329,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5361,7 +5361,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContent">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContent">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContent" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5393,7 +5393,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElement">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElement">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElement" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5425,7 +5425,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContentOp2Format">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsContentOp2Format">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsContentOp2Format" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5457,7 +5457,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElementOp2Format">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsElementOp2Format">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsElementOp2Format" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5489,7 +5489,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsOp2FormatOneOnly">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureAttachmentsOp2FormatOneOnly">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureAttachmentsOp2FormatOneOnly" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5521,7 +5521,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureP12Attachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureP12Attachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureP12Attachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5553,7 +5553,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureLocalForwardSolaRichiesta">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureLocalForwardSolaRichiesta">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForwardSolaRichiesta" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -5573,7 +5573,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureLocalForward">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureLocalForward">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureLocalForward" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5606,7 +5606,7 @@
         
 	<!-- Funzionalita' Incrociate -->
 	
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureEncrypt">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureEncrypt">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureEncrypt" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5642,7 +5642,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptSignature">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptSignature">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptSignature" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5678,7 +5678,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureEncryptAttachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureEncryptAttachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureEncryptAttachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5714,7 +5714,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptSignatureAttachments">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptSignatureAttachments">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptSignatureAttachments" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5752,7 +5752,7 @@
 
 
         <!-- Funzionalita' Timestamp/Encrypt/Signature, con utilizzo del certificato presente nella richiesta -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSS">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSS" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5792,7 +5792,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' Timestamp/Encrypt/Signature, in uno scenario OneWay con Riscontri -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConFiltroDuplicatiWSS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneAffidabileConFiltroDuplicatiWSS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="AffidabileConFiltroDuplicatiWSS" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -5835,7 +5835,7 @@
         <!-- Funzionalita' Timestamp/Encrypt/Signature, in uno scenario di Richiesta Asincrona Simmetrica. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincronaWSS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincronaWSS">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="WSS" />
             <servizio-applicativo nome="govwayTestSuiteAS_Sincrono" /> 
@@ -5876,7 +5876,7 @@
             in uno scenario di Richiesta Asincrona Asimmetrica, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincronaWSS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincronaWSS">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="WSS" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -5915,7 +5915,7 @@
         
         
         <!-- Funzionalita' di Encrypt, con configurazione errata. Deve essere tornato un codice EGOV_IT_200 -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncryptError">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncryptError">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncryptError" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -5945,7 +5945,7 @@
         </porta-applicativa>
         
         <!-- Funzionalita' di Signature, con configurazione errata. Deve essere tornato un codice EGOV_IT_202 -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignatureError">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignatureError">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignatureError" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -5981,7 +5981,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test1 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1_PdDActorMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1_PdDActorMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Signature_MustUnderstand1" />
@@ -6012,7 +6012,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1_PdDActorMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1_PdDActorMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1_PdDActorMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_MustUnderstand1" />
@@ -6050,7 +6050,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test2 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Signature_MustUnderstand1" />
@@ -6081,7 +6081,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_MustUnderstand1" />
@@ -6119,7 +6119,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test3 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientActorClient_PdDMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientActorClient_PdDMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Signature_ActorClient" />
@@ -6150,7 +6150,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientActorClient_PdDMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientActorClient_PdDMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_ActorClient" />
@@ -6187,7 +6187,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test4 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientActorClient_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientActorClient_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Signature_ActorClient" />
@@ -6218,7 +6218,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientActorClient_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientActorClient_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_ActorClient" />
@@ -6255,7 +6255,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test5 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1eActorClient_PdDMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1eActorClient_PdDMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1eActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Signature_MustUnderstand1_ActorClient" />
@@ -6286,7 +6286,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1eActorClient_PdDMustUnderstand1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1eActorClient_PdDMustUnderstand1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1eActorClient_PdDMustUnderstand1" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_MustUnderstand1_ActorClient" />
@@ -6323,7 +6323,7 @@
             Test Integrazione WSSClient con WSSPortaDiDominio 
             (Bug#18): Test6 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSEncrypt_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSEncrypt_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Signature_MustUnderstand1_ActorClient" />
@@ -6354,7 +6354,7 @@
             </message-security>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSignature_ClientMustUnderstand1eActorClient_PdDActorOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuite_Encrypt_MustUnderstand1_ActorClient" />
@@ -6389,7 +6389,7 @@
         
         <!-- WSSecurity, test di annidamento funzionalita -->
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSS_Annidamento">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSS_Annidamento">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSAnnidamento" />
             <servizio-applicativo nome="govwayTestSuite_SignatureAndEncrypt_MustUnderstand1_ActorClient" />
@@ -6441,7 +6441,7 @@
 
 	<!-- Funzionalita' SAML 2.0 -->	
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20Unsigned">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20Unsigned">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20Unsigned" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6458,7 +6458,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20Signed">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20Signed">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20Signed" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6475,7 +6475,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6492,7 +6492,7 @@
             </message-security>
         </porta-applicativa>
 
- 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedSendKey">
+ 	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedSendKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedSendKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6509,7 +6509,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12SendKey">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedP12SendKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedP12SendKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6526,7 +6526,7 @@
             </message-security>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKey">
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedHolderOfKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6535,7 +6535,7 @@
 	    </soggetti>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKeyP12">
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedHolderOfKeyP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedHolderOfKeyP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6544,7 +6544,7 @@
 	    </soggetti>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlySubject">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20OnlySubject">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlySubject" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6561,7 +6561,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthn">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthn">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlyAuthn" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6578,7 +6578,7 @@
             </message-security>
         </porta-applicativa>
 
- 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthz">
+ 	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20OnlyAuthz">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20OnlyAuthz" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6595,7 +6595,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20SignedDetachWSSDisable">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20SignedDetachWSSDisable">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20SignedDetachWSSDisable" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6615,7 +6615,7 @@
 
 	<!-- Funzionalita' SAML 2.0 (XACML-Policy) -->
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleOk">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleOk">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyLocaleOk" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6633,7 +6633,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleKo">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyLocaleKo">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyLocaleKo" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6651,7 +6651,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaOk">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaOk">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyRemotaOk" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6671,7 +6671,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaKo">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml20XACMLPolicyRemotaKo">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml20XACMLPolicyRemotaKo" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6694,7 +6694,7 @@
 
 	<!-- Funzionalita' SAML 1.1 -->	
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11Unsigned">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11Unsigned">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11Unsigned" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6711,7 +6711,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11Signed">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11Signed">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11Signed" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6728,7 +6728,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6745,7 +6745,7 @@
             </message-security>
         </porta-applicativa>
 
- 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedSendKey">
+ 	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedSendKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedSendKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6762,7 +6762,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12SendKey">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedP12SendKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedP12SendKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6779,7 +6779,7 @@
             </message-security>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKey">
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKey">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedHolderOfKey" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6788,7 +6788,7 @@
 	    </soggetti>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKeyP12">
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedHolderOfKeyP12">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedHolderOfKeyP12" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6797,7 +6797,7 @@
 	    </soggetti>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlySubject">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11OnlySubject">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlySubject" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6814,7 +6814,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthn">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthn">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlyAuthn" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6831,7 +6831,7 @@
             </message-security>
         </porta-applicativa>
 
- 	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthz">
+ 	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11OnlyAuthz">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11OnlyAuthz" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6848,7 +6848,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11SignedDetachWSSDisable">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11SignedDetachWSSDisable">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11SignedDetachWSSDisable" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6868,7 +6868,7 @@
 
 	<!-- Funzionalita' SAML 1.1 (XACML-Policy) -->
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleOk">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleOk">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyLocaleOk" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6886,7 +6886,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleKo">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyLocaleKo">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyLocaleKo" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6904,7 +6904,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaOk">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaOk">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyRemotaOk" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6924,7 +6924,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaKo">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSSaml11XACMLPolicyRemotaKo">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSaml11XACMLPolicyRemotaKo" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6947,7 +6947,7 @@
 
 	<!-- Username Token -->
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenDigest">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSUsernameTokenDigest">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenDigest" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6964,7 +6964,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenText">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSUsernameTokenText">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenText" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6981,7 +6981,7 @@
             </message-security>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenNoPassword">
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSUsernameTokenNoPassword">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenNoPassword" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -6998,7 +6998,7 @@
             </message-security>
         </porta-applicativa>
 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_WSSUsernameTokenSignature">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_WSSUsernameTokenSignature">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSUsernameTokenSignature" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -7028,7 +7028,7 @@
         <!-- Porte Applicative verso servizio di tracer: test di overhead -->
         
         <!-- OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PAOneWayOverhead">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PAOneWayOverhead">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Overhead" />
             <servizio-applicativo nome="TRACE_ECHO" /> 
@@ -7038,7 +7038,7 @@
         </porta-applicativa>
         
         <!-- Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PASincronoOverhead">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PASincronoOverhead">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="Overhead" />
             <servizio-applicativo nome="TRACE_ECHO" /> 
@@ -7058,7 +7058,7 @@
         <!-- Funzionalita' di integrazione della porta di dominio OpenSPCoop -->
         
 	<!-- ConsegnaApplicativa con connettore di tipo FILE -->
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFile" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeFile" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFile" />
             <servizio-applicativo nome="serializeFile" />
@@ -7066,7 +7066,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFileAndHeaders" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeFileAndHeaders" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFileAndHeaders" />
             <servizio-applicativo nome="serializeFileAndHeaders" />
@@ -7074,7 +7074,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeDynamicFile" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeDynamicFile" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeDynamicFile" />
             <servizio-applicativo nome="serializeDynamicFile" />
@@ -7082,7 +7082,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeFile_sbustamentoSOAP" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeFile_sbustamentoSOAP" stateless="abilitato" >
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="serializeFile_sbustamentoSOAP" />
             <servizio-applicativo nome="serializeFile_sbustamentoSOAP" />
@@ -7091,7 +7091,7 @@
 	    </soggetti>
         </porta-applicativa>
 
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeAndReturnFile" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFile" />
             <servizio-applicativo nome="serializeAndReturnFile" />
@@ -7099,7 +7099,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAndHeaders" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAndHeaders" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFileAndHeaders" />
             <servizio-applicativo nome="serializeAndReturnFileAndHeaders" />
@@ -7107,7 +7107,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnDynamicFile" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeAndReturnDynamicFile" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnDynamicFile" />
             <servizio-applicativo nome="serializeAndReturnDynamicFile" />
@@ -7115,7 +7115,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFile_sbustamentoSOAP" stateless="abilitato" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeAndReturnFile_sbustamentoSOAP" stateless="abilitato" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFile_sbustamentoSOAP" />
             <servizio-applicativo nome="serializeAndReturnFile_sbustamentoSOAP" />
@@ -7123,7 +7123,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-	<porta-applicativa gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAsync" stateless="abilitato" integrazione="trasporto" >
+	<porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_serializeAndReturnFileAsync" stateless="abilitato" integrazione="trasporto" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="serializeAndReturnFileAsync" />
             <servizio-applicativo nome="serializeAndReturnFileAsync" />
@@ -7133,7 +7133,7 @@
         </porta-applicativa>
 
         <!-- ConsegnaApplicativa con connettore di tipo JMS -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnQueueJMS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendTextOnQueueJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnQueueJMS" />
             <servizio-applicativo nome="PubbTestQueueAsText" />
@@ -7141,7 +7141,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendBytesOnQueueJMS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendBytesOnQueueJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendBytesOnQueueJMS" />
             <servizio-applicativo nome="PubbTestQueueAsBytes" />
@@ -7149,7 +7149,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnTopicJMS" />
             <servizio-applicativo nome="PubbTestTopicAsText" />
@@ -7157,7 +7157,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendBytesOnTopicJMS">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendBytesOnTopicJMS">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendBytesOnTopicJMS" />
             <servizio-applicativo nome="PubbTestTopicAsBytes" />
@@ -7167,7 +7167,7 @@
         </porta-applicativa>
         
         <!-- Propagazione delle informazioni eGov al servizio applicativo -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioPropagazioneEGov_queue">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioPropagazioneEGov_queue">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnQueue" />
             <servizio-applicativo nome="PubbTestQueueAsText" />
@@ -7183,7 +7183,7 @@
             <proprieta nome="azioneQUEUE" valore="azione" />
             <proprieta nome="idQUEUE" valore="identificativo" />
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioPropagazioneEGov_topic">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioPropagazioneEGov_topic">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="PropagazioneInfoEGovOnTopic" />
             <servizio-applicativo nome="PubbTestTopicAsText" />
@@ -7201,7 +7201,7 @@
         </porta-applicativa>
         
         <!-- JMS sbustato -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnQueueJMS_sbustato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendTextOnQueueJMS_sbustato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnQueueJMS_Sbustato" />
             <servizio-applicativo nome="PubbTestQueueAsTextSbustato" />
@@ -7209,7 +7209,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS_sbustato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_sendTextOnTopicJMS_sbustato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="sendTextOnTopicJMS_Sbustato" />
             <servizio-applicativo nome="PubbTestTopicAsTextSbustato" />
@@ -7220,7 +7220,7 @@
         
         
         <!-- Consegna del contenuto applicativo, sbustato dallo scheletro Soap, al servizio applicativo -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_ConsegnaContenutiApplicativi">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_ConsegnaContenutiApplicativi">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Sbustamento" />
             <servizio-applicativo nome="govwayTestSuiteConSbustamento" />
@@ -7230,7 +7230,7 @@
         </porta-applicativa>
         
         <!-- Utilizzo del servizio di MessageBox offerto dall'Integration Manager -->
-        <porta-applicativa gestione-manifest="abilitato" nome="testIntegrationManager">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="testIntegrationManager">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="GetMessage" />
             <servizio-applicativo nome="silGop1" />
@@ -7242,7 +7242,7 @@
         </porta-applicativa>
         
         <!-- Utilizzo del servizio di MessageBox offerto dall'Integration Manager -->
-        <porta-applicativa gestione-manifest="abilitato" nome="testIntegrationManager2">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="testIntegrationManager2">
             <servizio tipo="spc" nome="MessageBox" />
             <servizio-applicativo nome="silGop1" />
 	    <soggetti>
@@ -7251,7 +7251,7 @@
         </porta-applicativa>
         
         <!-- Gestione dell'errore nella consegna verso un servizio applicativo -->
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneErroreconsegna">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneErroreconsegna">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="GestioneErroreConnettore" />
             <servizio-applicativo nome="govwayTestSuiteGestioneErrore" />
@@ -7264,7 +7264,7 @@
 
         
         <!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE WSDL)-->
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral">
             <servizio tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral" /> 
 	    <soggetti>
@@ -7273,7 +7273,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral" /> 
 	    <soggetti>
@@ -7282,7 +7282,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral" /> 
 	    <soggetti>
@@ -7291,7 +7291,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral">
             <servizio tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral" /> 
 	    <soggetti>
@@ -7300,7 +7300,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral">
             <servizio tipo="spc" nome="GestioneUtentiDocumentLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral" /> 
 	    <soggetti>
@@ -7309,7 +7309,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral">
             <servizio tipo="spc" nome="GestioneUtentiRPCLiteral" />
             <servizio-applicativo nome="TestGestioneUtentiRPCLiteral" /> 
 	    <soggetti>
@@ -7318,7 +7318,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded">
             <servizio tipo="spc" nome="GestioneUtentiRPCEncoded" />
             <servizio-applicativo nome="TestGestioneUtentiRPCEncoded" /> 
 	    <soggetti>
@@ -7327,7 +7327,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations">
             <servizio tipo="spc" nome="GestioneUtentiOverloadedOperations" />
             <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations" /> 
 	    <soggetti>
@@ -7336,7 +7336,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="interface"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido">
             <servizio tipo="spc" nome="GestioneUtentiStileIbrido" />
             <servizio-applicativo nome="TestGestioneUtentiStileIbrido" /> 
 	    <soggetti>
@@ -7348,7 +7348,7 @@
 
 
         <!-- Validazione XSD + Validazione WSDL + PortType multipli (VALIDAZIONE OPENSPCOOP)-->
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7357,7 +7357,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoUtentiWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7366,7 +7366,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoSimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7375,7 +7375,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="AggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestAggiornamentoAsincronoAsimmetricoWrappedDocumentLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7384,7 +7384,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiDocumentLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7393,7 +7393,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiRPCLiteral_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7402,7 +7402,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiRPCEncoded_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7411,7 +7411,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiOverloadedOperations_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7420,7 +7420,7 @@
             <validazione-contenuti-applicativi stato="abilitato" tipo="openspcoop"/>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop">
             <servizio tipo="spc" nome="GestioneUtentiStileIbrido_ValidazioneOpenSPCoop" />
             <servizio-applicativo nome="TestGestioneUtentiStileIbrido_ValidazioneOpenSPCoop" /> 
 	    <soggetti>
@@ -7440,7 +7440,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroErogatore">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroErogatore">
             <servizio tipo="spc" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
             <servizio-applicativo nome="govwayTestSuiteAA" />
@@ -7460,7 +7460,7 @@
         
         
         <!-- Test gestione SOAP Fault -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoOneway">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoOneway">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativo" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
@@ -7468,7 +7468,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoOnewayStateless" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoOnewayStateless" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testSoapFaultApplicativoStateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
@@ -7476,7 +7476,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincrono">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincrono">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testSoapFaultApplicativo" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
@@ -7484,7 +7484,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincronoStateless" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoSincronoStateless" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testSoapFaultApplicativoStateless" />
             <servizio-applicativo nome="SOAPFaultApplicativo" />
@@ -7492,7 +7492,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -7502,7 +7502,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona_Stateless" />
@@ -7511,7 +7511,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona" 
             ricevuta-asincrona-simmetrica="abilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -7521,7 +7521,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona_Stateless" />
@@ -7530,7 +7530,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -7540,7 +7540,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaAsincrona_Stateless" />
@@ -7549,7 +7549,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona" 
             ricevuta-asincrona-asimmetrica="abilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -7559,7 +7559,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testSOAPFaultApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testSoapFaultApplicativo_richiestaSincrona_Stateless" />
@@ -7570,7 +7570,7 @@
         </porta-applicativa>
         
         <!-- Test gestione Errore Connessione -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoOneway">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoOneway">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
@@ -7578,7 +7578,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoOnewayStateless" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoOnewayStateless" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testConnettoreErratoApplicativoStateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
@@ -7586,7 +7586,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincrono">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincrono">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreErratoApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
@@ -7594,7 +7594,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincronoStateless" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoSincronoStateless" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreErratoApplicativoStateless" />
             <servizio-applicativo nome="ConnettoreErratoApplicativo" />
@@ -7602,7 +7602,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-simmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -7612,7 +7612,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona_Stateless" />
@@ -7621,7 +7621,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona" 
             ricevuta-asincrona-simmetrica="abilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -7631,7 +7631,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoSimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona_Stateless" />
@@ -7640,7 +7640,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona" 
             ricevuta-asincrona-asimmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -7650,7 +7650,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaAsincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaAsincrona_Stateless" />
@@ -7659,7 +7659,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona" />
@@ -7668,7 +7668,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoAsincronoAsimmetrico_richiestaSincrona_Stateless" 
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="testConnettoreErratoApplicativo_richiestaSincrona_Stateless" />
@@ -7679,7 +7679,7 @@
         </porta-applicativa>
         
         <!-- Connettore Errato Read Timeout -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoReadTimeout">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoReadTimeout">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreReadTimeoutApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoReadTimeout" />
@@ -7689,7 +7689,7 @@
         </porta-applicativa>
         
         <!-- Connettore Errato ConnectTimedOut -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoConnectTimedOut">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testConnettoreErratoApplicativoConnectTimedOut">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testConnettoreConnectTimedOutApplicativo" />
             <servizio-applicativo nome="ConnettoreErratoApplicativoConnectTimedOut" />
@@ -7699,7 +7699,7 @@
         </porta-applicativa>
 
 	<!-- FaultErrati -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSAConPrefixErrato" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSAConPrefixErrato" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapFaultSAConPrefixErrato" />
             <servizio-applicativo nome="FaultErrati_soapFaultSAConPrefixErrato" />
@@ -7707,7 +7707,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSASenzaPrefix" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_FaultErrati_soapFaultSASenzaPrefix" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapFaultSASenzaPrefix" />
             <servizio-applicativo nome="FaultErrati_soapFaultSASenzaPrefix" />
@@ -7727,7 +7727,7 @@
         <!-- Test di integrazione -->
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOneway" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOneway" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazione" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazione" /> 
@@ -7737,7 +7737,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincrona" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincrona" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazione" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazione" /> 
@@ -7747,7 +7747,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressing" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressing" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressing" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressing" /> 
@@ -7757,7 +7757,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressing" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressing" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressing" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressing" /> 
@@ -7767,7 +7767,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewaySAAJ" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewaySAAJ" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneSAAJ" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneSAAJ" /> 
@@ -7777,7 +7777,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaSAAJ" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaSAAJ" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneSAAJ" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneSAAJ" /> 
@@ -7787,7 +7787,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingSAAJ" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingSAAJ" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" /> 
@@ -7797,7 +7797,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingSAAJ" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingSAAJ" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingSAAJ" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingSAAJ" /> 
@@ -7807,7 +7807,7 @@
         </porta-applicativa>
 
 	<!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayHTTPCORE" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneHTTPCORE" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneHTTPCORE" /> 
@@ -7817,7 +7817,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaHTTPCORE" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneHTTPCORE" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneHTTPCORE" />
@@ -7827,7 +7827,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneOnewayWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
@@ -7837,7 +7837,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono  (WSAddressing) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="IntegrazioneSincronaWithWSAddressingHTTPCORE" integrazione="trasporto,urlBased,soap,wsa">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazioneWithWSAddressingHTTPCORE" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazioneWithWSAddressingHTTPCORE" /> 
@@ -7847,7 +7847,7 @@
         </porta-applicativa>
         
         <!-- Test Integrazione PA -->
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedPortaApplicativa" integrazione="trasporto,urlBased,soap">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedPortaApplicativa" integrazione="trasporto,urlBased,soap">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testIntegrazionePA" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazione" /> 
@@ -7863,7 +7863,7 @@
         </porta-applicativa>
         
         <!-- Test Correlazione Applicativa Risposta -->
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_ContentBased_SOAP_stateless"  integrazione="trasporto,urlBased,soap" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_ContentBased_SOAP_stateless"  integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateless" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazione" /> 
@@ -7879,7 +7879,7 @@
                     identificazione="contentBased" pattern="//test:idApplicativo/text()" identificazione-fallita="blocca" />
             </correlazione-applicativa-risposta>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_ContentBased_SOAP_stateful"  integrazione="trasporto,urlBased,soap" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_ContentBased_SOAP_stateful"  integrazione="trasporto,urlBased,soap" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_ContentBased_SOAP_stateful" />
             <servizio-applicativo nome="govwayTestSuiteRaccoltaInfoIntegrazione" /> 
@@ -7896,7 +7896,7 @@
             </correlazione-applicativa-risposta>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_TRASPORTO"  integrazione="trasporto,urlBased" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_TRASPORTO"  integrazione="trasporto,urlBased" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_TRASPORTO" />
             <servizio-applicativo nome="govwayTestSuiteGenerazioneHeaderIntegrazioneTRASPORTO" /> 
@@ -7912,7 +7912,7 @@
                     identificazione="inputBased" identificazione-fallita="blocca" />
             </correlazione-applicativa-risposta>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_SOAP"  integrazione="trasporto,urlBased,soap" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_SOAP"  integrazione="trasporto,urlBased,soap" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_SOAP" />
             <servizio-applicativo nome="govwayTestSuiteGenerazioneHeaderIntegrazioneSOAP" /> 
@@ -7928,7 +7928,7 @@
                     identificazione="inputBased" identificazione-fallita="blocca" />
             </correlazione-applicativa-risposta>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_WSA"  integrazione="trasporto,urlBased,wsa" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="CorrelazioneApplicativaContentBasedRisposta_InputBased_WSA"  integrazione="trasporto,urlBased,wsa" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="testCorrelazioneApplicativaRisposta_InputBased_WSA" />
             <servizio-applicativo nome="govwayTestSuiteGenerazioneHeaderIntegrazioneWSA" /> 
@@ -7959,7 +7959,7 @@
         <!-- Gestione dei messaggi SOAPWithAttachments (con gestione del manifest e-Gov) -->
         
         <!-- Gestione manifest eGov disabilitato -->
-        <porta-applicativa gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitata" >
+        <porta-applicativa autenticazione="none" gestione-manifest="disabilitato" nome="PA_GestioneManifestDisabilitata" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="gestioneManifestDisabilitata" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -7969,7 +7969,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: XML --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAP">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAP">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAP" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -7979,7 +7979,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono:MultipartRelatedMIME  --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAPMultipartRelatedMIME">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAPMultipartRelatedMIME">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPMultipartRelatedMIME" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -7990,7 +7990,7 @@
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: 
             Imbustamento del contenuto in un Attachment con mimeType application/openspcoop2 (codificato in BASE64 il contenuto) --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAPWithAttachmentApplicationOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAPWithAttachmentApplicationOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPWithAttachmentApplicationOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAP" /> 
@@ -8001,7 +8001,7 @@
         
         <!-- TestFunzionalita TunnelSOAP con profilo sincrono: 
             Imbustamento del contenuto in un Attachment con mimeType personalizzato --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAPWithAttachmentCustomMimeType">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAPWithAttachmentCustomMimeType">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="TunnelSOAPWithAttachmentCustomMimeType" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAPMimeType"/> 
@@ -8011,7 +8011,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: XML --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAP">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAP">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAP" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAPOneWay" /> 
@@ -8021,7 +8021,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: MultipartRelatedMIME  --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPMultipartRelatedMIME">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPMultipartRelatedMIME">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPMultipartRelatedMIME" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAPOneWay" /> 
@@ -8032,7 +8032,7 @@
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: 
             Imbustamento del contenuto in un Attachment con mimeType application/openspcoop2 (codificato in BASE64 il contenuto) --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPWithAttachmentApplicationOpenSPCoop">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPWithAttachmentApplicationOpenSPCoop">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPWithAttachmentApplicationOpenSPCoop" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAPOneWay" /> 
@@ -8043,7 +8043,7 @@
         
         <!-- TestFunzionalita TunnelSOAP con profilo oneway: 
             Imbustamento del contenuto in un Attachment con mimeType personalizzato --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPWithAttachmentCustomMimeType">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_NotificaTunnelSOAPWithAttachmentCustomMimeType">
             <servizio tipo="spc" nome="RichiestaBando" />
             <azione nome="NotificaTunnelSOAPWithAttachmentCustomMimeType" />
             <servizio-applicativo nome="govwayTestSuiteTunnelSOAPOneWay" /> 
@@ -8053,7 +8053,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita allegaBody -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAPAllegaBody" integrazione="trasporto,urlBased" allega-body="abilitato">             
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAPAllegaBody" integrazione="trasporto,urlBased" allega-body="abilitato">             
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="allegaBody"/>
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8063,7 +8063,7 @@
         </porta-applicativa>
         
         <!-- TestFunzionalita scartaBody -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TunnelSOAPScartaBody"  integrazione="trasporto,urlBased" scarta-body="abilitato">             
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TunnelSOAPScartaBody"  integrazione="trasporto,urlBased" scarta-body="abilitato">             
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="scartaBody"/>
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8080,7 +8080,7 @@
         
         <!-- Versionamento degli accordi -->
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_SoggettoReferente_Nome_Versione">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_SoggettoReferente_Nome_Versione">
             <servizio tipo="spc" nome="SoggettoReferente_Nome_Versione" />
             <azione nome="soggettoReferente_nome_versione" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8089,7 +8089,7 @@
 	    </soggetti>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_SoggettoReferente_Nome">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_SoggettoReferente_Nome">
             <servizio tipo="spc" nome="SoggettoReferente_Nome" />
             <azione nome="soggettoReferente_nome" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8098,7 +8098,7 @@
 	    </soggetti>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_Nome_Versione">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_VersionamentoAccordo_Nome_Versione">
             <servizio tipo="spc" nome="Nome_Versione" />
             <azione nome="nome_versione" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8114,7 +8114,7 @@
         
         
         <!-- HTTPS Sil Consegna -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PAHTTPSSilConsegna">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PAHTTPSSilConsegna">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="https_sil_consegna" />
             <servizio-applicativo nome="govwayTestSuiteHTTPS" /> 
@@ -8131,7 +8131,7 @@
         
         <!-- FIltro duplicati test -->
         <!-- Oneway con riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -8139,7 +8139,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -8148,7 +8148,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8156,7 +8156,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8165,7 +8165,7 @@
 	    </soggetti> 
         </porta-applicativa>
         <!-- Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8173,7 +8173,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -8182,7 +8182,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
@@ -8191,7 +8191,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
@@ -8200,7 +8200,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
@@ -8209,7 +8209,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
@@ -8219,7 +8219,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
@@ -8228,7 +8228,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
@@ -8237,7 +8237,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
@@ -8246,7 +8246,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatore_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
@@ -8266,7 +8266,7 @@
         
         
         <!-- Autorizzazione per contenuto -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAutorizzazioneContenutoOK" autorizzazione-contenuto="esempioOK" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAutorizzazioneContenutoOK" autorizzazione-contenuto="esempioOK" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="autorizzazioneContenutoOK" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8274,7 +8274,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAutorizzazioneContenutoKO" autorizzazione-contenuto="esempioKO" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAutorizzazioneContenutoKO" autorizzazione-contenuto="esempioKO" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="autorizzazioneContenutoKO" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8292,7 +8292,7 @@
         
         
         <!-- XMLEncoding -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_XMLEncoding" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_XMLEncoding" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="xmlEncoding" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8300,7 +8300,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_XMLEncoding_stateful" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_XMLEncoding_stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="xmlEncodingStateful" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8315,7 +8315,7 @@
         
         
         <!-- Test SOAP Header empty: senza integrazione SOAP! -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TestSoapHeaderEmpty" integrazione="trasporto,urlBased">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TestSoapHeaderEmpty" integrazione="trasporto,urlBased">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapHeaderEmpty" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8323,7 +8323,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_TestSoapHeaderEmpty_stateful" stateless="disabilitato" integrazione="trasporto,urlBased">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_TestSoapHeaderEmpty_stateful" stateless="disabilitato" integrazione="trasporto,urlBased">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="soapHeaderEmptyStateful" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -8339,7 +8339,7 @@
         
         
         <!-- Test RichiesteApplicativeScorrette -->
-        <porta-applicativa gestione-manifest="abilitato" nome="ValidazioneApplicativaRispostaErrata" integrazione="trasporto,urlBased">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="ValidazioneApplicativaRispostaErrata" integrazione="trasporto,urlBased">
             <servizio tipo="spc" nome="TestValidazioneApplicativaErrata" />
             <servizio-applicativo nome="govwayTestSuiteAlterazioneMessaggio" />
 	    <soggetti>
@@ -8353,7 +8353,7 @@
         
         
         <!-- SAAJ -->
-        <porta-applicativa gestione-manifest="abilitato" nome="SAAJOneway">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="SAAJOneway">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="saaj"/>
             <servizio-applicativo nome="SAAJ" /> 
@@ -8363,7 +8363,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="SAAJSincrono" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="SAAJSincrono" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="saaj"/>
             <servizio-applicativo nome="SAAJ" />
@@ -8374,7 +8374,7 @@
 
 
         <!-- HTTPCORE -->
-        <porta-applicativa gestione-manifest="abilitato" nome="HTTPCOREOneway">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="HTTPCOREOneway">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="httpCore"/>
             <servizio-applicativo nome="HTTPCORE" />
@@ -8384,7 +8384,7 @@
         </porta-applicativa>
 
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="HTTPCORESincrono" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="HTTPCORESincrono" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="httpCore"/>
             <servizio-applicativo nome="HTTPCORE" />
@@ -8399,7 +8399,7 @@
         
         
         <!-- Verifica malformazione XML -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody"/>
             <servizio-applicativo nome="MalformazioneXMLBody" />
@@ -8407,7 +8407,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_Body"/>
             <servizio-applicativo nome="MalformazioneXMLBody_Body" />
@@ -8415,7 +8415,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_BodyFirstChild"/>
             <servizio-applicativo nome="MalformazioneXMLBody_BodyFirstChild" />
@@ -8423,7 +8423,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody" >
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody" >
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_InsideBody"/>
             <servizio-applicativo nome="MalformazioneXMLBody_InsideBody" />
@@ -8432,7 +8432,7 @@
 	    </soggetti>
         </porta-applicativa>
         
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body_Stateful" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_Body_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_Body_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_Body" />
@@ -8440,7 +8440,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild_Stateful" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_BodyFirstChild_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_BodyFirstChild_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_BodyFirstChild" />
@@ -8448,7 +8448,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitore"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody_Stateful" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MalformazioneRispostaApplicativa_InsideBody_Stateful" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="malformazioneXMLBody_InsideBody_Stateful"/>
             <servizio-applicativo nome="MalformazioneXMLBody_InsideBody" />
@@ -10793,7 +10793,7 @@
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="Affidabile"/>
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback_SPCMinisteroFruitoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazioneLoopback_SPCMinisteroFruitoreLineeGuida">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -10804,7 +10804,7 @@
         
         
         <!-- Profilo OneWay: test tipo servizio -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroFruitoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroFruitoreLineeGuida">
             <servizio tipo="test" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" /> 
         </porta-applicativa>
@@ -10921,7 +10921,7 @@
         <!-- Profili di Collaborazione OneWay/Sincrono/AsincronoSimmetrico/AsincronoAsimmetrico -->
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -10930,7 +10930,7 @@
         </porta-applicativa>
         
         <!-- Profilo OneWay (Stateless) -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroErogatoreLineeGuida_Stateless"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_SPCMinisteroErogatoreLineeGuida_Stateless"
             stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="stateless" />
@@ -10941,7 +10941,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono_SPCMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioSincrono_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -10951,7 +10951,7 @@
         </porta-applicativa>
         
         <!-- Profilo Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioSincrono_SPCMinisteroErogatoreLineeGuida_Stateful"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioSincrono_SPCMinisteroErogatoreLineeGuida_Stateful"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="stateful" />
@@ -10964,7 +10964,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaAsincrona" />
@@ -10977,7 +10977,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi (Stateful)
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida_Stateful" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida_Stateful" 
             ricevuta-asincrona-simmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
@@ -10991,7 +10991,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAS_Sincrono" /> 
@@ -11003,7 +11003,7 @@
         <!-- Profilo Asincrono Simmetrico, richiesta. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi (Stateful)
         -->
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida_Stateful"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoSimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida_Stateful"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="richiestaSincronaStateful" />
@@ -11016,7 +11016,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaAsincrona" />
@@ -11029,7 +11029,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi (Stateful)
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida_Stateful" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida_Stateful" 
             ricevuta-asincrona-asimmetrica="disabilitato"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
@@ -11043,7 +11043,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi 
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -11055,7 +11055,7 @@
         <!-- Profilo Asincrono Asimmetrico, richiesta/richiesta-stato. 
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi (Stateful)
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida_Stateful"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_richiestaSincrona_SPCMinisteroErogatoreLineeGuida_Stateful"
             stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="richiestaSincronaStateful" />
@@ -11069,7 +11069,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona non contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaAsincrona_SPCMinisteroErogatoreLineeGuida" 
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaAsincrona" />
@@ -11083,7 +11083,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_esempioAsincronoAsimmetrico_AzioneCorrelata_richiestaSincrona_SPCMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="AzioneCorrelata_richiestaSincrona" />
             <servizio-applicativo nome="govwayTestSuiteAA" />
@@ -11099,7 +11099,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
             <servizio-applicativo nome="govwayTestSuiteAA" /> 
@@ -11115,7 +11115,7 @@
         
         <!-- FIltro duplicati test -->
         <!-- Oneway con riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_OnewayRiscontro" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateless" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -11123,7 +11123,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_OnewayRiscontro" stateless="disabilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiConRiscontroStateful" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -11132,7 +11132,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- Oneway senza riscontro -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Oneway" stateless="abilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -11140,7 +11140,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Oneway" stateless="disabilitato">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="govwayTestSuite" />
@@ -11149,7 +11149,7 @@
 	    </soggetti> 
         </porta-applicativa>
         <!-- Sincrono -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_Sincrono" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateless" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -11157,7 +11157,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_Sincrono" stateless="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="FiltroDuplicatiStateful" />
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -11166,7 +11166,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoSimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
@@ -11175,7 +11175,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
@@ -11184,7 +11184,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoSimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
@@ -11193,7 +11193,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoSimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-simmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoSimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
@@ -11203,7 +11203,7 @@
 	    </soggetti>
         </porta-applicativa>
         <!-- AsincronoAsimmetrico -->
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaAbilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaAbilitata" />
@@ -11212,7 +11212,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaAbilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaAbilitata" />
@@ -11221,7 +11221,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti> 
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateless_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="abilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateless_ricevutaDisabilitata" />
@@ -11230,7 +11230,7 @@
 		<soggetto tipo="spc" nome="MinisteroFruitoreLineeGuida"/>
 	    </soggetti>
         </porta-applicativa>
-        <porta-applicativa gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="MinisteroErogatoreLineeGuida_FiltroDuplicatiStateful_AsincronoAsimmetrico_ricevutaDisabilitata" stateless="disabilitato"
             ricevuta-asincrona-asimmetrica="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamentoAsincronoAsimmetrico" />
             <azione nome="FiltroDuplicatiStateful_ricevutaDisabilitata" />
@@ -11317,7 +11317,7 @@
         <!-- Profili di Collaborazione OneWay/Sincrono/AsincronoSimmetrico/AsincronoAsimmetrico -->
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_TESTMinisteroErogatoreLineeGuida">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_TESTMinisteroErogatoreLineeGuida">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" /> 
         </porta-applicativa>
@@ -11358,7 +11358,7 @@
             Esempio di profilo asincrono dove la ricevuta asincrona contiene dati applicativi e
             dove non viene utilizzato un servizio correlato ma un'azione correlata
         --> 
-        <porta-applicativa gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroTmp">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="PA_testRiconoscimentoProfilo_MinisteroTmp">
             <servizio tipo="spc" nome="TestProfiloLineeGuida" />
             <azione nome="test" />
             <servizio-applicativo nome="govwayTestSuiteAA" />
@@ -11386,7 +11386,7 @@
     <soggetto tipo="spc" nome="SoggettoTestConsegnaInOrdine">
         
         <!-- Profilo OneWay -->
-        <porta-applicativa gestione-manifest="abilitato" nome="comunicazioneVariazione_TESTSoggettoTestConsegnaInOrdine">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="comunicazioneVariazione_TESTSoggettoTestConsegnaInOrdine">
             <servizio tipo="spc" nome="ComunicazioneVariazione" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -11533,7 +11533,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter1">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter1">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11554,7 +11554,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter2">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter2">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11576,7 +11576,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter3">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter3">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11597,7 +11597,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter4">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter4">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11619,7 +11619,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter5">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter5">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11641,7 +11641,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter6">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter6">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" />
 	    <soggetti>
@@ -11663,7 +11663,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter7">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter7">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11685,7 +11685,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter8">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter8">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11707,7 +11707,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter9">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter9">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>
@@ -11729,7 +11729,7 @@
             <soggetto-erogatore tipo="spc" nome="MinisteroErogatore" />
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
         </porta-delegata>
-        <porta-applicativa gestione-manifest="abilitato" nome="TestUrlPrefixRewriter10">
+        <porta-applicativa autenticazione="none" gestione-manifest="abilitato" nome="TestUrlPrefixRewriter10">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <servizio-applicativo nome="govwayTestSuite" /> 
 	    <soggetti>

@@ -30,7 +30,7 @@
 
 				<!-- <echo message="TEST A[${git.commitShortHash}] B[${git.authorName}] C[${git.commitShortHash}] D[${git.authorDate}] E[${git.url}]"/> -->
 				<!-- Imposto versione -->	
-				<var name="pddDetails" value="3.2.0" />
+				<var name="pddDetails" value="3.2.1" />
 				<var name="pddVersionMajor" value="3" />
                                 <var name="pddVersionMinor" value="2" />
 				<if>
