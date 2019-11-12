@@ -455,6 +455,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_ALLEGATO, id),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
+				saveAs.setDisabilitaAjaxStatus();
 				dati.add(saveAs);
 			}
 			
@@ -506,6 +507,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 							new Parameter(ProtocolPropertiesCostanti.PARAMETRO_PP_ID_ALLEGATO, id),
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_PROTOCOL_PROPERTY));
+					saveAs.setDisabilitaAjaxStatus();
 					dati.add(saveAs);
 				}
 	

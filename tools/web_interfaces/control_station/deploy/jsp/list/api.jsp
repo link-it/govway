@@ -111,12 +111,13 @@ for (int j = 0; j < riga.size(); j++) {
 				DataElement deTitolo = (DataElement) vectorRiepilogo.elementAt(0);
 				String deTitoloName = "url_entry_"+numeroEntry;
 				String deTitoloValue = !deTitolo.getValue().equals("") ? deTitolo.getValue() : "&nbsp;";
+				String visualizzaAjaxStatus = deTitolo.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 				%><input id="<%= deTitoloName  %>" type="hidden" name="<%= deTitoloName  %>" value="<%= deTitolo.getUrl()  %>"/>
 				
 					<script type="text/javascript">
 					   $('[id=entry_<%=numeroEntryS %>]')
 					   .click(function() {
-						   		visualizzaAjaxStatus();
+						   		<%= visualizzaAjaxStatus %>
 								var val = $(this).children('input[id=url_entry_<%=numeroEntryS %>]').val();
 								window.location = val;
 					       });

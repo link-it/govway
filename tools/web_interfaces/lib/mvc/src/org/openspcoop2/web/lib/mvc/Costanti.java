@@ -196,6 +196,8 @@ public class Costanti {
 	
 	public final static String CUSTOM_JS_FUNCTION_INPUT_NUMBER_VALIDATION = "customInputNumberChangeEventHandler";
 	
+	public final static String JS_FUNCTION_VISUALIZZA_AJAX_STATUS = "visualizzaAjaxStatus();";
+	
 	/** PARAMETRI BINARI **/
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  

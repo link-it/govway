@@ -59,7 +59,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 								%>, <%	
 							}
 						    %>'<%= bottoni[i][0] %>' : function() {
-						    	visualizzaAjaxStatus();
+						    	<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 						    	<%= bottoni[i][1] %>;
 						    	 $( this ).dialog( "close" );
 			 	 	        }

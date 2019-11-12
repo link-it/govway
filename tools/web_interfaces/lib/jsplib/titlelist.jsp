@@ -71,7 +71,7 @@ Vector<GeneralLink> titlelist = pd.getTitleList();
 					        		if (!l.getUrl().equals("")) {
 							          //non ultimo con url
 							          %>
-							         	<li><a href="<%= l.getUrl() %>" onClick="visualizzaAjaxStatus();return true;"><span><%= l.getLabel() %></span></a></li>
+							         	<li><a href="<%= l.getUrl() %>" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"><span><%= l.getLabel() %></span></a></li>
 							         <%
 							        } else {
 							          //non ultimo ma senza url

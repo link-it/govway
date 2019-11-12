@@ -1241,6 +1241,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						DataElement de = new DataElement();
 						de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
 						de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
@@ -1424,6 +1425,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						DataElement de = new DataElement();
 						de.setValue(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI);
 						de.setOnClick(SoggettiCostanti.LABEL_SOGGETTI_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
