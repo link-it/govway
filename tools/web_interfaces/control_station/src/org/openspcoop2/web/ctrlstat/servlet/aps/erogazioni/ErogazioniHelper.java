@@ -1093,6 +1093,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						DataElement de = new DataElement();
 						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI);
 						de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
@@ -1337,6 +1338,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA_TOOLTIP_CON_PARAMETRO, AccordiServizioParteSpecificaCostanti.LABEL_APC_COMPOSTO_SOLO_PARTE_COMUNE));
 		image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_VISUALIZZA);
 		image.setTarget(TargetType.BLANK); 
+		image.setDisabilitaAjaxStatus();
 		
 		de.addImage(image);
 		dati.addElement(de);

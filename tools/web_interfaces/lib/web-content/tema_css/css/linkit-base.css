@@ -1257,6 +1257,20 @@ div.prop-slider{
 	border-radius: 0px;
 }
 
+/* finestra modal di check selezione */
+
+.contenutoSelezioneRichiestaModal {
+	padding: 20px;
+}
+
+.contenutoSelezioneRichiestaModal img {
+	vertical-align: text-bottom;
+}
+
+.contenutoSelezioneRichiestaModal span {
+	font-weight: bold;
+}
+
 
 /* finestra modal di conferma */
 

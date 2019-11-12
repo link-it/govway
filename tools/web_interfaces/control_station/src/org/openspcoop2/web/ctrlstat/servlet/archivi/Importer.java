@@ -683,6 +683,7 @@ public final class Importer extends Action {
 				saveAs.setValue(ArchiviCostanti.LABEL_DOWNLOAD);
 				saveAs.setType(DataElementType.LINK);
 				saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_RESOCONTO_EXPORT);
+				saveAs.setDisabilitaAjaxStatus();
 				dati.add(saveAs);
 			}
 			

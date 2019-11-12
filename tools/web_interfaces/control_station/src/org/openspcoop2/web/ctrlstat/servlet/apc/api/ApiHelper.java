@@ -337,6 +337,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 						else{
 							de.setOnClick(AccordiServizioParteComuneCostanti.LABEL_ASC_ESPORTA_SELEZIONATI_ONCLICK);
 						}
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
@@ -598,6 +599,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			image.setToolTip(MessageFormat.format(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA_TOOLTIP_CON_PARAMETRO, ApiCostanti.APC_API_LABEL_PARAMETRO_INTERFACCIA));
 			image.setImage(ApiCostanti.APC_API_ICONA_DOWNLOAD_DOCUMENTO_INTERFACCIA);
 			image.setTarget(TargetType.SELF);
+			image.setDisabilitaAjaxStatus();
 			
 			de.addImage(image);
 		}

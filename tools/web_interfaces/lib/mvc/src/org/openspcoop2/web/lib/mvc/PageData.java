@@ -73,6 +73,11 @@ public class PageData {
 	String labelBottoneInvia = null;
 	String labelBottoneFiltra = null;
 	String labelBottoneRipulsci = null;
+	
+	private boolean showAjaxStatusBottoneInvia = true;
+	private boolean showAjaxStatusBottoneFiltra = true;
+	private boolean showAjaxStatusBottoneRipulisci = true;
+	
 
 	public PageData() {
 		this.pageDescription = "";
@@ -494,4 +499,41 @@ public class PageData {
 	public void setLabelBottoneRipulsci(String labelBottoneRipulsci) {
 		this.labelBottoneRipulsci = labelBottoneRipulsci;
 	}
+
+	public boolean isShowAjaxStatusBottoneInvia() {
+		return this.showAjaxStatusBottoneInvia;
+	}
+
+	public void setShowAjaxStatusBottoneInvia(boolean showAjaxStatusBottoneInvia) {
+		this.showAjaxStatusBottoneInvia = showAjaxStatusBottoneInvia;
+	}
+	
+	public void setDisabilitaAjaxStatusBottoneInvia() {
+		this.showAjaxStatusBottoneInvia = false;
+	}
+
+	public boolean isShowAjaxStatusBottoneFiltra() {
+		return this.showAjaxStatusBottoneFiltra;
+	}
+
+	public void setShowAjaxStatusBottoneFiltra(boolean showAjaxStatusBottoneFiltra) {
+		this.showAjaxStatusBottoneFiltra = showAjaxStatusBottoneFiltra;
+	}
+	
+	public void setDisabilitaAjaxStatusBottoneFiltra() {
+		this.showAjaxStatusBottoneFiltra = false;
+	}
+
+	public boolean isShowAjaxStatusBottoneRipulisci() {
+		return this.showAjaxStatusBottoneRipulisci;
+	}
+
+	public void setShowAjaxStatusBottoneRipulisci(boolean showAjaxStatusBottoneRipulisci) {
+		this.showAjaxStatusBottoneRipulisci = showAjaxStatusBottoneRipulisci;
+	}
+	
+	public void setDisabilitaAjaxStatusBottoneRipulisci() {
+		this.showAjaxStatusBottoneRipulisci = false;
+	}
+	
 }

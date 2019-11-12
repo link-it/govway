@@ -344,6 +344,7 @@ public class ScopeHelper extends ConsoleHelper{
 						DataElement de = new DataElement();
 						de.setValue(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI);
 						de.setOnClick(ScopeCostanti.LABEL_SCOPE_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);

@@ -221,7 +221,8 @@ for (int i = 0; i < dati.size(); i++) {
 	        			<%
 	        		} else { // else note
 	        			if (type.equals("link")){
-	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"visualizzaAjaxStatus();" + de.getOnClick() + "\" " ) : " ";
+	        				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" " ) : " ";
 	        				%>
 	            			<div class="prop prop-link">
 	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>">&nbsp;</label>
@@ -502,10 +503,11 @@ for (int i = 0; i < dati.size(); i++) {
 		                            			<%
 		                            		} else { // else textarea || textarea-noedit
 		                            			if (type.equals("button")){
+		                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 		                            				%>
 		                                			<div class="prop">
 		                                				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
-		                                				<input type="button" onClick="visualizzaAjaxStatus();<%= de.getOnClick() %>" value="<%= de.getValue() %>">
+		                                				<input type="button" onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>" value="<%= de.getValue() %>">
 		                                				<% if(!deNote.equals("")){ %>
 									      					<p class="note <%= labelStyleClass %>"><%=deNote %></p>
 									      				<% } %>
@@ -525,7 +527,8 @@ for (int i = 0; i < dati.size(); i++) {
 		                                    	          		%><input size='<%= de.getSize() %>' type=file name="<%= deName  %>" class="<%= classInput %>"  
 											  	<%
 												  if (!de.getOnChange().equals("")) {
-													    %> onChange="visualizzaAjaxStatus();postVersion_<%= de.getOnChange() %>"<%
+													  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+													    %> onChange="<%= visualizzaAjaxStatus %>postVersion_<%= de.getOnChange() %>"<%
 													  }
 													  %>  	/><%
 													      		if(deInfo != null){
@@ -556,7 +559,8 @@ for (int i = 0; i < dati.size(); i++) {
 		                                      						String selValNoEdit = (de.getSelected() != "") ? de.getSelected() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 		                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 		                               							} else {
-		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"visualizzaAjaxStatus();" + de.getOnChange() + "\" " ) : " ";
+		                               								String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
 																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
 		                               								
 		                          									%><select name="<%= deName  %>" <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
@@ -602,8 +606,9 @@ for (int i = 0; i < dati.size(); i++) {
 			                                      						String selValNoEdit = (de.getSelezionatiAsString() != "") ? de.getSelezionatiAsString() : (pd.getMode().equals("view-noeditbutton") ? "&nbsp;" : "not defined");
 			                                      						%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%= selValNoEdit %></span></div><%
 			                               							} else {
+			                               							 	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 			                               								String selSize = " size='"+de.getRows()+"' ";
-			                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"visualizzaAjaxStatus();" + de.getOnChange() + "\" " ) : " ";
+			                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
 			                               								String selDataAttributes = !de.getDataAttributes().equals("") ? de.getDataAttributes() : " ";
 			                               								
 			                          									%><select name="<%= deName  %>" <%= selSize %> <%= selEvtOnChange %> class="<%= classInput %>" multiple <%= selDataAttributes %> ><%
@@ -677,7 +682,8 @@ for (int i = 0; i < dati.size(); i++) {
 			                                            			<div class="prop">
 			                                            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabel %></label>
 			                                            				<%
-								    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"visualizzaAjaxStatus();" + de.getOnClick() + "\" ") :" ";
+			                                            				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+								    									String chkEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" ") :" ";
 								    									String chkVal = de.getSelected().equals("yes") ? " checked='true' " : " ";
 								    									String disVal = pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton") ? "disabled=\"disabled\"" : "";
 								    									String controlSetClass = deInfo != null ? "controlset-cb-info" : "controlset";
@@ -836,7 +842,7 @@ if (visualizzaBottoneLogin) {
 	  %><tr class="buttonrow">
 		  <td colspan="2">
 		  	<div class="buttonrowform">
-				<input type=submit onClick='visualizzaAjaxStatus();CheckDati();return false;' value="Login" />
+				<input type=submit onClick='<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>CheckDati();return false;' value="Login" />
 			</div>
 		  </td>
 	  </tr>
@@ -850,10 +856,10 @@ if (pd.getMode().equals("view")) {
 			  String [][] bottoni = pd.getBottoni();
 			  if ((bottoni != null) && (bottoni.length > 0)) {
 			    for (int i = 0; i < bottoni.length; i++) {
-			      %><input type=button onClick="visualizzaAjaxStatus();<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			      %><input type=button onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
 			    }
 			  } else {
-			    %><input type=button onClick="visualizzaAjaxStatus();EditPage()" value="Modifica" /><%
+			    %><input type=button onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%>EditPage();" value="Modifica" /><%
 			  }
 		  %></div>
 	  </td>
@@ -872,10 +878,11 @@ if (pd.getMode().equals("view")) {
 			  String [][] bottoni = pd.getBottoni();
 			  if ((bottoni != null) && (bottoni.length > 0)) {
 			    for (int i = 0; i < bottoni.length; i++) {
-			      %><input type=submit onClick="visualizzaAjaxStatus();<%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
+			      %><input type=submit onClick="<%=Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS%><%= bottoni[i][1] %>" value="<%= bottoni[i][0] %>"/>&nbsp;<%
 			    }
 			  } else {
-			    %><input type=submit onClick='visualizzaAjaxStatus();CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" /><%
+				  String visualizzaAjax = pd.isShowAjaxStatusBottoneInvia() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+				  %><input type=submit onClick='<%=visualizzaAjax%>CheckDati();return false;' value="<%=pd.getLabelBottoneInvia() %>" /><%
 			  }
 		  %></div>
 	    </td>

@@ -97,7 +97,7 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																}
 															}else {%>
 															<span class="soggetto">
-																<a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;" href="<%= soggettoTitoloLink.getUrl() %>"><%= soggettoTitoloLink.getLabel() %></a>
+																<a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" href="<%= soggettoTitoloLink.getUrl() %>"><%= soggettoTitoloLink.getLabel() %></a>
 															 </span>
 														<% }%>
 													</div>
@@ -142,16 +142,16 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																					}else if("new".equals(l.getTarget())){
 																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
 																					}else {
-																          			%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" target="<%= l.getTarget() %>" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
 																					}
 																      			} else {
 																        		//solo url
-																        		%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
+																        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" href="<%= l.getUrl() %>" <%= toolTip %> ><%= l.getLabel() %></a><%
 																      			}
 																			} else {
 																      			if (!l.getOnClick().equals("")) {
 																        		//onClick
-																        		%><a class="td2PageHeader" href="" onClick="visualizzaAjaxStatus(); <%= l.getOnClick() %>; return true;" <%= toolTip %> ><%= l.getLabel() %></a><%
+																        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> <%= l.getOnClick() %>; return true;" <%= toolTip %> ><%= l.getLabel() %></a><%
 																      			} else {
 																				//solo stringa
 																        		%><span class="td2PageHeader" <%= toolTip %> ><%= l.getLabel() %></span><%
@@ -189,7 +189,7 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																}
 															}else {%>
 															<span class="modalita">
-																<a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;"  href="<%= modalitaTitoloLink.getUrl() %>"><%= modalitaTitoloLink.getLabel() %></a>
+																<a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= modalitaTitoloLink.getUrl() %>"><%= modalitaTitoloLink.getLabel() %></a>
 															 </span>
 														<% }%>
 													</div>
@@ -229,16 +229,16 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																					}else if("new".equals(l.getTarget())){
 																					%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																					}else {
-																          			%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																					}
 																      			} else {
 																        		//solo url
-																        		%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+																        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																      			}
 																			} else {
 																      			if (!l.getOnClick().equals("")) {
 																        		//onClick
-																        		%><a class="td2PageHeader" href="" onClick="visualizzaAjaxStatus();<%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
+																        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
 																      			} else {
 																				//solo stringa
 																        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%
@@ -307,16 +307,16 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 																				}else if("new".equals(l.getTarget())){
 																				%><a class="td2PageHeader" target="_blank" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																				}else {
-															          			%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+															          			%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  target="<%= l.getTarget() %>" href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 																				}
 															      			} else {
 															        		//solo url
-															        		%><a class="td2PageHeader" onClick="visualizzaAjaxStatus();return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
+															        		%><a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;"  href="<%= l.getUrl() %>"><%= l.getLabel() %></a><%
 															      			}
 																		} else {
 															      			if (!l.getOnClick().equals("")) {
 															        		//onClick
-															        		%><a class="td2PageHeader" href="" onClick="visualizzaAjaxStatus();<%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
+															        		%><a class="td2PageHeader" href="" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %><%= l.getOnClick() %>; return true;"><%= l.getLabel() %></a><%
 															      			} else {
 																			//solo stringa
 															        		%><span class="td2PageHeader"><%= l.getLabel() %></span><%

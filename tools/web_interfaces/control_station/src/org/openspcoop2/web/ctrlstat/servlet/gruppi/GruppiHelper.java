@@ -327,6 +327,7 @@ public class GruppiHelper extends ConsoleHelper{
 						DataElement de = new DataElement();
 						de.setValue(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI);
 						de.setOnClick(GruppiCostanti.LABEL_GRUPPI_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);

@@ -35,6 +35,7 @@ public class DataElementImage {
 	private String url;
 	private String target;
 	private String onClick;
+	private boolean showAjaxStatus = true;
 	
 	public String getImage() {
 		return DataElement.checkNull(this.image);
@@ -71,6 +72,15 @@ public class DataElementImage {
 	}
 	public void setOnClick(String onClick) {
 		this.onClick = onClick;
+	}
+	public void setDisabilitaAjaxStatus() {
+		this.showAjaxStatus = false;
+	}
+	public boolean isShowAjaxStatus() {
+		return this.showAjaxStatus;
+	}
+	public void setShowAjaxStatus(boolean showAjaxStatus) {
+		this.showAjaxStatus = showAjaxStatus;
 	}
 	
 }

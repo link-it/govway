@@ -1304,6 +1304,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT,
 								pIdAllegato,pId,pNomeDoc,pIdAccordo,pTipoDoc);
 						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_DOWNLOAD.toLowerCase());
+						de.setDisabilitaAjaxStatus();
 					}
 					e.addElement(de);
 
@@ -2068,6 +2069,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						DataElement de = new DataElement();
 						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI);
 						de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
@@ -6807,6 +6809,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, asps.getId()+""),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				saveAs.setDisabilitaAjaxStatus();
 				dati.add(saveAs);
 			}else {
 				de = new DataElement();
@@ -6837,6 +6840,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, asps.getId()+""),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, tipologiaDocumentoScaricare),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				saveAs.setDisabilitaAjaxStatus();
 				dati.add(saveAs);
 				
 				de = new DataElement();
@@ -7002,6 +7006,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE, myFru.getTipo()),
 							new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE, myFru.getNome()),
 							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+					saveAs.setDisabilitaAjaxStatus();
 					dati.add(saveAs);
 				}
 			}
@@ -7035,6 +7040,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_TIPO_SOGGETTO_FRUITORE, myFru.getTipo()),
 						new Parameter(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_IMPLEMENTATIVO_NOME_SOGGETTO_FRUITORE, myFru.getNome()),
 						new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_SPECIFICA));
+				saveAs.setDisabilitaAjaxStatus();
 				dati.add(saveAs);
 				
 				if(!finished){
@@ -8013,6 +8019,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 		Parameter pTipoDoc = new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_DOCUMENTO, "asps");
 		//			String params = "idAccordo="+idServizio+"&idAllegato="+idAllegato+"&tipoDocumento=asps";
 		saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pIdAllegato, pTipoDoc);
+		saveAs.setDisabilitaAjaxStatus();
 		dati.add(saveAs);
 
 		if(modificaAPI!=null) {
