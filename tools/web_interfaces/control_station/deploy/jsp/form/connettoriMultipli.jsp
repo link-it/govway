@@ -330,8 +330,12 @@ function Esporta(tipo) {
 	  }
 
 
-	if(elemToExport !== '')
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;  
+	if(elemToExport !== '') {
+		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+	} else {
+		$( "#selezioneRichiestaModal" ).dialog( "open" );
+	} 
 		  
 };
 
@@ -444,6 +448,8 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 				</table>
 				<% 
 					if ( mostraFormHeader ) {
+						String visualizzaAjaxStatusFiltra = pd.isShowAjaxStatusBottoneFiltra() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+						String visualizzaAjaxStatusRipulisci = pd.isShowAjaxStatusBottoneRipulisci() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 				%>
 				<table class="tabella" id="searchForm">
 					<tbody>
@@ -464,7 +470,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 							  	String [] values = filtro.getValues();
 							  	String [] labels = filtro.getLabels();
 							  	String selezionato = filtro.getSelected();
-								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"visualizzaAjaxStatus();Change(document.form,'"+filterName+"')\" " ) : " ";
+								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
 								String classInput = filtro.getStyleClass();
 							  	%>
 										<tr>
@@ -511,8 +517,8 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 								<tr>
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
-											<input type="button" onClick="visualizzaAjaxStatus();Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
-											<input type="button" onClick="visualizzaAjaxStatus();Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
+											<input type="button" onClick="<%=visualizzaAjaxStatusFiltra %>Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
+											<input type="button" onClick="<%=visualizzaAjaxStatusRipulisci %>Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
 										</div>								
 									
 									</td>
@@ -708,9 +714,11 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 																			  		if (!image.getTarget().equals("")) {
 																			  			deTarget = " target=\""+ image.getTarget() +"\"";
 																			  		}
+																			  		
+																			  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																		  			
 											                					%>
-											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
+											                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
 											                						<span class="icon-box">
 																						<i class="material-icons md-18"><%= deIconName %></i>
 																					</span>
@@ -792,9 +800,11 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 																						  		if (!image.getTarget().equals("")) {
 																						  			deTarget = " target=\""+ image.getTarget() +"\"";
 																						  		}
+																						  		
+																						  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																					  			
 														                					%>
-														                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
+														                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
 														                						<span class="icon-box">
 																									<i class="material-icons md-18"><%= deIconName %></i>
 																								</span>
@@ -882,8 +892,10 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 																							  		if (!image.getTarget().equals("")) {
 																							  			deTarget = " target=\""+ image.getTarget() +"\"";
 																							  		}
+																							  		
+																							  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 															                					%>
-															                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
+															                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
 															                						<span class="icon-box">
 																										<i class="material-icons md-18"><%= deIconName %></i>
 																									</span>
@@ -939,8 +951,10 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 																								  		if (!image.getTarget().equals("")) {
 																								  			deTarget = " target=\""+ image.getTarget() +"\"";
 																								  		}
+																								  		
+																								  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 																                					%>
-																                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="visualizzaAjaxStatus();return true;">
+																                					<a class="edit-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" type="button" onClick="<%= visualizzaAjaxStatus %>return true;">
 																                						<span class="icon-box">
 																											<i class="material-icons md-18"><%= deIconName %></i>
 																										</span>
@@ -988,7 +1002,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Crea Nuovo' /><%
+									  %><input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Crea Nuovo' /><%
 									}
 									
 									%>
