@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.core.autorizzazione.pd;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 
 /**
  * AbstractAutorizzazioneContenutoBase
@@ -43,7 +44,7 @@ public abstract class AbstractAutorizzazioneContenutoBase extends AbstractCore i
 	}
 
 	@Override
-	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) {
+	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException {
 		return null;
 	}
 }

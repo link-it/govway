@@ -55,7 +55,7 @@ public interface IAutorizzazioneContenutoPortaDelegata extends IAutorizzazioneCo
      * @param datiInvocazione Dati di invocazione
      * @return Suffisso che viene aggiunto alla chiave
      */
-    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg);
+    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione,OpenSPCoop2Message msg) throws AutorizzazioneException;
     
 }
 

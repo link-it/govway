@@ -1501,6 +1501,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 								new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_CERTIFICATO_SSL));
 						de.setValue(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_LINK_DOWNLOAD);
 						de.setType(DataElementType.LINK);
+						de.setDisabilitaAjaxStatus();
 						dati.addElement(de);
 					}
 					

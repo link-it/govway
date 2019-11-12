@@ -106,6 +106,8 @@ public class DataElement {
 	
 	private String icon, url,toolTip, target, onClick = null;
 	
+	private boolean showAjaxStatus = true;
+	
 	private Map<String, String> dataAttributes = null;
 	
 	private String customJsFunction = null;
@@ -821,4 +823,17 @@ public class DataElement {
 		this.addStatusValue(value);
 		this.addStatusType(type);
 	}
+	
+	public void setDisabilitaAjaxStatus() {
+		this.showAjaxStatus = false;
+	}
+
+	public boolean isShowAjaxStatus() {
+		return this.showAjaxStatus;
+	}
+
+	public void setShowAjaxStatus(boolean showAjaxStatus) {
+		this.showAjaxStatus = showAjaxStatus;
+	}
+	
 }

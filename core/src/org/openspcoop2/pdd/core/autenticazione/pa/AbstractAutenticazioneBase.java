@@ -50,7 +50,7 @@ public abstract class AbstractAutenticazioneBase extends AbstractCore implements
 	}
 
 	@Override
-	public String getSuffixKeyAuthenticationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) {
+	public String getSuffixKeyAuthenticationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) throws AutenticazioneException{
 		return null;
 	}
 }

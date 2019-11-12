@@ -439,6 +439,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 						DataElement de = new DataElement();
 						de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI);
 						de.setOnClick(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_ESPORTA_SELEZIONATI_CLICK_EVENT);
+						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);
 						bottoni.addElement(ab);
@@ -1098,6 +1099,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 								pTipoDoc
 								);
 						de.setValue(AccordiCooperazioneCostanti.LABEL_ACCORDI_COOPERAZIONE_DOWNLOAD.toLowerCase());
+						de.setDisabilitaAjaxStatus();
 					}
 					e.addElement(de);
 
@@ -1198,6 +1200,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 			Parameter pTipoDoc = new Parameter(AccordiCooperazioneCostanti.PARAMETRO_ACCORDI_COOPERAZIONE_TIPO_DOCUMENTO, "ac");
 			//			String params = "idAccordo="+idServizio+"&idAllegato="+idAllegato+"&tipoDocumento=asps";
 			saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, pIdAccordo, pIdAllegato, pTipoDoc);
+			saveAs.setDisabilitaAjaxStatus();
 			dati.add(saveAs);
 		}
 

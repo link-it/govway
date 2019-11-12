@@ -54,7 +54,7 @@ public interface IAutorizzazionePortaDelegata extends IAutorizzazione {
      * @param datiInvocazione Dati di invocazione
      * @return Suffisso che viene aggiunto alla chiave
      */
-    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione);
+    public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaDelegata datiInvocazione) throws AutorizzazioneException;
  
 }
 

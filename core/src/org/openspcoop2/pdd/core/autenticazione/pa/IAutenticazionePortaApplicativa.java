@@ -54,6 +54,6 @@ public interface IAutenticazionePortaApplicativa extends IAutenticazione {
      * @param datiInvocazione Dati di invocazione
      * @return Suffisso che viene aggiunto alla chiave
      */
-    public String getSuffixKeyAuthenticationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione);
+    public String getSuffixKeyAuthenticationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) throws AutenticazioneException;
 }
 

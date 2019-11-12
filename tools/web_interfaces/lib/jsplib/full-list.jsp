@@ -112,6 +112,8 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 				</table>
 				<% 
 					if ( mostraFormHeader ) {
+						String visualizzaAjaxStatusFiltra = pd.isShowAjaxStatusBottoneFiltra() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+						String visualizzaAjaxStatusRipulisci = pd.isShowAjaxStatusBottoneRipulisci() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 				%>
 				<table class="tabella" id="searchForm">
 					<tbody>
@@ -132,7 +134,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							  	String [] values = filtro.getValues();
 							  	String [] labels = filtro.getLabels();
 							  	String selezionato = filtro.getSelected();
-								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\"visualizzaAjaxStatus();Change(document.form,'"+filterName+"')\" " ) : " ";
+								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
 								String classInput = filtro.getStyleClass();
 							  	%>
 										<tr>
@@ -179,8 +181,8 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								<tr>
 									<td class="buttonrow">
 										<div class="buttonrowricerca">
-											<input type="button" onClick="visualizzaAjaxStatus();Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
-											<input type="button" onClick="visualizzaAjaxStatus();Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
+											<input type="button" onClick="<%= visualizzaAjaxStatusFiltra %>Search(document.form)" value='<%=pd.getLabelBottoneFiltra() %>' />
+											<input type="button" onClick="<%= visualizzaAjaxStatusRipulisci %>Reset(document.form);" value='<%=pd.getLabelBottoneRipulsci() %>' />
 										</div>								
 									
 									</td>
@@ -228,7 +230,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 													//Bottone Previous
 													if (pd.getIndex() != 0) {
 														%>							
-														<img id="ds_prev_top" src="images/tema_link/go_prev.png" onclick="visualizzaAjaxStatus();PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+														<img id="ds_prev_top" src="images/tema_link/go_prev.png" onclick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
 														<%
 													} else{
 														%>
@@ -249,7 +251,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 													  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 														  nextTopDisabled = false;
 													   			%>
-													   			<img id="ds_next_top" src="images/tema_link/go_next.png" onClick="visualizzaAjaxStatus();NextPage()" title="Successiva" class="dsImg"/>
+													   			<img id="ds_next_top" src="images/tema_link/go_next.png" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage()" title="Successiva" class="dsImg"/>
 													   			<%
 													  }
 													}
@@ -341,6 +343,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							    }
 					
 								if (de.getType().equals("text")) {
+									String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 						    		// tipo link
 					      			if (!de.getUrl().equals("")) {
 							    		//tooltip
@@ -375,13 +378,15 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 								  			deTip = " title=\"" + tip + "\"";
 								  		}
 								  		
-								  		%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" onClick="visualizzaAjaxStatus();return true;"><%= res %></a><%
+								  		
+								  		
+								  		%><a class="<%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;"><%= res %></a><%
 								  		
 							      	} else {
 										//no url
 										if (!de.getOnClick().equals("")) {
 										  //onclick
-										  %><a class="<%= classLink %>" href='' onClick="visualizzaAjaxStatus();<%= de.getOnClick() %>; return false;"><%= de.getValue() %></a><%
+										  %><a class="<%= classLink %>" href='' onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;"><%= de.getValue() %></a><%
 										} else {
 										  //string only
 										  %><span class="<%= classSpan %>"><%= de.getValue() %></span><%
@@ -410,9 +415,11 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 											  		String deUrl = !image.getUrl().equals("") ? image.getUrl() : "";
 											  		String deOnClick = !image.getOnClick().equals("") ? image.getOnClick() : "";
 											  		
+											  		String visualizzaAjaxStatus = image.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+											  		
 											  		if(!deUrl.equals("")){ // Url definita
 				                					%>
-					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" onClick="visualizzaAjaxStatus();return true;" type="button">
+					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="<%= image.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;" type="button">
 					                						<span class="icon-box">
 																<i class="material-icons md-18"><%= deIconName %></i>
 															</span>
@@ -420,7 +427,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 					                				<%
 											  		} else if (!deOnClick.equals("")){ // Se e' definito 'OnClick' 
 											  			%>
-					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" onClick="visualizzaAjaxStatus();<%= deOnClick %>; return false;" type="button">
+					                					<a class="image-link <%= classLink %>" <%= deTip %> <%=deTarget %> href="" onClick="<%= visualizzaAjaxStatus %><%= deOnClick %>; return false;" type="button">
 					                						<span class="icon-box">
 																<i class="material-icons md-18"><%= deIconName %></i>
 															</span>
@@ -477,6 +484,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 													}
 									  				String tooltip = !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : ""; 
 									  				 
+									  				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									  				// tipo link
 										      		if (!de.getUrl().equals("")) { 
 										      			String deTarget = " ";
@@ -484,7 +492,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 												  			deTarget = " target=\""+ de.getTarget() +"\"";
 												  		} 
 												  		%><div style="text-align: center;">
-												  			<a class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>" onClick="visualizzaAjaxStatus();return true;">
+												  			<a class="<%= classLink %>" <%=deTarget %> href="<%= de.getUrl() %>" onClick="<%= visualizzaAjaxStatus %>return true;">
 												  				<img src="images/tema_link/<%= image %>" <%= tooltip %>/>
 															</a>
 														</div><%
@@ -524,7 +532,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										//Bottone Previous
 										if (pd.getIndex() != 0) {
 											%>							
-											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="visualizzaAjaxStatus();PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
+											<img id="ds_prev_bottom" src="images/tema_link/go_prev.png" onclick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>PrevPage(document.form.limit.options[document.form.limit.selectedIndex].value)" title="Precedente"  class="dsImg" />
 											<%
 										} else{
 											%>
@@ -535,7 +543,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										//Scelta numero di entries da visualizzare
 										if ((pd.getNumEntries() > 20) || (pd.getIndex() != 0)) {
 										  %></td>
-											<td><select name="limit" onChange="visualizzaAjaxStatus();CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
+											<td><select name="limit" onChange="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>CambiaVisualizzazione(document.form.limit.options[selectedIndex].value)"><%
 										  switch (pd.getPageSize()) {
 										    case 20 :
 											%>
@@ -609,7 +617,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										  if (pd.getIndex()+pd.getPageSize() < pd.getNumEntries()) {
 											  nextBottomDisabled = false;
 										   			%>
-										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="visualizzaAjaxStatus();NextPage()" title="Successiva" class="dsImg"/>
+										   			<img id="ds_next_bottom" src="images/tema_link/go_next.png" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>NextPage()" title="Successiva" class="dsImg"/>
 										   			<%
 										  }
 										}
@@ -646,8 +654,9 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									  		Vector<?> bottoni = area.getBottoni();
 									 		for (int b = 0; b < bottoni.size(); b++) {
 									   			DataElement bottone = (DataElement) bottoni.elementAt(b);
+									   			String visualizzaAjaxStatus = bottone.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 									   			%>
-									   			<input type="button" onClick="visualizzaAjaxStatus();<%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
+									   			<input type="button" onClick="<%= visualizzaAjaxStatus %><%= bottone.getOnClick() %>" value='<%= bottone.getValue() %>'/>
 									   			<%
 									 		}
 										}
@@ -660,7 +669,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 									
 									//Bottone di Add
 									if (pd.getAddButton()) {
-									  %><input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Aggiungi' /><%
+									  %><input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Aggiungi' /><%
 									}
 									
 									%>
@@ -673,7 +682,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 						<tr>
 							<td colspan=<%= labelLength + 1 %> class="buttonrow">
 								<div class="buttonrowlista">
-									<input type="button" onClick="visualizzaAjaxStatus();AddEntry()" value='Aggiungi' />
+									<input type="button" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>AddEntry()" value='Aggiungi' />
 								</div>
 							</td>
 						</tr>

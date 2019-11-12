@@ -44,6 +44,22 @@
  	    });
  	}
  	
+ 	if($( "#selezioneRichiestaModal" ).length > 0){
+ 		$( "#selezioneRichiestaModal" ).dialog({
+ 	      resizable: false,
+ 	     dialogClass: "no-close",
+ 	     autoOpen: false,
+ 	      height: "auto",
+ 	      width: 400,
+ 	      modal: true,
+ 	      buttons: {
+ 	    	 'Chiudi' : function() {
+ 	 	          $( this ).dialog( "close" );
+ 	 	        }
+ 	      }
+ 	    });
+ 	}
+ 	
  	if($( "#dataElementInfoModal" ).length > 0){
  		$( "#dataElementInfoModal" ).dialog({
  	      resizable: false,
@@ -59,6 +75,8 @@
 		    $("#rem_btn").click(function(){
 		    	if($("input[name=selectcheckbox]:checked").length > 0)
 		    		$( "#confermaEliminazioneModal" ).dialog( "open" );
+			else
+				$( "#selezioneRichiestaModal" ).dialog( "open" );
 			    //RemoveEntries();
 			});
 		

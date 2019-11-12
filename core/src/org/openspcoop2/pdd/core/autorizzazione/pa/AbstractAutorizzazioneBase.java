@@ -27,6 +27,7 @@ package org.openspcoop2.pdd.core.autorizzazione.pa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.AbstractCore;
+import org.openspcoop2.pdd.core.autorizzazione.AutorizzazioneException;
 
 /**
  * AbstractAutorizzazioneBase
@@ -44,7 +45,7 @@ public abstract class AbstractAutorizzazioneBase extends AbstractCore implements
 	}
 
 	@Override
-	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) {
+	public String getSuffixKeyAuthorizationResultInCache(DatiInvocazionePortaApplicativa datiInvocazione) throws AutorizzazioneException {
 		return null;
 	}
 	

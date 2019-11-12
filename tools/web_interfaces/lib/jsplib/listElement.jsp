@@ -309,8 +309,12 @@ function Esporta(tipo) {
 	  }
 
 
-	if(elemToExport !== '')
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;  
+	if(elemToExport !== '') {
+		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+	} else {
+		$( "#selezioneRichiestaModal" ).dialog( "open" );
+	}
 		  
 };
 
@@ -441,6 +445,12 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
  		<p class="contenutoEliminazioneModal">
  			<img src="images/tema_link/alert_orange.png"/>
  			<span>Eliminare gli elementi selezionati?</span>
+ 		</p>
+	</div>
+	<div id="selezioneRichiestaModal" title="Selezione richiesta">
+ 		<p class="contenutoSelezioneRichiestaModal">
+ 			<img src="images/tema_link/alert_orange.png"/>
+ 			<span>&Egrave; necessario selezionare almeno 1 elemento.</span>
  		</p>
 	</div>
 <jsp:include page="/jsplib/conferma.jsp" flush="true" />

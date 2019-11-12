@@ -437,6 +437,7 @@ public final class Exporter extends Action {
 			pd.setDati(dati);
 
 			pd.setLabelBottoneInvia(ArchiviCostanti.LABEL_ARCHIVI_EXPORT);
+			pd.setDisabilitaAjaxStatusBottoneInvia();
 			
 			if(errore){
 				pd.setMessage(motivoErrore);

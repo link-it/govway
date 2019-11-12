@@ -9797,9 +9797,7 @@
         <!-- **** WSSecurity (SoapBox) **** -->
         
         <!-- WSSecurity (SoapBox) Cifrata e Firmata -->
-        <porta-applicativa
-            nome="SOAPBOX_CifrataFirmata"
-            stateless="abilitato">
+        <porta-applicativa nome="SOAPBOX_CifrataFirmata" autenticazione="none" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataFirmata"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -9864,9 +9862,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Firmata e Cifrata -->
-        <porta-applicativa
-            nome="SOAPBOX_FirmataCifrata"
-            stateless="abilitato">
+        <porta-applicativa nome="SOAPBOX_FirmataCifrata" autenticazione="none" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataCifrata"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -9931,9 +9927,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Cifrata -->
-        <porta-applicativa
-            nome="SOAPBOX_Cifrata"
-            stateless="abilitato">
+        <porta-applicativa nome="SOAPBOX_Cifrata" autenticazione="none" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrata"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -9979,9 +9973,7 @@
         
         
         <!-- WSSecurity (SoapBox) Firmata -->
-        <porta-applicativa
-            nome="SOAPBOX_Firmata"
-            stateless="abilitato">
+        <porta-applicativa nome="SOAPBOX_Firmata" autenticazione="none" stateless="abilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmata"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10030,9 +10022,7 @@
         
         
         <!-- WSSecurity (SoapBox) Cifrata e Firmata con Attachments -->
-        <porta-applicativa
-            nome="SOAPBOX_CifrataFirmataAttachments"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_CifrataFirmataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataFirmataAttachments"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10097,9 +10087,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Firmata e Cifrata con Attachments -->
-        <porta-applicativa
-            nome="SOAPBOX_FirmataCifrataAttachments"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_FirmataCifrataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataCifrataAttachments"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10164,9 +10152,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Cifrata con Attachments -->
-        <porta-applicativa
-            nome="SOAPBOX_CifrataAttachments"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_CifrataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxCifrataAttachments"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10211,9 +10197,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Firmata con Attachments -->
-        <porta-applicativa
-            nome="SOAPBOX_FirmataAttachments"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_FirmataAttachments" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachments"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10261,9 +10245,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Firmata con Attachments (Signature engine impostato a 'sun') -->
-        <porta-applicativa
-            nome="SOAPBOX_FirmataAttachments_SignatureEngineSun"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_FirmataAttachments_SignatureEngineSun" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun"/>
             <servizio-applicativo nome="govwayTestSuite" /> 
@@ -10313,9 +10295,7 @@
         </porta-applicativa>
         
         <!-- WSSecurity (SoapBox) Firmata con Attachments (Signature engine impostato a 'xmlSec') -->
-        <porta-applicativa
-            nome="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec"
-            stateless="abilitato" gestione-manifest="disabilitato">
+        <porta-applicativa nome="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
             <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineXmlSec"/>
             <servizio-applicativo nome="govwayTestSuite" /> 

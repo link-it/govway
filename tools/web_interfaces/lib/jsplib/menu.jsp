@@ -71,7 +71,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')
 							   .click(function() {
-								   		visualizzaAjaxStatus(); 
+								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %> 
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
 										window.location = val;
 							       });
@@ -85,7 +85,7 @@ PageData pd = (PageData) session.getAttribute(pdString);
 							<script type="text/javascript">
 							   $('[id=voceMenu_<%=j %>]')
 							   .click(function() {
-								   		visualizzaAjaxStatus();
+								   		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
 										var val = $(this).children('input[id=url_entry_<%=j %>]').val();
 										window.location = val;
 							       });
