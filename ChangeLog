@@ -1,3 +1,14 @@
+2019-11-15  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.2.1
+
+2019-11-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Risolto Bug OP-923
+	L'autorizzazione per Ruoli nelle erogazioni non funzionava per gli Applicativi. 
+	Non venivano verificati eventuali ruoli associati agli applicativi identificati durante l'invocazione dell'erogazione.
+
 2019-11-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

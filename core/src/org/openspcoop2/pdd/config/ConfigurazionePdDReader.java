@@ -2369,7 +2369,7 @@ public class ConfigurazionePdDReader {
 	}
 	
 	protected boolean autorizzazioneRoles(RegistroServiziManager registroServiziManager, 
-			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, InfoConnettoreIngresso infoConnettoreIngresso,
+			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
 			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
@@ -2379,8 +2379,8 @@ public class ConfigurazionePdDReader {
 		}
 
 		if(checkRuoloRegistro && !checkRuoloEsterno){
-			if(soggetto==null){
-				throw new DriverConfigurazioneException("Identità soggetto non disponibile; tale informazione è richiesta dall'autorizzazione");
+			if(soggetto==null && sa==null){
+				throw new DriverConfigurazioneException("Identità soggetto e/o applicativo non disponibile; tale informazione è richiesta dall'autorizzazione");
 			}
 		}
 		
@@ -2417,12 +2417,27 @@ public class ConfigurazionePdDReader {
 			
 			boolean trovato = false;
 			
-			if(checkRuoloRegistro && soggetto!=null && soggetto.getRuoli()!=null){
-				RuoliSoggetto ruoliSoggetto = soggetto.getRuoli();
-				for (int i = 0; i < ruoliSoggetto.sizeRuoloList(); i++) {
-					if(ruolo.getNome().equals(ruoliSoggetto.getRuolo(i).getNome())){
-						trovato = true;
-						break;
+			if(checkRuoloRegistro) {
+				if(sa!=null) {
+					if(sa.getInvocazionePorta()!=null && sa.getInvocazionePorta().getRuoli()!=null){
+						ServizioApplicativoRuoli ruoliSA = sa.getInvocazionePorta().getRuoli();
+						for (int i = 0; i < ruoliSA.sizeRuoloList(); i++) {
+							if(ruolo.getNome().equals(ruoliSA.getRuolo(i).getNome())){
+								trovato = true;
+								break;
+							}
+						}
+					}
+				}
+				else if(soggetto!=null) {
+					if(soggetto.getRuoli()!=null){
+						RuoliSoggetto ruoliSoggetto = soggetto.getRuoli();
+						for (int i = 0; i < ruoliSoggetto.sizeRuoloList(); i++) {
+							if(ruolo.getNome().equals(ruoliSoggetto.getRuolo(i).getNome())){
+								trovato = true;
+								break;
+							}
+						}
 					}
 				}
 			}

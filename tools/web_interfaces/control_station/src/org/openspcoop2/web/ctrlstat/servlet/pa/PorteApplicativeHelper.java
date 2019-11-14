@@ -1666,7 +1666,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, autorizzazioneContenutiStato, 
 					autorizzazioneContenuti, autorizzazioneContenutiProperties, serviceBinding, 
-					false, urlAutorizzazioneContenutiErogazioneCustomPropertiesList, 0); 
+					false, urlAutorizzazioneContenutiErogazioneCustomPropertiesList, 0,
+					confPers); 
 		}
 		
 		
@@ -1752,7 +1753,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		}
 			
 		if (tipoOp.equals(TipoOperazione.CHANGE)) {
-			if(this.isModalitaAvanzata() && !isConfigurazione){
+			if( (this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard()) && !isConfigurazione){
 				de = new DataElement();
 				de.setType(DataElementType.LINK);
 				de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST,pIdSogg,pIdPorta, pIdAsps);
@@ -2138,7 +2139,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MTOM);
 			//}
 			listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA);
-			if(this.isModalitaAvanzata())
+			if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard()))
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
 //			if(this.core.isRegistroServiziLocale()){
 //				//listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO);
@@ -2283,7 +2284,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 						de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CORRELAZIONE_APPLICATIVA_DISABILITATA);
 					e.addElement(de);
 
-					if(this.isModalitaAvanzata()){
+					if((this.isModalitaAvanzata() || this.porteApplicativeCore.isProprietaErogazioni_showModalitaStandard())){
 						de = new DataElement();
 						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_PROPRIETA_PROTOCOLLO_LIST, pIdSogg, pIdPorta, pIdAsps);
 						if (contaListe) {

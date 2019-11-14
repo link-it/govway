@@ -842,6 +842,14 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.porte.localForward");
 	}
 	
+	public boolean isProprietaErogazioni_showModalitaStandard() throws UtilsException{
+		return this.readBooleanProperty(true, "menu.proprietaErogazioni.showModalitaStandard");
+	}
+	
+	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
+		return this.readBooleanProperty(true, "menu.proprietaFruizioni.showModalitaStandard");
+	}
+	
 	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
 		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
 		String tmp = this.readProperty(false, p);

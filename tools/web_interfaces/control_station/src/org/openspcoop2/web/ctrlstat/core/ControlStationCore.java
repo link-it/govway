@@ -538,7 +538,7 @@ public class ControlStationCore {
 	public boolean isAccordiCooperazioneEnabled() {
 		return this.isAccordiCooperazioneEnabled;
 	}
-
+	
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -582,6 +582,8 @@ public class ControlStationCore {
 	private boolean showMTOMVisualizzazioneCompleta = false;
 	private int portaCorrelazioneApplicativaMaxLength = 255;
 	private boolean showPortaDelegataLocalForward = false;
+	private boolean isProprietaErogazioni_showModalitaStandard;
+	private boolean isProprietaFruizioni_showModalitaStandard;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
 	private boolean showConfigurazioneTracciamentoDiagnostica = true;
 	private String tokenPolicyForceId = null;
@@ -656,6 +658,12 @@ public class ControlStationCore {
 	}
 	public boolean isShowPortaDelegataLocalForward() {
 		return this.showPortaDelegataLocalForward;
+	}
+	public boolean isProprietaErogazioni_showModalitaStandard() throws UtilsException{
+		return this.isProprietaErogazioni_showModalitaStandard;
+	}
+	public boolean isProprietaFruizioni_showModalitaStandard() throws UtilsException{
+		return this.isProprietaFruizioni_showModalitaStandard;
 	}
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
@@ -1639,6 +1647,8 @@ public class ControlStationCore {
 		this.showMTOMVisualizzazioneCompleta = core.showMTOMVisualizzazioneCompleta;
 		this.portaCorrelazioneApplicativaMaxLength = core.portaCorrelazioneApplicativaMaxLength;
 		this.showPortaDelegataLocalForward = core.showPortaDelegataLocalForward;
+		this.isProprietaErogazioni_showModalitaStandard = core.isProprietaErogazioni_showModalitaStandard;
+		this.isProprietaFruizioni_showModalitaStandard = core.isProprietaFruizioni_showModalitaStandard;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
@@ -1924,6 +1934,8 @@ public class ControlStationCore {
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
 			this.portaCorrelazioneApplicativaMaxLength = consoleProperties.getPortaCorrelazioneApplicativaMaxLength();
 			this.showPortaDelegataLocalForward = consoleProperties.isMenuPortaDelegataLocalForward();
+			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioni_showModalitaStandard();
+			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioni_showModalitaStandard();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
 			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();

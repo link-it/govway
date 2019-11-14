@@ -24,8 +24,10 @@
 
 package org.openspcoop2.pdd.core.autorizzazione.pa;
 
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -61,12 +63,20 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     	try{
 
     		IDSoggetto idSoggetto = datiInvocazione.getIdSoggettoFruitore();
+    		IDServizioApplicativo idSA = datiInvocazione.getIdentitaServizioApplicativoFruitore();
     		IDServizio idServizio = datiInvocazione.getIdServizio();
     		errore = this.getErrorString(idSoggetto, idServizio);
     		
+    		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()); 
+    		
+    		ServizioApplicativo sa = null;
+    		if(idSA!=null) {
+    			sa = configurazionePdDManager.getServizioApplicativo(idSA);
+    		}
+    		
     		StringBuffer detailsBuffer = new StringBuffer();
-    		if( ConfigurazionePdDManager.getInstance(datiInvocazione.getState()).
-    				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), 
+    		if(configurazionePdDManager.
+    				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), sa,
     						datiInvocazione.getInfoConnettoreIngresso(), 
     						this.getPddContext(),
     						this.checkRuoloRegistro, this.checkRuoloEsterno,

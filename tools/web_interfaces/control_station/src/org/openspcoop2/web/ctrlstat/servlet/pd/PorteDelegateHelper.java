@@ -802,7 +802,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 				
 			this.controlloAccessiAutorizzazioneContenuti(dati, tipoOp, autorizzazioneContenutiStato, autorizzazioneContenuti, autorizzazioneContenutiProperties,
-					serviceBinding, false, null, 0);
+					serviceBinding, false, null, 0,
+					confPers);
 		}
 		
 		
@@ -2051,7 +2052,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 
 			labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CORRELAZIONE_APPLICATIVA);
 			
-			if(this.isModalitaAvanzata())
+			if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard()))
 				labelsList.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
 			
 			if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
@@ -2207,7 +2208,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					// Protocol Properties
-					if(this.isModalitaAvanzata()){
+					if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())){
 						de = new DataElement();
 						//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_PROPRIETA_PROTOCOLLO_LIST, pIdSoggPD, pIdPD,

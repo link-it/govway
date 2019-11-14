@@ -2421,8 +2421,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				}
 				listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE);
 				
-				if(this.isModalitaAvanzata()) {
+				if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
+				}
+				if(this.isModalitaAvanzata()) {
 					listaLabel.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
 				}
 				if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
@@ -3089,7 +3091,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					// Protocol Properties
-					if(this.isModalitaAvanzata()){
+					if(this.isModalitaAvanzata() || this.apsCore.isProprietaErogazioni_showModalitaStandard()) {
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PROTOCOL_PROPERTIES);
@@ -3997,8 +3999,10 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_DUMP_CONFIGURAZIONE);
 				
-				if(this.isModalitaAvanzata()) {
+				if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
+				}
+				if(this.isModalitaAvanzata()) {
 					listaLabel.add(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
 				}
 				if(extendedServletList!=null && extendedServletList.showExtendedInfo(this.request, this.session)){
@@ -4659,7 +4663,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					// Protocol Properties
-					if(this.isModalitaAvanzata()){
+					if((this.isModalitaAvanzata() || this.porteDelegateCore.isProprietaFruizioni_showModalitaStandard())){
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES);
