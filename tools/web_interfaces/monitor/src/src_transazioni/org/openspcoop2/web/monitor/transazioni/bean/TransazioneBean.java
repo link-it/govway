@@ -1126,26 +1126,43 @@ public class TransazioneBean extends Transazione{
 		}
 		
 	}
+	
+	public String getPddRuoloImageVisualizzazioneCustom() {
+		PddRuolo pddRuolo = this.getPddRuolo();
+		if(pddRuolo!=null) {
+			switch (pddRuolo) {
+			case DELEGATA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_DELEGATA_ICON_KEY);
+			case APPLICATIVA:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_APPLICATIVA_ICON_KEY);
+			case ROUTER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
+			case INTEGRATION_MANAGER:
+				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_IM_ICON_KEY);
+			}
+		}
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
+	}
 
 	public String getCssColonnaEsito() {
 		if(this.isEsitoOk())
-			return "col-esito-ok";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
 		if(this.isEsitoFaultApplicativo())
-			return "col-esito-fault";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_FAULT;
 		if(this.isEsitoKo())
-			return "col-esito-errore";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_ERRORE;
 		
-		return "col-esito-errore";
+		return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_ERRORE;
 	}
 	
 	public String getCssColonnaLatenza() {
 		if(this.isEsitoOk())
-			return "col-latenza-ok";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
 		if(this.isEsitoFaultApplicativo())
-			return "col-latenza-fault";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_FAULT;
 		if(this.isEsitoKo())
-			return "col-latenza-errore";
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE;
 		
-		return "col-latenza-errore";
+		return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE;
 	}
 }

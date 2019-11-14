@@ -131,6 +131,9 @@ Context, Cloneable {
 	
 	private boolean integrationManagerEnabled = false;
 	
+	private boolean visualizzaStoricoCustomEnabled = false;
+	private boolean visualizzaLiveCustomEnabled = false;
+	
 	public TransazioniSearchForm(){
 		super();
 		
@@ -155,6 +158,9 @@ Context, Cloneable {
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive();
+			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
@@ -177,6 +183,9 @@ Context, Cloneable {
 			this.modalitaRicercaStorico = TransazioniSearchForm.default_modalitaRicercaStorico;
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
+			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive();
 			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
@@ -1328,4 +1337,22 @@ Context, Cloneable {
 	public void setRicercaLiberaIdApplicativo(String ricercaLiberaIdApplicativo) {
 		this.ricercaLiberaIdApplicativo = ricercaLiberaIdApplicativo;
 	}
+
+	public boolean isVisualizzaStoricoCustomEnabled() {
+		return this.visualizzaStoricoCustomEnabled;
+	}
+
+	public void setVisualizzaStoricoCustomEnabled(boolean visualizzaStoricoCustomEnabled) {
+		this.visualizzaStoricoCustomEnabled = visualizzaStoricoCustomEnabled;
+	}
+
+	public boolean isVisualizzaLiveCustomEnabled() {
+		return this.visualizzaLiveCustomEnabled;
+	}
+
+	public void setVisualizzaLiveCustomEnabled(boolean visualizzaLiveCustomEnabled) {
+		this.visualizzaLiveCustomEnabled = visualizzaLiveCustomEnabled;
+	}
+	
+	
 }

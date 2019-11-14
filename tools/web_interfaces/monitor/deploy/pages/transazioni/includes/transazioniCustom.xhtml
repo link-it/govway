@@ -10,8 +10,7 @@
 
 	<a4j:outputPanel id="gridCtr" layout="block" styleClass="panelLista" rendered="#{value.executeQuery}">
 
-	 <link:dataTable height="880px"
-					id="msgDt"
+	 <link:dataTable id="msgDt"
 					value="#{value}"
 					headerText="#{headerText}"
 					enableDelete="false"
@@ -33,37 +32,54 @@
 							<c:if test="#{not empty processiDettagliBean}">
 								<f:setPropertyActionListener value="#{selectedProcesso}" target="#{processiDettagliBean.selectedProcesso}"/>
 							</c:if>	
+							<f:setPropertyActionListener value="infoGenerali" target="#{dettagliBean.selectedTab}"/>
 						</a4j:support>
 						<a4j:outputPanel layout="block" id="entryIconeTransazione" styleClass="entryIconeTransazione">
 							<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="entryRuoloTransazione">
-								<a4j:outputPanel id="imgRuoloTransazione">
-									<i class="material-icons md-40">#{item.pddRuoloImage}</i>
-								</a4j:outputPanel>
-								<rich:toolTip for="imgRuoloTransazione" value="#{item.pddRuoloToolTip}" />
+								<h:graphicImage value="/images/tema_link/erogazione_white_48.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+								<h:graphicImage value="/images/tema_link/fruizione_white_48.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+								<rich:toolTip for="entryRuoloTransazione" value="#{item.pddRuoloToolTip}" />
 							</a4j:outputPanel>
 						</a4j:outputPanel>
-						<a4j:outputPanel layout="block" id="entryDatiTransazione" styleClass="entryDatiTransazione" style="">
+						<a4j:outputPanel layout="block" id="entryDatiTransazione" styleClass="entryDatiTransazione">
 							<a4j:outputPanel layout="block" id="riga1" styleClass="entryDatiTransazioneRiga1">
 								<a4j:outputPanel layout="block" id="titolo" styleClass="divTitoloEntry">
-									<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
-									<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
-									<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
-										<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
-											<h:outputText value="Richiesta Anonima" />
+									<a4j:outputPanel layout="block" id="titoloSx" styleClass="titoloSX">
+										<h:outputText id="outServ2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}" styleClass="#{item.pddRuolo!='DELEGATA' ? 'interno' : ''}"/>
+										<rich:toolTip for="outServ2" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}">
+											<h:outputText value="Erogatore: "/>
+											<h:outputText value="#{item.soggettoErogatore}" />
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" />
+											<h:outputText value="#{msg['commons.servizio.label']} #{item.tipoApiLabel}: "/>
+											<h:outputText value="#{item.servizio}" />
 										</rich:toolTip>
-									</h:graphicImage>
-									<rich:spacer width="8"/>
-									<a4j:outputPanel id="imgRuoloTransazione2">
-										<i class="material-icons md-32">#{item.pddRuoloImage}</i>
+										<h:outputText id="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}" styleClass="#{item.pddRuolo!='DELEGATA' ? 'interno' : ''}"/>
+										<rich:toolTip for="outServ3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 									</a4j:outputPanel>
-									<rich:spacer width="8"/>
 									
-									<h:outputText id="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-									<rich:toolTip for="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-									<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-									<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+									<a4j:outputPanel layout="block" id="titoloIconaRuolo" styleClass="titoloIconaRuolo">
+										<a4j:outputPanel id="imgRuoloTransazione2">
+											<h:graphicImage value="/images/tema_link/erogazione_black_24.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
+											<h:graphicImage value="/images/tema_link/fruizione_black_24.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
+										</a4j:outputPanel>
+									</a4j:outputPanel>
 									
-									<rich:spacer width="12" rendered="#{not empty item.listaGruppi}"/>
+									<a4j:outputPanel layout="block" id="titoloDx" styleClass="titoloDX">
+										<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}" styleClass="#{item.pddRuolo =='DELEGATA' ? 'interno' : ''}"/>
+										<rich:toolTip for="outServizioApplicativoFruitore" rendered="#{not empty item.labelRichiedenteConFruitore}">
+											<h:outputText value="Fruitore: " rendered="#{not empty item.soggettoFruitore}"/>
+											<h:outputText value="#{item.soggettoFruitore}" rendered="#{not empty item.soggettoFruitore}" />
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.soggettoFruitore}"/>
+											<h:outputText value="Richiedente: "/>
+											<h:outputText value="#{item.richiedente}" />
+										</rich:toolTip>
+										<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+											<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
+												<h:outputText value="Richiesta Anonima" />
+											</rich:toolTip>
+										</h:graphicImage>
+									</a4j:outputPanel>
+									
 									<a4j:outputPanel layout="block" id="tags" styleClass="titoloTags" rendered="#{not empty item.listaGruppi}">
 										<a4j:repeat value="#{item.listaGruppi}" var="gruppo">
 											<h:outputText id="outCustomContentTag" value="#{gruppo.label}"  styleClass="tag label label-info #{gruppo.value}"/>
@@ -75,6 +91,13 @@
 										<a4j:outputPanel layout="block" id="titoloInfoLatenzaTransazione" styleClass="titoloEntry">
 											<i class="material-icons md-32">hourglass_empty</i>			
 										</a4j:outputPanel>
+										<rich:toolTip for="entryInfoLatenzaTransazioneTitolo">
+												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio}"/>
+												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio}"/>
+												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio}"/>
+												<h:outputText value="Latenza Porta: "/>
+												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
+											</rich:toolTip>
 									</a4j:outputPanel>
 									<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneTitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk}">
@@ -89,42 +112,78 @@
 										<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
 											<i class="material-icons md-32">warning</i>
 										</a4j:outputPanel>
+										<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
+												<h:outputText value="#{item.esitoLabelDescription}" />
+											</rich:toolTip>
 									</a4j:outputPanel>
 								</a4j:outputPanel>
 							</a4j:outputPanel>
 							<a4j:outputPanel layout="block" id="riga2" styleClass="entryDatiTransazioneRiga2">
 								<a4j:outputPanel layout="block" id="metadati" styleClass="divSottotitoloEntry">
-									<h:outputText id="outDataLabe2" value="Data: " rendered="true"/>
-									<h:outputText id="outDataIngRich2" value="#{item.dataIngressoRichiesta}">
-										<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
-											timeZone="Europe/Rome" />
-									</h:outputText>
-									<rich:toolTip for="outDataIngRich2">
-										<h:outputText  value="#{item.dataIngressoRichiesta}">
-											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+									<a4j:outputPanel layout="block" id="sottotitoloSx" styleClass="">
+										<h:outputText id="outDataLabe2" value="Data: " rendered="true"/>
+										<h:outputText id="outDataIngRich2" value="#{item.dataIngressoRichiesta}">
+											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
+												timeZone="Europe/Rome" />
 										</h:outputText>
-									</rich:toolTip>
+										<rich:toolTip for="sottotitoloSx">
+											<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
+											<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
+											<h:outputText value="Accettazione Risposta: " rendered="#{mBean.visualizzaDataAccettazione}" />
+											<h:outputText value="#{item.dataAccettazioneRisposta}" rendered="#{mBean.visualizzaDataAccettazione}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
+											<h:outputText value="Ingresso Richiesta: "/>
+											<h:outputText value="#{item.dataIngressoRichiesta}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.dataUscitaRichiesta}" />
+											<h:outputText value="Uscita Richiesta: " rendered="#{not empty item.dataUscitaRichiesta}"/>
+											<h:outputText value="#{item.dataUscitaRichiesta}" rendered="#{not empty item.dataUscitaRichiesta}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.dataIngressoRisposta}" />
+											<h:outputText value="Ingresso Risposta: " rendered="#{not empty item.dataIngressoRisposta}"/>
+											<h:outputText value="#{item.dataIngressoRisposta}" rendered="#{not empty item.dataIngressoRisposta}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+											<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.dataUscitaRisposta}"/>
+											<h:outputText value="Uscita Risposta: " rendered="#{not empty item.dataUscitaRisposta}"/>
+											<h:outputText value="#{item.dataUscitaRisposta}" rendered="#{not empty item.dataUscitaRisposta}">
+												<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+											</h:outputText>
+										</rich:toolTip>
+									</a4j:outputPanel>
 									
-									<h:outputText id="outAzione1" value=", Operazione: " />
-									<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-									<rich:toolTip for="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-									<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-									<rich:toolTip for="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+									<a4j:outputPanel layout="block" id="sottotitoloDx" styleClass="">
+										<h:outputText id="outAzione1" value=", Operazione: " />
+										<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+										<rich:toolTip for="sottotitoloDx" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+										<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+										<rich:toolTip for="sottotitoloDx" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+									</a4j:outputPanel>
 								</a4j:outputPanel>
 								<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">
 									<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
 										<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
 											<h:outputText id="outLatenzaServizio2" value="#{item.latenzaTotale}" converter="latenzaConverter"/>
-											<rich:toolTip for="outLatenzaServizio2">
-												<h:outputText value="Tempi Risposta: "/>
-												<h:outputText value="#{item.latenzaTotale}" converter="latenzaConverter"/>
+											<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo">
+												<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio}"/>
+												<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio}"/>
+												<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio}"/>
+												<h:outputText value="Latenza Porta: "/>
+												<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 											</rich:toolTip>
 										</a4j:outputPanel>
 									</a4j:outputPanel>
 									<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneSottotitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
 										<a4j:outputPanel layout="block" id="sottotitoloInfoEsitoTransazione" styleClass="metadatiEntry">
 											<h:outputText id="outEsito2" value="#{item.esitoLabelSyntetic}" />
-											<rich:toolTip for="outEsito2">
+											<rich:toolTip for="entryInfoEsitoTransazioneSottotitolo">
 												<h:outputText value="#{item.esitoLabelDescription}" />
 											</rich:toolTip>
 										</a4j:outputPanel>
@@ -134,7 +193,6 @@
 						</a4j:outputPanel>
 					</a4j:outputPanel>
 				</rich:column>
-				<ui:insert name="extraColumns"></ui:insert>
 				<ui:define name="buttons">
 					<h:panelGrid columns="3" >
 						<a4j:outputPanel styleClass="form-container" layout="block">

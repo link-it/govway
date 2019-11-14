@@ -61,7 +61,7 @@
 							<c:set var="_totRowsToDisplay" value="#{rowsToDisplay gt 0 ? (_totRows lt rowsToDisplay ? _totRows : rowsToDisplay) : _totRows}"/>
 							<c:set var="_rowsCount" value="#{(page*(_totRowsToDisplay))}"/>
 							<c:set var="_currentRowDisplayed" value="#{((page-1)*rowsToDisplay)+1}"/>						
-							<h:panelGroup id="#{id}tableHeaderText">
+							<h:panelGroup id="#{id}_tableHeaderText">
 								<h:outputText value="#{headerText}: " rendered="#{not empty headerText}" escape="false"/>
 								<h:outputText value="record [#{(_totRows gt 0) ? _currentRowDisplayed : 0} - #{ _rowsCount gt _totRows ? _totRows : _rowsCount }] su #{_totRows}" />
 							</h:panelGroup>						
@@ -131,7 +131,7 @@
 				
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
-	                      <h:panelGroup style="width:50px;" layout="block">
+	                      <h:panelGroup style="width:50px;" layout="block" id="chkClmnPg">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
 	                        	
 	                        </h:selectBooleanCheckbox>
@@ -251,7 +251,7 @@
 								<td>
 									<h:panelGrid columns="3">
 										<rich:spacer width="10px"/>
-										<h:panelGroup id="tableHeaderText">
+										<h:panelGroup id="#{id}_tableHeaderText">
 											<h:outputText value="#{headerText}" rendered="#{not empty headerText and empty value.recordLabel}"/>
 											<h:outputText value="#{headerText}: " rendered="#{not empty headerText and not empty value.recordLabel}"/>
 											<h:outputText value="#{value.recordLabel}" rendered="#{not empty value.recordLabel}"/>

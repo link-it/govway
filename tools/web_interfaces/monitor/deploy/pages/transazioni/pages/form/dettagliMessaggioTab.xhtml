@@ -7,7 +7,7 @@
 	xmlns:a4j="http://richfaces.org/a4j"
     xmlns:c="http://java.sun.com/jstl/core"
     xmlns:link="http://www.link.it">
-      <f:loadBundle var="msg" basename="messages" />
+    <f:loadBundle var="msg" basename="messages" />
 	<ui:define name="navbar">
 			<ul>
 				<li>
@@ -38,43 +38,43 @@
 			<f:facet name="header">
 				<h:outputText id="outDettagli" value="Dettagli Transazione" />
 			</f:facet>
-			<rich:tabPanel>
-				<rich:tab>
+			<rich:tabPanel switchType="client" selectedTab="#{dettagliBean.selectedTab}">
+				<rich:tab name="infoGenerali">
 					<f:facet name="label">
 						<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniGenerali.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab>
+			    <rich:tab name="dettagliMessaggio">
 					<f:facet name="label">
 						<h:outputText id="outTitleDettRich" value="Dettagli Messaggio" />
 				    </f:facet>
-				    <ui:include src="/transazioni/includes/dettaglioMessaggioDettagliRichiesta.xhtml" >
+				    <ui:include src="/transazioni/includes/dettaglioMessaggioDettagliMessaggio.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab>
+			    <rich:tab name="diagnostici">
 					<f:facet name="label">
 						<h:outputText id="outTitleDettRisp" value="Diagnostici" />
 				    </f:facet>
-				    <ui:include src="/transazioni/includes/dettaglioMessaggioDettagliRisposta.xhtml" >
+				    <ui:include src="/transazioni/includes/dettaglioMessaggioMessaggiDiagnostici.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab>
+			    <rich:tab name="infoAvanzate">
 					<f:facet name="label">
 						<h:outputText id="outTitleInfoAvanz" value="Informazioni Avanzate" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniAvanzate.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject}">
+			    <rich:tab rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject}" name="tempiElaborazione">
 					<f:facet name="label">
 						<h:outputText id="outTitleTempiElab" value="Tempi di Elaborazione" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioTempiElaborazione.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab rendered="#{true}">
+			    <rich:tab rendered="#{true}" name="consegneMultiple">
 					<f:facet name="label">
 						<h:outputText id="outTitleInfoServer" value="Consegne Multiple" />
 				    </f:facet>

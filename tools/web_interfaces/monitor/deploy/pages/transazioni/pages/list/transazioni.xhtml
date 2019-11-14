@@ -5,6 +5,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:link="http://www.link.it">
 	<f:loadBundle var="msg" basename="messages" />
 		
@@ -127,43 +128,110 @@ xmlns="http://www.w3.org/1999/xhtml"
 			<div class="spacer"></div>
 			
 			<a4j:outputPanel id="listaTransazioniCtr" ajaxRendered="false" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">
-				<script type="text/javascript">
-				//<![CDATA[
-				   jQuery(document).ready(nascondiChk);
-				   
-				   function nascondiChk(){
-					   jQuery("div[id$='ckbClmn:sortDiv'] span[class$='extdt-sortable-header'] img").remove();
-					   jQuery("div[id$='colEsitoImg:sortDiv'] span[class$='extdt-sortable-header'] img[class$='extdt-header-sort-img']").remove();
-					   jQuery("input[id$='msgDt_column_ckb']").parent().addClass('align-center');
-					   visualizzaPannelloComandi('msgDt');
-				   }
-							   
-				   function completa(evt){   }
-				   
-				   function checkExportContenutiSelection(containerId){
-						 var name = "csvCheckSelection";
-						 var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='esportazioniChk:2']:checked").length;
-							if(n==1){
-								Richfaces.showModalPanel(name);
-								return false;
-							}else{
-								return true;
-							}
-					 };
-					 
-				function getExportContenutiSelection(containerId){
-						 var toRet = "";
-						 var ids = jQuery("div [id$='"+containerId+"'] input:checkbox[id*='esportazioniChk']:checked");
-						 for (var i =0 ; i < ids.length ; i++) {
-								if(i > 0 ) toRet += ',';
-								
-								toRet += ids[i].id.substring(ids[i].id.indexOf(':')+1);
-							} 
+				<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == false}">
+					<script type="text/javascript">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						   jQuery("div[id$='ckbClmn:sortDiv'] span[class$='extdt-sortable-header'] img").remove();
+						   jQuery("div[id$='colEsitoImg:sortDiv'] span[class$='extdt-sortable-header'] img[class$='extdt-header-sort-img']").remove();
+						   jQuery("input[id$='msgDt_column_ckb']").parent().addClass('align-center');
+						   visualizzaPannelloComandi('msgDt');
+					   }
+								   
+					   function completa(evt){   }
+					   
+					   function checkExportContenutiSelection(containerId){
+							 var name = "csvCheckSelection";
+							 var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='esportazioniChk:2']:checked").length;
+								if(n==1){
+									Richfaces.showModalPanel(name);
+									return false;
+								}else{
+									return true;
+								}
+						 };
 						 
-						 return toRet;
-					 };
-					 //]]>	
-				</script>
+					function getExportContenutiSelection(containerId){
+							 var toRet = "";
+							 var ids = jQuery("div [id$='"+containerId+"'] input:checkbox[id*='esportazioniChk']:checked");
+							 for (var i =0 ; i < ids.length ; i++) {
+									if(i > 0 ) toRet += ',';
+									
+									toRet += ids[i].id.substring(ids[i].id.indexOf(':')+1);
+								} 
+							 
+							 return toRet;
+						 };
+						 //]]>	
+					</script>
+				
+				</c:if>
+				
+				<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == true}">
+					<script type="text/javascript">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						   jQuery("div[id$='chkClmnPg']").attr('style', '');
+						   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
+						   jQuery("th[id$='ckbClmnheader']").css('width','16px');
+						   jQuery("input[id$='msgDt_column_ckb']").parent().attr('width','');
+						   jQuery("input[id$='msgDt_column_ckb']").parent().css('padding','12px');
+						   jQuery("input[id$='msgDt_column_ckb']").parent().addClass('align-center');
+						   jQuery("input[id$='msgDt_column_ckb']").css('padding','0px');
+						   
+						   // adattare dimensione delle colonne latenza e esito
+						   var larghezzaColonnaLatenza = getLarghezzaMassima("div[id$='sottotitoloInfoLatenzaTransazione']");
+						   
+						   var larghezzaColonnaLatenzaPixel = larghezzaColonnaLatenza + 'px';
+						   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
+						   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
+						   
+ 						   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
+						   
+						   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
+						   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
+						   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
+						   
+						   visualizzaPannelloComandi('msgDt');
+					   }
+					   
+					   function getLarghezzaMassima(sel){
+						   return Math.max.apply(Math, jQuery(sel).map(function(){  return jQuery(this).width(); }).get());
+					   }
+					   
+					   function completa(evt){   }
+					   
+					   function checkExportContenutiSelection(containerId){
+							 var name = "csvCheckSelection";
+							 var n = jQuery("div [id$='"+containerId+"'] input:checkbox[id$='esportazioniChk:2']:checked").length;
+								if(n==1){
+									Richfaces.showModalPanel(name);
+									return false;
+								}else{
+									return true;
+								}
+						 };
+						 
+					function getExportContenutiSelection(containerId){
+							 var toRet = "";
+							 var ids = jQuery("div [id$='"+containerId+"'] input:checkbox[id*='esportazioniChk']:checked");
+							 for (var i =0 ; i < ids.length ; i++) {
+									if(i > 0 ) toRet += ',';
+									
+									toRet += ids[i].id.substring(ids[i].id.indexOf(':')+1);
+								} 
+							 
+							 return toRet;
+						 };
+						 //]]>	
+					</script>
+				
+				</c:if>
+				
 				<h:form id="formExportListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}">
 					<a4j:outputPanel layout="block" ajaxRendered="false">
 						<a4j:jsFunction name="preparaFormModale" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.initExportListener}" limitToList="true">
@@ -173,21 +241,40 @@ xmlns="http://www.w3.org/1999/xhtml"
 		        	</a4j:outputPanel>
 		        </h:form>
 				<a4j:form id="formListaTransazioni" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" prependId="false">
-					<ui:include src="/transazioni/includes/transazioniCustom.xhtml">
-						<ui:param value="#{transazioniDM}" name="value" />
-						<ui:param value="Lista #{(searchFormTransazioni.modalitaRicercaStorico == 'intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico == 'idApplicativo') ? 
-											 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : 'Fruizioni')
-											 :
-											 'Transazioni' }" name="headerText" />
-						<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
-						<ui:param value="#{transazioniBean}" name="mBean" />
-						<ui:param value="#{transazioniBean.tableState}" name="tableState" />
-						<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
-						<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
-						<ui:param value="#{transazioniBean.exportSelected}" name="esportaTransazioniSelezionate" />
-						<ui:param value="panelPaginaTransazioniCtr" name="reRenderIds" />
-						<ui:param value="#{searchFormTransazioni.useCount}" name="useCount" />
-					</ui:include>
+					<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == false}">
+						<ui:include src="/transazioni/includes/transazioniGrid.xhtml">
+							<ui:param value="#{transazioniDM}" name="value" />
+							<ui:param value="Lista #{(searchFormTransazioni.modalitaRicercaStorico == 'intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico == 'idApplicativo') ? 
+												 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : 'Fruizioni')
+												 :
+												 'Transazioni' }" name="headerText" />
+							<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
+							<ui:param value="#{transazioniBean}" name="mBean" />
+							<ui:param value="#{transazioniBean.tableState}" name="tableState" />
+							<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
+							<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
+							<ui:param value="#{transazioniBean.exportSelected}" name="esportaTransazioniSelezionate" />
+							<ui:param value="panelPaginaTransazioniCtr" name="reRenderIds" />
+							<ui:param value="#{searchFormTransazioni.useCount}" name="useCount" />
+						</ui:include>
+					</c:if>
+					<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == true}">
+						<ui:include src="/transazioni/includes/transazioniCustom.xhtml">
+							<ui:param value="#{transazioniDM}" name="value" />
+							<ui:param value="Lista #{(searchFormTransazioni.modalitaRicercaStorico == 'intervalloTemporale' or searchFormTransazioni.modalitaRicercaStorico == 'idApplicativo') ? 
+												 (searchFormTransazioni.tipologiaRicerca eq 'ingresso' ? 'Erogazioni' : 'Fruizioni')
+												 :
+												 'Transazioni' }" name="headerText" />
+							<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
+							<ui:param value="#{transazioniBean}" name="mBean" />
+							<ui:param value="#{transazioniBean.tableState}" name="tableState" />
+							<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
+							<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
+							<ui:param value="#{transazioniBean.exportSelected}" name="esportaTransazioniSelezionate" />
+							<ui:param value="panelPaginaTransazioniCtr" name="reRenderIds" />
+							<ui:param value="#{searchFormTransazioni.useCount}" name="useCount" />
+						</ui:include>
+					</c:if>
 				</a4j:form>
 				
 				<rich:modalPanel id="exportCsvModalPnl" showWhenRendered="false" width="800" style="overflow:auto;" autosized="true">
@@ -498,9 +585,16 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</a4j:form>
 					<h:inputHidden id="sessioneAttivaHidden" value="#{searchFormTransazioni.sessioneLiveValida}" />
 					<a4j:form id="res" rendered="#{searchFormTransazioni.periodo eq 'Live'}" prependId="false">	
-						<ui:include src="/transazioni/includes/tabellaTransazioniLive.xhtml">
-						
-						</ui:include>
+						<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == false}">
+							<ui:include src="/transazioni/includes/tabellaTransazioniLive.xhtml">
+							
+							</ui:include>
+						</c:if>
+						<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == true}">
+							<ui:include src="/transazioni/includes/tabellaTransazioniLiveCustom.xhtml">
+							
+							</ui:include>
+						</c:if>
 					</a4j:form>
 				</a4j:region>
 			</a4j:outputPanel>

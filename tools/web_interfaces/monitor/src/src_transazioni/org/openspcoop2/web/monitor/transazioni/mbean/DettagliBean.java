@@ -53,6 +53,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -92,6 +93,9 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private transient ITracciaDriver driver;
 	private transient ITransazioniService transazioniService;
+	private transient ITransazioneApplicativoServerService transazioniSAService;
+	
+	private String selectedTab = null;
 
 	private TracciaBean tracciaRichiesta;
 	private TracciaBean tracciaRisposta;
@@ -1041,6 +1045,15 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 		return null;
 	}
+	
+    public String getSelectedTab() {
+        return this.selectedTab;
+	}
+	
+	public void setSelectedTab(String selectedTab) {
+	        this.selectedTab = selectedTab;
+	}
+
 	
 	
 	public List<TransazioneBean> getListaConsegne() {

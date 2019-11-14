@@ -115,6 +115,15 @@ public enum EsitoTransazioneName implements Serializable{
 		}
 		return false;
 	}
+	public static boolean isConsegnaMultipla(EsitoTransazioneName esitoTransactionName){
+		if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA.equals(esitoTransactionName) 
+				){
+			return true;
+		}
+		return false;
+	}
 
 	public static EsitoTransazioneName convertoTo(String name){
 		EsitoTransazioneName esitoTransactionName = null;

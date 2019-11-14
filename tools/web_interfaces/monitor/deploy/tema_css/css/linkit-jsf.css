@@ -1362,7 +1362,8 @@ input.rich-spinner-input {
 }
 
 
-#msgDt_tbl td.rich-table-cell {
+#msgDt_tbl td.rich-table-cell,
+#dtTblLive td.rich-table-cell {
 	border: 1px solid ${table.thead.action.menu.background.color};
 	font-family: 'Roboto';
     padding: 0px;
