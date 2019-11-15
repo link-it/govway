@@ -1,16 +1,76 @@
 Per creare una tag version:
+
 1. Inserire la corretta versione in tools/utils/src/org/openspcoop2/utils/Costanti.java
+
 2. Inserire la versione del rilascio in ChangeLog
+
 3. Inserire la versione corretta in ant/setup/antinstall-config.xml:
    - 3 occorrenze della versione (2 display e proprietà 'antinstaller_versione_attuale')
      NOTA: per le due versioni display usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
    - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
-4. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
-5. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
-6. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
-7. Eseguire i test di verifica JavaDoc, GPL e XSD.
-8. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
-9. Creazione versione tag
 
-NOTA: prima di generare la versione, sistemare la documentazione e soprattutto il documento di ReleaseNotes
+4. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
+
+5. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
+
+6. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
+
+7. Eseguire i test di verifica JavaDoc, GPL e XSD.
+
+8. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
+
+9. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
+
+10. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+   Per farlo, ad esempio se stiamo rilasciando la versione 3.2.1:
+   - fare il clone di govway-docker
+   - generare una versione dell'installer semi-definitiva e copiarla dentro la directory compose_bin/ di govway-docker
+   - editare il file compose_bin/Dockerfile:
+	. Commentare la seguente riga:
+		#RUN wget -qO - https://github.com/link-it/GovWay/releases/download/${GOVWAY_FULLVERSION}/govway-installer-${GOVWAY_FULLVERSION}.tgz | tar -xzf- -C /opt
+	. Aggiungere sotto le direttive:
+		COPY govway-installer-3.2.1.tgz /tmp
+		RUN tar -xzf /tmp/govway-installer-3.2.1.tgz -C /opt
+   - Come utenza root:
+         ./build_compose.sh  -t govway:3.2.1-preRilascio -v 3.2.1
+   - Attendere per qualche minuto il completamento del build
+   - Decomprimere resources/scenari/scenari.zip
+   - Editare il file scenari/docker-compose.yml
+   	. Commentare la riga:
+		#    image: linkitaly/govway:3.2.0_postgres
+	. e aggiungere la direttiva:
+		image: govway:3.2.1-preRilascio
+   - Come utenza root avviare il database prima usando il comando:
+	source env.sh; docker-compose up testdatabase
+   - Eseguire prima l'installer pre rilascio per ottenere la patch SQL da applicare al database a partire dalla precedente versione
+   - Come utenza root:
+	docker cp /var/tmp/GovWay_upgrade_3.2.1.sql PGSQL955:/tmp
+        docker exec -ti PGSQL955 /bin/bash
+        psql govwaydb govway -f /tmp/GovWay_upgrade_3.2.1.sql
+	exit
+   - Riportare eventuali aggiunte dei file esterni della nuova versione in scenari/data/govway/etc/
+   - Si fa una prova del tutto sempre con utenza root:
+	mandare in background il docker che ha avviato postgresql
+	./starttest.sh
+	collegarsi alle console e verificare la nuova versione:
+	. https://govway.localdomain/govwayConsole/
+	. https://govway.localdomain/govwayMonitor/
+	Se tutto funziona, provando ad eseguire dei test con PostMan chiudere il tutto con il comando (mandare in background lo starttest precedente):
+	./stoptest.sh
+    - Editare nuovamente il file scenari/docker-compose.yml:
+	. Eliminare la direttiva:
+		image: govway:3.2.1-preRilascio
+	. e scommentare facendo l'upgrade di versione dell'immagine ufficiale:
+		image: linkitaly/govway:3.2.1_postgres	
+    - Ripulire i log:
+	. rm scenari/data/govway/log/* -f
+	. rm scenari/data/govway/log/tomcat_logs/* -f
+	. rm -rf scenari/data/govway/etc/controlloTraffico/
+	. rm -rf scenari/data/govway/etc/https/
+	. rm -rf scenari/data/govway/etc/resources/
+	. rm -rf scenari/data/govway/etc/dumpNonRealTime/
+    - !!Come utenza root ricreare l'archivio scenari.zip
+	NOTA: Senza utenza root non viene salvata la parte del database postgresql
+
+10. Creazione versione tag
