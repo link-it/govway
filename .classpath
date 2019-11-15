@@ -54,6 +54,7 @@
         <classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/config/server/src"/>
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/traccia/server/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
+	<classpathentry kind="src" path="tools/batch/statistiche/src"/>
 	<classpathentry excluding="*/*.xml" kind="src" path="tools/connection_pool/src"/>
 	<classpathentry kind="src" path="tools/generic_project/src"/>
 	<classpathentry kind="src" path="tools/web_generic_project/src"/>

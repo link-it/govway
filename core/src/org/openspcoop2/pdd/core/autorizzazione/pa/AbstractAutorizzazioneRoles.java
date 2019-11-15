@@ -70,7 +70,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     		ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(datiInvocazione.getState()); 
     		
     		ServizioApplicativo sa = null;
-    		if(idSA!=null) {
+    		if(idSA!=null && idSA.getNome()!=null) {
     			sa = configurazionePdDManager.getServizioApplicativo(idSA);
     		}
     		

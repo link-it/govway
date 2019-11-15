@@ -1,0 +1,78 @@
+<project name="openspcoop2-distrib-batchStatistiche">
+    <description>
+        Produzione del batch
+    </description>
+
+	<import file="${openspcoop2}/ant/commons/utils.xml" />
+	
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+          <classpath>
+              <pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+          </classpath>
+	</taskdef>
+	
+
+	
+	<!-- Crea la distribuzione del batch -->
+	<target name="distrib_openspcoop2_batchStatistiche" description="Crea la distribuzione del batch">
+
+		<delete dir="${distrib_batchStatistiche}"/>
+		<mkdir dir="${distrib_batchStatistiche}"/>
+
+		<copy todir="${distrib_batchStatistiche}/properties">
+			<fileset dir="${properties_batchStatistiche}"/>
+		</copy>
+
+		<copy todir="${distrib_batchStatistiche}/lib">
+			<fileset dir="${dist_batchStatistiche}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_batchStatistiche}/lib">
+			<fileset dir="${openspcoop2.dist}" includes="openspcoop2_*.jar"/>
+		</copy>
+		<copy todir="${distrib_batchStatistiche}/lib" flatten="true">
+			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
+		</copy>
+
+		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>
+		
+		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
+			<param name="TipoStatistiche" value="StatisticheOrarie"/>
+                </antcall>
+		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
+			<param name="TipoStatistiche" value="StatisticheGiornaliere"/>
+                </antcall>
+		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
+			<param name="TipoStatistiche" value="StatisticheSettimanali"/>
+                </antcall>
+		<antcall target="-distrib_openspcoop2_batchStatistiche_script">
+			<param name="TipoStatistiche" value="StatisticheMensili"/>
+                </antcall>
+
+	</target>
+
+	<target name="-distrib_openspcoop2_batchStatistiche_script">
+
+		<copy file="${script_batchStatistiche}/run.sh" tofile="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh"/>
+			<param name="token" value="TIPOSTATISTICA"/>
+			<param name="value" value="${TipoStatistiche}"/>
+                </antcall>
+		<chmod file="${distrib_batchStatistiche}/genera${TipoStatistiche}.sh" perm="a+x"/>
+
+		<copy file="${script_batchStatistiche}/run.cmd" tofile="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd"/>
+		<antcall target="replace_token">
+			<param name="file" value="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd"/>
+			<param name="token" value="TIPOSTATISTICA"/>
+			<param name="value" value="${TipoStatistiche}"/>
+                </antcall>
+		<chmod file="${distrib_batchStatistiche}/genera${TipoStatistiche}.cmd" perm="a+x"/>
+
+
+	</target>
+
+	
+</project>

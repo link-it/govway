@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="BatchStatistiche" default="build" basedir=".">
+
+	<description>
+        	Ambiente di compilazione del Progetto batchStatistiche
+	</description>
+
+	<import file="./local_env.xml" />
+	<import file="./ant/openspcoop2-batchStatistiche-build.xml" />
+	<import file="./ant/openspcoop2-batchStatistiche-distrib.xml" />
+
+
+	<!-- estensione di ant (if .... ) -->
+	<taskdef resource="net/sf/antcontrib/antlib.xml">
+	<classpath>
+			<pathelement location="${required_lib}/ant/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+	<!-- directory root -->
+	<property name="gitrepo_root" location="${openspcoop2}" />
+	
+	<property name="src_batchStatistiche" location="src" />
+	<property name="build_batchStatistiche" location="build" />
+	<property name="dist_batchStatistiche" location="dist" />
+	<property name="doc_batchStatistiche" location="doc" />
+	<property name="properties_batchStatistiche" location="properties" />
+	<property name="script_batchStatistiche" location="script" />
+	<property name="distrib_batchStatistiche" location="distrib/generatoreStatistiche" />
+
+
+	<!-- CLASSPATH -->
+	<path id="classpath_compile" >
+		<fileset dir="${required_lib}" >
+			<exclude name="**/axis14/*"/>
+			<exclude name="**/applicationServer/**/*.jar"/>
+			<exclude name="**/*README"/>
+			<exclude name="*.userlibraries"/>
+		</fileset>
+	</path>
+	<path id="classpath_dist" >
+		<!-- <fileset dir="${openspcoop2}/core/dist" > -->
+		<fileset dir="${openspcoop2.dist}" >
+			<include name="openspcoop2_*.jar"/>
+		</fileset>
+	</path>	
+
+	<!-- Ripulisce la distribuzione -->
+	<target name="clean_batchStatistiche">
+		<delete dir="${build_batchStatistiche}" />
+		<delete dir="build" />
+		<delete dir="${dist_batchStatistiche}" />
+		<delete dir="${doc_batchStatistiche}" />
+	</target>
+
+	<!-- Create the build directory structure used by compile -->
+	<target name="init_compile_batchStatistiche">
+		<mkdir dir="${build_batchStatistiche}" />
+		<mkdir dir="${build_batchStatistiche}/tmp" />
+		<mkdir dir="${dist_batchStatistiche}" />
+	</target>
+	
+	
+	
+	
+	<!-- Compilazione della PddConsole-->
+	<target name="compile_batchStatistiche" depends="init_compile_batchStatistiche,compile_openspcoop2_batchStatistiche" />
+	
+	<!-- alias -->
+	<target name="build" depends="compile_batchStatistiche, distrib_openspcoop2_batchStatistiche"/>
+	<target name="build_openspcoop2_batchStatistiche_jar" depends="compile_openspcoop2_batchStatistiche"/>
+	<target name="clean" depends="clean_batchStatistiche"/>
+	
+</project>
