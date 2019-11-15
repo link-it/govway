@@ -58,6 +58,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
@@ -67,7 +68,9 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
+import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
@@ -158,8 +161,10 @@ Context, Cloneable {
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
-			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
-			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive();
+			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
+			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
@@ -184,8 +189,10 @@ Context, Cloneable {
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
-			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
-			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive();
+			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
+			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);

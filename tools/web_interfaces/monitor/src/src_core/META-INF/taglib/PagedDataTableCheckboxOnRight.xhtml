@@ -132,7 +132,9 @@
 				rowClasses="#{rowClasses}"
 				width="#{width}">
 				
-					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
+					  <ui:insert/>
+					  
+					  <rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
 	                      <h:panelGroup style="width:50px;" layout="block" id="chkClmnPg">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
@@ -142,9 +144,7 @@
 	                      </h:panelGroup>
 	                    </f:facet>
 	                    <h:selectBooleanCheckbox id="#{id}_column_ckb" value="#{selectionMapTarget}" disabled="false"  onclick="singleCheckboxListener( '#{id}', this.checked , #{showSelectAll} ,#{value.rowCount} , #{rowsToDisplay} );"/>
-	                </rich:column>
-					  
-					  <ui:insert/>
+	                  </rich:column>
 					  
 				      <f:facet name="footer">
 				      	<a4j:outputPanel layout="block">

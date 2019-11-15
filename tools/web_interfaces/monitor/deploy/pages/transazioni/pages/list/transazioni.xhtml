@@ -190,11 +190,25 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
 						   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
 						   
- 						   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
+ 						   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");
 						   
 						   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
 						   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
 						   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
+						   
+						   // larghezza della colonna centrale
+						   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
+						   jQuery(".divTitoloEntry").css('width', '0px');
+						   
+						   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
+						   
+						   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
+						   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
+						   
+						   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
+						   
+						   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
+						   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
 						   
 						   visualizzaPannelloComandi('msgDt');
 					   }
@@ -202,7 +216,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 					   function getLarghezzaMassima(sel){
 						   return Math.max.apply(Math, jQuery(sel).map(function(){  return jQuery(this).width(); }).get());
 					   }
-					   
+
 					   function completa(evt){   }
 					   
 					   function checkExportContenutiSelection(containerId){

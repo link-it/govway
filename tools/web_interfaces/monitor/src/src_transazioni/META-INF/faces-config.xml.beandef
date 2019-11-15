@@ -50,14 +50,14 @@
 		<managed-property>
 			<property-name>diagnosticiBean</property-name>
 			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
-			<value>#{diagnosticiBean}</value>
+			<value>#{dettagliBean.diagnosticiBean}</value>
 		</managed-property>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>diagnosticiBean</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>diagnosticiBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>request</managed-bean-scope> -->
+<!-- 	</managed-bean> -->
 	<managed-bean>
 		<managed-bean-name>dettagliBean</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliBean</managed-bean-class>

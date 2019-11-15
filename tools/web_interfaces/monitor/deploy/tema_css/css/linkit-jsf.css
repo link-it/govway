@@ -1360,13 +1360,3 @@ input.rich-spinner-input {
 	font-family: 'Roboto';
 	font-size: 14px;
 }
-
-
-#msgDt_tbl td.rich-table-cell,
-#dtTblLive td.rich-table-cell {
-	border: 1px solid ${table.thead.action.menu.background.color};
-	font-family: 'Roboto';
-    padding: 0px;
-    font-size: 14px;
-	color: ${table.thead.action.menu.color};
-}

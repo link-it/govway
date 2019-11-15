@@ -8,6 +8,11 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
 	
+	<style>
+		#dtTblLive td.rich-table-cell { border-bottom-width: 12px; padding: 0px; }
+		#dtTblLive thead.rich-table-thead { display: none;}
+	</style>
+	
 	<script type="text/javascript">
 		//<![CDATA[
 		   jQuery(document).ready(nascondiChk);
@@ -20,12 +25,25 @@
 			   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
 			   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
 			   
-				   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
+			   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
 			   
 			   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
 			   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
 			   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
 			   
+				// larghezza della colonna centrale
+			   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
+			   jQuery(".divTitoloEntry").css('width', '0px');
+			   
+			   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
+			   
+			   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
+			   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
+			   
+			   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
+			   
+			   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
+			   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
 		   }
 		   
 		   function getLarghezzaMassima(sel){
@@ -36,7 +54,8 @@
 		 //]]>	
 	</script>
 
-	<rich:dataTable id="dtTblLive" rowClasses="even,odd" value="#{liveBean.liveData}" var="item" width="100%" >
+	<a4j:outputPanel layout="block" style="width: 100%; height: 8px;" />
+	<rich:dataTable id="dtTblLive" rowClasses="odd,odd" value="#{liveBean.liveData}" var="item" width="100%" >
 		<rich:column id="colCustomContent" sortable="false" label="Transazione">
 			<f:facet name="header">
 				<h:outputText id="outCustomContent1" value="Transazione" />
@@ -52,7 +71,7 @@
 					<f:setPropertyActionListener value="infoGenerali" target="#{dettagliBean.selectedTab}"/>
 				</a4j:support>
 				<a4j:outputPanel layout="block" id="entryIconeTransazione" styleClass="entryIconeTransazione">
-					<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="entryRuoloTransazione">
+					<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="#{item.pddRuolo=='DELEGATA' ? 'entryRuoloTransazioneFruizione' : 'entryRuoloTransazioneErogazione'}">
 						<h:graphicImage value="/images/tema_link/erogazione_white_48.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 						<h:graphicImage value="/images/tema_link/fruizione_white_48.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 						<rich:toolTip for="entryRuoloTransazione" value="#{item.pddRuoloToolTip}" />

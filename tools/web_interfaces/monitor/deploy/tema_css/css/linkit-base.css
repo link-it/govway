@@ -442,6 +442,7 @@ span.iconLinkie{
 
 .col-esito-errore{
 	background-color: ${transazioni.stato.errore.esito.background.color};
+	color: ${transazioni.stato.errore.esito.color};
 }
 .col-latenza-errore{
 	background-color: ${transazioni.stato.errore.latenza.background.color};
@@ -457,10 +458,12 @@ span.iconLinkie{
 	cursor: pointer;
 /* 	padding: 8px; */
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryIconeTransazione {
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	align-items: center;
 	background-color: ${transazioni.ruolo.background.color};
 	color: ${transazioni.ruolo.color};
@@ -472,24 +475,24 @@ span.iconLinkie{
 
 .entryDatiTransazioneRiga1 {
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryDatiTransazioneRiga1 .divTitoloEntry {
 	padding: 16px 20px 8px 20px;
-/*     font-weight: bold; */
     font-size: 16px;
-    display: flex;
-    align-items: center;
     white-space: nowrap;
-    flex-wrap: wrap;
 }
 
 .titoloIconaRuolo {
 	padding: 4px 8px 4px 8px;
+	float: left;
 }
 
 .titoloSX {
-	padding: 4px 0px 4px 0px;
+	padding: 0px 0px 0px 0px;
+	float: left;
+	line-height: 32px;
 }
 
 .titoloSX > span,
@@ -498,7 +501,9 @@ span.iconLinkie{
 }
 
 .titoloDX {
-	padding: 4px 8px 4px 0px;
+	padding: 0px 8px 0px 0px;
+	float: left;
+	line-height: 32px;
 }
 
 .interno {
@@ -506,11 +511,14 @@ span.iconLinkie{
 }
 
 .entryDatiTransazioneRiga1 .titoloTags {
-	padding: 4px 0px 4px 0px;
+	padding: 0px 0px 0px 0px;
+	float: left;
+    line-height: 32px;
 }
 
 .infoColDXTransazioneRiga1 {
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	margin-left: auto;
 }
 
@@ -538,12 +546,14 @@ span.iconLinkie{
 
 .entryDatiTransazioneRiga2 {
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryDatiTransazioneRiga2 .divSottotitoloEntry {
 	padding: 8px 20px 16px 20px;
 	color: ${body.secondary.color};
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
     flex-wrap: wrap;
 }
 
@@ -552,6 +562,7 @@ span.iconLinkie{
 
 .infoColDXTransazioneRiga2 {
 	display: flex;
+	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	margin-left: auto;
 }
 
@@ -574,8 +585,12 @@ span.iconLinkie{
 	white-space: nowrap;
 }
 
-.entryRuoloTransazione {
-    padding: 0px 16px;
+.entryRuoloTransazioneFruizione {
+    padding: 0px 22px 0px 10px;
+}
+
+.entryRuoloTransazioneErogazione {
+    padding: 0px 10px 0px 22px;
 }
 
 

@@ -9,8 +9,13 @@
 	<f:loadBundle var="msg" basename="messages" />
 
 	<a4j:outputPanel id="gridCtr" layout="block" styleClass="panelLista" rendered="#{value.executeQuery}">
+	
+	<style>
+		#msgDt_tbl td.rich-table-cell { border-bottom-width: 12px; padding: 0px; }
+		#msgDt_tbl thead.rich-table-thead { display: none;}
+	</style>
 
-	 <link:dataTable id="msgDt"
+	 <link:dataTableCheckboxOnRight id="msgDt"
 					value="#{value}"
 					headerText="#{headerText}"
 					enableDelete="false"
@@ -19,6 +24,7 @@
 					rowsToDisplay="#{rowsToDisplay}"
 					reRenderIds="#{reRenderIds}"
 					useCount="#{useCount}"
+					rowClasses="odd,odd"
 					>
 				<rich:column id="colCustomContent" sortable="false" label="Transazione">
 					<f:facet name="header">
@@ -35,7 +41,7 @@
 							<f:setPropertyActionListener value="infoGenerali" target="#{dettagliBean.selectedTab}"/>
 						</a4j:support>
 						<a4j:outputPanel layout="block" id="entryIconeTransazione" styleClass="entryIconeTransazione">
-							<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="entryRuoloTransazione">
+							<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="#{item.pddRuolo=='DELEGATA' ? 'entryRuoloTransazioneFruizione' : 'entryRuoloTransazioneErogazione'}">
 								<h:graphicImage value="/images/tema_link/erogazione_white_48.png" rendered="#{item.pddRuolo!='DELEGATA'}"/>
 								<h:graphicImage value="/images/tema_link/fruizione_white_48.png" rendered="#{item.pddRuolo=='DELEGATA'}"/>
 								<rich:toolTip for="entryRuoloTransazione" value="#{item.pddRuoloToolTip}" />
@@ -215,7 +221,7 @@
 						</h:commandLink>
 					</h:panelGrid>
 				</ui:define>	
-			</link:dataTable>
+			</link:dataTableCheckboxOnRight>
 			
 			<rich:modalPanel id="csvCheckSelection" width="350" height="200">
 			   <f:facet name="header">

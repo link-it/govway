@@ -96,6 +96,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private transient ITransazioneApplicativoServerService transazioniSAService;
 	
 	private String selectedTab = null;
+	private DiagnosticiBean diagnosticiBean;
 
 	private TracciaBean tracciaRichiesta;
 	private TracciaBean tracciaRisposta;
@@ -1053,8 +1054,20 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setSelectedTab(String selectedTab) {
 	        this.selectedTab = selectedTab;
 	}
-
 	
+	public DiagnosticiBean getDiagnosticiBean() {
+		if(this.diagnosticiBean == null) {
+			this.diagnosticiBean  = new DiagnosticiBean();
+			this.diagnosticiBean.setIdEgov(this.idEgov);
+			this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
+			this.diagnosticiBean.setIdTransazione(this.idTransazione);
+		}
+		
+		return this.diagnosticiBean;
+	}
+	public void setDiagnosticiBean(DiagnosticiBean diagnosticiBean) {
+		this.diagnosticiBean = diagnosticiBean;
+	}
 	
 	public List<TransazioneBean> getListaConsegne() {
 		try {
@@ -1067,5 +1080,6 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 	public void setListaConsegne(List<TransazioneBean> listaConsegne) {
 	}
+	
 
 }

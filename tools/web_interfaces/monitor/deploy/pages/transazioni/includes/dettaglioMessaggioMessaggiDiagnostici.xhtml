@@ -8,27 +8,62 @@
     xmlns:c="http://java.sun.com/jstl/core">
     <f:loadBundle var="msg" basename="messages" /> 
     
-    <a4j:outputPanel layout="block" id="informazioniDettagliRisposta">
-    	<h:panelGrid id="panelDettaglioDiagnostici" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
-	 		
-			<h:outputLabel id="diag-iconLabel" value="Diagnostici" styleClass="outputFieldLabel icon-show-diagnostici"/>
-			<h:panelGroup id="panelGroupDiag">
-				<h:form id="formDiag">
-					<h:panelGrid id="panelDiag" columns="3">
-						<a4j:htmlCommandLink id="diag-iconLink" styleClass="icon-details" action="visualizzaDiagnostici" value="Visualizza">
-                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{diagnosticiBean.idTransazione}"/>
-                    		<a4j:actionparam value="#{dettagliBean.idEgov}" assignTo="#{diagnosticiBean.idEgov}"/>
-                    		<a4j:actionparam value="#{dettagliBean.identificativoPorta}" assignTo="#{diagnosticiBean.identificativoPorta}"/>
-                    	</a4j:htmlCommandLink>
-                    	<h:outputLabel value="&#160;|&#160;" />	                    	
-                    	<a4j:htmlCommandLink id="exportDiagnostici-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveDiagnostici}">
-							<h:outputText id="outEsporta" value="Esporta" />
-						</a4j:htmlCommandLink>
-                   	</h:panelGrid>
-				</h:form>
-			</h:panelGroup>
-								
-		</h:panelGrid>
+    <a4j:outputPanel layout="block" id="informazioniMessaggiDiagnostici">
+			<h:form id="formDiag">
+				<link:dataTable 
+					value="#{diagnosticiDM}" 
+					id="diagnosticiTable"
+					headerText="Lista Diagnostici"
+					showSelectAll="false"
+					enableDelete="false">
+					
+					<rich:column id="colData">
+							<f:facet name="header">
+								<h:outputText id="outData1" value="Data" />
+							</f:facet>
+							<h:outputText id="outData2" value="#{item.gdo.time}" >
+								<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
+							</h:outputText>	
+						</rich:column>
+						<rich:column id="colSeverita">
+							<f:facet name="header">
+								<h:outputText id="outSeverita1" value="Severita" />
+							</f:facet>
+							<h:outputText id="outSeverita2" value="#{item.severitaAsString}" styleClass="#{item.severitaAsString}"/>
+						</rich:column>
+						<!-- 
+						<rich:column id="colCodice">
+							<f:facet name="header">
+								<h:outputText id="outCodice1" value="Codice" />
+							</f:facet>
+							<h:outputText id="outCodice2" value="#{item.codice}" />
+						</rich:column>
+						-->
+						<rich:column id="colFunzione">
+							<f:facet name="header">
+								<h:outputText id="outFunzione1" value="Funzione" />
+							</f:facet>
+							<h:outputText id="outFunzione2" value="#{item.idFunzioneAsString}" />
+						</rich:column>
+						<rich:column id="colMsg" width="60%">
+							<f:facet name="header">
+								<h:outputText id="outMsg1" value="Messaggio" />
+							</f:facet>
+							<h:outputText id="outMsg2" escape="false" value="#{item.messaggioAsString}"/>
+						</rich:column>
+						
+						<ui:define name="buttons">
+								<h:commandLink id="exportDiagnostici-iconLink" 
+												target="_blank" 
+												styleClass="icon-compress" 
+												action="#{dettagliBean.saveDiagnostici}" 
+												>
+									<h:outputText value="Esporta" />
+								</h:commandLink>
+						</ui:define>
+												
+				</link:dataTable>
+			</h:form>
     </a4j:outputPanel>
     
  
