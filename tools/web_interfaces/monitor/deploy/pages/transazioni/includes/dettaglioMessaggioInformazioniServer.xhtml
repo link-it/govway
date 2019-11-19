@@ -15,6 +15,7 @@
 					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
 					<ui:param value="#{dettagliBean}" name="targetBean" />
 					<ui:param value="#{nomeTab}" name="nomeTab" />
+					<ui:param value="#{dettagliBean}" name="mBean" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == true}">
@@ -22,6 +23,7 @@
 					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
 					<ui:param value="#{dettagliBean}" name="targetBean" />
 					<ui:param value="#{nomeTab}" name="nomeTab" />
+					<ui:param value="#{dettagliBean}" name="mBean" />
 				</ui:include>
 			</c:if>
 		</a4j:form>

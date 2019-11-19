@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -91,6 +92,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private transient ITracciaDriver driver;
 	private transient ITransazioniService transazioniService;
+	
+	private boolean visualizzaIdCluster = false;
 	
 	private String selectedTab = null;
 	private DiagnosticiBean diagnosticiBean;
@@ -163,6 +166,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		try {
 
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
+			List<String> govwayMonitorare = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
+			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
 
 			this.driver  = govwayMonitorProperties.getDriverTracciamento();
 			
@@ -1068,4 +1073,11 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.diagnosticiBean = diagnosticiBean;
 	}
 
+	public boolean isVisualizzaIdCluster() {
+		return this.visualizzaIdCluster;
+	}
+
+	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
+		this.visualizzaIdCluster = visualizzaIdCluster;
+	}
 }

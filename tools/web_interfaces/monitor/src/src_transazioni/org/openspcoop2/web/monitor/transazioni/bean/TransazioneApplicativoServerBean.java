@@ -19,6 +19,8 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long latenzaConsegna = null;
+	
 	public TransazioneApplicativoServerBean() {
 		super();
 	}
@@ -28,8 +30,26 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(0);
 		
 		metodiEsclusi.add(new BlackListElement("setLatenza", Long.class));
+		metodiEsclusi.add(new BlackListElement("setLatenzaConsegna", Long.class));
 		
 		BeanUtils.copy(this, transazioneApplicativoServer, metodiEsclusi);
+	}
+	
+	public Long getLatenzaConsegna() {
+		if(this.latenzaConsegna == null){
+			if(this.dataUscitaRichiesta != null && this.dataIngressoRisposta != null){
+				this.latenzaConsegna = this.dataIngressoRisposta.getTime() - this.dataUscitaRichiesta.getTime();
+			}
+		}
+
+		if(this.latenzaConsegna == null)
+			return -1L;
+
+		return this.latenzaConsegna;
+	}
+	
+	public void setLatenzaConsegna(Long latenzaConsegna) {
+		this.latenzaConsegna = latenzaConsegna;		
 	}
 	
 	public Long getLatenza() {
@@ -160,10 +180,20 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	}
 	
 	public String getClusterId() {
-		return this.clusterIdConsegna;
+		if(this.consegnaIntegrationManager)
+			return this.clusterIdPrelievoIm;
+		else
+			return this.clusterIdConsegna;
 	}
 	
 	public String getNomeServizioApplicativoErogatore() {
 		return this.servizioApplicativoErogatore;
+	}
+	
+	public String getNomeConnettore() {
+		if(!this.consegnaIntegrationManager)
+			return this.locationConnettore;
+		else 
+			return "Consegna IM";
 	}
 }
