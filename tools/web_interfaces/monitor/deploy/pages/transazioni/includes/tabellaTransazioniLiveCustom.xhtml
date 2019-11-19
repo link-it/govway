@@ -130,9 +130,9 @@
 									<i class="material-icons md-32">hourglass_empty</i>			
 								</a4j:outputPanel>
 								<rich:toolTip for="entryInfoLatenzaTransazioneTitolo">
-										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio}"/>
-										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio}"/>
-										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio}"/>
+										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
+										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
+										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<h:outputText value="Latenza Porta: "/>
 										<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 									</rich:toolTip>
@@ -164,7 +164,7 @@
 									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 										timeZone="Europe/Rome" />
 								</h:outputText>
-								<rich:toolTip for="sottotitoloSx">
+								<rich:toolTip for="sottotitoloSx" style="text-align: right;">
 									<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
 									<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
 										<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
@@ -197,19 +197,19 @@
 								</rich:toolTip>
 							</a4j:outputPanel>
 							
-							<a4j:outputPanel layout="block" id="sottotitoloDx" styleClass="">
-								<h:outputText id="outAzione1" value=", Operazione: " />
-								<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="sottotitoloDx" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-								<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-								<rich:toolTip for="sottotitoloDx" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-							</a4j:outputPanel>
 							<a4j:outputPanel layout="block" id="sottotitoloDx_clusterID" styleClass="" rendered="#{mBean.visualizzaIdCluster}">
-								<h:outputText id="outIDCluster1" value=", ID Cluster: " />
+								<h:outputText id="outIDCluster1" value=",&#160;&#160;&#160;ID Cluster: " />
 								<h:outputText id="outIDCluster2" value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
 								<rich:toolTip for="sottotitoloDx_clusterID" rendered="#{mBean.visualizzaIdCluster}">
 									<h:outputText value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
 								</rich:toolTip>
+							</a4j:outputPanel>
+							<a4j:outputPanel layout="block" id="sottotitoloDx" styleClass="">
+								<h:outputText id="outAzione1" value=",&#160;&#160;&#160;Operazione: " />
+								<h:outputText id="outAzione2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="sottotitoloDx" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+								<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+								<rich:toolTip for="sottotitoloDx" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 							</a4j:outputPanel>
 						</a4j:outputPanel>
 						<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">
@@ -217,9 +217,9 @@
 								<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
 									<h:outputText id="outLatenzaServizio2" value="#{item.latenzaTotale}" converter="latenzaConverter"/>
 									<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo">
-										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio}"/>
-										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio}"/>
-										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio}"/>
+										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
+										<h:outputText value="#{item.latenzaServizio}" converter="latenzaConverter" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
+										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenzaServizio and item.consegnaMultipla == false}"/>
 										<h:outputText value="Latenza Porta: "/>
 										<h:outputText value="#{item.latenzaPorta}" converter="latenzaConverter"/>
 									</rich:toolTip>
