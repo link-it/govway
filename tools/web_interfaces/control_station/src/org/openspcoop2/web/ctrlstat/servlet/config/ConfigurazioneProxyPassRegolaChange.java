@@ -109,7 +109,7 @@ public final class ConfigurazioneProxyPassRegolaChange extends Action {
 			boolean multiTenant = false;
 			if(configurazioneMultitenant != null) {
 				StatoFunzionalita statoMultitenant = configurazioneMultitenant.getStato();
-				multiTenant = statoMultitenant.equals(StatoFunzionalita.ABILITATO);
+				multiTenant = StatoFunzionalita.ABILITATO.equals(statoMultitenant);
 			}
 			
 			long idRegola = Long.parseLong(idRegolaS);

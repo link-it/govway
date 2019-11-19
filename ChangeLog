@@ -1,3 +1,10 @@
+2019-11-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-926
+	La console va in errore al momento di registrare una nuova regola di Proxy Pass.
+	Il problema sussiste solamente su nuove installazioni dove non è mai stato effettuato il salvataggio della configurazione.
+
 2019-11-15  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.1
