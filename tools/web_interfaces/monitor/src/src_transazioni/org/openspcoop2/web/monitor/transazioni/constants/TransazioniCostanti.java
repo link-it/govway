@@ -47,9 +47,6 @@ public class TransazioniCostanti {
 	public static final String TRANSAZIONI_ELENCO_RUOLO_PDD_IM_LABEL_KEY = "transazioni.elenco.ruoloPdd.im.label";
 	public static final String TRANSAZIONI_ELENCO_RUOLO_PDD_IM_ICON_KEY = "transazioni.elenco.ruoloPdd.im.icona";
 	
-	public static final String TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_DELEGATA_ICON_KEY = "transazioni.elenco.custom.ruoloPdd.delegata.icona";
-	public static final String TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_APPLICATIVA_ICON_KEY = "transazioni.elenco.custom.ruoloPdd.applicativa.icona";
-	
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_TEMPORALE_LABEL_KEY = "transazioni.search.tipoRicerca.temporale.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_MITTENTE_LABEL_KEY = "transazioni.search.tipoRicerca.mittente.label";
 	public static final String TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY = "transazioni.search.tipoRicerca.id.label";

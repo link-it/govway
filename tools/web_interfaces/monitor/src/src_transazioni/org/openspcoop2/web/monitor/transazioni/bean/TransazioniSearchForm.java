@@ -136,6 +136,7 @@ Context, Cloneable {
 	
 	private boolean visualizzaStoricoCustomEnabled = false;
 	private boolean visualizzaLiveCustomEnabled = false;
+	private boolean visualizzaConsegneMultipleCustomEnabled = false;
 	
 	public TransazioniSearchForm(){
 		super();
@@ -165,6 +166,7 @@ Context, Cloneable {
 			
 			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
@@ -193,6 +195,7 @@ Context, Cloneable {
 			
 			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
@@ -1360,6 +1363,12 @@ Context, Cloneable {
 	public void setVisualizzaLiveCustomEnabled(boolean visualizzaLiveCustomEnabled) {
 		this.visualizzaLiveCustomEnabled = visualizzaLiveCustomEnabled;
 	}
-	
-	
+
+	public boolean isVisualizzaConsegneMultipleCustomEnabled() {
+		return this.visualizzaConsegneMultipleCustomEnabled;
+	}
+
+	public void setVisualizzaConsegneMultipleCustomEnabled(boolean visualizzaConsegneMultipleCustomEnabled) {
+		this.visualizzaConsegneMultipleCustomEnabled = visualizzaConsegneMultipleCustomEnabled;
+	}
 }

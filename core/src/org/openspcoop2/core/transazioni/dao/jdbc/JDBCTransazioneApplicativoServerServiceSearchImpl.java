@@ -156,6 +156,7 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         if(efficente){
         
         	List<IField> fields = new ArrayList<IField>();
+        	fields.add(new CustomField("id", Long.class, "id", this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model())));  
     		fields.add(TransazioneApplicativoServer.model().ID_TRANSAZIONE);
     		fields.add(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE);
     		fields.add(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE);

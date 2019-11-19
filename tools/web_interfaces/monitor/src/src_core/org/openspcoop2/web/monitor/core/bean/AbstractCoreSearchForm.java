@@ -21,7 +21,11 @@
  */
 package org.openspcoop2.web.monitor.core.bean;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 /**
  * AbstractCoreSearchForm
@@ -45,6 +49,7 @@ public abstract class AbstractCoreSearchForm {
 	private boolean useCount = true;
 	protected boolean executeQuery = false;
 	private boolean aggiornamentoDatiAbilitato = false;
+	private boolean visualizzaSelezioneDimensionePagina = false;
 	
 	public String aggiorna() {
 		this.initParametriPaginazione();
@@ -181,4 +186,29 @@ public abstract class AbstractCoreSearchForm {
 		this.currentSearchSize = currentSearchSize;
 	}
 	
+	
+	public List<SelectItem> getListaNumeroRisultati(){
+		List<SelectItem> lst = new ArrayList<>();
+		
+		lst.add(new SelectItem(new Integer(25), "25 Entries"));  
+		lst.add(new SelectItem(new Integer(75), "75 Entries"));
+		lst.add(new SelectItem(new Integer(125), "125 Entries"));
+		lst.add(new SelectItem(new Integer(250), "250 Entries"));
+		lst.add(new SelectItem(new Integer(500), "500 Entries"));
+		lst.add(new SelectItem(new Integer(1000), "1000 Entries"));
+		
+		return lst;
+	}
+	
+	public void limitSelected(ActionEvent ae) {
+		
+	}
+
+	public boolean isVisualizzaSelezioneDimensionePagina() {
+		return this.visualizzaSelezioneDimensionePagina;
+	}
+
+	public void setVisualizzaSelezioneDimensionePagina(boolean visualizzaSelezioneDimensionePagina) {
+		this.visualizzaSelezioneDimensionePagina = visualizzaSelezioneDimensionePagina;
+	}
 }

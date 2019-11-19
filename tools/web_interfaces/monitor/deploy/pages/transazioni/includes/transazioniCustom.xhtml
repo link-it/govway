@@ -32,13 +32,13 @@
 					</f:facet>
 					<a4j:outputPanel layout="block" id="rowTransazione" styleClass="rowTransazione" >
 						<a4j:support event="onclick"  action="dettagliMessaggio">
-							<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-							<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
-							<f:setPropertyActionListener value="#{item.pddCodice}" target="#{dettagliBean.identificativoPorta}"/>
+							<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
+							<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{targetBean.idEgov}"/>
+							<f:setPropertyActionListener value="#{item.pddCodice}" target="#{targetBean.identificativoPorta}"/>
 							<c:if test="#{not empty processiDettagliBean}">
 								<f:setPropertyActionListener value="#{selectedProcesso}" target="#{processiDettagliBean.selectedProcesso}"/>
 							</c:if>	
-							<f:setPropertyActionListener value="infoGenerali" target="#{dettagliBean.selectedTab}"/>
+							<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
 						</a4j:support>
 						<a4j:outputPanel layout="block" id="entryIconeTransazione" styleClass="entryIconeTransazione">
 							<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="#{item.pddRuolo=='DELEGATA' ? 'entryRuoloTransazioneFruizione' : 'entryRuoloTransazioneErogazione'}">
@@ -70,7 +70,7 @@
 										</a4j:outputPanel>
 									</a4j:outputPanel>
 									
-									<a4j:outputPanel layout="block" id="titoloDx" styleClass="titoloDX">
+									<a4j:outputPanel layout="block" id="titoloDx" styleClass="#{not empty item.labelRichiedenteConFruitore ? 'titoloDX' : 'titoloDXAnonimo'}">
 										<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}" styleClass="#{item.pddRuolo =='DELEGATA' ? 'interno' : ''}"/>
 										<rich:toolTip for="outServizioApplicativoFruitore" rendered="#{not empty item.labelRichiedenteConFruitore}">
 											<h:outputText value="Fruitore: " rendered="#{not empty item.soggettoFruitore}"/>
@@ -171,6 +171,13 @@
 										<rich:toolTip for="sottotitoloDx" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
 										<h:outputText id="outAzione3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
 										<rich:toolTip for="sottotitoloDx" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+									</a4j:outputPanel>
+									<a4j:outputPanel layout="block" id="sottotitoloDx_clusterID" styleClass="" rendered="#{mBean.visualizzaIdCluster}">
+										<h:outputText id="outIDCluster1" value=", ID Cluster: " />
+										<h:outputText id="outIDCluster2" value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+										<rich:toolTip for="sottotitoloDx_clusterID" rendered="#{mBean.visualizzaIdCluster}">
+											<h:outputText value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+										</rich:toolTip>
 									</a4j:outputPanel>
 								</a4j:outputPanel>
 								<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">

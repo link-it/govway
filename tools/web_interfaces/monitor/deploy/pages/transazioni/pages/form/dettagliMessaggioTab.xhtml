@@ -38,7 +38,7 @@
 			<f:facet name="header">
 				<h:outputText id="outDettagli" value="Dettagli Transazione" />
 			</f:facet>
-			<rich:tabPanel switchType="client" selectedTab="#{dettagliBean.selectedTab}">
+			<rich:tabPanel switchType="ajax" selectedTab="#{dettagliBean.selectedTab}">
 				<rich:tab name="infoGenerali">
 					<f:facet name="label">
 						<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
@@ -74,11 +74,12 @@
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioTempiElaborazione.xhtml" >
 				    </ui:include>
 			    </rich:tab>
-			    <rich:tab rendered="#{true}" name="consegneMultiple">
+			    <rich:tab rendered="#{dettagliBean.dettaglio.consegnaMultipla == true}" name="consegneMultiple">
 					<f:facet name="label">
 						<h:outputText id="outTitleInfoServer" value="Consegne Multiple" />
 				    </f:facet>
 				    <ui:include src="/transazioni/includes/dettaglioMessaggioInformazioniServer.xhtml" >
+				    	<ui:param value="consegneMultiple" name="nomeTab" />
 				    </ui:include>
 			    </rich:tab>
 		    </rich:tabPanel>

@@ -41,6 +41,7 @@ public class DiagnosticiBean implements Serializable {
 	private String idTransazione;
 	private String idEgov;
 	private String identificativoPorta;
+	private String protocollo;
 	
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
@@ -68,6 +69,14 @@ public class DiagnosticiBean implements Serializable {
 	
 	public String submit(){
 		return "success";
+	}
+
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
 	}
 	
 }

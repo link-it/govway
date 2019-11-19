@@ -57,13 +57,13 @@
 						<h:outputText id="outDataIngRich1" value="Data Richiesta" />
 					</f:facet>
 					<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
-						<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-						<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
-						<f:setPropertyActionListener value="#{item.pddCodice}" target="#{dettagliBean.identificativoPorta}"/>
+						<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
+						<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{targetBean.idEgov}"/>
+						<f:setPropertyActionListener value="#{item.pddCodice}" target="#{targetBean.identificativoPorta}"/>
 						<c:if test="#{not empty processiDettagliBean}">
 							<f:setPropertyActionListener value="#{selectedProcesso}" target="#{processiDettagliBean.selectedProcesso}"/>
 						</c:if>				
-						
+						<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
 						<h:outputText id="outDataIngRich2" value="#{item.dataIngressoRichiesta}">
 							<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 								timeZone="Europe/Rome" />

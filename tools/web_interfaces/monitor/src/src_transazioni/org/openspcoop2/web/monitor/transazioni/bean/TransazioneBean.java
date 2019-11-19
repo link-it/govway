@@ -123,7 +123,8 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setListaGruppi", List.class));
-
+		metodiEsclusi.add(new BlackListElement("setConsegnaMultipla", boolean.class));
+		
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
 
@@ -1127,23 +1128,6 @@ public class TransazioneBean extends Transazione{
 		
 	}
 	
-	public String getPddRuoloImageVisualizzazioneCustom() {
-		PddRuolo pddRuolo = this.getPddRuolo();
-		if(pddRuolo!=null) {
-			switch (pddRuolo) {
-			case DELEGATA:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_DELEGATA_ICON_KEY);
-			case APPLICATIVA:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_RUOLO_PDD_APPLICATIVA_ICON_KEY);
-			case ROUTER:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
-			case INTEGRATION_MANAGER:
-				return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_IM_ICON_KEY);
-			}
-		}
-		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
-	}
-
 	public String getCssColonnaEsito() {
 		if(this.isEsitoOk())
 			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
@@ -1165,4 +1149,18 @@ public class TransazioneBean extends Transazione{
 		
 		return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE;
 	}
+	
+	public boolean isConsegnaMultipla() {
+		try{
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+			String name = esitiProperties.getEsitoName(this.getEsito());
+			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
+			return EsitoTransazioneName.isConsegnaMultipla(esitoName);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il check consegna multipla: "+e.getMessage(),e);
+			return false;
+		}
+	}
+
+	public void setConsegnaMultipla(boolean consegnaMultipla) {}
 }

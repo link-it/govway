@@ -126,15 +126,16 @@
 					<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
 					<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 						<h:form id="formTokenInfo">
-                                      <a4j:htmlCommandLink id="tokenInfo-iconLink"
-                                                                       styleClass="icon-details"
-                                                                       value="Visualizza"
-                                                                       rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"
-                                                                       action="tokenInfo">
-                                       <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-                                       <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
-                                       <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-                             			</a4j:htmlCommandLink>
+	                        <a4j:htmlCommandLink id="tokenInfo-iconLink"
+	                                                         styleClass="icon-details"
+	                                                         value="Visualizza"
+	                                                         rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"
+	                                                         action="tokenInfo">
+	                         	<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+	                        	 <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+	                         	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                         	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+	               			</a4j:htmlCommandLink>
 						</h:form>
 					</h:panelGroup>	
 				

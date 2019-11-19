@@ -1,0 +1,162 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="msg" basename="messages" />
+	
+	<style>
+		#dtConsegne td.rich-table-cell { border-bottom-width: 12px; padding: 0px; }
+		#dtConsegne thead.rich-table-thead { display: none;}
+	</style>
+	
+	<script type="text/javascript">
+		//<![CDATA[
+		   jQuery(document).ready(nascondiChk);
+		   
+		   function nascondiChk(){
+			   // adattare dimensione delle colonne latenza e esito
+			   var larghezzaColonnaLatenza = getLarghezzaMassima("div[id$='sottotitoloInfoLatenzaTransazione']");
+			   
+			   var larghezzaColonnaLatenzaPixel = larghezzaColonnaLatenza + 'px';
+			   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
+			   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
+			   
+			   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
+			   
+			   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
+			   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
+			   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
+			   
+			   if(isIE()){
+					// larghezza della colonna centrale
+				   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
+				   jQuery(".divTitoloEntry").css('width', '0px');
+				   
+				   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
+				   
+				   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
+				   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
+				   
+				   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
+				   
+				   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
+				   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
+			   }
+		   }
+		   
+		   function getLarghezzaMassima(sel){
+			   return Math.max.apply(Math, jQuery(sel).map(function(){  return jQuery(this).width(); }).get());
+		   }
+		   
+		   function completa(evt){   }
+		 //]]>	
+	</script>
+
+	<rich:dataTable id="dtConsegne" rowClasses="odd,odd" value="#{value}" var="item" width="100%" >
+		<rich:column id="colCustomContent" sortable="false" label="Informazioni Consegna">
+			<f:facet name="header">
+				<h:outputText id="outCustomContent1" value="Informazioni Consegna" />
+			</f:facet>
+			<a4j:outputPanel layout="block" id="rowTransazione" styleClass="rowTransazione" >
+				<a4j:support event="onclick"  action="dettagliConsegna">
+					<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
+					<f:setPropertyActionListener value="#{item.id}" target="#{targetBean.idConsegna}"/>
+					<f:setPropertyActionListener value="#{nomeTab}" target="#{targetBean.selectedTab}"/>
+				</a4j:support>
+				<a4j:outputPanel layout="block" id="entryDatiTransazione" styleClass="entryDatiTransazione">
+					<a4j:outputPanel layout="block" id="riga1" styleClass="entryDatiTransazioneRiga1">
+						<a4j:outputPanel layout="block" id="titolo" styleClass="divTitoloEntry">
+							<a4j:outputPanel layout="block" id="titoloSx" styleClass="titoloSX">
+								<h:outputText id="outConnettore2" value="#{item.nomeServizioApplicativoErogatore}" rendered="#{true}" styleClass="interno"/>
+								<rich:toolTip for="titoloSx" rendered="#{true}">
+									<h:outputText value="Servizio Applicativo Erogatore: "/>
+									<h:outputText value="#{item.nomeServizioApplicativoErogatore}" />
+								</rich:toolTip>
+							</a4j:outputPanel>
+						</a4j:outputPanel>
+						<a4j:outputPanel layout="block" id="infoColDXTitolo" styleClass="infoColDXTransazioneRiga1">
+							<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneTitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
+								<a4j:outputPanel layout="block" id="titoloInfoLatenzaTransazione" styleClass="titoloEntry">
+									<i class="material-icons md-32">hourglass_empty</i>			
+								</a4j:outputPanel>
+								<rich:toolTip for="entryInfoLatenzaTransazioneTitolo">
+										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenza}"/>
+										<h:outputText value="#{item.latenza}" converter="latenzaConverter" rendered="#{not empty item.latenza}"/>
+										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenza}"/>
+										<h:outputText value="Latenza Porta: "/>
+										<h:outputText value="#{item.latenza}" converter="latenzaConverter"/>
+									</rich:toolTip>
+							</a4j:outputPanel>
+							<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneTitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
+								<a4j:outputPanel layout="block" id="titoloInfoEsito_ok" styleClass="titoloEntry" rendered="#{item.esitoOk}">
+									<i class="material-icons md-32">check</i>
+								</a4j:outputPanel>	
+								<a4j:outputPanel layout="block" id="titoloInfoEsito_fault" styleClass="titoloEntry" rendered="#{item.esitoFaultApplicativo}">
+									<i class="material-icons md-32">error</i>
+								</a4j:outputPanel>	
+								<a4j:outputPanel layout="block" id="titoloInfoEsito_ko" styleClass="titoloEntry" rendered="#{item.esitoKo}">
+									<i class="material-icons md-32">warning</i>
+								</a4j:outputPanel>	
+								<a4j:outputPanel layout="block" id="titoloInfoEsito_def" styleClass="titoloEntry" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}">
+									<i class="material-icons md-32">warning</i>
+								</a4j:outputPanel>
+								<rich:toolTip for="entryInfoEsitoTransazioneTitolo">
+										<h:outputText value="#{item.esitoLabelDescription}" />
+									</rich:toolTip>
+							</a4j:outputPanel>
+						</a4j:outputPanel>
+					</a4j:outputPanel>
+					<a4j:outputPanel layout="block" id="riga2" styleClass="entryDatiTransazioneRiga2">
+						<a4j:outputPanel layout="block" id="metadati" styleClass="divSottotitoloEntry">
+							<a4j:outputPanel layout="block" id="sottotitoloSx" styleClass="">
+								<h:outputText id="outDataLabe2" value="Data: " rendered="true"/>
+								<h:outputText id="outDataIngRich2" value="#{item.dataRegistrazione}">
+									<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
+										timeZone="Europe/Rome" />
+								</h:outputText>
+								<rich:toolTip for="sottotitoloSx">Date
+								</rich:toolTip>
+							</a4j:outputPanel>
+							<a4j:outputPanel layout="block" id="sottotitoloDx" styleClass="">
+								<h:outputText id="outNumeroTentativi1" value=", Numero Tentativi: " />
+							</a4j:outputPanel>
+							<a4j:outputPanel layout="block" id="sottotitoloDx_clusterID" styleClass="" rendered="#{mBean.visualizzaIdCluster}">
+								<h:outputText id="outIDCluster1" value=", ID Cluster: " />
+								<h:outputText id="outIDCluster2" value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+								<rich:toolTip for="sottotitoloDx_clusterID" rendered="#{mBean.visualizzaIdCluster}">
+									<h:outputText value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster}"/>
+								</rich:toolTip>
+							</a4j:outputPanel>
+						</a4j:outputPanel>
+						<a4j:outputPanel layout="block" id="infoColDXSottotitolo" styleClass="infoColDXTransazioneRiga2">
+							<a4j:outputPanel layout="block" id="entryInfoLatenzaTransazioneSottotitolo" styleClass="entryInfoLatenzaTransazione #{item.cssColonnaLatenza}">
+								<a4j:outputPanel layout="block" id="sottotitoloInfoLatenzaTransazione" styleClass="metadatiEntry">
+									<h:outputText id="outLatenzaServizio2" value="#{item.latenza}" converter="latenzaConverter"/>
+									<rich:toolTip for="entryInfoLatenzaTransazioneSottotitolo">
+										<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenza}"/>
+										<h:outputText value="#{item.latenza}" converter="latenzaConverter" rendered="#{not empty item.latenza}"/>
+										<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.latenza}"/>
+										<h:outputText value="Latenza Porta: "/>
+										<h:outputText value="#{item.latenza}" converter="latenzaConverter"/>
+									</rich:toolTip>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+							<a4j:outputPanel layout="block" id="entryInfoEsitoTransazioneSottotitolo" styleClass="entryInfoEsitoTransazione #{item.cssColonnaEsito}">
+								<a4j:outputPanel layout="block" id="sottotitoloInfoEsitoTransazione" styleClass="metadatiEntry">
+									<h:outputText id="outEsito2" value="#{item.esitoLabelSyntetic}" />
+									<rich:toolTip for="entryInfoEsitoTransazioneSottotitolo">
+										<h:outputText value="#{item.esitoLabelDescription}" />
+									</rich:toolTip>
+								</a4j:outputPanel>
+							</a4j:outputPanel>
+						</a4j:outputPanel>
+					</a4j:outputPanel>
+				</a4j:outputPanel>
+			</a4j:outputPanel>
+		</rich:column>
+	</rich:dataTable>
+</ui:composition>

@@ -456,14 +456,11 @@ span.iconLinkie{
 
 .rowTransazione {
 	cursor: pointer;
-/* 	padding: 8px; */
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryIconeTransazione {
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	align-items: center;
 	background-color: ${transazioni.ruolo.background.color};
 	color: ${transazioni.ruolo.color};
@@ -475,7 +472,6 @@ span.iconLinkie{
 
 .entryDatiTransazioneRiga1 {
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryDatiTransazioneRiga1 .divTitoloEntry {
@@ -506,6 +502,11 @@ span.iconLinkie{
 	line-height: 32px;
 }
 
+.titoloDXAnonimo {
+	padding: 6px 8px 4px 4px;
+	float: left;
+}
+
 .interno {
 	 font-weight: bold;
 }
@@ -518,7 +519,6 @@ span.iconLinkie{
 
 .infoColDXTransazioneRiga1 {
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	margin-left: auto;
 }
 
@@ -539,22 +539,20 @@ span.iconLinkie{
 }
 
 .infoColDXTransazioneRiga1 .entryInfoLatenzaTransazione .titoloEntry {
-/* 	padding: 4px 4px 4px 0px; */
     font-weight: bold;
     font-size: 16px;
 }
 
 .entryDatiTransazioneRiga2 {
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 }
 
 .entryDatiTransazioneRiga2 .divSottotitoloEntry {
-	padding: 8px 20px 16px 20px;
+	padding: 8px 20px 8px 20px;
 	color: ${body.secondary.color};
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
     flex-wrap: wrap;
+    line-height: 32px;
 }
 
 .entryDatiTransazioneRiga2 .metadatiEntry {
@@ -562,13 +560,12 @@ span.iconLinkie{
 
 .infoColDXTransazioneRiga2 {
 	display: flex;
-	display: -ms-flexbox;  /* TWEENER - IE 10 */
 	margin-left: auto;
 }
 
 .infoColDXTransazioneRiga2 .entryInfoEsitoTransazione{
-	padding: 8px 20px 16px 20px;
-/* 	width: 180px; */
+	padding: 8px 20px 8px 20px;
+	line-height: 32px;
 }
 
 .infoColDXTransazioneRiga2 .entryInfoEsitoTransazione .metadatiEntry {
@@ -577,8 +574,8 @@ span.iconLinkie{
 }
 
 .infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione{
-	padding: 8px 20px 16px 20px;
-/* 	width: 80px; */
+	padding: 8px 20px 8px 20px;
+	line-height: 32px;
 }
 
 .infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione .metadatiEntry {

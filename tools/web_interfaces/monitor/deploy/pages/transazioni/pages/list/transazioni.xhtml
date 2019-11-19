@@ -178,7 +178,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   jQuery("div[id$='chkClmnPg']").attr('style', '');
 						   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
 						   jQuery("th[id$='ckbClmnheader']").css('width','16px');
-						   jQuery("input[id$='msgDt_column_ckb']").parent().attr('width','');
+						   jQuery("input[id$='msgDt_column_ckb']").parent().attr('width','16px');
 						   jQuery("input[id$='msgDt_column_ckb']").parent().css('padding','12px');
 						   jQuery("input[id$='msgDt_column_ckb']").parent().addClass('align-center');
 						   jQuery("input[id$='msgDt_column_ckb']").css('padding','0px');
@@ -196,19 +196,21 @@ xmlns="http://www.w3.org/1999/xhtml"
 						   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
 						   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
 						   
-						   // larghezza della colonna centrale
-						   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
-						   jQuery(".divTitoloEntry").css('width', '0px');
-						   
-						   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
-						   
-						   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
-						   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
-						   
-						   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
-						   
-						   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
-						   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
+						   if(isIE()){
+							   // larghezza della colonna centrale
+							   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
+							   jQuery(".divTitoloEntry").css('width', '0px');
+							   
+							   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
+							   
+							   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
+							   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
+							   
+							   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
+							   
+							   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
+							   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
+						   }
 						   
 						   visualizzaPannelloComandi('msgDt');
 					   }
@@ -264,6 +266,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 												 'Transazioni' }" name="headerText" />
 							<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
 							<ui:param value="#{transazioniBean}" name="mBean" />
+							<ui:param value="#{dettagliBean}" name="targetBean" />
 							<ui:param value="#{transazioniBean.tableState}" name="tableState" />
 							<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
 							<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
@@ -281,7 +284,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 												 'Transazioni' }" name="headerText" />
 							<ui:param value="#{transazioniBean.selectedIds[item]}" name="selectionMapTarget" />
 							<ui:param value="#{transazioniBean}" name="mBean" />
-							<ui:param value="#{transazioniBean.tableState}" name="tableState" />
+							<ui:param value="#{dettagliBean}" name="targetBean" />
 							<ui:param value="#{searchFormTransazioni.pageSize}" name="rowsToDisplay" />
 							<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
 							<ui:param value="#{transazioniBean.exportSelected}" name="esportaTransazioniSelezionate" />
@@ -599,14 +602,16 @@ xmlns="http://www.w3.org/1999/xhtml"
 					</a4j:form>
 					<h:inputHidden id="sessioneAttivaHidden" value="#{searchFormTransazioni.sessioneLiveValida}" />
 					<a4j:form id="res" rendered="#{searchFormTransazioni.periodo eq 'Live'}" prependId="false">	
-						<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == false}">
+						<c:if test="#{searchFormTransazioni.visualizzaLiveCustomEnabled == false}">
 							<ui:include src="/transazioni/includes/tabellaTransazioniLive.xhtml">
-							
+								<ui:param value="#{liveBean.liveData}" name="value" />
+								<ui:param value="#{dettagliBean}" name="targetBean" />
 							</ui:include>
 						</c:if>
-						<c:if test="#{searchFormTransazioni.visualizzaStoricoCustomEnabled == true}">
+						<c:if test="#{searchFormTransazioni.visualizzaLiveCustomEnabled == true}">
 							<ui:include src="/transazioni/includes/tabellaTransazioniLiveCustom.xhtml">
-							
+								<ui:param value="#{liveBean.liveData}" name="value" />
+								<ui:param value="#{dettagliBean}" name="targetBean" />
 							</ui:include>
 						</c:if>
 					</a4j:form>

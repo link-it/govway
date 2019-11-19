@@ -53,6 +53,7 @@
 		                    		<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
 			                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
 			                    	<f:setPropertyActionListener value="#{false}" target="#{dettagliBean.isRisposta}"/>
+			                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 		                    	</a4j:htmlCommandLink>
 		                    	<h:outputLabel value="&#160;|&#160;" />	 
 		                    	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
@@ -74,6 +75,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 		                    	<f:setPropertyActionListener value="RichiestaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpMessaggiReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -94,6 +96,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -114,6 +117,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 		                    	<f:setPropertyActionListener value="RichiestaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpBinarioReqIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -134,6 +138,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -153,6 +158,7 @@
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idTransazione}" target="#{dettagliBean.idTransazione}"/>
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRichiesta.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 							<h:outputText id="visualizzaTransOrig" value="Visualizza Transazione Originale" />
 						</a4j:commandLink>
 					</h:form>
@@ -198,6 +204,7 @@
 										<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
 										<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{dettagliBean.idEgov}"/>
 										<f:setPropertyActionListener value="#{item.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+										<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 										<h:outputText id="outDataIngrRich" value="#{item.dataIngressoRichiesta}">
 											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
 												timeZone="Europe/Rome" />
@@ -254,6 +261,7 @@
 		                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
 		                    	<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 		                   	</a4j:htmlCommandLink>
 		                   	<h:outputLabel value="&#160;|&#160;" />	 
 		                   	<h:commandLink id="exportTracce-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.saveTracce}">
@@ -266,32 +274,34 @@
 					<h:outputLabel id="risp-faultCooperazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Ingresso' : 'Fault Uscita'}" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"/>
 					<h:panelGroup id="panelGroupFaultCooperazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 						<h:form id="formFaultCooperazione">
-                                      <a4j:htmlCommandLink id="faultCooperazione-iconLink"
-                                                                       styleClass="icon-details"
-                                                                       value="Visualizza"
-                                                                       rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}" 
-                                                                       action="fault">
-                                       <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-                                       <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
-                                       <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-									<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultCooperazione}"/>
-                             			</a4j:htmlCommandLink>
+                             <a4j:htmlCommandLink id="faultCooperazione-iconLink"
+                                                              styleClass="icon-details"
+                                                              value="Visualizza"
+                                                              rendered="#{not empty dettagliBean.dettaglio.faultCooperazione}" 
+                                                              action="fault">
+                      	        <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                      	        <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+            					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+								<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultCooperazione}"/>
+								<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                   			</a4j:htmlCommandLink>
 						</h:form>
 					</h:panelGroup>
 					
 					<h:outputLabel id="risp-faultIntegrazione-iconLabel" styleClass="outputFieldLabel icon-xml" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Fault Uscita' : 'Fault Ingresso'}" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"/>
 					<h:panelGroup id="panelGroupFaultIntegrazioneRisp" rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"> <!-- Lo vogliamo sempre, puo' essere utile and !dettagliBean.hasDumpRisposta}" -->
 						<h:form id="formFaultIntegrazione">
-                                      <a4j:htmlCommandLink id="faultIntegrazione-iconLink"
-                                                                       styleClass="icon-details"
-                                                                       value="Visualizza"
-                                                                       rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"
-                                                                       action="fault">
-                                       <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-                                       <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
-                                       <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-									<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultIntegrazione}"/>
-                             			</a4j:htmlCommandLink>
+                        	<a4j:htmlCommandLink id="faultIntegrazione-iconLink"
+                                                           styleClass="icon-details"
+                                                           value="Visualizza"
+                                                           rendered="#{not empty dettagliBean.dettaglio.faultIntegrazione}"
+                                                           action="fault">
+                           		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                           		<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+                           		<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+								<f:setPropertyActionListener value="#{true}" target="#{dettagliBean.showFaultIntegrazione}"/>
+								<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                 		</a4j:htmlCommandLink>
 						</h:form>
 					</h:panelGroup>								
 					
@@ -306,6 +316,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -326,6 +337,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RispostaUscita" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpMessaggiResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -346,6 +358,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -366,6 +379,7 @@
 	                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
 	                    		<f:setPropertyActionListener value="RispostaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
 		                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+		                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 	                    	</a4j:htmlCommandLink>
 	                    	<h:outputLabel value="&#160;|&#160;" />	 
 	                    	<h:commandLink id="exportDumpBinarioResUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliBean.exportContenuti}">
@@ -385,6 +399,7 @@
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idTransazione}" target="#{dettagliBean.idTransazione}"/>
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idMessaggioRisposta}" target="#{dettagliBean.idEgov}"/>
 							<f:setPropertyActionListener value="#{dettagliBean.transazioneOriginaleRisposta.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+							<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 							<h:outputText id="visualizzaTransOrig" value="Visualizza Transazione Originale" />
 						</a4j:commandLink>
 					</h:form>
@@ -429,6 +444,7 @@
 										<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliBean.idTransazione}"/>
 										<f:setPropertyActionListener value="#{item.idMessaggioRisposta}" target="#{dettagliBean.idEgov}"/>
 										<f:setPropertyActionListener value="#{item.idportaSoggettoFruitore}" target="#{dettagliBean.identificativoPorta}"/>
+										<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
 										<h:outputText id="outDataIngrRisp" value="#{item.dataIngressoRichiesta}">
 											<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss z"
 												timeZone="Europe/Rome" />

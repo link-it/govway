@@ -69,6 +69,21 @@
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>transazioniApplicativoServerDM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniApplicativoServerDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>diagnosticiBean</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
+			<value>#{dettagliBean.diagnosticiBean}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>dataProvider</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService</property-class>
+			<value>#{transazioniApplicativoServerService}</value>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>dettagliDump</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliDump</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
