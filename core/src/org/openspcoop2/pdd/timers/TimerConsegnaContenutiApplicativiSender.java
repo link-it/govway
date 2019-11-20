@@ -24,6 +24,8 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Timestamp;
 
+import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -213,6 +215,17 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
 				idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, pddContext));
 				idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
+				PortaApplicativa pa = this.configurazionePdDReader.getPortaApplicativa_SafeMethod(idPA);
+				if(pa!=null && pa.getServizioApplicativoList()!=null) {
+					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+						if(pasa.getNome().equals(servizioApplicativo)) {
+							if(pasa.getDatiConnettore()!=null) {
+								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
+							}
+							break;
+						}
+					}
+				}
 				behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
 				consegnaMSG.setBehaviour(behaviourMsg);
 	

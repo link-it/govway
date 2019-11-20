@@ -82,6 +82,13 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return "servizio_applicativo_erogatore";
 			}
 		}
+		if(field.equals(TransazioneApplicativoServer.model().CONNETTORE_NOME)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".connettore_nome";
+			}else{
+				return "connettore_nome";
+			}
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".data_registrazione";
@@ -108,6 +115,13 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 				return this.toAliasTable(field)+".dettaglio_esito";
 			}else{
 				return "dettaglio_esito";
+			}
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".consegna_trasparente";
+			}else{
+				return "consegna_trasparente";
 			}
 		}
 		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER)){
@@ -339,6 +353,9 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 		if(field.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
+		if(field.equals(TransazioneApplicativoServer.model().CONNETTORE_NOME)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
 		if(field.equals(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
@@ -349,6 +366,9 @@ public class TransazioneApplicativoServerFieldConverter extends AbstractSQLField
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().DETTAGLIO_ESITO)){
+			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
+		}
+		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE)){
 			return this.toTable(TransazioneApplicativoServer.model(), returnAlias);
 		}
 		if(field.equals(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER)){

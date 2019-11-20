@@ -31,6 +31,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *     &lt;sequence>
  *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="connettore-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-registrazione-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-registrazione-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -38,6 +39,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="data-messaggio-scaduto-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-messaggio-scaduto-max" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="consegna-trasparente" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
  *         &lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="data-accettazione-richiesta-min" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1" />
@@ -102,6 +104,7 @@ import java.util.Date;
 @javax.xml.bind.annotation.XmlType(name = "search-filter-transazione-applicativo-server", namespace="http://www.openspcoop2.org/core/transazioni/management", propOrder = {
     "idTransazione",
     "servizioApplicativoErogatore",
+    "connettoreNome",
     "dataRegistrazioneMin",
     "dataRegistrazioneMax",
     "protocollo",
@@ -109,6 +112,7 @@ import java.util.Date;
     "dataMessaggioScadutoMin",
     "dataMessaggioScadutoMax",
     "dettaglioEsito",
+    "consegnaTrasparente",
     "consegnaIntegrationManager",
     "identificativoMessaggio",
     "dataAccettazioneRichiestaMin",
@@ -178,6 +182,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public String getServizioApplicativoErogatore(){
 		return this.servizioApplicativoErogatore;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="connettore-nome",required=false,nillable=false)
+	private String connettoreNome;
+	
+	public void setConnettoreNome(String connettoreNome){
+		this.connettoreNome = connettoreNome;
+	}
+	
+	public String getConnettoreNome(){
+		return this.connettoreNome;
 	}
 	
 	
@@ -273,6 +290,19 @@ public class SearchFilterTransazioneApplicativoServer extends org.openspcoop2.ut
 	
 	public Integer getDettaglioEsito(){
 		return this.dettaglioEsito;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-trasparente",required=false,nillable=false,defaultValue="false")
+	private Boolean consegnaTrasparente = Boolean.valueOf("false");
+	
+	public void setConsegnaTrasparente(Boolean consegnaTrasparente){
+		this.consegnaTrasparente = consegnaTrasparente;
+	}
+	
+	public Boolean getConsegnaTrasparente(){
+		return this.consegnaTrasparente;
 	}
 	
 	

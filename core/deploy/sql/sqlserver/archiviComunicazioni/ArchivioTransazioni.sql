@@ -176,11 +176,14 @@ CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	connettore_nome VARCHAR(255),
 	data_registrazione DATETIME2 NOT NULL,
 	-- Esito della Consegna
 	consegna_terminata BIT DEFAULT 'false',
 	data_messaggio_scaduto DATETIME2,
 	dettaglio_esito INT,
+	-- Consegna ad un Backend Applicativo
+	consegna_trasparente BIT DEFAULT 'false',
 	-- Consegna via Integration Manager
 	consegna_im BIT DEFAULT 'false',
 	-- Identificativo del messaggio

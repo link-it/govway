@@ -312,6 +312,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			transazioneApplicativoServer = new TransazioneApplicativoServer();
 			transazioneApplicativoServer.setIdTransazione(behaviourConsegna.getIdTransazioneApplicativoServer().getIdTransazione());
 			transazioneApplicativoServer.setServizioApplicativoErogatore(behaviourConsegna.getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
+			transazioneApplicativoServer.setConnettoreNome(behaviourConsegna.getIdTransazioneApplicativoServer().getConnettoreNome());
 			transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
 			String protocol = (String) consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
 			transazioneApplicativoServer.setProtocollo(protocol);

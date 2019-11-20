@@ -1590,6 +1590,17 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 				
+				<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-ddl-column-comment><![CDATA[Nome Assegnato al Connettore]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				
 				<xsd:element name="data-registrazione" type="xsd:dateTime">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -1647,6 +1658,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 					</xsd:annotation>
 				</xsd:element>
 				
+				<xsd:element name="consegna-trasparente" type="xsd:boolean" default="false" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping name="consegna_trasparente"/>
+								<linkit:sql-column-comment><![CDATA[Consegna ad un Backend Applicativo]]></linkit:sql-column-comment>
+								<linkit:sql-ddl-column-comment><![CDATA[Consegna ad un Backend Applicativo]]></linkit:sql-ddl-column-comment>
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 				<xsd:element name="consegna-integration-manager" type="xsd:boolean" default="false" minOccurs="0">
 					<xsd:annotation>
 						<xsd:appinfo>
@@ -2830,7 +2853,8 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 	<xsd:complexType name="id-transazione-applicativo-server">
 		<xsd:sequence>
 			<xsd:element name="id-transazione" type="xsd:string"/>
-			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" />
+			<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

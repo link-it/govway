@@ -14,11 +14,14 @@ CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	connettore_nome VARCHAR(255),
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Consegna
 	consegna_terminata BOOLEAN,
 	data_messaggio_scaduto TIMESTAMP,
 	dettaglio_esito INT,
+	-- Consegna ad un Backend Applicativo
+	consegna_trasparente BOOLEAN,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN,
 	-- Identificativo del messaggio
@@ -68,7 +71,10 @@ CREATE TABLE transazioni_sa
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
 ALTER TABLE transazioni_sa ALTER COLUMN consegna_terminata SET DEFAULT false;
+ALTER TABLE transazioni_sa ALTER COLUMN consegna_trasparente SET DEFAULT false;
+ALTER TABLE transazioni_sa ALTER COLUMN consegna_im SET DEFAULT false;
 ALTER TABLE transazioni_sa ALTER COLUMN numero_tentativi SET DEFAULT 0;
+ALTER TABLE transazioni_sa ALTER COLUMN numero_prelievi_im SET DEFAULT 0;
 
 CREATE TABLE transazioni_sa_init_seq (id BIGINT);
 INSERT INTO transazioni_sa_init_seq VALUES (NEXT VALUE FOR seq_transazioni_sa);

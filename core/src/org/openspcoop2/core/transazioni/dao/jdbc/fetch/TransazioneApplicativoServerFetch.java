@@ -59,6 +59,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "id_transazione", TransazioneApplicativoServer.model().ID_TRANSAZIONE.getFieldType()));
 				setParameter(object, "setServizioApplicativoErogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "servizio_applicativo_erogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
+				setParameter(object, "setConnettoreNome", TransazioneApplicativoServer.model().CONNETTORE_NOME.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "connettore_nome", TransazioneApplicativoServer.model().CONNETTORE_NOME.getFieldType()));
 				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "data_registrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
 				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
@@ -67,6 +69,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "data_messaggio_scaduto", TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dettaglio_esito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
+				setParameter(object, "setConsegnaTrasparente", TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "consegna_trasparente", TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE.getFieldType()));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "consegna_im", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()));
 				setParameter(object, "setIdentificativoMessaggio", TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType(),
@@ -153,6 +157,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"id-transazione"));
 				setParameter(object, "setServizioApplicativoErogatore", TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					this.getObjectFromMap(map,"servizio-applicativo-erogatore"));
+				setParameter(object, "setConnettoreNome", TransazioneApplicativoServer.model().CONNETTORE_NOME.getFieldType(),
+					this.getObjectFromMap(map,"connettore-nome"));
 				setParameter(object, "setDataRegistrazione", TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType(),
 					this.getObjectFromMap(map,"data-registrazione"));
 				setParameter(object, "setConsegnaTerminata", TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType(),
@@ -161,6 +167,8 @@ public class TransazioneApplicativoServerFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"data-messaggio-scaduto"));
 				setParameter(object, "setDettaglioEsito", TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType(),
 					this.getObjectFromMap(map,"dettaglio-esito"));
+				setParameter(object, "setConsegnaTrasparente", TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE.getFieldType(),
+					this.getObjectFromMap(map,"consegna-trasparente"));
 				setParameter(object, "setConsegnaIntegrationManager", TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType(),
 					this.getObjectFromMap(map,"consegna-integration-manager"));
 				setParameter(object, "setIdentificativoMessaggio", TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType(),

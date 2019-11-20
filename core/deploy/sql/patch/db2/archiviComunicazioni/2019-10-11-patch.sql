@@ -12,11 +12,14 @@ CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	connettore_nome VARCHAR(255),
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Consegna
 	consegna_terminata SMALLINT DEFAULT 0,
 	data_messaggio_scaduto TIMESTAMP,
 	dettaglio_esito INT,
+	-- Consegna ad un Backend Applicativo
+	consegna_trasparente SMALLINT DEFAULT 0,
 	-- Consegna via Integration Manager
 	consegna_im SMALLINT DEFAULT 0,
 	-- Identificativo del messaggio

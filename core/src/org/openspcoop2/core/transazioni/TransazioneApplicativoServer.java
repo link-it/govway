@@ -39,11 +39,13 @@ import java.io.Serializable;
  * 		&lt;sequence>
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="connettore-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="consegna-terminata" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="data-messaggio-scaduto" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="dettaglio-esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="consegna-trasparente" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="consegna-integration-manager" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="false"/>
  * 			&lt;element name="identificativo-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="data-accettazione-richiesta" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
@@ -89,11 +91,13 @@ import java.io.Serializable;
   propOrder = {
   	"idTransazione",
   	"servizioApplicativoErogatore",
+  	"connettoreNome",
   	"dataRegistrazione",
   	"protocollo",
   	"consegnaTerminata",
   	"dataMessaggioScaduto",
   	"dettaglioEsito",
+  	"consegnaTrasparente",
   	"consegnaIntegrationManager",
   	"identificativoMessaggio",
   	"dataAccettazioneRichiesta",
@@ -163,6 +167,14 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
   }
 
+  public java.lang.String getConnettoreNome() {
+    return this.connettoreNome;
+  }
+
+  public void setConnettoreNome(java.lang.String connettoreNome) {
+    this.connettoreNome = connettoreNome;
+  }
+
   public java.util.Date getDataRegistrazione() {
     return this.dataRegistrazione;
   }
@@ -205,6 +217,18 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
 
   public void setDettaglioEsito(int dettaglioEsito) {
     this.dettaglioEsito = dettaglioEsito;
+  }
+
+  public boolean isConsegnaTrasparente() {
+    return this.consegnaTrasparente;
+  }
+
+  public boolean getConsegnaTrasparente() {
+    return this.consegnaTrasparente;
+  }
+
+  public void setConsegnaTrasparente(boolean consegnaTrasparente) {
+    this.consegnaTrasparente = consegnaTrasparente;
   }
 
   public boolean isConsegnaIntegrationManager() {
@@ -478,6 +502,10 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @XmlElement(name="servizio-applicativo-erogatore",required=true,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
 
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="connettore-nome",required=false,nillable=false)
+  protected java.lang.String connettoreNome;
+
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="data-registrazione",required=true,nillable=false,type=java.lang.String.class)
@@ -499,6 +527,10 @@ public class TransazioneApplicativoServer extends org.openspcoop2.utils.beans.Ba
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="dettaglio-esito",required=false,nillable=false)
   protected int dettaglioEsito;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlElement(name="consegna-trasparente",required=false,nillable=false,defaultValue="false")
+  protected boolean consegnaTrasparente = false;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlElement(name="consegna-integration-manager",required=false,nillable=false,defaultValue="false")

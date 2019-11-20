@@ -71,11 +71,13 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		sqlQueryObjectInsert.addInsertTable(this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model()));
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().ID_TRANSAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONNETTORE_NOME,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,false),"?");
 		// NONSERIALIZZATO SU DB sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA,false),"?");
@@ -112,11 +114,13 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		long id = jdbcUtilities.insertAndReturnGeneratedKey(sqlQueryObjectInsert, keyGenerator, jdbcProperties.isShowSql(),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getIdTransazione(),TransazioneApplicativoServer.model().ID_TRANSAZIONE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getServizioApplicativoErogatore(),TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConnettoreNome(),TransazioneApplicativoServer.model().CONNETTORE_NOME.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataRegistrazione(),TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()),
 			// NONSERIALIZZATO SU DB new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getProtocollo(),TransazioneApplicativoServer.model().PROTOCOLLO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaTerminata(),TransazioneApplicativoServer.model().CONSEGNA_TERMINATA.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataMessaggioScaduto(),TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDettaglioEsito(),TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaTrasparente(),TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getConsegnaIntegrationManager(),TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getIdentificativoMessaggio(),TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazioneApplicativoServer.getDataAccettazioneRichiesta(),TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA.getFieldType()),
@@ -211,6 +215,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getIdTransazione(), TransazioneApplicativoServer.model().ID_TRANSAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getServizioApplicativoErogatore(), TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONNETTORE_NOME,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConnettoreNome(), TransazioneApplicativoServer.model().CONNETTORE_NOME.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataRegistrazione(), TransazioneApplicativoServer.model().DATA_REGISTRAZIONE.getFieldType()));
 		// NONSERIALIZZATO SU DB sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,false), "?");
@@ -221,6 +227,8 @@ public class JDBCTransazioneApplicativoServerServiceImpl extends JDBCTransazione
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDataMessaggioScaduto(), TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getDettaglioEsito(), TransazioneApplicativoServer.model().DETTAGLIO_ESITO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE,false), "?");
+		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConsegnaTrasparente(), TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,false), "?");
 		lstObjects_transazioneApplicativoServer.add(new JDBCObject(transazioneApplicativoServer.getConsegnaIntegrationManager(), TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,false), "?");

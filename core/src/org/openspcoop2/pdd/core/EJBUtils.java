@@ -34,6 +34,7 @@ import java.util.Random;
 import javax.xml.soap.SOAPBody;
 
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -1891,6 +1892,16 @@ public class EJBUtils {
 				IdTransazioneApplicativoServer idTransazioneApplicativoServer = new IdTransazioneApplicativoServer();
 				idTransazioneApplicativoServer.setIdTransazione(PdDContext.getValue(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, this.pddContext));
 				idTransazioneApplicativoServer.setServizioApplicativoErogatore(servizioApplicativo);
+				if(pa!=null && pa.getServizioApplicativoList()!=null) {
+					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+						if(pasa.getNome().equals(servizioApplicativo)) {
+							if(pasa.getDatiConnettore()!=null) {
+								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
+							}
+							break;
+						}
+					}
+				}
 				behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
 				consegnaMSG.setBehaviour(behaviourMsg);
 				
@@ -2144,6 +2155,7 @@ public class EJBUtils {
 				transazioneApplicativoServer = new TransazioneApplicativoServer();
 				transazioneApplicativoServer.setIdTransazione(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getIdTransazione());
 				transazioneApplicativoServer.setServizioApplicativoErogatore(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
+				transazioneApplicativoServer.setConnettoreNome(consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer().getConnettoreNome());
 				transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
 				transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
 				transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
@@ -2152,6 +2164,7 @@ public class EJBUtils {
 				}
 				transazioneApplicativoServer.setIdentificativoMessaggio(consegnaMSG.getBusta().getID());
 				transazioneApplicativoServer.setClusterIdPresaInCarico(propertiesReader.getClusterId(false));
+				transazioneApplicativoServer.setConsegnaTrasparente(servizioApplicativoConConnettore);
 				transazioneApplicativoServer.setConsegnaIntegrationManager(getMessageAbilitato);
 			
 				if(transazioneApplicativoServer!=null) {

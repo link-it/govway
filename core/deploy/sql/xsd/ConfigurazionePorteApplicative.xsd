@@ -22,7 +22,7 @@
                                 <linkit:sql-table object-name="porte-applicative" object-type="porte-applicative"/>
                                 <linkit:sql-table object-name="porte-applicative-sa" object-type="porte-applicative-sa"/>
                                 <linkit:sql-table object-name="porte-applicative-sa-prop" object-type="NomeValore"/>
-                                <linkit:sql-table object-name="porte-applicative-behaviour-prop" object-type="NomeValore"/>
+                                <linkit:sql-table object-name="porte-applicative-behaviour-prop" object-type="NomeValore4000"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autenticazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione" object-type="NomeValore"/>
                                 <linkit:sql-table object-name="porte-applicative-prop-autorizzazione-contenuto" object-type="NomeValore"/>
@@ -1228,7 +1228,7 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
         </xsd:annotation>
     </xsd:element>
     
-    <xsd:element name="porte-applicative-behaviour-prop" type="NomeValore">
+    <xsd:element name="porte-applicative-behaviour-prop" type="NomeValore4000">
         <xsd:annotation>
             <xsd:appinfo>
                 <linkit:generator xmlns:linkit="http://www.link.it/project_generator">
@@ -1503,6 +1503,44 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                         <linkit:generator
                             xmlns:linkit="http://www.link.it/project_generator">
                             <linkit:sql-column-mapping name="valore"/>
+                            <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+    
+    <xsd:complexType name="NomeValore4000">
+        <xsd:sequence>
+            <xsd:element name="id_porta" type="xsd:long">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="id_porta"/>
+                            <linkit:sql-ddl-column-comment>Identificativo della porta applicativa [FK verso tabella porte_applicative(id)]</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="nome" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="nome"/>
+                            <linkit:sql-ddl-column-comment>Nome della proprietà</linkit:sql-ddl-column-comment>
+                        </linkit:generator>
+                    </xsd:appinfo>
+                </xsd:annotation>
+            </xsd:element>
+            <xsd:element name="valore" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:appinfo>
+                        <linkit:generator
+                            xmlns:linkit="http://www.link.it/project_generator">
+                            <linkit:sql-column-mapping name="valore" varchar="4000"/>
                             <linkit:sql-ddl-column-comment>Valore associato alla proprietà</linkit:sql-ddl-column-comment>
                         </linkit:generator>
                     </xsd:appinfo>

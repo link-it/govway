@@ -159,11 +159,13 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
         	fields.add(new CustomField("id", Long.class, "id", this.getTransazioneApplicativoServerFieldConverter().toTable(TransazioneApplicativoServer.model())));  
     		fields.add(TransazioneApplicativoServer.model().ID_TRANSAZIONE);
     		fields.add(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE);
+    		fields.add(TransazioneApplicativoServer.model().CONNETTORE_NOME);
     		fields.add(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE);
     		// NONSERIALIZZATO SU DB fields.add(TransazioneApplicativoServer.model().PROTOCOLLO);
     		fields.add(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA);
     		fields.add(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO);
     		fields.add(TransazioneApplicativoServer.model().DETTAGLIO_ESITO);
+    		fields.add(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE);
     		fields.add(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER);
     		fields.add(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO);
     		fields.add(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA);
@@ -566,11 +568,13 @@ public class JDBCTransazioneApplicativoServerServiceSearchImpl implements IJDBCS
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField("id");
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().ID_TRANSAZIONE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONNETTORE_NOME,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_REGISTRAZIONE,true));
 		// NONSERIALIZZATO SU DB sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().PROTOCOLLO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TERMINATA,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_MESSAGGIO_SCADUTO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DETTAGLIO_ESITO,true));
+		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_TRASPARENTE,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().CONSEGNA_INTEGRATION_MANAGER,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().IDENTIFICATIVO_MESSAGGIO,true));
 		sqlQueryObjectGet_transazioneApplicativoServer.addSelectField(this.getTransazioneApplicativoServerFieldConverter().toColumn(TransazioneApplicativoServer.model().DATA_ACCETTAZIONE_RICHIESTA,true));

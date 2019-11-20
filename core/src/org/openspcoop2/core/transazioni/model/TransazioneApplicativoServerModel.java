@@ -44,11 +44,13 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	
 		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONNETTORE_NOME = new Field("connettore-nome",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_REGISTRAZIONE = new Field("data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_TERMINATA = new Field("consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_MESSAGGIO_SCADUTO = new Field("data-messaggio-scaduto",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new Field("dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_TRASPARENTE = new Field("consegna-trasparente",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new Field("consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new Field("identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new Field("data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -88,11 +90,13 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	
 		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONNETTORE_NOME = new ComplexField(father,"connettore-nome",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_REGISTRAZIONE = new ComplexField(father,"data-registrazione",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_TERMINATA = new ComplexField(father,"consegna-terminata",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_MESSAGGIO_SCADUTO = new ComplexField(father,"data-messaggio-scaduto",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DETTAGLIO_ESITO = new ComplexField(father,"dettaglio-esito",int.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
+		this.CONSEGNA_TRASPARENTE = new ComplexField(father,"consegna-trasparente",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.CONSEGNA_INTEGRATION_MANAGER = new ComplexField(father,"consegna-integration-manager",boolean.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.IDENTIFICATIVO_MESSAGGIO = new ComplexField(father,"identificativo-messaggio",java.lang.String.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
 		this.DATA_ACCETTAZIONE_RICHIESTA = new ComplexField(father,"data-accettazione-richiesta",java.util.Date.class,"transazione-applicativo-server",TransazioneApplicativoServer.class);
@@ -132,6 +136,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	 
 	public IField SERVIZIO_APPLICATIVO_EROGATORE = null;
 	 
+	public IField CONNETTORE_NOME = null;
+	 
 	public IField DATA_REGISTRAZIONE = null;
 	 
 	public IField PROTOCOLLO = null;
@@ -141,6 +147,8 @@ public class TransazioneApplicativoServerModel extends AbstractModel<Transazione
 	public IField DATA_MESSAGGIO_SCADUTO = null;
 	 
 	public IField DETTAGLIO_ESITO = null;
+	 
+	public IField CONSEGNA_TRASPARENTE = null;
 	 
 	public IField CONSEGNA_INTEGRATION_MANAGER = null;
 	 

@@ -185,6 +185,7 @@ CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000) NOT NULL,
+	connettore_nome VARCHAR(255),
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_registrazione TIMESTAMP(3) NOT NULL DEFAULT 0,
 	-- Esito della Consegna
@@ -192,6 +193,8 @@ CREATE TABLE transazioni_sa
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	data_messaggio_scaduto TIMESTAMP(3) DEFAULT 0,
 	dettaglio_esito INT,
+	-- Consegna ad un Backend Applicativo
+	consegna_trasparente BOOLEAN DEFAULT false,
 	-- Consegna via Integration Manager
 	consegna_im BOOLEAN DEFAULT false,
 	-- Identificativo del messaggio

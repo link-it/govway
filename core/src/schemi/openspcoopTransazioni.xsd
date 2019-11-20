@@ -212,6 +212,8 @@
 				
 				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string"/>
 				
+				<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0" />
+				
 				<xsd:element name="data-registrazione" type="xsd:dateTime"/>
 				
 				<xsd:element name="protocollo" type="xsd:string" minOccurs="0"/> <!-- informazione non serializzata su database -->
@@ -220,6 +222,7 @@
 				<xsd:element name="data-messaggio-scaduto" type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="dettaglio-esito" type="xsd:int" minOccurs="0"/>
 				
+				<xsd:element name="consegna-trasparente" type="xsd:boolean" default="false" minOccurs="0" />
 				<xsd:element name="consegna-integration-manager" type="xsd:boolean" default="false" minOccurs="0"/>
 				
 				<xsd:element name="identificativo-messaggio" type="xsd:string" minOccurs="0"/>
@@ -416,7 +419,8 @@
 	<xsd:complexType name="id-transazione-applicativo-server">
 		<xsd:sequence>
 			<xsd:element name="id-transazione" type="xsd:string"/>
-			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" />
+			<xsd:element name="connettore-nome" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

@@ -38,7 +38,8 @@ import java.io.Serializable;
  * &lt;complexType name="id-transazione-applicativo-server">
  * 		&lt;sequence>
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="connettore-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -53,7 +54,8 @@ import java.io.Serializable;
 @XmlType(name = "id-transazione-applicativo-server", 
   propOrder = {
   	"idTransazione",
-  	"servizioApplicativoErogatore"
+  	"servizioApplicativoErogatore",
+  	"connettoreNome"
   }
 )
 
@@ -93,6 +95,14 @@ public class IdTransazioneApplicativoServer extends org.openspcoop2.utils.beans.
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
   }
 
+  public java.lang.String getConnettoreNome() {
+    return this.connettoreNome;
+  }
+
+  public void setConnettoreNome(java.lang.String connettoreNome) {
+    this.connettoreNome = connettoreNome;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -105,7 +115,11 @@ public class IdTransazioneApplicativoServer extends org.openspcoop2.utils.beans.
   protected java.lang.String idTransazione;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
+  @XmlElement(name="servizio-applicativo-erogatore",required=true,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="connettore-nome",required=false,nillable=false)
+  protected java.lang.String connettoreNome;
 
 }

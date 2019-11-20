@@ -49,7 +49,7 @@ CREATE TABLE pa_behaviour_props
 (
 	id_porta NUMBER NOT NULL,
 	nome VARCHAR2(255) NOT NULL,
-	valore VARCHAR2(255) NOT NULL,
+	valore VARCHAR2(4000) NOT NULL,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

@@ -181,7 +181,7 @@ CREATE TABLE pa_behaviour_props
 (
 	id_porta BIGINT NOT NULL,
 	nome VARCHAR(255) NOT NULL,
-	valore VARCHAR(255) NOT NULL,
+	valore VARCHAR(4000) NOT NULL,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- unique constraints

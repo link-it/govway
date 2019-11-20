@@ -15,11 +15,14 @@ CREATE TABLE transazioni_sa
 (
 	id_transazione VARCHAR2(255) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR2(2000) NOT NULL,
+	connettore_nome VARCHAR2(255),
 	data_registrazione TIMESTAMP NOT NULL,
 	-- Esito della Consegna
 	consegna_terminata NUMBER,
 	data_messaggio_scaduto TIMESTAMP,
 	dettaglio_esito NUMBER,
+	-- Consegna ad un Backend Applicativo
+	consegna_trasparente NUMBER,
 	-- Consegna via Integration Manager
 	consegna_im NUMBER,
 	-- Identificativo del messaggio
@@ -69,7 +72,10 @@ CREATE TABLE transazioni_sa
 CREATE INDEX index_transazioni_sa_1 ON transazioni_sa (id_transazione);
 
 ALTER TABLE transazioni_sa MODIFY consegna_terminata DEFAULT 0;
+ALTER TABLE transazioni_sa MODIFY consegna_trasparente DEFAULT 0;
+ALTER TABLE transazioni_sa MODIFY consegna_im DEFAULT 0;
 ALTER TABLE transazioni_sa MODIFY numero_tentativi DEFAULT 0;
+ALTER TABLE transazioni_sa MODIFY numero_prelievi_im DEFAULT 0;
 
 CREATE TRIGGER trg_transazioni_sa
 BEFORE

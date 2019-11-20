@@ -415,6 +415,10 @@
 					
 				</xsd:element>
 				
+				<xsd:element minOccurs="0" name="connettore-nome" type="xsd:string">
+					
+				</xsd:element>
+				
 				<xsd:element name="data-registrazione" type="xsd:dateTime">
 					
 				</xsd:element>
@@ -433,6 +437,9 @@
 					
 				</xsd:element>
 				
+				<xsd:element default="false" minOccurs="0" name="consegna-trasparente" type="xsd:boolean">
+					
+				</xsd:element>
 				<xsd:element default="false" minOccurs="0" name="consegna-integration-manager" type="xsd:boolean">
 					
 				</xsd:element>
@@ -822,7 +829,8 @@
 	<xsd:complexType name="id-transazione-applicativo-server">
 		<xsd:sequence>
 			<xsd:element name="id-transazione" type="xsd:string"/>
-			<xsd:element minOccurs="0" name="servizio-applicativo-erogatore" type="xsd:string"/>
+			<xsd:element name="servizio-applicativo-erogatore" type="xsd:string"/>
+			<xsd:element minOccurs="0" name="connettore-nome" type="xsd:string"/>
 		</xsd:sequence>
 	</xsd:complexType>
 
