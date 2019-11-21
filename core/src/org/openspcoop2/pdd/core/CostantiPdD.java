@@ -478,6 +478,15 @@ public class CostantiPdD {
     /** Costante che descrive il behaviour personalizzato */
     public final static String KEY_DESCRIZIONE_BEHAVIOUR = "@DESCRIZIONE_BEHAVIOUR@";
     
+    /** Costante che identifica il tipo di selettore per l'indentificazione dinamica dei connettori */
+    public final static String KEY_TIPO_SELETTORE = "@TIPO_SELETTORE@";
+    /** Costante che identifica il patter utilizzato dal selettore per l'indentificazione dinamica dei connettori */
+    public final static String KEY_PATTERN_SELETTORE = "@PATTERN_SELETTORE@";
+    /** Costante che identifica la condizione estratta per l'indentificazione dinamica dei connettori */
+    public final static String KEY_CONDIZIONE_CONNETTORE =  "@CONDIZIONE_CONNETTORE@";
+    /** Costante che identifica il nome di un connettore */
+    public final static String KEY_NOME_CONNETTORE = "@NOME_CONNETTORE@";
+    
     
     /* Proprietà specifiche per modulo funzionale */
     

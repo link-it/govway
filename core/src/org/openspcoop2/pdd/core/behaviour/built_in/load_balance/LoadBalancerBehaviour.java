@@ -27,8 +27,8 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
@@ -45,7 +45,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class LoadBalancerBehaviour extends AbstractCore implements IBehaviour {
+public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehaviour {
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
@@ -55,7 +55,9 @@ public class LoadBalancerBehaviour extends AbstractCore implements IBehaviour {
 		try{
 			behaviour = new Behaviour();
 			
-			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, gestoreMessaggioRichiesta.getMessage(), busta, 
+					requestInfo, this.getPddContext(), 
+					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			if(config.getPool().isEmpty()) {
 				throw new Exception("Nessun connettore selezionabile");	
 			}

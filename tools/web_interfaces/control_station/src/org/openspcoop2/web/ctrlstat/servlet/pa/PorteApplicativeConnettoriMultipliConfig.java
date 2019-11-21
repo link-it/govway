@@ -261,9 +261,6 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				BehaviourType behaviourType = BehaviourType.toEnumConstant(modalitaConsegna);
 				
 				switch (behaviourType) {
-				case CONSEGNA_CONDIZIONALE:
-					behaviour.setNome(modalitaConsegna);
-					break;
 				case CONSEGNA_LOAD_BALANCE:
 					behaviour.setNome(modalitaConsegna);
 					ConfigurazioneLoadBalancer.addLoadBalancerType(behaviour, loadBalanceStrategia);

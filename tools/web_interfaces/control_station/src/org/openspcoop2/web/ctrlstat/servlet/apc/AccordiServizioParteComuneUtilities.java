@@ -396,6 +396,14 @@ public class AccordiServizioParteComuneUtilities {
 				continue;
 			}
 			
+			// Controllo se assegnata in gruppi per la consegna condizionale
+			if(porteApplicativeCore.azioneUsataInConfigurazioneConsegnaMultiplaCondizionale(nomeop)) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in erogazioni per la configurazione di connettori multipli (consegna condizionale)"+newLine);
+				continue;
+			}
 			
 			// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
 			if(idServiziWithPortType!=null && idServiziWithPortType.size()>0){

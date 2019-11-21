@@ -26,6 +26,11 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
+import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.slf4j.Logger;
 
 /**
@@ -74,7 +79,9 @@ public class ConfigurazioneLoadBalancer  {
 	
 	
 	
-	public static ConfigurazioneLoadBalancer read(PortaApplicativa pa, Logger log) throws CoreException {
+	public static ConfigurazioneLoadBalancer read(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log) throws CoreException {
 		ConfigurazioneLoadBalancer config = new ConfigurazioneLoadBalancer();
 		if(pa.getBehaviour()==null || pa.getBehaviour().sizeProprietaList()<=0) {
 			throw new CoreException("Load Balancer type undefined");
@@ -94,7 +101,9 @@ public class ConfigurazioneLoadBalancer  {
 		}
 		config.setType(enumType);
 		
-		config.setPool(GestoreLoadBalancerCaching.getLoadBalancerPool(pa, log));
+		config.setPool(GestoreLoadBalancerCaching.getLoadBalancerPool(pa, message, busta, 
+				requestInfo, pddContext, 
+				msgDiag, log));
 
 		return config;
 	}

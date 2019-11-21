@@ -21,13 +21,22 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import java.util.List;
+
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
@@ -317,13 +326,33 @@ public class GestoreLoadBalancerCaching {
 	
 	/* ********************** ENGINE ************************** */
 	
-	public static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, Logger log) throws CoreException{
+	public static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log) throws CoreException{
     	
     	if(GestoreLoadBalancerCaching.cache==null){
     		throw new CoreException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
 		}
     	else{
+    		
+    		ConditionalFilterResult filterResult = 
+    				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, true);
+    		
     		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
+    		if(filterResult!=null) {
+    			if(filterResult.isByFilter()) {
+    				keyCache = keyCache +" [Conditional-By-Filter] ";
+        		}
+    			else {
+    				keyCache = keyCache +" [Conditional-By-Name] ";
+    			}
+    			if(filterResult.getNomeGruppoAzioni()!=null) {
+    				keyCache = keyCache +"[Gruppo "+filterResult.getNomeGruppoAzioni()+"] ";
+    			}
+    			if(filterResult.getCondition()!=null) {
+    				keyCache = keyCache +" "+filterResult.getCondition();
+    			}
+    		}
 
 			synchronized (GestoreLoadBalancerCaching.cache) {
 
@@ -343,7 +372,7 @@ public class GestoreLoadBalancerCaching {
 
 				// Effettuo la query
 				log.debug("oggetto con chiave ["+keyCache+"] (method:getLoadBalancerPool) ricerco nella configurazione...");
-				LoadBalancerPool pool = readLoadBalancerPool(pa);
+				LoadBalancerPool pool = readLoadBalancerPool(pa, filterResult);
 				
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -368,10 +397,19 @@ public class GestoreLoadBalancerCaching {
     }
 	
 	
-	private static LoadBalancerPool readLoadBalancerPool(PortaApplicativa pa) throws CoreException {
+	private static LoadBalancerPool readLoadBalancerPool(PortaApplicativa pa, ConditionalFilterResult filterResult) throws CoreException {
+		
+		List<PortaApplicativaServizioApplicativo> listSA = null;
+		if(filterResult==null) {
+			listSA = pa.getServizioApplicativoList();
+		}
+		else {
+			listSA = filterResult.getListServiziApplicativi();
+		}
+		
 		LoadBalancerPool pool = new LoadBalancerPool();
-		if(pa.sizeServizioApplicativoList()>0) {
-			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
+		if(!listSA.isEmpty()) {
+			for (PortaApplicativaServizioApplicativo servizioApplicativo : listSA) {
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
 					int weight = -1;
