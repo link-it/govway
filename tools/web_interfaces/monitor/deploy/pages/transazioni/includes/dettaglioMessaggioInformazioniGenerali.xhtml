@@ -14,17 +14,28 @@
 	    
 	 		<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
 	 		
-	 			<h:outputLabel value="Esito" id="esito-iconLabel" styleClass="outputFieldLabel #{dettagliBean.dettaglio.esitoStyleClass}"/>
-				<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />
-							
+	 			<h:outputLabel value="Data" id="data-iconLabel" styleClass="outputFieldLabel icon-date" />
+				<h:outputText id="outData" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				</h:outputText>	
+				
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
+				<h:outputText id="outIdTransazione" value="#{dettagliBean.dettaglio.idTransazione}" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
+				
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
+				<h:outputText id="outIdCluster" value="#{dettagliBean.dettaglio.clusterId}" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
+				
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelTipologia" value="Tipologia" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 				<h:outputText id="outTipologia" value="#{dettagliBean.tipologiaConProtocollo}" rendered="#{not empty dettagliBean.tipologiaConProtocollo}" />
 				
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelOp" value="Operazione" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
 				<h:outputText id="outOp" value="#{dettagliBean.dettaglio.operazioneIm}" rendered="#{not empty dettagliBean.dettaglio.operazioneIm}"/>
 				
-				<h:outputLabel styleClass="outputFieldLabel" id="outLabelFruitore" value="Fruitore" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoFruitore}"/>
-				<h:outputText id="outFruitore" value="#{dettagliBean.dettaglio.soggettoFruitore}" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoFruitore}"/>
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelFruitore" value="Fruitore" rendered="#{not empty dettagliBean.dettaglio.soggettoFruitore}"/>
+				<h:outputText id="outFruitore" value="#{dettagliBean.dettaglio.soggettoFruitore}" rendered="#{not empty dettagliBean.dettaglio.soggettoFruitore}"/>
+				
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelRichiedente" value="Richiedente" rendered="#{not empty dettagliBean.dettaglio.richiedente}"/>
+				<h:outputText id="outRichiedente" value="#{dettagliBean.dettaglio.richiedente}" rendered="#{not empty dettagliBean.dettaglio.richiedente}"/>
 				
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelErogatore" value="Erogatore" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
 				<h:outputText id="outErogatore" value="#{dettagliBean.dettaglio.soggettoErogatore}" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
@@ -32,15 +43,15 @@
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizio" value="#{msg['commons.servizio.label']} #{dettagliBean.dettaglio.tipoApiLabel}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
 				<h:outputText id="outServizio" value="#{dettagliBean.dettaglio.servizio}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
 				
-				<h:outputLabel styleClass="outputFieldLabel" id="outLabelAzione" value="Azione" rendered="#{not empty dettagliBean.dettaglio.azione}"/>
-				<h:outputText id="outAzione" value="#{dettagliBean.dettaglio.azione}" rendered="#{not empty dettagliBean.dettaglio.azione}"/>
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelAzione" value="#{dettagliBean.dettaglio.tipoOperazioneLabel}" rendered="#{not empty dettagliBean.dettaglio.operazioneLabel}"/>
+				<h:outputText id="outAzione" value="#{dettagliBean.dettaglio.operazioneLabel}" rendered="#{not empty dettagliBean.dettaglio.operazioneLabel}"/>
 				
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelGruppi" value="Tags" rendered="#{not empty dettagliBean.dettaglio.gruppiHTML}" />
 				<h:outputText id="outGruppi" value="#{dettagliBean.dettaglio.gruppiHTML}" escape="false" rendered="#{not empty dettagliBean.dettaglio.gruppiHTML}" />
 										
-				<h:outputLabel styleClass="outputFieldLabel" id="outLabelProfColl" value="Profilo Collaborazione" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt or not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
-				<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{not empty dettagliBean.dettaglio.profiloCollaborazioneProt}"/>
-				<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2}"/>
+				<h:outputLabel styleClass="outputFieldLabel" id="outLabelProfColl" value="Profilo Collaborazione" rendered="#{dettagliBean.dettaglio.showProfiloCollaborazione and (not empty dettagliBean.dettaglio.profiloCollaborazioneProt or not empty dettagliBean.dettaglio.profiloCollaborazioneOp2)}"/>
+				<h:outputText id="outProfCollProt" value="#{dettagliBean.dettaglio.profiloCollaborazioneProt}" rendered="#{dettagliBean.dettaglio.showProfiloCollaborazione and (not empty dettagliBean.dettaglio.profiloCollaborazioneProt)}"/>
+				<h:outputText id="outProfCollOp2" value="#{dettagliBean.dettaglio.profiloCollaborazioneOp2}" rendered="#{dettagliBean.dettaglio.showProfiloCollaborazione and (empty dettagliBean.dettaglio.profiloCollaborazioneProt and not empty dettagliBean.dettaglio.profiloCollaborazioneOp2)}"/>
 				
 				<h:outputLabel styleClass="outputFieldCollaborazione" id="outLabelCollaborazione" value="ID Collaborazione" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
 				<h:outputText id="outCollaborazione" value="#{dettagliBean.dettaglio.idCollaborazione}" rendered="#{not empty dettagliBean.dettaglio.idCollaborazione}"/>
@@ -54,6 +65,9 @@
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelCorrAppRisp" value="ID Applicativo Risposta" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}"/>
 				<h:outputText id="outCorrAppRisp" value="#{dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}"/>
 										
+				<h:outputLabel value="Esito" id="esito-iconLabel" styleClass="outputFieldLabel #{dettagliBean.dettaglio.esitoStyleClass}"/>
+				<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />
+				
 				<h:outputLabel styleClass="outputFieldLabel" id="outLabelEsitoContesto" value="Contesto" rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
 				<h:outputText id="outEsitoContesto" value="#{dettagliBean.dettaglio.esitoContestoLabel}" 
 					rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
@@ -67,7 +81,7 @@
 		<link:fieldset legend="Informazioni Mittente"
 			rendered="#{true}" collapsible="false" closed="false">
 				<h:panelGrid id="panelDettaglioMittente" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
-			
+					
 					<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoFruitore" value="Applicativo Fruitore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 					<h:outputText id="outServizioApplicativoFruitore" value="#{dettagliBean.dettaglio.servizioApplicativoFruitore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoFruitore}"/>
 					
@@ -126,19 +140,18 @@
 					<h:outputLabel id="outLabelTokenInfo" styleClass="outputFieldLabel" value="#{msg['commons.tokenInfo.label']}" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"/>
 					<h:panelGroup id="panelGroupTokenInfo" rendered="#{not empty dettagliBean.dettaglio.tokenInfo}">
 						<h:form id="formTokenInfo">
-	                        <a4j:htmlCommandLink id="tokenInfo-iconLink"
-	                                                         styleClass="icon-details"
-	                                                         value="Visualizza"
-	                                                         rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"
-	                                                         action="tokenInfo">
-	                         	<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-	                        	 <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
-	                         	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-	                         	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
-	               			</a4j:htmlCommandLink>
+                            <a4j:htmlCommandLink id="tokenInfo-iconLink"
+                                                             styleClass="icon-details"
+                                                             value="Visualizza"
+                                                             rendered="#{not empty dettagliBean.dettaglio.tokenInfo}"
+                                                             action="tokenInfo">
+	                             <f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+	                             <f:setPropertyActionListener value="#{true}" target="#{dettagliBean.isRisposta}"/>
+	                             <f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+	                             <f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+              				</a4j:htmlCommandLink>	
 						</h:form>
 					</h:panelGroup>	
-				
 				</h:panelGrid>
 			
 		</link:fieldset>

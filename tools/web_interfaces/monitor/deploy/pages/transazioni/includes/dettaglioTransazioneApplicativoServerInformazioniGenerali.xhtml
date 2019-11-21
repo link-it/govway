@@ -1,0 +1,32 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniGenerali">
+    
+	    <link:fieldset legend="Informazioni Generali" rendered="#{true}" collapsible="false" closed="false">
+	    
+	 		<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+	 		
+	 			<h:outputLabel value="Data" id="data-iconLabel" styleClass="outputFieldLabel icon-date" />
+				<h:outputText id="outData" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+				</h:outputText>	
+				
+						
+			</h:panelGrid>
+			
+		</link:fieldset>
+		
+		<rich:spacer id="spacerInformazioniMittente" height="10px"/>
+    
+    </a4j:outputPanel>
+    
+ 
+</ui:composition>

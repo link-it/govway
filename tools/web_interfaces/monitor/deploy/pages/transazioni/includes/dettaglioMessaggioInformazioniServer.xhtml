@@ -13,17 +13,21 @@
 			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == false}">
 				<ui:include src="/transazioni/includes/tabellaTransazioniApplicativoServer.xhtml">
 					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
-					<ui:param value="#{dettagliBean}" name="targetBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="targetBean" />
 					<ui:param value="#{nomeTab}" name="nomeTab" />
-					<ui:param value="#{dettagliBean}" name="mBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="mBean" />
+					<ui:param value="#{dettagliBean}" name="dettagliBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean.selectedIds[item]}" name="selectionMapTarget" />
 				</ui:include>
 			</c:if>
 			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == true}">
 				<ui:include src="/transazioni/includes/tabellaTransazioniApplicativoServerCustom.xhtml">
 					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
-					<ui:param value="#{dettagliBean}" name="targetBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="targetBean" />
 					<ui:param value="#{nomeTab}" name="nomeTab" />
-					<ui:param value="#{dettagliBean}" name="mBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="mBean" />
+					<ui:param value="#{dettagliBean}" name="dettagliBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean.selectedIds[item]}" name="selectionMapTarget" />
 				</ui:include>
 			</c:if>
 		</a4j:form>

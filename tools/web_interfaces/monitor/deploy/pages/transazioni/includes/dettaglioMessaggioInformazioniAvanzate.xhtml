@@ -10,14 +10,8 @@
     
     <a4j:outputPanel layout="block" id="informazioniAvanzate">
  		<h:panelGrid id="panelInformazioniAvanzate" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
-						
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdTransazione" value="ID Transazione" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
-			<h:outputText id="outIdTransazione" value="#{dettagliBean.dettaglio.idTransazione}" rendered="#{not empty dettagliBean.dettaglio.idTransazione}" />
-			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelIdCluster" value="ID Cluster" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
-			<h:outputText id="outIdCluster" value="#{dettagliBean.dettaglio.clusterId}" rendered="#{not empty dettagliBean.dettaglio.clusterId}" />
-								
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdD" value="Dominio (ID)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
+ 		
+ 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdD" value="Dominio (ID)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 			<h:outputText id="outPdD" value="#{dettagliBean.dettaglio.pddCodice}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 		
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="Dominio (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
@@ -51,7 +45,7 @@
 			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizioApplicativoErogatore" value="Applicativo Erogatore" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
 			<h:outputText id="outServizioApplicativoErogatore" value="#{dettagliBean.dettaglio.servizioApplicativoErogatore}" rendered="#{not empty dettagliBean.dettaglio.servizioApplicativoErogatore}"/>
-			
+						
 		</h:panelGrid>  
     
     </a4j:outputPanel>
