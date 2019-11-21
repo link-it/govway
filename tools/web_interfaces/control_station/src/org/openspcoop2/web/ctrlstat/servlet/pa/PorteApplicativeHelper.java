@@ -85,6 +85,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
@@ -6356,13 +6357,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String [] modalitaLabels = {
 					BehaviourType.CONSEGNA_MULTIPLA.getLabel(),
 					BehaviourType.CONSEGNA_LOAD_BALANCE.getLabel(),
-					BehaviourType.CONSEGNA_CONDIZIONALE.getLabel(),
 					BehaviourType.CUSTOM.getLabel()
 					};
 			String [] modalitaValues = {
 					BehaviourType.CONSEGNA_MULTIPLA.getValue(),
 					BehaviourType.CONSEGNA_LOAD_BALANCE.getValue(),
-					BehaviourType.CONSEGNA_CONDIZIONALE.getValue(),
 					BehaviourType.CUSTOM.getValue()
 					};
 			
@@ -6419,7 +6418,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setInfo(dInfo);
 				dati.addElement(de);
 				
-			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
+			}  
+			//else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
 				// form
 //				de = new DataElement();
 //				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE);
@@ -6431,7 +6431,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				// condizione
 				
 				
-			}
+			//}
 		} 
 		
 		return dati;
@@ -6469,9 +6469,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 //					return false;
 //				}
 				
-			}  else if(modalitaConsegna.equals(BehaviourType.CONSEGNA_CONDIZIONALE.getValue())) {
-				// form
-			}
+			}  
 		}
 		
 		return true;
@@ -6551,6 +6549,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
 			
 			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
 			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idAspsLong);
@@ -6741,7 +6740,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				e.addElement(de);
 				
 				// Filtri
-				if(beaBehaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+				if(behaviourConFiltri) {
 					de = new DataElement();
 					de.setType(DataElementType.BUTTON);
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
@@ -6846,7 +6845,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public Vector<DataElement> addConnettoriMultipliToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
 			BehaviourType beaBehaviourType, String nomeSAConnettore,
-			String nome, String descrizione, String stato, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) {
+			String nome, String descrizione, String stato, boolean behaviourConFiltri, String filtri, String vDatiGenerali, String vDescrizione, String vFiltri, String vConnettore) {
 		
 		boolean visualizzaDatiGenerali = ServletUtils.isCheckBoxEnabled(vDatiGenerali);
 		boolean visualizzaDescrizione = ServletUtils.isCheckBoxEnabled(vDescrizione);
@@ -6918,7 +6917,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
-		if(beaBehaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+		if(behaviourConFiltri) {
 			
 			
 			if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && visualizzaFiltri)) {

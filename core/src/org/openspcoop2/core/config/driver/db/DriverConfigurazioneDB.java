@@ -6838,6 +6838,88 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			}
 		}
 	}
+	
+	public boolean azioneUsataInConfigurazioneConsegnaMultiplaCondizionale(String azione) throws DriverConfigurazioneException {
+
+		String nomeMetodo = "azioneUsataInConfigurazioneConsegnaMultiplaCondizionale";
+		
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		
+		String nomeTabella = CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS;
+
+		if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+			
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(nomeTabella);
+			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addWhereLikeCondition("nome", CostantiConfigurazione.BEHAVIOUR_CONDITIONAL_GROUP+"%", false);
+			sqlQueryObject.addWhereLikeCondition("nome", CostantiConfigurazione.BEHAVIOUR_CONDITIONAL_GROUP_ACTION_NAME, true, false);
+			sqlQueryObject.addWhereCondition("valore=?");
+			sqlQueryObject.setANDLogicOperator(true);
+			stmt = con.prepareStatement(sqlQueryObject.createSQLQuery());
+			stmt.setString(1, azione);
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				
+				return true;
+
+			}
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverConfigurazioneException("[DriverConfigurazioneDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try {
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose) {}
+			try {
+				if(stmt!=null)
+					stmt.close();
+			}catch(Exception eClose) {}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+		
+		return false;
+	}
 
     @Override
     public ServizioApplicativo getServizioApplicativo(IDServizioApplicativo idServizioApplicativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{

@@ -330,4 +330,9 @@ public class CostantiConfigurazione {
     public final static String SERVER = "server";
     public final static String CLIENT_OR_SERVER = "clientORserver";
     
+    /** Behaviour */
+    public static final String BEHAVIOUR_CONDITIONAL_GROUP = "c_group_";
+	public static final String BEHAVIOUR_CONDITIONAL_GROUP_NAME = "_name";
+	public static final String BEHAVIOUR_CONDITIONAL_GROUP_ACTION_NAME = "_action_"; // alla fine avremo 1 proprieta per ogni azione ed e' più facile fare i vari controlli inUse.
+    
 }

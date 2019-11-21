@@ -27,7 +27,6 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
-import org.openspcoop2.pdd.core.behaviour.built_in.DefaultBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverBehaviour;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -93,6 +92,10 @@ public class BehaviourLoader {
 		}
 		
 		behaviourImpl.init(pddContext, protocolFactory);
+		
+		if(behaviourImpl instanceof AbstractBehaviour) {
+			((AbstractBehaviour)behaviourImpl).initMsgDiagnostico(msgDiag);
+		}
 		
 		return behaviourImpl;
 		

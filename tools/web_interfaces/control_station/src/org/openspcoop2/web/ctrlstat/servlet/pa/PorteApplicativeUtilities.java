@@ -27,7 +27,10 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
+import org.slf4j.Logger;
 
 
 /**
@@ -41,11 +44,12 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 public class PorteApplicativeUtilities {
 
 	public static void deletePortaApplicativaAzioni(PortaApplicativa pa, PorteApplicativeCore porteApplicativeCore, PorteApplicativeHelper porteApplicativeHelper, 
-			StringBuffer inUsoMessage, List<String> azioni, String userLogin) throws Exception {
+			StringBuffer inUsoMessage, String newLine, List<String> azioni, String userLogin, Logger log) throws Exception {
 	
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 		StringBuffer bfTrasformazioni = new StringBuffer();
 		StringBuffer bfCT = new StringBuffer();
+		StringBuffer bfConnettoreMultiplo = new StringBuffer();
 		
 		for (int i = 0; i < azioni.size(); i++) {
 
@@ -75,11 +79,29 @@ public class PorteApplicativeUtilities {
 				bfTrasformazioni.append(azione);
 			}
 			else {
-				for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
-					String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
-					if (azione.equals(azioneDelegata)) {
-						pa.getAzione().removeAzioneDelegata(j);
-						break;
+				
+				boolean usedInConnettoreMultiplo = false;
+				if(pa.getBehaviour()!=null && pa.getBehaviour().sizeProprietaList()>0) {
+					if(ConditionalUtils.isConfigurazioneCondizionale(pa, log)) {
+						ConfigurazioneCondizionale cc = ConditionalUtils.read(pa, log);
+						if(cc.getConfigurazioneSelettoreCondizioneByAzione(azione)!=null) {
+							usedInConnettoreMultiplo = true;
+						}
+					}
+				}
+				if(usedInConnettoreMultiplo) {
+					if(bfConnettoreMultiplo.length()>0) {
+						bfConnettoreMultiplo.append(",");
+					}
+					bfConnettoreMultiplo.append(azione);
+				}
+				else {
+					for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
+						String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
+						if (azione.equals(azioneDelegata)) {
+							pa.getAzione().removeAzioneDelegata(j);
+							break;
+						}
 					}
 				}
 			}
@@ -89,11 +111,22 @@ public class PorteApplicativeUtilities {
 		if(pa.getAzione().sizeAzioneDelegataList() == 0) {
 			inUsoMessage.append(PorteApplicativeCostanti.MESSAGGIO_ERRORE_NON_E_POSSIBILE_ELIMINARE_TUTTE_LE_AZIONI_ASSOCIATE_ALLA_CONFIGURAZIONE); 
 		}
-		else if(bfCT.length()>0) {
-			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString()); 
-		}
-		else if(bfTrasformazioni.length()>0) {
-			inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè utilizzate in criteri di applicabilità di una Trasformazione: "+bfTrasformazioni.toString()); 
+		else if(bfCT.length()>0 || bfTrasformazioni.length()>0 || bfConnettoreMultiplo.length()>0) {
+			if(bfCT.length()>0) {
+				inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè risultano utilizzate in configurazione di Rate Limiting: "+bfCT.toString());
+			}
+			if(bfTrasformazioni.length()>0) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè utilizzate in criteri di applicabilità di una Trasformazione: "+bfTrasformazioni.toString()); 
+			}
+			if(bfConnettoreMultiplo.length()>0) {
+				if(inUsoMessage.length()>0) {
+					inUsoMessage.append(newLine);
+				}
+				inUsoMessage.append("Non è stato possibile procedere con l'eliminazione poichè utilizzate nei connettori multipli in consegne condizionali: "+bfConnettoreMultiplo.toString()); 
+			}
 		}
 		else {
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);

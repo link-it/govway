@@ -35,15 +35,19 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
-import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.slf4j.Logger;
 
 /**
  * MultiDeliverBehaviour
@@ -52,7 +56,7 @@ import org.openspcoop2.protocol.sdk.Busta;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class MultiDeliverBehaviour extends AbstractCore implements IBehaviour {
+public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehaviour {
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 
@@ -60,7 +64,7 @@ public class MultiDeliverBehaviour extends AbstractCore implements IBehaviour {
 		
 		try{
 
-			ConfigurazioneMultiDeliver configurazione = ConfigurazioneMultiDeliver.read(pa);
+			ConfigurazioneMultiDeliver configurazione = MultiDeliverUtils.read(pa, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			
 			List<IDServizioApplicativo> listaServiziApplicativi_consegnaSenzaRisposta = new ArrayList<IDServizioApplicativo>();
 			IDServizioApplicativo idServizioApplicativoResponder = null;
@@ -86,6 +90,37 @@ public class MultiDeliverBehaviour extends AbstractCore implements IBehaviour {
 					}
 				}
 			}
+			
+			if(!listaServiziApplicativi_consegnaSenzaRisposta.isEmpty()) {
+				
+				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
+				
+				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, gestoreMessaggioRichiesta.getMessage(), busta, 
+						requestInfo, this.getPddContext(), 
+						this.msgDiag, log, false);
+				
+				if(filterResult!=null && !filterResult.getListServiziApplicativi().isEmpty()) {
+					listaServiziApplicativi_consegnaSenzaRisposta.clear();
+				
+					for (PortaApplicativaServizioApplicativo pasa : filterResult.getListServiziApplicativi()) {
+						
+						String nomeConnettore = null;
+						if(pasa.getDatiConnettore()!=null) {
+							nomeConnettore = pasa.getDatiConnettore().getNome();
+						}
+						
+						if(configurazione.getTransazioneSincrona_nomeConnettore()==null ||
+								!configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+							IDServizioApplicativo idSA = new IDServizioApplicativo();
+							idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+							idSA.setNome(pasa.getNome());
+							listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
+						}
+					}
+				}
+				
+			}
+			
 			
 			Behaviour behaviour = new Behaviour();
 			behaviour.setApplicativeSyncResponder(idServizioApplicativoResponder);

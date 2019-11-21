@@ -131,6 +131,11 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.integrazione.backward_compatibility" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.keystore" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.load_balance" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.conditional" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.test" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.jmx" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.node" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.response_caching" />
