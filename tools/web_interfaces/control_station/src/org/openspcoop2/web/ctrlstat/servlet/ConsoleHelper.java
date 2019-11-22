@@ -14637,4 +14637,48 @@ public class ConsoleHelper implements IConsoleHelper {
 		return ( ++ idxConfigurazione);
 	}
 
+	
+	public boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+					PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
+	}
+	
+	public List<String> getAllActionsNotRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		List<String> l = new ArrayList<>();
+		if(lista==null || lista.size()<=0) {
+			return azioni;
+		}
+		l.addAll(azioni);
+		for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+			PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+			if(paAssociata.getAzione() != null && !paAssociata.getAzione().getAzioneDelegataList().isEmpty()) {
+				for (String azPA : paAssociata.getAzione().getAzioneDelegataList()) {
+					l.remove(azPA);
+				}
+			}
+		}
+		return l;
+	}
 }

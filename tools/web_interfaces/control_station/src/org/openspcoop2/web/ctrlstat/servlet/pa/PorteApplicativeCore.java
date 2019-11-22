@@ -67,6 +67,12 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.mapping.DBMappingUtils;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.beans.AzioneSintetica;
+import org.openspcoop2.core.registry.beans.OperationSintetica;
+import org.openspcoop2.core.registry.beans.PortTypeSintetico;
+import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
@@ -1815,5 +1821,87 @@ public class PorteApplicativeCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
+	}
+	
+	
+	public boolean azioniTutteOneway(AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, List<String> azioniDaControllare) {
+		String profiloCollaborazioneAccordo = as.getProfiloCollaborazione().toString();
+		if (profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
+			profiloCollaborazioneAccordo = "oneway";
+		} else if (profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.SINCRONO.getValue())) {
+			profiloCollaborazioneAccordo = "sincrono";
+		} else if (profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ASINCRONO_SIMMETRICO.getValue())) {
+			profiloCollaborazioneAccordo = "asincronoSimmetrico";
+		} else if (profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ASINCRONO_ASIMMETRICO.getValue())) {
+			profiloCollaborazioneAccordo = "asincronoAsimmetrico";
+		}
+		
+		for (String nomeAzione : azioniDaControllare) {
+			boolean isProfiloOneWay = true;
+			// recupero profilo collaborazione azione se l'azione e'
+			// specificata e il profilo azione e' ridefinito
+			String profiloCollaborazioneAzione = "";
+			if (nomeAzione != null && !nomeAzione.equals("")) {
+				if(asps.getPortType()!=null){
+					for (PortTypeSintetico pt : as.getPortType()) {
+						if(pt.getNome().equals(asps.getPortType())){
+							for (OperationSintetica op : pt.getAzione()) {
+								if(op.getNome().equals(nomeAzione)){
+									if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(op.getProfAzione())){
+										if(op.getProfiloCollaborazione()!=null)
+											profiloCollaborazioneAzione = op.getProfiloCollaborazione().toString();
+									}
+									else{
+										if(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO.equals(pt.getProfiloPT())){
+											if(pt.getProfiloCollaborazione()!=null)
+												profiloCollaborazioneAzione = pt.getProfiloCollaborazione().toString();
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				else{
+					for (int i = 0; i < as.getAzione().size(); i++) {
+						AzioneSintetica tmpAz = as.getAzione().get(i);
+						if (tmpAz.getProfAzione().equals(CostantiRegistroServizi.PROFILO_AZIONE_RIDEFINITO)) {
+							if(tmpAz.getProfiloCollaborazione()!=null)
+								profiloCollaborazioneAzione = tmpAz.getProfiloCollaborazione().toString();
+							break;
+						}
+					}
+				}
+			}
+
+			// Controllo se nomeAzione e' specificato allora e' possibile
+			// che il profilo azione sia ridefinito
+			// quindi devo controllare se e' diverso da oneway
+			if (nomeAzione != null && !nomeAzione.equals("")) {
+				// se e' diverso da oneway posso avere solo un azione
+				if ( profiloCollaborazioneAzione != null && !profiloCollaborazioneAzione.equals("") ){
+					if (!profiloCollaborazioneAzione.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
+						isProfiloOneWay = false;
+					}
+				}
+				else{
+					if (!profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
+						isProfiloOneWay = false;
+					}	
+				}
+			} else {
+				// non ho azione (o azione con profilo non ridefinito)
+				// allora considero il profilo dell'accordo
+				if (!profiloCollaborazioneAccordo.equals(CostantiRegistroServizi.ONEWAY.getValue())) {
+					isProfiloOneWay = false;
+				}
+			}
+			
+			if(!isProfiloOneWay)
+				return false;
+		}
+		
+		
+		return true;
 	}
 }
