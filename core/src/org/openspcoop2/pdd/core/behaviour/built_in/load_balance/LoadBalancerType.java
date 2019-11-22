@@ -51,6 +51,9 @@ public enum LoadBalancerType implements IEnumeration , Serializable , Cloneable 
 	;
 	
 
+	public boolean isTypeWithWeight() {
+		return WEIGHT_ROUND_ROBIN.equals(this) || WEIGHT_RANDOM.equals(this);
+	}
 
 	
 	/** Value */

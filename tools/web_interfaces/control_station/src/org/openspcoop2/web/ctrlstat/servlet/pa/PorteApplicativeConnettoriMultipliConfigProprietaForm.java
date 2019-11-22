@@ -41,6 +41,7 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -204,11 +205,11 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 
 				if(peso == null) {
-					peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(oldPaSA);
+					peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(oldPaSA);
 				}
 				
 				if(peso == null) {
-					peso = "1";
+					peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
 				}
 
 				// preparo i campi
@@ -288,10 +289,10 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaForm extends
 				}
 			}
 
-			peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(paSA);
+			peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(paSA);
 			
 			if(peso == null) {
-				peso = "1";
+				peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
 			}
 
 			// preparo i campi
