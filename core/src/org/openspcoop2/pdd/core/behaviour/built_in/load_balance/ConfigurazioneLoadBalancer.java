@@ -66,7 +66,7 @@ public class ConfigurazioneLoadBalancer  {
 		p.setValore(weight);
 		paSA.getDatiConnettore().addProprieta(p);
 	}
-	public static String readLoadBalancerType(PortaApplicativaServizioApplicativo paSA) {
+	public static String readLoadBalancerWeight(PortaApplicativaServizioApplicativo paSA) {
 		if(paSA!=null && paSA.getDatiConnettore()!=null && paSA.getDatiConnettore().sizeProprietaList()>0) {
 			for (Proprieta p : paSA.getDatiConnettore().getProprietaList()) {
 				if(Costanti.LOAD_BALANCER_WEIGHT.equals(p.getNome())) {
@@ -74,7 +74,7 @@ public class ConfigurazioneLoadBalancer  {
 				}
 			}
 		}
-		return null;
+		return LoadBalancerPool.DEFAULT_WEIGHT+"";
 	}	
 	
 	

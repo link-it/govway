@@ -85,6 +85,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -6474,8 +6475,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		return true;
 	}
-	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, List<PortaApplicativaServizioApplicativo> lista) throws Exception {
+	public void preparePorteAppConnettoriMultipliList(String nomePorta, Search ricerca, PortaApplicativa pa) throws Exception {
 		try {
+			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
 			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
@@ -6548,9 +6551,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			boolean isModalitaCompleta = this.isModalitaCompleta();
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
 			
-			PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
+			//PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
 			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			
+			LoadBalancerType loadBalancerType = null;
+			if(beaBehaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+				String balancerTypeS = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(pa.getBehaviour());
+				loadBalancerType = LoadBalancerType.toEnumConstant(balancerTypeS, true);
+			}
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idAspsLong);
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
@@ -6769,17 +6778,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 				}
 				
-				if(beaBehaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+				if(beaBehaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE) &&
+						loadBalancerType.isTypeWithWeight()) {
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE);
 
-					String balancerType = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(paSA);
-					if(StringUtils.isBlank(balancerType))
-						balancerType = " ";
-					
-					de.setValue(balancerType);
+					String balancerWeight = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(paSA);
+					if(StringUtils.isBlank(balancerWeight))
+						balancerWeight = " ";
+					de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT+": "+balancerWeight);
 					
 					image = new DataElementImage();
 					

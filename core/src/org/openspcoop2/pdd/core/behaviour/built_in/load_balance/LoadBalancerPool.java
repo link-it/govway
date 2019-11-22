@@ -45,7 +45,7 @@ public class LoadBalancerPool implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	protected static int DEFAULT_WEIGHT = 1; 
+	public static int DEFAULT_WEIGHT = 1; 
 	
 	@Override
 	public String toString() {

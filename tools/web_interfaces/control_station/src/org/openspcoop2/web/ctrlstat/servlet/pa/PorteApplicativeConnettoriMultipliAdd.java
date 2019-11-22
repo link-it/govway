@@ -793,9 +793,7 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 	
 			ricerca = porteApplicativeHelper.checkSearchParameters(idLista, ricerca);
 			
-			List<PortaApplicativaServizioApplicativo> lista = pa.getServizioApplicativoList();
-						
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, lista);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(pa.getNome(), ricerca, pa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			// Forward control to the specified success URI

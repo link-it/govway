@@ -24,7 +24,6 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.text.MessageFormat;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -219,11 +218,9 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 
-			List<PortaApplicativaServizioApplicativo> lista = portaApplicativa.getServizioApplicativoList();
-
 			// filtro
 
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, portaApplicativa);
 
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

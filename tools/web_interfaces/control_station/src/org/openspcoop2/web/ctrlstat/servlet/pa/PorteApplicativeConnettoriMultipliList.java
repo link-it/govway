@@ -23,8 +23,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,7 +34,6 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -94,11 +91,9 @@ public final class PorteApplicativeConnettoriMultipliList extends Action {
 	
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			
-			List<PortaApplicativaServizioApplicativo> lista = portaApplicativa.getServizioApplicativoList();
-			
 			// filtro
 	
-			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, lista);
+			porteApplicativeHelper.preparePorteAppConnettoriMultipliList(nomePorta, ricerca, portaApplicativa);
 	
 			ServletUtils.setSearchObjectIntoSession(session, ricerca);
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
