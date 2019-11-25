@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.timers;
 
 import java.sql.Timestamp;
 
+import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -40,6 +41,9 @@ import org.openspcoop2.pdd.core.MessaggioServizioApplicativo;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -222,6 +226,9 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 							if(pasa.getDatiConnettore()!=null) {
 								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
 							}
+							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa, this.log.getLog()); 
+							GestioneErrore gestioneErroreBehaviour = GestioneConsegnaNotificheUtils.toGestioneErrore(configGestioneConsegna);		
+							behaviourMsg.setGestioneErrore(gestioneErroreBehaviour);
 							break;
 						}
 					}

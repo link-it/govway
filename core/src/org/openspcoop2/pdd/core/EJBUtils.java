@@ -33,6 +33,7 @@ import java.util.Random;
 
 import javax.xml.soap.SOAPBody;
 
+import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
@@ -71,6 +72,9 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
@@ -1898,6 +1902,9 @@ public class EJBUtils {
 							if(pasa.getDatiConnettore()!=null) {
 								idTransazioneApplicativoServer.setConnettoreNome(pasa.getDatiConnettore().getNome());
 							}
+							ConfigurazioneGestioneConsegnaNotifiche configGestioneConsegna = MultiDeliverUtils.read(pasa, this.log); 
+							GestioneErrore gestioneErroreBehaviour = GestioneConsegnaNotificheUtils.toGestioneErrore(configGestioneConsegna);		
+							behaviourMsg.setGestioneErrore(gestioneErroreBehaviour);
 							break;
 						}
 					}

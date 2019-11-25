@@ -39,10 +39,6 @@ import org.w3c.dom.Element;
  * @version $Rev$, $Date$
  */
 public class XmlSerializer {
-
-	/** RFC 7807 Problem Details for HTTP APIs */
-	public static final String XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE = "urn:ietf:rfc:7807";
-	public static final String XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME = "problem";
 	
 	private boolean generateTypeBlank = false;
 	private XMLUtils xmlUtils;
@@ -119,39 +115,40 @@ public class XmlSerializer {
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
-		Element xmlProblem = document.createElementNS(XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE, XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME);
+		Element xmlProblem = document.createElementNS(ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE, 
+				ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME);
 		
 		if(problem.getType()!=null) {
-			Element child = document.createElement("type");
+			Element child = document.createElement(ProblemConstants.CLAIM_TYPE);
 			child.setTextContent(problem.getType());
 			xmlProblem.appendChild(child);
 		}
 		else if(this.generateTypeBlank) {
-			Element child = document.createElement("type");
-			child.setTextContent("about:blank");
+			Element child = document.createElement(ProblemConstants.CLAIM_TYPE);
+			child.setTextContent(ProblemConstants.CLAIM_TYPE_BLANK_VALUE);
 			xmlProblem.appendChild(child);
 		}
 		
 		if(problem.getTitle()!=null) {
-			Element child = document.createElement("title");
+			Element child = document.createElement(ProblemConstants.CLAIM_TITLE);
 			child.setTextContent(problem.getTitle());
 			xmlProblem.appendChild(child);
 		}	
 		
 		if(problem.getStatus()!=null) {
-			Element child = document.createElement("status");
+			Element child = document.createElement(ProblemConstants.CLAIM_STATUS);
 			child.setTextContent(problem.getStatus()+"");
 			xmlProblem.appendChild(child);
 		}	
 		
 		if(problem.getDetail()!=null) {
-			Element child = document.createElement("detail");
+			Element child = document.createElement(ProblemConstants.CLAIM_DETAIL);
 			child.setTextContent(problem.getDetail());
 			xmlProblem.appendChild(child);
 		}	
 		
 		if(problem.getInstance()!=null) {
-			Element child = document.createElement("instance");
+			Element child = document.createElement(ProblemConstants.CLAIM_INSTANCE);
 			child.setTextContent(problem.getInstance());
 			xmlProblem.appendChild(child);
 		}	

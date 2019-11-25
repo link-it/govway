@@ -71,26 +71,26 @@ public class JsonSerializer {
 		ObjectNode jsonProblem = this.jsonUtils.newObjectNode();
 		
 		if(problem.getType()!=null) {
-			jsonProblem.put("type", problem.getType());
+			jsonProblem.put(ProblemConstants.CLAIM_TYPE, problem.getType());
 		}
 		else if(this.generateTypeBlank) {
-			jsonProblem.put("type", "about:blank");
+			jsonProblem.put(ProblemConstants.CLAIM_TYPE, ProblemConstants.CLAIM_TYPE_BLANK_VALUE);
 		}
 		
 		if(problem.getTitle()!=null) {
-			jsonProblem.put("title", problem.getTitle());
+			jsonProblem.put(ProblemConstants.CLAIM_TITLE, problem.getTitle());
 		}	
 		
 		if(problem.getStatus()!=null) {
-			jsonProblem.put("status", problem.getStatus());
+			jsonProblem.put(ProblemConstants.CLAIM_STATUS, problem.getStatus());
 		}	
 		
 		if(problem.getDetail()!=null) {
-			jsonProblem.put("detail", problem.getDetail());
+			jsonProblem.put(ProblemConstants.CLAIM_DETAIL, problem.getDetail());
 		}	
 		
 		if(problem.getInstance()!=null) {
-			jsonProblem.put("instance", problem.getInstance());
+			jsonProblem.put(ProblemConstants.CLAIM_INSTANCE, problem.getInstance());
 		}	
 		
 		if(problem.getCustom()!=null && !problem.getCustom().isEmpty()) {

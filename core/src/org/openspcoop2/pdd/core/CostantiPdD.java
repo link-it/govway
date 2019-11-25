@@ -594,6 +594,8 @@ public class CostantiPdD {
     public final static String KEY_DESTINATARIO_TRASMISSIONE = "@DESTINATARIO_TRASMISSIONE@";
     /** Costante che indica la descrizione degli elementi principali che formano un soap fault ricevuto */
     public final static String KEY_SOAP_FAULT = "@SOAP_FAULT@";
+    /** Costante che indica la descrizione degli elementi principali che formano un problem detail ricevuto */
+    public final static String KEY_REST_PROBLEM = "@REST_PROBLEM@";
     /** Costante (true/false) indica se la funzionalità è stata richiesta nell'accordo*/
     public final static String KEY_FUNZIONALITA_COLLABORAZIONE = "@FUNZIONALITA_COLLABORAZIONE@";
     /** Costante (true/false) indica se la funzionalità è stata richiesta nell'accordo*/

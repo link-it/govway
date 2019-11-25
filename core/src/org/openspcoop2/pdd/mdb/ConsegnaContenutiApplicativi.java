@@ -146,6 +146,8 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.problem.ProblemConstants;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -396,9 +398,11 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
 		String idMessaggioPreBehaviour = null;
 		BehaviourForwardToConfiguration behaviourForwardToConfiguration = null;
+		GestioneErrore gestioneErroreBehaviour = null;
 		if(behaviourConsegna!=null) {
 			idMessaggioPreBehaviour = behaviourConsegna.getIdMessaggioPreBehaviour();
 			behaviourForwardToConfiguration = behaviourConsegna.getBehaviourForwardToConfiguration();
+			gestioneErroreBehaviour = behaviourConsegna.getGestioneErrore();
 		}
 		
 		/* PddContext */
@@ -1642,7 +1646,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			java.sql.Timestamp dataRiconsegna = null;
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
-			SOAPFault fault = null;
+			SOAPFault soapFault = null;
+			ProblemRFC7807 restProblem = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
 			// Ricerco connettore
@@ -1735,42 +1740,47 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			// GestioneErrore
 			GestioneErrore gestioneConsegnaConnettore = null;
-			if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
-					Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
-				try{
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
-				}
-
-
+			if(gestioneErroreBehaviour!=null) {
+				gestioneConsegnaConnettore = gestioneErroreBehaviour;
 			}
-			else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
-				try{
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
+			else {
+				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
+						Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
+					try{
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
+	
+	
 				}
-			}else{
-				try{
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
+				else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
+					try{
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
+				}else{
+					try{
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
 				}
 			}
 			if(gestioneConsegnaConnettore==null){
@@ -2090,7 +2100,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						transazioneApplicativoServer.setConsegnaTerminata(!errorConsegna);
 					}
 					// raccolta risultati del connettore
-					fault = gestoreErrore.getFault();
+					soapFault = gestoreErrore.getFault();
+					restProblem = gestoreErrore.getProblem();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
 					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
 							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
@@ -2510,15 +2521,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			else if(errorConsegna){
 						
 				// Effettuo log dell'eventuale fault
-				if(fault!=null && 
+				if(soapFault!=null && 
 						( 
 						  (motivoErroreConsegna==null) ||
 						  (!motivoErroreConsegna.toLowerCase().contains("faultCode") && !motivoErroreConsegna.toLowerCase().contains("faultActor") && !motivoErroreConsegna.toLowerCase().contains("faultString"))
 					    ) 
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(soapFault));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
+				}
+				else if(restProblem!=null && 
+						( 
+						  (motivoErroreConsegna==null) ||
+						  (!motivoErroreConsegna.toLowerCase().contains(ProblemConstants.CLAIM_TYPE))
+					    ) 
+					){
+					// Se non l'ho gia indicato nel motivo di errore, registro il fault
+					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+					msgDiag.logPersonalizzato("ricezioneRestProblem");
 				}
 				else{
 					
@@ -2681,9 +2702,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			// Effettuo log del fault
-			if(fault!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+			if(soapFault!=null){
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(soapFault));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
+			}
+			else if(restProblem!=null){
+				// Se non l'ho gia indicato nel motivo di errore, registro il fault
+				msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+				msgDiag.logPersonalizzato("ricezioneRestProblem");
 			}
 			
 			if(existsModuloInAttesaRispostaApplicativa){
@@ -2733,7 +2759,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 					if( returnProtocolReply == false){
 
-						if(fault!=null){
+						if(soapFault!=null || restProblem!=null){
 							// Devo ritornare il SoapFault
 							msgDiag.mediumDebug("Invio messaggio di fault a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.sendSOAPFault(richiestaApplicativa.getIdModuloInAttesa(),responseMessage);
@@ -2749,7 +2775,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					else{
 
 						// Invio risposta immediata in seguito alla richiesta ricevuta
-						if(fault!=null){
+						if(soapFault!=null || restProblem!=null){
 							// Devo ritornare il SoapFault
 							msgDiag.mediumDebug("Invio messaggio di fault a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.sendSOAPFault(richiestaApplicativa.getIdModuloInAttesa(),responseMessage);
@@ -3274,7 +3300,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						
 						if( richiestaApplicativa!=null && Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(richiestaApplicativa.getScenario()) ){
 							// Per avere esattamente il solito comportamento dello scenario con protocollo.
-							if(fault==null){
+							if(soapFault==null && restProblem==null){
 								// devo 'ignorare' la risposta anche se presente, essendo un profilo oneway.
 								if(responseMessage!=null){
 									if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){

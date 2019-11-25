@@ -26,6 +26,7 @@ package org.openspcoop2.pdd.mdb;
 
 import java.io.Serializable;
 
+import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 
@@ -53,10 +54,10 @@ public class ConsegnaContenutiApplicativiBehaviourMessage implements Serializabl
 	private String idMessaggioPreBehaviour = null;
 	private BehaviourForwardToConfiguration behaviourForwardToConfiguration;
 	private IdTransazioneApplicativoServer idTransazioneApplicativoServer;
+	private GestioneErrore gestioneErrore;
 
 
 	/* ********  C O S T R U T T O R E  ******** */
-
 
 	/**
 	 * Costruttore. 
@@ -92,6 +93,14 @@ public class ConsegnaContenutiApplicativiBehaviourMessage implements Serializabl
 
 	public void setIdTransazioneApplicativoServer(IdTransazioneApplicativoServer idTransazioneApplicativoServer) {
 		this.idTransazioneApplicativoServer = idTransazioneApplicativoServer;
+	}
+	
+	public GestioneErrore getGestioneErrore() {
+		return this.gestioneErrore;
+	}
+	
+	public void setGestioneErrore(GestioneErrore gestioneErrore) {
+		this.gestioneErrore = gestioneErrore;
 	}
 	
 }

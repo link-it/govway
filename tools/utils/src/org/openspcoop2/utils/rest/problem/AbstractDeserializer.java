@@ -51,7 +51,7 @@ public abstract class AbstractDeserializer {
 	
 	protected void set(ProblemRFC7807 problem, String name, Object value) throws UtilsException {
 		
-		if("type".equals(name)) {
+		if(ProblemConstants.CLAIM_TYPE.equals(name)) {
 			String type = this.getAsString(value);
 			if("about:blank".equals(type)) {
 				if(this.generateTypeBlank) {
@@ -62,16 +62,16 @@ public abstract class AbstractDeserializer {
 				problem.setType(type);
 			}
 		}
-		else if("title".equals(name)) {
+		else if(ProblemConstants.CLAIM_TITLE.equals(name)) {
 			problem.setTitle(this.getAsString(value));
 		}
-		else if("status".equals(name)) {
+		else if(ProblemConstants.CLAIM_STATUS.equals(name)) {
 			problem.setStatus(this.getAsInt(value));
 		}
-		else if("detail".equals(name)) {
+		else if(ProblemConstants.CLAIM_DETAIL.equals(name)) {
 			problem.setDetail(this.getAsString(value));
 		}
-		else if("instance".equals(name)) {
+		else if(ProblemConstants.CLAIM_INSTANCE.equals(name)) {
 			problem.setInstance(this.getAsString(value));
 		}
 		else {

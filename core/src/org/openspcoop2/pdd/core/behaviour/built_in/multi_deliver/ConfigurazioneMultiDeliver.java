@@ -23,10 +23,8 @@
 package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 
@@ -49,9 +47,6 @@ public class ConfigurazioneMultiDeliver {
 	private boolean notificheByEsito_richiesteScartate = false;
 	private List<Integer> initTransazioneSincrona_esitiPerSpedireNotifiche;
 	
-	private HashMap<String, GestioneErrore> mapConnettoreToGestioneErrore = new HashMap<>();
-		
-
 	public List<Integer> getTransazioneSincrona_esitiPerSpedireNotifiche(EsitiProperties esitiProperties) throws ProtocolException {
 		if(this.initTransazioneSincrona_esitiPerSpedireNotifiche==null) {
 			initTransazioneSincrona_esitiPerSpedireNotifiche(esitiProperties);
@@ -117,15 +112,7 @@ public class ConfigurazioneMultiDeliver {
 	public void setTransazioneSincrona_nomeConnettore(String transazioneSincrona_nomeConnettore) {
 		this.transazioneSincrona_nomeConnettore = transazioneSincrona_nomeConnettore;
 	}
-	
-	public HashMap<String, GestioneErrore> getMapConnettoreToGestioneErrore() {
-		return this.mapConnettoreToGestioneErrore;
-	}
-
-	public void setMapConnettoreToGestioneErrore(HashMap<String, GestioneErrore> mapConnettoreToGestioneErrore) {
-		this.mapConnettoreToGestioneErrore = mapConnettoreToGestioneErrore;
-	}
-	
+		
 	public boolean isNotificheByEsito() {
 		return this.notificheByEsito;
 	}
