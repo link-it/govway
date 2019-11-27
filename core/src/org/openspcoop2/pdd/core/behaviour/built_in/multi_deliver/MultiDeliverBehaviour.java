@@ -77,7 +77,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
 					idSA.setNome(servizioApplicativo.getNome());
 					
-					String nomeConnettore = null;
+					String nomeConnettore =  org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
 					if(servizioApplicativo.getDatiConnettore()!=null) {
 						nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
 					}
