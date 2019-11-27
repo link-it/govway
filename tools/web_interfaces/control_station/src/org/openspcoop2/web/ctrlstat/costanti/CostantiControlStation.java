@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
@@ -195,11 +196,13 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD = "Forward Authorization";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO = "Tipo";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM = "Claim";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER = ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM = ModalitaIdentificazione.FORM_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM = ModalitaIdentificazione.TOKEN.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO = "seleziona altro claim";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_ESTESO = "Nome del Claim";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE = "Espressione Regolare";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER = "Forward Header";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM = "Forward Parametro Url";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "Opzionale";
@@ -1037,6 +1040,7 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
+	public final static String LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = "Disabilitata";
 	
 	public final static String VALUE_PARAMETRO_DUMP_STATO_DEFAULT = "default";
 	public final static String VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
@@ -1216,6 +1220,9 @@ public class CostantiControlStation {
 	public final static int LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS = 110;
 	
 	/** INFO */
+	
+	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT = "Identificazione tramite API";
+	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT = "Modalità alternativa utilizzata se l'identificazione indicata fallisce";
 	
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA = "Espressione applicata sul messaggio; se si ha un match la regola di correlazione verrà utilizzata.<br/>I tipi di espressione utilizzabili sono:";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_SOAP = "<b>Path</b>: espressione XPath";
@@ -1732,7 +1739,7 @@ public class CostantiControlStation {
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
 	}
-	
+		
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";

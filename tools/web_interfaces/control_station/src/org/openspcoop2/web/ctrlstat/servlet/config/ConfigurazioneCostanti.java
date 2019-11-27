@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -1145,13 +1146,6 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED = "Filtro per Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED_COMPACT = "Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO = "Tipologia";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE = "Espressione Regolare";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH = "Pattern";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION = "SoapAction";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP = "Indirizzo IP (Socket)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE = "Valore";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED = "Modalità Calcolo";
@@ -1174,12 +1168,6 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL = "Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE = "Raggruppamento per Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO = "Tipologia";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE = "Espressione Regolare";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_XPATH = "Pattern";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_SOAP_ACTION = "SoapAction";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP = "Indirizzo IP (Socket)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_CUSTOM = "Tipo Personalizzato";
 	
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_DATI_GENERALI = "Dati Generali";
@@ -1428,7 +1416,17 @@ public class ConfigurazioneCostanti {
 	}
 	
 
-	
+	public final static List<String> LABEL_RATE_LIMITING_FILTRO_APPLICATIVO = 
+			ModalitaIdentificazione.getLabels(
+					ModalitaIdentificazione.HEADER_BASED,
+					ModalitaIdentificazione.URL_BASED,
+					ModalitaIdentificazione.FORM_BASED,
+					ModalitaIdentificazione.SOAP_ACTION_BASED,
+					ModalitaIdentificazione.CONTENT_BASED,
+					ModalitaIdentificazione.INDIRIZZO_IP_BASED,
+					ModalitaIdentificazione.X_FORWARD_FOR_BASED,
+					ModalitaIdentificazione.PLUGIN_BASED
+				);
 	
 	public final static String[] TIPI_RUOLO_PDD = {
 			RuoloPolicy.ENTRAMBI.getValue(),

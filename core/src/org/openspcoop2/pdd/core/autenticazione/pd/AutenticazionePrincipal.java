@@ -66,6 +66,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			switch (this.tipoAutenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				break;
 			case HEADER:
 				this.nome = authPrincipal.getNome();
@@ -122,6 +123,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		case FORM:
 		case URL:
 		case INDIRIZZO_IP:
+		case INDIRIZZO_IP_X_FORWARDED_FOR:
 		case TOKEN:
 			if(datiInvocazione==null) {
 				return null;

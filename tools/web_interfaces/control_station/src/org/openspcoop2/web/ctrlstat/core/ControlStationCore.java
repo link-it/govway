@@ -5598,6 +5598,7 @@ public class ControlStationCore {
 			switch (tipo) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				return null;
 			case HEADER:
 			case FORM:
@@ -5700,6 +5701,7 @@ public class ControlStationCore {
 			switch (autenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				break;
 			case HEADER:
 			case FORM:

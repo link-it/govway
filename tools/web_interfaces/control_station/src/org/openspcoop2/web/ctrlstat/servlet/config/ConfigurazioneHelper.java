@@ -39,6 +39,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -13217,6 +13218,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 						de.setValues(TipoFiltroApplicativo.toStringArray());
+						de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
 						de.setSelected(policy.getFiltro().getInformazioneApplicativaTipo());
 						de.setType(DataElementType.SELECT);
 						de.setPostBack_viaPOST(true);
@@ -13660,6 +13662,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
 					de.setValues(TipoFiltroApplicativo.toStringArray());
+					de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
 					de.setSelected(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setValue(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setType(DataElementType.SELECT);
@@ -13716,20 +13719,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		switch (tipo) {
 		case HEADER_BASED:
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		case FORM_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME;
+			return ModalitaIdentificazione.FORM_BASED.getLabelParametro();
 		case CONTENT_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH;
+			return ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 		case URLBASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
+			return ModalitaIdentificazione.URL_BASED.getLabelParametro();
 		case SOAPACTION_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION;
+			return ModalitaIdentificazione.SOAP_ACTION_BASED.getLabelParametro();
 		case INDIRIZZO_IP:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP;
+			return ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabelParametro();
 		case INDIRIZZO_IP_FORWARDED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
+			return ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabelParametro();
 		case PLUGIN_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM;
+			return ModalitaIdentificazione.PLUGIN_BASED.getLabelParametro();
 		}
 		return null;
 	}
@@ -13741,20 +13745,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		switch (tipo) {
 		case HEADER_BASED:
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		case FORM_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_NOME;
+			return ModalitaIdentificazione.FORM_BASED.getLabelParametro();
 		case CONTENT_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_XPATH;
+			return ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 		case URLBASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
+			return ModalitaIdentificazione.URL_BASED.getLabelParametro();
 		case SOAPACTION_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_SOAP_ACTION;
+			return ModalitaIdentificazione.SOAP_ACTION_BASED.getLabelParametro();
 		case INDIRIZZO_IP:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP;
+			return ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabelParametro();
 		case INDIRIZZO_IP_FORWARDED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
+			return ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabelParametro();
 		case PLUGIN_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_CUSTOM;
+			return ModalitaIdentificazione.PLUGIN_BASED.getLabelParametro();
 		}
 		return null;
 	}
@@ -14108,31 +14113,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO+": "+filtro.getInformazioneApplicativaTipo());
 				
 				bf.append("<br/>");
-				TipoFiltroApplicativo tipoFiltroApplicativo = TipoFiltroApplicativo.toEnumConstant(filtro.getInformazioneApplicativaTipo(), true);
-				switch (tipoFiltroApplicativo) {
-				case HEADER_BASED:
-				case FORM_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case URLBASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case CONTENT_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case SOAPACTION_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case INDIRIZZO_IP:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case INDIRIZZO_IP_FORWARDED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case PLUGIN_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				}
+				bf.append(getLabelTipoInformazioneApplicativaFiltro(filtro.getInformazioneApplicativaTipo())).append(": ").append(filtro.getInformazioneApplicativaNome());
 				
 				bf.append("<br/>");
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+": "+filtro.getInformazioneApplicativaValore());

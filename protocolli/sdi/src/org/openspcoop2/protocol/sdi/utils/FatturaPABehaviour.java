@@ -36,6 +36,8 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
@@ -82,7 +84,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 
-			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException {
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio()) &&
 				SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
@@ -266,7 +268,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				
 				return behaviour;
 			}catch(Exception e){
-				throw new CoreException(e.getMessage(),e);
+				throw new BehaviourException(e.getMessage(),e);
 			}
 			
 		}

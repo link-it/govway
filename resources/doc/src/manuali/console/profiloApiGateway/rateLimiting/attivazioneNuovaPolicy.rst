@@ -68,29 +68,28 @@ Si compilano i campi seguenti:
 
        - *Chiave*: il valore di soglia rappresente il totale ripartito tra le richieste raggruppate in base ad una chiave personalizzata il cui valore viene fornito secondo uno dei metodi selezionati tra i seguenti:
 
-          -  *HeaderBased*: La chiave è presente nell'header di trasporto
+          -  *Header HTTP*: La chiave è presente nell'header di trasporto
              indicato nella proprietà "Nome".
 
-          -  *URLBased*: La chiave è presente nella URL ricavandola tramite
+          -  *Url di Invocazione*: La chiave è presente nella URL ricavabile tramite
              l'espressione regolare fornita nell'elemento seguente.
 
-          -  *FormBased*: La chiave viene fornita in modalità Form Encoded
+          -  *Parametro della Url*: La chiave viene fornita in modalità Form Encoded
              con il parametro indicato nell'elemento "Nome".
 
-          -  *SOAPActionBased*: La chiave corrisponde al valore della
+          -  *SOAPAction*: La chiave corrisponde al valore della
              SoapAction.
 
-          -  *ContentBased*: La chiave è presente nel body del messaggio e
+          -  *Contenuto*: La chiave è presente nel body del messaggio e
              viene ricavata tramite una espressione XPath o JsonPath fornito nell'elemento
              seguente.
 
-          -  *IndirizzoIP*: La chiave corrisponde all'indirizzo IP del client.
+          -  *Client IP*: La chiave corrisponde all'indirizzo IP del client.
 
-          -  *IndirizzoIP_Forwarded*: La chiave corrisponde all'indirizzo IP del client presente negli header http appositi (es. X-Forwarded-For).
+          -  *X-Forwarded-For*: La chiave corrisponde all'indirizzo IP del client presente negli header http utilizzati per il mantenimento dell’IP di origine nel caso di nodi intermedi (es. X-Forwarded-For).
 
-          -  *PluginBased*: La chiave viene restituita tramite l'esecuzione
-             di una classe il cui nome viene fornito con il campo "Tipo
-             Personalizzato". Per maggiori dettagli si rimanda alla sezione :ref:`configurazioneRateLimiting_filtriRaggruppamentiPersonalizzati`
+          -  *Plugin Personalizzato*: La chiave viene restituita tramite l'esecuzione
+             di una classe il cui nome viene fornito con il campo "Tipo". Per maggiori dettagli si rimanda alla sezione :ref:`configurazioneRateLimiting_filtriRaggruppamentiPersonalizzati`
 
 -  *Filtro*: Abilitando questa sezione è possibile indicare i criteri affinché la policy sia applicabile in base alle caratteristiche di ciascuna richiesta in ingresso. In assenza di filtro, la policy sarà valutata su tutte le richieste in ingresso che riguardano l'erogazione/fruizione che si sta configurando. Per la creazione del filtro sono disponibili i seguenti campi:
 
@@ -105,31 +104,30 @@ Si compilano i campi seguenti:
       chiave che può essere specificata in maniera personalizzata
       effettuando una delle seguenti scelte per il campo *Tipologia*:
 
-      -  *HeaderBased*: Occorre fornire i dati “Nome” e “Valore”. La
-         policy si applicherà soltanto alle richieste che hanno,
-         nell'header di trasporto, una proprietà che corrisponde.
+      -  *Header HTTP*: Occorre fornire i dati “Nome” e “Valore”. La
+         policy si applicherà soltanto alle richieste che hanno un header http che corrisponde.
 
-      -  *URLBased*: Occorre fornire i dati “Espressione Regolare” e
+      -  *Url di Invocazione*: Occorre fornire i dati “Espressione Regolare” e
          “Valore”. La policy si applicherà soltanto alle richieste ove,
          applicando l'espressione regolare alla URL di invocazione, si
          ottiene un valore identico a quello fornito.
 
-      -  *FormBased*: Occorre fornire i dati “Nome” e “Valore”. La
+      -  *Parametro della Url*: Occorre fornire i dati “Nome” e “Valore”. La
          policy si applicherà soltanto alle richieste che contengono
-         nella query string un parametro corrispondente ai dati forniti.
+         nella url di invocazione un parametro corrispondente ai dati forniti.
 
-      -  *SOAPActionBased*: Occorre fornire il dato “Valore”. La
+      -  *SOAPAction*: Occorre fornire il dato “Valore”. La
          policy si applicherà soltanto alle richieste che si presentano
          con una SOAPAction avente il valore fornito.
 
-      -  *ContentBased*: Occorre fornire i dati “Pattern” e
+      -  *Contenuto*: Occorre fornire i dati “Pattern” e
          “Valore”. La policy si applicherà soltanto alle richieste dove,
          applicando l'espressione XPath o JsonPath al messaggio di richiesta, si
          ottiene un valore identico a quello fornito.
 
-      -  *IndirizzoIP*: La policy si applicherà soltanto alle richieste che provengono dall'indirizzo IP indicato.
+      -  *Client IP*: La policy si applicherà soltanto alle richieste che provengono dall'indirizzo IP indicato.
 
-      -  *IndirizzoIP_Forwarded*: La policy si applicherà soltanto alle richieste che provengono dall'indirizzo IP indicato  presente negli header http appositi (es. X-Forwarded-For).
+      -  *X-Forwarded-For*: La policy si applicherà soltanto alle richieste che provengono dall'indirizzo IP indicato presente negli header http utilizzati per il mantenimento dell’IP di origine nel caso di nodi intermedi (es. X-Forwarded-For).
 
-      -  *PluginBased*:  Permette di definire un criterio di filtro personalizzato. Per maggiori dettagli si rimanda alla sezione :ref:`configurazioneRateLimiting_filtriRaggruppamentiPersonalizzati`
+      -  *Plugin Personalizzato*:  Permette di definire un criterio di filtro personalizzato. Per maggiori dettagli si rimanda alla sezione :ref:`configurazioneRateLimiting_filtriRaggruppamentiPersonalizzati`
 

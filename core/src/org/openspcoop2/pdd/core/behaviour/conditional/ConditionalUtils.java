@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.pdd.core.behaviour.conditional;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -111,7 +112,7 @@ public class ConditionalUtils  {
 				}
 				Element element = null;
 				String elementJson = null;
-				if(TipoSelettore.CONTENT_BASED.equals(selettore.getTipoSelettore()) || TipoSelettore.GOVWAY_EXPRESSION.equals(selettore.getTipoSelettore())) {
+				if(TipoSelettore.CONTENT_BASED.equals(selettore.getTipoSelettore()) || selettore.getTipoSelettore().isTemplate()) {
 					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 						element =message.castAsSoap().getSOAPPart().getEnvelope();
 					}
@@ -143,7 +144,7 @@ public class ConditionalUtils  {
 					break;
 					
 				case URLBASED:
-					pattern = " (RegExpr: "+selettore.getPattern()+")";
+					pattern = " (Espressione Regolare: "+selettore.getPattern()+")";
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					try{
 						condition = RegularExpressionEngine.getStringMatchPattern(urlInvocazione, selettore.getPattern());
@@ -201,8 +202,13 @@ public class ConditionalUtils  {
 					}
 					break;
 					
-				case GOVWAY_EXPRESSION:
-					pattern = " (govwayExpr: "+selettore.getPattern()+")";
+				case TEMPLATE:
+					if(selettore.getPattern().length()<50) {
+						pattern = " ("+selettore.getPattern()+")";
+					}
+					else {
+						pattern = "";
+					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 					ErrorHandler errorHandler = new ErrorHandler();
@@ -211,11 +217,55 @@ public class ConditionalUtils  {
 							element, elementJson, 
 							busta, pTrasporto, pForm,
 							errorHandler);
-					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig", selettore.getPattern(), dynamicMap, pddContext, true);
+					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", selettore.getPattern(), dynamicMap, pddContext, true);
+					break;
+					
+				case FREEMARKER_TEMPLATE:
+					if(selettore.getPattern().length()<50) {
+						pattern = " ("+selettore.getPattern()+")";
+					}
+					else {
+						pattern = "";
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
+					dynamicMap = new Hashtable<String, Object>();
+					errorHandler = new ErrorHandler();
+					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+							message,
+							element, elementJson, 
+							busta, pTrasporto, pForm,
+							errorHandler);
+					ByteArrayOutputStream bout = new ByteArrayOutputStream();
+					DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", selettore.getPattern().getBytes(), dynamicMap, bout);
+					bout.flush();
+					bout.close();
+					condition = bout.toString();
+					break;
+					
+				case VELOCITY_TEMPLATE:
+					if(selettore.getPattern().length()<50) {
+						pattern = " ("+selettore.getPattern()+")";
+					}
+					else {
+						pattern = "";
+					}
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
+					dynamicMap = new Hashtable<String, Object>();
+					errorHandler = new ErrorHandler();
+					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
+							message,
+							element, elementJson, 
+							busta, pTrasporto, pForm,
+							errorHandler);
+					bout = new ByteArrayOutputStream();
+					DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", selettore.getPattern().getBytes(), dynamicMap, bout);
+					bout.flush();
+					bout.close();
+					condition = bout.toString();
 					break;
 				}
 			
-				if(condition==null) {
+				if(condition==null || "".equals(condition)) {
 					throw new Exception("Nessuna condizione estratta");
 				}
 				else {

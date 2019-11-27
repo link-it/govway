@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -721,7 +722,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI_EROGATORI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_EROGATORE = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_VALORE = "Valore";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN = "Pattern";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO = "Applicativo Erogatore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_SERVIZI_APPLICATIVI = "Applicativi Erogatori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE = "Connettore";
@@ -829,7 +831,8 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_EREDITA = "Eredita Da";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_NUOVA = "Nuova";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_GRUPPO = "Gruppo";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT;
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
@@ -838,14 +841,14 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = "url-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = "content-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = "input-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = "soap-action-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = "interface-based";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = "protocol-based";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = ModalitaIdentificazione.REGISTER_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = ModalitaIdentificazione.HEADER_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED = ModalitaIdentificazione.URL_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED = ModalitaIdentificazione.CONTENT_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED = ModalitaIdentificazione.INPUT_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED = ModalitaIdentificazione.SOAP_ACTION_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_WSDL_BASED = ModalitaIdentificazione.INTERFACE_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED = ModalitaIdentificazione.PROTOCOL_BASED.getLabel();
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_DUMP_CONFIGURAZIONE_CONFIG_DI = CostantiControlStation.LABEL_REGISTRAZIONE_MESSAGGI_CONFIG_DI;
@@ -995,14 +998,14 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO = "Emissione Diagnostico";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE = "Utilizza Connettore";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_ESPRESSIONE_REGOLARE = "Espressione Regolare";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_XPATH = "Pattern";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_SOAP_ACTION = "SoapAction";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP = "Indirizzo IP (Socket)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
-	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_GOVWAY_EXPRESSION = "Espressione";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN = "Nome";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_NOME = "Nome";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_ESPRESSIONE_REGOLARE = "Espressione Regolare";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_XPATH = "Pattern";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_SOAP_ACTION = "SoapAction";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP = "Indirizzo IP (Socket)";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
+//	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_GOVWAY_EXPRESSION = "Espressione";
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI = "Regole Per Azioni";
 	
@@ -1158,7 +1161,6 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_AL_SERVIZIO_DEI_FRUITORI_CON_CREDENZIALI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati al servizio dei fruitori con credenziali non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTORIZZAZIONE_XX = "Indicare un nome per l'autorizzazione ''{0}''";
 	public static final String MESSAGGIO_ERRORE_INDICARE_UN_NOME_PER_L_AUTENTICAZIONE_XX = "Indicare un nome per l'autenticazione ''{0}''";
-	public static final String MESSAGGIO_ERRORE_MODE_AZIONE_DEV_ESSERE_USER_INPUT_REGISTER_INPUT_URL_BASED_CONTENT_BASED_INPUT_BASED_SOAP_ACTION_BASED_PROTOCOL_BASED_O_WSDL_BASED = "Mode Azione dev'essere user-input, register-input, url-based, content-based, input-based, soap-action-based, protocol-based o interface-based";
 	public static final String MESSAGGIO_ERRORE_NON_INSERIRE_SPAZI_NEI_CAMPI_DI_TESTO = "Non inserire spazi nei campi di testo";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_PATTERN_AZIONE = "Dati incompleti. &Egrave; necessario indicare: Pattern azione";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATA_TROVATA_NESSUNA_AZIONE_ASSOCIATA_AL_SERVIZIO_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stata trovata nessuna azione associata al servizio. Scegliere una delle altre modalit&agrave;";

@@ -23,13 +23,15 @@ si possono specificare:
 
         - *Container*: il principal viene fornito direttamente dal container sul quale è in esecuzione il gateway.
 
-        - *HeaderBased*: il principal viene estratto dallo specifico header http che viene indicato successivamente. È inoltre possibile attivare l'opzione *Forward Header* per far sì che il gateway propaghi il dato di autenticazione.
+        - *Header HTTP*: il principal viene estratto dallo specifico header http che viene indicato successivamente. È inoltre possibile attivare l'opzione *Forward Header* per far sì che il gateway propaghi il dato di autenticazione.
 
-        - *FormBased*: il principal viene estratto da un parametro della query string il cui nome viene indicato successivamente. È inoltre possibile attivare l'opzione *Forward Parametro Url* per far sì che il gateway propaghi il dato di autenticazione.
+        - *Parametro della Url*: il principal viene estratto da un parametro della query string il cui nome viene indicato successivamente. È inoltre possibile attivare l'opzione *Forward Parametro Url* per far sì che il gateway propaghi il dato di autenticazione.
 
-        - *UrlBased*: il principal viene estratto direttamente dalla URL di invocazione tramite l'espressione regolare che viene fornita successivamente.
+        - *Url di Invocazione*: il principal viene estratto direttamente dalla URL di invocazione tramite l'espressione regolare che viene fornita successivamente.
 
-        - *Indirizzo IP*: il principal utilizzato è l'indirizzo IP di provenienza.
+        - *Client IP*: il principal utilizzato è l'indirizzo IP di provenienza.
+
+	- *X-Forwarded-For*: il principal viene estratto dall'header http utilizzato per il mantenimento dell’IP di origine nel caso di nodi intermedi (es. X-Forwarded-For).
 
 	- *Token*: opzione presente solamente se è stata attivata, al passo precedente, l'autenticazione del token. Il principal viene letto da uno dei claim presenti nel token.
 

@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -84,6 +85,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
@@ -1376,9 +1378,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				} else {
 		
 					de = new DataElement();
-					if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) 
-							|| modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
-						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+					if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED))) {
+						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE);
+						de.setValue(patternAzione);
+						de.setRequired(true);
+					} 
+					else if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
+						de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
 						de.setValue(patternAzione);
 						de.setRequired(true);
 					} 
@@ -1421,7 +1427,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT);
 				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
 						modeaz!= null && 
 						(
@@ -1442,6 +1448,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					}
 					else {
 						de.setType(DataElementType.CHECKBOX);
+						de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_RIGHT);
 						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
 							de.setSelected(true);
 						}
@@ -1530,10 +1537,14 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
 				deLabel.setType(DataElementType.TEXT);
-				if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED) 
-						|| modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
+				if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_URL_BASED))) {
 					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE);
+					deLabel.setValue(patternAzione);
+				} 
+				else if ((modeaz != null) && (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_CONTENT_BASED))) {
+					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
 					deLabel.setValue(patternAzione);
 				} 
 				else if ((modeaz != null) && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED)
@@ -1566,7 +1577,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(forceWsdlBased);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
@@ -1579,7 +1590,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						!modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))
 				){
 					DataElement deLabel = new DataElement();
-					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
+					deLabel.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED_LEFT);
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
 					dati.addElement(deLabel);
@@ -2729,8 +2740,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					if(cae.getIdentificazione()!=null)
-						de.setValue(cae.getIdentificazione().toString());
+					if(cae.getIdentificazione()!=null) {
+						//de.setValue(cae.getIdentificazione().toString());
+						switch (cae.getIdentificazione()) {
+						case DISABILITATO:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+							break;
+						case HEADER_BASED:
+							de.setValue(ModalitaIdentificazione.HEADER_BASED.getLabel());
+							break;
+						case URL_BASED:
+							de.setValue(ModalitaIdentificazione.URL_BASED.getLabel());
+							break;
+						case CONTENT_BASED:
+							de.setValue(ModalitaIdentificazione.CONTENT_BASED.getLabel());
+							break;
+						case INPUT_BASED:
+							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
+							break;
+						}
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -2861,8 +2890,23 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					if(cae.getIdentificazione()!=null)
-						de.setValue(cae.getIdentificazione().toString());
+					if(cae.getIdentificazione()!=null) {
+						//de.setValue(cae.getIdentificazione().toString());
+						switch (cae.getIdentificazione()) {
+						case DISABILITATO:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+							break;
+						case HEADER_BASED:
+							de.setValue(ModalitaIdentificazione.HEADER_BASED.getLabel());
+							break;
+						case CONTENT_BASED:
+							de.setValue(ModalitaIdentificazione.CONTENT_BASED.getLabel());
+							break;
+						case INPUT_BASED:
+							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
+							break;
+						}
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -3420,11 +3464,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED, 
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
 		};
+		List<String> labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.URL_BASED,
+				ModalitaIdentificazione.HEADER_BASED,
+				ModalitaIdentificazione.CONTENT_BASED,
+				ModalitaIdentificazione.INPUT_BASED);
+		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE );
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE);
 		de.setValues(tipoMode);
+		de.setLabels(labels);
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrAppPortaApplicativa('add')");
 		de.setPostBack(true);
@@ -3440,11 +3492,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE);
+				}
+				else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
+				}
 				de.setType(DataElementType.TEXT_AREA);
 				
 				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
-					dInfoPattern = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+					dInfoPattern = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
@@ -3531,11 +3588,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_INPUT_BASED,
 				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_DISABILITATO
 		};
+		
+		List<String> labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.HEADER_BASED,
+				ModalitaIdentificazione.CONTENT_BASED,
+				ModalitaIdentificazione.INPUT_BASED);
+		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+		
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_IDENTIFICAZIONE);
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE);
 		de.setValues(tipoMode);
+		de.setLabels(labels);
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrAppPortaApplicativa('add','Risposta')");
 		de.setPostBack(true);
@@ -3550,11 +3615,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_ESPRESSIONE_REGOLARE);
+				}
+				else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
+				}
 				de.setType(DataElementType.TEXT_AREA);
 				
 				if(mode.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
-					dInfoPattern = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_PATTERN);
+					dInfoPattern = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONTENT_PATTERN);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
@@ -6325,7 +6395,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			int numeroRegolePerAzioni, boolean condizioneNonIdentificataAbortTransaction, String condizioneNonIdentificataDiagnostico, String condizioneNonIdentificataConnettore,
 			boolean connettoreNonTrovatoAbortTransaction, String connettoreNonTrovatoDiagnostico, String connettoreNonTrovatoConnettore
 			
-			) {
+			) throws NotFoundException {
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
 		DataElement de = new DataElement();
@@ -6523,7 +6593,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE);
 				de.setType(DataElementType.SELECT);
 				
-				String [] identificazioneCondizionaleValues = {
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipoSelettoreS = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale, true);
+								
+				String [] identificazioneCondizionale_values = {
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue(),
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue(),
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue(),
@@ -6531,11 +6603,26 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.getValue(),
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.getValue(),
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.getValue(),
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.getValue()
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.getValue(),
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.getValue(),
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue()
 						};
 				
-				de.setValues(identificazioneCondizionaleValues);
-				de.setLabels(identificazioneCondizionaleValues);
+				List<String> identificazioneCondizionale_labels = ModalitaIdentificazione.getLabels(
+						ModalitaIdentificazione.HEADER_BASED,
+						ModalitaIdentificazione.URL_BASED,
+						ModalitaIdentificazione.FORM_BASED,
+						ModalitaIdentificazione.SOAP_ACTION_BASED,
+						ModalitaIdentificazione.CONTAINER_BASED,
+						ModalitaIdentificazione.INDIRIZZO_IP_BASED,
+						ModalitaIdentificazione.X_FORWARD_FOR_BASED,
+						ModalitaIdentificazione.GOVWAY_TEMPLATE,
+						ModalitaIdentificazione.FREEMARKER_TEMPLATE,
+						ModalitaIdentificazione.VELOCITY_TEMPLATE
+					);
+				
+				de.setValues(identificazioneCondizionale_values);
+				de.setLabels(identificazioneCondizionale_labels);
 				de.setPostBack(true);
 				de.setSelected(identificazioneCondizionale);
 				dati.addElement(de);
@@ -6543,7 +6630,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				// nome
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN);
-				
 				de.setLabel(this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale));
 				de.setValue(identificazioneCondizionalePattern);
 				if(identificazioneCondizionale==null || 
@@ -6554,23 +6640,51 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.equals(identificazioneCondizionale) ||
 						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.equals(identificazioneCondizionale)||
-						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.equals(identificazioneCondizionale)) {
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)||
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.equals(identificazioneCondizionale)||
+						org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 					de.setRequired(true);
 					de.setType(DataElementType.TEXT_AREA);
+					if(tipoSelettoreS.isTemplate()) {
+						de.setRows(10);
+					}
 				}
 				else{
 					de.setRequired(true);
 					de.setType(DataElementType.TEXT_EDIT);
 				}
 				
-				if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.getValue().equals(identificazioneCondizionale)) {
-					DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
-					dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
-					if(ServiceBinding.REST.equals(serviceBinding)) {
-						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+				if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+					DataElementInfo dInfoPattern = null;
+					if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)) {
+						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+						if(ServiceBinding.REST.equals(serviceBinding)) {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+						}
+						else {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+						}
+					}
+					else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
+						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+						}
+						else {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+						}
 					}
 					else {
-						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
+						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+						}
+						else {
+							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+						}
 					}
 					de.setInfo(dInfoPattern);
 				}
@@ -6583,7 +6697,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 				de.setSize(this.getSize());
 				de.setValue(identificazioneCondizionalePrefisso);
-				if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.getValue().equals(identificazioneCondizionale)) {
+				if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
 					 de.setType(DataElementType.HIDDEN);
 				} else {
 					 de.setType(DataElementType.TEXT_EDIT);
@@ -6596,7 +6710,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
 				de.setSize(this.getSize());
 				de.setValue(identificazioneCondizionaleSuffisso);
-				if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.getValue().equals(identificazioneCondizionale)) {
+				if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
 					 de.setType(DataElementType.HIDDEN);
 				} else {
 					 de.setType(DataElementType.TEXT_EDIT);
@@ -6763,28 +6877,33 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public String getLabelIdentificazioneCondizionalePattern(String identificazioneCondizionale){
 		if(identificazioneCondizionale == null)
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_NOME;
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		
 		org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipo = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale);
 		
 		switch (tipo) {
 		case HEADER_BASED:
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		case FORM_BASED:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_NOME;
+			return ModalitaIdentificazione.FORM_BASED.getLabelParametro();
 		case CONTENT_BASED:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_XPATH;
+			return ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 		case URLBASED:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_ESPRESSIONE_REGOLARE;
+			return ModalitaIdentificazione.URL_BASED.getLabelParametro();
 		case SOAPACTION_BASED:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_SOAP_ACTION;
+			return ModalitaIdentificazione.SOAP_ACTION_BASED.getLabelParametro();
 		case INDIRIZZO_IP:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP;
+			return ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabelParametro();
 		case INDIRIZZO_IP_FORWARDED:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_INDIRIZZO_IP_FORWARDED;
-		case GOVWAY_EXPRESSION:
-			return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_GOVWAY_EXPRESSION;
+			return ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabelParametro();
+		case TEMPLATE:
+			return ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabelParametro();
+		case FREEMARKER_TEMPLATE:
+			return ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabelParametro();
+		case VELOCITY_TEMPLATE:
+			return ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabelParametro();
 		}
-		return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_NOME;
+		return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 	}
 	
 	public boolean connettoriMultipliConfigurazioneCheckData(TipoOperazione tipoOp, String stato, String modalitaConsegna, String tipoCustom, String loadBalanceStrategia, boolean visualizzaGestioneNotifiche) throws Exception{
@@ -6872,10 +6991,9 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					String identificazioneCondizionale = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE);
 					
-					if(     !(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.SOAPACTION_BASED.equals(identificazioneCondizionale)  || 
-							org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.equals(identificazioneCondizionale) || 
-							org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.equals(identificazioneCondizionale)
-						)){  // e' un caso in cui e' visibile
+					org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipo = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale);
+										
+					if(tipo.hasParameter()) {
 					
 						String identificazioneCondizionalePattern = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN);
 						
@@ -6889,7 +7007,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 					}
 					
-					if(!org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.equals(identificazioneCondizionale)){  // e' un caso in cui e' visibile
+										
+					if(!tipo.isTemplate()){  // e' un caso in cui e' visibile
 					
 						String identificazioneCondizionalePrefisso = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 						String identificazioneCondizionaleSuffisso = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
@@ -6902,7 +7021,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							return false;
 						}
 					}
-										
+					
 					String condizioneNonIdentificataAbortTransactionS = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
 					boolean condizioneNonIdentificataAbortTransaction = ServletUtils.isCheckBoxEnabled(condizioneNonIdentificataAbortTransactionS);
 					if(!condizioneNonIdentificataAbortTransaction) {

@@ -43,7 +43,9 @@ public enum TipoSelettore implements IEnumeration , Serializable , Cloneable {
 	CONTENT_BASED ("ContentBased"),
 	INDIRIZZO_IP ("ClientIP"),
 	INDIRIZZO_IP_FORWARDED ("XForwardedFor"),
-	GOVWAY_EXPRESSION ("GovWayExpression");
+	TEMPLATE ("Template"),
+	VELOCITY_TEMPLATE ("VelocityTemplate"),
+	FREEMARKER_TEMPLATE ("FreemarkerTemplate");
 	
 	
 	/** Value */
@@ -61,6 +63,14 @@ public enum TipoSelettore implements IEnumeration , Serializable , Cloneable {
 		this.value = value;
 	}
 
+	
+	public boolean isTemplate() {
+		return TEMPLATE.equals(this) || VELOCITY_TEMPLATE.equals(this) || FREEMARKER_TEMPLATE.equals(this);
+	}
+	
+	public boolean hasParameter() {
+		return HEADER_BASED.equals(this) || URLBASED.equals(this) || FORM_BASED.equals(this) || CONTENT_BASED.equals(this) || this.isTemplate();
+	}
 
 	
 	@Override

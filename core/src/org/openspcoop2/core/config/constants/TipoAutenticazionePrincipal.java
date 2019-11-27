@@ -42,6 +42,7 @@ public enum TipoAutenticazionePrincipal implements IEnumeration , Serializable ,
 	FORM (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_FORM,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_FORM),
 	URL (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_URL,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_URL),
 	INDIRIZZO_IP (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP),
+	INDIRIZZO_IP_X_FORWARDED_FOR (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP_X_FORWARDED_FOR,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP_X_FORWARDED_FOR),
 	// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
 	// CONTENT (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_CONTENT,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT),
 	TOKEN (CostantiConfigurazione.AUTENTICAZIONE_PRINCIPAL_TOKEN,CostantiConfigurazione.LABEL_AUTENTICAZIONE_PRINCIPAL_TOKEN);

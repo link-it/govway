@@ -3747,6 +3747,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			switch (autenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				break;
 			case HEADER:
 			case FORM:
@@ -4110,6 +4111,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					switch (autenticazionePrincipal) {
 					case CONTAINER:
 					case INDIRIZZO_IP:
+					case INDIRIZZO_IP_X_FORWARDED_FOR:
 						break;
 					case HEADER:
 					case FORM:
@@ -4120,7 +4122,12 @@ public class ConsoleHelper implements IConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER);
+						}
+						else {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM);
+						}
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
 						if(allHidden) {
@@ -4229,7 +4236,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							}
 							de = new DataElement();
 							de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME);
 							de.setValue(autenticazioneParametro);
 							if(allHidden) {
 								de.setType(DataElementType.HIDDEN);
@@ -5198,11 +5205,17 @@ public class ConsoleHelper implements IConsoleHelper {
 				switch (autenticazionePrincipal) {
 				case CONTAINER:
 				case INDIRIZZO_IP:
+				case INDIRIZZO_IP_X_FORWARDED_FOR:
 					break;
 				case HEADER:
+					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER));
+						return false;
+					}
+					break;
 				case FORM:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME));
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM));
 						return false;
 					}
 					break;

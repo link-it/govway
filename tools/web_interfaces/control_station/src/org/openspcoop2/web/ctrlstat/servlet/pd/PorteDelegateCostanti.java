@@ -23,6 +23,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -637,7 +638,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA = "Gestione Asincrona";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_SIMMETRICA;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA = CostantiControlStation.LABEL_RICEVUTA_ASINCRONA_ASIMMETRICA;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN = "Pattern";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN = ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_SERVIZIO = "Servizio";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_TIPO_SERVIZIO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_SERVIZIO = "Nome Servizio";
@@ -674,7 +676,8 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_IDENTIFICAZIONE_FALLITA = "Identificazione fallita";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RIUSO_ID_MESSAGGIO = "Riuso ID";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_STATO = CostantiControlStation.LABEL_PARAMETRO_PORTE_STATO;
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "Force Interface";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT;
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_RIGHT = CostantiControlStation.LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PORTA_DELEGANTE = "Porta Delegante";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_RICERCA_PORTA_AZIONE_DELEGATA = "Ricerca Azione Delegata";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_CONNETTORE = "Ridefinisci Connettore";
@@ -698,13 +701,13 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
 	
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT = "register-input";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED = "header-based";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED = "url-based";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED = "content-based";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = "input-based";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = "soap-action-based";
-	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = "interface-based";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT = ModalitaIdentificazione.REGISTER_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED = ModalitaIdentificazione.HEADER_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED = ModalitaIdentificazione.URL_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED = ModalitaIdentificazione.CONTENT_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_INPUT_BASED = ModalitaIdentificazione.INPUT_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_SOAP_ACTION_BASED = ModalitaIdentificazione.SOAP_ACTION_BASED.getLabel();
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_WSDL_BASED = ModalitaIdentificazione.INTERFACE_BASED.getLabel();
 
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_PROTOCOL_PROPERTIES_CONFIG_DI = "Propriet&agrave; di ";
@@ -886,7 +889,6 @@ public class PorteDelegateCostanti {
 	public static final String MESSAGGIO_ERRORE_NON_E_POSSIBILE_MODIFICARE_IL_TIPO_DI_AUTENTICAZIONE_DA_XX_A_YY_POICHÈ_RISULTANO_ASSOCIATI_ALLA_PORTA_DELEGATA_DEI_SERVIZI_APPLICATIVI_NON_COMPATIBILI_NELLA_MODALITA_DI_ACCESSO_CON_IL_NUOVO_TIPO_DI_AUTENTICAZIONE = "Non &egrave; possibile modificare il tipo di autenticazione da [{0}] a [{1}], poichè risultano associati alla porta delegata dei servizi applicativi non compatibili, nella modalit&agrave; di accesso, con il nuovo tipo di autenticazione";
 	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_PORTA_DELEGATA_CON_NOME_XX_ASSOCIATA_AL_SOGGETTO_YY = "Esiste gi&agrave; una Porta Delegata con nome [{0}] associata al Soggetto [{1}]";
 	public static final String MESSAGGIO_ERRORE_VALIDAZIONE_XSD_DEV_ESSERE_ABILITATO_DISABILITATO_O_WARNING_ONLY = "Validazione XSD dev'essere abilitato, disabilitato o warningOnly";
-	public static final String MESSAGGIO_ERRORE_MODE_AZIONE_DEV_ESSERE_USER_INPUT_REGISTER_INPUT_URL_BASED_CONTENT_BASED_INPUT_BASED_SOAP_ACTION_BASED_O_WSDL_BASED = "Mode Azione dev'essere user-input, register-input, url-based, content-based, input-based, soap-action-based o interface-based";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_EGRAVE_NECESSARIO_INDICARE_IL_NOME = "Dati incompleti. &Egrave; necessario indicare il Nome";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stato trovato nessun soggetto erogatore. Scegliere una delle altre modalit&agrave;";
 	public static final String MESSAGGIO_ERRORE_DATI_INCOMPLETI_NON_E_STATO_TROVATO_NESSUN_SERVIZIO_ASSOCIATO_AL_SOGGETTO_EROGATORE_SCEGLIERE_UNA_DELLE_ALTRE_MODALITA = "Dati incompleti. Non &egrave; stato trovato nessun servizio associato al soggetto erogatore. Scegliere una delle altre modalit&agrave;";
