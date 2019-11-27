@@ -21,15 +21,17 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
@@ -49,24 +51,31 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
-			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException {
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		
 		Behaviour behaviour = null;
 		try{
 			behaviour = new Behaviour();
 			
-			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, gestoreMessaggioRichiesta.getMessage(), busta, 
+			OpenSPCoop2Message msg = null;
+			try {
+				msg = gestoreMessaggioRichiesta.getMessage();
+			}catch(Exception e) {
+				throw new BehaviourException(e.getMessage(), e);
+			}
+			
+			ConfigurazioneLoadBalancer config = ConfigurazioneLoadBalancer.read(pa, msg, busta, 
 					requestInfo, this.getPddContext(), 
 					this.msgDiag, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			if(config.getPool().isEmpty()) {
-				throw new Exception("Nessun connettore selezionabile");	
+				throw new BehaviourException("Nessun connettore selezionabile");	
 			}
 			
 			LoadBalancer lb = new LoadBalancer(config.getType(), config.getPool(), this.getPddContext());
 			
 			String nomeConnettore = lb.selectConnector();
 			if(nomeConnettore==null) {
-				throw new Exception("Nessun connettore selezionato");
+				throw new BehaviourException("Nessun connettore selezionato");
 			}
 			
 			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
@@ -99,8 +108,12 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 				}
 			}
 
-		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
+		}
+		catch(BehaviourEmitDiagnosticException e){
+			throw e;
+		}
+		catch(BehaviourException e){
+			throw e;
 		}
 		
 		return behaviour;

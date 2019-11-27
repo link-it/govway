@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 
 /**
  * ConfigurazioneCondizionale
@@ -59,22 +59,22 @@ public class ConfigurazioneCondizionale {
 		this.defaultConfig = defaultConfig;
 	}
 	
-	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, String azione) throws CoreException {
+	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, String azione) throws BehaviourException {
 		List<String> l = new ArrayList<String>();
 		l.add(azione);
 		this.addActionConfig(groupName, config, l);
 	}
-	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, List<String> azioni) throws CoreException {
+	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, List<String> azioni) throws BehaviourException {
 		// check che non un'azione non sia già registrata
 		if(azioni==null || azioni.isEmpty()) {
-			throw new CoreException("Azioni non indicate");
+			throw new BehaviourException("Azioni non indicate");
 		}
 		if(!this.actionConfigList_azioni.isEmpty()) {
 			for (String azione : azioni) {
 				for (String groupNameGiaRegistrate: this.actionConfigList_azioni.keySet()) {
 					List<String> list = this.actionConfigList_azioni.get(groupNameGiaRegistrate);
 					if(list.contains(azione)) {
-						throw new CoreException("L'azione '"+azione+"' risulta già utilizzata nella configurazione relativa al gruppo '"+groupNameGiaRegistrate+"'");
+						throw new BehaviourException("L'azione '"+azione+"' risulta già utilizzata nella configurazione relativa al gruppo '"+groupNameGiaRegistrate+"'");
 					}
 				}
 			}

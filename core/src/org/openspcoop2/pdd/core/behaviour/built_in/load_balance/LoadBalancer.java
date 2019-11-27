@@ -28,8 +28,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 
 /**
  * LoadBalancer
@@ -50,7 +50,7 @@ public class LoadBalancer {
 		this.pool = pool;
 	}
 	
-	public String selectConnector() throws CoreException {
+	public String selectConnector() throws BehaviourException {
 		switch (this.type) {
 		case ROUND_ROBIN:
 			return getRoundRobin();
@@ -66,7 +66,7 @@ public class LoadBalancer {
 			return getLeastConnections();
 		}
 		
-		throw new CoreException("Type '"+this.type+"' unknown");
+		throw new BehaviourException("Type '"+this.type+"' unknown");
 	}
 
 	private String getRoundRobin() {

@@ -22,10 +22,10 @@
 package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.slf4j.Logger;
 
 /**
@@ -38,10 +38,10 @@ import org.slf4j.Logger;
 public class MultiDeliverUtils  {
 	
 	
-	public static ConfigurazioneMultiDeliver read(PortaApplicativa pa, Logger log) throws CoreException {
+	public static ConfigurazioneMultiDeliver read(PortaApplicativa pa, Logger log) throws BehaviourException {
 		ConfigurazioneMultiDeliver config = new ConfigurazioneMultiDeliver();
 		if(pa.getBehaviour()==null) {
-			throw new CoreException("Configurazione non disponibile");
+			throw new BehaviourException("Configurazione non disponibile");
 		}
 		
 		if(pa.getBehaviour().sizeProprietaList()>0) {
@@ -76,7 +76,7 @@ public class MultiDeliverUtils  {
 					}
 					
 				}catch(Exception e) {
-					throw new CoreException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
+					throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
 				}
 			}
 		}	
@@ -85,13 +85,13 @@ public class MultiDeliverUtils  {
 	}
 	
 
-	public static void save(PortaApplicativa pa, ConfigurazioneMultiDeliver configurazione) throws CoreException {
+	public static void save(PortaApplicativa pa, ConfigurazioneMultiDeliver configurazione) throws BehaviourException {
 		
 		if(pa.getBehaviour()==null) {
-			throw new CoreException("Configurazione behaviour non abilitata");
+			throw new BehaviourException("Configurazione behaviour non abilitata");
 		}
 		if(configurazione==null) {
-			throw new CoreException("Configurazione condizionale non fornita");
+			throw new BehaviourException("Configurazione condizionale non fornita");
 		}
 		
 		if(StringUtils.isNotEmpty(configurazione.getTransazioneSincrona_nomeConnettore())) {
@@ -109,7 +109,7 @@ public class MultiDeliverUtils  {
 	
 	
 	
-	public static ConfigurazioneGestioneConsegnaNotifiche read(PortaApplicativaServizioApplicativo pasa, Logger log) throws CoreException {
+	public static ConfigurazioneGestioneConsegnaNotifiche read(PortaApplicativaServizioApplicativo pasa, Logger log) throws BehaviourException {
 		ConfigurazioneGestioneConsegnaNotifiche config = new ConfigurazioneGestioneConsegnaNotifiche();
 		if(pasa==null || pasa.getDatiConnettore()==null || pasa.getDatiConnettore().sizeProprietaList()==0) {
 	//		throw new CoreException("Configurazione non disponibile");
@@ -224,7 +224,7 @@ public class MultiDeliverUtils  {
 				}
 				
 			}catch(Exception e) {
-				throw new CoreException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
+				throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
 			}
 		}	
 
@@ -232,13 +232,13 @@ public class MultiDeliverUtils  {
 	}
 	
 
-	public static void save(PortaApplicativaServizioApplicativo pasa, ConfigurazioneGestioneConsegnaNotifiche configurazione) throws CoreException {
+	public static void save(PortaApplicativaServizioApplicativo pasa, ConfigurazioneGestioneConsegnaNotifiche configurazione) throws BehaviourException {
 		
 		if(pasa==null || pasa.getDatiConnettore()==null) {
-			throw new CoreException("Configurazione behaviour non disponibile");
+			throw new BehaviourException("Configurazione behaviour non disponibile");
 		}
 		if(configurazione==null) {
-			throw new CoreException("Configurazione condizionale non fornita");
+			throw new BehaviourException("Configurazione condizionale non fornita");
 		}
 		
 		if(configurazione.getCadenzaRispedizione()!=null) {
@@ -256,13 +256,13 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto2xx_leftInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[2xx] Left Interval undefined");
+					throw new BehaviourException("[2xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto2xx_rightInterval()!=null) {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto2xx_rightInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[2xx] Right Interval undefined");
+					throw new BehaviourException("[2xx] Right Interval undefined");
 				}
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
@@ -277,7 +277,7 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_CODE_LIST, bf.toString()));
 				}
 				else {
-					throw new CoreException("[2xx] Code undefined");
+					throw new BehaviourException("[2xx] Code undefined");
 				}
 				break;
 			}
@@ -294,13 +294,13 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto3xx_leftInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[3xx] Left Interval undefined");
+					throw new BehaviourException("[3xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto3xx_rightInterval()!=null) {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto3xx_rightInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[3xx] Right Interval undefined");
+					throw new BehaviourException("[3xx] Right Interval undefined");
 				}
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
@@ -315,7 +315,7 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_CODE_LIST, bf.toString()));
 				}
 				else {
-					throw new CoreException("[3xx] Code undefined");
+					throw new BehaviourException("[3xx] Code undefined");
 				}
 				break;
 			}
@@ -332,13 +332,13 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto4xx_leftInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[4xx] Left Interval undefined");
+					throw new BehaviourException("[4xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto4xx_rightInterval()!=null) {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto4xx_rightInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[4xx] Right Interval undefined");
+					throw new BehaviourException("[4xx] Right Interval undefined");
 				}
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
@@ -353,7 +353,7 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_CODE_LIST, bf.toString()));
 				}
 				else {
-					throw new CoreException("[4xx] Code undefined");
+					throw new BehaviourException("[4xx] Code undefined");
 				}
 				break;
 			}
@@ -370,13 +370,13 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto5xx_leftInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[5xx] Left Interval undefined");
+					throw new BehaviourException("[5xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto5xx_rightInterval()!=null) {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto5xx_rightInterval().intValue()+""));
 				}
 				else {
-					throw new CoreException("[5xx] Right Interval undefined");
+					throw new BehaviourException("[5xx] Right Interval undefined");
 				}
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
@@ -391,7 +391,7 @@ public class MultiDeliverUtils  {
 					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_CODE_LIST, bf.toString()));
 				}
 				else {
-					throw new CoreException("[5xx] Code undefined");
+					throw new BehaviourException("[5xx] Code undefined");
 				}
 				break;
 			}

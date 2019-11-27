@@ -220,10 +220,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						identificazioneCondizionalePattern = "";
 						identificazioneCondizionalePrefisso = "";
 						identificazioneCondizionaleSuffisso = ""; 
-						condizioneNonIdentificataAbortTransaction = false;
+						condizioneNonIdentificataAbortTransaction = true;
 						condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 						condizioneNonIdentificataConnettore = "";
-						connettoreNonTrovatoAbortTransaction = false;
+						connettoreNonTrovatoAbortTransaction = true;
 						connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 						connettoreNonTrovatoConnettore = "";
 					}
@@ -304,10 +304,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						identificazioneCondizionalePattern = "";
 						identificazioneCondizionalePrefisso = "";
 						identificazioneCondizionaleSuffisso = ""; 
-						condizioneNonIdentificataAbortTransaction = false;
+						condizioneNonIdentificataAbortTransaction = true;
 						condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 						condizioneNonIdentificataConnettore = "";
-						connettoreNonTrovatoAbortTransaction = false;
+						connettoreNonTrovatoAbortTransaction = true;
 						connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 						connettoreNonTrovatoConnettore = "";
 						
@@ -383,10 +383,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 							identificazioneCondizionalePattern = "";
 							identificazioneCondizionalePrefisso = "";
 							identificazioneCondizionaleSuffisso = ""; 
-							condizioneNonIdentificataAbortTransaction = false;
+							condizioneNonIdentificataAbortTransaction = true;
 							condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 							condizioneNonIdentificataConnettore = "";
-							connettoreNonTrovatoAbortTransaction = false;
+							connettoreNonTrovatoAbortTransaction = true;
 							connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 							connettoreNonTrovatoConnettore = "";
 						}
@@ -511,10 +511,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				identificazioneCondizionalePattern = "";
 				identificazioneCondizionalePrefisso = "";
 				identificazioneCondizionaleSuffisso = ""; 
-				condizioneNonIdentificataAbortTransaction = false;
+				condizioneNonIdentificataAbortTransaction = true;
 				condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 				condizioneNonIdentificataConnettore = "";
-				connettoreNonTrovatoAbortTransaction = false;
+				connettoreNonTrovatoAbortTransaction = true;
 				connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 				connettoreNonTrovatoConnettore = "";
 			} else {
@@ -588,10 +588,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					identificazioneCondizionalePattern = "";
 					identificazioneCondizionalePrefisso = "";
 					identificazioneCondizionaleSuffisso = ""; 
-					condizioneNonIdentificataAbortTransaction = false;
+					condizioneNonIdentificataAbortTransaction = true;
 					condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 					condizioneNonIdentificataConnettore = "";
-					connettoreNonTrovatoAbortTransaction = false;
+					connettoreNonTrovatoAbortTransaction = true;
 					connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
 					connettoreNonTrovatoConnettore = "";
 				}

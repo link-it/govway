@@ -70,7 +70,6 @@ import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.controllo_traffico.constants.TipoFiltroApplicativo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -119,8 +118,6 @@ import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.mvc.TipoOperazione;
-
-import javassist.compiler.ast.CondExpr;
 
 /**
  * PorteApplicativeHelper
@@ -6566,7 +6563,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setType(DataElementType.TEXT_EDIT);
 				}
 				
-				if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue().equals(identificazioneCondizionale)) {
+				if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.GOVWAY_EXPRESSION.getValue().equals(identificazioneCondizionale)) {
 					DataElementInfo dInfoPattern = new DataElementInfo(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RISPOSTA_HEADER_VALORE);
 					dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
 					if(ServiceBinding.REST.equals(serviceBinding)) {
@@ -6620,17 +6617,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					dati.addElement(de);
 				}
 				
-				
+
 				// Sezione Identificazione Condizione Fallita 
+				
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
+				de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(condizioneNonIdentificataAbortTransaction);
 				de.setPostBack(true);
+				if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue()) && !condizioneNonIdentificataAbortTransaction) {	
+					de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_WARNING);
+				}
 				dati.addElement(de);
 				
 				if(!condizioneNonIdentificataAbortTransaction) {
+					
 					// select Diagnostico
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO);
@@ -6643,9 +6650,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR,
 							PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO
 							};
+					
+					String [] condizioneNonIdentificataDiagnosticiLabels = {
+							StatoFunzionalita.DISABILITATO.getValue(),
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_ERROR,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO
+							};
 					 
 					de.setValues(condizioneNonIdentificataDiagnosticiValues);
-					de.setLabels(condizioneNonIdentificataDiagnosticiValues);
+					de.setLabels(condizioneNonIdentificataDiagnosticiLabels);
 					de.setSelected(condizioneNonIdentificataDiagnostico);
 					dati.addElement(de);
 					
@@ -6675,15 +6688,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				
 				// Sezione Nessun Connettore Trovato
+				
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+				
 				de = new DataElement();
 				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
-				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
+				de.setLabelRight(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
 				de.setType(DataElementType.CHECKBOX);
 				de.setSelected(connettoreNonTrovatoAbortTransaction);
 				de.setPostBack(true);
+				if(modalitaConsegna.equals(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue()) && !connettoreNonTrovatoAbortTransaction) {	
+					de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_WARNING);
+				}
 				dati.addElement(de);
 				
 				if(!connettoreNonTrovatoAbortTransaction) {
+										
 					// select Diagnostico
 					de = new DataElement();
 					de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO);
@@ -6696,9 +6719,15 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR,
 							PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO
 							};
+					
+					String [] connettoreNonTrovatoDiagnosticiLabels = {
+							StatoFunzionalita.DISABILITATO.getValue(),
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_ERROR,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_DIAGNOSTICO_INFO
+							};
 					 
 					de.setValues(connettoreNonTrovatoDiagnosticiValues);
-					de.setLabels(connettoreNonTrovatoDiagnosticiValues);
+					de.setLabels(connettoreNonTrovatoDiagnosticiLabels);
 					de.setSelected(connettoreNonTrovatoDiagnostico);
 					dati.addElement(de);
 					
@@ -6887,9 +6916,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						String condizioneNonIdentificataConnettore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE);
 						
 						if(!visualizzaGestioneNotifiche) {
-							if (StringUtils.isEmpty(condizioneNonIdentificataConnettore)) {
-								this.pd.setMessage("Il campo "+  PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +" non pu&ograve; essere vuoto");
-								return false;
+							if(modalitaConsegna.equals(BehaviourType.CONSEGNA_MULTIPLA.getValue())) {	
+								if (StringUtils.isEmpty(condizioneNonIdentificataConnettore)) {
+									this.pd.setMessage("Il campo "+  
+											PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +" nella sezione '"+
+											PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA+"' non pu&ograve; essere vuoto");
+									return false;
+								}
 							}
 						}
 					}
@@ -6907,9 +6940,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						String connettoreNonTrovatoConnettore = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE);
 						
 						if(!visualizzaGestioneNotifiche) {
-							if (StringUtils.isEmpty(connettoreNonTrovatoConnettore)) {
-								this.pd.setMessage("Il campo "+  PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +" non pu&ograve; essere vuoto");
-								return false;
+							if(modalitaConsegna.equals(BehaviourType.CONSEGNA_MULTIPLA.getValue())) {	
+								if (StringUtils.isEmpty(connettoreNonTrovatoConnettore)) {
+									this.pd.setMessage("Il campo "+  
+											PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +" nella sezione '"+
+											PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO+"' non pu&ograve; essere vuoto");
+									return false;
+								}
 							}
 						}
 					}
@@ -7307,7 +7344,20 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		DataElement de = new DataElement();
 		
 		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && (visualizzaDatiGenerali || visualizzaDescrizione || visualizzaFiltri))) {
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI);
+			if(tipoOp.equals(TipoOperazione.ADD)) {
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DATI_GENERALI);
+			}
+			else {
+				if(visualizzaDescrizione) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DESCRIZIONE);
+				}
+				else if(visualizzaFiltri) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_FILTRI);
+				}
+				else {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME);
+				}
+			}
 			de.setType(DataElementType.TITLE);
 			dati.add(de);
 		}

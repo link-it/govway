@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.core.behaviour.test;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeaderElement;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -35,6 +34,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
@@ -55,7 +56,7 @@ public class ExampleMultipleMessageWithResponseAndFilterToBehaviour extends Abst
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
-			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException {
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		try{
 			Behaviour behaviour = new Behaviour();
 			
@@ -105,7 +106,7 @@ public class ExampleMultipleMessageWithResponseAndFilterToBehaviour extends Abst
 			
 			return behaviour;
 		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
+			throw new BehaviourException(e.getMessage(),e);
 		}
 		
 	}

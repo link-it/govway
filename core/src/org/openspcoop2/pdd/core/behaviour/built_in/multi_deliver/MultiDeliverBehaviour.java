@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -38,6 +37,8 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.AbstractBehaviour;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
@@ -60,7 +61,7 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 
-			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException {
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		
 		try{
 
@@ -95,7 +96,15 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				
 				Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 				
-				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, gestoreMessaggioRichiesta.getMessage(), busta, 
+
+				OpenSPCoop2Message msg = null;
+				try {
+					msg = gestoreMessaggioRichiesta.getMessage();
+				}catch(Exception e) {
+					throw new BehaviourException(e.getMessage(), e);
+				}
+				
+				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, msg, busta, 
 						requestInfo, this.getPddContext(), 
 						this.msgDiag, log, false);
 				
@@ -140,9 +149,16 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				}else {
 					idSA = listaServiziApplicativi_consegnaSenzaRisposta.get(0);
 				}
-				ServizioApplicativo sa = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idSA);
-				boolean uniqueSA_integrationManager = ConfigurazionePdDManager.getInstance().invocazioneServizioConGetMessage(sa);
-				boolean uniqueSA_connettore = ConfigurazionePdDManager.getInstance().invocazioneServizioConConnettore(sa);
+				ServizioApplicativo sa = null;
+				boolean uniqueSA_integrationManager = false;
+				boolean uniqueSA_connettore = false;
+				try {
+					sa = ConfigurazionePdDManager.getInstance().getServizioApplicativo(idSA);
+					uniqueSA_integrationManager = ConfigurazionePdDManager.getInstance().invocazioneServizioConGetMessage(sa);
+					uniqueSA_connettore = ConfigurazionePdDManager.getInstance().invocazioneServizioConConnettore(sa);
+				}catch(Exception e) {
+					throw new BehaviourException(e.getMessage(), e);
+				}
 				forceSalvataggioMessaggio = uniqueSA_integrationManager && uniqueSA_connettore;
 			}
 			
@@ -159,7 +175,12 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				}
 			}
 			if(saveMessage) {
-				OpenSPCoop2Message msg = gestoreMessaggioRichiesta.getMessage();
+				OpenSPCoop2Message msg = null;
+				try {
+					msg = gestoreMessaggioRichiesta.getMessage();
+				}catch(Exception e) {
+					throw new BehaviourException(e.getMessage(), e);
+				}
 				forwardTo.setMessage(msg);
 				
 				if(idServizioApplicativoResponder==null) {
@@ -181,8 +202,12 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 			
 			return behaviour;
 			
-		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
+		}
+		catch(BehaviourEmitDiagnosticException e){
+			throw e;
+		}
+		catch(BehaviourException e){
+			throw e;
 		}
 		
 	}

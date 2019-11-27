@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
 import java.util.List;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
@@ -31,6 +30,8 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -328,10 +329,10 @@ public class GestoreLoadBalancerCaching {
 	
 	public static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
-			MsgDiagnostico msgDiag, Logger log) throws CoreException{
+			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException{
     	
     	if(GestoreLoadBalancerCaching.cache==null){
-    		throw new CoreException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
+    		throw new BehaviourException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
 		}
     	else{
     		
@@ -364,7 +365,7 @@ public class GestoreLoadBalancerCaching {
 						return (LoadBalancerPool) response.getObject();
 					}else if(response.getException()!=null){
 						log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:getLoadBalancerPool) in cache.");
-						throw new CoreException( (Exception) response.getException() );
+						throw new BehaviourException( (Exception) response.getException() );
 					}else{
 						log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
 					}
@@ -389,7 +390,7 @@ public class GestoreLoadBalancerCaching {
 					}
 					return pool;
 				}else{
-					throw new CoreException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
+					throw new BehaviourException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
 				}
 			}
     	}
@@ -397,7 +398,7 @@ public class GestoreLoadBalancerCaching {
     }
 	
 	
-	private static LoadBalancerPool readLoadBalancerPool(PortaApplicativa pa, ConditionalFilterResult filterResult) throws CoreException {
+	private static LoadBalancerPool readLoadBalancerPool(PortaApplicativa pa, ConditionalFilterResult filterResult) throws BehaviourException {
 		
 		List<PortaApplicativaServizioApplicativo> listSA = null;
 		if(filterResult==null) {

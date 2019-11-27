@@ -21,11 +21,11 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.constants.GestioneErroreComportamento;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 
 /**
  * ConfigurazioneGestoneErrori
@@ -36,7 +36,7 @@ import org.openspcoop2.core.config.constants.GestioneErroreComportamento;
  */
 public class GestioneConsegnaNotificheUtils  {
 	
-	public static ConfigurazioneGestioneConsegnaNotifiche getGestioneDefault() throws CoreException {
+	public static ConfigurazioneGestioneConsegnaNotifiche getGestioneDefault() throws BehaviourException {
 		
 		ConfigurazioneGestioneConsegnaNotifiche config = new ConfigurazioneGestioneConsegnaNotifiche();
 		
@@ -50,7 +50,7 @@ public class GestioneConsegnaNotificheUtils  {
 		
 	}
 	
-	public static GestioneErrore toGestioneErrore(ConfigurazioneGestioneConsegnaNotifiche config) throws CoreException {
+	public static GestioneErrore toGestioneErrore(ConfigurazioneGestioneConsegnaNotifiche config) throws BehaviourException {
 		
 		GestioneErrore gestioneErrore = new GestioneErrore();
 		gestioneErrore.setComportamento(GestioneErroreComportamento.RISPEDISCI);
@@ -77,7 +77,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto2xx_codes()==null || config.getGestioneTrasporto2xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 2xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 2xx) non fornita");
 				}
 				for (Integer code : config.getGestioneTrasporto2xx_codes()) {
 					GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
@@ -89,10 +89,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto2xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 2xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 2xx) non definito");
 				}
 				if(config.getGestioneTrasporto2xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 2xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 2xx) non definito");
 				}
 				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 				codiceTrasporto.setValoreMinimo(config.getGestioneTrasporto2xx_leftInterval());
@@ -121,7 +121,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto3xx_codes()==null || config.getGestioneTrasporto3xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 3xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 3xx) non fornita");
 				}
 				for (Integer code : config.getGestioneTrasporto3xx_codes()) {
 					GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
@@ -133,10 +133,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto3xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 3xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 3xx) non definito");
 				}
 				if(config.getGestioneTrasporto3xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 3xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 3xx) non definito");
 				}
 				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 				codiceTrasporto.setValoreMinimo(config.getGestioneTrasporto3xx_leftInterval());
@@ -165,7 +165,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto4xx_codes()==null || config.getGestioneTrasporto4xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 4xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 4xx) non fornita");
 				}
 				for (Integer code : config.getGestioneTrasporto4xx_codes()) {
 					GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
@@ -177,10 +177,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto4xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 4xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 4xx) non definito");
 				}
 				if(config.getGestioneTrasporto4xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 4xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 4xx) non definito");
 				}
 				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 				codiceTrasporto.setValoreMinimo(config.getGestioneTrasporto4xx_leftInterval());
@@ -209,7 +209,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto5xx_codes()==null || config.getGestioneTrasporto5xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 5xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 5xx) non fornita");
 				}
 				for (Integer code : config.getGestioneTrasporto5xx_codes()) {
 					GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
@@ -221,10 +221,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto5xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 5xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 5xx) non definito");
 				}
 				if(config.getGestioneTrasporto5xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 5xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 5xx) non definito");
 				}
 				GestioneErroreCodiceTrasporto codiceTrasporto = new GestioneErroreCodiceTrasporto();
 				codiceTrasporto.setValoreMinimo(config.getGestioneTrasporto5xx_leftInterval());
@@ -268,7 +268,7 @@ public class GestioneConsegnaNotificheUtils  {
 	}
 	
 	
-	public static String toString(ConfigurazioneGestioneConsegnaNotifiche config, boolean soap) throws CoreException {
+	public static String toString(ConfigurazioneGestioneConsegnaNotifiche config, boolean soap) throws BehaviourException {
 		
 		StringBuffer bf = new StringBuffer("Consegna completata con codice");
 		
@@ -284,7 +284,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto2xx_codes()==null || config.getGestioneTrasporto2xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 2xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 2xx) non fornita");
 				}
 				bf.append(" ");
 				int index = 0;
@@ -299,10 +299,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto2xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 2xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 2xx) non definito");
 				}
 				if(config.getGestioneTrasporto2xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 2xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 2xx) non definito");
 				}
 				bf.append(" ").append(config.getGestioneTrasporto2xx_leftInterval()).append("-").append(config.getGestioneTrasporto2xx_rightInterval());
 				first = false;
@@ -323,7 +323,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto3xx_codes()==null || config.getGestioneTrasporto3xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 3xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 3xx) non fornita");
 				}
 				if(!first) {
 					bf.append(" o");
@@ -341,10 +341,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto3xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 3xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 3xx) non definito");
 				}
 				if(config.getGestioneTrasporto3xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 3xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 3xx) non definito");
 				}
 				if(!first) {
 					bf.append(" o");
@@ -368,7 +368,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto4xx_codes()==null || config.getGestioneTrasporto4xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 4xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 4xx) non fornita");
 				}
 				if(!first) {
 					bf.append(" o");
@@ -386,10 +386,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto4xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 4xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 4xx) non definito");
 				}
 				if(config.getGestioneTrasporto4xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 4xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 4xx) non definito");
 				}
 				if(!first) {
 					bf.append(" o");
@@ -413,7 +413,7 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto5xx_codes()==null || config.getGestioneTrasporto5xx_codes().isEmpty()) {
-					throw new CoreException("Lista dei codici accettati (classe 5xx) non fornita");
+					throw new BehaviourException("Lista dei codici accettati (classe 5xx) non fornita");
 				}
 				if(!first) {
 					bf.append(" o");
@@ -431,10 +431,10 @@ public class GestioneConsegnaNotificheUtils  {
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(config.getGestioneTrasporto5xx_leftInterval()==null) {
-					throw new CoreException("Intervallo sinistro (classe 5xx) non definito");
+					throw new BehaviourException("Intervallo sinistro (classe 5xx) non definito");
 				}
 				if(config.getGestioneTrasporto5xx_rightInterval()==null) {
-					throw new CoreException("Intervallo destro (classe 5xx) non definito");
+					throw new BehaviourException("Intervallo destro (classe 5xx) non definito");
 				}
 				if(!first) {
 					bf.append(" o");

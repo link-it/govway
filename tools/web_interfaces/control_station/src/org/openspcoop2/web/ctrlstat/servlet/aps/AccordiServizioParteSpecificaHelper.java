@@ -2901,6 +2901,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						
 						boolean ridefinito = false;
+						boolean connettoreRidefinito = false;
 						boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );
 						if(mapping.isDefault()) {
 							if(visualizzazioneTabs) {
@@ -2910,6 +2911,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 									de.setToolTip(tooltipConnettore);
 								} else {
 									de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
+									de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
 								}
 							}
 							else {
@@ -2940,7 +2942,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							
 						}else {
 							// Connettore e' ridefinito se
-							boolean connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo);
+							connettoreRidefinito = isConnettoreRidefinito(paAssociataDefault, portaApplicativaServizioApplicativoDefault, paAssociata, portaApplicativaServizioApplicativo);
 							
 							if(!connettoreRidefinito) { 
 								servletConnettore = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORE_DEFAULT;
@@ -2949,6 +2951,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue("["+org.openspcoop2.core.constants.Costanti.MAPPING_EROGAZIONE_PA_DESCRIZIONE_DEFAULT+"] "+this.getLabelConnettore(sa,is));
 									} else {
 										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
+										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
 									}
 								}
 								else {
@@ -2969,6 +2972,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 										de.setValue(this.getLabelConnettore(sa,is));
 									} else {
 										de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paAssociata));
+										de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paAssociata));
 									}
 								}
 								else {
@@ -3062,7 +3066,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						// configurazione connettori multipli
 						if(visualizzazioneTabs) {
-							if(this.core.isConnettoriMultipliEnabled()) {
+							if(this.core.isConnettoriMultipliEnabled() && (connettoreRidefinito || mapping.isDefault())) {
 								DataElementImage image = new DataElementImage();
 								List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
 								listParametersConfigutazioneConnettoriMultipli.add(paIdSogg);
@@ -3083,7 +3087,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						} else {
 							DataElement deConfiguraConnettoriMultipli = new DataElement();
 							
-							if(this.core.isConnettoriMultipliEnabled()) {
+							if(this.core.isConnettoriMultipliEnabled() && (connettoreRidefinito || mapping.isDefault())) {
 								deConfiguraConnettoriMultipli.setValue(this.getStatoConnettoriMultipliPortaApplicativa(paAssociata));
 								deConfiguraConnettoriMultipli.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, paIdSogg, pIdPorta, pIdAsps,
 										pConnettoreAccessoDaGruppi,

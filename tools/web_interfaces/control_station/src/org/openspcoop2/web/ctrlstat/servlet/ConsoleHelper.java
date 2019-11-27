@@ -152,11 +152,16 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -14536,7 +14541,40 @@ public class ConsoleHelper implements IConsoleHelper {
 		return connettoreMultiploEnabled ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString();
 	}
 	
-	public String getNomiConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
+	public String getNomiConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound, NotFoundException {
+		StringBuilder sbConnettoriMultipli = new StringBuilder();
+		
+		BehaviourType behaviourType = BehaviourType.toEnumConstant(paAssociata.getBehaviour().getNome());
+		switch (behaviourType) {
+		case CONSEGNA_LOAD_BALANCE:
+			String loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(paAssociata.getBehaviour());
+			LoadBalancerType type = LoadBalancerType.toEnumConstant(loadBalanceStrategia, true);
+			sbConnettoriMultipli.append(behaviourType.getLabel()).append(" '").append(type.getLabel()).append("'");
+			
+			boolean condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE);
+			}
+			
+			break;
+		case CONSEGNA_MULTIPLA:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE);
+			}
+			
+			break;
+		case CUSTOM:
+			sbConnettoriMultipli.append("Consegna Personalizzata '"+paAssociata.getBehaviour().getNome()+"'");
+			break;
+		}
+		
+		return sbConnettoriMultipli.toString();
+	}
+	
+	public String getToolTipConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
 		StringBuilder sbConnettoriMultipli = new StringBuilder();
 		for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
 			if(sbConnettoriMultipli.length() >0)

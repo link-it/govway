@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 
 /**
  * LoadBalancerPool
@@ -145,13 +145,13 @@ public class LoadBalancerPool implements Serializable{
 		return this.connectorMap.get(name);
 	}
 	
-	public void addConnector(String name) throws CoreException {
+	public void addConnector(String name) throws BehaviourException {
 		this.addConnector(name, DEFAULT_WEIGHT);
 	}
-	public void addConnector(String name, int weight) throws CoreException {
+	public void addConnector(String name, int weight) throws BehaviourException {
 		synchronized (this.semaphore) {
 			if(this.connectorMap.containsKey(name)) {
-				throw new CoreException("Already exists connector '"+name+"'");
+				throw new BehaviourException("Already exists connector '"+name+"'");
 			}
 			this.connectorMap.put(name, weight);
 			this.totalWeight = this.totalWeight+weight;
@@ -160,7 +160,7 @@ public class LoadBalancerPool implements Serializable{
 	}
 	
 
-	public void addActiveConnection(String name) throws Exception {
+	public void addActiveConnection(String name) throws BehaviourException {
 		synchronized (this.semaphore) {
 			int activeConnections = 0;
 			if(this.connectorMap_activeConnections.containsKey(name)) {
@@ -171,7 +171,7 @@ public class LoadBalancerPool implements Serializable{
 			//System.out.println("ADD ["+name+"] ["+activeConnections+"]");
 		}
 	}
-	public void removeActiveConnection(String name) throws Exception {
+	public void removeActiveConnection(String name) throws BehaviourException {
 		synchronized (this.semaphore) {
 			int activeConnections = 0;
 			if(this.connectorMap_activeConnections.containsKey(name)) {

@@ -1080,6 +1080,8 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.nomeConnettore.error",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.nomeConnettore.info",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.connettoreDefault",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.tuttiConnettori",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.nessunConnettore",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneRestProblem",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"logInvocazioneOperazione",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"autenticazioneNonImpostata",

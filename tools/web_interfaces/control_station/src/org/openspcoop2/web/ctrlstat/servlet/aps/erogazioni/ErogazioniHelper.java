@@ -1520,6 +1520,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				} else {
 					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI);
 					de.setValue(this.getNomiConnettoriMultipliPortaApplicativa(paDefault));
+					de.setToolTip(this.getToolTipConnettoriMultipliPortaApplicativa(paDefault));
 				}
 				
 				boolean visualizzaLinkConfigurazioneConnettore = !this.core.isConnettoriMultipliEnabled() || ( this.core.isConnettoriMultipliEnabled() && !connettoreMultiploEnabled );

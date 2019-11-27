@@ -21,13 +21,14 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -81,10 +82,10 @@ public class ConfigurazioneLoadBalancer  {
 	
 	public static ConfigurazioneLoadBalancer read(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
-			MsgDiagnostico msgDiag, Logger log) throws CoreException {
+			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException {
 		ConfigurazioneLoadBalancer config = new ConfigurazioneLoadBalancer();
 		if(pa.getBehaviour()==null || pa.getBehaviour().sizeProprietaList()<=0) {
-			throw new CoreException("Load Balancer type undefined");
+			throw new BehaviourException("Load Balancer type undefined");
 		}
 		String type = null;
 		for (Proprieta p : pa.getBehaviour().getProprietaList()) {
@@ -93,11 +94,11 @@ public class ConfigurazioneLoadBalancer  {
 			}
 		}
 		if(type==null) {
-			throw new CoreException("Load Balancer type undefined");
+			throw new BehaviourException("Load Balancer type undefined");
 		}
 		LoadBalancerType enumType = LoadBalancerType.toEnumConstant(type);
 		if(enumType==null) {
-			throw new CoreException("Load Balancer type '"+type+"' unknown");
+			throw new BehaviourException("Load Balancer type '"+type+"' unknown");
 		}
 		config.setType(enumType);
 		

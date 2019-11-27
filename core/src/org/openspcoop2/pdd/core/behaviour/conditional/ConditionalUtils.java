@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
@@ -38,6 +37,8 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -64,7 +65,7 @@ public class ConditionalUtils  {
 	public static ConditionalFilterResult filter(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			boolean loadBalancer) throws CoreException {
+			boolean loadBalancer) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneCondizionale(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -79,9 +80,11 @@ public class ConditionalUtils  {
 		String azione = null;
 		String staticInfo = null;
 		if(busta.getAzione()!=null && !"".equals(busta.getAzione())) {
-			selettore = config.getConfigurazioneSelettoreCondizioneByAzione(azione);	
-			staticInfo = selettore.getStaticInfo();
-			result.setNomeGruppoAzioni(config.getGruppoByAzione(azione));
+			selettore = config.getConfigurazioneSelettoreCondizioneByAzione(azione);
+			if(selettore!=null) {
+				staticInfo = selettore.getStaticInfo();
+				result.setNomeGruppoAzioni(config.getGruppoByAzione(azione));
+			}
 		}
 		if(selettore==null) {
 			selettore = config.getDefaultConfig();
@@ -126,35 +129,47 @@ public class ConditionalUtils  {
 				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, selettore.getTipoSelettore().getValue());
+				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern); // per eliminare @@ dove non serve
 				
 				switch (selettore.getTipoSelettore()) {
 				
 				case HEADER_BASED:
 					pattern = " (Header HTTP: "+selettore.getPattern()+")";
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					condition = TransportUtils.get(pTrasporto, selettore.getPattern());
+					if(condition==null) {
+						throw new Exception("header non presente");
+					}
 					break;
 					
 				case URLBASED:
 					pattern = " (RegExpr: "+selettore.getPattern()+")";
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					try{
 						condition = RegularExpressionEngine.getStringMatchPattern(urlInvocazione, selettore.getPattern());
 					}catch(RegExpNotFoundException notFound){}
 					break;
 					
 				case FORM_BASED:
-					pattern = " (Property URL: "+selettore.getPattern()+")";
+					pattern = " (Parametro URL: "+selettore.getPattern()+")";
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					condition = TransportUtils.get(pForm, selettore.getPattern());
+					if(condition==null) {
+						throw new Exception("parametro della url non presente");
+					}
 					break;
 					
 				case CONTENT_BASED:
 					AbstractXPathExpressionEngine xPathEngine = null;
 					if(element!=null) {
 						pattern = " (xPath: "+selettore.getPattern()+")";
+						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 						xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
 						condition = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, selettore.getPattern(),  log);
 					}
 					else {
 						pattern = " (jsonPath: "+selettore.getPattern()+")";
+						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 						condition = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, selettore.getPattern(), log);
 					}
 					break;
@@ -174,11 +189,21 @@ public class ConditionalUtils  {
 				case SOAPACTION_BASED:
 					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 						condition = message.castAsSoap().getSoapAction();
+						if(condition!=null) {
+							condition = condition.trim();
+							if(condition.startsWith("\"") && condition.length()>1){
+								condition = condition.substring(1);
+							}
+							if(condition.endsWith("\"")  && condition.length()>1){
+								condition = condition.substring(0, (condition.length()-1));
+							}
+						}
 					}
 					break;
 					
 				case GOVWAY_EXPRESSION:
 					pattern = " (govwayExpr: "+selettore.getPattern()+")";
+					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 					ErrorHandler errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
@@ -190,10 +215,8 @@ public class ConditionalUtils  {
 					break;
 				}
 			
-				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-				
 				if(condition==null) {
-					throw new Exception("Nessuna condizione estratta dalla richiesta");
+					throw new Exception("Nessuna condizione estratta");
 				}
 				else {
 					msgDiag.addKeyword(CostantiPdD.KEY_CONDIZIONE_CONNETTORE, condition);
@@ -204,8 +227,8 @@ public class ConditionalUtils  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, e.getMessage());
 				
 				if(config.getCondizioneNonIdentificata().isAbortTransaction()) {
-					throw new CoreException(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.identificazioneFallita.error"),e);
+					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.identificazioneFallita.error", e);
 				}
 				else {
 					if(config.getCondizioneNonIdentificata().isEmitDiagnosticError()) {
@@ -219,6 +242,10 @@ public class ConditionalUtils  {
 					
 					if(loadBalancer) {
 						// li usero tutti senza filtro sulla condizionalità
+						
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+						
 						result.setListServiziApplicativi(pa.getServizioApplicativoList());
 						return result;
 						
@@ -227,13 +254,19 @@ public class ConditionalUtils  {
 					nomeConnettoreDaUsare = config.getCondizioneNonIdentificata().getNomeConnettore();
 					if(nomeConnettoreDaUsare==null) {
 						// può succedere per le comunicazioni sincrone dove non vi saranno notifiche
+						
+						if(!loadBalancer) {
+							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+									"connettoriMultipli.consegnaCondizionale.nessunConnettore");
+						}
+						
 						result.setListServiziApplicativi(new ArrayList<>());
 						return result;
 					}
 					
 					result.setListServiziApplicativi(filter(pa.getServizioApplicativoList(),false,nomeConnettoreDaUsare));
 					if(result.getListServiziApplicativi().isEmpty()) {
-						throw new CoreException("Connettore '"+nomeConnettoreDaUsare+"' indicato, da utilizzare in caso di identificazione fallita, non esistente");
+						throw new BehaviourException("Connettore '"+nomeConnettoreDaUsare+"' indicato, da utilizzare in caso di identificazione fallita, non esistente");
 					}
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
@@ -263,12 +296,12 @@ public class ConditionalUtils  {
 		else {
 			if(config.getNessunConnettoreTrovato().isAbortTransaction()) {
 				if(config.isByFilter()) {
-					throw new CoreException(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.filtro.error"));
+					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.filtro.error");
 				}
 				else {
-					throw new CoreException(msgDiag.getMessaggio_replaceKeywords(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.nomeConnettore.error"));
+					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.connettoreNonEsistente.nomeConnettore.error");
 				}
 			}
 			else {
@@ -295,6 +328,10 @@ public class ConditionalUtils  {
 				
 				if(loadBalancer) {
 					// li usero tutti senza filtro sulla condizionalità
+					
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+					
 					result.setListServiziApplicativi(pa.getServizioApplicativoList());
 					return result;
 				}
@@ -302,13 +339,19 @@ public class ConditionalUtils  {
 				nomeConnettoreDaUsare = config.getNessunConnettoreTrovato().getNomeConnettore();
 				if(nomeConnettoreDaUsare==null) {
 					// può succedere per le comunicazioni sincrone dove non vi saranno notifiche
+					
+					if(!loadBalancer) {
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.nessunConnettore");
+					}					
+					
 					result.setListServiziApplicativi(new ArrayList<>());
 					return result;
 				}
 				
 				result.setListServiziApplicativi(filter(pa.getServizioApplicativoList(),false,nomeConnettoreDaUsare));
 				if(result.getListServiziApplicativi().isEmpty()) {
-					throw new CoreException("Connettore '"+nomeConnettoreDaUsare+"' indicato, da utilizzare in caso di identificazione condizionale fallita, non esistente");
+					throw new BehaviourException("Connettore '"+nomeConnettoreDaUsare+"' indicato, da utilizzare in caso di identificazione condizionale fallita, non esistente");
 				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
@@ -390,10 +433,10 @@ public class ConditionalUtils  {
 		return "true".equals(type) && "true".equals(byFilter);
 	}
 	
-	public static ConfigurazioneCondizionale read(PortaApplicativa pa, Logger log) throws CoreException {
+	public static ConfigurazioneCondizionale read(PortaApplicativa pa, Logger log) throws BehaviourException {
 		ConfigurazioneCondizionale config = new ConfigurazioneCondizionale();
 		if(pa.getBehaviour()==null || pa.getBehaviour().sizeProprietaList()<=0) {
-			throw new CoreException("Configurazione condizionale non disponibile");
+			throw new BehaviourException("Configurazione condizionale non disponibile");
 		}
 		
 		ConfigurazioneSelettoreCondizione selettoreConfigurazioneDefault = new ConfigurazioneSelettoreCondizione();
@@ -461,7 +504,7 @@ public class ConditionalUtils  {
 					nessunConnettoreTrovato.setNomeConnettore(valore);
 				}
 			}catch(Exception e) {
-				throw new CoreException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
+				throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
 			}
 			
 		}
@@ -507,7 +550,7 @@ public class ConditionalUtils  {
 							}
 						}
 					}catch(Exception e) {
-						throw new CoreException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
+						throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
 					}					
 					
 				}
@@ -522,20 +565,20 @@ public class ConditionalUtils  {
 	}
 	
 
-	public static void save(PortaApplicativa pa, ConfigurazioneCondizionale configurazione) throws CoreException {
+	public static void save(PortaApplicativa pa, ConfigurazioneCondizionale configurazione) throws BehaviourException {
 		
 		if(pa.getBehaviour()==null) {
-			throw new CoreException("Configurazione behaviour non abilitata");
+			throw new BehaviourException("Configurazione behaviour non abilitata");
 		}
 		if(configurazione==null) {
-			throw new CoreException("Configurazione condizionale non fornita");
+			throw new BehaviourException("Configurazione condizionale non fornita");
 		}
 		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_ENABLED, true+""));
 		
 		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_BY_FILTER, configurazione.isByFilter()+""));
 				
 		if(configurazione.getDefaultConfig()==null) {
-			throw new CoreException("Configurazione selettore condizione di default non fornita");
+			throw new BehaviourException("Configurazione selettore condizione di default non fornita");
 		}
 		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_TIPO_SELETTORE, configurazione.getDefaultConfig().getTipoSelettore().getValue()));
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getPattern())) {
@@ -559,10 +602,10 @@ public class ConditionalUtils  {
 				List<String> azioni = configurazione.getAzioniByGroupName(gruppo);
 				
 				if(selettore==null) {
-					throw new CoreException("Configurazione selettore condizione per il gruppo '"+gruppo+"' non fornita");
+					throw new BehaviourException("Configurazione selettore condizione per il gruppo '"+gruppo+"' non fornita");
 				}
 				if(azioni==null || azioni.isEmpty()) {
-					throw new CoreException("Configurazione lista di azioni per il gruppo '"+gruppo+"' non fornita");
+					throw new BehaviourException("Configurazione lista di azioni per il gruppo '"+gruppo+"' non fornita");
 				}
 				
 				String prefixGruppoAzione = prefixGruppo+Costanti.CONDITIONAL_GROUP_ACTION_NAME;
@@ -591,7 +634,7 @@ public class ConditionalUtils  {
 		}
 		
 		if(configurazione.getCondizioneNonIdentificata()==null) {
-			throw new CoreException("Configurazione 'condizione non identificata' non fornita");
+			throw new BehaviourException("Configurazione 'condizione non identificata' non fornita");
 		}
 		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_ABORT_TRANSACTION),
 				configurazione.getCondizioneNonIdentificata().isAbortTransaction()+""));
@@ -605,7 +648,7 @@ public class ConditionalUtils  {
 		}
 		
 		if(configurazione.getNessunConnettoreTrovato()==null) {
-			throw new CoreException("Configurazione 'nessun connettore trovato' non fornita");
+			throw new BehaviourException("Configurazione 'nessun connettore trovato' non fornita");
 		}
 		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_ABORT_TRANSACTION),
 				configurazione.getNessunConnettoreTrovato().isAbortTransaction()+""));

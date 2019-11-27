@@ -21,7 +21,6 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in;
 
-import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -39,6 +38,8 @@ import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.GestoreMessaggiException;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
@@ -66,7 +67,7 @@ public class ServizioApplicativoContentBasedBehaviour extends AbstractCore imple
 	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta,
-			PortaApplicativa pa, RequestInfo requestInfo) throws CoreException {
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		
 		Behaviour behaviour = null;
 		BehaviourForwardTo forwardTo = null;
@@ -211,7 +212,7 @@ public class ServizioApplicativoContentBasedBehaviour extends AbstractCore imple
 			}
 			
 		}catch(Exception e){
-			throw new CoreException(e.getMessage(),e);
+			throw new BehaviourException(e.getMessage(),e);
 		}
 		
 		
