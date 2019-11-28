@@ -76,19 +76,34 @@ public class ConditionalUtils  {
 		
 		ConfigurazioneCondizionale config = read(pa, log);
 		
-		ConfigurazioneSelettoreCondizione selettore = null;
 		
-		String azione = null;
+		TipoSelettore tipoSelettore = null;
+		String patternSelettore = null;
+		String prefixSelettore = null;
+		String suffixSelettore = null;
 		String staticInfo = null;
 		if(busta.getAzione()!=null && !"".equals(busta.getAzione())) {
-			selettore = config.getConfigurazioneSelettoreCondizioneByAzione(azione);
-			if(selettore!=null) {
-				staticInfo = selettore.getStaticInfo();
-				result.setNomeGruppoAzioni(config.getGruppoByAzione(azione));
+			ConfigurazioneSelettoreCondizioneRegola regola = null;
+			try {
+				regola = config.getRegolaByOperazione(busta.getAzione());
+			}catch(Exception e) {
+				throw new BehaviourException(e.getMessage(),e);
+			}
+			if(regola!=null) {
+				tipoSelettore = regola.getTipoSelettore();
+				patternSelettore = regola.getPattern();
+				prefixSelettore = regola.getPrefix();
+				suffixSelettore = regola.getSuffix();
+				staticInfo = regola.getStaticInfo();
+				result.setRegola(regola.getRegola());
 			}
 		}
-		if(selettore==null) {
-			selettore = config.getDefaultConfig();
+		if(tipoSelettore==null) {
+			ConfigurazioneSelettoreCondizione c = config.getDefaultConfig();
+			tipoSelettore = c.getTipoSelettore();
+			patternSelettore = c.getPattern();
+			prefixSelettore = c.getPrefix();
+			suffixSelettore = c.getSuffix();
 		}
 		
 		result.setByFilter(config.isByFilter());
@@ -112,7 +127,7 @@ public class ConditionalUtils  {
 				}
 				Element element = null;
 				String elementJson = null;
-				if(TipoSelettore.CONTENT_BASED.equals(selettore.getTipoSelettore()) || selettore.getTipoSelettore().isTemplate()) {
+				if(TipoSelettore.CONTENT_BASED.equals(tipoSelettore) || tipoSelettore.isTemplate()) {
 					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 						element =message.castAsSoap().getSOAPPart().getEnvelope();
 					}
@@ -124,37 +139,37 @@ public class ConditionalUtils  {
 							elementJson = message.castAsRestJson().getContent();
 						}
 						else{
-							throw new Exception("Selettore '"+selettore.getTipoSelettore().getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
+							throw new Exception("Selettore '"+tipoSelettore.getValue()+"' non supportato per il message-type '"+message.getMessageType()+"'");
 						}
 					}
 				}
 				
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, selettore.getTipoSelettore().getValue());
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, tipoSelettore.getValue());
 				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern); // per eliminare @@ dove non serve
 				
-				switch (selettore.getTipoSelettore()) {
+				switch (tipoSelettore) {
 				
 				case HEADER_BASED:
-					pattern = " (Header HTTP: "+selettore.getPattern()+")";
+					pattern = " (Header HTTP: "+patternSelettore+")";
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					condition = TransportUtils.get(pTrasporto, selettore.getPattern());
+					condition = TransportUtils.get(pTrasporto, patternSelettore);
 					if(condition==null) {
 						throw new Exception("header non presente");
 					}
 					break;
 					
 				case URLBASED:
-					pattern = " (Espressione Regolare: "+selettore.getPattern()+")";
+					pattern = " (Espressione Regolare: "+patternSelettore+")";
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 					try{
-						condition = RegularExpressionEngine.getStringMatchPattern(urlInvocazione, selettore.getPattern());
+						condition = RegularExpressionEngine.getStringMatchPattern(urlInvocazione, patternSelettore);
 					}catch(RegExpNotFoundException notFound){}
 					break;
 					
 				case FORM_BASED:
-					pattern = " (Parametro URL: "+selettore.getPattern()+")";
+					pattern = " (Parametro URL: "+patternSelettore+")";
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					condition = TransportUtils.get(pForm, selettore.getPattern());
+					condition = TransportUtils.get(pForm, patternSelettore);
 					if(condition==null) {
 						throw new Exception("parametro della url non presente");
 					}
@@ -163,15 +178,15 @@ public class ConditionalUtils  {
 				case CONTENT_BASED:
 					AbstractXPathExpressionEngine xPathEngine = null;
 					if(element!=null) {
-						pattern = " (xPath: "+selettore.getPattern()+")";
+						pattern = " (xPath: "+patternSelettore+")";
 						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
 						xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
-						condition = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, selettore.getPattern(),  log);
+						condition = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, patternSelettore,  log);
 					}
 					else {
-						pattern = " (jsonPath: "+selettore.getPattern()+")";
+						pattern = " (jsonPath: "+patternSelettore+")";
 						msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-						condition = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, selettore.getPattern(), log);
+						condition = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(elementJson, patternSelettore, log);
 					}
 					break;
 					
@@ -203,8 +218,8 @@ public class ConditionalUtils  {
 					break;
 					
 				case TEMPLATE:
-					if(selettore.getPattern().length()<50) {
-						pattern = " ("+selettore.getPattern()+")";
+					if(patternSelettore.length()<50) {
+						pattern = " ("+patternSelettore+")";
 					}
 					else {
 						pattern = "";
@@ -217,12 +232,12 @@ public class ConditionalUtils  {
 							element, elementJson, 
 							busta, pTrasporto, pForm,
 							errorHandler);
-					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", selettore.getPattern(), dynamicMap, pddContext, true);
+					condition = DynamicUtils.convertDynamicPropertyValue("ConditionalConfig.gwt", patternSelettore, dynamicMap, pddContext, true);
 					break;
 					
 				case FREEMARKER_TEMPLATE:
-					if(selettore.getPattern().length()<50) {
-						pattern = " ("+selettore.getPattern()+")";
+					if(patternSelettore.length()<50) {
+						pattern = " ("+patternSelettore+")";
 					}
 					else {
 						pattern = "";
@@ -236,15 +251,15 @@ public class ConditionalUtils  {
 							busta, pTrasporto, pForm,
 							errorHandler);
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", selettore.getPattern().getBytes(), dynamicMap, bout);
+					DynamicUtils.convertFreeMarkerTemplate("ConditionalConfig.ftl", patternSelettore.getBytes(), dynamicMap, bout);
 					bout.flush();
 					bout.close();
 					condition = bout.toString();
 					break;
 					
 				case VELOCITY_TEMPLATE:
-					if(selettore.getPattern().length()<50) {
-						pattern = " ("+selettore.getPattern()+")";
+					if(patternSelettore.length()<50) {
+						pattern = " ("+patternSelettore+")";
 					}
 					else {
 						pattern = "";
@@ -258,7 +273,7 @@ public class ConditionalUtils  {
 							busta, pTrasporto, pForm,
 							errorHandler);
 					bout = new ByteArrayOutputStream();
-					DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", selettore.getPattern().getBytes(), dynamicMap, bout);
+					DynamicUtils.convertVelocityTemplate("ConditionalConfig.vm", patternSelettore.getBytes(), dynamicMap, bout);
 					bout.flush();
 					bout.close();
 					condition = bout.toString();
@@ -329,11 +344,11 @@ public class ConditionalUtils  {
 		}
 		
 		String conditionFinal = condition;
-		if(selettore.getPrefix()!=null) {
-			conditionFinal = selettore.getPrefix()+conditionFinal;
+		if(prefixSelettore!=null) {
+			conditionFinal = prefixSelettore+conditionFinal;
 		}
-		if(selettore.getSuffix()!=null) {
-			conditionFinal = conditionFinal+selettore.getSuffix();
+		if(suffixSelettore!=null) {
+			conditionFinal = conditionFinal+suffixSelettore;
 		}
 		result.setCondition(conditionFinal);
 		msgDiag.addKeyword(CostantiPdD.KEY_CONDIZIONE_CONNETTORE, conditionFinal);
@@ -498,7 +513,7 @@ public class ConditionalUtils  {
 		IdentificazioneFallitaConfigurazione nessunConnettoreTrovato = new IdentificazioneFallitaConfigurazione();
 		config.setNessunConnettoreTrovato(nessunConnettoreTrovato);
 		
-		List<String> gruppi = new ArrayList<String>();
+		List<String> idRegole = new ArrayList<String>();
 		
 		for (Proprieta p : pa.getBehaviour().getProprietaList()) {
 			
@@ -523,9 +538,9 @@ public class ConditionalUtils  {
 					selettoreConfigurazioneDefault.setSuffix(valore);
 				}
 				
-				else if(nome.startsWith(Costanti.CONDITIONAL_GROUP) && nome.endsWith(Costanti.CONDITIONAL_GROUP_NAME) ) {
-					String gruppoNome = nome.substring(Costanti.CONDITIONAL_GROUP.length(), (nome.length()-Costanti.CONDITIONAL_GROUP_NAME.length()));
-					gruppi.add(gruppoNome);
+				else if(nome.startsWith(Costanti.CONDITIONAL_RULE) && nome.endsWith(Costanti.CONDITIONAL_RULE_NAME) ) {
+					String idRegola = nome.substring(Costanti.CONDITIONAL_RULE.length(), (nome.length()-Costanti.CONDITIONAL_RULE_NAME.length()));
+					idRegole.add(idRegola);
 				}
 				
 				else if((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_ABORT_TRANSACTION).equals(nome)) {
@@ -559,15 +574,12 @@ public class ConditionalUtils  {
 			
 		}
 		
-		if(!gruppi.isEmpty()) {
-			for (String gruppo : gruppi) {
+		if(!idRegole.isEmpty()) {
+			for (String idRegola : idRegole) {
 				
-				String prefixGruppo = Costanti.CONDITIONAL_GROUP+gruppo;
+				String prefixGruppo = Costanti.CONDITIONAL_RULE+idRegola;
 				String prefixGruppoConUnderscore = prefixGruppo+"_";
-				ConfigurazioneSelettoreCondizione selettoreConfigurazionePerAzioni = new ConfigurazioneSelettoreCondizione();
-				
-				String nomeGruppoEsteso = null;
-				List<String> azioni = new ArrayList<>();
+				ConfigurazioneSelettoreCondizioneRegola selettoreConfigurazioneRegola = new ConfigurazioneSelettoreCondizioneRegola();
 				
 				for (Proprieta p : pa.getBehaviour().getProprietaList()) {
 					
@@ -575,29 +587,27 @@ public class ConditionalUtils  {
 					String valore = p.getValore().trim();
 					
 					try {
-						if((prefixGruppo+Costanti.CONDITIONAL_GROUP_NAME).equals(nome)) {
-							nomeGruppoEsteso = valore;
+						if((prefixGruppo+Costanti.CONDITIONAL_RULE_NAME).equals(nome)) {
+							selettoreConfigurazioneRegola.setRegola(valore);
 						}
+						else if((prefixGruppo+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE).equals(nome)) {
+							selettoreConfigurazioneRegola.setPatternOperazione(valore);
+						}
+						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_RULE_STATIC_INFO).equals(nome)) {
+							selettoreConfigurazioneRegola.setStaticInfo(valore);
+						}
+						
 						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_TIPO_SELETTORE).equals(nome)) {
-							selettoreConfigurazionePerAzioni.setTipoSelettore(TipoSelettore.toEnumConstant(valore, true));
-						}
-						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_STATIC_INFO).equals(nome)) {
-							selettoreConfigurazionePerAzioni.setStaticInfo(valore);
+							selettoreConfigurazioneRegola.setTipoSelettore(TipoSelettore.toEnumConstant(valore, true));
 						}
 						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_PATTERN).equals(nome)) {
-							selettoreConfigurazionePerAzioni.setPattern(valore);
+							selettoreConfigurazioneRegola.setPattern(valore);
 						}
 						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_PREFIX).equals(nome)) {
-							selettoreConfigurazionePerAzioni.setPrefix(valore);
+							selettoreConfigurazioneRegola.setPrefix(valore);
 						}
 						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_SUFFIX).equals(nome)) {
-							selettoreConfigurazionePerAzioni.setSuffix(valore);
-						}
-						else if(nome.startsWith(prefixGruppo+Costanti.CONDITIONAL_GROUP_ACTION_NAME) ) {
-							String azione = valore;
-							if(!azioni.contains(azione)) {
-								azioni.add(azione);
-							}
+							selettoreConfigurazioneRegola.setSuffix(valore);
 						}
 					}catch(Exception e) {
 						throw new BehaviourException("Configurazione condizionale non corretta (proprietà:"+p.getNome()+" valore:'"+p.getValore()+"'): "+e.getMessage(),e);
@@ -605,7 +615,7 @@ public class ConditionalUtils  {
 					
 				}
 				
-				config.addActionConfig(nomeGruppoEsteso, selettoreConfigurazionePerAzioni, azioni);
+				config.addRegola(selettoreConfigurazioneRegola);
 				
 			}
 		}
@@ -641,45 +651,34 @@ public class ConditionalUtils  {
 			pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix()));
 		}
 		
-		if(configurazione.getGruppiConfigurazioneSelettoreCondizione()!=null && !configurazione.getGruppiConfigurazioneSelettoreCondizione().isEmpty()) {
-			int indexGruppo = 1;
-			for (String gruppo : configurazione.getGruppiConfigurazioneSelettoreCondizione()) {
+		if(configurazione.getRegole()!=null && !configurazione.getRegole().isEmpty()) {
+			int indexRegola = 1;
+			for (String nomeRegola : configurazione.getRegole()) {
 				
-				String prefixGruppo = Costanti.CONDITIONAL_GROUP+indexGruppo;
-				pa.getBehaviour().addProprieta(newP((prefixGruppo+Costanti.CONDITIONAL_GROUP_NAME),gruppo));
+				String prefixRegola = Costanti.CONDITIONAL_RULE+indexRegola;
+				pa.getBehaviour().addProprieta(newP((prefixRegola+Costanti.CONDITIONAL_RULE_NAME),nomeRegola));
 				
-				ConfigurazioneSelettoreCondizione selettore = configurazione.getConfigurazioneSelettoreCondizioneByGroupName(gruppo);
-				List<String> azioni = configurazione.getAzioniByGroupName(gruppo);
+				ConfigurazioneSelettoreCondizioneRegola regola = configurazione.getRegola(nomeRegola);
 				
-				if(selettore==null) {
-					throw new BehaviourException("Configurazione selettore condizione per il gruppo '"+gruppo+"' non fornita");
-				}
-				if(azioni==null || azioni.isEmpty()) {
-					throw new BehaviourException("Configurazione lista di azioni per il gruppo '"+gruppo+"' non fornita");
+				pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE),regola.getPatternOperazione()));
+				if(StringUtils.isNotEmpty(regola.getStaticInfo())) {
+					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_RULE_STATIC_INFO),regola.getStaticInfo()));
 				}
 				
-				String prefixGruppoAzione = prefixGruppo+Costanti.CONDITIONAL_GROUP_ACTION_NAME;
-				int indexAzione = 1;
-				for (String azione : azioni) {
-					pa.getBehaviour().addProprieta(newP((prefixGruppoAzione+indexAzione),azione));
-					indexAzione++;
+				if(regola.getTipoSelettore()!=null) {
+					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_TIPO_SELETTORE),regola.getTipoSelettore().getValue()));
+				}
+				if(StringUtils.isNotEmpty(regola.getPattern())) {
+					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_PATTERN),regola.getPattern()));
+				}
+				if(StringUtils.isNotEmpty(regola.getPrefix())) {
+					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_PREFIX),regola.getPrefix()));
+				}
+				if(StringUtils.isNotEmpty(regola.getSuffix())) {
+					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_SUFFIX), regola.getSuffix()));
 				}
 				
-				pa.getBehaviour().addProprieta(newP((prefixGruppo+"_"+Costanti.CONDITIONAL_TIPO_SELETTORE),selettore.getTipoSelettore().getValue()));
-				if(StringUtils.isNotEmpty(selettore.getStaticInfo())) {
-					pa.getBehaviour().addProprieta(newP((prefixGruppo+"_"+Costanti.CONDITIONAL_STATIC_INFO),selettore.getStaticInfo()));
-				}
-				if(StringUtils.isNotEmpty(selettore.getPattern())) {
-					pa.getBehaviour().addProprieta(newP((prefixGruppo+"_"+Costanti.CONDITIONAL_PATTERN),selettore.getPattern()));
-				}
-				if(StringUtils.isNotEmpty(selettore.getPrefix())) {
-					pa.getBehaviour().addProprieta(newP((prefixGruppo+"_"+Costanti.CONDITIONAL_PREFIX),selettore.getPrefix()));
-				}
-				if(StringUtils.isNotEmpty(selettore.getSuffix())) {
-					pa.getBehaviour().addProprieta(newP((prefixGruppo+"_"+Costanti.CONDITIONAL_SUFFIX), selettore.getSuffix()));
-				}
-				
-				indexGruppo++;
+				indexRegola++;
 			}
 		}
 		

@@ -21,8 +21,6 @@
  */
 package org.openspcoop2.pdd.core.behaviour.conditional;
 
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-
 /**
  * Costanti
  *
@@ -37,26 +35,23 @@ public class Costanti  {
 	public static final String CONDITIONAL_BY_FILTER = "c_by_filter"; // true/false
 	
 	public static final String CONDITIONAL_TIPO_SELETTORE = "c_selettore";
-	public static final String CONDITIONAL_STATIC_INFO = "c_static_info";
 	public static final String CONDITIONAL_PATTERN = "c_pattern";
 	public static final String CONDITIONAL_PREFIX = "c_prefix";
 	public static final String CONDITIONAL_SUFFIX = "c_suffix";
 	
-	public static final String CONDITIONAL_GROUP = CostantiConfigurazione.BEHAVIOUR_CONDITIONAL_GROUP;
-	public static final String CONDITIONAL_GROUP_NAME = CostantiConfigurazione.BEHAVIOUR_CONDITIONAL_GROUP_NAME;
-	public static final String CONDITIONAL_GROUP_ACTION_NAME = CostantiConfigurazione.BEHAVIOUR_CONDITIONAL_GROUP_ACTION_NAME; // alla fine avremo 1 proprieta per ogni azione ed e' più facile fare i vari controlli inUse.
+    public static final String CONDITIONAL_RULE = "c_rule_";
+	public static final String CONDITIONAL_RULE_NAME = "_name";
+	public static final String CONDITIONAL_RULE_PATTERN_OPERAZIONE = "pattern_operazione";
+	public static final String CONDITIONAL_RULE_STATIC_INFO = "static_info";
 	// Esempi:
 	/*
-	 * c_group_1_name=Prova Gruppo 1
-	 * c_group_1_c_by_filter=true
-	 * c_group_1_action_1=deleteStato
-	 * c_group_1_action_2=updateStato
+	 * c_rule_1_name=Prova Regola 1
+	 * c_rule_1_c_by_filter=true
+	 * c_rule_1_pattern_operazione=deleteStato
 	 * 
-	 * c_group_2_name=Prova Gruppo 2
-	 * c_group_2_c_by_filter=false
-	 * c_group_2_action_1=create
-	 * c_group_2_action_2=get
-	 * c_group_2_action_3=read
+	 * c_rule_2_name=Prova Regola 2
+	 * c_rule_2_c_by_filter=false
+	 * c_rule_2_pattern_operazione=^(?:azione1|get\.azione2)$
 	 * */
 	
 	public static final String CONDITIONAL_ABORT_TRANSACTION = "c_abort"; // true/false

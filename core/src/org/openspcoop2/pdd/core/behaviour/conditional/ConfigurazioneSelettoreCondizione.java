@@ -30,18 +30,11 @@ package org.openspcoop2.pdd.core.behaviour.conditional;
  */
 public class ConfigurazioneSelettoreCondizione {
 
-	private String staticInfo; // utilizzabile solamente per azioni specifiche.
 	private TipoSelettore tipoSelettore; // required se la proprietà selectionByFilter=true 
 	private String pattern; // exprRegular o xpath o jsonPath o template
 	private String prefix;
 	private String suffix;
 		
-	public String getStaticInfo() {
-		return this.staticInfo;
-	}
-	public void setStaticInfo(String staticInfo) {
-		this.staticInfo = staticInfo;
-	}
 	public TipoSelettore getTipoSelettore() {
 		return this.tipoSelettore;
 	}

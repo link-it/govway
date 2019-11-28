@@ -21,12 +21,14 @@
  */
 package org.openspcoop2.pdd.core.behaviour.conditional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
+import org.openspcoop2.utils.regexp.RegExpException;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 
 /**
  * ConfigurazioneCondizionale
@@ -39,8 +41,7 @@ public class ConfigurazioneCondizionale {
 
 	private boolean byFilter = true; 
 	private ConfigurazioneSelettoreCondizione defaultConfig;
-	private Map<String, ConfigurazioneSelettoreCondizione> actionConfigList = new HashMap<>();
-	private Map<String, List<String>> actionConfigList_azioni = new HashMap<>();
+	private Map<String, ConfigurazioneSelettoreCondizioneRegola> regolaList = new HashMap<>();
 	
 	private IdentificazioneFallitaConfigurazione condizioneNonIdentificata;
 	private IdentificazioneFallitaConfigurazione nessunConnettoreTrovato; 
@@ -59,87 +60,49 @@ public class ConfigurazioneCondizionale {
 		this.defaultConfig = defaultConfig;
 	}
 	
-	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, String azione) throws BehaviourException {
-		List<String> l = new ArrayList<String>();
-		l.add(azione);
-		this.addActionConfig(groupName, config, l);
-	}
-	public void addActionConfig(String groupName, ConfigurazioneSelettoreCondizione config, List<String> azioni) throws BehaviourException {
-		// check che non un'azione non sia già registrata
-		if(azioni==null || azioni.isEmpty()) {
-			throw new BehaviourException("Azioni non indicate");
+	public void addRegola(ConfigurazioneSelettoreCondizioneRegola config) throws BehaviourException {
+		// check che una regola non sia già registrata
+		if(config.getRegola()==null) {
+			throw new BehaviourException("Nome Regola non indicata");
 		}
-		if(!this.actionConfigList_azioni.isEmpty()) {
-			for (String azione : azioni) {
-				for (String groupNameGiaRegistrate: this.actionConfigList_azioni.keySet()) {
-					List<String> list = this.actionConfigList_azioni.get(groupNameGiaRegistrate);
-					if(list.contains(azione)) {
-						throw new BehaviourException("L'azione '"+azione+"' risulta già utilizzata nella configurazione relativa al gruppo '"+groupNameGiaRegistrate+"'");
-					}
+		if(!this.regolaList.isEmpty()) {
+			for (String nomeRegola : this.regolaList.keySet()) {
+				if(nomeRegola.equalsIgnoreCase(config.getRegola())) {
+					throw new BehaviourException("Esiste già una regola con nome '"+nomeRegola+"'");
 				}
 			}
 		}
-		this.actionConfigList.put(groupName, config);
-		this.actionConfigList_azioni.put(groupName, azioni);
+		this.regolaList.put(config.getRegola(), config);
 	}
 	
-	public ConfigurazioneSelettoreCondizione getConfigurazioneSelettoreCondizioneByAzione(String azione) {
-		if(!this.actionConfigList_azioni.isEmpty()) {
-			for (String groupNameGiaRegistrate: this.actionConfigList_azioni.keySet()) {
-				List<String> list = this.actionConfigList_azioni.get(groupNameGiaRegistrate);
-				if(list.contains(azione)) {
-					return this.actionConfigList.get(groupNameGiaRegistrate);
+	public ConfigurazioneSelettoreCondizioneRegola getRegolaByOperazione(String operazione) throws RegExpException {
+		if(!this.regolaList.isEmpty()) {
+			for (String nomeRegola: this.regolaList.keySet()) {
+				ConfigurazioneSelettoreCondizioneRegola config = this.regolaList.get(nomeRegola);
+				boolean match = false;
+				try {
+					match = RegularExpressionEngine.isMatch(operazione, config.getPatternOperazione());
+				}catch(RegExpNotFoundException notFound) {}
+				if(match) {
+					return config;
 				}
 			}
 		}
 		return null;
 	}
-	public ConfigurazioneSelettoreCondizione getConfigurazioneSelettoreCondizioneByGroupName(String groupName) {
-		return this.actionConfigList.get(groupName);
+	public String getNomeRegolaByOperazione(String operazione) throws RegExpException {
+		ConfigurazioneSelettoreCondizioneRegola c = this.getRegolaByOperazione(operazione);
+		return c!=null ? c.getRegola() : null;
 	}
-	public List<String> getAzioniByGroupName(String groupName) {
-		return this.actionConfigList_azioni.get(groupName);
+	public ConfigurazioneSelettoreCondizioneRegola getRegola(String nomeRegola) {
+		return this.regolaList.get(nomeRegola);
 	}
-	
-	public String getGruppoByAzione(String azione) {
-		if(!this.actionConfigList_azioni.isEmpty()) {
-			for (String groupNameGiaRegistrate: this.actionConfigList_azioni.keySet()) {
-				List<String> list = this.actionConfigList_azioni.get(groupNameGiaRegistrate);
-				if(list.contains(azione)) {
-					return groupNameGiaRegistrate;
-				}
-			}
-		}
-		return null;
-	}
-	public List<String> getGruppiConfigurazioneSelettoreCondizione(){
-		List<String> l = new ArrayList<>();
-		l.addAll(this.actionConfigList.keySet());
-		return l;
+	public Set<String> getRegole(){
+		return this.regolaList.keySet();
 	}
 	
-	public void removeAzioneConfigurazioneSelettoreCondizione(String azione){
-		if(!this.actionConfigList_azioni.isEmpty()) {
-			for (String groupNameGiaRegistrate: this.actionConfigList_azioni.keySet()) {
-				List<String> list = this.actionConfigList_azioni.get(groupNameGiaRegistrate);
-				if(list.contains(azione)) {
-					for (int i = 0; i < list.size(); i++) {
-						if(list.get(i).equals(azione)) {
-							list.remove(i);
-							break;
-						}
-					}
-					if(list.isEmpty()) {
-						this.actionConfigList.remove(groupNameGiaRegistrate);
-						this.actionConfigList_azioni.remove(groupNameGiaRegistrate);
-					}
-				}
-			}
-		}
-	}
-	public void removeGruppoConfigurazioneSelettoreCondizione(String groupName){
-		this.actionConfigList.remove(groupName);
-		this.actionConfigList_azioni.remove(groupName);
+	public void removeRegola(String nomeRegola){
+		this.regolaList.remove(nomeRegola);
 	}
 	
 	public IdentificazioneFallitaConfigurazione getCondizioneNonIdentificata() {

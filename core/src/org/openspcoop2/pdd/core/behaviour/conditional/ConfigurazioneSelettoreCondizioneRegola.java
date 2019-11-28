@@ -21,41 +21,24 @@
  */
 package org.openspcoop2.pdd.core.behaviour.conditional;
 
-import java.util.List;
-
-import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
-
 /**
- * ConditionalFilterResult
+ * ConfigurazioneSelettoreCondizione
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class ConditionalFilterResult  {
+public class ConfigurazioneSelettoreCondizioneRegola extends ConfigurazioneSelettoreCondizione {
+
+	private String regola;
+	private String patternOperazione; // exprRegulare (Per far matchare più azioni '^(?:azione1|get\.azione2)$')
+	private String staticInfo; 
 	
-	private boolean byFilter = true;
-	private String regola = null;
-	private String condition;
-	private List<PortaApplicativaServizioApplicativo> listServiziApplicativi;
-	
-	public boolean isByFilter() {
-		return this.byFilter;
+	public String getStaticInfo() {
+		return this.staticInfo;
 	}
-	public void setByFilter(boolean byFilter) {
-		this.byFilter = byFilter;
-	}
-	public String getCondition() {
-		return this.condition;
-	}
-	public void setCondition(String condition) {
-		this.condition = condition;
-	}
-	public List<PortaApplicativaServizioApplicativo> getListServiziApplicativi() {
-		return this.listServiziApplicativi;
-	}
-	public void setListServiziApplicativi(List<PortaApplicativaServizioApplicativo> listServiziApplicativi) {
-		this.listServiziApplicativi = listServiziApplicativi;
+	public void setStaticInfo(String staticInfo) {
+		this.staticInfo = staticInfo;
 	}
 	public String getRegola() {
 		return this.regola;
@@ -63,4 +46,12 @@ public class ConditionalFilterResult  {
 	public void setRegola(String regola) {
 		this.regola = regola;
 	}
+	public String getPatternOperazione() {
+		return this.patternOperazione;
+	}
+	public void setPatternOperazione(String patternOperazione) {
+		this.patternOperazione = patternOperazione;
+	}
+
+	
 }

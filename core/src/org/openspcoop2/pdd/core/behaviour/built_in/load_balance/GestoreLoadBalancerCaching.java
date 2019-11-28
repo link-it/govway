@@ -347,8 +347,8 @@ public class GestoreLoadBalancerCaching {
     			else {
     				keyCache = keyCache +" [Conditional-By-Name] ";
     			}
-    			if(filterResult.getNomeGruppoAzioni()!=null) {
-    				keyCache = keyCache +"[Gruppo "+filterResult.getNomeGruppoAzioni()+"] ";
+    			if(filterResult.getRegola()!=null) {
+    				keyCache = keyCache +"[Regola "+filterResult.getRegola()+"] ";
     			}
     			if(filterResult.getCondition()!=null) {
     				keyCache = keyCache +" "+filterResult.getCondition();

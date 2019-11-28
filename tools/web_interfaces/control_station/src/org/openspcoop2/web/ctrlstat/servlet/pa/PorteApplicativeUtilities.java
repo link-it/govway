@@ -27,8 +27,6 @@ import java.util.List;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
-import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
-import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.slf4j.Logger;
 
@@ -80,30 +78,14 @@ public class PorteApplicativeUtilities {
 			}
 			else {
 				
-				boolean usedInConnettoreMultiplo = false;
-				if(pa.getBehaviour()!=null && pa.getBehaviour().sizeProprietaList()>0) {
-					if(ConditionalUtils.isConfigurazioneCondizionale(pa, log)) {
-						ConfigurazioneCondizionale cc = ConditionalUtils.read(pa, log);
-						if(cc.getConfigurazioneSelettoreCondizioneByAzione(azione)!=null) {
-							usedInConnettoreMultiplo = true;
-						}
+				for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
+					String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
+					if (azione.equals(azioneDelegata)) {
+						pa.getAzione().removeAzioneDelegata(j);
+						break;
 					}
 				}
-				if(usedInConnettoreMultiplo) {
-					if(bfConnettoreMultiplo.length()>0) {
-						bfConnettoreMultiplo.append(",");
-					}
-					bfConnettoreMultiplo.append(azione);
-				}
-				else {
-					for (int j = 0; j < pa.getAzione().sizeAzioneDelegataList(); j++) {
-						String azioneDelegata = pa.getAzione().getAzioneDelegata(j);
-						if (azione.equals(azioneDelegata)) {
-							pa.getAzione().removeAzioneDelegata(j);
-							break;
-						}
-					}
-				}
+				
 			}
 		}
 		
