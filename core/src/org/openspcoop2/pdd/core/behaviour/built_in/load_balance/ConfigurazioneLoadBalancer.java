@@ -29,6 +29,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -44,10 +45,7 @@ import org.slf4j.Logger;
 public class ConfigurazioneLoadBalancer  {
 
 	public static void addLoadBalancerType(PortaApplicativaBehaviour paBehaviour, String type) {
-		Proprieta p = new Proprieta();
-		p.setNome(Costanti.LOAD_BALANCER_TYPE);
-		p.setValore(type);
-		paBehaviour.addProprieta(p);
+		BehaviourPropertiesUtils.addProprieta(paBehaviour, Costanti.LOAD_BALANCER_TYPE, type);
 	}
 	public static String readLoadBalancerType(PortaApplicativaBehaviour paBehaviour) {
 		if(paBehaviour!=null && paBehaviour.sizeProprietaList()>0) {
@@ -62,10 +60,7 @@ public class ConfigurazioneLoadBalancer  {
 	
 	
 	public static void addLoadBalancerWeight(PortaApplicativaServizioApplicativo paSA, String weight) {
-		Proprieta p = new Proprieta();
-		p.setNome(Costanti.LOAD_BALANCER_WEIGHT);
-		p.setValore(weight);
-		paSA.getDatiConnettore().addProprieta(p);
+		BehaviourPropertiesUtils.addProprieta(paSA.getDatiConnettore(), Costanti.LOAD_BALANCER_WEIGHT, weight);
 	}
 	public static String readLoadBalancerWeight(PortaApplicativaServizioApplicativo paSA) {
 		if(paSA!=null && paSA.getDatiConnettore()!=null && paSA.getDatiConnettore().sizeProprietaList()>0) {

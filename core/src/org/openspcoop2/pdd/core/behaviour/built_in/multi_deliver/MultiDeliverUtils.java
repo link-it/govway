@@ -26,6 +26,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.slf4j.Logger;
 
 /**
@@ -95,16 +96,16 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(StringUtils.isNotEmpty(configurazione.getTransazioneSincrona_nomeConnettore())) {
-			pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_CONNETTORE_API, configurazione.getTransazioneSincrona_nomeConnettore()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_CONNETTORE_API, configurazione.getTransazioneSincrona_nomeConnettore());
 		}
 		
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO, configurazione.isNotificheByEsito()+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO, configurazione.isNotificheByEsito()+"");
 				
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK, configurazione.isNotificheByEsito_ok()+""));
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT, configurazione.isNotificheByEsito_fault()+""));
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA, configurazione.isNotificheByEsito_erroriConsegna()+""));
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE, configurazione.isNotificheByEsito_richiesteScartate()+""));
-		pa.getBehaviour().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO, configurazione.isNotificheByEsito_erroriProcessamento()+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_OK, configurazione.isNotificheByEsito_ok()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_FAULT, configurazione.isNotificheByEsito_fault()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_CONSEGNA, configurazione.isNotificheByEsito_erroriConsegna()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_RICHIESTA_SCARTATE, configurazione.isNotificheByEsito_richiesteScartate()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.MULTI_DELIVER_NOTIFICHE_BY_ESITO_ERRORI_PROCESSAMENTO, configurazione.isNotificheByEsito_erroriProcessamento()+"");
 	}
 	
 	
@@ -242,24 +243,24 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(configurazione.getCadenzaRispedizione()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_CADENZA, configurazione.getCadenzaRispedizione().intValue()+""));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_CADENZA, configurazione.getCadenzaRispedizione().intValue()+"");
 		}
 		
 		if(configurazione.getGestioneTrasporto2xx()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX, configurazione.getGestioneTrasporto2xx().getValue()));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX, configurazione.getGestioneTrasporto2xx().getValue());
 			switch (configurazione.getGestioneTrasporto2xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto2xx_leftInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto2xx_leftInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto2xx_leftInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[2xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto2xx_rightInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto2xx_rightInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto2xx_rightInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[2xx] Right Interval undefined");
@@ -274,7 +275,7 @@ public class MultiDeliverUtils  {
 						}
 						bf.append(code);
 					}
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_CODE_LIST, bf.toString()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_CODE_LIST, bf.toString());
 				}
 				else {
 					throw new BehaviourException("[2xx] Code undefined");
@@ -284,20 +285,20 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(configurazione.getGestioneTrasporto3xx()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX, configurazione.getGestioneTrasporto3xx().getValue()));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX, configurazione.getGestioneTrasporto3xx().getValue());
 			switch (configurazione.getGestioneTrasporto3xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto3xx_leftInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto3xx_leftInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto3xx_leftInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[3xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto3xx_rightInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto3xx_rightInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto3xx_rightInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[3xx] Right Interval undefined");
@@ -312,7 +313,7 @@ public class MultiDeliverUtils  {
 						}
 						bf.append(code);
 					}
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_CODE_LIST, bf.toString()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_CODE_LIST, bf.toString());
 				}
 				else {
 					throw new BehaviourException("[3xx] Code undefined");
@@ -322,20 +323,20 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(configurazione.getGestioneTrasporto4xx()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX, configurazione.getGestioneTrasporto4xx().getValue()));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX, configurazione.getGestioneTrasporto4xx().getValue());
 			switch (configurazione.getGestioneTrasporto4xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto4xx_leftInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto4xx_leftInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto4xx_leftInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[4xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto4xx_rightInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto4xx_rightInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto4xx_rightInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[4xx] Right Interval undefined");
@@ -350,7 +351,7 @@ public class MultiDeliverUtils  {
 						}
 						bf.append(code);
 					}
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_CODE_LIST, bf.toString()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_CODE_LIST, bf.toString());
 				}
 				else {
 					throw new BehaviourException("[4xx] Code undefined");
@@ -360,20 +361,20 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(configurazione.getGestioneTrasporto5xx()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX, configurazione.getGestioneTrasporto5xx().getValue()));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX, configurazione.getGestioneTrasporto5xx().getValue());
 			switch (configurazione.getGestioneTrasporto5xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
 			case INTERVALLO_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto5xx_leftInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto5xx_leftInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_LEFT_INTERVAL, configurazione.getGestioneTrasporto5xx_leftInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[5xx] Left Interval undefined");
 				}
 				if(configurazione.getGestioneTrasporto5xx_rightInterval()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto5xx_rightInterval().intValue()+""));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_RIGHT_INTERVAL, configurazione.getGestioneTrasporto5xx_rightInterval().intValue()+"");
 				}
 				else {
 					throw new BehaviourException("[5xx] Right Interval undefined");
@@ -388,7 +389,7 @@ public class MultiDeliverUtils  {
 						}
 						bf.append(code);
 					}
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_CODE_LIST, bf.toString()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_CODE_LIST, bf.toString());
 				}
 				else {
 					throw new BehaviourException("[5xx] Code undefined");
@@ -398,34 +399,25 @@ public class MultiDeliverUtils  {
 		}
 		
 		if(configurazione.getFault()!=null) {
-			pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT, configurazione.getFault().getValue()));
+			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT, configurazione.getFault().getValue());
 			switch (configurazione.getFault()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
 				break;
 			case CUSTOM:
 				if(configurazione.getFaultCode()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_CODE, configurazione.getFaultCode()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_CODE, configurazione.getFaultCode());
 				}
 				if(configurazione.getFaultActor()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_ACTOR, configurazione.getFaultActor()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_ACTOR, configurazione.getFaultActor());
 				}
 				if(configurazione.getFaultMessage()!=null) {
-					pasa.getDatiConnettore().addProprieta(newP(Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_MESSAGE, configurazione.getFaultMessage()));
+					BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_MESSAGE, configurazione.getFaultMessage());
 				}
 				break;
 			}
 		}
 	}
 	
-	
-	
-	
-	
-	private static Proprieta newP(String nome, String valore) {
-		Proprieta p = new Proprieta();
-		p.setNome(nome);
-		p.setValore(valore);
-		return p;
-	}
+
 }

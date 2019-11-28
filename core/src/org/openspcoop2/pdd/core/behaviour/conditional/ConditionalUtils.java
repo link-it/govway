@@ -40,6 +40,7 @@ import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -633,22 +634,22 @@ public class ConditionalUtils  {
 		if(configurazione==null) {
 			throw new BehaviourException("Configurazione condizionale non fornita");
 		}
-		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_ENABLED, true+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_ENABLED, true+"");
 		
-		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_BY_FILTER, configurazione.isByFilter()+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_BY_FILTER, configurazione.isByFilter()+"");
 				
 		if(configurazione.getDefaultConfig()==null) {
 			throw new BehaviourException("Configurazione selettore condizione di default non fornita");
 		}
-		pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_TIPO_SELETTORE, configurazione.getDefaultConfig().getTipoSelettore().getValue()));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_TIPO_SELETTORE, configurazione.getDefaultConfig().getTipoSelettore().getValue());
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getPattern())) {
-			pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_PATTERN, configurazione.getDefaultConfig().getPattern()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PATTERN, configurazione.getDefaultConfig().getPattern());
 		}
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getPrefix())) {
-			pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_PREFIX, configurazione.getDefaultConfig().getPrefix()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PREFIX, configurazione.getDefaultConfig().getPrefix());
 		}
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getSuffix())) {
-			pa.getBehaviour().addProprieta(newP(Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix());
 		}
 		
 		if(configurazione.getRegole()!=null && !configurazione.getRegole().isEmpty()) {
@@ -656,26 +657,26 @@ public class ConditionalUtils  {
 			for (String nomeRegola : configurazione.getRegole()) {
 				
 				String prefixRegola = Costanti.CONDITIONAL_RULE+indexRegola;
-				pa.getBehaviour().addProprieta(newP((prefixRegola+Costanti.CONDITIONAL_RULE_NAME),nomeRegola));
+				BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+Costanti.CONDITIONAL_RULE_NAME),nomeRegola);
 				
 				ConfigurazioneSelettoreCondizioneRegola regola = configurazione.getRegola(nomeRegola);
 				
-				pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE),regola.getPatternOperazione()));
+				BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE),regola.getPatternOperazione());
 				if(StringUtils.isNotEmpty(regola.getStaticInfo())) {
-					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_RULE_STATIC_INFO),regola.getStaticInfo()));
+					BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_RULE_STATIC_INFO),regola.getStaticInfo());
 				}
 				
 				if(regola.getTipoSelettore()!=null) {
-					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_TIPO_SELETTORE),regola.getTipoSelettore().getValue()));
+					BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_TIPO_SELETTORE),regola.getTipoSelettore().getValue());
 				}
 				if(StringUtils.isNotEmpty(regola.getPattern())) {
-					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_PATTERN),regola.getPattern()));
+					BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_PATTERN),regola.getPattern());
 				}
 				if(StringUtils.isNotEmpty(regola.getPrefix())) {
-					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_PREFIX),regola.getPrefix()));
+					BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_PREFIX),regola.getPrefix());
 				}
 				if(StringUtils.isNotEmpty(regola.getSuffix())) {
-					pa.getBehaviour().addProprieta(newP((prefixRegola+"_"+Costanti.CONDITIONAL_SUFFIX), regola.getSuffix()));
+					BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+"_"+Costanti.CONDITIONAL_SUFFIX), regola.getSuffix());
 				}
 				
 				indexRegola++;
@@ -685,36 +686,30 @@ public class ConditionalUtils  {
 		if(configurazione.getCondizioneNonIdentificata()==null) {
 			throw new BehaviourException("Configurazione 'condizione non identificata' non fornita");
 		}
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_ABORT_TRANSACTION),
-				configurazione.getCondizioneNonIdentificata().isAbortTransaction()+""));
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_INFO),
-				configurazione.getCondizioneNonIdentificata().isEmitDiagnosticInfo()+""));
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_ERROR),
-				configurazione.getCondizioneNonIdentificata().isEmitDiagnosticError()+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_ABORT_TRANSACTION),
+				configurazione.getCondizioneNonIdentificata().isAbortTransaction()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_INFO),
+				configurazione.getCondizioneNonIdentificata().isEmitDiagnosticInfo()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_ERROR),
+				configurazione.getCondizioneNonIdentificata().isEmitDiagnosticError()+"");
 		if(StringUtils.isNotEmpty(configurazione.getCondizioneNonIdentificata().getNomeConnettore())) {
-			pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_NOME_CONNETTORE),
-					configurazione.getCondizioneNonIdentificata().getNomeConnettore()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA+Costanti.CONDITIONAL_NOME_CONNETTORE),
+					configurazione.getCondizioneNonIdentificata().getNomeConnettore());
 		}
 		
 		if(configurazione.getNessunConnettoreTrovato()==null) {
 			throw new BehaviourException("Configurazione 'nessun connettore trovato' non fornita");
 		}
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_ABORT_TRANSACTION),
-				configurazione.getNessunConnettoreTrovato().isAbortTransaction()+""));
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_INFO),
-				configurazione.getNessunConnettoreTrovato().isEmitDiagnosticInfo()+""));
-		pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_ERROR),
-				configurazione.getNessunConnettoreTrovato().isEmitDiagnosticError()+""));
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_ABORT_TRANSACTION),
+				configurazione.getNessunConnettoreTrovato().isAbortTransaction()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_INFO),
+				configurazione.getNessunConnettoreTrovato().isEmitDiagnosticInfo()+"");
+		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_EMIT_DIAGNOSTIC_ERROR),
+				configurazione.getNessunConnettoreTrovato().isEmitDiagnosticError()+"");
 		if(StringUtils.isNotEmpty(configurazione.getNessunConnettoreTrovato().getNomeConnettore())) {
-			pa.getBehaviour().addProprieta(newP((Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_NOME_CONNETTORE),
-					configurazione.getNessunConnettoreTrovato().getNomeConnettore()));
+			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(Costanti.CONDITIONAL_NESSUN_CONNETTORE_TROVATO+Costanti.CONDITIONAL_NOME_CONNETTORE),
+					configurazione.getNessunConnettoreTrovato().getNomeConnettore());
 		}
 	}
 	
-	private static Proprieta newP(String nome, String valore) {
-		Proprieta p = new Proprieta();
-		p.setNome(nome);
-		p.setValore(valore);
-		return p;
-	}
 }
