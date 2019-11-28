@@ -83,7 +83,7 @@ public class DBOggettiInUsoUtils  {
 			throw new UtilsException(se.getMessage(),se);
 		}
 	}
-	private static String formatList(List<String> whereIsInUso, String separator) {
+	public static String formatList(List<String> whereIsInUso, String separator) {
 		StringBuilder sb = new StringBuilder();
 		for (String v : whereIsInUso) {
 			sb.append(separator);

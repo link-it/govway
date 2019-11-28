@@ -460,7 +460,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			lstParam.add(new Parameter(labelPerPorta,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
 
 			// Label diversa in base all'operazione
-			String labelPagina = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
+			String oldNomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
+			String labelPagina = oldNomeConnettore;
 
 
 			String visualizzaDatiGenerali = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_DATI_GENERALI);
@@ -481,7 +482,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				ServletUtils.setPageDataTitle(pd, lstParam);
 
 				if(nomeConnettore == null) {
-					nomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
+					nomeConnettore = oldNomeConnettore;
 					descrizioneConnettore = oldDatiConnettore != null ? oldDatiConnettore.getDescrizione() : "";
 					filtriConnettore = "";
 					if(oldDatiConnettore != null) {
@@ -1010,7 +1011,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 			// Controlli sui campi immessi 
 			boolean isOk = porteApplicativeHelper.connettoriMultipliCheckData(TipoOperazione.CHANGE, pa, beaBehaviourType, nomeSAConnettore,
-					porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA), nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore);
+					oldNomeConnettore, nomeConnettore, descrizioneConnettore, statoConnettore, filtriConnettore,  visualizzaDatiGenerali, visualizzaDescrizione, visualizzaFiltri, visualizzaConnettore);
 
 			if(isOk) {
 				isOk = porteApplicativeHelper.endPointCheckData(protocollo, true,
@@ -1134,23 +1135,76 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			}
 
 			PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
-			
+
 			if(datiConnettore == null) { // succede solo se e' la prima volta che modifico la configurazione di default
 				datiConnettore = new PortaApplicativaServizioApplicativoConnettore();
 				datiConnettore.setNome(CostantiControlStation.LABEL_DEFAULT);
 			}
-			
+
 			paSA.setDatiConnettore(datiConnettore);
-			
+
 			boolean isDefault = datiConnettore != null ? !datiConnettore.isNotifica() : true;
 
 			if(visualizzaSezioneDatiGenerali) {
 				datiConnettore.setNome(nomeConnettore);
-				// TODO togliere
-				if(statoConnettore.equals(StatoFunzionalita.ABILITATO.getValue()))
-					datiConnettore.setStato(StatoFunzionalita.ABILITATO);
-				else 
-					datiConnettore.setStato(StatoFunzionalita.DISABILITATO);
+
+				if(!nomeConnettore.equals(oldNomeConnettore)) {
+					if(pa.getBehaviour() != null) {
+						
+						BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+
+						boolean consegnaCondizionale = false;
+						if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
+							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
+
+							org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+
+							if(configurazioneMultiDeliver != null) {
+								if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
+										// modifica riferimento
+										configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
+									}
+								}
+							}
+
+
+							if(consegnaCondizionale) {
+								boolean save = false;
+								org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
+										org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+
+								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
+										configurazioneCondizionale.getCondizioneNonIdentificata();
+
+								if(condizioneNonIdentificata.getNomeConnettore() != null) {
+									if(condizioneNonIdentificata.getNomeConnettore().equals(oldNomeConnettore)) {
+										// modifica riferimento
+										condizioneNonIdentificata.setNomeConnettore(nomeConnettore);
+										save = true;
+									}
+								}
+
+								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
+										configurazioneCondizionale.getNessunConnettoreTrovato();
+
+								if(connettoreNonTrovato.getNomeConnettore() != null) {
+									if(connettoreNonTrovato.getNomeConnettore().equals(oldNomeConnettore)) {
+										// modifica riferimento
+										connettoreNonTrovato.setNomeConnettore(nomeConnettore);
+										save = true;
+									}
+								}
+
+								if(save) {
+									org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
+								}
+							}
+						}
+					}
+				}
 			}
 
 			if(visualizzaSezioneDescrizione)
@@ -1233,9 +1287,9 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					} else {
 						// se sono nella configurazione di default devo ripristinare la situazione precedente 
 						if(pa.getServizioApplicativoDefault() != null) {
-							
+
 							String oldServizioApplicativoDefault = pa.getServizioApplicativoDefault();
-							
+
 							// prelevo l'associazione con il vecchio servizio applicativo server
 							PortaApplicativaServizioApplicativo paSAtmp = null;
 							for (PortaApplicativaServizioApplicativo paSA2 : pa.getServizioApplicativoList()) {
@@ -1244,21 +1298,21 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 									break;
 								}
 							}
-		
+
 							if(paSAtmp!= null) {
 								// se ho modificato il server che sto utilizzando lo rimuovo
 								if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
 									pa.getServizioApplicativoList().remove(paSAtmp); 	
 								}
 							}
-		
+
 							paSA.setNome(oldServizioApplicativoDefault);
-		//					paSA.setNome(pa.getNome());
+							//					paSA.setNome(pa.getNome());
 							pa.getServizioApplicativoList().add(paSA);
 							pa.setServizioApplicativoDefault(null);
-		
+
 							porteApplicativeHelper.impostaSADefaultAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(idAsps, pa, sa, listaOggettiDaModificare);
-							
+
 							// rileggo la vecchia configurazione dal db di default
 							idSA = new IDServizioApplicativo();
 							idSA.setNome(oldServizioApplicativoDefault);
@@ -1272,8 +1326,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							cis = is.getCredenziali();
 							connis = is.getConnettore();
 						}
-						
-						
+
+
 					}
 
 					if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){

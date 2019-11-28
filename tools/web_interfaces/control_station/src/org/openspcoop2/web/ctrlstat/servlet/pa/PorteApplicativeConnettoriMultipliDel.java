@@ -42,6 +42,8 @@ import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
@@ -99,7 +101,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			// while (objTok.hasMoreElements()) {
 			// idToRemove[k++] = Integer.parseInt(objTok.nextToken());
 			// }
-			
+
 			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
 			if(StringUtils.isNotEmpty(idConnTab)) {
 				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
@@ -117,34 +119,141 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 			boolean eseguiOperazione = true;
 
-			int numeroAbilitati = 0;
+			boolean connettoreUtilizzatiConfig = false;
+			List<String> messaggiSezioniConnettore = new ArrayList<String>();
 			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
 				PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
+				String nomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
 
-				boolean toDel = false;
 				for (int i = 0; i < idsToRemove.size(); i++) {
 					nome = idsToRemove.get(i);
 					if (nome.equals(paSA.getNome())) {
-						toDel = true;
+						if(pa.getBehaviour() != null) {
+							boolean connettoreInUso = false;
+							List<String> titoliSezioniAggiornate = new ArrayList<String>();
+							BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+
+							boolean consegnaCondizionale = false;
+							if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
+								consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
+
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+
+								if(configurazioneMultiDeliver != null) {
+									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+											// MESSAGGIO!
+											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE 
+													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
+											connettoreInUso = true;
+										}
+									}
+								}
+
+
+								if(consegnaCondizionale) {
+									org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
+											org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+
+									org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
+											configurazioneCondizionale.getCondizioneNonIdentificata();
+
+									if(condizioneNonIdentificata.getNomeConnettore() != null) {
+										if(condizioneNonIdentificata.getNomeConnettore().equals(nomeConnettore)) {
+											// MESSAGGIO!
+
+											titoliSezioniAggiornate.add(
+
+													PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
+													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA);
+											connettoreInUso = true;
+										}
+									}
+
+									org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
+											configurazioneCondizionale.getNessunConnettoreTrovato();
+
+									if(connettoreNonTrovato.getNomeConnettore() != null) {
+										if(connettoreNonTrovato.getNomeConnettore().equals(nomeConnettore)) {
+											// MESSAGGIO!
+											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
+													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO);
+											connettoreInUso = true;
+										}
+									}
+								}
+
+								if(connettoreInUso) {
+									StringBuilder sbMsg = new StringBuilder();
+									if(idsToRemove.size() > 1) {
+										sbMsg.append(nomeConnettore).append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+									}
+									
+									sbMsg.append(DBOggettiInUsoUtils.formatList(titoliSezioniAggiornate, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+									messaggiSezioniConnettore.add(sbMsg.toString());
+									connettoreUtilizzatiConfig = true;
+								}
+
+							}
+						}
 						break;
+					}
+				} // end for elementi selezionati
+			} // end for tutti i pasa
+
+			StringBuilder sbErrore = new StringBuilder();
+			if(connettoreUtilizzatiConfig) {
+				if(idsToRemove.size() > 1) {
+					sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_UTILIZZATI_IN_CONFIGURAZIONE);
+				} else {
+					sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE);
+				}
+				sbErrore.append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+				for (String s : messaggiSezioniConnettore) {
+					sbErrore.append(s);
+				}
+
+				eseguiOperazione = false;
+			}
+
+			// se non devo visualizzare il messaggio di errore procedo ai controlli successivi 
+			if(!connettoreUtilizzatiConfig) {
+				int numeroAbilitati = 0;
+				for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+					PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
+
+					boolean toDel = false;
+					for (int i = 0; i < idsToRemove.size(); i++) {
+						nome = idsToRemove.get(i);
+						if (nome.equals(paSA.getNome())) {
+							toDel = true;
+							break;
+						}
+					}
+
+					if(!toDel) {
+						boolean abilitato = paSA.getDatiConnettore() != null ? paSA.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+
+						if(abilitato)
+							numeroAbilitati ++;
 					}
 				}
 
-				if(!toDel) {
-					boolean abilitato = paSA.getDatiConnettore()	!= null ? paSA.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
 
-					if(abilitato)
-						numeroAbilitati ++;
+				if(numeroAbilitati < 1) {
+					eseguiOperazione = false;
+					if(idsToRemove.size() > 1) {
+						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO);
+					} else {
+						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO);
+					}
 				}
-			}
-
-			if(numeroAbilitati < 1) {
-				eseguiOperazione = false;
 			}
 
 			if(!eseguiOperazione) {
 				if(actionConferma == null) {
-					String messaggio =PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO;
+					String messaggio = sbErrore.toString();
 					String title = "Attenzione";
 					String[][] bottoni = { 
 							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 
@@ -157,6 +266,7 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 					pd.setMessage(messaggio, title, MessageType.CONFIRM);
 				}
 			}
+
 
 			if(eseguiOperazione) {
 				for (int i = 0; i < idsToRemove.size(); i++) {

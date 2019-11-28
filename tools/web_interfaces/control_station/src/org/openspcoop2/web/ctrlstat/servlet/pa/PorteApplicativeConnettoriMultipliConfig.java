@@ -148,7 +148,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			
 			String servletRegolePerAzioni = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_CONDIZIONI_AZIONI_LIST;
 			List<Parameter> listaParametriServletRegolePerAzioni = new ArrayList<>();
-			int numeroRegolePerAzioni = 0; // TODO
+			int numeroRegolePerAzioni = 0;
 			
 			String condizioneNonIdentificataAbortTransactionS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_ABORT_TRANSACTION);
 			boolean condizioneNonIdentificataAbortTransaction = ServletUtils.isCheckBoxEnabled(condizioneNonIdentificataAbortTransactionS);
@@ -209,6 +209,13 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				if(portaApplicativa.sizeServizioApplicativoList() > 1)
 					modificaStatoAbilitata = false;
+				
+				// TODO attendere decisione regole su azioni.
+//				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
+//					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
+//					numeroRegolePerAzioni = configurazioneCondizionale.getGruppiConfigurazioneSelettoreCondizione().size();
+//					visualizzaLinkRegolePerAzioni = true;
+//				}
 			}
 
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();

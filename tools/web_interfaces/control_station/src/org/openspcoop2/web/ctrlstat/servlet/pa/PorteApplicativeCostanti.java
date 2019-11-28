@@ -1140,6 +1140,10 @@ public class PorteApplicativeCostanti {
 	
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile disabilitare il connettore ''{0}'', deve rimanare almento un connettore abilitato";
 	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile eliminare i connettori selezionati.<br/>Deve rimanare almento un connettore abilitato";
+	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile eliminare il connettore selezionato.<br/>Deve rimanare almento un connettore abilitato";
+	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile eliminare i connettori selezionati.<br/>Sono utilizzati all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";
+	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile eliminare il connettore selezionato.<br/>&Egrave; utilizzato all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";
+	
 
 	/* MESSAGGI ERRORE */
 	public static final String MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX = "Dati incompleti. &Egrave; necessario indicare: {0}"; 

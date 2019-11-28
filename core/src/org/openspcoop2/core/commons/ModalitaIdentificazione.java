@@ -36,6 +36,7 @@ import java.util.List;
 
 public enum ModalitaIdentificazione {
 
+	STATIC("Informazione Statica", "Nome"),
 	PROTOCOL_BASED("Profilo di Interoperabilità", null),
 	REGISTER_BASED("Registro GovWay", null),
 	HEADER_BASED("Header HTTP", "Nome"),
