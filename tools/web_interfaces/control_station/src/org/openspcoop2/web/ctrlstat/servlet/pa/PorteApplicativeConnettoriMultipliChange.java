@@ -1162,21 +1162,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-							MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-							boolean isSoapOneWay = porteApplicativeHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+							if( behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
 
-							if(behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
-								if(!isSoapOneWay) {
-									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
-
-									if(configurazioneMultiDeliver != null) {
-										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
-											if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
-												// modifica riferimento
-												configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-												org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
-											}
+								if(configurazioneMultiDeliver != null) {
+									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
+											// modifica riferimento
+											configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
+											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
 										}
 									}
 								}

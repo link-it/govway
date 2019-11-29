@@ -7047,7 +7047,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// validazione della sezione gestione notifiche
 			String connettoreImplementaAPI = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
-			if(!isSoapOneWay) {
+			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 				// select list con strategia
 				if (StringUtils.isEmpty(connettoreImplementaAPI)) {
 					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API+" non pu&ograve; essere vuoto");
@@ -7134,7 +7134,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							}
 						}
 						
-						if(!isSoapOneWay) {
+						if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreImplementaAPI.equals(condizioneNonIdentificataConnettore)) {
 								this.pd.setMessage("Il campo '"+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +"' nella sezione '"+
@@ -7166,7 +7166,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							}
 						}
 						
-						if(!isSoapOneWay) {
+						if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							if(connettoreImplementaAPI.equals(connettoreNonTrovatoConnettore)) {
 								this.pd.setMessage("Il campo '"+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +"' nella sezione '"+
@@ -8988,22 +8988,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 							|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 						consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
-						boolean isSoapOneWay = this.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
-
-						if(behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
-							if(!isSoapOneWay) {
+						if(behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
 										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
 
-								if(configurazioneMultiDeliver != null) {
-									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
-										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
-											// MESSAGGIO!
-											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE 
-													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
-											connettoreInUso = true;
-										}
+							if(configurazioneMultiDeliver != null) {
+								if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+										// MESSAGGIO!
+										titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE 
+												+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
+										connettoreInUso = true;
 									}
 								}
 							}
