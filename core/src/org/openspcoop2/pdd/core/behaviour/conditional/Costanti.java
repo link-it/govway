@@ -59,6 +59,8 @@ public class Costanti  {
 	public static final String CONDITIONAL_EMIT_DIAGNOSTIC_ERROR = "c_diag_error"; // true/false
 	public static final String CONDITIONAL_NOME_CONNETTORE = "c_connettore";
 	
+	public static final String CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO = "##c_connettore_nessuno";
+	
 	public static final String CONDITIONAL_CONDIZIONE_NON_IDENTIFICATA = "c_selector_not_found_";
 	public static final String CONDITIONAL_NESSUN_CONNETTORE_TROVATO = "c_connector_not_found_";
 	

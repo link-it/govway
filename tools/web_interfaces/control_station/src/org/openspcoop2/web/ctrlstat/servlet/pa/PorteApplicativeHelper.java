@@ -6837,7 +6837,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							condizioneNonIdentificataConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
-							condizioneNonIdentificataConnettoriLabels.add(0, CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+							condizioneNonIdentificataConnettoriLabels.add(0, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI);
+							if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+								condizioneNonIdentificataConnettoriValues.add(1, org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO);
+								condizioneNonIdentificataConnettoriLabels.add(1, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO);
+							}
 							de.setPostBack(true);
 						}
 						
@@ -6854,6 +6858,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_MULTI_WARNING);
+								dati.addElement(de);
+							}
+							else if(org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(condizioneNonIdentificataConnettore)) {
+								de = new DataElement();
+								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE+"__NOTE");
+								de.setType(DataElementType.NOTE);
+								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA);
 								dati.addElement(de);
 							}
 						}
@@ -6925,7 +6936,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						
 						if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna) || BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 							connettoreNonTrovatoConnettoriValues.add(0, CostantiControlStation.DEFAULT_VALUE_AZIONE_RISORSA_NON_SELEZIONATA);
-							connettoreNonTrovatoConnettoriLabels.add(0, CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO);
+							connettoreNonTrovatoConnettoriLabels.add(0, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_QUALSIASI);
+							if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+								connettoreNonTrovatoConnettoriValues.add(1, org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO);
+								connettoreNonTrovatoConnettoriLabels.add(1, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_IDENTIFICATO_NESSUNO);
+							}
 							de.setPostBack(true);
 						}
 						
@@ -6942,6 +6957,13 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE+"__NOTE");
 								de.setType(DataElementType.NOTE);
 								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_MULTI_WARNING);
+								dati.addElement(de);
+							}
+							else if(org.openspcoop2.pdd.core.behaviour.conditional.Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(connettoreNonTrovatoConnettore)) {
+								de = new DataElement();
+								de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE+"__NOTE");
+								de.setType(DataElementType.NOTE);
+								de.setValue(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA);
 								dati.addElement(de);
 							}
 						}

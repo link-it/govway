@@ -41,6 +41,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourPropertiesUtils;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -67,7 +68,7 @@ public class ConditionalUtils  {
 	public static ConditionalFilterResult filter(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			boolean notifichePerServizioSincrono, boolean loadBalancer) throws BehaviourException, BehaviourEmitDiagnosticException {
+			BehaviourType behaviourType) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneCondizionale(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -306,28 +307,51 @@ public class ConditionalUtils  {
 								"connettoriMultipli.consegnaCondizionale.identificazioneFallita.info");
 					}
 					
-					if(loadBalancer) {
+					if(BehaviourType.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
 						// li usero tutti senza filtro sulla condizionalità
 						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+								"connettoriMultipli.consegnaCondizionale.loadBalancer.tuttiConnettori");
 						
-						result.setListServiziApplicativi(pa.getServizioApplicativoList());
+						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 						return result;
-						
 					}
 					
+					// se arrivo qua, sicuramente non sono in load balance mode
 					nomeConnettoreDaUsare = config.getCondizioneNonIdentificata().getNomeConnettore();
-					if(nomeConnettoreDaUsare==null) {
-						// può succedere per le comunicazioni sincrone dove non vi saranno notifiche
+					if(nomeConnettoreDaUsare==null || "".equals(nomeConnettoreDaUsare)) {
 						
-						if(!loadBalancer) {
+						if(BehaviourType.CONSEGNA_MULTIPLA.equals(behaviourType)) {
+							
 							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-									"connettoriMultipli.consegnaCondizionale.nessunConnettore");
+									"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+							
+							result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
+							return result;
 						}
+						else if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+							// non può succedere
+							throw new BehaviourException("Connettore da utilizzare in caso di identificazione fallita non indicato");
+						}
+						else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+							
+							msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+									"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+							
+							result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
+							return result;
+						} 
+												
+					}
+					else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
+							Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(nomeConnettoreDaUsare)) {
+													
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.nessunConnettore");
 						
 						result.setListServiziApplicativi(new ArrayList<>());
 						return result;
+												
 					}
 					
 					result.setListServiziApplicativi(filter(pa.getServizioApplicativoList(),false,nomeConnettoreDaUsare));
@@ -336,7 +360,7 @@ public class ConditionalUtils  {
 					}
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
-					if(notifichePerServizioSincrono) {
+					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
 								"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
 					}
@@ -362,6 +386,14 @@ public class ConditionalUtils  {
 		
 		List<PortaApplicativaServizioApplicativo> l = filter(pa.getServizioApplicativoList(), config.isByFilter(), conditionFinal);
 		if(!l.isEmpty()) {
+			
+			if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+				if(l.size()>1) {
+					throw new BehaviourEmitDiagnosticException(msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.servizioSincrono.consegnaVersoNServiziApplicativi");
+				}
+			}
+			
 			result.setListServiziApplicativi(l);
 			return result;
 		}
@@ -398,27 +430,51 @@ public class ConditionalUtils  {
 					}
 				}
 				
-				if(loadBalancer) {
+				if(BehaviourType.CONSEGNA_LOAD_BALANCE.equals(behaviourType)) {
 					// li usero tutti senza filtro sulla condizionalità
 					
 					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+							"connettoriMultipli.consegnaCondizionale.loadBalancer.tuttiConnettori");
 					
-					result.setListServiziApplicativi(pa.getServizioApplicativoList());
+					result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
 					return result;
 				}
 				
+				// se arrivo qua, sicuramente non sono in load balance mode
 				nomeConnettoreDaUsare = config.getNessunConnettoreTrovato().getNomeConnettore();
-				if(nomeConnettoreDaUsare==null) {
-					// può succedere per le comunicazioni sincrone dove non vi saranno notifiche
+				if(nomeConnettoreDaUsare==null || "".equals(nomeConnettoreDaUsare)) {
 					
-					if(!loadBalancer) {
+					if(BehaviourType.CONSEGNA_MULTIPLA.equals(behaviourType)) {
+						
 						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-								"connettoriMultipli.consegnaCondizionale.nessunConnettore");
-					}					
+								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+						
+						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
+						return result;
+					}
+					else if(BehaviourType.CONSEGNA_CONDIZIONALE.equals(behaviourType)) {
+						// non può succedere
+						throw new BehaviourException("Connettore da utilizzare in caso di identificazione del connettore fallita non indicato");
+					}
+					else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+						
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.tuttiConnettori");
+						
+						result.setListServiziApplicativi(getAllEnabled(pa.getServizioApplicativoList()));
+						return result;
+					} 
+											
+				}
+				else if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType) && 
+						Costanti.CONDITIONAL_NOME_CONNETTORE_VALORE_NESSUNO.equals(nomeConnettoreDaUsare)) {
+												
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.nessunConnettore");
 					
 					result.setListServiziApplicativi(new ArrayList<>());
 					return result;
+											
 				}
 				
 				result.setListServiziApplicativi(filter(pa.getServizioApplicativoList(),false,nomeConnettoreDaUsare));
@@ -427,8 +483,14 @@ public class ConditionalUtils  {
 				}
 				
 				msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
-				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-						"connettoriMultipli.consegnaCondizionale.connettoreDefault");
+				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(behaviourType)) {
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
+				}
+				else {
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.connettoreDefault");
+				}
 				
 				return result;
 			}
@@ -466,6 +528,22 @@ public class ConditionalUtils  {
 			}
 		}
 		return l;
+	}
+	private static List<PortaApplicativaServizioApplicativo> getAllEnabled(List<PortaApplicativaServizioApplicativo> listPASA){
+		
+		List<PortaApplicativaServizioApplicativo> l = new ArrayList<>();
+		
+		for (PortaApplicativaServizioApplicativo servizioApplicativo : listPASA) {
+			
+			if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
+					StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
+				l.add(servizioApplicativo);
+			}
+			
+		}
+		
+		return l;
+		
 	}
 	
 	public static boolean isConfigurazioneCondizionale(PortaApplicativa pa, Logger log) {

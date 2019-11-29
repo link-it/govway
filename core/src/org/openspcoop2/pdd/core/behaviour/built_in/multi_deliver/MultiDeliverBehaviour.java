@@ -46,6 +46,7 @@ import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -123,29 +124,33 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					throw new BehaviourException(e.getMessage(), e);
 				}
 				
-				boolean notifichePerServizioSincrono = (idServizioApplicativoResponder!=null);
-				boolean loadBalancerDisabled = false;
 				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, msg, busta, 
 						requestInfo, this.getPddContext(), 
 						this.msgDiag, log, 
-						notifichePerServizioSincrono, loadBalancerDisabled);
+						this.bt);
 				
-				if(filterResult!=null && !filterResult.getListServiziApplicativi().isEmpty()) {
+				if(filterResult!=null) { 
+						// && !filterResult.getListServiziApplicativi().isEmpty()) { NOTA! la lista vuota viene appunto usata per far si che non siano utilizzati alcun applicativi
 					listaServiziApplicativi_consegnaSenzaRisposta.clear();
 				
-					for (PortaApplicativaServizioApplicativo pasa : filterResult.getListServiziApplicativi()) {
+					for (PortaApplicativaServizioApplicativo servizioApplicativo : filterResult.getListServiziApplicativi()) {
 						
-						String nomeConnettore = org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
-						if(pasa.getDatiConnettore()!=null) {
-							nomeConnettore = pasa.getDatiConnettore().getNome();
-						}
+						if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
+								StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
 						
-						if(configurazione.getTransazioneSincrona_nomeConnettore()==null ||
-								!configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
-							IDServizioApplicativo idSA = new IDServizioApplicativo();
-							idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-							idSA.setNome(pasa.getNome());
-							listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
+							String nomeConnettore = org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
+							if(servizioApplicativo.getDatiConnettore()!=null) {
+								nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+							}
+							
+							if(configurazione.getTransazioneSincrona_nomeConnettore()==null ||
+									!configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+								IDServizioApplicativo idSA = new IDServizioApplicativo();
+								idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+								idSA.setNome(servizioApplicativo.getNome());
+								listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
+							}
+							
 						}
 					}
 				}
@@ -189,6 +194,20 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				}catch(Exception e) {
 					throw new BehaviourException(e.getMessage(), e);
 				}
+				
+				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(this.bt) || BehaviourType.CONSEGNA_CONDIZIONALE.equals(this.bt)) {
+					if(!uniqueSA_connettore) {
+						if(uniqueSA_integrationManager) {
+							throw new BehaviourEmitDiagnosticException(this.msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+									"connettoriMultipli.servizioSincrono.consegnaIntegrationManager");
+						}
+						else {
+							throw new BehaviourEmitDiagnosticException(this.msgDiag, MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+									"connettoriMultipli.servizioSincrono.consegnaNonTrasparente");
+						}
+					}
+				}
+				
 				forceSalvataggioMessaggio = uniqueSA_integrationManager && uniqueSA_connettore;
 			}
 			

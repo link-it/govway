@@ -32,6 +32,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -336,11 +337,9 @@ public class GestoreLoadBalancerCaching {
 		}
     	else{
     		
-    		boolean notifichePerServizioSincrono = false;
-			boolean loadBalancer = true;
     		ConditionalFilterResult filterResult = 
     				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
-    						notifichePerServizioSincrono, loadBalancer);
+    						BehaviourType.CONSEGNA_LOAD_BALANCE);
     		
     		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
     		if(filterResult!=null) {
