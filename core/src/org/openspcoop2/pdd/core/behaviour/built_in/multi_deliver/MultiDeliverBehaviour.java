@@ -43,6 +43,7 @@ import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -59,6 +60,12 @@ import org.slf4j.Logger;
  */
 public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehaviour {
 
+	private BehaviourType bt;
+	public MultiDeliverBehaviour(BehaviourType bt) {
+		this.bt = bt;
+	}
+	
+	
 	@Override
 	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 
 			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
@@ -82,14 +89,21 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
 					
-					String nomeConnettore =  org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
-					if(servizioApplicativo.getDatiConnettore()!=null) {
-						nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
-					}
+					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(this.bt)) {
 					
-					if(configurazione.getTransazioneSincrona_nomeConnettore()!=null && 
-							configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
-						idServizioApplicativoResponder = idSA;
+						String nomeConnettore =  org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
+						if(servizioApplicativo.getDatiConnettore()!=null) {
+							nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+						}
+						
+						if(configurazione.getTransazioneSincrona_nomeConnettore()!=null && 
+								configurazione.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+							idServizioApplicativoResponder = idSA;
+						}
+						else {
+							listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
+						}
+						
 					}
 					else {
 						listaServiziApplicativi_consegnaSenzaRisposta.add(idSA);
