@@ -32,6 +32,7 @@ package org.openspcoop2.core.transazioni.ws.server.filter;
  *         &lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
+ *         &lt;element name="esito-sincrono" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="consegne-multiple-in-corso" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
  *         &lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
@@ -136,6 +137,7 @@ import java.util.Date;
     "idTransazione",
     "stato",
     "esito",
+    "esitoSincrono",
     "consegneMultipleInCorso",
     "esitoContesto",
     "protocollo",
@@ -256,6 +258,19 @@ public class SearchFilterTransazione extends org.openspcoop2.utils.beans.BaseBea
 	
 	public Integer getEsito(){
 		return this.esito;
+	}
+	
+	
+	@javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="esito-sincrono",required=false,nillable=false)
+	private Integer esitoSincrono;
+	
+	public void setEsitoSincrono(Integer esitoSincrono){
+		this.esitoSincrono = esitoSincrono;
+	}
+	
+	public Integer getEsitoSincrono(){
+		return this.esitoSincrono;
 	}
 	
 	

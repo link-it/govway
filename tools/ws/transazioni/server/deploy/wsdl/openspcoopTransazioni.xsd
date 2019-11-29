@@ -61,6 +61,9 @@
 			    </xsd:element>
 				
 				<!-- Esito di una transazione con consegna multipla -->
+				<xsd:element minOccurs="0" name="esito-sincrono" type="xsd:int">
+					
+				</xsd:element>
 				<xsd:element minOccurs="0" name="consegne-multiple-in-corso" type="xsd:int">
 					
 				</xsd:element> 

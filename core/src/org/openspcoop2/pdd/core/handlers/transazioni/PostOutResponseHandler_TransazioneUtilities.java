@@ -53,23 +53,33 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.EJBUtils;
+import org.openspcoop2.pdd.core.EJBUtilsMessaggioInConsegna;
+import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
 import org.openspcoop2.pdd.core.controllo_traffico.CostantiControlloTraffico;
 import org.openspcoop2.pdd.core.handlers.ExtendedTransactionInfo;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
+import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.transazioni.DateUtility;
 import org.openspcoop2.pdd.core.transazioni.PropertiesSerializator;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.logger.DumpUtility;
+import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.protocol.engine.driver.RepositoryBuste;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.slf4j.Logger;
@@ -132,6 +142,12 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			rispostaDuplicata = transaction.containsIdProtocolloDuplicato(tracciaRisposta.getBusta().getID());
 		}
 
+		boolean schedulaNotificheDopoConsegnaSincrona = false;
+		boolean consegnaMultipla_profiloSincrono = false;
+		MsgDiagnostico msgDiag = null;
+		String idTransazione = null;
+		String nomePorta = null;
+				
 		try {
 
 			IProtocolFactory<?> protocolFactory = context.getProtocolFactory();
@@ -141,35 +157,75 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			Transazione transactionDTO = new Transazione();
 
-			// Consegna Multipla
+			// ** Consegna Multipla **
 			boolean consegnaMultipla = false;
 			int connettoriMultipli = -1;
-			boolean connettoreSync = false;
-			Object oConsegnaMultipla = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA );
-			if (oConsegnaMultipla!=null && oConsegnaMultipla instanceof Boolean){
-				consegnaMultipla = (Boolean) oConsegnaMultipla;
-			}
-			else if (oConsegnaMultipla!=null && oConsegnaMultipla instanceof String){
-				consegnaMultipla = Boolean.valueOf( (String) oConsegnaMultipla );
-			}
-			if(consegnaMultipla) {
+			if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI)) {
 				Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI );
 				if (oConnettori!=null && oConnettori instanceof Integer){
 					connettoriMultipli = (Integer) oConnettori;
 				}
 				
-				Object oConnettoreSync = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONO );
-				if (oConnettoreSync!=null && oConnettoreSync instanceof Boolean){
-					connettoreSync = (Boolean) oConnettoreSync;
-				}
-				else if (oConnettoreSync!=null && oConnettoreSync instanceof String){
-					connettoreSync = Boolean.valueOf( (String) oConnettoreSync );
+				if(connettoriMultipli>0) {
+					consegnaMultipla = true;
 				}
 			}
 			
+			ConfigurazioneMultiDeliver configurazione_consegnaMultipla_profiloSincrono = null;
+			EsitiProperties esitiProperties = null;
+			if(consegnaMultipla) {
+				Object oConnettoreSync = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA );
+				if (oConnettoreSync!=null && oConnettoreSync instanceof Boolean){
+					consegnaMultipla_profiloSincrono = (Boolean) oConnettoreSync;
+				}
+				else if (oConnettoreSync!=null && oConnettoreSync instanceof String){
+					consegnaMultipla_profiloSincrono = Boolean.valueOf( (String) oConnettoreSync );
+				}
+				
+				if(consegnaMultipla_profiloSincrono) {
+					Object oConnettoreSyncConfig = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE );
+					if (oConnettoreSyncConfig!=null && oConnettoreSyncConfig instanceof ConfigurazioneMultiDeliver){
+						configurazione_consegnaMultipla_profiloSincrono = (ConfigurazioneMultiDeliver) oConnettoreSyncConfig;
+					}
+				}
+				
+				esitiProperties = EsitiProperties.getInstance(this.logger, context.getProtocolFactory().getProtocol());
+			}
+
+			if(consegnaMultipla_profiloSincrono) {
+				if(transaction!=null && transaction.getRequestInfo()!=null && transaction.getRequestInfo().getProtocolContext()!=null){
+					nomePorta = transaction.getRequestInfo().getProtocolContext().getInterfaceName();
+				}
+				msgDiag = MsgDiagnostico.newInstance(context.getTipoPorta(),idDominio, context.getIdModulo(), nomePorta, context.getStato());
+			}
+			if(consegnaMultipla_profiloSincrono && configurazione_consegnaMultipla_profiloSincrono!=null &&
+					context.getEsito()!=null && context.getEsito().getCode()!=null) {
+				if(configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito()) {
+					int esitoSincrono = context.getEsito().getCode();
+					if(isEsito(esitiProperties.getEsitiCodeOk_senzaFaultApplicativo(), esitoSincrono)) {
+						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_ok();
+					}
+					else if(isEsito(esitiProperties.getEsitiCodeFaultApplicativo(), esitoSincrono)) {
+						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_fault();
+					}
+					else if(isEsito(esitiProperties.getEsitiCodeErroriConsegna(), esitoSincrono)) {
+						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriConsegna();
+					}
+					else if(isEsito(esitiProperties.getEsitiCodeRichiestaScartate(), esitoSincrono)) {
+						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_richiesteScartate();
+					}
+					else {
+						schedulaNotificheDopoConsegnaSincrona = configurazione_consegnaMultipla_profiloSincrono.isNotificheByEsito_erroriProcessamento();
+					}
+				}
+				else {
+					schedulaNotificheDopoConsegnaSincrona = true;
+				}
+			}
+			
+
 			
 			// ** Identificativo di transazione **
-			String idTransazione = null;
 			if (context.getPddContext().getObject(Costanti.ID_TRANSAZIONE)!=null){
 				idTransazione = ((String)context.getPddContext().getObject(Costanti.ID_TRANSAZIONE));
 				transactionDTO.setIdTransazione(idTransazione);
@@ -200,10 +256,18 @@ public class PostOutResponseHandler_TransazioneUtilities {
 
 			// ** Esito Transazione **
 			if (context.getEsito()!=null){
-				if(context.getEsito().getCode()!=null){
-					transactionDTO.setEsito(context.getEsito().getCode());
+				if(consegnaMultipla) {
+					transactionDTO.setEsito(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+					if(context.getEsito().getCode()!=null){
+						transactionDTO.setEsitoSincrono(context.getEsito().getCode());
+					}
+					transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);	
 				}
-				transactionDTO.setConsegneMultipleInCorso(connettoriMultipli);
+				else {
+					if(context.getEsito().getCode()!=null){
+						transactionDTO.setEsito(context.getEsito().getCode());
+					}
+				}
 				transactionDTO.setEsitoContesto(context.getEsito().getContextType());
 			}
 
@@ -1038,6 +1102,74 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		} catch (Exception e) {
 			throw new HandlerException("Errore durante il popolamento della transazione da salvare su database: " + e.getLocalizedMessage(), e);
 		} 
+		finally{
+		
+			if(consegnaMultipla_profiloSincrono) {
+				IOpenSPCoopState openspcoopState = null;
+				try {
+					
+					EJBUtilsMessaggioInConsegna messaggiInConsegna = null;
+					Object oConnettoreConfig = context.getPddContext().getObject(CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE );
+					if (oConnettoreConfig!=null && oConnettoreConfig instanceof EJBUtilsMessaggioInConsegna){
+						messaggiInConsegna = (EJBUtilsMessaggioInConsegna) oConnettoreConfig;
+					}
+					if(messaggiInConsegna==null) {
+						throw new Exception("configurazione non disponibile");
+					}
+					
+					openspcoopState = new OpenSPCoopStateful();
+					openspcoopState.initResource(idDominio, context.getIdModulo(), idTransazione);
+					GestoreMessaggi msgRequest = new GestoreMessaggi(openspcoopState,true, messaggiInConsegna.getBusta().getID(),
+							org.openspcoop2.protocol.engine.constants.Costanti.INBOX,msgDiag,context.getPddContext());
+					
+					if(schedulaNotificheDopoConsegnaSincrona) {
+						
+						RepositoryBuste repositoryBuste = null;
+						boolean spedizioneConsegnaContenuti = false; // sarà il timer a far partire effettivamente la spedizione
+						/*
+							RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
+						 */
+							
+						// Devo rilasciare l'attenti esito
+						Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
+						msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
+						
+						EJBUtils.sendMessages(this.logger, msgDiag, openspcoopState, idTransazione, 
+								repositoryBuste, msgRequest, null, 
+								context.getProtocolFactory(), idDominio, nomePorta, messaggiInConsegna,
+								spedizioneConsegnaContenuti);
+						
+					}
+					else {
+						
+						for (String servizioApplicativo : messaggiInConsegna.getServiziApplicativi()) {
+							msgRequest.eliminaDestinatarioMessaggio(servizioApplicativo, null);
+						}
+						
+					}
+					
+				}catch(Exception e) {
+					this.logger.error("Non è stato possibile gestire lo scheduling delle notifiche (connettori multipli): "+e.getMessage(), e);
+				}
+				finally {
+					try{
+						if(openspcoopState!=null && !openspcoopState.resourceReleased()){
+							openspcoopState.commit();
+							openspcoopState.releaseResource();
+						}
+					}catch(Exception e){}
+				}
+			}
+			
+		}
 	}
 	
+	private boolean isEsito(List<Integer> esiti, int esitoCheck) {
+		for (int esito : esiti) {
+			if(esitoCheck == esito){
+				return true;
+			}
+		}
+		return false;
+	}
 }

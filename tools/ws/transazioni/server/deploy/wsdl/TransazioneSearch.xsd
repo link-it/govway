@@ -16,6 +16,7 @@
  			<xsd:element name="id-transazione" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="stato" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="esito" type="xsd:int" minOccurs="0" maxOccurs="1" />
+ 			<xsd:element name="esito-sincrono" type="xsd:int" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="consegne-multiple-in-corso" type="xsd:int" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="esito-contesto" type="xsd:string" minOccurs="0" maxOccurs="1" />
  			<xsd:element name="protocollo" type="xsd:string" minOccurs="0" maxOccurs="1" />

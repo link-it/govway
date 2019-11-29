@@ -3,6 +3,7 @@ ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
 ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO TYPE VARCHAR(2000);
 
 ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore TYPE VARCHAR(2000);
+ALTER TABLE transazioni ADD COLUMN esito_sincrono INT;
 ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);

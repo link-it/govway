@@ -1660,7 +1660,7 @@ public class EJBUtils {
 					serviziApplicativiAbilitati.add(idServizioApplicativo.getNome());
 				}
 			}
-			if( serviziApplicativiAbilitati.size() < 1){
+			if( serviziApplicativiAbilitati.size() < 1 && (behaviour_idSA_SyncResponder==null) ){
 				throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 			}
 
@@ -1709,7 +1709,7 @@ public class EJBUtils {
 				
 				if(behaviour_idSA_SyncResponder!=null) {
 					
-					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONO, "true");
+					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA, "true");
 					
 					attendiEsitoTransazioneSincronaPrimaDiSpedire = true;
 					
@@ -1742,12 +1742,11 @@ public class EJBUtils {
 							serviziApplicativiAbilitatiForwardTo.add(idServizioApplicativo.getNome());
 						}
 					}	
-					if( serviziApplicativiAbilitatiForwardTo.size() < 1){
+					if( serviziApplicativiAbilitatiForwardTo.size() < 1 && (behaviour_idSA_SyncResponder==null) ){
 						throw new EJBUtilsConsegnaException(this.msgDiag,MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI,"behaviour.servizioApplicativoNonDefinito");
 					}
 					
 					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
-					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA, "true");
 										
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
 					OpenSPCoopStateless stateBehaviour = null;

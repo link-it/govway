@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruolo-transazione" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="esito-sincrono" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="consegne-multiple-in-corso" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
@@ -152,6 +153,7 @@ import java.util.List;
   	"stato",
   	"ruoloTransazione",
   	"esito",
+  	"esitoSincrono",
   	"consegneMultipleInCorso",
   	"esitoContesto",
   	"protocollo",
@@ -296,6 +298,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setEsito(int esito) {
     this.esito = esito;
+  }
+
+  public int getEsitoSincrono() {
+    return this.esitoSincrono;
+  }
+
+  public void setEsitoSincrono(int esitoSincrono) {
+    this.esitoSincrono = esitoSincrono;
   }
 
   public int getConsegneMultipleInCorso() {
@@ -1120,6 +1130,10 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito",required=false,nillable=false)
   protected int esito;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="esito-sincrono",required=false,nillable=false)
+  protected int esitoSincrono;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="consegne-multiple-in-corso",required=false,nillable=false)

@@ -67,7 +67,7 @@ public class ConditionalUtils  {
 	public static ConditionalFilterResult filter(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log,
-			boolean loadBalancer) throws BehaviourException, BehaviourEmitDiagnosticException {
+			boolean notifichePerServizioSincrono, boolean loadBalancer) throws BehaviourException, BehaviourEmitDiagnosticException {
 		
 		if(isConfigurazioneCondizionale(pa, log)==false) {
 			return null; // non vi è da fare alcun filtro condizionale
@@ -336,8 +336,14 @@ public class ConditionalUtils  {
 					}
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_NOME_CONNETTORE, nomeConnettoreDaUsare);
-					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
-							"connettoriMultipli.consegnaCondizionale.connettoreDefault");
+					if(notifichePerServizioSincrono) {
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.connettoreNotificaDefault");
+					}
+					else {
+						msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+								"connettoriMultipli.consegnaCondizionale.connettoreDefault");
+					}
 					
 					return result;
 				}

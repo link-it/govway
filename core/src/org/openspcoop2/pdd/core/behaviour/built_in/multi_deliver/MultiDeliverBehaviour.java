@@ -67,15 +67,20 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 
 			ConfigurazioneMultiDeliver configurazione = MultiDeliverUtils.read(pa, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 			
+			List<IDServizioApplicativo> listaServiziApplicativiAll = new ArrayList<IDServizioApplicativo>();
+			
 			List<IDServizioApplicativo> listaServiziApplicativi_consegnaSenzaRisposta = new ArrayList<IDServizioApplicativo>();
 			IDServizioApplicativo idServizioApplicativoResponder = null;
 			
 			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
+				
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+				idSA.setNome(servizioApplicativo.getNome());
+				listaServiziApplicativiAll.add(idSA);
+				
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {
-					IDServizioApplicativo idSA = new IDServizioApplicativo();
-					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
-					idSA.setNome(servizioApplicativo.getNome());
 					
 					String nomeConnettore =  org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
 					if(servizioApplicativo.getDatiConnettore()!=null) {
@@ -104,16 +109,19 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 					throw new BehaviourException(e.getMessage(), e);
 				}
 				
+				boolean notifichePerServizioSincrono = (idServizioApplicativoResponder!=null);
+				boolean loadBalancerDisabled = false;
 				ConditionalFilterResult filterResult = ConditionalUtils.filter(pa, msg, busta, 
 						requestInfo, this.getPddContext(), 
-						this.msgDiag, log, false);
+						this.msgDiag, log, 
+						notifichePerServizioSincrono, loadBalancerDisabled);
 				
 				if(filterResult!=null && !filterResult.getListServiziApplicativi().isEmpty()) {
 					listaServiziApplicativi_consegnaSenzaRisposta.clear();
 				
 					for (PortaApplicativaServizioApplicativo pasa : filterResult.getListServiziApplicativi()) {
 						
-						String nomeConnettore = null;
+						String nomeConnettore = org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
 						if(pasa.getDatiConnettore()!=null) {
 							nomeConnettore = pasa.getDatiConnettore().getNome();
 						}
@@ -134,6 +142,14 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 			Behaviour behaviour = new Behaviour();
 			behaviour.setApplicativeSyncResponder(idServizioApplicativoResponder);
 			BehaviourForwardTo forwardTo = new BehaviourForwardTo();
+			
+			if(idServizioApplicativoResponder!=null) {
+				boolean connettoriPerNotifiche = listaServiziApplicativi_consegnaSenzaRisposta.size()>0;
+				if(connettoriPerNotifiche) {
+					this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_SINCRONA_CONFIGURAZIONE, configurazione);
+				}	
+			}
+						
 			
 			boolean forceSalvataggioMessaggio = false;
 			
@@ -196,6 +212,10 @@ public class MultiDeliverBehaviour extends AbstractBehaviour implements IBehavio
 			BehaviourForwardToFilter filter = new BehaviourForwardToFilter();
 			for (IDServizioApplicativo idServizioApplicativo : listaServiziApplicativi_consegnaSenzaRisposta) {
 				filter.getAccessListServiziApplicativi().add(idServizioApplicativo);
+			}
+			if(listaServiziApplicativi_consegnaSenzaRisposta.size()<=0) {
+				// devo creare una deny list senno viene consegnato a tutti
+				filter.setDenyListServiziApplicativi(listaServiziApplicativiAll);
 			}
 			forwardTo.setFilter(filter);
 			behaviour.getForwardTo().add(forwardTo);
