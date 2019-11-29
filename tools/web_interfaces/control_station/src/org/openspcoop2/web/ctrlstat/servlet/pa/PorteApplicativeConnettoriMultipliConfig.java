@@ -146,7 +146,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			String identificazioneCondizionalePrefisso = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 			String identificazioneCondizionaleSuffisso = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
 			
-			String servletRegolePerAzioni = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_CONDIZIONI_AZIONI_LIST;
+			String servletRegolePerAzioni = PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_LIST;
 			List<Parameter> listaParametriServletRegolePerAzioni = new ArrayList<>();
 			int numeroRegolePerAzioni = 0;
 			
@@ -210,12 +210,11 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				if(portaApplicativa.sizeServizioApplicativoList() > 1)
 					modificaStatoAbilitata = false;
 				
-				// TODO attendere decisione regole su azioni.
-//				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
-//					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
-//					numeroRegolePerAzioni = configurazioneCondizionale.getGruppiConfigurazioneSelettoreCondizione().size();
-//					visualizzaLinkRegolePerAzioni = true;
-//				}
+				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
+					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
+					numeroRegolePerAzioni = configurazioneCondizionale.getRegole().size();
+					visualizzaLinkRegolePerAzioni = true;
+				}
 			}
 
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -504,6 +503,9 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
 
 			visualizzaLinkProprietaCustom = false;
+			numeroProprietaCustom = 0;
+			visualizzaLinkRegolePerAzioni = false;
+			numeroRegolePerAzioni = 0;
 
 			if(portaApplicativa.getBehaviour() == null) {
 				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
@@ -550,6 +552,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				else if(behaviourType.equals(BehaviourType.CUSTOM)) {
 					visualizzaLinkProprietaCustom = true;
 					tipoCustom = portaApplicativa.getBehaviour().getNome();
+					numeroProprietaCustom = portaApplicativa.getBehaviour().sizeProprietaList();
 				}
 				
 				if(consegnaCondizionale) {
@@ -589,6 +592,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						connettoreNonTrovatoDiagnostico = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO;
 						
 					connettoreNonTrovatoConnettore = connettoreNonTrovato.getNomeConnettore();
+					numeroRegolePerAzioni = configurazioneCondizionale.getRegole().size();
+					visualizzaLinkRegolePerAzioni = true;
 				} else {
 					selezioneConnettoreBy = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO;
 					identificazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue();

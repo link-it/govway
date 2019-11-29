@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -92,6 +93,7 @@ import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -8433,5 +8435,154 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		
 		return visualizzaGestioneNotifiche;
+	}
+	
+	public void preparePorteApplicativeConnettoriMultipliConfigAzioniList(PortaApplicativa pa,
+			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale, ISearch ricerca, Set<String> lista) throws Exception {
+		try {
+			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
+			Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, this.session);
+			String idAsps = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null)
+				idAsps = "";
+
+			String id = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
+			String idsogg = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+
+			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id);
+			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, pa.getNome());
+			Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+			Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+			
+			String idTabP = this.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+			Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+			
+			String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
+			String connettoreAccessoGruppi = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, connettoreAccessoGruppi);
+			String connettoreRegistro = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			Parameter pConnettoreRegistro = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, connettoreRegistro);
+			String connettoreAccessoCM = this.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
+			Parameter pConnettoreAccessoCM = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI, connettoreAccessoCM);
+			
+			
+			ServletUtils.addListElementIntoSession(this.session, PorteApplicativeCostanti.OBJECT_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI,
+					pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pAccessoDaAPS, pIdTab, pConnettoreAccessoCM);
+			
+			ServletUtils.disabledPageDataSearch(this.pd);
+			
+			this.pd.setNumEntries(lista != null ? lista.size() : 0);
+			String idporta = pa.getNome();
+			
+			long idAspsLong = Long.parseLong(idAsps);
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			AccordoServizioParteComuneSintetico as = null;
+			if(this.porteApplicativeCore.isRegistroServiziLocale()){
+				int idAcc = asps.getIdAccordo().intValue();
+				as = this.apcCore.getAccordoServizioSintetico(idAcc);
+			}
+			else{
+				as = this.apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			}
+
+			boolean accessoDaListaAPS = false;
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+				accessoDaListaAPS = true;
+			}
+			
+			boolean isModalitaCompleta = this.isModalitaCompleta();
+			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, this.session);
+			// setto la barra del titolo
+			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
+			
+			String labelPerPorta = null;
+			if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+				if(accessoDaListaAPS) {
+					if(!isModalitaCompleta) {
+						if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG;
+						} else {
+							labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI+
+									this.getLabelIdServizio(asps);
+						}
+					}
+					else {
+						labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG;
+					}
+				}
+				else {
+					labelPerPorta = this.porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI,
+							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG,
+							pa);
+				}
+			}
+			else {
+				labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_DI+idporta;
+			}
+			
+			if(accessoDaListaAPS) {
+				lstParam.remove(lstParam.size()-1);
+			}
+			
+			lstParam.add(new Parameter(labelPerPorta,PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, pIdSogg, pIdPorta, pIdAsps,
+					pConnettoreAccessoDaGruppi,	pConnettoreRegistro, pConnettoreAccessoCM));
+			
+			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE;
+			
+			lstParam.add(new Parameter(labelPagLista,null));
+
+			ServletUtils.setPageDataTitle(this.pd, lstParam.toArray(new Parameter[lstParam.size()]));
+
+			ServiceBinding serviceBinding = this.porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
+			
+			// setto le label delle colonne
+			String[] labels = {PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME,	this.getLabelAzione(serviceBinding )};
+			this.pd.setLabels(labels);
+
+			// preparo i dati
+			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
+
+			if (lista != null) {
+				Iterator<String> it = lista.iterator();
+				while (it.hasNext()) {
+					String nomeRegola = it.next();
+					ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
+		
+					Vector<DataElement> e = new Vector<DataElement>();
+		
+					DataElement de = new DataElement();
+					de.setValue(nomeRegola);
+					de.setIdToRemove(nomeRegola + "");
+					e.addElement(de);
+					
+					de = new DataElement();
+					de.setValue(regola.getPattern());
+					e.addElement(de);
+		
+					dati.addElement(e);
+				}
+			}
+
+			this.pd.setDati(dati);
+			this.pd.setAddButton(true);
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione change,
+			Object object, String nome, String patternOperazione, boolean selezioneConnettoreBy,
+			String identificazioneCondizionale, String identificazioneCondizionalePattern,
+			String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso) throws Exception {
+		return dati;
+	}
+	public boolean azioneConnettoriMultipliConfigCheckData(TipoOperazione add, String idPorta, Object object,
+			String nome, String patternOperazione, boolean selezioneConnettoreBy, String identificazioneCondizionale,
+			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso,
+			String identificazioneCondizionaleSuffisso) {
+		return false;
 	}
 }
