@@ -55,8 +55,10 @@ public class BehaviourLoader {
 			BehaviourType bt = BehaviourType.toEnumConstant(behaviour.getNome(), false);
 			switch (bt) {
 			case CONSEGNA_MULTIPLA:
+			case CONSEGNA_CONDIZIONALE:
+			case CONSEGNA_CON_NOTIFICHE:
 				
-				behaviourImpl = new MultiDeliverBehaviour();
+				behaviourImpl = new MultiDeliverBehaviour(bt);
 				
 				tipoDiagBehaviour = bt.getLabel();
 				

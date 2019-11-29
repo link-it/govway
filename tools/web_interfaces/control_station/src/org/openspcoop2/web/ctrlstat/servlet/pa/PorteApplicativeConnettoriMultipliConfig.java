@@ -45,6 +45,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -219,29 +220,43 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
 			if(postBackElementName != null ){
+				
+				boolean reinitParametriCondizionali = false;
+				
 				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE)) {
-					if(consegnaCondizionale) {
-						selezioneConnettoreBy = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO;
-						identificazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue();
-						identificazioneCondizionalePattern = "";
-						identificazioneCondizionalePrefisso = "";
-						identificazioneCondizionaleSuffisso = ""; 
-						condizioneNonIdentificataAbortTransaction = true;
-						condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
-						condizioneNonIdentificataConnettore = "";
-						connettoreNonTrovatoAbortTransaction = true;
-						connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
-						connettoreNonTrovatoConnettore = "";
+					reinitParametriCondizionali = consegnaCondizionale;
+				}
+				else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA)) {
+					reinitParametriCondizionali = BehaviourType.CONSEGNA_CONDIZIONALE.getValue().equals(modalitaConsegna);
+					consegnaCondizionale = false;
+					
+					if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
+						// uso il default
+						ConfigurazioneMultiDeliver config = new ConfigurazioneMultiDeliver();
+						notificheCondizionaliEsito = config.isNotificheByEsito();
+						esitiTransazione = porteApplicativeHelper.getEsitiTransazione(config);
 					}
+				}
+				
+				if(reinitParametriCondizionali) {
+					selezioneConnettoreBy = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO;
+					identificazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue();
+					identificazioneCondizionalePattern = "";
+					identificazioneCondizionalePrefisso = "";
+					identificazioneCondizionaleSuffisso = ""; 
+					condizioneNonIdentificataAbortTransaction = true;
+					condizioneNonIdentificataDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
+					condizioneNonIdentificataConnettore = "";
+					connettoreNonTrovatoAbortTransaction = true;
+					connettoreNonTrovatoDiagnostico = StatoFunzionalita.DISABILITATO.getValue();
+					connettoreNonTrovatoConnettore = "";
 				}
 			}
 
-			boolean visualizzaGestioneNotifiche = false;
+			boolean isSoapOneWay = false;
 
 			if(stato!= null && stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {
-				if(BehaviourType.CONSEGNA_MULTIPLA.getValue().equals(modalitaConsegna)) {
-					visualizzaGestioneNotifiche = porteApplicativeHelper.visualizzaSezioneGestioneNotifiche(portaApplicativa, mappingErogazionePortaApplicativa, asps, as, serviceBinding);
-				}
+				isSoapOneWay = porteApplicativeHelper.isSoapOneWay(portaApplicativa, mappingErogazionePortaApplicativa, asps, as, serviceBinding);
 			}
 
 			// select list della sezione notifiche
@@ -299,7 +314,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				if(stato == null) {
 					if(portaApplicativa.getBehaviour() == null) {
 						stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
-						modalitaConsegna = BehaviourType.CONSEGNA_MULTIPLA.getValue();
+						modalitaConsegna = BehaviourType.CONSEGNA_LOAD_BALANCE.getValue();
 						consegnaCondizionale = false;
 						connettoreImplementaAPI = "";
 						notificheCondizionaliEsito = false;
@@ -323,14 +338,18 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						BehaviourType behaviourType = BehaviourType.toEnumConstant(portaApplicativa.getBehaviour().getNome());
 
 						modalitaConsegna = behaviourType.getValue();
+						
+						isSoapOneWay = porteApplicativeHelper.isSoapOneWay(portaApplicativa, mappingErogazionePortaApplicativa, asps, as, serviceBinding);
+																		
 						if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 							loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(portaApplicativa.getBehaviour());
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
-						} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
+						} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA) ||
+								behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE) ||
+								behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-							visualizzaGestioneNotifiche = porteApplicativeHelper.visualizzaSezioneGestioneNotifiche(portaApplicativa, mappingErogazionePortaApplicativa, asps, as, serviceBinding);
-							if(visualizzaGestioneNotifiche) {
+							if(!isSoapOneWay) {
 								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
 								connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 								notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
@@ -407,7 +426,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata, 
-						consegnaCondizionale, visualizzaGestioneNotifiche, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore,
@@ -423,7 +442,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, visualizzaGestioneNotifiche);
+			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, isSoapOneWay);
 
 			if(!isOk) {
 				// preparo i campi
@@ -433,7 +452,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 				dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 						numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom, loadBalanceStrategia, modificaStatoAbilitata,
-						consegnaCondizionale, visualizzaGestioneNotifiche, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+						consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
 						serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
@@ -473,7 +492,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					}
 				} 
 				break;
-				case CONSEGNA_MULTIPLA: {
+				case CONSEGNA_MULTIPLA:
+				case CONSEGNA_CONDIZIONALE:
+				case CONSEGNA_CON_NOTIFICHE:
+				{
 					behaviour.setNome(modalitaConsegna);
 					
 					// configurazione multideliver
@@ -509,7 +531,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			if(portaApplicativa.getBehaviour() == null) {
 				stato = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_DISABILITATO;
-				modalitaConsegna = BehaviourType.CONSEGNA_MULTIPLA.getValue();
+				modalitaConsegna = BehaviourType.CONSEGNA_LOAD_BALANCE.getValue();
 				consegnaCondizionale = false;
 				connettoreImplementaAPI = "";
 				notificheCondizionaliEsito = false;
@@ -538,7 +560,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 
-					if(visualizzaGestioneNotifiche) {
+					if(!isSoapOneWay) {
 						org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(portaApplicativa, ControlStationCore.getLog());
 						connettoreImplementaAPI = configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null ? configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() : "";
 						notificheCondizionaliEsito = configurazioneMultiDeliver.isNotificheByEsito();
@@ -614,7 +636,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			dati = porteApplicativeHelper.addConnettoriMultipliConfigurazioneToDati(dati, TipoOperazione.OTHER, accessoDaAPSParametro, stato, modalitaConsegna, tipoCustom, 
 					numeroProprietaCustom, servletProprietaCustom, listaParametriServletProprietaCustom, visualizzaLinkProprietaCustom,loadBalanceStrategia, modificaStatoAbilitata,
-					consegnaCondizionale, visualizzaGestioneNotifiche, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
+					consegnaCondizionale, isSoapOneWay, connettoreImplementaAPI, connettoriImplementaAPIValues, connettoriImplementaAPILabels, notificheCondizionaliEsito, esitiTransazione,
 					serviceBinding, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern,
 					identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 					numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,

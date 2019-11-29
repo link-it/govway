@@ -14579,6 +14579,19 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			break;
+		case CONSEGNA_CON_NOTIFICHE:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI);
+			}
+			
+			break;
+		case CONSEGNA_CONDIZIONALE:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			break;
 		case CUSTOM:
 			sbConnettoriMultipli.append("Consegna Personalizzata '"+paAssociata.getBehaviour().getNome()+"'");
 			break;

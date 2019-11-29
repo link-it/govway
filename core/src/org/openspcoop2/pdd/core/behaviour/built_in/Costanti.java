@@ -38,5 +38,7 @@ public class Costanti  {
 	
 	public static final String CONSEGNA_CONDIZIONALE = "__conditional";
 	
+	public static final String CONSEGNA_CON_NOTIFICHE = "__notify";
+	
 	public static final String CONSEGNA_CUSTOM = "__custom";
 }

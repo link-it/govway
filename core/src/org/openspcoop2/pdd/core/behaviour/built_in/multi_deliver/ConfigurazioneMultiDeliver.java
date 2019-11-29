@@ -39,9 +39,9 @@ public class ConfigurazioneMultiDeliver {
 
 	private String transazioneSincrona_nomeConnettore;
 	
-	private boolean notificheByEsito = false;
-	private boolean notificheByEsito_ok = false;
-	private boolean notificheByEsito_fault = false;
+	private boolean notificheByEsito = true;
+	private boolean notificheByEsito_ok = true;
+	private boolean notificheByEsito_fault = true;
 	private boolean notificheByEsito_erroriConsegna = false;
 	private boolean notificheByEsito_erroriProcessamento = false;
 	private boolean notificheByEsito_richiesteScartate = false;

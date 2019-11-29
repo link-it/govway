@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.behaviour.built_in;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
@@ -36,11 +37,13 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
  */
 public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 
-	CONSEGNA_MULTIPLA (Costanti.CONSEGNA_MULTIPLA ,"Più Destinatari"),
-	CONSEGNA_LOAD_BALANCE (Costanti.CONSEGNA_LOAD_BALANCE ,"Load Balance"),
+	CONSEGNA_LOAD_BALANCE (Costanti.CONSEGNA_LOAD_BALANCE ,"Load Balance"), // per tutti
+	CONSEGNA_MULTIPLA (Costanti.CONSEGNA_MULTIPLA ,"Più Destinatari"), // per oneway-soap
+	CONSEGNA_CONDIZIONALE (Costanti.CONSEGNA_CONDIZIONALE ,"Consegna Condizionale"), // per !oneway-soap e rest
+	CONSEGNA_CON_NOTIFICHE (Costanti.CONSEGNA_CON_NOTIFICHE ,"Consegna con Notifiche"), // per !oneway-soap e rest
 	CUSTOM (Costanti.CONSEGNA_CUSTOM ,"Personalizzata");
-	
-	
+
+
 	/** Value */
 	private String value;
 	@Override
@@ -81,9 +84,9 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 			return false;
 		return object.equals(this.getValue());	
 	}
-	
-		
-	
+
+
+
 	/** compatibility with the generated bean (reflection) */
 	public boolean equals(Object object,List<String> fieldsNotCheck){
 		if( !(object instanceof BehaviourType) ){
@@ -94,19 +97,49 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 	public String toString(boolean reportHTML){
 		return toString();
 	}
-  	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
-  		return toString();
-  	}
-  	public String diff(Object object,StringBuffer bf,boolean reportHTML){
+	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
+		return toString();
+	}
+	public String diff(Object object,StringBuffer bf,boolean reportHTML){
 		return bf.toString();
 	}
 	public String diff(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){
 		return bf.toString();
 	}
-	
-	
+
+
 	/** Utilities */
-	
+
+	public static List<BehaviourType> getEnums(boolean soapOneway){
+		List<BehaviourType> l = new ArrayList<BehaviourType>();
+		l.add(BehaviourType.CONSEGNA_LOAD_BALANCE);
+		if(soapOneway) {
+			l.add(BehaviourType.CONSEGNA_MULTIPLA);
+		}
+		else {
+			l.add(BehaviourType.CONSEGNA_CONDIZIONALE);
+			l.add(BehaviourType.CONSEGNA_CON_NOTIFICHE);
+		}
+		l.add(BehaviourType.CUSTOM);
+		return l;
+	}
+	public static List<String> getLabels(boolean soapOneway){
+		List<BehaviourType> l = getEnums(soapOneway);
+		List<String> newL = new ArrayList<String>();
+		for (BehaviourType behaviourType : l) {
+			newL.add(behaviourType.getLabel());
+		}
+		return newL;
+	}
+	public static List<String> getValues(boolean soapOneway){
+		List<BehaviourType> l = getEnums(soapOneway);
+		List<String> newL = new ArrayList<String>();
+		for (BehaviourType behaviourType : l) {
+			newL.add(behaviourType.getValue());
+		}
+		return newL;
+	}
+
 	public static String[] toArray(){
 		String[] res = new String[values().length];
 		int i=0;
@@ -134,11 +167,11 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 		}
 		return res;
 	}
-	
+
 	public static boolean contains(String value){
 		return toEnumConstant(value)!=null;
 	}
-	
+
 	public static BehaviourType toEnumConstant(String value){
 		try{
 			return toEnumConstant(value,false);
@@ -162,7 +195,7 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 		}
 		return res;
 	}
-	
+
 	public static IEnumeration toEnumConstantFromString(String value){
 		try{
 			return toEnumConstantFromString(value,false);
