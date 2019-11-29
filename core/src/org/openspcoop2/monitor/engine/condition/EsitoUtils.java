@@ -146,12 +146,6 @@ public class EsitoUtils {
 				List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
 				expr.and().in(fieldEsito, esitiRichiesteMalformate);
 			}
-			else if(escludiRichiesteScartate) {
-				List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
-				IExpression exprRichiesteMalformate = newExpression;
-				exprRichiesteMalformate.and().in(fieldEsito, esitiRichiesteMalformate);
-				expr.and().not(exprRichiesteMalformate);
-			}
 			else{
 				if(esitoDettaglio == ALL_FAULT_APPLICATIVO_VALUE){
 					// si tratta del fault, devo trasformarlo nel codice ufficiale
@@ -159,8 +153,14 @@ public class EsitoUtils {
 					int codeFaultApplicativo = this.esitiProperties.convertNameToCode(EsitoTransazioneName.ERRORE_APPLICATIVO.name());
 					expr.and().equals(fieldEsito, codeFaultApplicativo);
 				}
-				else{
+				else if(esitoDettaglio>=0){
 					expr.and().equals(fieldEsito, esitoDettaglio);
+				}
+				else if(escludiRichiesteScartate) {
+					List<Integer> esitiRichiesteMalformate = this.esitiProperties.getEsitiCodeRichiestaScartate();
+					IExpression exprRichiesteMalformate = newExpression;
+					exprRichiesteMalformate.and().in(fieldEsito, esitiRichiesteMalformate);
+					expr.and().not(exprRichiesteMalformate);
 				}
 			}
 			
