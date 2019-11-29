@@ -123,6 +123,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 			
 			ServiceBinding serviceBinding = porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			
+			String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
 			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
 			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
 			Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
@@ -242,6 +243,9 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 						);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta,idAsps,  dati);
+				
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, null);	
 
 				pd.setDati(dati);
 
@@ -272,6 +276,9 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 						);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idPorta, idsogg, idPorta, idAsps, dati);
+				
+				dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTabP, null, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+						connettoreAccessoGruppi, connettoreRegistro, null);	
 
 				pd.setDati(dati);
 
