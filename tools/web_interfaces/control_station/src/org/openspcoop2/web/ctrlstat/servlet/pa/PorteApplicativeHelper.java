@@ -6671,7 +6671,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
-						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						if(ServiceBinding.REST.equals(serviceBinding)) {
 							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
 						}
 						else {
@@ -6681,7 +6681,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					else {
 						dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
-						if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
+						if(ServiceBinding.REST.equals(serviceBinding)) {
 							dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
 						}
 						else {
@@ -6878,8 +6878,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	}
 	
 	public String getLabelIdentificazioneCondizionalePattern(String identificazioneCondizionale){
+		return getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale, null);
+	}
+	
+	
+	public String getLabelIdentificazioneCondizionalePattern(String identificazioneCondizionale, Boolean selezioneConnettoreByFiltro){
 		if(identificazioneCondizionale == null)
 			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
+		
+		if(identificazioneCondizionale.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO)) {
+			if(selezioneConnettoreByFiltro == null) {
+				return ModalitaIdentificazione.STATIC.getLabelParametro();
+			}
+			
+			if(selezioneConnettoreByFiltro.booleanValue()) {
+				return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_FILTRO;
+			} else {
+				return PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN_CONNETTORE;
+			}
+		}
 		
 		org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipo = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale);
 		
@@ -8573,16 +8590,216 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			throw new Exception(e);
 		}
 	}
-	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione change,
-			Object object, String nome, String patternOperazione, boolean selezioneConnettoreBy,
-			String identificazioneCondizionale, String identificazioneCondizionalePattern,
-			String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso) throws Exception {
+	public Vector<DataElement> addAzioneConnettoriMultipliConfigToDati(Vector<DataElement> dati, TipoOperazione tipoOp, ServiceBinding serviceBinding,
+			String oldNome, String nome, String patternOperazione, boolean selezioneConnettoreByFiltro, String identificazioneCondizionale,
+			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso,
+			List<String> connettoriValues, List<String> connettoriLabels) throws Exception {
+	
+		DataElement de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_REGOLA);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		// vecchio nome
+		if(tipoOp.equals(TipoOperazione.CHANGE)) {
+			de = new DataElement();
+			de.setLabel("");
+			de.setValue(oldNome);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME);
+			dati.addElement(de);
+		}
+		
+		// nome
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
+		de.setValue(nome);
+		de.setType(DataElementType.TEXT_EDIT);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		// operationPattern
+		de = new DataElement();
+		de.setLabel(this.getLabelAzione(serviceBinding));
+		de.setValue(patternOperazione);
+		de.setType(DataElementType.TEXT_AREA);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_OPERAZIONE);
+		de.setRequired(true);
+		dati.addElement(de);
+		
+		// Identificazione condizionale
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE);
+		de.setType(DataElementType.SELECT);
+		
+		org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipoSelettoreS = null;
+		if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale)) {
+			tipoSelettoreS = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale, true);
+		}
+						
+		String [] identificazioneCondizionale_values = {
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.SOAPACTION_BASED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.getValue(),
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue(),
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO
+				};
+		
+		List<String> identificazioneCondizionale_labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.HEADER_BASED,
+				ModalitaIdentificazione.URL_BASED,
+				ModalitaIdentificazione.FORM_BASED,
+				ModalitaIdentificazione.SOAP_ACTION_BASED,
+				ModalitaIdentificazione.CONTAINER_BASED,
+				ModalitaIdentificazione.INDIRIZZO_IP_BASED,
+				ModalitaIdentificazione.X_FORWARD_FOR_BASED,
+				ModalitaIdentificazione.GOVWAY_TEMPLATE,
+				ModalitaIdentificazione.FREEMARKER_TEMPLATE,
+				ModalitaIdentificazione.VELOCITY_TEMPLATE,
+				ModalitaIdentificazione.STATIC
+			);
+		
+		de.setValues(identificazioneCondizionale_values);
+		de.setLabels(identificazioneCondizionale_labels);
+		de.setPostBack(true);
+		de.setSelected(identificazioneCondizionale);
+		dati.addElement(de);	
+		
+		// nome
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PATTERN);
+		de.setLabel(this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale, selezioneConnettoreByFiltro));
+		de.setValue(identificazioneCondizionalePattern);
+		if(identificazioneCondizionale==null || 
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.SOAPACTION_BASED.equals(identificazioneCondizionale)  || 
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP.equals(identificazioneCondizionale) || 
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.equals(identificazioneCondizionale)){
+			de.setType(DataElementType.HIDDEN);
+		}
+		else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.equals(identificazioneCondizionale) ||
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.CONTENT_BASED.equals(identificazioneCondizionale)||
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)||
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.equals(identificazioneCondizionale)||
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
+			de.setRequired(true);
+			de.setType(DataElementType.TEXT_AREA);
+			if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+				de.setRows(10);
+			}
+		}else if(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale)) { // static
+			if(selezioneConnettoreByFiltro) {
+				de.setRequired(true);
+				de.setType(DataElementType.TEXT_EDIT);
+			} else {
+				de.setType(DataElementType.SELECT);
+				de.setValues(connettoriValues);
+				de.setLabels(connettoriLabels);
+				de.setSelected(identificazioneCondizionalePattern);
+			}
+		}
+		else{
+			de.setRequired(true);
+			de.setType(DataElementType.TEXT_EDIT);
+		}
+		
+		if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+			DataElementInfo dInfoPattern = null;
+			if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.equals(identificazioneCondizionale)) {
+				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.GOVWAY_TEMPLATE.getLabel());
+				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASPORTO);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_REST_VALORI_CON_RISPOSTE);
+				}
+				else {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_TRASFORMAZIONI_TRASPORTO_SOAP_VALORI_CON_RISPOSTE);
+				}
+			}
+			else if(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.equals(identificazioneCondizionale)) {
+				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.FREEMARKER_TEMPLATE.getLabel());
+				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_FREEMARKER);
+				}
+				else {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_FREEMARKER);
+				}
+			}
+			else {
+				dInfoPattern = new DataElementInfo(ModalitaIdentificazione.VELOCITY_TEMPLATE.getLabel());
+				dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
+				if(ServiceBinding.REST.equals(serviceBinding)) {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_REST_VALORI_VELOCITY);
+				}
+				else {
+					dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_SOAP_VALORI_VELOCITY);
+				}
+			}
+			de.setInfo(dInfoPattern);
+		}
+		
+		dati.addElement(de);
+		
+		// prefisso
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
+		de.setSize(this.getSize());
+		de.setValue(identificazioneCondizionalePrefisso);
+		if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+			 de.setType(DataElementType.HIDDEN);
+		} else {
+			 de.setType(DataElementType.TEXT_EDIT);
+		}
+		dati.addElement(de);
+		
+		// suffisso
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
+		de.setSize(this.getSize());
+		de.setValue(identificazioneCondizionaleSuffisso);
+		if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+			 de.setType(DataElementType.HIDDEN);
+		} else {
+			 de.setType(DataElementType.TEXT_EDIT);
+		}
+		dati.addElement(de);
+		
+		
+		
 		return dati;
 	}
-	public boolean azioneConnettoriMultipliConfigCheckData(TipoOperazione add, String idPorta, Object object,
+	public boolean azioneConnettoriMultipliConfigCheckData(TipoOperazione tipoOp, ServiceBinding serviceBinding, String idPorta, String oldNome,
 			String nome, String patternOperazione, boolean selezioneConnettoreBy, String identificazioneCondizionale,
 			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso,
-			String identificazioneCondizionaleSuffisso) {
-		return false;
+			String identificazioneCondizionaleSuffisso, Set<String> regoleEsistenti) throws Exception {
+		
+		
+		
+		if(tipoOp.equals(TipoOperazione.ADD)) {
+			if(regoleEsistenti != null) {
+				if(regoleEsistenti.contains(nome)) {
+					
+				}
+			}
+		}
+		
+		if(tipoOp.equals(TipoOperazione.CHANGE)) { 
+			if(!oldNome.equals(nome)) { // cambio nome alla regola nella change
+				if(regoleEsistenti.contains(nome)) {
+					
+				}
+			}
+		}
+		
+		return true;
 	}
 }

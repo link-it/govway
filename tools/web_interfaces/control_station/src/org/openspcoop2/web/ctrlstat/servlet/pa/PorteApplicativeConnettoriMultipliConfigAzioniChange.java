@@ -36,16 +36,18 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.PortaApplicativa;
-import org.openspcoop2.core.config.Proprieta;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
-import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -89,6 +91,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			String idPorta = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(idPorta);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
+			String oldNome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME);
 			String nome = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
 			String patternOperazione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_OPERAZIONE);
 			String identificazioneCondizionale = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE);
@@ -101,6 +104,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
 
@@ -109,6 +113,16 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			String nomePorta = pa.getNome();
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			AccordoServizioParteComuneSintetico as = null;
+			if(porteApplicativeCore.isRegistroServiziLocale()){
+				int idAcc = asps.getIdAccordo().intValue();
+				as = apcCore.getAccordoServizioSintetico(idAcc);
+			}
+			else{
+				as = apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			}
+			
+			ServiceBinding serviceBinding = porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			
 			Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, idPorta);
 			Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, nomePorta);
@@ -130,9 +144,23 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			
 			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
 			
-			ConfigurazioneSelettoreCondizione configurazioneSelettoreCondizione = configurazioneCondizionale.getDefaultConfig();
+			ConfigurazioneSelettoreCondizioneRegola oldRegola = configurazioneCondizionale.getRegola(oldNome);
 			
-			boolean selezioneConnettoreBy = configurazioneCondizionale.isByFilter();
+			boolean selezioneConnettoreByFiltro = configurazioneCondizionale.isByFilter();
+			// select list connettori in caso di selezione by nome
+			List<String> connettoriValues = new ArrayList<>();
+			List<String> connettoriLabels = new ArrayList<>();
+			if(!selezioneConnettoreByFiltro) {
+				List<PortaApplicativaServizioApplicativo> servizioApplicativoList = pa.getServizioApplicativoList();
+				if(servizioApplicativoList != null) {
+					for (PortaApplicativaServizioApplicativo paSA : servizioApplicativoList) {
+						String nomeConnettorePaSA = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+	
+						connettoriValues.add(nomeConnettorePaSA);
+						connettoriLabels.add(nomeConnettorePaSA);
+					}
+				}
+			}
 			
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
@@ -195,20 +223,28 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 				ServletUtils.setPageDataTitle(pd, lstParam);
 				
 				if(nome == null) {
-					nome = "";
-					patternOperazione = "";
-					identificazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue();
-					identificazioneCondizionalePattern = "";
-					identificazioneCondizionalePrefisso = "";
-					identificazioneCondizionaleSuffisso = ""; 
+					nome = oldRegola.getRegola();
+					patternOperazione = oldRegola.getPatternOperazione();
+					
+					if(oldRegola.getStaticInfo() == null) {
+						identificazioneCondizionale = oldRegola.getTipoSelettore().getValue();
+						identificazioneCondizionalePattern = oldRegola.getPattern();
+					} else {
+						identificazioneCondizionale = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO;
+						identificazioneCondizionalePattern = oldRegola.getStaticInfo();
+					}
+					identificazioneCondizionalePrefisso = oldRegola.getPrefix();
+					identificazioneCondizionaleSuffisso = oldRegola.getSuffix(); 
 				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, null, nome,
-						patternOperazione,  selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso
+				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, serviceBinding, oldNome, nome,
+						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
+						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso,
+						connettoriValues, connettoriLabels
 						);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta,idAsps,  dati);
@@ -222,8 +258,8 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			}
 
 			// Controlli sui campi immessi
-			boolean isOk = porteApplicativeHelper.azioneConnettoriMultipliConfigCheckData(TipoOperazione.CHANGE, idPorta, null, nome,
-					patternOperazione,  selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso);
+			boolean isOk = porteApplicativeHelper.azioneConnettoriMultipliConfigCheckData(TipoOperazione.CHANGE, serviceBinding, idPorta, oldNome, nome,
+					patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -234,8 +270,10 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, null, nome,
-						patternOperazione,  selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso
+				dati = porteApplicativeHelper.addAzioneConnettoriMultipliConfigToDati(dati, TipoOperazione.CHANGE, serviceBinding, oldNome, nome,
+						patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, 
+						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso,
+						connettoriValues, connettoriLabels
 						);
 				
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, idPorta, idsogg, idPorta, idAsps, dati);
@@ -254,8 +292,19 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			ConfigurazioneSelettoreCondizioneRegola regola = new ConfigurazioneSelettoreCondizioneRegola();
 			
 			regola.setRegola(nome);
+			regola.setPatternOperazione(patternOperazione);
 			
-			configurazioneCondizionale.addRegola(regola );
+			if(!identificazioneCondizionale.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO)) {
+				regola.setTipoSelettore(org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale));
+				regola.setPattern(identificazioneCondizionalePattern);
+			} else {
+				regola.setStaticInfo(identificazioneCondizionalePattern);
+			}
+			regola.setPrefix(identificazioneCondizionalePrefisso);
+			regola.setSuffix(identificazioneCondizionaleSuffisso);
+			
+			configurazioneCondizionale.removeRegola(oldNome);
+			configurazioneCondizionale.addRegola(regola);
 			
 			org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
 
