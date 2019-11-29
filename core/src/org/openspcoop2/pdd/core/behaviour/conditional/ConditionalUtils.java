@@ -597,7 +597,7 @@ public class ConditionalUtils  {
 						if((prefixGruppo+Costanti.CONDITIONAL_RULE_NAME).equals(nome)) {
 							selettoreConfigurazioneRegola.setRegola(valore);
 						}
-						else if((prefixGruppo+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE).equals(nome)) {
+						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_RULE_PATTERN_OPERAZIONE).equals(nome)) {
 							selettoreConfigurazioneRegola.setPatternOperazione(valore);
 						}
 						else if((prefixGruppoConUnderscore+Costanti.CONDITIONAL_RULE_STATIC_INFO).equals(nome)) {
@@ -658,9 +658,9 @@ public class ConditionalUtils  {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix());
 		}
 		
-		if(configurazione.getRegole()!=null && !configurazione.getRegole().isEmpty()) {
+		if(configurazione.getRegoleOrdinate()!=null && !configurazione.getRegoleOrdinate().isEmpty()) {
 			int indexRegola = 1;
-			for (String nomeRegola : configurazione.getRegole()) {
+			for (String nomeRegola : configurazione.getRegoleOrdinate()) {
 				
 				String prefixRegola = Costanti.CONDITIONAL_RULE+indexRegola;
 				BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),(prefixRegola+Costanti.CONDITIONAL_RULE_NAME),nomeRegola);

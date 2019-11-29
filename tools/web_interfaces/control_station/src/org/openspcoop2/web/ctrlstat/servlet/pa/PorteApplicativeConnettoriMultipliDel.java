@@ -40,17 +40,29 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -93,6 +105,9 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			int idInt = Integer.parseInt(idPorta);
 			String objToRemove = porteApplicativeHelper.getParameter(Costanti.PARAMETER_NAME_OBJECTS_FOR_REMOVE);
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
+			String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+			if(idAsps == null) 
+				idAsps = "";
 			// Elimino le properties della porta applicativa dal db
 			// StringTokenizer objTok = new StringTokenizer(objToRemove, ",");
 			// int[] idToRemove = new int[objTok.countTokens()];
@@ -113,94 +128,26 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 			// Prendo la porta applicativa
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
+			AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+			AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
 
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
+			long idAspsLong = Long.parseLong(idAsps);
+			AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
 			List<Object> listaOggettiDaEliminare = new ArrayList<Object>();
 			boolean eseguiOperazione = true;
 
 			boolean connettoreUtilizzatiConfig = false;
 			List<String> messaggiSezioniConnettore = new ArrayList<String>();
-			for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
-				PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
-				String nomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
-
-				for (int i = 0; i < idsToRemove.size(); i++) {
-					nome = idsToRemove.get(i);
-					if (nome.equals(paSA.getNome())) {
-						if(pa.getBehaviour() != null) {
-							boolean connettoreInUso = false;
-							List<String> titoliSezioniAggiornate = new ArrayList<String>();
-							BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
-
-							boolean consegnaCondizionale = false;
-							if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
-								consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
-
-								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
-
-								if(configurazioneMultiDeliver != null) {
-									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
-										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
-											// MESSAGGIO!
-											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE 
-													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
-											connettoreInUso = true;
-										}
-									}
-								}
-
-
-								if(consegnaCondizionale) {
-									org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
-											org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
-
-									org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
-											configurazioneCondizionale.getCondizioneNonIdentificata();
-
-									if(condizioneNonIdentificata.getNomeConnettore() != null) {
-										if(condizioneNonIdentificata.getNomeConnettore().equals(nomeConnettore)) {
-											// MESSAGGIO!
-
-											titoliSezioniAggiornate.add(
-
-													PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
-													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA);
-											connettoreInUso = true;
-										}
-									}
-
-									org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
-											configurazioneCondizionale.getNessunConnettoreTrovato();
-
-									if(connettoreNonTrovato.getNomeConnettore() != null) {
-										if(connettoreNonTrovato.getNomeConnettore().equals(nomeConnettore)) {
-											// MESSAGGIO!
-											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
-													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO);
-											connettoreInUso = true;
-										}
-									}
-								}
-
-								if(connettoreInUso) {
-									StringBuilder sbMsg = new StringBuilder();
-									if(idsToRemove.size() > 1) {
-										sbMsg.append(nomeConnettore).append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
-									}
-									
-									sbMsg.append(DBOggettiInUsoUtils.formatList(titoliSezioniAggiornate, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
-									messaggiSezioniConnettore.add(sbMsg.toString());
-									connettoreUtilizzatiConfig = true;
-								}
-
-							}
-						}
-						break;
-					}
-				} // end for elementi selezionati
-			} // end for tutti i pasa
+			int numeroElementiDaControllare = idsToRemove.size();
+			for (int i = 0; i < idsToRemove.size(); i++) {
+				nome = idsToRemove.get(i);
+			
+				connettoreUtilizzatiConfig = porteApplicativeHelper. isConnettoreMultiploInUso(numeroElementiDaControllare, nome, pa, asps, apc, serviceBinding, messaggiSezioniConnettore);
+			} // end for elementi selezionati
 
 			StringBuilder sbErrore = new StringBuilder();
 			if(connettoreUtilizzatiConfig) {

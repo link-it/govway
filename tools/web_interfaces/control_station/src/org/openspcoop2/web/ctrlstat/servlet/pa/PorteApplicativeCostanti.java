@@ -1161,6 +1161,7 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_CONFERMA_DISABILITAZIONE_CONNETTORE ="Procedere con la disabilitazione del connettore ''{0}''?"; 
 	
 	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile disabilitare il connettore ''{0}'', deve rimanare almento un connettore abilitato";
+	public static final String MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile disabilitare il connettore selezionato.<br/>&Egrave; utilizzato all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";
 	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile eliminare i connettori selezionati.<br/>Deve rimanare almento un connettore abilitato";
 	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_IL_CONNETTORE_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO = "Impossibile eliminare il connettore selezionato.<br/>Deve rimanare almento un connettore abilitato";
 	public static final String MESSAGGIO_IMPOSSIBILE_ELIMINARE_I_CONNETTORI_UTILIZZATI_IN_CONFIGURAZIONE = "Impossibile eliminare i connettori selezionati.<br/>Sono utilizzati all'interno della sezione '"+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG+"'";
@@ -1200,5 +1201,6 @@ public class PorteApplicativeCostanti {
 	public static final String MESSAGGIO_ERRORE_LA_PROPERTY_XX_E_GIA_STATA_ASSOCIATA_ALLA_CONFIGURAZIONE = "La propriet&agrave; ''{0}'' &egrave; gi&agrave; stata associata alla configurazione connettori multipli di tipo custom";
 	public static final String MESSAGGIO_ERRRORE_FORMATO_NUMERICO_XX_NON_VALIDO = "Il valore inserito nel campo {0} non &egrave; di tipo numerico";
 	public static final String MESSAGGIO_ERRRORE_MIN_XX_NON_VALIDO = "Il valore inserito nel campo {0} deve essere maggiore di {1}"; 
+	public static final String MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX = "Esiste gi&agrave; una Regola con Nome ''{0}''";
 	
 }

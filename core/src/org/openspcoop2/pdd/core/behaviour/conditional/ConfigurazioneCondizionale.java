@@ -21,9 +21,8 @@
  */
 package org.openspcoop2.pdd.core.behaviour.conditional;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -41,7 +40,7 @@ public class ConfigurazioneCondizionale {
 
 	private boolean byFilter = true; 
 	private ConfigurazioneSelettoreCondizione defaultConfig;
-	private Map<String, ConfigurazioneSelettoreCondizioneRegola> regolaList = new HashMap<>();
+	private TreeMap<String, ConfigurazioneSelettoreCondizioneRegola> regolaList = new TreeMap<String, ConfigurazioneSelettoreCondizioneRegola>();
 	
 	private IdentificazioneFallitaConfigurazione condizioneNonIdentificata;
 	private IdentificazioneFallitaConfigurazione nessunConnettoreTrovato; 
@@ -77,7 +76,7 @@ public class ConfigurazioneCondizionale {
 	
 	public ConfigurazioneSelettoreCondizioneRegola getRegolaByOperazione(String operazione) throws RegExpException {
 		if(!this.regolaList.isEmpty()) {
-			for (String nomeRegola: this.regolaList.keySet()) {
+			for (String nomeRegola: getRegoleOrdinate()) {
 				ConfigurazioneSelettoreCondizioneRegola config = this.regolaList.get(nomeRegola);
 				boolean match = false;
 				try {
@@ -97,7 +96,8 @@ public class ConfigurazioneCondizionale {
 	public ConfigurazioneSelettoreCondizioneRegola getRegola(String nomeRegola) {
 		return this.regolaList.get(nomeRegola);
 	}
-	public Set<String> getRegole(){
+	public Set<String> getRegoleOrdinate(){
+		
 		return this.regolaList.keySet();
 	}
 	

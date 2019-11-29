@@ -89,7 +89,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniList extends Ac
 			
 			Set<String> lista = null;
 			if(configurazioneCondizionale != null) {
-				lista = configurazioneCondizionale.getRegole();
+				lista = configurazioneCondizionale.getRegoleOrdinate();
 			}
 
 			porteApplicativeHelper.preparePorteApplicativeConnettoriMultipliConfigAzioniList(pa, configurazioneCondizionale, ricerca, lista);

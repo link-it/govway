@@ -65,11 +65,13 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
@@ -1150,31 +1152,51 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				if(!nomeConnettore.equals(oldNomeConnettore)) {
 					if(pa.getBehaviour() != null) {
-						
+
 						BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
 
 						boolean consegnaCondizionale = false;
-						if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
+						if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)
+								|| behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)
+								|| behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)
+								|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
 
-							org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
-									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+							MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+							boolean isSoapOneWay = porteApplicativeHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
 
-							if(configurazioneMultiDeliver != null) {
-								if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
-									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
-										// modifica riferimento
-										configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
-										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
+							if(behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+								if(!isSoapOneWay) {
+									org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+											org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+
+									if(configurazioneMultiDeliver != null) {
+										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+											if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(oldNomeConnettore)) {
+												// modifica riferimento
+												configurazioneMultiDeliver.setTransazioneSincrona_nomeConnettore(nomeConnettore);
+												org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(pa, configurazioneMultiDeliver);
+											}
+										}
 									}
 								}
 							}
-
 
 							if(consegnaCondizionale) {
 								boolean save = false;
 								org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
 										org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+
+								for (String nomeRegola : configurazioneCondizionale.getRegoleOrdinate()) {
+									ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
+									if(!configurazioneCondizionale.isByFilter()) {
+										if(regola.getStaticInfo() != null) {
+											if(regola.getStaticInfo().equals(nomeConnettore)) {
+												regola.setStaticInfo(nomeConnettore);
+											}
+										}
+									}
+								}
 
 								org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
 										configurazioneCondizionale.getCondizioneNonIdentificata();

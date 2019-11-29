@@ -24,6 +24,8 @@
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,10 +41,15 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativoConnettore;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
+import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
 import org.openspcoop2.web.lib.mvc.GeneralData;
@@ -120,21 +127,55 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 				boolean eseguiOperazione = true;
 
 				// solo per i casi in cui sto disabilitando
+				StringBuilder sbErrore = new StringBuilder();
 				if(!ServletUtils.isCheckBoxEnabled(changeAbilitato)) {
-					// controllare che almeno un connettore rimanga abilitato
-					int numeroAbilitati = 0;
-					for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
-						if(!paSATmp.getNome().equals(nomeSAConnettore)) { // controllo che tutti gli altri non siano disabilitati
-							boolean abilitato = paSATmp.getDatiConnettore()	!= null ? 	paSATmp.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
-
-							if(abilitato)
-								numeroAbilitati ++;
+					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(porteApplicativeCore);
+					AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(porteApplicativeCore);
+					
+					String idAsps = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS);
+					if(idAsps == null) 
+						idAsps = "";
+					long idAspsLong = Long.parseLong(idAsps);
+					AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+					AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
+					ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
+					
+					// controllo che il connettore non sia utilizzato in altri punti della configurazione
+					List<String> messaggiSezioniConnettore = new ArrayList<String>();
+					int numeroElementiDaControllare = 1;
+					
+					boolean connettoreUtilizzatiConfig = porteApplicativeHelper.isConnettoreMultiploInUso(numeroElementiDaControllare,
+							nomeSAConnettore, pa, asps, apc, serviceBinding, messaggiSezioniConnettore);
+					
+					if(connettoreUtilizzatiConfig) {
+						sbErrore.append(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_UTILIZZATI_IN_CONFIGURAZIONE);
+						sbErrore.append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+						for (String s : messaggiSezioniConnettore) {
+							sbErrore.append(s);
 						}
+
+						eseguiOperazione = false;
 					}
 					
 					
-					if(numeroAbilitati < 1) {
-						eseguiOperazione = false;
+					if(!connettoreUtilizzatiConfig) {
+						// controllare che almeno un connettore rimanga abilitato
+						int numeroAbilitati = 0;
+						for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+							if(!paSATmp.getNome().equals(nomeSAConnettore)) { // controllo che tutti gli altri non siano disabilitati
+								boolean abilitato = paSATmp.getDatiConnettore()	!= null ? 	paSATmp.getDatiConnettore().getStato().equals(StatoFunzionalita.ABILITATO) : true;
+	
+								if(abilitato)
+									numeroAbilitati ++;
+							}
+						}
+						
+						
+						if(numeroAbilitati < 1) {
+							eseguiOperazione = false;
+							sbErrore.append(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO,
+									porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA)));
+						}
 					}
 				}
 
@@ -154,8 +195,7 @@ public final class PorteApplicativeConnettoriMultipliAbilitazione extends Action
 								Costanti.LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX }};
 					pd.setBottoni(bottoni );
 				} else {
-					messaggio = MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_IMPOSSIBILE_DISABILITARE_IL_CONNETTORE_0_DEVE_RIMANARE_ALMENTO_UN_CONNETTORE_ABILITATO,
-							porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA));
+					messaggio = sbErrore.toString();
 					title = "Attenzione";
 					String[][] bottoni = { 
 							{ Costanti.LABEL_MONITOR_BUTTON_CHIUDI, 

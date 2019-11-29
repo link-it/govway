@@ -213,7 +213,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 				
 				if(org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog())){
 					org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(portaApplicativa, ControlStationCore.getLog());
-					numeroRegolePerAzioni = configurazioneCondizionale.getRegole().size();
+					numeroRegolePerAzioni = configurazioneCondizionale.getRegoleOrdinate().size();
 					visualizzaLinkRegolePerAzioni = true;
 				}
 			}
@@ -614,7 +614,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						connettoreNonTrovatoDiagnostico = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_DIAGNOSTICO_INFO;
 						
 					connettoreNonTrovatoConnettore = connettoreNonTrovato.getNomeConnettore();
-					numeroRegolePerAzioni = configurazioneCondizionale.getRegole().size();
+					numeroRegolePerAzioni = configurazioneCondizionale.getRegoleOrdinate().size();
 					visualizzaLinkRegolePerAzioni = true;
 				} else {
 					selezioneConnettoreBy = PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SELEZIONE_CONNETTORE_BY_FILTRO;

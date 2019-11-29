@@ -87,7 +87,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniDel extends Act
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale =
 					org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
-			Set<String> nomiRegole = configurazioneCondizionale.getRegole();
+			Set<String> nomiRegole = configurazioneCondizionale.getRegoleOrdinate();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 				for (String nomeRegola : nomiRegole) {
@@ -112,7 +112,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniDel extends Act
 			
 			Set<String> lista = null;
 			if(configurazioneCondizionale != null) {
-				lista = configurazioneCondizionale.getRegole();
+				lista = configurazioneCondizionale.getRegoleOrdinate();
 			}
 
 			// Preparo la lista

@@ -89,6 +89,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
@@ -96,6 +97,7 @@ import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCon
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -7012,7 +7014,6 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				return false;
 			}
 			
-			boolean validaSezioneGestioneNotifiche = false;
 			boolean validaSezioneCondizionalita = false;
 			// custom
 			if(modalitaConsegna.equals(BehaviourType.CUSTOM.getValue())) {
@@ -7045,9 +7046,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			// validazione della sezione gestione notifiche
-			if(validaSezioneGestioneNotifiche) {
-				String connettoreImplementaAPI = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
-				
+			String connettoreImplementaAPI = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
+			if(!isSoapOneWay) {
 				// select list con strategia
 				if (StringUtils.isEmpty(connettoreImplementaAPI)) {
 					this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API+" non pu&ograve; essere vuoto");
@@ -7133,6 +7133,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								return false;
 							}
 						}
+						
+						if(!isSoapOneWay) {
+							if(connettoreImplementaAPI.equals(condizioneNonIdentificataConnettore)) {
+								this.pd.setMessage("Il campo '"+  
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA_CONNETTORE +"' nella sezione '"+
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA+"' non pu&ograve; contenere lo stesso valore indicato nel campo '" + 
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API +"'");
+								return false;
+							}
+						}
 					}
 					
 					String connettoreNonTrovatoAbortTransactionS = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_ABORT_TRANSACTION);
@@ -7152,6 +7162,16 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 								this.pd.setMessage("Il campo "+  
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +" nella sezione '"+
 										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO+"' non pu&ograve; essere vuoto");
+								return false;
+							}
+						}
+						
+						if(!isSoapOneWay) {
+							if(connettoreImplementaAPI.equals(connettoreNonTrovatoConnettore)) {
+								this.pd.setMessage("Il campo '"+  
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_CONNETTORE +"' nella sezione '"+
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO+"' non pu&ograve; contenere lo stesso valore indicato nel campo '" + 
+										PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API +"'");
 								return false;
 							}
 						}
@@ -8424,7 +8444,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return configurazioneMultiDeliver;
 	}
 	
-	public org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale  toConfigurazioneCondizionale(
+	public org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale toConfigurazioneCondizionale(
 			boolean consegnaCondizionale, String selezioneConnettoreBy, String identificazioneCondizionale, String identificazioneCondizionalePattern,
 			String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso, boolean condizioneNonIdentificataAbortTransaction, String condizioneNonIdentificataDiagnostico, String condizioneNonIdentificataConnettore,
 			boolean connettoreNonTrovatoAbortTransaction, String connettoreNonTrovatoDiagnostico, String connettoreNonTrovatoConnettore) {
@@ -8634,16 +8654,19 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				while (it.hasNext()) {
 					String nomeRegola = it.next();
 					ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
-		
+					Parameter pNomeRegola = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_OLD_NOME, nomeRegola);
+					
 					Vector<DataElement> e = new Vector<DataElement>();
 		
 					DataElement de = new DataElement();
 					de.setValue(nomeRegola);
 					de.setIdToRemove(nomeRegola + "");
+					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_CHANGE, 
+							pIdPorta, pIdSogg, pIdAsps, pNomePorta, pConnettoreAccessoDaGruppi, pConnettoreRegistro, pAccessoDaAPS, pIdTab, pConnettoreAccessoCM,pNomeRegola);
 					e.addElement(de);
 					
 					de = new DataElement();
-					de.setValue(regola.getPattern());
+					de.setValue(regola.getPatternOperazione());
 					e.addElement(de);
 		
 					dati.addElement(e);
@@ -8846,16 +8869,86 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		return dati;
 	}
 	public boolean azioneConnettoriMultipliConfigCheckData(TipoOperazione tipoOp, ServiceBinding serviceBinding, String idPorta, String oldNome,
-			String nome, String patternOperazione, boolean selezioneConnettoreBy, String identificazioneCondizionale,
+			String nome, String patternOperazione, boolean selezioneConnettoreByFiltro, String identificazioneCondizionale,
 			String identificazioneCondizionalePattern, String identificazioneCondizionalePrefisso,
 			String identificazioneCondizionaleSuffisso, Set<String> regoleEsistenti) throws Exception {
 		
+		// campi obbligatori
+		if (nome.equals("")){
+			this.pd.setMessage("Il campo "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME +" non pu&ograve; essere vuoto");
+			return false;
+		}
+		
+		if (patternOperazione.equals("")){
+			this.pd.setMessage("Il campo "+ this.getLabelAzione(serviceBinding) +" non pu&ograve; essere vuoto");
+			return false;
+		}
+		
+		// Check Lunghezza
+		if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME)==false) {
+			return false;
+		}
+		
+		if(this.checkLength4000(patternOperazione, this.getLabelAzione(serviceBinding))==false) {
+			return false;
+		}
+		
+		if (identificazioneCondizionale.equals("")){
+			this.pd.setMessage("Il campo "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE +" non pu&ograve; essere vuoto");
+			return false;
+		}
+		
+		if(!PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale)) {
+			org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore tipo = org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.toEnumConstant(identificazioneCondizionale);
+								
+			if(tipo.hasParameter()) {
+				if (StringUtils.isEmpty(identificazioneCondizionalePattern)) {
+					this.pd.setMessage("Il campo "+ this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale) +" non pu&ograve; essere vuoto");
+					return false;
+				}
+				
+				if(this.checkLength4000(identificazioneCondizionalePattern, this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale))==false) {
+					return false;
+				}
+			}
+			
+								
+			if(!tipo.isTemplate()){  // e' un caso in cui e' visibile
+				if(this.checkLength255(identificazioneCondizionalePrefisso, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO)==false) {
+					return false;
+				}
+				
+				if(this.checkLength255(identificazioneCondizionaleSuffisso, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO)==false) {
+					return false;
+				}
+			}
+		} else { // caso static
+			if (StringUtils.isEmpty(identificazioneCondizionalePattern)) {
+				this.pd.setMessage("Il campo "+ this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale, selezioneConnettoreByFiltro) +" non pu&ograve; essere vuoto");
+				return false;
+			}
+			
+			if(selezioneConnettoreByFiltro) {
+				if(this.checkLength255(identificazioneCondizionalePattern, this.getLabelIdentificazioneCondizionalePattern(identificazioneCondizionale, selezioneConnettoreByFiltro))==false) {
+					return false;
+				}
+			}
+			
+			if(this.checkLength255(identificazioneCondizionalePrefisso, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO)==false) {
+				return false;
+			}
+			
+			if(this.checkLength255(identificazioneCondizionaleSuffisso, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO)==false) {
+				return false;
+			}
+		}
 		
 		
 		if(tipoOp.equals(TipoOperazione.ADD)) {
 			if(regoleEsistenti != null) {
 				if(regoleEsistenti.contains(nome)) {
-					
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX, nome));	
+					return false;
 				}
 			}
 		}
@@ -8863,11 +8956,125 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		if(tipoOp.equals(TipoOperazione.CHANGE)) { 
 			if(!oldNome.equals(nome)) { // cambio nome alla regola nella change
 				if(regoleEsistenti.contains(nome)) {
-					
+					this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRORE_ESISTE_GIA_UNA_REGOLA_XX, nome));	
+					return false;
 				}
 			}
 		}
 		
 		return true;
+	}
+	
+	public boolean isConnettoreMultiploInUso(int numeroElementiDaControllare, String nomePaSA,
+			PortaApplicativa pa, AccordoServizioParteSpecifica asps,
+			AccordoServizioParteComuneSintetico apc, ServiceBinding serviceBinding, List<String> messaggiSezioniConnettore) throws DriverConfigurazioneException, Exception,
+			DriverRegistroServiziException, DriverConfigurazioneNotFound, BehaviourException {
+		
+		boolean connettoreUtilizzatiConfig = false;
+		
+		for (int j = 0; j < pa.sizeServizioApplicativoList(); j++) {
+			PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(j);
+			String nomeConnettore = this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+			if (nomePaSA.equals(paSA.getNome())) {
+				if(pa.getBehaviour() != null) {
+					boolean connettoreInUso = false;
+					List<String> titoliSezioniAggiornate = new ArrayList<String>();
+					BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+
+					boolean consegnaCondizionale = false;
+					if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)
+							|| behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)
+							|| behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)
+							|| behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+						consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(pa, ControlStationCore.getLog());
+
+						MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+						boolean isSoapOneWay = this.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+
+						if(behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE)) {
+							if(!isSoapOneWay) {
+								org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = 
+										org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+
+								if(configurazioneMultiDeliver != null) {
+									if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore() != null) {
+										if(configurazioneMultiDeliver.getTransazioneSincrona_nomeConnettore().equals(nomeConnettore)) {
+											// MESSAGGIO!
+											titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SEZIONE_NOTIFICHE 
+													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API);
+											connettoreInUso = true;
+										}
+									}
+								}
+							}
+						}
+
+
+						if(consegnaCondizionale) {
+							org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = 
+									org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
+							
+							for (String nomeRegola : configurazioneCondizionale.getRegoleOrdinate()) {
+								ConfigurazioneSelettoreCondizioneRegola regola = configurazioneCondizionale.getRegola(nomeRegola);
+								if(!configurazioneCondizionale.isByFilter()) {
+									if(regola.getStaticInfo() != null) {
+										if(regola.getStaticInfo().equals(nomeConnettore)) {
+											// MESSAGGIO!
+
+											titoliSezioniAggiornate.add(
+													PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
+													+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_PER_AZIONI);
+											connettoreInUso = true;
+											break;
+										}
+									}
+								}
+							}
+
+							org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione condizioneNonIdentificata =
+									configurazioneCondizionale.getCondizioneNonIdentificata();
+
+							if(condizioneNonIdentificata.getNomeConnettore() != null) {
+								if(condizioneNonIdentificata.getNomeConnettore().equals(nomeConnettore)) {
+									// MESSAGGIO!
+
+									titoliSezioniAggiornate.add(
+
+											PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
+											+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONDIZIONE_NON_IDENTIFICATA);
+									connettoreInUso = true;
+								}
+							}
+
+							org.openspcoop2.pdd.core.behaviour.conditional.IdentificazioneFallitaConfigurazione connettoreNonTrovato = 
+									configurazioneCondizionale.getNessunConnettoreTrovato();
+
+							if(connettoreNonTrovato.getNomeConnettore() != null) {
+								if(connettoreNonTrovato.getNomeConnettore().equals(nomeConnettore)) {
+									// MESSAGGIO!
+									titoliSezioniAggiornate.add(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONDIZIONALITA 
+											+ " -> " + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO);
+									connettoreInUso = true;
+								}
+							}
+						}
+
+						if(connettoreInUso) {
+							StringBuilder sbMsg = new StringBuilder();
+							if(numeroElementiDaControllare > 1) {
+								sbMsg.append(nomeConnettore).append(":").append(org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
+							}
+
+							sbMsg.append(DBOggettiInUsoUtils.formatList(titoliSezioniAggiornate, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE));
+							messaggiSezioniConnettore.add(sbMsg.toString());
+							connettoreUtilizzatiConfig = true;
+						}
+
+					}
+				}
+				break;
+			}
+		} // end for tutti i pasa
+		return connettoreUtilizzatiConfig;
 	}
 }

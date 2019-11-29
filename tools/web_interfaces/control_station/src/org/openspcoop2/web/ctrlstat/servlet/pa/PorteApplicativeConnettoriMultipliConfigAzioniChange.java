@@ -144,6 +144,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			
 			org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneCondizionale configurazioneCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.read(pa, ControlStationCore.getLog());
 			
+			Set<String> regoleEsistenti = configurazioneCondizionale.getRegoleOrdinate();
 			ConfigurazioneSelettoreCondizioneRegola oldRegola = configurazioneCondizionale.getRegola(oldNome);
 			
 			boolean selezioneConnettoreByFiltro = configurazioneCondizionale.isByFilter();
@@ -259,7 +260,8 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.azioneConnettoriMultipliConfigCheckData(TipoOperazione.CHANGE, serviceBinding, idPorta, oldNome, nome,
-					patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso);
+					patternOperazione,  selezioneConnettoreByFiltro, identificazioneCondizionale, identificazioneCondizionalePattern,
+					identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, regoleEsistenti);
 			if (!isOk) {
 				
 				// setto la barra del titolo
@@ -319,7 +321,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			
 			Set<String> lista = null;
 			if(configurazioneCondizionale != null) {
-				lista = configurazioneCondizionale.getRegole();
+				lista = configurazioneCondizionale.getRegoleOrdinate();
 			}
 
 			// Preparo la lista
