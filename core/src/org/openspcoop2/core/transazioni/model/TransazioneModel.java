@@ -46,6 +46,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.STATO = new Field("stato",java.lang.String.class,"transazione",Transazione.class);
 		this.RUOLO_TRANSAZIONE = new Field("ruolo-transazione",int.class,"transazione",Transazione.class);
 		this.ESITO = new Field("esito",int.class,"transazione",Transazione.class);
+		this.ESITO_SINCRONO = new Field("esito-sincrono",int.class,"transazione",Transazione.class);
 		this.CONSEGNE_MULTIPLE_IN_CORSO = new Field("consegne-multiple-in-corso",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new Field("esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione",Transazione.class);
@@ -148,6 +149,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"transazione",Transazione.class);
 		this.RUOLO_TRANSAZIONE = new ComplexField(father,"ruolo-transazione",int.class,"transazione",Transazione.class);
 		this.ESITO = new ComplexField(father,"esito",int.class,"transazione",Transazione.class);
+		this.ESITO_SINCRONO = new ComplexField(father,"esito-sincrono",int.class,"transazione",Transazione.class);
 		this.CONSEGNE_MULTIPLE_IN_CORSO = new ComplexField(father,"consegne-multiple-in-corso",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new ComplexField(father,"esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione",Transazione.class);
@@ -251,6 +253,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField RUOLO_TRANSAZIONE = null;
 	 
 	public IField ESITO = null;
+	 
+	public IField ESITO_SINCRONO = null;
 	 
 	public IField CONSEGNE_MULTIPLE_IN_CORSO = null;
 	 

@@ -4778,7 +4778,45 @@ public class GestoreMessaggi  {
 		}
 	}
 
+	public void releaseAttesaEsiti(boolean debug, Logger log) throws GestoreMessaggiException {
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateMSG.getConnectionDB();
 
+			PreparedStatement pstmt = null;
+			try{
+
+				// Costruzione Query Update
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET ATTESA_ESITO=? WHERE ID_MESSAGGIO=?";
+				//log.debug("Query: "+query);
+				pstmt= connectionDB.prepareStatement(query);
+				int index = 1;
+				pstmt.setInt(index++,CostantiDB.FALSE);
+				pstmt.setString(index++,this.idBusta);
+
+				int row = pstmt.executeUpdate();
+				if(debug) {
+					log.debug("(rows update: "+row+") UPDATE MSG_SERVIZI_APPLICATIVI SET ATTESA_ESITO="+CostantiDB.FALSE+" WHERE ID_MESSAGGIO='"+this.idBusta+"'");
+				}
+				
+				pstmt.close();
+
+			} catch(Exception e) {
+				try{
+					if( pstmt != null  )
+						pstmt.close();
+				} catch(Exception er) {}
+				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
+				log.error(msgError,e);
+				throw new GestoreMessaggiException(msgError,e);
+			}
+
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+	
 
 
 

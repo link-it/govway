@@ -52,6 +52,7 @@ CREATE TABLE transazioni
 	ruolo_transazione NUMBER NOT NULL,
 	-- Esito della Transazione
 	esito NUMBER,
+	esito_sincrono NUMBER,
 	consegne_multiple NUMBER,
 	esito_contesto VARCHAR2(20),
 	-- Protocollo utilizzato per la transazione

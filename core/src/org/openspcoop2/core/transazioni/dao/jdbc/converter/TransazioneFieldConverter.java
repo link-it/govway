@@ -96,6 +96,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "esito";
 			}
 		}
+		if(field.equals(Transazione.model().ESITO_SINCRONO)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".esito_sincrono";
+			}else{
+				return "esito_sincrono";
+			}
+		}
 		if(field.equals(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".consegne_multiple";
@@ -1260,6 +1267,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().ESITO)){
+			return this.toTable(Transazione.model(), returnAlias);
+		}
+		if(field.equals(Transazione.model().ESITO_SINCRONO)){
 			return this.toTable(Transazione.model(), returnAlias);
 		}
 		if(field.equals(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO)){

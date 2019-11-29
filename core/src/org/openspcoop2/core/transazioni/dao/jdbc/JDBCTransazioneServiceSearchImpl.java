@@ -149,6 +149,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
     		fields.add(Transazione.model().STATO);
     		fields.add(Transazione.model().RUOLO_TRANSAZIONE);
     		fields.add(Transazione.model().ESITO);
+    		fields.add(Transazione.model().ESITO_SINCRONO);
     		fields.add(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO);
     		fields.add(Transazione.model().ESITO_CONTESTO);
     		fields.add(Transazione.model().PROTOCOLLO);
@@ -793,6 +794,7 @@ public class JDBCTransazioneServiceSearchImpl implements IJDBCServiceSearchWithI
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().STATO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RUOLO_TRANSAZIONE,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO,true));
+		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_SINCRONO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_CONTESTO,true));
 		sqlQueryObjectGet_transazione.addSelectField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PROTOCOLLO,true));

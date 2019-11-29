@@ -336,8 +336,11 @@ public class GestoreLoadBalancerCaching {
 		}
     	else{
     		
+    		boolean notifichePerServizioSincrono = false;
+			boolean loadBalancer = true;
     		ConditionalFilterResult filterResult = 
-    				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, true);
+    				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
+    						notifichePerServizioSincrono, loadBalancer);
     		
     		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
     		if(filterResult!=null) {
