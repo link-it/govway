@@ -2663,6 +2663,16 @@
             <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormError" path="/jsplib/info.jsp"/>
         </action>
         
+        <!--  Porte Applicative (Connettori Multipli Proprieta Notifiche) -->
+    	 
+    	<action path="/porteApplicativeConnettoriMultipliConfigProprietaNotifiche" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaNotifiche"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheError" path="/jsplib/info.jsp"/>
+        </action>
+        
         <!--  Porte Applicative (Connettori Multipli Abilitazione) -->
 
         <action path="/porteApplicativeConnettoriMultipliAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliAbilitazione"

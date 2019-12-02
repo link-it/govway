@@ -92,6 +92,7 @@ import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizione;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
@@ -7282,15 +7283,25 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			//PortaApplicativa pa = this.porteApplicativeCore.getPortaApplicativa(Integer.parseInt(idPorta));
 			boolean behaviourConFiltri = ConditionalUtils.isConfigurazioneCondizionaleByFilter(pa, this.log);
-			BehaviourType beaBehaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
+			BehaviourType behaviourType = BehaviourType.toEnumConstant(pa.getBehaviour().getNome());
 			
 			LoadBalancerType loadBalancerType = null;
-			if(beaBehaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
+			if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 				String balancerTypeS = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerType(pa.getBehaviour());
 				loadBalancerType = LoadBalancerType.toEnumConstant(balancerTypeS, true);
 			}
 			long idAspsLong = Long.parseLong(idAsps);
 			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(idAspsLong);
+			AccordoServizioParteComuneSintetico as = null;
+			if(this.porteApplicativeCore.isRegistroServiziLocale()){
+				int idAcc = asps.getIdAccordo().intValue();
+				as = this.apcCore.getAccordoServizioSintetico(idAcc);
+			}
+			else{
+				as = this.apcCore.getAccordoServizioSintetico(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()));
+			}
+			
+			ServiceBinding serviceBinding = this.porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			List<Parameter> lstParam = this.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			String labelPerPorta = null;
@@ -7507,7 +7518,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					e.addElement(de);
 				}
 				
-				if(beaBehaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE) &&
+				if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE) &&
 						loadBalancerType.isTypeWithWeight()) {
 					// Proprieta
 					de = new DataElement();
@@ -7522,7 +7533,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					image = new DataElementImage();
 					
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_FORM,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pAccessoDaAPS);
-					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA));
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
 					de.addImage(image );
@@ -7531,7 +7542,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				}
 				
 				
-				if(beaBehaviourType.equals(BehaviourType.CUSTOM)) {
+				if(behaviourType.equals(BehaviourType.CUSTOM)) {
 					// Proprieta
 					de = new DataElement();
 					de.setType(DataElementType.TEXT);
@@ -7543,6 +7554,36 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					
 					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPERTIES_LIST,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb);
 					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_PROPRIETA));
+					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
+					
+					de.addImage(image );
+					
+					e.addElement(de);
+				}
+				
+				if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA) || behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
+					// Proprieta
+					de = new DataElement();
+					de.setType(DataElementType.TEXT);
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE);
+					
+					ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, this.log);
+					
+					String consegnaNotificheLabel = "";
+					
+					if(configurazioneGestioneConsegnaNotifiche != null)
+						consegnaNotificheLabel = org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.GestioneConsegnaNotificheUtils.toString(configurazioneGestioneConsegnaNotifiche,
+								serviceBinding.equals(ServiceBinding.SOAP));
+					
+					if(StringUtils.isBlank(consegnaNotificheLabel))
+						consegnaNotificheLabel = " ";
+					
+					de.setValue(consegnaNotificheLabel);
+					
+					image = new DataElementImage();
+					
+					image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_PROPRIETA_NOTIFICHE,pIdSogg, pNomePorta, pIdPorta, pIdAsps, pNomePaSA, pIdTAb, pAccessoDaAPS);
+					image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_GESTIONE_NOTIFICHE));
 					image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 					
 					de.addImage(image );
@@ -9093,5 +9134,54 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 		} // end for tutti i pasa
 		return connettoreUtilizzatiConfig;
+	}
+	
+	
+	public Vector<DataElement> addConnettoriMultipliNotificheToDati(Vector<DataElement> dati, TipoOperazione tipoOp,
+			BehaviourType beaBehaviourType, String nomeSAConnettore, ServiceBinding serviceBinding, String cadenzaRispedizione) {
+		
+		DataElement de = new DataElement();
+		
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_REGOLE_CONSEGNA_NOTIFICA);
+		de.setType(DataElementType.TITLE);
+		dati.add(de);
+		
+		de = new DataElement();
+		de.setLabel("");
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
+		de.setType(DataElementType.HIDDEN);
+		de.setValue(nomeSAConnettore);
+		dati.add(de);
+		
+		// cadenza rispedizione
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE );
+		de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE_NOTE);
+		de.setType(DataElementType.NUMBER);
+		de.setValue(cadenzaRispedizione);
+		dati.add(de);
+		
+		
+		// subtitolo Codice Risposta HTTP
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP);
+		de.setType(DataElementType.SUBTITLE);
+		dati.add(de);
+		
+		
+		
+		if(serviceBinding.equals(ServiceBinding.SOAP)) { // sezione SOAP Fault
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_SOAP_FAULT);
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+		
+		if(serviceBinding.equals(ServiceBinding.REST)) { // sezione Problem Detail
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_PROBLEM_DETAIL); 
+			de.setType(DataElementType.SUBTITLE);
+			dati.add(de);
+		}
+		
+		return dati;
 	}
 }
