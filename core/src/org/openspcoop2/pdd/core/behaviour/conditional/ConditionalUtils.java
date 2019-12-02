@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.Proprieta;
@@ -114,7 +115,8 @@ public class ConditionalUtils  {
 		String nomeConnettoreDaUsare = null;
 		if(staticInfo!=null && !"".equals(staticInfo)) {
 			condition = staticInfo;
-			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, "static");
+			msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, ModalitaIdentificazione.STATIC.getLabel());
+			msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, ""); // per eliminare @@ dove non serve
 		}
 		else {
 			String pattern = "";
@@ -736,6 +738,17 @@ public class ConditionalUtils  {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix());
 		}
 		
+		List<String> listProprietaDaRimuovere = new ArrayList<>();
+		for (Proprieta p : pa.getBehaviour().getProprietaList()) {
+			if(p.getNome().startsWith(Costanti.CONDITIONAL_RULE)) {
+				listProprietaDaRimuovere.add(p.getNome());
+			}
+		}
+		if(!listProprietaDaRimuovere.isEmpty()) {
+			for (String propertyName : listProprietaDaRimuovere) {
+				BehaviourPropertiesUtils.removeProprieta(pa.getBehaviour(), propertyName);
+			}
+		}
 		if(configurazione.getRegoleOrdinate()!=null && !configurazione.getRegoleOrdinate().isEmpty()) {
 			int indexRegola = 1;
 			for (String nomeRegola : configurazione.getRegoleOrdinate()) {

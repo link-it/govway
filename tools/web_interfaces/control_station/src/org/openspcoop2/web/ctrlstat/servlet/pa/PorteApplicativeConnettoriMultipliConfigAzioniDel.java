@@ -100,6 +100,8 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniDel extends Act
 			
 			org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
 
+			org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(pa, configurazioneCondizionale);
+			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
 			porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
