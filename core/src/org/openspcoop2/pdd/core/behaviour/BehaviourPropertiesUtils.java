@@ -35,6 +35,23 @@ import org.openspcoop2.core.config.Proprieta;
 public class BehaviourPropertiesUtils {
 
 	public static void addProprieta(PortaApplicativaBehaviour paBehaviour, String nome, String valore) {
+		removeProprieta(paBehaviour, nome);
+		paBehaviour.addProprieta(newP(nome, valore));
+	}
+	
+	public static void addProprieta(PortaApplicativaServizioApplicativoConnettore pasaConnnettore, String nome, String valore) {
+		removeProprieta(pasaConnnettore, nome);
+		pasaConnnettore.addProprieta(newP(nome, valore));
+	}
+	
+	private static Proprieta newP(String nome, String valore) {
+		Proprieta p = new Proprieta();
+		p.setNome(nome);
+		p.setValore(valore);
+		return p;
+	}
+	
+	public static void removeProprieta(PortaApplicativaBehaviour paBehaviour, String nome) {
 		if(paBehaviour.sizeProprietaList()>0) {
 			int index =0;
 			for (Proprieta p : paBehaviour.getProprietaList()) {
@@ -45,10 +62,8 @@ public class BehaviourPropertiesUtils {
 				index++;
 			}
 		}
-		paBehaviour.addProprieta(newP(nome, valore));
 	}
-	
-	public static void addProprieta(PortaApplicativaServizioApplicativoConnettore pasaConnnettore, String nome, String valore) {
+	public static void removeProprieta(PortaApplicativaServizioApplicativoConnettore pasaConnnettore, String nome) {
 		if(pasaConnnettore.sizeProprietaList()>0) {
 			int index =0;
 			for (Proprieta p : pasaConnnettore.getProprietaList()) {
@@ -59,13 +74,5 @@ public class BehaviourPropertiesUtils {
 				index++;
 			}
 		}
-		pasaConnnettore.addProprieta(newP(nome, valore));
-	}
-	
-	private static Proprieta newP(String nome, String valore) {
-		Proprieta p = new Proprieta();
-		p.setNome(nome);
-		p.setValore(valore);
-		return p;
 	}
 }

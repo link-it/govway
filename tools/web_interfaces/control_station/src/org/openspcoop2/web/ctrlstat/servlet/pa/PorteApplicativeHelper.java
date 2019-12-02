@@ -8739,6 +8739,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setType(DataElementType.TEXT_AREA);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_OPERAZIONE);
 		de.setRequired(true);
+		DataElementInfo info = new DataElementInfo(this.getLabelAzione(serviceBinding));
+		info.setHeaderBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_HEADER);
+		info.setListBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_PATTERN_AZIONE_INFO_BODY_LIST);
+		de.setInfo(info);
 		dati.addElement(de);
 		
 		// Identificazione condizionale
@@ -8753,6 +8757,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 						
 		String [] identificazioneCondizionale_values = {
+				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO,
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.HEADER_BASED.getValue(),
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.URLBASED.getValue(),
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FORM_BASED.getValue(),
@@ -8762,11 +8767,11 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.INDIRIZZO_IP_FORWARDED.getValue(),
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.TEMPLATE.getValue(),
 				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.FREEMARKER_TEMPLATE.getValue(),
-				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue(),
-				PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO
+				org.openspcoop2.pdd.core.behaviour.conditional.TipoSelettore.VELOCITY_TEMPLATE.getValue()
 				};
 		
 		List<String> identificazioneCondizionale_labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.STATIC,
 				ModalitaIdentificazione.HEADER_BASED,
 				ModalitaIdentificazione.URL_BASED,
 				ModalitaIdentificazione.FORM_BASED,
@@ -8776,8 +8781,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				ModalitaIdentificazione.X_FORWARD_FOR_BASED,
 				ModalitaIdentificazione.GOVWAY_TEMPLATE,
 				ModalitaIdentificazione.FREEMARKER_TEMPLATE,
-				ModalitaIdentificazione.VELOCITY_TEMPLATE,
-				ModalitaIdentificazione.STATIC
+				ModalitaIdentificazione.VELOCITY_TEMPLATE
 			);
 		
 		de.setValues(identificazioneCondizionale_values);
@@ -8866,7 +8870,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_PREFISSO);
 		de.setSize(this.getSize());
 		de.setValue(identificazioneCondizionalePrefisso);
-		if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) 
+				||
+				(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale))
+				) {
 			 de.setType(DataElementType.HIDDEN);
 		} else {
 			 de.setType(DataElementType.TEXT_EDIT);
@@ -8879,7 +8886,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_SUFFISSO);
 		de.setSize(this.getSize());
 		de.setValue(identificazioneCondizionaleSuffisso);
-		if(tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) {
+		if( (tipoSelettoreS!=null && tipoSelettoreS.isTemplate()) 
+				||
+				(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE_STATIC_INFO.equals(identificazioneCondizionale))
+				) {
 			 de.setType(DataElementType.HIDDEN);
 		} else {
 			 de.setType(DataElementType.TEXT_EDIT);
