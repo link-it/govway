@@ -38,10 +38,13 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -160,6 +163,16 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniAdd extends Act
 						connettoriValues.add(nomeConnettorePaSA);
 						connettoriLabels.add(nomeConnettorePaSA);
 					}
+				}
+			}
+			
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName != null ){
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
+					identificazioneCondizionalePattern = "";
+					identificazioneCondizionalePrefisso = "";
+					identificazioneCondizionaleSuffisso = ""; 
 				}
 			}
 			

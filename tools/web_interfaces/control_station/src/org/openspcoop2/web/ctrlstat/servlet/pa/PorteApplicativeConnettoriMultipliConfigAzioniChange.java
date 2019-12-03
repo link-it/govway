@@ -164,6 +164,16 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 				}
 			}
 			
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName != null ){
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_IDENTIFICAZIONE_CONDIZIONALE)) {
+					identificazioneCondizionalePattern = "";
+					identificazioneCondizionalePrefisso = "";
+					identificazioneCondizionaleSuffisso = ""; 
+				}
+			}
+			
 			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 			// setto la barra del titolo
