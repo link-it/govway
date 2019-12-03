@@ -730,12 +730,18 @@ public class ConditionalUtils  {
 		BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_TIPO_SELETTORE, configurazione.getDefaultConfig().getTipoSelettore().getValue());
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getPattern())) {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PATTERN, configurazione.getDefaultConfig().getPattern());
+		}else {
+			BehaviourPropertiesUtils.removeProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PATTERN);
 		}
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getPrefix())) {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PREFIX, configurazione.getDefaultConfig().getPrefix());
+		}else {
+			BehaviourPropertiesUtils.removeProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_PREFIX);
 		}
 		if(StringUtils.isNotEmpty(configurazione.getDefaultConfig().getSuffix())) {
 			BehaviourPropertiesUtils.addProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_SUFFIX, configurazione.getDefaultConfig().getSuffix());
+		}else {
+			BehaviourPropertiesUtils.removeProprieta(pa.getBehaviour(),Costanti.CONDITIONAL_SUFFIX);
 		}
 		
 		List<String> listProprietaDaRimuovere = new ArrayList<>();

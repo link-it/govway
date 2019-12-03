@@ -236,6 +236,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						notificheCondizionaliEsito = config.isNotificheByEsito();
 						esitiTransazione = porteApplicativeHelper.getEsitiTransazione(config);
 					}
+				}else if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_IDENTIFICAZIONE_CONDIZIONALE)) {
+					identificazioneCondizionalePattern = "";
+					identificazioneCondizionalePrefisso = "";
+					identificazioneCondizionaleSuffisso = ""; 
 				}
 				
 				if(reinitParametriCondizionali) {
