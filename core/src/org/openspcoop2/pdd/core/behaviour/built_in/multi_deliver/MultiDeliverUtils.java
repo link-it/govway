@@ -244,10 +244,15 @@ public class MultiDeliverUtils  {
 		
 		if(configurazione.getCadenzaRispedizione()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_CADENZA, configurazione.getCadenzaRispedizione().intValue()+"");
+		} else {
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_CADENZA);
 		}
 		
 		if(configurazione.getGestioneTrasporto2xx()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX, configurazione.getGestioneTrasporto2xx().getValue());
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_LEFT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_RIGHT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_2XX_CODE_LIST);
 			switch (configurazione.getGestioneTrasporto2xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
@@ -286,6 +291,10 @@ public class MultiDeliverUtils  {
 		
 		if(configurazione.getGestioneTrasporto3xx()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX, configurazione.getGestioneTrasporto3xx().getValue());
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_LEFT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_RIGHT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_3XX_CODE_LIST);
+			
 			switch (configurazione.getGestioneTrasporto3xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
@@ -324,6 +333,10 @@ public class MultiDeliverUtils  {
 		
 		if(configurazione.getGestioneTrasporto4xx()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX, configurazione.getGestioneTrasporto4xx().getValue());
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_LEFT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_RIGHT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_4XX_CODE_LIST);
+			
 			switch (configurazione.getGestioneTrasporto4xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
@@ -362,6 +375,10 @@ public class MultiDeliverUtils  {
 		
 		if(configurazione.getGestioneTrasporto5xx()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX, configurazione.getGestioneTrasporto5xx().getValue());
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_LEFT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_RIGHT_INTERVAL);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_TRASPORTO_5XX_CODE_LIST);
+			
 			switch (configurazione.getGestioneTrasporto5xx()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:
@@ -400,6 +417,10 @@ public class MultiDeliverUtils  {
 		
 		if(configurazione.getFault()!=null) {
 			BehaviourPropertiesUtils.addProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT, configurazione.getFault().getValue());
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_CODE);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_ACTOR);
+			BehaviourPropertiesUtils.removeProprieta(pasa.getDatiConnettore(),Costanti.MULTI_DELIVER_NOTIFICHE_GESTIONE_ERRORE_TIPO_GESTIONE_FAULT_MESSAGE);
+			
 			switch (configurazione.getFault()) {
 			case CONSEGNA_COMPLETATA:
 			case CONSEGNA_FALLITA:

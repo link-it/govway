@@ -44,8 +44,9 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
-import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerPool;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaTrasporto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -104,7 +105,27 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			}
 
 			String nomeSAConnettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOME_SA);
-			String peso = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LOAD_BALANCE_WEIGHT);
+			String cadenzaRispedizione = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CADENZA_RISPEDIZIONE);
+			String codiceRisposta2xx = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX); 
+			String codiceRisposta2xxValueMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MIN); 
+			String codiceRisposta2xxValueMax = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE_MAX); 
+			String codiceRisposta2xxValue = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX_VALUE);
+			String codiceRisposta3xx = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX); 
+			String codiceRisposta3xxValueMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MIN); 
+			String codiceRisposta3xxValueMax = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE_MAX); 
+			String codiceRisposta3xxValue = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX_VALUE);
+			String codiceRisposta4xx = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX); 
+			String codiceRisposta4xxValueMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MIN); 
+			String codiceRisposta4xxValueMax = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE_MAX); 
+			String codiceRisposta4xxValue = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX_VALUE);
+			String codiceRisposta5xx = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX); 
+			String codiceRisposta5xxValueMin = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MIN); 
+			String codiceRisposta5xxValueMax = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE_MAX); 
+			String codiceRisposta5xxValue = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX_VALUE);
+			String gestioneFault = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE); 
+			String faultCode = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODE); 
+			String faultActor = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_ACTOR); 
+			String faultMessage = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_MESSAGE); 
 
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
@@ -150,6 +171,40 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			
 			ConfigurazioneGestioneConsegnaNotifiche oldConfigurazioneGestioneConsegnaNotifiche =
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(oldPaSA, ControlStationCore.getLog());
+			
+			
+			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
+			if(postBackElementName != null ){
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_2XX)) {
+					codiceRisposta2xxValueMin = "";
+					codiceRisposta2xxValueMax = "";
+					codiceRisposta2xxValue = "";
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_3XX)) {
+					codiceRisposta3xxValueMin = "";
+					codiceRisposta3xxValueMax = "";
+					codiceRisposta3xxValue = "";
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_4XX)) {
+					codiceRisposta4xxValueMin = "";
+					codiceRisposta4xxValueMax = "";
+					codiceRisposta4xxValue = "";
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CODICE_RISPOSTA_HTTP_5XX)) {
+					codiceRisposta5xxValueMin = "";
+					codiceRisposta5xxValueMax = "";
+					codiceRisposta5xxValue = "";
+				}
+				
+				if(postBackElementName.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_GESTIONE)) {
+					faultCode = "";
+					faultActor = "";
+					faultMessage = "";
+				}
+			}
 			
 
 			List<Parameter> lstParam = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
@@ -224,19 +279,188 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			// dati
 			if (porteApplicativeHelper.isEditModeInProgress()) {
 
-				if(peso == null) {
-					peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(oldPaSA);
-				}
-				
-				if(peso == null) {
-					peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
+				if(cadenzaRispedizione == null) {
+					if(oldConfigurazioneGestioneConsegnaNotifiche != null) {
+						// cadenza rispedizione
+						cadenzaRispedizione = oldConfigurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione() != null ? oldConfigurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione()+ "" : "";
+						
+						TipoGestioneNotificaTrasporto gestioneTrasporto2xxE = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx();
+						if(gestioneTrasporto2xxE != null) {
+							codiceRisposta2xx = gestioneTrasporto2xxE.getValue();
+							codiceRisposta2xxValueMin = "";
+							codiceRisposta2xxValueMax = "";
+							codiceRisposta2xxValue = "";
+
+							switch(gestioneTrasporto2xxE) {
+							case CONSEGNA_COMPLETATA:
+							case CONSEGNA_FALLITA:
+								break;
+							case CODICI_CONSEGNA_COMPLETATA:
+								StringBuilder sb = new StringBuilder();
+								for(Integer x : oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_codes()) {
+									if(sb.length() > 0) {
+										sb.append(",");
+									}
+									sb.append(x+ "");
+								}
+								codiceRisposta2xxValue = sb.toString();
+								break;
+							case INTERVALLO_CONSEGNA_COMPLETATA:
+								codiceRisposta2xxValueMin = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_leftInterval() + "";
+								codiceRisposta2xxValueMax = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_rightInterval() + "";
+								break;
+							}
+						} else {
+							codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+							codiceRisposta2xxValueMin = "";
+							codiceRisposta2xxValueMax = "";
+							codiceRisposta2xxValue = "";
+						}
+						
+						TipoGestioneNotificaTrasporto gestioneTrasporto3xxE = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx();
+						if(gestioneTrasporto3xxE != null) {
+							codiceRisposta3xx = gestioneTrasporto3xxE.getValue();
+							codiceRisposta3xxValueMin = "";
+							codiceRisposta3xxValueMax = "";
+							codiceRisposta3xxValue = "";
+
+							switch(gestioneTrasporto3xxE) {
+							case CONSEGNA_COMPLETATA:
+							case CONSEGNA_FALLITA:
+								break;
+							case CODICI_CONSEGNA_COMPLETATA:
+								StringBuilder sb = new StringBuilder();
+								for(Integer x : oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_codes()) {
+									if(sb.length() > 0) {
+										sb.append(",");
+									}
+									sb.append(x+ "");
+								}
+								codiceRisposta3xxValue = sb.toString();
+								break;
+							case INTERVALLO_CONSEGNA_COMPLETATA:
+								codiceRisposta3xxValueMin = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_leftInterval() + "";
+								codiceRisposta3xxValueMax = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_rightInterval() + "";
+								break;
+							}
+						} else {
+							codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+							codiceRisposta3xxValueMin = "";
+							codiceRisposta3xxValueMax = "";
+							codiceRisposta3xxValue = "";
+						}
+						
+						TipoGestioneNotificaTrasporto gestioneTrasporto4xxE = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx();
+						if(gestioneTrasporto4xxE != null) {
+							codiceRisposta4xx = gestioneTrasporto4xxE.getValue();
+							codiceRisposta4xxValueMin = "";
+							codiceRisposta4xxValueMax = "";
+							codiceRisposta4xxValue = "";
+
+							switch(gestioneTrasporto4xxE) {
+							case CONSEGNA_COMPLETATA:
+							case CONSEGNA_FALLITA:
+								break;
+							case CODICI_CONSEGNA_COMPLETATA:
+								StringBuilder sb = new StringBuilder();
+								for(Integer x : oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_codes()) {
+									if(sb.length() > 0) {
+										sb.append(",");
+									}
+									sb.append(x+ "");
+								}
+								codiceRisposta4xxValue = sb.toString();
+								break;
+							case INTERVALLO_CONSEGNA_COMPLETATA:
+								codiceRisposta4xxValueMin = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_leftInterval() + "";
+								codiceRisposta4xxValueMax = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_rightInterval() + "";
+								break;
+							}
+						} else {
+							codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+							codiceRisposta4xxValueMin = "";
+							codiceRisposta4xxValueMax = "";
+							codiceRisposta4xxValue = "";
+						}
+						
+						TipoGestioneNotificaTrasporto gestioneTrasporto5xxE = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx();
+						if(gestioneTrasporto5xxE != null) {
+							codiceRisposta5xx = gestioneTrasporto5xxE.getValue();
+							codiceRisposta5xxValueMin = "";
+							codiceRisposta5xxValueMax = "";
+							codiceRisposta5xxValue = "";
+
+							switch(gestioneTrasporto5xxE) {
+							case CONSEGNA_COMPLETATA:
+							case CONSEGNA_FALLITA:
+								break;
+							case CODICI_CONSEGNA_COMPLETATA:
+								StringBuilder sb = new StringBuilder();
+								for(Integer x : oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_codes()) {
+									if(sb.length() > 0) {
+										sb.append(",");
+									}
+									sb.append(x+ "");
+								}
+								codiceRisposta5xxValue = sb.toString();
+								break;
+							case INTERVALLO_CONSEGNA_COMPLETATA:
+								codiceRisposta5xxValueMin = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_leftInterval() + "";
+								codiceRisposta5xxValueMax = oldConfigurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_rightInterval() + "";
+								break;
+							}
+						} else {
+							codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+							codiceRisposta5xxValueMin = "";
+							codiceRisposta5xxValueMax = "";
+							codiceRisposta5xxValue = "";
+						}
+						
+						if(oldConfigurazioneGestioneConsegnaNotifiche.getFault() != null) {
+							gestioneFault = oldConfigurazioneGestioneConsegnaNotifiche.getFault().getValue();
+						} else {
+							gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+						}
+						
+						faultCode = oldConfigurazioneGestioneConsegnaNotifiche.getFaultCode() != null ? oldConfigurazioneGestioneConsegnaNotifiche.getFaultCode() : "";
+						faultActor = oldConfigurazioneGestioneConsegnaNotifiche.getFaultActor() != null ? oldConfigurazioneGestioneConsegnaNotifiche.getFaultActor() : "";
+						faultMessage = oldConfigurazioneGestioneConsegnaNotifiche.getFaultMessage() != null ? oldConfigurazioneGestioneConsegnaNotifiche.getFaultMessage() : "";
+						
+					} else {
+						cadenzaRispedizione = "";
+						codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta2xxValueMin = "";
+						codiceRisposta2xxValueMax = "";
+						codiceRisposta2xxValue = "";
+						codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta3xxValueMin = "";
+						codiceRisposta3xxValueMax = "";
+						codiceRisposta3xxValue = "";
+						codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta4xxValueMin = "";
+						codiceRisposta4xxValueMax = "";
+						codiceRisposta4xxValue = "";
+						codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+						codiceRisposta5xxValueMin = "";
+						codiceRisposta5xxValueMax = "";
+						codiceRisposta5xxValue = "";
+						gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+						faultCode = "";
+						faultActor = "";
+						faultMessage = "";
+					}
 				}
 
 				// preparo i campi
 				Vector<DataElement> dati = new Vector<DataElement>();
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addConnettoriMultipliLoadBalanceToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, peso);
+				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
+						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
+						codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
+						codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
+						gestioneFault, faultCode, faultActor, faultMessage);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta,idAsps, dati);
 
@@ -251,8 +475,13 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 						ForwardParams.OTHER(""));
 			}
 
-			// Controlli sui campi immessi 
-			boolean isOk = porteApplicativeHelper.connettoriMultipliLoadBalanceCheckData(TipoOperazione.OTHER, pa, beaBehaviourType, nomeSAConnettore, peso);
+			// Controlli sui campi immessi
+			boolean isOk = porteApplicativeHelper.connettoriMultipliNotificheCheckData(TipoOperazione.OTHER, pa, beaBehaviourType, serviceBinding, nomeSAConnettore, cadenzaRispedizione,
+					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
+					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
+					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
+					gestioneFault, faultCode, faultActor, faultMessage);
 
 			if (!isOk) {
 
@@ -261,7 +490,12 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-				dati = porteApplicativeHelper.addConnettoriMultipliLoadBalanceToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, peso);
+				dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
+						codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
+						codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
+						codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+						codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
+						gestioneFault, faultCode, faultActor, faultMessage);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
@@ -293,7 +527,14 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 			
 			paSA.setDatiConnettore(datiConnettore);
 			
-			org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.addLoadBalancerWeight(paSA, peso);
+			ConfigurazioneGestioneConsegnaNotifiche nuovaConfigurazioneGestioneConsegnaNotifiche  = porteApplicativeHelper.getConfigurazioneGestioneConsegnaNotifiche(serviceBinding, cadenzaRispedizione,
+					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue,
+					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue,
+					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue,
+					gestioneFault, faultCode, faultActor, faultMessage);
+			
+			org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.save(paSA, nuovaConfigurazioneGestioneConsegnaNotifiche);
 
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
@@ -308,11 +549,178 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 					paSA = paSATmp;					
 				}
 			}
-
-			peso = org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer.readLoadBalancerWeight(paSA);
 			
-			if(peso == null) {
-				peso = LoadBalancerPool.DEFAULT_WEIGHT+"";
+			ConfigurazioneGestioneConsegnaNotifiche configurazioneGestioneConsegnaNotifiche =
+					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils.read(paSA, ControlStationCore.getLog());
+
+			if(configurazioneGestioneConsegnaNotifiche != null) {
+				// cadenza rispedizione
+				cadenzaRispedizione = configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione() != null ? configurazioneGestioneConsegnaNotifiche.getCadenzaRispedizione()+ "" : "";
+				
+				TipoGestioneNotificaTrasporto gestioneTrasporto2xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx();
+				if(gestioneTrasporto2xxE != null) {
+					codiceRisposta2xx = gestioneTrasporto2xxE.getValue();
+					codiceRisposta2xxValueMin = "";
+					codiceRisposta2xxValueMax = "";
+					codiceRisposta2xxValue = "";
+
+					switch(gestioneTrasporto2xxE) {
+					case CONSEGNA_COMPLETATA:
+					case CONSEGNA_FALLITA:
+						break;
+					case CODICI_CONSEGNA_COMPLETATA:
+						StringBuilder sb = new StringBuilder();
+						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_codes()) {
+							if(sb.length() > 0) {
+								sb.append(",");
+							}
+							sb.append(x+ "");
+						}
+						codiceRisposta2xxValue = sb.toString();
+						break;
+					case INTERVALLO_CONSEGNA_COMPLETATA:
+						codiceRisposta2xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_leftInterval() + "";
+						codiceRisposta2xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto2xx_rightInterval() + "";
+						break;
+					}
+				} else {
+					codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+					codiceRisposta2xxValueMin = "";
+					codiceRisposta2xxValueMax = "";
+					codiceRisposta2xxValue = "";
+				}
+				
+				TipoGestioneNotificaTrasporto gestioneTrasporto3xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx();
+				if(gestioneTrasporto3xxE != null) {
+					codiceRisposta3xx = gestioneTrasporto3xxE.getValue();
+					codiceRisposta3xxValueMin = "";
+					codiceRisposta3xxValueMax = "";
+					codiceRisposta3xxValue = "";
+
+					switch(gestioneTrasporto3xxE) {
+					case CONSEGNA_COMPLETATA:
+					case CONSEGNA_FALLITA:
+						break;
+					case CODICI_CONSEGNA_COMPLETATA:
+						StringBuilder sb = new StringBuilder();
+						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_codes()) {
+							if(sb.length() > 0) {
+								sb.append(",");
+							}
+							sb.append(x+ "");
+						}
+						codiceRisposta3xxValue = sb.toString();
+						break;
+					case INTERVALLO_CONSEGNA_COMPLETATA:
+						codiceRisposta3xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_leftInterval() + "";
+						codiceRisposta3xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto3xx_rightInterval() + "";
+						break;
+					}
+				} else {
+					codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+					codiceRisposta3xxValueMin = "";
+					codiceRisposta3xxValueMax = "";
+					codiceRisposta3xxValue = "";
+				}
+				
+				TipoGestioneNotificaTrasporto gestioneTrasporto4xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx();
+				if(gestioneTrasporto4xxE != null) {
+					codiceRisposta4xx = gestioneTrasporto4xxE.getValue();
+					codiceRisposta4xxValueMin = "";
+					codiceRisposta4xxValueMax = "";
+					codiceRisposta4xxValue = "";
+
+					switch(gestioneTrasporto4xxE) {
+					case CONSEGNA_COMPLETATA:
+					case CONSEGNA_FALLITA:
+						break;
+					case CODICI_CONSEGNA_COMPLETATA:
+						StringBuilder sb = new StringBuilder();
+						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_codes()) {
+							if(sb.length() > 0) {
+								sb.append(",");
+							}
+							sb.append(x+ "");
+						}
+						codiceRisposta4xxValue = sb.toString();
+						break;
+					case INTERVALLO_CONSEGNA_COMPLETATA:
+						codiceRisposta4xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_leftInterval() + "";
+						codiceRisposta4xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto4xx_rightInterval() + "";
+						break;
+					}
+				} else {
+					codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+					codiceRisposta4xxValueMin = "";
+					codiceRisposta4xxValueMax = "";
+					codiceRisposta4xxValue = "";
+				}
+				
+				TipoGestioneNotificaTrasporto gestioneTrasporto5xxE = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx();
+				if(gestioneTrasporto5xxE != null) {
+					codiceRisposta5xx = gestioneTrasporto5xxE.getValue();
+					codiceRisposta5xxValueMin = "";
+					codiceRisposta5xxValueMax = "";
+					codiceRisposta5xxValue = "";
+
+					switch(gestioneTrasporto5xxE) {
+					case CONSEGNA_COMPLETATA:
+					case CONSEGNA_FALLITA:
+						break;
+					case CODICI_CONSEGNA_COMPLETATA:
+						StringBuilder sb = new StringBuilder();
+						for(Integer x : configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_codes()) {
+							if(sb.length() > 0) {
+								sb.append(",");
+							}
+							sb.append(x+ "");
+						}
+						codiceRisposta5xxValue = sb.toString();
+						break;
+					case INTERVALLO_CONSEGNA_COMPLETATA:
+						codiceRisposta5xxValueMin = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_leftInterval() + "";
+						codiceRisposta5xxValueMax = configurazioneGestioneConsegnaNotifiche.getGestioneTrasporto5xx_rightInterval() + "";
+						break;
+					}
+				} else {
+					codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+					codiceRisposta5xxValueMin = "";
+					codiceRisposta5xxValueMax = "";
+					codiceRisposta5xxValue = "";
+				}
+				
+				if(configurazioneGestioneConsegnaNotifiche.getFault() != null) {
+					gestioneFault = configurazioneGestioneConsegnaNotifiche.getFault().getValue();
+				} else {
+					gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+				}
+				
+				faultCode = configurazioneGestioneConsegnaNotifiche.getFaultCode() != null ? configurazioneGestioneConsegnaNotifiche.getFaultCode() : "";
+				faultActor = configurazioneGestioneConsegnaNotifiche.getFaultActor() != null ? configurazioneGestioneConsegnaNotifiche.getFaultActor() : "";
+				faultMessage = configurazioneGestioneConsegnaNotifiche.getFaultMessage() != null ? configurazioneGestioneConsegnaNotifiche.getFaultMessage() : "";
+				
+			} else {
+				cadenzaRispedizione = "";
+				codiceRisposta2xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+				codiceRisposta2xxValueMin = "";
+				codiceRisposta2xxValueMax = "";
+				codiceRisposta2xxValue = "";
+				codiceRisposta3xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+				codiceRisposta3xxValueMin = "";
+				codiceRisposta3xxValueMax = "";
+				codiceRisposta3xxValue = "";
+				codiceRisposta4xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+				codiceRisposta4xxValueMin = "";
+				codiceRisposta4xxValueMax = "";
+				codiceRisposta4xxValue = "";
+				codiceRisposta5xx = TipoGestioneNotificaTrasporto.CONSEGNA_COMPLETATA.getValue();
+				codiceRisposta5xxValueMin = "";
+				codiceRisposta5xxValueMax = "";
+				codiceRisposta5xxValue = "";
+				gestioneFault = TipoGestioneNotificaFault.CONSEGNA_COMPLETATA.getValue();
+				faultCode = "";
+				faultActor = "";
+				faultMessage = "";
 			}
 
 			// preparo i campi
@@ -320,7 +728,12 @@ public final class PorteApplicativeConnettoriMultipliConfigProprietaNotifiche ex
 
 			dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
-			dati = porteApplicativeHelper.addConnettoriMultipliLoadBalanceToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, peso);
+			dati = porteApplicativeHelper.addConnettoriMultipliNotificheToDati(dati, TipoOperazione.OTHER, beaBehaviourType, nomeSAConnettore, serviceBinding, cadenzaRispedizione, 
+					codiceRisposta2xx, codiceRisposta2xxValueMin, codiceRisposta2xxValueMax, codiceRisposta2xxValue, 
+					codiceRisposta3xx, codiceRisposta3xxValueMin, codiceRisposta3xxValueMax, codiceRisposta3xxValue, 
+					codiceRisposta4xx, codiceRisposta4xxValueMin, codiceRisposta4xxValueMax, codiceRisposta4xxValue, 
+					codiceRisposta5xx, codiceRisposta5xxValueMin, codiceRisposta5xxValueMax, codiceRisposta5xxValue, 
+					gestioneFault, faultCode, faultActor, faultMessage);
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER, idPorta, idsogg, idPorta, idAsps, dati);
 
