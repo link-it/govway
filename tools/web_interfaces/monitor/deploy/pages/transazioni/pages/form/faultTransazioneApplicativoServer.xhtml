@@ -1,0 +1,123 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:link="http://www.link.it">
+
+<ui:composition template="/templates/defaultTemplate.xhtml">
+	<ui:define name="navbar">
+		<ul>
+			<li>
+				<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
+			<li>
+				<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}"/>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink id="dettagliTransazione" action="dettagliMessaggio" value="Dettagli Transazione">
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<a4j:htmlCommandLink id="dettagliTransazioneSA" action="dettagliConsegna" value="Dettagli Transazione Applicativo Server">
+					<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+					<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+					<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+					<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.diagnosticiBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+					
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+				</a4j:htmlCommandLink>
+			</li>
+			<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+			<li>
+				<h:outputText id="faultIBreadCrumb" value="Fault" styleClass="ultimo-path" rendered="#{dettagliTransazioneApplicativoServerBean.showFault}" />
+				<h:outputText id="faultIBreadCrumbUE" value="Fault Ultimo Errore" styleClass="ultimo-path" rendered="#{dettagliTransazioneApplicativoServerBean.showFaultUltimoErrore}" />
+			</li>
+		</ul>
+	</ui:define>
+	<ui:define name="body">
+		<a4j:keepAlive beanName="dettagliBean" />
+		<a4j:keepAlive beanName="dettagliTransazioneApplicativoServerBean" />
+		<a4j:loadScript src="/scripts/XRegExp.js" />
+		<a4j:loadScript src="/scripts/shCore.js" />
+		<a4j:loadScript src="/scripts/shBrushXml.js" />
+		<a4j:loadScript src="/scripts/shBrushJson.js" />
+		<a4j:loadStyle src="resource:///css/shCore.css" />
+		<a4j:loadStyle src="resource:///css/shThemeDefault.css" />
+		<a4j:outputPanel id="panelXmlFault" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault and dettagliTransazioneApplicativoServerBean.showFault==true}">	
+			<script type="text/javascript">
+			//<![CDATA[
+				if(#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFault}){
+				   var xmlPnl = jQuery("#xmlPnlFault"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   jQuery(document).ready(inizializza);
+				   
+				   SyntaxHighlighter.all();
+				   lineWrap();
+				   
+				   function inizializza(){
+					   checkWidth(xmlPnl,bodyWrapperPanel);
+					   lineWrap();
+				   }
+				}
+				 //]]>	
+			</script>
+			<rich:panel id="xmlPnlFault" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}">
+				<f:facet name="header">
+					<h:outputText id="outXmlFault" value="Fault"/>
+				</f:facet>
+				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFault2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFault}">
+					<pre class="brush: #{dettagliTransazioneApplicativoServerBean.dettaglio.brushFault}; toolbar: false;">#{dettagliTransazioneApplicativoServerBean.dettaglio.faultPretty}</pre>
+				</a4j:outputPanel>
+			</rich:panel>
+		</a4j:outputPanel>
+		
+		<a4j:outputPanel id="panelXmlFaultUltimoErrore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore and dettagliTransazioneApplicativoServerBean.showFaultUltimoErrore ==true}">	
+			<script type="text/javascript">
+			//<![CDATA[
+				if(#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFaultUltimoErrore}){
+				   var xmlPnl = jQuery("#xmlPnlFault"); 
+				   var bodyWrapperPanel = jQuery("#bodyWrapper");
+				   jQuery(window).resize(function(){lineWrap()});
+				   jQuery(document).ready(inizializza);
+				   
+				   SyntaxHighlighter.all();
+				   lineWrap();
+				   
+				   function inizializza(){
+					   checkWidth(xmlPnl,bodyWrapperPanel);
+					   lineWrap();
+				   }
+				}
+				 //]]>	
+			</script>
+			<rich:panel id="xmlPnlFaultUltimoErrore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}">
+				<f:facet name="header">
+					<h:outputText id="outXmlFaultUltimoErrore" value="Fault Ultimo Errore"/>
+				</f:facet>
+				<a4j:outputPanel layout="block" style="height: 350px; overflow-y: scroll;" id="xmlPnlFaultUltimoErrore2" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.visualizzaFaultUltimoErrore}">
+					<pre class="brush: #{dettagliTransazioneApplicativoServerBean.dettaglio.brushFaultUltimoErrore}; toolbar: false;">#{dettagliTransazioneApplicativoServerBean.dettaglio.faultPrettyUltimoErrore}</pre>
+				</a4j:outputPanel>
+			</rich:panel>
+		</a4j:outputPanel>
+	</ui:define>
+</ui:composition>
+
+</html>

@@ -201,10 +201,6 @@
 			<to-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>visualizzaDiagnostici</from-outcome>
-			<to-view-id>/transazioni/pages/form/visualizzaDiagnostici.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>dettaglioDump</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettaglioDump.xhtml</to-view-id>
 		</navigation-case>
@@ -231,6 +227,14 @@
 			<from-outcome>dettagliMessaggio</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettaglioDump</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fault</from-outcome>
+			<to-view-id>/transazioni/pages/form/faultTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</from-view-id>
@@ -244,6 +248,17 @@
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/faultTransazioneApplicativoServer.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
@@ -265,5 +280,16 @@
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
 			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

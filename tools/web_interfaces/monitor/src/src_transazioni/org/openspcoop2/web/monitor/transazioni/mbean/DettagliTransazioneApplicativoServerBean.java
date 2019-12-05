@@ -36,7 +36,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -53,7 +52,6 @@ import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
-import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
@@ -68,7 +66,7 @@ import org.slf4j.Logger;
  *
  */
 public class DettagliTransazioneApplicativoServerBean extends
-PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
+PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicativoServerBean, Long>> {
 
 	/**
 	 * 
@@ -101,8 +99,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private transient IProtocolFactory<?> protocolFactory;
 	
-	private boolean showFaultCooperazione = false;
-	private boolean showFaultIntegrazione = false;
+	private boolean showFault = false;
+	private boolean showFaultUltimoErrore = false;
 
 	private boolean visualizzaDataAccettazione = false;
 	
@@ -114,7 +112,6 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private Boolean hasHeaderTrasportoUltimaConsegnaRispostaIngresso = null;
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita = null;
 	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso = null;
-	
 	
 	
 	private TipoMessaggio exportContenuto;
@@ -520,23 +517,23 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.idTransazione = idTransazione;
 	}
 
-	public boolean getShowFaultCooperazione() {
-		return this.showFaultCooperazione;
+	public boolean getShowFault() {
+		return this.showFault;
 	}
 
-	public void setShowFaultCooperazione(boolean showFaultCooperazione) {
-		this.showFaultCooperazione = showFaultCooperazione;
-		this.showFaultIntegrazione = false;
+	public void setShowFault(boolean showFault) {
+		this.showFault = showFault;
+		this.showFaultUltimoErrore= false;
 	}
 
-	public boolean getShowFaultIntegrazione() {
-		return this.showFaultIntegrazione;
+	public boolean getShowFaultUltimoErrore() {
+		return this.showFaultUltimoErrore;
 	}
 
-	public void setShowFaultIntegrazione(boolean showFaultIntegrazione) {
+	public void setShowFaultUltimoErrore(boolean showFaultUltimoErrore) {
 		
-		this.showFaultIntegrazione = showFaultIntegrazione;
-		this.showFaultCooperazione = false;
+		this.showFaultUltimoErrore = showFaultUltimoErrore;
+		this.showFault = false;
 	}
 	
 	public void setDettaglio(TransazioneApplicativoServerBean dettaglio) {

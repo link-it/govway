@@ -82,12 +82,12 @@
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpMessaggiReqUscita">
-					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDumpSA"
+					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
    						rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRichiestaUscita}">
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
-                   		<f:setPropertyActionListener value="UltimaConsegnaRichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
                    		
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -102,13 +102,13 @@
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
                    	<h:commandLink id="exportDumpMessaggiReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="UltimaConsegnaRichiestaUscita" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiReqUscita" value="Esporta" />
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw Uscita" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRichiestaUscita or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita}">
 				<h:form id="formDumpBinarioReqUscita">
 					<a4j:htmlCommandLink id="dumpBinarioUscita-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
@@ -116,7 +116,7 @@
    						<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
-                   		<f:setPropertyActionListener value="UltimaConsegnaRichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
                     	
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -131,7 +131,7 @@
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
                    	<h:commandLink id="exportDumpBinarioReqUscita-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="UltimaConsegnaRichiestaUscitaDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
 				</h:form>
@@ -170,33 +170,34 @@
 				rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}" />
 					
 			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Fault" 
-				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"/>
-			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"> 
+				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}"/>
+			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}"> 
 				<h:form id="formFault">
-                      	<a4j:htmlCommandLink id="faultIntegrazione-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="faultSA">
-                        	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
-	                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
-	                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
-	                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
-	                   		
-	                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
-	                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
-	                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
-	                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
-	                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                  	<a4j:htmlCommandLink id="faultIntegrazione-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.fault}" action="fault">
+                       	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		<f:setPropertyActionListener value="#{true}" target="#{dettagliTransazioneApplicativoServerBean.showFault}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
                		</a4j:htmlCommandLink>
 				</h:form>
 			</h:panelGroup>	
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti Ingresso" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Contenuti" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpMessaggiResIngresso">
-					<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDumpSA"
+					<a4j:htmlCommandLink id="dumpMessaggiResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
    						 rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoUltimaConsegnaRispostaIngresso}">
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
-                   		<f:setPropertyActionListener value="UltimaConsegnaRispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
                    		
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -212,13 +213,13 @@
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
                    	<h:commandLink id="exportDumpMessaggiResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="UltimaConsegnaRispostaIngresso" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+                   		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText id="outEsportaDumpMessaggiResIngresso" value="Esporta" />
 					</h:commandLink>
 				</h:form>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw Ingresso" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Dati Raw" rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}"/>
 			<h:panelGroup rendered="#{dettagliTransazioneApplicativoServerBean.hasDumpBinarioUltimaConsegnaRispostaIngresso or dettagliTransazioneApplicativoServerBean.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso}">
 				<h:form id="formDumpBinarioResIngresso">
 					<a4j:htmlCommandLink id="dumpBinarioResIngresso-iconLink" styleClass="icon-details" value="Visualizza" action="dettaglioDump"
@@ -226,7 +227,7 @@
   						<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliDump.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
-                   		<f:setPropertyActionListener value="UltimaConsegnaRispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
                     	
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -241,7 +242,7 @@
                    	</a4j:htmlCommandLink>
                    	<h:outputLabel value="&#160;|&#160;" />	 
                    	<h:commandLink id="exportDumpBinarioResIngresso-iconLink" target="_blank" styleClass="icon-compress" action="#{dettagliTransazioneApplicativoServerBean.exportContenuti}">
-                   		<f:setPropertyActionListener value="UltimaConsegnaRispostaIngressoDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
+                   		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliTransazioneApplicativoServerBean.exportContenuto}"/>
 						<h:outputText value="Esporta" />
 					</h:commandLink>
 				</h:form>

@@ -72,7 +72,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 
 
 	private String idTransazione;
-	private String nomeServizioApplicativo;
+	private String servizioApplicativoErogatore;
+	private String protocollo = null;
 	private TipoMessaggio tipoMessaggio;
 
 	private DumpMessaggio dumpMessaggio;
@@ -96,12 +97,20 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		this.idTransazione = idTransazione;
 	}
 
-	public String getNomeServizioApplicativo() {
-		return this.nomeServizioApplicativo;
+	public String getServizioApplicativoErogatore() {
+		return this.servizioApplicativoErogatore;
 	}
 
-	public void setNomeServizioApplicativo(String nomeServizioApplicativo) {
-		this.nomeServizioApplicativo = nomeServizioApplicativo;
+	public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
+		this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+	}
+	
+	@Override
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
 	}
 
 	public boolean isVisualizzaMessaggio(){
@@ -295,7 +304,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			return this.dumpMessaggio;
 
 		try {
-			this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.nomeServizioApplicativo, this.tipoMessaggio);
+			this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.tipoMessaggio);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 

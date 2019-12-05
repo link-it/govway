@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
@@ -1032,4 +1037,195 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		return this.servizioApplicativoErogatore;
 	}
 
+	public String getFaultPretty(){
+		String f = super.getFault();
+		String toRet = null;
+		if(f !=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			if(errore!= null)
+				return "";
+
+			MessageType messageType= MessageType.XML;
+			if(StringUtils.isNotEmpty(super.getFormatoFault())) {
+				messageType = MessageType.valueOf(super.getFormatoFault());
+			}
+
+			switch (messageType) {
+			case BINARY:
+			case MIME_MULTIPART:
+				// questi due casi dovrebbero essere gestiti sopra 
+				break;	
+			case JSON:
+				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+				try {
+					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
+				} catch (UtilsException e) {
+				}
+				break;
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = Utils.prettifyXml(f);
+				break;
+			}
+		}
+
+		if(toRet == null)
+			toRet = f != null ? f : "";
+
+		return toRet;
+	}
+
+	public boolean isVisualizzaFault(){
+		boolean visualizzaMessaggio = true;
+		String f = super.getFault();
+
+		if(f == null)
+			return false;
+
+		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		if(errore!= null)
+			return false;
+
+		return visualizzaMessaggio;
+	}
+
+	public String getBrushFault() {
+		String toRet = null;
+		String f = super.getFault();
+		if(f!=null) {
+			MessageType messageType= MessageType.XML;
+			if(StringUtils.isNotEmpty(super.getFormatoFault())) {
+				messageType = MessageType.valueOf(super.getFormatoFault());
+			}
+
+			switch (messageType) {
+			case JSON:
+				toRet = "json";
+				break;
+			case BINARY:
+			case MIME_MULTIPART:
+				// per ora restituisco il default
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = "xml";
+				break;
+			}
+		}
+
+		return toRet;
+	}
+
+	public String getErroreVisualizzaFault(){
+		String f = super.getFault();
+		if(f!=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			return errore;
+		}
+
+		return null;
+	}
+	
+	
+	
+	public String getFaultPrettyUltimoErrore(){
+		String f = super.getFaultUltimoErrore();
+		String toRet = null;
+		if(f !=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			if(errore!= null)
+				return "";
+
+			MessageType messageType= MessageType.XML;
+			if(StringUtils.isNotEmpty(super.getFormatoFaultUltimoErrore())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultUltimoErrore());
+			}
+
+			switch (messageType) {
+			case BINARY:
+			case MIME_MULTIPART:
+				// questi due casi dovrebbero essere gestiti sopra 
+				break;	
+			case JSON:
+				JSONUtils jsonUtils = JSONUtils.getInstance(true);
+				try {
+					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
+				} catch (UtilsException e) {
+				}
+				break;
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = Utils.prettifyXml(f);
+				break;
+			}
+		}
+
+		if(toRet == null)
+			toRet = f != null ? f : "";
+
+		return toRet;
+	}
+
+	public boolean isVisualizzaFaultUltimoErrore(){
+		boolean visualizzaMessaggio = true;
+		String f = super.getFaultUltimoErrore();
+
+		if(f == null)
+			return false;
+
+		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		if(errore!= null)
+			return false;
+
+		return visualizzaMessaggio;
+	}
+
+	public String getBrushFaultUltimoErrore() {
+		String toRet = null;
+		String f = super.getFaultUltimoErrore();
+		if(f!=null) {
+			MessageType messageType= MessageType.XML;
+			if(StringUtils.isNotEmpty(super.getFormatoFaultUltimoErrore())) {
+				messageType = MessageType.valueOf(super.getFormatoFaultUltimoErrore());
+			}
+
+			switch (messageType) {
+			case JSON:
+				toRet = "json";
+				break;
+			case BINARY:
+			case MIME_MULTIPART:
+				// per ora restituisco il default
+			case SOAP_11:
+			case SOAP_12:
+			case XML:
+			default:
+				toRet = "xml";
+				break;
+			}
+		}
+
+		return toRet;
+	}
+
+	public String getErroreVisualizzaFaultUltimoErrore(){
+		String f = super.getFaultUltimoErrore();
+		if(f!=null) {
+			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			return errore;
+		}
+
+		return null;
+	}
 }

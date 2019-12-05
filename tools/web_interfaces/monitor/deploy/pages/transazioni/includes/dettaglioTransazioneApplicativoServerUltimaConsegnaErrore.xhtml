@@ -50,11 +50,12 @@
 				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"/>
 			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"> 
 				<h:form id="formFaultUE">
-                  	<a4j:htmlCommandLink id="faultIntegrazioneUE-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="faultSA">
+                  	<a4j:htmlCommandLink id="faultIntegrazioneUE-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="fault">
                        	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		<f:setPropertyActionListener value="#{true}" target="#{dettagliTransazioneApplicativoServerBean.showFaultUltimoErrore}"/>
                    		
                    		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
                     	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
