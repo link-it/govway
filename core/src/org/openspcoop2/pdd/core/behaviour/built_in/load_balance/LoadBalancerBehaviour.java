@@ -70,14 +70,12 @@ public class LoadBalancerBehaviour extends AbstractBehaviour implements IBehavio
 			if(config.getPool().isEmpty()) {
 				throw new BehaviourException("Nessun connettore selezionabile");	
 			}
-			
-			LoadBalancer lb = new LoadBalancer(config.getType(), config.getPool(), this.getPddContext());
-			
-			String nomeConnettore = lb.selectConnector();
-			if(nomeConnettore==null) {
+			if(config.getConnectorSelected()==null || "".equals(config.getConnectorSelected())) {
 				throw new BehaviourException("Nessun connettore selezionato");
 			}
 			
+			String nomeConnettore = config.getConnectorSelected();
+					
 			for (PortaApplicativaServizioApplicativo servizioApplicativo : pa.getServizioApplicativoList()) {
 				if(servizioApplicativo.getDatiConnettore()==null || servizioApplicativo.getDatiConnettore().getStato()==null || 
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getDatiConnettore().getStato())) {

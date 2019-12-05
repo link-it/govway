@@ -676,6 +676,11 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "paCMModConsTipo";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "paCMModConsStrategy";
 	
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "paCMModConsSticky";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "paCMModConsStickyType";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_PATTERN = "paCMModConsStickyPattern";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "paCMModConsStickyMaxAge";
+	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = "paCMConsCond";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_IMPLEMENTA_API = "paCMImplAPI";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI_ESITO = "paCMNotCondEsito";
@@ -1010,6 +1015,14 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CUSTOM_PROPRIETA = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STRATEGIA = "Strategia";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Sessione Sticky";
+	public final static String LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY = "Tutte le richieste che presentano lo stesso id di sessione vengono servite tramite lo stesso connettore";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_INFO = "Se abilitato, viene ricercato nella richiesta pervenuta l'identificativo di sessione.<BR/>"+
+	"Se l'identificativo di sessione si riferisce ad una nuova sessione viene selezionato un connettore rispetto alla strategia indicata.<BR/>"+
+	"Tutte le successive richieste relative al medesimo identificativo di sessione vengono servite con il medesimo connettore.";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE = "Identificativo Sessione";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE = "Max Age";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE_NOTE = "È possibile indicare la durata della sessione in secondi";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_LEFT = "Consegna Condizionale";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_NOTIFICA_LEFT = "Connettori";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_CONDIZIONALE_SINGOLO_CONNETTORE_RIGHT = "La consegna avviene sul connettore che corrispondone alla condizione indicata";
@@ -1083,6 +1096,8 @@ public class PorteApplicativeCostanti {
 		LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CLAIMS_INFO_LIST.add(LABEL_RIGA_2);
 	}
 	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STICKY = "Sticky";
+	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE = " (consegna condizionale)";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI = " (notifiche condizionali)";
 	
@@ -1103,6 +1118,16 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_LOAD_BALANCER_WARNING = "Nel pool di connettori da bilanciare verranno inseriti tutti i connettori indiscriminatamente";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_MULTI_WARNING = "La consegna avverrà su tutti i connettori indiscriminatamente";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONNETTORE_NON_TROVATO_NESSUNA_CONSEGNA = "Non verrà effettuata alcuna notifica";
+	
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_REST = "Espressione utilizzata sul messaggio per estrarre un identificativo.<br/>I tipi di espressione utilizzabili sono:";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_SOAP = "Espressione utilizzata sul messaggio per estrarre un identificativo.";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_XPATH = "<b>XPath</b>: utilizzabile con messaggi XML";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_JSONPATH = "<b>JSONPath</b>: utilizzabile con messaggi JSON";
+	public final static List<String> LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST = new ArrayList<>();
+	static {
+		LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_XPATH);
+		LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_VALORI_REST.add(LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI_INFO_PATTERN_JSONPATH);
+	}
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_REGOLA = "Regola";
 

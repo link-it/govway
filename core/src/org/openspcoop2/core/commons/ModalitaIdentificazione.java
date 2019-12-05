@@ -39,6 +39,7 @@ public enum ModalitaIdentificazione {
 	STATIC("Informazione Statica", "Nome"),
 	PROTOCOL_BASED("Profilo di Interoperabilità", null),
 	REGISTER_BASED("Registro GovWay", null),
+	COOKIE_BASED("Cookie", "Nome"),
 	HEADER_BASED("Header HTTP", "Nome"),
 	URL_BASED("Url di Invocazione", "Espressione Regolare"),
 	FORM_BASED("Parametro della Url", "Nome"),
