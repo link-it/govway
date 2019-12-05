@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
+import java.util.Date;
 import java.util.List;
 
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -33,6 +34,9 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyConnector;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyResult;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalFilterResult;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -43,6 +47,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.date.DateManager;
 import org.slf4j.Logger;
 
 /**     
@@ -328,35 +333,94 @@ public class GestoreLoadBalancerCaching {
 	
 	/* ********************** ENGINE ************************** */
 	
-	public static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+	public static LoadBalancerInstance getLoadBalancerInstance(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log,
+			LoadBalancerType loadBalancerType) throws BehaviourException, BehaviourEmitDiagnosticException{
+		
+		LoadBalancerInstance instance = new LoadBalancerInstance();
+		
+		ConditionalFilterResult filterResult = 
+				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
+						BehaviourType.CONSEGNA_LOAD_BALANCE);
+		
+		String keyCache = getKeyCache(pa, message, busta, 
+				requestInfo, pddContext, 
+				msgDiag, log,
+				filterResult);
+		
+		String keyCacheLoadBalancerPool = "[POOL] "+keyCache;
+		instance.setLoadBalancerPool(getLoadBalancerPool(pa, message, busta, 
+				requestInfo, pddContext, 
+				msgDiag, log, 
+				keyCacheLoadBalancerPool, filterResult));
+		
+		StickyResult stickyResult = getStickyInfo(pa, message, busta, 
+				requestInfo, pddContext, 
+				msgDiag, log);
+		
+		if(stickyResult!=null && stickyResult.isFound()) {
+			String keyCacheSticky = "[STICKY '"+stickyResult.getCondition()+"'] "+keyCache;
+			instance.setConnectorSelected(getNomeConnettore(pa, message, busta, 
+					requestInfo, pddContext, 
+					msgDiag, log, 
+					keyCacheSticky, instance.getLoadBalancerPool(), loadBalancerType, stickyResult));
+		}
+		
+		if(instance.getConnectorSelected()==null) {
+			instance.setConnectorSelected(selectConnector(loadBalancerType, instance.getLoadBalancerPool(), pddContext));
+		}
+		
+		return instance;
+	}
+	
+	private static StickyResult getStickyInfo(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
 			RequestInfo requestInfo, PdDContext pddContext, 
 			MsgDiagnostico msgDiag, Logger log) throws BehaviourException, BehaviourEmitDiagnosticException{
+		
+		if(StickyUtils.isConfigurazioneSticky(pa, log)) {
+			return StickyUtils.getStickyResult(pa, message, busta, requestInfo, pddContext, msgDiag, log);
+		}
+		
+		return null;
+		
+	}
+	
+	private static String getKeyCache(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log,
+			ConditionalFilterResult filterResult) throws BehaviourException, BehaviourEmitDiagnosticException {
+		
+		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
+		if(filterResult!=null) {
+			if(filterResult.isByFilter()) {
+				keyCache = keyCache +" [Conditional-By-Filter] ";
+    		}
+			else {
+				keyCache = keyCache +" [Conditional-By-Name] ";
+			}
+			if(filterResult.getRegola()!=null) {
+				keyCache = keyCache +"[Regola "+filterResult.getRegola()+"] ";
+			}
+			if(filterResult.getCondition()!=null) {
+				keyCache = keyCache +" "+filterResult.getCondition();
+			}
+		}
+		
+		return keyCache;
+		
+	}
+	
+	private static LoadBalancerPool getLoadBalancerPool(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log,
+			String keyCache, ConditionalFilterResult filterResult) throws BehaviourException, BehaviourEmitDiagnosticException{
     	
     	if(GestoreLoadBalancerCaching.cache==null){
     		throw new BehaviourException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
 		}
     	else{
     		
-    		ConditionalFilterResult filterResult = 
-    				ConditionalUtils.filter(pa, message, busta, requestInfo, pddContext, msgDiag, log, 
-    						BehaviourType.CONSEGNA_LOAD_BALANCE);
-    		
-    		String keyCache = "["+pa.getBehaviour().getNome()+"] "+pa.getTipoSoggettoProprietario()+"/"+pa.getNomeSoggettoProprietario()+" "+pa.getNome();
-    		if(filterResult!=null) {
-    			if(filterResult.isByFilter()) {
-    				keyCache = keyCache +" [Conditional-By-Filter] ";
-        		}
-    			else {
-    				keyCache = keyCache +" [Conditional-By-Name] ";
-    			}
-    			if(filterResult.getRegola()!=null) {
-    				keyCache = keyCache +"[Regola "+filterResult.getRegola()+"] ";
-    			}
-    			if(filterResult.getCondition()!=null) {
-    				keyCache = keyCache +" "+filterResult.getCondition();
-    			}
-    		}
-
 			synchronized (GestoreLoadBalancerCaching.cache) {
 
 				org.openspcoop2.utils.cache.CacheResponse response = 
@@ -375,22 +439,22 @@ public class GestoreLoadBalancerCaching {
 
 				// Effettuo la query
 				log.debug("oggetto con chiave ["+keyCache+"] (method:getLoadBalancerPool) ricerco nella configurazione...");
-				LoadBalancerPool pool = readLoadBalancerPool(pa, filterResult);
+				LoadBalancerPool lbPool = readLoadBalancerPool(pa, filterResult);
 				
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
 				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
 				// - impostare il noCache a true
-				if(pool!=null){
+				if(lbPool!=null){
 					log.info("Aggiungo oggetto ["+keyCache+"] in cache");
 					try{	
 						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-						responseCache.setObject(pool);
+						responseCache.setObject(lbPool);
 						GestoreLoadBalancerCaching.cache.put(keyCache,responseCache);
 					}catch(UtilsException e){
 						log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
 					}
-					return pool;
+					return lbPool;
 				}else{
 					throw new BehaviourException("Metodo (getLoadBalancerPool) non è riuscito a costruire un pool");
 				}
@@ -443,5 +507,93 @@ public class GestoreLoadBalancerCaching {
 			}
 		}
 		return pool;
+	}
+	
+	private static String getNomeConnettore(PortaApplicativa pa, OpenSPCoop2Message message, Busta busta, 
+			RequestInfo requestInfo, PdDContext pddContext, 
+			MsgDiagnostico msgDiag, Logger log,
+			String keyCache, LoadBalancerPool loadBalancerPool, LoadBalancerType loadBalancerType, StickyResult stickyResult) throws BehaviourException, BehaviourEmitDiagnosticException{
+    	
+    	if(GestoreLoadBalancerCaching.cache==null){
+    		throw new BehaviourException("La funzionalità di Load Balancer richiede che sia abilitata la cache dedicata alla funzionalità");
+		}
+    	else{
+    		
+			synchronized (GestoreLoadBalancerCaching.cache) {
+
+				org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreLoadBalancerCaching.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:getLoadBalancerPool) in cache.");
+						
+						StickyConnector stickyConnector = (StickyConnector) response.getObject();
+						if(stickyConnector.getExpirationDate()!=null) {
+							Date now = DateManager.getDate();
+							if(stickyConnector.getExpirationDate().after(now)){
+								return  stickyConnector.getConnector();
+							}
+							else {
+								String msg = "Connettore '"+stickyConnector.getConnector()+"' scaduto per sticky '"+stickyResult.getCondition()+"' in data "+
+										Utilities.getSimpleDateFormatMs().format(stickyConnector.getExpirationDate())+"";
+								log.debug(msg);
+								try {
+									GestoreLoadBalancerCaching.cache.remove(keyCache);
+								}catch(Exception e) {
+									throw new BehaviourException(msg+". Rimozione dalla cache non riuscita: "+e.getMessage(),e);
+								}
+							}
+						}
+						else {
+							return  stickyConnector.getConnector();
+						}
+						
+					}else if(response.getException()!=null){
+						log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:getLoadBalancerPool) in cache.");
+						throw new BehaviourException( (Exception) response.getException() );
+					}else{
+						log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+
+				// Effettuo la query
+				log.debug("oggetto con chiave ["+keyCache+"] (method:getNomeConnettore) ricerco nella configurazione...");
+				String selectedConnector = selectConnector(loadBalancerType, loadBalancerPool, pddContext);
+				if(selectedConnector==null) {
+					throw new BehaviourException("Metodo (getNomeConnettore) non è riuscito a selezionare un connettore");
+				}
+				StickyConnector stickyConnector = new StickyConnector();
+				stickyConnector.setConnector(selectedConnector);
+				if(stickyResult.getMaxAgeSeconds()!=null && stickyResult.getMaxAgeSeconds().intValue()>0) {
+					Date expire = new Date((DateManager.getTimeMillis() + (1000*stickyResult.getMaxAgeSeconds().intValue())));
+					stickyConnector.setExpirationDate(expire);
+				}
+				
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
+				// - impostare una eccezione di processamento (che setta automaticamente noCache a true)
+				// - impostare il noCache a true
+				log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject(stickyConnector);
+					GestoreLoadBalancerCaching.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+				return stickyConnector.getConnector();
+
+			}
+    	}
+    	
+    }
+
+	private static String selectConnector(LoadBalancerType loadBalancerType, LoadBalancerPool pool, PdDContext pddContext) throws BehaviourException {
+		LoadBalancer lb = new LoadBalancer(loadBalancerType, pool, pddContext);
+		String nomeConnettore = lb.selectConnector();
+		if(nomeConnettore==null) {
+			throw new BehaviourException("Nessun connettore selezionato");
+		}
+		return nomeConnettore;
 	}
 }

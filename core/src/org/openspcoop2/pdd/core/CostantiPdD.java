@@ -317,7 +317,7 @@ public class CostantiPdD {
     /** MBean per il caching dei keystore */
     public static final String JMX_KEYSTORE_CACHING = "Keystore";
     /** MBean per la gestione della consegna agli applicativi */
-    public static final String JMX_GESTORE_CONSEGNA_APPLICATIVI = "GestoreConsegnaApplicativi";
+    public static final String JMX_LOAD_BALANCER = "LoadBalancer";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */
@@ -486,6 +486,8 @@ public class CostantiPdD {
     public final static String KEY_CONDIZIONE_CONNETTORE =  "@CONDIZIONE_CONNETTORE@";
     /** Costante che identifica il nome di un connettore */
     public final static String KEY_NOME_CONNETTORE = "@NOME_CONNETTORE@";
+    /** Costante che identifica la condizione estratta per lo sticky */
+    public final static String KEY_CONDIZIONE_STICKY =  "@CONDIZIONE_STICKY@";
     
     
     /* Proprietà specifiche per modulo funzionale */

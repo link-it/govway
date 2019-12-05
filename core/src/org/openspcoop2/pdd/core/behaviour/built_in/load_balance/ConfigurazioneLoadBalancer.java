@@ -97,16 +97,28 @@ public class ConfigurazioneLoadBalancer  {
 		}
 		config.setType(enumType);
 		
-		config.setPool(GestoreLoadBalancerCaching.getLoadBalancerPool(pa, message, busta, 
+		LoadBalancerInstance lbInstance = GestoreLoadBalancerCaching.getLoadBalancerInstance(pa, message, busta, 
 				requestInfo, pddContext, 
-				msgDiag, log));
+				msgDiag, log,
+				enumType);
+		
+		config.setPool(lbInstance.getLoadBalancerPool());
 
+		config.setConnectorSelected(lbInstance.getConnectorSelected());
+				
 		return config;
 	}
 
 	private LoadBalancerType type;
 	private LoadBalancerPool pool;
+	private String connectorSelected;
 	
+	public String getConnectorSelected() {
+		return this.connectorSelected;
+	}
+	public void setConnectorSelected(String connectorSelected) {
+		this.connectorSelected = connectorSelected;
+	}
 	public LoadBalancerPool getPool() {
 		return this.pool;
 	}

@@ -289,6 +289,9 @@ public class ConditionalUtils  {
 				}
 				else {
 					msgDiag.addKeyword(CostantiPdD.KEY_CONDIZIONE_CONNETTORE, condition);
+					
+					msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI, 
+							"connettoriMultipli.consegnaCondizionale.identificazioneRiuscita");
 				}
 				
 			}catch(Exception e) {

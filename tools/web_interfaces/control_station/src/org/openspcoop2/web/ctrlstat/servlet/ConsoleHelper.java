@@ -161,6 +161,7 @@ import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
@@ -14562,7 +14563,11 @@ public class ConsoleHelper implements IConsoleHelper {
 		case CONSEGNA_LOAD_BALANCE:
 			String loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(paAssociata.getBehaviour());
 			LoadBalancerType type = LoadBalancerType.toEnumConstant(loadBalanceStrategia, true);
-			sbConnettoriMultipli.append(behaviourType.getLabel()).append(" '").append(type.getLabel()).append("'");
+			sbConnettoriMultipli.append(behaviourType.getLabel()).append(" '");
+			if(StickyUtils.isConfigurazioneSticky(paAssociata, ControlStationLogger.getPddConsoleCoreLogger())){
+				sbConnettoriMultipli.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STICKY).append(" ");
+			}
+			sbConnettoriMultipli.append(type.getLabel()).append("'");
 			
 			boolean condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
 			if(condizionale) {

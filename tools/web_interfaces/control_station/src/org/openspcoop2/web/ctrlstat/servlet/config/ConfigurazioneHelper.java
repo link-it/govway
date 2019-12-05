@@ -2405,7 +2405,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_KEYSTORE);
 			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_KEYSTORE);
 
-			return checkDatiCache(CostantiPdD.JMX_GESTORE_CONSEGNA_APPLICATIVI, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
+			return checkDatiCache(CostantiPdD.JMX_LOAD_BALANCER, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);

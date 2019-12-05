@@ -2030,7 +2030,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_keystoreCaching);
 			
 			org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi infoGestoreConsegnaApplicativi = new org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi();
-			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_GESTORE_CONSEGNA_APPLICATIVI, infoGestoreConsegnaApplicativi.isCacheAbilitata());
+			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_LOAD_BALANCER, infoGestoreConsegnaApplicativi.isCacheAbilitata());
 			if(infoGestoreConsegnaApplicativi.isCacheAbilitata()){
 				informazioniStatoPortaCache_gestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
 			}
