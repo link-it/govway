@@ -78,23 +78,17 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 */
 	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick,String protocollo);
 
-	public boolean hasInfoDumpAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio);
+	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio);
 
-	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio);
+	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio);
 
-	public DumpMessaggio getDumpMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio) throws Exception;
+	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio) throws Exception;
 
-	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
-	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpContenuto> getContenutiSpecifici(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
-	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
 	/**
 	 * Effettua una ricerca dei duplicati della transazione

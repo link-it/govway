@@ -53,6 +53,16 @@
 			<value>#{dettagliBean.diagnosticiBean}</value>
 		</managed-property>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>diagnosticiSADM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.DiagnosticiDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>diagnosticiBean</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
+			<value>#{dettagliTransazioneApplicativoServerBean.diagnosticiBean}</value>
+		</managed-property>
+	</managed-bean>
 <!-- 	<managed-bean> -->
 <!-- 		<managed-bean-name>diagnosticiBean</managed-bean-name> -->
 <!-- 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</managed-bean-class> -->
@@ -72,6 +82,11 @@
 		<managed-bean-name>dettagliTransazioneApplicativoServerBean</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliTransazioneApplicativoServerBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>transazioniService</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.TransazioniService</property-class>
+			<value>#{transazioniService}</value>
+		</managed-property>
 		<managed-property>
 			<property-name>transazioniApplicativoServerService</property-name>
 			<property-class>org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService</property-class>

@@ -79,7 +79,7 @@
 			<a4j:outputPanel layout="block" id="rowTransazione" styleClass="rowTransazione" >
 				<a4j:support event="onclick"  action="dettagliConsegna">
 					<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
-					<f:setPropertyActionListener value="#{item.id}" target="#{targetBean.idTransazioneApplicativoServer}"/>
+					<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{targetBean.servizioApplicativoErogatore}"/>
 					<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
 					<f:setPropertyActionListener value="#{dettagliBean.diagnosticiBean.protocollo}" target="#{targetBean.protocollo}"/>
 					

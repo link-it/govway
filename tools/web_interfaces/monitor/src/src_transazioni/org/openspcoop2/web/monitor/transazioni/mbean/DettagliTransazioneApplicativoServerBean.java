@@ -35,19 +35,15 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
-import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
-import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
@@ -59,8 +55,8 @@ import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService;
+import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
-import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
 import org.slf4j.Logger;
 
 /**
@@ -86,12 +82,15 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private String identificativoPorta;
 	private boolean isRisposta;
 	
-	private Long idTransazioneApplicativoServer;
+	private String servizioApplicativoErogatore;
 	
 	private TransazioneApplicativoServerBean dettaglio;
 	private transient ITransazioniApplicativoServerService transazioniSAService;
+	private transient ITransazioniService transazioniService;
 
 	private boolean visualizzaIdCluster = false;
+	
+	private DiagnosticiBean diagnosticiBean;
 	
 	private String selectedTab = null;
 	private String protocollo = null;
@@ -106,6 +105,17 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	private boolean showFaultIntegrazione = false;
 
 	private boolean visualizzaDataAccettazione = false;
+	
+	private Boolean hasDumpBinarioUltimaConsegnaRichiestaUscita = null;
+	private Boolean hasDumpBinarioUltimaConsegnaRispostaIngresso = null;
+	private Boolean hasDumpUltimaConsegnaRichiestaUscita = null;
+	private Boolean hasDumpUltimaConsegnaRispostaIngresso = null;
+	private Boolean hasHeaderTrasportoUltimaConsegnaRichiestaUscita = null;
+	private Boolean hasHeaderTrasportoUltimaConsegnaRispostaIngresso = null;
+	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita = null;
+	private Boolean hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso = null;
+	
+	
 	
 	private TipoMessaggio exportContenuto;
 		
@@ -153,9 +163,77 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 					e);
 		}
 	}
+	
+	public void setTransazioniService(ITransazioniService transazioniService) {
+		this.transazioniService = transazioniService;
+	}
 
 	public void setTransazioniApplicativoServerService(ITransazioniApplicativoServerService transazioniService) {
 		this.transazioniSAService = transazioniService;
+	}
+	
+	public Boolean getHasDumpUltimaConsegnaRichiestaUscita() {
+		if(this.hasDumpUltimaConsegnaRichiestaUscita == null)
+			this.hasDumpUltimaConsegnaRichiestaUscita  = this.getHasDump(TipoMessaggio.RICHIESTA_USCITA); 
+		
+		return this.hasDumpUltimaConsegnaRichiestaUscita;
+	}
+	
+	public Boolean getHasDumpUltimaConsegnaRispostaIngresso() {
+		if(this.hasDumpUltimaConsegnaRispostaIngresso == null)
+			this.hasDumpUltimaConsegnaRispostaIngresso  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO); 
+		
+		return this.hasDumpUltimaConsegnaRispostaIngresso;
+	}
+	
+ 	public boolean getHasDumpBinarioUltimaConsegnaRichiestaUscita() {
+		if(this.hasDumpBinarioUltimaConsegnaRichiestaUscita == null)
+			this.hasDumpBinarioUltimaConsegnaRichiestaUscita  = this.getHasDump(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO); 
+		
+		return this.hasDumpBinarioUltimaConsegnaRichiestaUscita;
+	}
+
+	public boolean getHasDumpBinarioUltimaConsegnaRispostaIngresso() {
+		if(this.hasDumpBinarioUltimaConsegnaRispostaIngresso == null)
+			this.hasDumpBinarioUltimaConsegnaRispostaIngresso  = this.getHasDump(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO); 
+		
+		return this.hasDumpBinarioUltimaConsegnaRispostaIngresso;
+	}
+	
+	public Boolean getHasHeaderTrasportoUltimaConsegnaRichiestaUscita() {
+		if(this.hasHeaderTrasportoUltimaConsegnaRichiestaUscita == null)
+			this.hasHeaderTrasportoUltimaConsegnaRichiestaUscita  = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_USCITA);  
+		
+		return this.hasHeaderTrasportoUltimaConsegnaRichiestaUscita;
+	}
+	
+	public Boolean getHasHeaderTrasportoUltimaConsegnaRispostaIngresso() {
+		if(this.hasHeaderTrasportoUltimaConsegnaRispostaIngresso == null)
+			this.hasHeaderTrasportoUltimaConsegnaRispostaIngresso  = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO);  
+		
+		return this.hasHeaderTrasportoUltimaConsegnaRispostaIngresso;
+	}
+	
+	public boolean getHasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita() {
+		if(this.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita == null)
+			this.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita = this.getHasHeaderTrasporto(TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioUltimaConsegnaRichiestaUscita;
+	}
+
+	public boolean getHasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso() {
+		if(this.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso == null)
+			this.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso = this.getHasHeaderTrasporto(TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO);  
+		
+		return this.hasHeaderTrasportoBinarioUltimaConsegnaRispostaIngresso;
+	}
+	
+	private boolean getHasDump(TipoMessaggio tipo) {
+		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), tipo);
+	}
+	
+	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
+		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), tipo);
 	}
 
 	public String saveDiagnostici() {
@@ -386,7 +464,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 			this.transazioniSAService.setIdTransazione(this.idTransazione);
 			this.transazioniSAService.setProtocollo(this.protocollo);
-			this.dettaglio = this.transazioniSAService.findById(this.getIdTransazioneApplicativoServer());
+			this.dettaglio = this.transazioniSAService.findByServizioApplicativoErogatore(this.servizioApplicativoErogatore);
 
 			if (this.dettaglio != null && this.protocolFactory == null) { // && this.getTraccia() != null) {
 				try {
@@ -639,6 +717,24 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	        this.selectedTab = selectedTab;
 	}
 	
+	public DiagnosticiBean getDiagnosticiBean() {
+		if(this.diagnosticiBean == null) {
+			this.diagnosticiBean  = new DiagnosticiBean();
+			this.diagnosticiBean.setIdEgov(this.idEgov);
+			this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
+			this.diagnosticiBean.setIdTransazione(this.idTransazione);
+			if(this.dettaglio != null)
+				this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
+			this.diagnosticiBean.setNomeServizioApplicativo(this.dettaglio.getNomeServizioApplicativoErogatore());
+			this.diagnosticiBean.setForceNomeServizioApplicativoNull(null);
+		}
+		
+		return this.diagnosticiBean;
+	}
+	public void setDiagnosticiBean(DiagnosticiBean diagnosticiBean) {
+		this.diagnosticiBean = diagnosticiBean;
+	}
+	
 	@Override
 	public String getProtocollo() {
 		return this.protocollo;
@@ -654,10 +750,55 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
 		this.visualizzaIdCluster = visualizzaIdCluster;
 	}
-	public Long getIdTransazioneApplicativoServer() {
-		return idTransazioneApplicativoServer;
+	
+	public boolean isVisualizzaTextAreaLocationConnettore () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getLocationConnettore())) {
+			if(this.dettaglio.getLocationConnettore().length() > 150)
+				return true;
+		} 
+		return false;
 	}
-	public void setIdTransazioneApplicativoServer(Long idTransazioneApplicativoServer) {
-		this.idTransazioneApplicativoServer = idTransazioneApplicativoServer;
+
+	public void setVisualizzaTextAreaLocationConnettore(boolean visualizzaTextAreaLocationConnettore) {
+	}
+	
+	public boolean isVisualizzaTextAreaLocationUltimoErrore () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getLocationUltimoErrore())) {
+			if(this.dettaglio.getLocationUltimoErrore().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+	
+	public String getServizioApplicativoErogatore() {
+		return this.servizioApplicativoErogatore;
+	}
+	public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
+		this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+	}
+	
+	public boolean isVisualizzaTextAreaUltimoErrore () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getUltimoErrore())) {
+			if(this.dettaglio.getUltimoErrore().length() > 150)
+				return true;
+		} 
+		return false;
+	}
+	
+	public boolean isVisualizzaUltimoErrore () {
+		if(this.dettaglio.getUltimoErrore() != null && (
+				this.dettaglio.getDataUltimoErrore().equals(this.dettaglio.getDataUltimaConsegna()))
+		)
+			return true;
+		return false;
+	}
+	
+	public boolean isVisualizzaTabUltimaConsegnaErrore () {
+		if(this.dettaglio.isConsegnaTrasparente() && this.dettaglio.getNumeroTentativi() > 1 && this.dettaglio.getUltimoErrore() != null && 
+				!this.dettaglio.getDataUltimoErrore().equals(this.dettaglio.getDataUscitaRichiesta()) &&
+				!this.dettaglio.getDataUltimoErrore().equals(this.dettaglio.getDataAccettazioneRichiesta())
+		)
+			return true;
+		return false;
 	}
 }

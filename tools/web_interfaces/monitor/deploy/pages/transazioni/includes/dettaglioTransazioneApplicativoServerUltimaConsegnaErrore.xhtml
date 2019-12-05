@@ -1,0 +1,72 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="consegnaTrasparenteUltimaConsegnaErrore">
+    
+ 		<h:panelGrid id="panelDettaglioPrincipaleCTUE" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+ 		
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni Ultima Consegna in Errore" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+ 		
+			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{true}">
+				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
+ 				<h:outputText value="Esito" styleClass="outputFieldLabel"  />
+			</h:panelGroup>
+ 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dettaglioEsitoUltimoErrore}" />
+ 			
+ 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}">
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+			</h:outputText>
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="ID Cluster" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaIdCluster and not empty dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdUltimoErrore}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdUltimoErrore}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaIdCluster and not empty dettagliTransazioneApplicativoServerBean.dettaglio.clusterIdUltimoErrore}" />
+			
+			<h:outputText styleClass="outputFieldLabel" value="Connettore"
+					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUlitmoErrore}"/>
+			<h:inputTextarea value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}" />
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" />			
+			
+			<h:outputText styleClass="outputFieldLabel" value="Errore"
+					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}"/>
+			<h:inputTextarea  value="#{dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaUltimoErrore}" />
+				
+			<h:outputLabel styleClass="outputFieldLabel icon-xml" value="Fault" 
+				rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"/>
+			<h:panelGroup rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}"> 
+				<h:form id="formFaultUE">
+                  	<a4j:htmlCommandLink id="faultIntegrazioneUE-iconLink" styleClass="icon-details" value="Visualizza" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.faultUltimoErrore}" action="faultSA">
+                       	<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+               		</a4j:htmlCommandLink>
+				</h:form>
+			</h:panelGroup>	
+			
+		</h:panelGrid>
+    
+    </a4j:outputPanel>
+ 
+</ui:composition>

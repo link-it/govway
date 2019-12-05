@@ -10,6 +10,11 @@
     
     <a4j:outputPanel layout="block" id="informazioniTempiElaborazione">
  		<h:panelGrid id="panelTempiElaborazione" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth270,valueAllineataSx" >
+ 		
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Tempi di Elaborazione" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
 						
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelTempiElaborazioneToken" value="Token" 
 				rendered="#{not empty dettagliBean.dettaglio.tempiElaborazioneObject.infoTempiElaborazioneToken}" />

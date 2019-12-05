@@ -625,7 +625,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasDump(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, tipo);
+		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, null, tipo);
 	}
 
 	public boolean getHasHeaderTrasportoRichiestaIngresso() {
@@ -685,7 +685,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, tipo);
+		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, null, tipo);
 	}
 
 	public void visualizzaRichiestaListener(ActionEvent ae) {
@@ -1065,6 +1065,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			this.diagnosticiBean.setIdTransazione(this.idTransazione);
 			if(this.dettaglio != null)
 				this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
+			this.diagnosticiBean.setNomeServizioApplicativo(null);
+			this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
 		}
 		
 		return this.diagnosticiBean;

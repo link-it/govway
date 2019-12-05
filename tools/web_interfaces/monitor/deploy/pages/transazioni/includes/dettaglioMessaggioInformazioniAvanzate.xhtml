@@ -11,6 +11,11 @@
     <a4j:outputPanel layout="block" id="informazioniAvanzate">
  		<h:panelGrid id="panelInformazioniAvanzate" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
  		
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni Avanzate" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+ 		
  			<h:outputLabel styleClass="outputFieldLabel" id="outLabelPdD" value="Dominio (ID)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 			<h:outputText id="outPdD" value="#{dettagliBean.dettaglio.pddCodice}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 		

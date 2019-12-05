@@ -1097,14 +1097,23 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	@Override
-	public DumpMessaggio getDumpMessaggio(String idTransazione, TipoMessaggio tipoMessaggio) throws Exception {
+	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio) throws Exception {
 
 		try {
-			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
+			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
 			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
 			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
 
 			DumpMessaggio mes = this.dumpMessaggioSearchDAO.find(expr);
 			this.updateMessageWithSdk(mes);
@@ -1120,14 +1129,14 @@ public class TransazioniService implements ITransazioniService {
 			
 			// ignore
 		} catch (Exception e) {
-			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + " e tipo: "	+ tipoMessaggio.toString(), e);
-			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + " e tipo: " + tipoMessaggio.toString(), e);
+			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: "	+ tipoMessaggio.toString(), e);
+			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: " + tipoMessaggio.toString(), e);
 		}
 		return null;
 	}
 
 	@Override
-	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 
@@ -1188,7 +1197,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 		
 	@Override
-	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,	TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpContenuto> getContenutiSpecifici(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 		try {
 
 			this.log.debug("Get Contenuti specifici [idDump: "	+ idDump + "]");
@@ -1241,17 +1250,13 @@ public class TransazioniService implements ITransazioniService {
 
 		return new ArrayList<DumpContenuto>();
 	}
-
+	
 	@Override
-	public boolean hasInfoDumpAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio) {
+	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio) {
 
 		try {
 
-			this.log
-			.info("Has Info Dump Available [id transazione: "
-					+ idTransazione + "],[ tipomessaggio: "
-					+ tipoMessaggio.toString() + "]");
+			this.log.info("Has Info Dump Available [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: " + tipoMessaggio.toString() + "]");
 			// Long l =
 			// (Long)this.em.createQuery("select count(d) from DumpMessaggio d where d.idTransazione=:idTransazione and d.tipoMessaggio=:tipoMessaggio
 			//AND ( (d.envelope is not null) OR (EXISTS (select id FROM DumpAllegato da WHERE da.dumpMessaggio.id=d.id)) OR (EXISTS (select id FROM DumpContenuto dc WHERE dc.dumpMessaggio.id=d.id)) ) ")
@@ -1260,10 +1265,18 @@ public class TransazioniService implements ITransazioniService {
 			// .getSingleResult();
 
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
-			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO,
-					TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
-			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE,
-					idTransazione);
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
 			//			IExpression orExpr = this.dumpMessaggioSearchDAO.newExpression();
 
 			//			orExpr.isNotNull(DumpMessaggio.model().ENVELOPE);
@@ -1301,7 +1314,7 @@ public class TransazioniService implements ITransazioniService {
 			//			return (nnn != null && nnn.longValue() > 0);
 
 		}  catch (NotFoundException e) {
-			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
@@ -1311,7 +1324,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}catch (Exception eVirtual) {
 				this.log.error(
-						"Errore durante la costruzione virtuale del messaggio (hasInfoDumpAvailable) [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+						"Errore durante la costruzione virtuale del messaggio (hasInfoDumpAvailable) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
 			}
 			
 		}catch (Exception e) {
@@ -1320,12 +1333,12 @@ public class TransazioniService implements ITransazioniService {
 
 		return false;
 	}
-
+	
 	@Override
-	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, TipoMessaggio tipoMessaggio) {
+	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio) {
 
 		this.log
-		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
+		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 		try {
 
 			// Long l =
@@ -1342,6 +1355,15 @@ public class TransazioniService implements ITransazioniService {
 					TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
 			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE,
 					idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
 
 			DumpMessaggio msg = this.dumpMessaggioSearchDAO.find(expr);
 
@@ -1374,7 +1396,7 @@ public class TransazioniService implements ITransazioniService {
 			// return (l != null && l > 0);
 
 		}  catch (NotFoundException e) {
-			this.log.debug("non sono state trovate informazioni sull'Header Trasporto per [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+			this.log.debug("non sono state trovate informazioni sull'Header Trasporto per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
@@ -1384,7 +1406,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}catch (Exception eVirtual) {
 				this.log.error(
-						"Errore durante la costruzione virtuale del messaggio (hasInfoHeaderTrasportoAvailable) [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+						"Errore durante la costruzione virtuale del messaggio (hasInfoHeaderTrasportoAvailable) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
 			}
 			
 		}catch (Exception e) {
@@ -1395,7 +1417,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, String saErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 

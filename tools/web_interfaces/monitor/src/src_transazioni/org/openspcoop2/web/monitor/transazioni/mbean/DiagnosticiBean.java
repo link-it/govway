@@ -42,6 +42,8 @@ public class DiagnosticiBean implements Serializable {
 	private String idEgov;
 	private String identificativoPorta;
 	private String protocollo;
+	private String nomeServizioApplicativo;
+	private Boolean forceNomeServizioApplicativoNull;
 	
 	public void setIdTransazione(String idTransazione) {
 		this.idTransazione = idTransazione;
@@ -77,6 +79,22 @@ public class DiagnosticiBean implements Serializable {
 
 	public void setProtocollo(String protocollo) {
 		this.protocollo = protocollo;
+	}
+
+	public String getNomeServizioApplicativo() {
+		return this.nomeServizioApplicativo;
+	}
+
+	public void setNomeServizioApplicativo(String nomeServizioApplicativo) {
+		this.nomeServizioApplicativo = nomeServizioApplicativo;
+	}
+
+	public Boolean getForceNomeServizioApplicativoNull() {
+		return this.forceNomeServizioApplicativoNull;
+	}
+
+	public void setForceNomeServizioApplicativoNull(Boolean forceNomeServizioApplicativoNull) {
+		this.forceNomeServizioApplicativoNull = forceNomeServizioApplicativoNull;
 	}
 	
 }

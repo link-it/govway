@@ -9,4 +9,5 @@ public interface ITransazioniApplicativoServerService extends IService<Transazio
 	
 	public void setProtocollo(String protocollo); 
 	
+	public TransazioneApplicativoServerBean findByServizioApplicativoErogatore(String nomeServizioApplicativoErogatore) throws Exception;
 }

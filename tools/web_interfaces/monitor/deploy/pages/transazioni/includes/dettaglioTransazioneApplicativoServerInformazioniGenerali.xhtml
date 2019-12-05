@@ -10,23 +10,37 @@
     
     <a4j:outputPanel layout="block" id="informazioniGenerali">
     
-	    <link:fieldset legend="Informazioni Generali" rendered="#{true}" collapsible="false" closed="false">
-	    
-	 		<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
-	 		
-	 			<h:outputLabel value="Data" id="data-iconLabel" styleClass="outputFieldLabel icon-date" />
-				<h:outputText id="outData" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">
-					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
-				</h:outputText>	
-				
-						
-			</h:panelGrid>
+ 		<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+ 		
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni Generali" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+ 		
+ 			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}">
+				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
+ 				<h:outputText value="Stato" styleClass="outputFieldLabel"  />
+			</h:panelGroup>
+ 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.tooltipIconaColonnaSX}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}" />
+ 		
+			<h:outputLabel styleClass="outputFieldLabel" value="Nome Connettore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+ 		
+ 			<h:outputLabel value="Data in Coda" styleClass="outputFieldLabel icon-date" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+			</h:outputText>
 			
-		</link:fieldset>
-		
-		<rich:spacer id="spacerInformazioniMittente" height="10px"/>
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Scaduto in data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}">
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+			</h:outputText>
+									
+			<h:outputLabel styleClass="outputFieldLabel" value="Identificativo Messaggio" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" />
+					
+		</h:panelGrid>
     
     </a4j:outputPanel>
-    
  
 </ui:composition>

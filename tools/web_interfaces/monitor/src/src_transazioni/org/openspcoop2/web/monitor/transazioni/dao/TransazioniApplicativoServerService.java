@@ -86,6 +86,28 @@ public class TransazioniApplicativoServerService implements ITransazioniApplicat
 		}
 		return null;
 	}
+	
+	@Override
+	public TransazioneApplicativoServerBean findByServizioApplicativoErogatore(String nomeServizioApplicativoErogatore) throws Exception {
+		try {
+			this.log.info("Find By Servizio Applicativo Erogatore: [" + nomeServizioApplicativoErogatore + "]");
+			
+			IExpression expr = this.createFilter();
+			
+			if(nomeServizioApplicativoErogatore == null) {
+				expr.isNull(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(TransazioneApplicativoServer.model().SERVIZIO_APPLICATIVO_EROGATORE, nomeServizioApplicativoErogatore);
+			}
+			
+			TransazioneApplicativoServer transazione = this.transazioniSASearch.find(expr);
+			transazione.setProtocollo(this.protocollo); 
+			return new TransazioneApplicativoServerBean(transazione);
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+		return null;
+	}
 
 	@Override
 	public List<TransazioneApplicativoServerBean> findAll() {
