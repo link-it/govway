@@ -61,6 +61,8 @@ public class Messaggio implements Serializable{
 	
 	private String servizioApplicativoErogatore;
 	
+	private Date dataConsegna;
+	
 	private MessageType formatoMessaggio;
 	
 	private String contentType;
@@ -98,6 +100,8 @@ public class Messaggio implements Serializable{
 		this.tipoMessaggio = dumpMessaggio.getTipoMessaggio();
 		
 		this.servizioApplicativoErogatore = dumpMessaggio.getServizioApplicativoErogatore();
+		
+		this.dataConsegna = dumpMessaggio.getDataConsegnaErogatore();
 		
 		if(dumpMessaggio.getFormatoMessaggio()!=null) {
 			this.formatoMessaggio = MessageType.valueOf(dumpMessaggio.getFormatoMessaggio());
@@ -181,6 +185,8 @@ public class Messaggio implements Serializable{
 		dumpMessaggio.setTipoMessaggio(this.tipoMessaggio);
 		
 		dumpMessaggio.setServizioApplicativoErogatore(this.servizioApplicativoErogatore);
+		
+		dumpMessaggio.setDataConsegnaErogatore(this.dataConsegna);
 		
 		if(this.formatoMessaggio!=null) {
 			dumpMessaggio.setFormatoMessaggio(this.formatoMessaggio.name());
@@ -407,5 +413,13 @@ public class Messaggio implements Serializable{
 	
 	public void setServizioApplicativoErogatore(String servizioApplicativoErogatore) {
 		this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+	}
+	
+	public Date getDataConsegna() {
+		return this.dataConsegna;
+	}
+	
+	public void setDataConsegna(Date dataConsegna) {
+		this.dataConsegna = dataConsegna;
 	}
 }

@@ -140,9 +140,11 @@ public class Dump {
 	/** -----------------Impostazione TransazioneApplicativoServer ---------------- */
 	private TransazioneApplicativoServer transazioneApplicativoServer;
 	private IDPortaApplicativa idPortaApplicativa;
-	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPortaApplicativa) {
+	private Date dataConsegnaTransazioneApplicativoServer;
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPortaApplicativa, Date dataConsegnaTransazioneApplicativoServer) {
 		this.transazioneApplicativoServer = transazioneApplicativoServer;
 		this.idPortaApplicativa = idPortaApplicativa;
+		this.dataConsegnaTransazioneApplicativoServer = dataConsegnaTransazioneApplicativoServer;
 	}
 	
 	/**
@@ -684,6 +686,7 @@ public class Dump {
 					// forzo
 					messaggio.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
 					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
+					messaggio.setDataConsegna(this.dataConsegnaTransazioneApplicativoServer);
 					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa);
 				}catch(Throwable t) {
 					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();

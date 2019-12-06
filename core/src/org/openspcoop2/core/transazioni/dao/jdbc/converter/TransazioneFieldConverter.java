@@ -740,6 +740,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "servizio_applicativo_erogatore";
 			}
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DATA_CONSEGNA_EROGATORE)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".data_consegna_erogatore";
+			}else{
+				return "data_consegna_erogatore";
+			}
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.TIPO_MESSAGGIO)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".tipo_messaggio";
@@ -1543,6 +1550,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.SERVIZIO_APPLICATIVO_EROGATORE)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.DATA_CONSEGNA_EROGATORE)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.TIPO_MESSAGGIO)){

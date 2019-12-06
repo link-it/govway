@@ -7,6 +7,7 @@ ALTER TABLE transazioni ADD COLUMN esito_sincrono INT;
 ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+ALTER TABLE dump_messaggi ADD COLUMN data_consegna_erogatore TIMESTAMP;
 
 
 CREATE SEQUENCE seq_transazioni_sa AS BIGINT START WITH 1 INCREMENT BY 1 ; -- (Scommentare in hsql 2.x) CYCLE;

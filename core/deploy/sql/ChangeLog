@@ -34,6 +34,7 @@
 	Nuova tabella 'transazioni_sa'
 
 	ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+	ALTER TABLE dump_messaggi ADD COLUMN data_consegna_erogatore TIMESTAMP;
 
 2019-09-25  Andrea Poli <apoli@link.it>
 

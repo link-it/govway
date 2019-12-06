@@ -391,7 +391,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			MsgDiagnostico msgDiag,
 			TransazioneApplicativoServer transazioneApplicativoServer) throws OpenSPCoopStateException {
 
-
+		Date dataConsegna = DateManager.getDate();
+		
 		EsitoLib esito = new EsitoLib();
 		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
 		
@@ -1200,6 +1201,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			transazioneApplicativoServer.setConsegnaIntegrationManager(integrationManager);
 			connettoreMsg.setTransazioneApplicativoServer(transazioneApplicativoServer);
 			connettoreMsg.setIdPortaApplicativa(idPA);
+			connettoreMsg.setDataConsegnaTransazioneApplicativoServer(dataConsegna);
 		}
 
 		// Identificativo di una risposta.
@@ -1981,7 +1983,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
 			if(transazioneApplicativoServer!=null) {
-				dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+				dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
 			}
 			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessageTrasformato, outRequestContext.getConnettore());
 
@@ -2188,7 +2190,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 								dumpConfig);
 						if(transazioneApplicativoServer!=null) {
-							dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+							dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
 						}
 						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
 						if(infoConnettoreUscita!=null){
@@ -2464,7 +2466,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
 					if(transazioneApplicativoServer!=null) {
-						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA);
+						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
 					}
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}

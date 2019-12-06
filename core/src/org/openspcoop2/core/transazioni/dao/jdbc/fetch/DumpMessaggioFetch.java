@@ -66,6 +66,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "protocollo", DumpMessaggio.model().PROTOCOLLO.getFieldType()));
 				setParameter(object, "setServizioApplicativoErogatore", DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "servizio_applicativo_erogatore", DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType()));
+				setParameter(object, "setDataConsegnaErogatore", DumpMessaggio.model().DATA_CONSEGNA_EROGATORE.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "data_consegna_erogatore", DumpMessaggio.model().DATA_CONSEGNA_EROGATORE.getFieldType()));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					jdbcParameterUtilities.readParameter(rs, "tipo_messaggio", DumpMessaggio.model().TIPO_MESSAGGIO.getFieldType())+"");
 				setParameter(object, "setFormatoMessaggio", DumpMessaggio.model().FORMATO_MESSAGGIO.getFieldType(),
@@ -188,6 +190,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"protocollo"));
 				setParameter(object, "setServizioApplicativoErogatore", DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE.getFieldType(),
 					this.getObjectFromMap(map,"servizio-applicativo-erogatore"));
+				setParameter(object, "setDataConsegnaErogatore", DumpMessaggio.model().DATA_CONSEGNA_EROGATORE.getFieldType(),
+					this.getObjectFromMap(map,"data-consegna-erogatore"));
 				setParameter(object, "set_value_tipoMessaggio", String.class,
 					this.getObjectFromMap(map,"tipo-messaggio"));
 				setParameter(object, "setFormatoMessaggio", DumpMessaggio.model().FORMATO_MESSAGGIO.getFieldType(),

@@ -328,6 +328,7 @@
 				<xsd:element name="id-transazione" type="xsd:string"/>
 				<xsd:element name="protocollo" type="xsd:string" />
 				<xsd:element name="servizio-applicativo-erogatore" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="data-consegna-erogatore"  type="xsd:dateTime" minOccurs="0"/>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio"/>
 				<xsd:element name="formato-messaggio" type="xsd:string" minOccurs="0"/>
 				<xsd:element name="content-type" type="xsd:string" minOccurs="0"/>

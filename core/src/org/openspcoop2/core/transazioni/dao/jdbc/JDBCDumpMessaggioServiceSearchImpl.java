@@ -604,6 +604,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().PROTOCOLLO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().FORMATO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,true));

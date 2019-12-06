@@ -7,6 +7,7 @@ ALTER TABLE transazioni ADD COLUMN esito_sincrono INT;
 ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
 
 ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+ALTER TABLE dump_messaggi ADD COLUMN data_consegna_erogatore TIMESTAMP;
 
 CREATE SEQUENCE seq_transazioni_sa start 1 increment 1 maxvalue 9223372036854775807 minvalue 1 cache 1 CYCLE;
 

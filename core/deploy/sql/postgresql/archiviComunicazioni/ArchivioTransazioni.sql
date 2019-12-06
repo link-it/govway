@@ -289,6 +289,7 @@ CREATE TABLE dump_messaggi
 	id_transazione VARCHAR(255) NOT NULL,
 	protocollo VARCHAR(20) NOT NULL,
 	servizio_applicativo_erogatore VARCHAR(2000),
+	data_consegna_erogatore TIMESTAMP,
 	tipo_messaggio VARCHAR(255) NOT NULL,
 	formato_messaggio VARCHAR(20),
 	content_type VARCHAR(255),

@@ -271,7 +271,8 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					// sara' null nel caso in cui il connettore viene utilizzato per funzionalita' esterne come ad esempio il token. Es: org.openspcoop2.pdd.core.token.GestoreToken.http
 					this.dump = new Dump(dominio,this.idModulo, this.outRequestContext.getTipoPorta(), nomePorta, this.outRequestContext.getPddContext());
 					if(request.getTransazioneApplicativoServer()!=null) {
-						this.dump.setTransazioneApplicativoServer(request.getTransazioneApplicativoServer(), request.getIdPortaApplicativa());
+						this.dump.setTransazioneApplicativoServer(request.getTransazioneApplicativoServer(), 
+								request.getIdPortaApplicativa(), request.getDataConsegnaTransazioneApplicativoServer());
 					}
 				}
 			}catch(Exception e){

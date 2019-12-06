@@ -4522,6 +4522,14 @@ public class RicezioneBuste {
 			richiestaApplicativa.setIdAccordo(infoServizio.getIdAccordo());
 		}
 		
+		// Aggiorno eventuale valore ProfiloCollaborazione dipendete dal profilo (PDC)
+		if(bustaRichiesta!=null && this.msgContext.getProtocol()!=null) {
+			this.msgContext.getProtocol().setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
+			if(bustaRichiesta.getVersioneServizio()>0 && bustaRichiesta.getVersioneServizio()!=this.msgContext.getProtocol().getVersioneServizio()) {
+				this.msgContext.getProtocol().setVersioneServizio(bustaRichiesta.getVersioneServizio());
+			}
+		}
+
 		
 		
 		

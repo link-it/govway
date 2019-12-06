@@ -43,6 +43,7 @@ import java.util.List;
  * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="data-consegna-erogatore" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -77,6 +78,7 @@ import java.util.List;
   	"idTransazione",
   	"protocollo",
   	"servizioApplicativoErogatore",
+  	"dataConsegnaErogatore",
   	"tipoMessaggio",
   	"formatoMessaggio",
   	"contentType",
@@ -140,6 +142,14 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   public void setServizioApplicativoErogatore(java.lang.String servizioApplicativoErogatore) {
     this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+  }
+
+  public java.util.Date getDataConsegnaErogatore() {
+    return this.dataConsegnaErogatore;
+  }
+
+  public void setDataConsegnaErogatore(java.util.Date dataConsegnaErogatore) {
+    this.dataConsegnaErogatore = dataConsegnaErogatore;
   }
 
   public void set_value_tipoMessaggio(String value) {
@@ -392,6 +402,11 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
   protected java.lang.String servizioApplicativoErogatore;
+
+  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
+  @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
+  @XmlElement(name="data-consegna-erogatore",required=false,nillable=false,type=java.lang.String.class)
+  protected java.util.Date dataConsegnaErogatore;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoMessaggio;

@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Date;
 
 import org.slf4j.Logger;
 import org.openspcoop2.core.constants.Costanti;
@@ -33,6 +34,7 @@ import org.openspcoop2.pdd.core.FileSystemSerializer;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 
 /**     
@@ -156,13 +158,14 @@ public class ExceptionSerialzerFileSystem {
 		}
 	}
 	
-	public void registrazioneFileSystemDumpEmessoPdD(Messaggio messaggio, String idTransazione, String applicativoServer){
+	public void registrazioneFileSystemDumpEmessoPdD(Messaggio messaggio, String idTransazione, String applicativoServer, Date dataConsegna){
 		try{
 			DumpMessaggio messaggioOp2 = messaggio.toDumpMessaggio();
 			
 			// forzo
 			messaggio.setIdTransazione(idTransazione);
 			messaggio.setServizioApplicativoErogatore(applicativoServer);
+			messaggio.setDataConsegna(dataConsegna);
 			
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			messaggioOp2.writeTo(bout, WriteToSerializerType.XML_JAXB);
@@ -170,7 +173,7 @@ public class ExceptionSerialzerFileSystem {
 	    	bout.close();
 			FileSystemSerializer.getInstance().registraDump(bout.toByteArray(), messaggioOp2.getDumpTimestamp());
 		}catch(Exception eSerializer){
-			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"]: "+eSerializer.getMessage(),eSerializer);
+			this.logger.error("Errore durante la registrazione su file system del messaggio diagnostico [idTransazione: "+idTransazione+"][server: "+applicativoServer+"][data:"+Utilities.getSimpleDateFormatMs().format(dataConsegna)+"]: "+eSerializer.getMessage(),eSerializer);
 		}
 	}
 	

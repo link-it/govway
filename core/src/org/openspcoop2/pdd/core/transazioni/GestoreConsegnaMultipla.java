@@ -396,7 +396,8 @@ public class GestoreConsegnaMultipla {
 				Messaggio messaggio = (Messaggio) o;
 				try{
 					if(messaggio.getIdTransazione()!=null && messaggio.getServizioApplicativoErogatore()!=null) {
-						exceptionSerializerFileSystem.registrazioneFileSystemDumpEmessoPdD(messaggio, messaggio.getIdTransazione(), messaggio.getServizioApplicativoErogatore());
+						exceptionSerializerFileSystem.registrazioneFileSystemDumpEmessoPdD(messaggio, messaggio.getIdTransazione(), 
+								messaggio.getServizioApplicativoErogatore(), messaggio.getDataConsegna());
 					}
 				} catch (Exception eClose) {}
 				// Effettuo il log anche nel core per evitare che un eventuale filtro a OFF sul core della PdD eviti la scrittura di questi errori

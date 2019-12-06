@@ -3263,6 +3263,17 @@ public class RicezioneContenutiApplicativi {
 		msgDiag.highDebug("Convert infoServizio to Busta terminata");
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
 		
+		// Aggiorno eventuale valore dipendete dal profilo (PDC)
+		if(this.msgContext.getProtocol()!=null && idServizio.getVersione()!=null) {
+			if(this.msgContext.getProtocol().getVersioneServizio()==null) {
+				this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
+			}
+			else if(this.msgContext.getProtocol().getVersioneServizio().intValue()!=idServizio.getVersione().intValue()) {
+				this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
+			}
+		}
+
+		
 	
 		
 		

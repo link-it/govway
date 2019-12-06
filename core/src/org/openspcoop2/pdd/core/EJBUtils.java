@@ -1701,7 +1701,7 @@ public class EJBUtils {
 						null,null,stateless,this.openSPCoopState,
 						null,
 						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
-						behaviour!=null ? behaviour.getLoadBalancer() : null);
+						behaviour!=null ? behaviour.getLoadBalancer() : null, false);
 			}
 			else{
 				
@@ -1722,7 +1722,7 @@ public class EJBUtils {
 							null,null,stateless,this.openSPCoopState,
 							null,
 							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
-							null);
+							null, false);
 				}
 				
 				List<BehaviourForwardTo> forwardTo = behaviour.getForwardTo();
@@ -1790,7 +1790,7 @@ public class EJBUtils {
 								busta.getID(),behaviourForwardTo.getConfig(),stateless,stateNuoviMessaggi,
 								behaviourForwardTo.getMessage(),
 								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire,
-								null);
+								null, true);
 						
 						// Applico modifiche effettuate dal modulo Consegna
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
@@ -1838,7 +1838,7 @@ public class EJBUtils {
 			boolean stateless,IOpenSPCoopState state,
 			OpenSPCoop2Message requestMessageNullable,
 			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire,
-			BehaviourLoadBalancer loadBalancer) throws Exception{
+			BehaviourLoadBalancer loadBalancer, boolean presaInCarico) throws Exception{
 		
 		// Eventuale indicazione per la registrazione via stateless
 		boolean registrazioneMessaggioPerStatelessEffettuata = false;
@@ -1930,7 +1930,10 @@ public class EJBUtils {
 			idSA.setIdSoggettoProprietario(richiestaApplicativa.getIDServizio().getSoggettoErogatore());
 			ServizioApplicativo sappl = this.configurazionePdDReader.getServizioApplicativo(idSA);
 
-			this.msgDiag.setServizioApplicativo(servizioApplicativo);
+			if(!presaInCarico) {
+				// altrimenti il diagnostico deve finire nella parte "presa in carico"
+				this.msgDiag.setServizioApplicativo(servizioApplicativo);
+			}
 
 			// Raccolgo dati per la registrazione
 			boolean servizioApplicativoConConnettore = true; // la ricezione contenuti asincroni lo deve obbligatoriamente contenere
@@ -2151,9 +2154,7 @@ public class EJBUtils {
 			
 			// identificativo Porta Applicativa
 			richiestaApplicativa.setServizioApplicativo(servizioApplicativo);
-			
-			msgDiag.setServizioApplicativo(servizioApplicativo);
-			
+						
 			// Preparo TransazioneApplicativoServer transazioneApplicativoServer
 			TransazioneApplicativoServer transazioneApplicativoServer = null;
 			if(consegnaMSG.getBehaviour()!=null && consegnaMSG.getBehaviour().getIdTransazioneApplicativoServer()!=null) {
@@ -2184,6 +2185,10 @@ public class EJBUtils {
 				}
 			}
 			
+			if(transazioneApplicativoServer==null) {
+				// altrimenti il diagnostico deve finire nella parte "presa in carico"
+				msgDiag.setServizioApplicativo(servizioApplicativo);
+			}
 			
 			// Spedisco al modulo ConsegnaContenutiApplicativi, solo se e' presente una definizione di servizio-applicativo
 			if(servizioApplicativoConConnettore){

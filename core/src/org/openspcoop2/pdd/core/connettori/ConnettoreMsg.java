@@ -24,6 +24,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Date;
 import java.util.Enumeration;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
@@ -111,6 +112,7 @@ public class ConnettoreMsg  {
 	
 	private TransazioneApplicativoServer transazioneApplicativoServer;
 	private IDPortaApplicativa idPortaApplicativa;
+	private Date dataConsegnaTransazioneApplicativoServer;
 	
 
 
@@ -489,5 +491,11 @@ public class ConnettoreMsg  {
 	}
 	public void setIdPortaApplicativa(IDPortaApplicativa idPortaApplicativa) {
 		this.idPortaApplicativa = idPortaApplicativa;
+	}
+	public Date getDataConsegnaTransazioneApplicativoServer() {
+		return this.dataConsegnaTransazioneApplicativoServer;
+	}
+	public void setDataConsegnaTransazioneApplicativoServer(Date dataConsegnaTransazioneApplicativoServer) {
+		this.dataConsegnaTransazioneApplicativoServer = dataConsegnaTransazioneApplicativoServer;
 	}
 }

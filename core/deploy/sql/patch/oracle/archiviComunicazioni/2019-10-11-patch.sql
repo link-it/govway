@@ -7,6 +7,7 @@ ALTER TABLE transazioni ADD esito_sincrono NUMBER;
 ALTER TABLE transazioni ADD consegne_multiple NUMBER;
 
 ALTER TABLE dump_messaggi ADD servizio_applicativo_erogatore VARCHAR2(2000);
+ALTER TABLE dump_messaggi ADD data_consegna_erogatore TIMESTAMP;
 
 
 

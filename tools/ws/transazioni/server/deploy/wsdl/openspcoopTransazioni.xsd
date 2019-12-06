@@ -649,6 +649,9 @@
 				<xsd:element minOccurs="0" name="servizio-applicativo-erogatore" type="xsd:string">
 					
 				</xsd:element>
+				<xsd:element minOccurs="0" name="data-consegna-erogatore" type="xsd:dateTime">
+					
+				</xsd:element>
 				<xsd:element name="tipo-messaggio" type="tipo-messaggio">
 					
 				</xsd:element>
