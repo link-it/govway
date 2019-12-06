@@ -15,9 +15,97 @@
 					<f:facet name="header">
 						<h:outputText id="outData1" value="Data" />
 					</f:facet>
-					<h:outputText id="outData2" value="#{item.gdo.time}" >
+					<h:outputText id="outData2" value="#{item.dataConsegnaErogatore}" >
 						<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome"/>
 					</h:outputText>	
+				</rich:column>
+				
+				<rich:column id="colRichUscita">
+					<f:facet name="header">
+						<h:outputText id="colRichUscita1" value="Richiesta" />
+					</f:facet>
+					<a4j:htmlCommandLink id="dumpMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza Contenuti" action="dettaglioDump"
+   						rendered="#{item.hasDumpRichiestaUscita}">
+                   		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{item.dataConsegnaErogatore}" target="#{dettagliDump.dataConsegnaErogatore}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	</a4j:htmlCommandLink>
+               		<h:outputLabel value="&#160;|&#160;" rendered="#{item.hasDumpRichiestaUscita and item.hasDumpBinarioRichiestaUscita}"/>	 
+					<a4j:htmlCommandLink id="dumpBinarioMessaggiUscita-iconLink" styleClass="icon-details" value="Visualizza Dati Raw" action="dettaglioDump" rendered="#{item.hasDumpBinarioRichiestaUscita}">
+                   		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{item.dataConsegnaErogatore}" target="#{dettagliDump.dataConsegnaErogatore}"/>
+                   		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	</a4j:htmlCommandLink>
+				</rich:column>
+				
+				<rich:column id="colRispIngresso">
+					<f:facet name="header">
+						<h:outputText id="colRispIngresso1" value="Risposta" />
+					</f:facet>
+					<a4j:htmlCommandLink id="dumpMessaggiIngresso-iconLink" styleClass="icon-details" value="Visualizza Contenuti" action="dettaglioDump"
+   						rendered="#{item.hasDumpRispostaIngresso}">
+                   		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{item.dataConsegnaErogatore}" target="#{dettagliDump.dataConsegnaErogatore}"/>
+                   		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	</a4j:htmlCommandLink>
+               		<h:outputLabel value="&#160;|&#160;" rendered="#{item.hasDumpRispostaIngresso and item.hasDumpBinarioRispostaIngresso}"/>	 
+					<a4j:htmlCommandLink id="dumpBinarioMessaggiIngresso-iconLink" styleClass="icon-details" value="Visualizza Dati Raw" action="dettaglioDump" rendered="#{item.hasDumpBinarioRispostaIngresso}">
+                   		<f:setPropertyActionListener value="#{item.idTransazione}" target="#{dettagliDump.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{item.protocollo}" target="#{dettagliDump.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{item.dataConsegnaErogatore}" target="#{dettagliDump.dataConsegnaErogatore}"/>
+                   		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.selectedTab}" target="#{dettagliTransazioneApplicativoServerBean.selectedTab}"/>
+                   		
+                   		<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                    	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	</a4j:htmlCommandLink>
 				</rich:column>
 				
 				<ui:define name="buttons">

@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -75,6 +76,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	private String servizioApplicativoErogatore;
 	private String protocollo = null;
 	private TipoMessaggio tipoMessaggio;
+	private Date dataConsegnaErogatore = null;
+	private Date ultimaConsegna = null;
 
 	private DumpMessaggio dumpMessaggio;
 	private DumpAllegato selectedAttachment;
@@ -105,6 +108,14 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		this.servizioApplicativoErogatore = servizioApplicativoErogatore;
 	}
 	
+	public Date getDataConsegnaErogatore() {
+		return this.dataConsegnaErogatore;
+	}
+
+	public void setDataConsegnaErogatore(Date dataConsegnaErogatore) {
+		this.dataConsegnaErogatore = dataConsegnaErogatore;
+	}
+
 	@Override
 	public String getProtocollo() {
 		return this.protocollo;
@@ -304,7 +315,10 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			return this.dumpMessaggio;
 
 		try {
-			this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.tipoMessaggio);
+			if(this.ultimaConsegna == null)
+				this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.dataConsegnaErogatore, this.tipoMessaggio);
+			else 
+				this.dumpMessaggio = ((this.service)).getDumpMessaggio(this.idTransazione, this.servizioApplicativoErogatore, this.ultimaConsegna, this.tipoMessaggio);
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
 
@@ -323,7 +337,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpAllegato> list = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpAllegato> list = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		if(list.size()>0){
 			List<DumpAllegato> newL = new ArrayList<DumpAllegato>();
@@ -343,7 +357,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpHeaderTrasporto> list = ((this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpHeaderTrasporto> list = ((this.service)).getHeaderTrasporto(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(),  this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		return (list.size()>0) ? list : null;
 	}
@@ -353,7 +367,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		if(this.getDumpMessaggio()==null)
 			return null;
 
-		List<DumpContenuto> list = ((this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+		List<DumpContenuto> list = ((this.service)).getContenutiSpecifici(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 		if(list.size()>0){
 			List<DumpContenuto> listNew = new ArrayList<DumpContenuto>();
@@ -565,7 +579,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 
 			// Streams we will use to read, write the file bytes to our response
 			// First we load the file in our InputStream
-			List<DumpAllegato> allegatiCore = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
+			List<DumpAllegato> allegatiCore = ((this.service)).getAllegatiMessaggio(this.dumpMessaggio.getIdTransazione(), this.dumpMessaggio.getServizioApplicativoErogatore(), this.dumpMessaggio.getDataConsegnaErogatore(), this.dumpMessaggio.getTipoMessaggio(), this.dumpMessaggio.getId());
 
 			List<DumpAllegato> allegati = new ArrayList<DumpAllegato>();
 			for (DumpAllegato dumpAllegato : allegatiCore) {
@@ -670,5 +684,13 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			}
 		}
 		return "Contenuti Messaggio";
+	}
+
+	public Date getUltimaConsegna() {
+		return ultimaConsegna;
+	}
+
+	public void setUltimaConsegna(Date ultimaConsegna) {
+		this.ultimaConsegna = ultimaConsegna;
 	}
 }

@@ -4,20 +4,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
-import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
-import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
-import org.openspcoop2.protocol.utils.EsitiProperties;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BlackListElement;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.web.monitor.core.core.Utils;
-import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
+import org.openspcoop2.web.monitor.transazioni.utils.FormatoFaultUtils;
+import org.openspcoop2.web.monitor.transazioni.utils.TransazioniEsitiUtils;
 
 public class TransazioneApplicativoServerBean extends TransazioneApplicativoServer {
 
@@ -438,97 +431,45 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	
 
 	public String getEsitoStyleClass(){
-
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			String name = esitiProperties.getEsitoName(this.dettaglioEsito);
-			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
-			boolean casoSuccesso = esitiProperties.getEsitiCodeOk().contains(this.dettaglioEsito);
-			if(EsitoTransazioneName.ERRORE_APPLICATIVO.equals(esitoName)){
-				//return "icon-alert-orange";
-				return "icon-alert-yellow";
-			}
-			else if(casoSuccesso){
-				return "icon-verified-green";
-			}
-			else{
-				return "icon-alert-red";
-			}
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return "icon-ko";
-		}
-
+		return TransazioniEsitiUtils.getEsitoStyleClass(this.getDettaglioEsito(), this.getProtocollo());
 	}
 
 	public boolean isEsitoOk(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(this.dettaglioEsito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoOk(this.dettaglioEsito, this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(this.dettaglioEsito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.dettaglioEsito, this.getProtocollo());
 	}
 	public boolean isEsitoKo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(this.dettaglioEsito);
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoKo(this.dettaglioEsito, this.getProtocollo());
 	}
-	
-	
-	
-	
-	
 	
 
 	public java.lang.String getEsitoLabel() {
-		try{
-			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoLabelFromValue(this.dettaglioEsito, false);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabel(this.dettaglioEsito, this.getProtocollo());
 	}
 
 	public java.lang.String getEsitoLabelSyntetic() {
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
-			return esitiProperties.getEsitoLabelSyntetic(this.dettaglioEsito);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.dettaglioEsito, this.getProtocollo());
 	}
 
 	public java.lang.String getEsitoLabelDescription() {
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
-			return getEsitoLabel() + " - " + esitiProperties.getEsitoDescription(this.dettaglioEsito);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.dettaglioEsito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsito, this.getProtocollo());
+	}
+	
+	public java.lang.String getEsitoUltimoErroreLabelDescription() {
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.dettaglioEsitoUltimoErrore, this.getProtocollo());
+	}
+	
+	public String getIconaUltimoErroreConsegna() {
+		if(TransazioniEsitiUtils.isEsitoOk(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_OK_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_ERROR_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoKo(this.dettaglioEsitoUltimoErrore, this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
+
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_ESITO_WARNING_ICON_KEY);
 	}
 	
 	public java.lang.String getEsitoSyntetic() {
@@ -1038,194 +979,34 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 	}
 
 	public String getFaultPretty(){
-		String f = super.getFault();
-		String toRet = null;
-		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFault())) {
-				messageType = MessageType.valueOf(super.getFormatoFault());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFault(), super.getFormatoFault());
 	}
 
 	public boolean isVisualizzaFault(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFault();
-
-		if(f == null)
-			return false;
-
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-		if(errore!= null)
-			return false;
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFault());
 	}
 
 	public String getBrushFault() {
-		String toRet = null;
-		String f = super.getFault();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFault())) {
-				messageType = MessageType.valueOf(super.getFormatoFault());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFault(), super.getFormatoFault());
 	}
 
 	public String getErroreVisualizzaFault(){
-		String f = super.getFault();
-		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFault());
 	}
 	
-	
-	
 	public String getFaultPrettyUltimoErrore(){
-		String f = super.getFaultUltimoErrore();
-		String toRet = null;
-		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultUltimoErrore())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultUltimoErrore());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFaultUltimoErrore(), super.getFormatoFaultUltimoErrore());
 	}
 
 	public boolean isVisualizzaFaultUltimoErrore(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFaultUltimoErrore();
-
-		if(f == null)
-			return false;
-
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-		if(errore!= null)
-			return false;
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFaultUltimoErrore());
 	}
 
 	public String getBrushFaultUltimoErrore() {
-		String toRet = null;
-		String f = super.getFaultUltimoErrore();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultUltimoErrore())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultUltimoErrore());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFaultUltimoErrore(), super.getFormatoFaultUltimoErrore());
 	}
 
 	public String getErroreVisualizzaFaultUltimoErrore(){
-		String f = super.getFaultUltimoErrore();
-		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultUltimoErrore());
 	}
 }

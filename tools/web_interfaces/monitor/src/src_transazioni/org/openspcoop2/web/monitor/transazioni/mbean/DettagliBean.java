@@ -625,7 +625,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasDump(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, null, tipo);
+		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, null, null, tipo);
 	}
 
 	public boolean getHasHeaderTrasportoRichiestaIngresso() {
@@ -685,7 +685,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, null, tipo);
+		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, null, null, tipo);
 	}
 
 	public void visualizzaRichiestaListener(ActionEvent ae) {

@@ -66,8 +66,8 @@
 			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" />
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" />
 		
-			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}"/>
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}">
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}">
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
 			</h:outputText>
 			
@@ -88,6 +88,7 @@
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
                    		<f:setPropertyActionListener value="RichiestaUscita" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
                    		
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -117,6 +118,7 @@
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
                    		<f:setPropertyActionListener value="RichiestaUscitaDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
                     	
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -150,8 +152,8 @@
 				<h:outputText value="Dettagli Risposta Ultima Consegna" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
 			
-			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}"/>
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}">
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRisposta}">
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
 			</h:outputText>
 			
@@ -198,6 +200,7 @@
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
                    		<f:setPropertyActionListener value="RispostaIngresso" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
                    		
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>
@@ -228,6 +231,7 @@
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.servizioApplicativoErogatore}" target="#{dettagliDump.servizioApplicativoErogatore}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliDump.protocollo}"/>
                    		<f:setPropertyActionListener value="RispostaIngressoDumpBinario" target="#{dettagliDump.tipoMessaggio}"/>
+                   		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.dataUltimaConsegna}" target="#{dettagliDump.ultimaConsegna}"/>
                     	
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.protocollo}" target="#{dettagliTransazioneApplicativoServerBean.protocollo}"/>
                    		<f:setPropertyActionListener value="#{dettagliTransazioneApplicativoServerBean.idTransazione}" target="#{dettagliTransazioneApplicativoServerBean.idTransazione}"/>

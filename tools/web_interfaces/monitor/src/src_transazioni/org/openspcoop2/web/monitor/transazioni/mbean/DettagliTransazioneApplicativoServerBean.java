@@ -25,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.zip.ZipEntry;
@@ -92,6 +93,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	
 	private String selectedTab = null;
 	private String protocollo = null;
+	private Date dataUltimaConsegna = null;
 
 	private static Boolean enableHeaderInfo = null;
 	private static boolean headersAsProperties = true;
@@ -125,7 +127,7 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	}
 	public void setExportContenuto(String exportContenuto) {
 		if(exportContenuto != null )
-				this.exportContenuto = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(exportContenuto);
+			this.exportContenuto = (TipoMessaggio) TipoMessaggio.toEnumConstantFromString(exportContenuto);
 	}
 
 
@@ -226,13 +228,31 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	}
 	
 	private boolean getHasDump(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), tipo);
+		if(this.dettaglio.getNumeroTentativi() > 1) {
+			return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), this.getDataUltimaConsegna(), tipo);
+		}
+		
+		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), null, tipo);
 	}
 	
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), tipo);
+		if(this.dettaglio.getNumeroTentativi() > 1) {
+			return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), this.getDataUltimaConsegna(), tipo);
+		}
+		
+		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, this.dettaglio.getNomeServizioApplicativoErogatore(), null, tipo);
 	}
 
+	public Date getDataUltimaConsegna() {
+		if(this.dataUltimaConsegna == null) {
+			this.dataUltimaConsegna = this.transazioniService.getDataConsegnaErogatore(this.idTransazione,  this.dettaglio.getNomeServizioApplicativoErogatore(),  this.dettaglio.getDataAccettazioneRichiesta());
+		}
+		
+		return this.dataUltimaConsegna;
+	}
+	public void setDataUltimaConsegna(Date dataUltimaConsegna) {
+		this.dataUltimaConsegna = dataUltimaConsegna;
+	}
 	public String saveDiagnostici() {
 		try {
 

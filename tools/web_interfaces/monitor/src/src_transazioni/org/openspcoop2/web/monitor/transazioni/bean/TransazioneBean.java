@@ -45,26 +45,23 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
-import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
-import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.web.monitor.core.core.Utility;
-import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
 import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
+import org.openspcoop2.web.monitor.transazioni.utils.FormatoFaultUtils;
+import org.openspcoop2.web.monitor.transazioni.utils.TransazioniEsitiUtils;
 import org.slf4j.Logger;
 
 /**
@@ -183,91 +180,29 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public String getEsitoStyleClass(){
-
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			String name = esitiProperties.getEsitoName(this.getEsito());
-			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
-			boolean casoSuccesso = esitiProperties.getEsitiCodeOk().contains(this.getEsito());
-			if(EsitoTransazioneName.ERRORE_APPLICATIVO.equals(esitoName)){
-				//return "icon-alert-orange";
-				return "icon-alert-yellow";
-			}
-			else if(casoSuccesso){
-				return "icon-verified-green";
-			}
-			else{
-				return "icon-alert-red";
-			}
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return "icon-ko";
-		}
-
+		return TransazioniEsitiUtils.getEsitoStyleClass(this.getEsito(), this.getProtocollo());
 	}
-
+	
 	public boolean isEsitoOk(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoKo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo());
 	}
 
 	public java.lang.String getEsitoLabel() {
-		try{
-			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoLabelFromValue(this.esito, false);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
 	}
 	
 	public java.lang.String getEsitoLabelSyntetic() {
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
-			return esitiProperties.getEsitoLabelSyntetic(this.esito);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo());
 	}
 	
 	public java.lang.String getEsitoLabelDescription() {
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.protocollo);
-			return getEsitoLabel() + " - " + esitiProperties.getEsitoDescription(this.esito);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo());
 	}
 	
 	public boolean isShowContesto(){
@@ -280,254 +215,39 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public java.lang.String getEsitoContestoLabel() {
-		try{
-			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoContestoLabelFromValue(this.esitoContesto);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per il contesto esito ["+this.esitoContesto+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
 	}
 	
-	
 	public String getFaultCooperazionePretty(){
-		String f = super.getFaultCooperazione();
-		String toRet = null;
-		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFaultCooperazione(), super.getFormatoFaultCooperazione());
 	}
 
 	public boolean isVisualizzaFaultCooperazione(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFaultCooperazione();
-
-		if(f == null)
-			return false;
-
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-		if(errore!= null)
-			return false;
-
-		//			MessageType messageType= MessageType.XML;
-		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-		//			}
-
-		//			switch (messageType) {
-		//			case BINARY:
-		//			case MIME_MULTIPART:
-		//				// questi due casi dovrebbero essere gestiti sopra 
-		//				break;	
-		//			case JSON:
-		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-		//				try {
-		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-		//				} catch (UtilsException e) {
-		//				}
-		//				break;
-		//			case SOAP_11:
-		//			case SOAP_12:
-		//			case XML:
-		//			default:
-		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-		//				break;
-		//			}
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFaultCooperazione());
 	}
 
 	public String getBrushFaultCooperazione() {
-		String toRet = null;
-		String f = super.getFaultCooperazione();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFaultCooperazione(), super.getFormatoFaultCooperazione());
 	}
 
 	public String getErroreVisualizzaFaultCooperazione(){
-		String f = super.getFaultCooperazione();
-		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultCooperazione());
 	}
 
 	public String getFaultIntegrazionePretty(){
-		String f = super.getFaultIntegrazione();
-		String toRet = null;
-		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFaultIntegrazione(), super.getFormatoFaultIntegrazione());
 	}
 
 	public boolean isVisualizzaFaultIntegrazione(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFaultIntegrazione();
-
-		if(f == null)
-			return false;
-
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-		if(errore!= null)
-			return false;
-
-		//			MessageType messageType= MessageType.XML;
-		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-		//			}
-
-		//			switch (messageType) {
-		//			case BINARY:
-		//			case MIME_MULTIPART:
-		//				// questi due casi dovrebbero essere gestiti sopra 
-		//				break;	
-		//			case JSON:
-		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-		//				try {
-		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-		//				} catch (UtilsException e) {
-		//				}
-		//				break;
-		//			case SOAP_11:
-		//			case SOAP_12:
-		//			case XML:
-		//			default:
-		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-		//				break;
-		//			}
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFaultIntegrazione());
 	}
 
 	public String getBrushFaultIntegrazione() {
-		String toRet = null;
-		String f = super.getFaultIntegrazione();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFaultIntegrazione(), super.getFormatoFaultIntegrazione());
 	}
 
 	public String getErroreVisualizzaFaultIntegrazione(){
-		String f = super.getFaultIntegrazione();
-		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultIntegrazione());
 	}
 
 	@Override

@@ -18,10 +18,10 @@
 			</h:panelGroup>
  		
 			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{true}">
-				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
+				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaUltimoErroreConsegna}</i>
  				<h:outputText value="Esito" styleClass="outputFieldLabel"  />
 			</h:panelGroup>
- 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dettaglioEsitoUltimoErrore}" />
+ 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.esitoUltimoErroreLabelDescription}" />
  			
  			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataUltimoErrore}">
@@ -33,7 +33,7 @@
 			
 			<h:outputText styleClass="outputFieldLabel" value="Connettore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}"/>
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUlitmoErrore}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and not dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}"/>
 			<h:inputTextarea value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}" />
 			
