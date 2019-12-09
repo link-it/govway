@@ -19,16 +19,16 @@
  		
  			<h:panelGroup layout="block" styleClass="outputFieldLabel" 
  				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi == 0}">
-				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
- 				<h:outputLabel value="Esito" styleClass="outputFieldLabel"  />
+				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
+ 				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.tooltipIconaColonnaSX}" 
  				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi == 0}" />
  		
 			<h:panelGroup layout="block" styleClass="outputFieldLabel" 
 				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 0}">
-				<i class="material-icons md-32">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
- 				<h:outputLabel value="Esito" styleClass="outputFieldLabel"  />
+				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
+ 				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.esitoDescription}" 
  				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 0}" />

@@ -347,6 +347,10 @@ a.titleLinkRight:hover {
     vertical-align: top;
 }
 
+.v-align-middle{
+    vertical-align: middle;
+}
+
 .align-left{
 	text-align: left;
 }
@@ -359,26 +363,31 @@ a.titleLinkRight:hover {
 .labelAllineataDx {
 	text-align: right;
 	padding: 0px 10px;
+	line-height: 24px;
 }
 
 .labelAllineataDxFixedWidth130 {
 	text-align: right;
 	padding: 0px 10px;
 	width: 160px;
+	line-height: 24px;
 }
 
 .labelAllineataDxFixedWidth270 {
-        text-align: right;
-        padding: 0px 10px;
-        width: 270px;
+    text-align: right;
+    padding: 0px 10px;
+    width: 270px;
+    line-height: 24px;
 }
 
 .labelAllineataSx {
 	padding: 0px 10px;
+	line-height: 24px;
 }
 
 .valueAllineataSx {
     padding: 0 10px 0 2px;
+    line-height: 24px;
 }
 
 .borderSpacingTable{

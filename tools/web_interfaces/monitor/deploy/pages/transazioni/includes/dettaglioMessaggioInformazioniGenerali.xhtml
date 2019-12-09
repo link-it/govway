@@ -18,8 +18,8 @@
 			</h:panelGroup>
 			
 			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{not empty dettagliBean.dettaglio.esitoIcona}">
-				<i class="material-icons md-32">#{dettagliBean.dettaglio.esitoIcona}</i>
- 				<h:outputLabel value="Esito" styleClass="outputFieldLabel"  />
+				<i class="material-icons md-24 v-align-middle">#{dettagliBean.dettaglio.esitoIcona}</i>
+ 				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>		
 			<h:outputLabel value="Esito" styleClass="outputFieldLabel" rendered="#{empty dettagliBean.dettaglio.esitoIcona}" />
 			<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />

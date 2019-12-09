@@ -161,6 +161,21 @@
 			<div class="spacer"></div>
 	
 			<a4j:outputPanel id="eventiTbl" layout="block" styleClass="panelLista" rendered="#{eventiDM.executeQuery}">
+			
+				<script type="text/javascript">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						
+						   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+						   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+					   }
+					   
+					   function completa(evt){   }
+					 //]]>	
+				</script>
+				
 				<h:form>
 					<link:dataTable value="#{eventiDM}" id="tableEventi"
 						mBean="#{eventiBean}" showSelectAll="false"
