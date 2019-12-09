@@ -7,6 +7,23 @@
 	xmlns:link="http://www.link.it"
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
+	
+	<script type="text/javascript">
+		//<![CDATA[
+		   jQuery(document).ready(nascondiChk);
+		   
+		   function nascondiChk(){
+			
+			   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+			   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+			   
+			   jQuery("th[id$='colRuoloTransazioneImgheader']").css('padding','8px');
+			   jQuery("th[id$='colRuoloTransazioneImgheader']").css('width','16px');
+		   }
+		   
+		   function completa(evt){   }
+		 //]]>	
+	</script>
 
 	<rich:dataTable id="dtTblLive" rowClasses="even,odd" value="#{value}" var="item" width="100%" >
 		<rich:column id="colEsitoImg" style="text-align: center;">

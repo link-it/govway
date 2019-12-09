@@ -104,7 +104,11 @@ public class TransazioniCostanti {
 	public static final String DETTAGLIO_TRANSAZIONE_NOME_TAB_INFO_AVANZATE = "infoAvanzate";
 	public static final String DETTAGLIO_TRANSAZIONE_NOME_TAB_TEMPI_ELABORAZIONE = "tempiElaborazione";
 	public static final String DETTAGLIO_TRANSAZIONE_NOME_TAB_CONSEGNE_MULTIPLE = "consegneMultiple";
-
+	
+	public static final String TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY = "transazioni.elenco.esito.ok.icon";
+	public static final String TRANSAZIONI_ELENCO_ESITO_ERROR_ICON_KEY = "transazioni.elenco.esito.error.icon";
+	public static final String TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY = "transazioni.elenco.esito.warning.icon";
+	
 
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_APPLICATIVO_ZERO_TENTATIVI_ICON_KEY = "transazioniApplicativoServer.elenco.applicativo.inCoda.zeroTentativi.icon";
 	public static final String TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_IM_ZERO_PRELIEVI_ICON_KEY = "transazioniApplicativoServer.elenco.im.inCoda.zeroPrelievi.icon";

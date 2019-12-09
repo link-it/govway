@@ -16,6 +16,13 @@
  			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
 				<h:outputText value="Informazioni Generali" styleClass="subtitle-nopaddingleft-nomarginleft"/>
 			</h:panelGroup>
+			
+			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{not empty dettagliBean.dettaglio.esitoIcona}">
+				<i class="material-icons md-32">#{dettagliBean.dettaglio.esitoIcona}</i>
+ 				<h:outputLabel value="Esito" styleClass="outputFieldLabel"  />
+			</h:panelGroup>		
+			<h:outputLabel value="Esito" styleClass="outputFieldLabel" rendered="#{empty dettagliBean.dettaglio.esitoIcona}" />
+			<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />
  		
  			<h:outputLabel value="Data" id="data-iconLabel" styleClass="outputFieldLabel icon-date" />
 			<h:outputText id="outData" value="#{dettagliBean.dettaglio.dataAccettazioneRichiesta}">
@@ -67,10 +74,7 @@
 									
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCorrAppRisp" value="ID Applicativo Risposta" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}"/>
 			<h:outputText id="outCorrAppRisp" value="#{dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}" rendered="#{not empty dettagliBean.dettaglio.idCorrelazioneApplicativaRisposta}"/>
-									
-			<h:outputLabel value="Esito" id="esito-iconLabel" styleClass="outputFieldLabel #{dettagliBean.dettaglio.esitoStyleClass}"/>
-			<h:outputText id="outEsito" value="#{dettagliBean.dettaglio.esitoLabel}" />
-			
+					
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelEsitoContesto" value="Contesto" rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>
 			<h:outputText id="outEsitoContesto" value="#{dettagliBean.dettaglio.esitoContestoLabel}" 
 				rendered="#{dettagliBean.dettaglio.showContesto and not empty dettagliBean.dettaglio.esitoContesto}"/>

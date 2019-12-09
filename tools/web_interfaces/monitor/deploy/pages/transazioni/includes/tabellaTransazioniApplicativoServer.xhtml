@@ -8,97 +8,169 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 	<f:loadBundle var="msg" basename="messages" />
 
-	<rich:dataTable id="dtTblLive" rowClasses="even,odd" value="#{value}" var="item" width="100%" >
-		<rich:column id="colEsitoImg" style="text-align: center;">
-			<f:facet name="header">
-				<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
-			</f:facet>
-			<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
-				<rich:toolTip for="outEsitoImgOk">
-					<h:outputText value="#{item.esitoLabel}" />
+	<style>
+	</style>
+	
+	<script type="text/javascript">
+		//<![CDATA[
+		   jQuery(document).ready(nascondiChk);
+		   
+		   function nascondiChk(){
+			   jQuery("div[id$='chkClmnPg']").attr('style', '');
+			   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
+			   jQuery("th[id$='ckbClmnheader']").css('width','16px');
+			   jQuery("input[id$='dtConsegne_column_ckb']").parent().attr('width','16px');
+			   jQuery("input[id$='dtConsegne_column_ckb']").parent().css('padding','12px');
+			   jQuery("input[id$='dtConsegne_column_ckb']").parent().addClass('align-center');
+			   jQuery("input[id$='dtConsegne_column_ckb']").css('padding','0px');
+			   jQuery("input[id$='dtConsegne_checkAll']").css('margin-top','0px');
+			
+			   jQuery("th[id$='colEsitoheader']").css('padding','8px');
+			   jQuery("th[id$='colEsitoheader']").css('width','42px');
+		   }
+		   
+		   function completa(evt){   }
+		 //]]>	
+	</script>
+	
+	<link:dataTable width="100%" value="#{value}" id="dtConsegne" headerText="Lista Consegne"
+					showSelectAll="true" enableDelete="false" selectionMapTarget="#{selectionMapTarget}"
+					mBean="#{mBean}">
+			
+			<rich:column id="colEsito" style="text-align: center;">
+				<f:facet name="header">
+					<h:outputText id="colEsito1" value="Esito" />
+				</f:facet>
+				<a4j:outputPanel layout="block" id="entryRuoloTransazione" styleClass="">
+					<i class="material-icons md-32">#{item.iconaColonnaSX}</i>
+					<rich:toolTip for="entryRuoloTransazione" value="#{item.tooltipIconaColonnaSX}" />
+				</a4j:outputPanel>
+			</rich:column>
+			<rich:column id="colConnettore">
+				<f:facet name="header">
+					<h:outputText id="colConnettore1" value="Connettore" />
+				</f:facet>
+				
+				<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliConsegna">
+				
+					<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
+					<f:setPropertyActionListener value="#{item.servizioApplicativoErogatore}" target="#{targetBean.servizioApplicativoErogatore}"/>
+					<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.diagnosticiBean.protocollo}" target="#{targetBean.protocollo}"/>
+					
+					<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+					<f:setPropertyActionListener value="#{dettagliBean.idTransazione}" target="#{dettagliBean.idTransazione}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+                   	<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+                   	<h:outputText id="outConnettore2" value="#{item.connettoreNome}" rendered="#{true}" />
+				</a4j:htmlCommandLink>
+				<rich:toolTip for="details-iconLink" rendered="#{true}">
+					<h:outputText value="Connettore: "/>
+					<h:outputText value="#{item.connettoreNome}" />
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.titoloDX}" />
+					<h:outputText id="outConnettore3" value="#{item.titoloDX}" rendered="#{not empty item.titoloDX}" />
 				</rich:toolTip>
-			</h:graphicImage>
-			<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
-				<rich:toolTip for="outEsitoImgFaultApplicativo">
-					<h:outputText value="#{item.esitoLabel}" />
-				</rich:toolTip>
-			</h:graphicImage>
-			<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
-				<rich:toolTip for="outEsitoImgKo">
-					<h:outputText value="#{item.esitoLabel}" />
-				</rich:toolTip>
-			</h:graphicImage>
-			<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
-		</rich:column>
-		<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" style="text-align: center;">
-			<f:facet name="header">
-				<i class="material-icons md-24">swap_horiz</i>
-			</f:facet>
-			<a4j:outputPanel id="imgRuoloTransazione">
-				<i class="material-icons md-16">#{item.pddRuoloImage}</i>
-			</a4j:outputPanel>
-			<rich:toolTip for="imgRuoloTransazione" value="#{item.pddRuoloToolTip}" />
-		</rich:column>
-		<rich:column id="colDataRichLive">
-			<f:facet name="header">
-				<h:outputText id="outDataRichLive1" value="Data Richiesta" />
-			</f:facet>
-			<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
-				<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{targetBean.idEgov}"/>
-				<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
-				<f:setPropertyActionListener value="#{item.pddCodice}" target="#{targetBean.identificativoPorta}"/>
-				<h:outputText id="outDataRichLive2" value="#{item.dataIngressoRichiesta}">
-					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"
+			</rich:column>	
+			
+			<rich:column id="colData">
+				<f:facet name="header">
+					<h:outputText id="colData1" value="Data" />
+				</f:facet>
+				<h:outputText id="outData2" value="#{item.dataSX}" rendered="#{not empty item.dataSX}">
+					<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss"
 						timeZone="Europe/Rome" />
 				</h:outputText>
-				<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
-			</a4j:htmlCommandLink>
-		</rich:column>
-		<rich:column id="colProtocollo" rendered="#{searchFormTransazioni.showListaProtocolli}">
-			<f:facet name="header">
-				<h:outputText id="outProtocollo1" value="#{applicationBean.labelProfiloCompact}" />
-			</f:facet>
-			<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}" />
-			<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}" />
-		</rich:column>
-		<rich:column id="colServLive">
-			<f:facet name="header">
-				<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
-			</f:facet>
-			<h:outputText id="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-			<rich:toolTip for="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-			<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-			<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-		</rich:column>
-		<rich:column id="colAzioneLive">
-			<f:facet name="header">
-				<h:outputText id="outAzioneLive1" value="Operazione" />
-			</f:facet>
-			<h:outputText id="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-			<rich:toolTip for="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
-			<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-			<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
-		</rich:column>
-		<rich:column id="colFruitoreLive">
-			<f:facet name="header">
-				<h:outputText id="outFruitoreLive1" value="Mittente" />
-			</f:facet>
-			<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
-			<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
-			<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
-				<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
-					<h:outputText value="Richiesta Anonima" />
+				<rich:toolTip for="outData2" style="text-align: right;">
+					<h:outputText value="Accettazione Richiesta: " rendered="#{mBean.visualizzaDataAccettazione}" />
+					<h:outputText value="#{item.dataAccettazioneRichiesta}" rendered="#{mBean.visualizzaDataAccettazione}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
+					<h:outputText value="Accettazione Risposta: " rendered="#{mBean.visualizzaDataAccettazione}" />
+					<h:outputText value="#{item.dataAccettazioneRisposta}" rendered="#{mBean.visualizzaDataAccettazione}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{mBean.visualizzaDataAccettazione}" />
+					<h:outputText value="Registrazione: "/>
+					<h:outputText value="#{item.dataRegistrazione}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataUscitaRichiesta}" />
+					<h:outputText value="Uscita Richiesta: " rendered="#{item.consegnaIntegrationManager == false and not empty item.dataUscitaRichiesta}"/>
+					<h:outputText value="#{item.dataUscitaRichiesta}" rendered="#{item.consegnaIntegrationManager == false and  not empty item.dataUscitaRichiesta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}" />
+					<h:outputText value="Ingresso Risposta: " rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}"/>
+					<h:outputText value="#{item.dataIngressoRisposta}" rendered="#{item.consegnaIntegrationManager == false and not empty item.dataIngressoRisposta}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrelievoIm}" />
+					<h:outputText value="Prelievo: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrelievoIm}"/>
+					<h:outputText value="#{item.dataPrelievoIm}" rendered="#{item.consegnaIntegrationManager == true and  not empty item.dataPrelievoIm}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrimoPrelievoIm}" />
+					<h:outputText value="Primo Prelievo: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataPrimoPrelievoIm}"/>
+					<h:outputText value="#{item.dataPrimoPrelievoIm}" rendered="#{item.consegnaIntegrationManager == true and  not empty item.dataPrimoPrelievoIm}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}" />
+					<h:outputText value="Eliminazione: " rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}"/>
+					<h:outputText value="#{item.dataEliminazioneIm}" rendered="#{item.consegnaIntegrationManager == true and not empty item.dataEliminazioneIm}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
+					<a4j:outputPanel layout="block" styleClass="spacerTooltip" rendered="#{not empty item.dataMessaggioScaduto}" />
+					<h:outputText value="Scaduto in data: " rendered="#{not empty item.dataMessaggioScaduto}"/>
+					<h:outputText value="#{item.dataMessaggioScaduto}" rendered="#{not empty item.dataMessaggioScaduto}">
+						<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+					</h:outputText>
 				</rich:toolTip>
-			</h:graphicImage>
-		</rich:column>
-		<rich:column id="colEsitoLive">
-			<f:facet name="header">
-				<h:outputText id="outEsitoLive1" value="Esito" />
-			</f:facet>
-			<h:outputText id="outEsitoLive2" value="#{item.esitoLabelSyntetic}" />
-			<rich:toolTip for="outEsitoLive2">
-				<h:outputText value="#{item.esitoLabelDescription}" />
-			</rich:toolTip>
-		</rich:column>
-	</rich:dataTable>
+			</rich:column>	
+			
+			<rich:column id="colIDCluster" rendered="#{mBean.visualizzaIdCluster}">
+				<f:facet name="header">
+					<h:outputText id="outIDCluster1" value="ID Cluster" />
+				</f:facet>
+				<h:outputText id="outIDCluster2" value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster and not empty item.clusterId}"/>
+				<rich:toolTip for="outIDCluster2" rendered="#{mBean.visualizzaIdCluster and not empty item.clusterId}">
+					<h:outputText value="#{item.clusterId}" rendered="#{mBean.visualizzaIdCluster and not empty item.clusterId}"/>
+				</rich:toolTip>
+			</rich:column>
+			
+			<rich:column id="colNumeroTentativi">
+				<f:facet name="header">
+					<h:outputText id="colNumeroTentativi1" value="Numero Tentativi" />
+				</f:facet>
+				<h:outputText id="outNumeroTentativi2" value="#{item.numeroTentativiValue}"  rendered="#{not empty item.numeroTentativiValue}" />
+				<rich:toolTip for="outNumeroTentativi2" rendered="#{not empty item.numeroTentativiValue}" >
+					<h:outputText value="#{item.numeroTentativiLabel}: " />
+					<h:outputText value="#{item.numeroTentativiValue}" />
+				</rich:toolTip>
+			</rich:column>
+			
+			<rich:column id="colLatenzaServizio">
+				<f:facet name="header">
+					<h:outputText id="colLatenzaServizio1" value="Tempo Risposta Servizio" />
+				</f:facet>
+				<h:outputText id="outLatenzaServizio2" value="#{item.latenzaConsegna}" converter="latenzaConverter" rendered="#{not empty item.latenzaConsegna}"/>
+				<h:outputText id="outLatenzaServizio2_IM" value="--" rendered="#{empty item.latenzaConsegna}"/>
+				<rich:toolTip for="outLatenzaServizio2" rendered="#{not empty item.latenzaConsegna}">
+					<h:outputText value="Tempo Risposta Servizio: " rendered="#{not empty item.latenzaConsegna}"/>
+					<h:outputText value="#{item.latenzaConsegna}" converter="latenzaConverter" rendered="#{not empty item.latenzaConsegna}"/>
+				</rich:toolTip>
+			</rich:column>
+			
+			<rich:column id="colStato">
+				<f:facet name="header">
+					<h:outputText id="colStato1" value="Stato" />
+				</f:facet>
+				<h:outputText id="outEsito2" value="#{item.esitoSyntetic}" />
+				<rich:toolTip for="outEsito2">
+					<h:outputText value="#{item.esitoDescription}" />
+				</rich:toolTip>
+			</rich:column>
+	</link:dataTable>
+	
 </ui:composition>

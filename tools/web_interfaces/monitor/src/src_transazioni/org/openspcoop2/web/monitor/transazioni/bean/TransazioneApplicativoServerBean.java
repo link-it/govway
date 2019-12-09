@@ -185,7 +185,7 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		}
 
 		if(this.isInCodaOttenibileImZeroPrelievi()) {
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_APPLICATIVO_IM_ZERO_TENTATIVI_ICON_KEY);
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_IM_ZERO_PRELIEVI_ICON_KEY);
 		}
 
 		if(this.isInCodaConsegnaApplicativoImZeroTentativi()) {
@@ -197,7 +197,7 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		}
 
 		if(this.isInCodaOttenibileImPiuPrelievi()) {
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_APPLICATIVO_IM_PIU_TENTATIVI_ICON_KEY);
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_IM_PIU_PRELIEVI_ICON_KEY);
 		}
 
 		if(this.isInCodaConsegnaApplicativoImPiuPrelievi()) {
@@ -229,7 +229,7 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		}
 
 		if(this.isInCodaOttenibileImZeroPrelievi()) {
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_APPLICATIVO_IM_ZERO_TENTATIVI_LABEL_KEY);
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_IM_ZERO_PRELIEVI_LABEL_KEY);
 		}
 
 		if(this.isInCodaConsegnaApplicativoImZeroTentativi()) {
@@ -241,7 +241,7 @@ public class TransazioneApplicativoServerBean extends TransazioneApplicativoServ
 		}
 
 		if(this.isInCodaOttenibileImPiuPrelievi()) {
-			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_APPLICATIVO_IM_PIU_TENTATIVI_LABEL_KEY);
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_APPLICATIVO_SERVER_ELENCO_IN_CODA_IM_PIU_PRELIEVI_LABEL_KEY);
 		}
 
 		if(this.isInCodaConsegnaApplicativoImPiuPrelievi()) {

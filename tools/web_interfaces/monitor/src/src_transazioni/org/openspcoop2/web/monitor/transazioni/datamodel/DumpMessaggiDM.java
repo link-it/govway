@@ -111,6 +111,9 @@ public class DumpMessaggiDM extends
 				
 				for (int i = 0; i < lista.size(); i++) {
 					DumpMessaggioBean dump = lista.get(i);
+					
+					dump.setProtocollo(this.diagnosticiBean.getProtocollo());
+					
 					this.wrappedData.put(dump.getId(), dump);
 					this.wrappedKeys.add(dump.getId());
 					visitor.process(context, dump.getId(), argument);

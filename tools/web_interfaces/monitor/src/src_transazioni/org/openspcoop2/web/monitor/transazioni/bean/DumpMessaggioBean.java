@@ -17,6 +17,7 @@ public class DumpMessaggioBean implements Serializable {
 	private Date dataConsegnaErogatore = null;
 	private String idTransazione;
 	private String servizioApplicativoErogatore;
+	private String protocollo;	
 	private List<TipoMessaggio> tipiMessaggio = new ArrayList<>();
 	
 	public Long getId() {
@@ -27,6 +28,13 @@ public class DumpMessaggioBean implements Serializable {
 	}
 	public void setId(Long id) {}
 	
+	
+	public String getProtocollo() {
+		return this.protocollo;
+	}
+	public void setProtocollo(String protocollo) {
+		this.protocollo = protocollo;
+	}
 	public Date getDataConsegnaErogatore() {
 		return this.dataConsegnaErogatore;
 	}

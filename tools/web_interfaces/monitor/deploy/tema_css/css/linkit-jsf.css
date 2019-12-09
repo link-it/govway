@@ -948,6 +948,7 @@ span.soggettoImg {
 }
 
 .rich-tool-tip {
+	line-height: 32px;
 	font-weight: normal;
 	background-color: ${tooltip.background.color};
 	border: 1px solid ${tooltip.border.color};

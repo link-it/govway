@@ -192,6 +192,17 @@ public class TransazioneBean extends Transazione{
 	public boolean isEsitoKo(){	
 		return TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo());
 	}
+	
+	public String getEsitoIcona() {
+		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_ERROR_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY);
+
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY);
+	}
 
 	public java.lang.String getEsitoLabel() {
 		return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
@@ -213,7 +224,7 @@ public class TransazioneBean extends Transazione{
 			return false;
 		}
 	}
-
+	
 	public java.lang.String getEsitoContestoLabel() {
 		return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
 	}
