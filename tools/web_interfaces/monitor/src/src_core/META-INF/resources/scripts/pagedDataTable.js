@@ -130,3 +130,16 @@ function visualizzaColonnaSelectAll(containerId){
 			thCheckAll.show();
 		}
 };
+
+function checkCountNumeroRisultati(containerId){
+	var tid = containerId+"_tbl";
+	return jQuery("table [id$='"+tid+"'] tbody[id$='tb']").children().length > 0;
+};
+
+function visualizzaMessaggioNoData(containerId){
+	var risultatiPresenti = checkCountNumeroRisultati(containerId);
+	if(!risultatiPresenti) {
+		jQuery("div [id$='"+containerId+"']").hide();
+		jQuery("div [id$='"+containerId+"_nodata']").show();
+	} 
+};

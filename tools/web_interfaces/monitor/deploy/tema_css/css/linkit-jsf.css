@@ -355,7 +355,7 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 }
 
 .rich-datascr {
-	padding-bottom: 16px;
+	padding-bottom: 8px;
 }
 
 .ds_down {
@@ -366,6 +366,7 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 .rich-dtascroller-table {
 	border: none;
 	color: ${table.datascroller.color};
+	line-height: 28px;
 }
 
 .rich-datascr-button {
@@ -409,6 +410,19 @@ th.extdt-empty-cell.rich-extdt-subheadercell {
 .rich-menu-item-hover, .rich-menu-group-hover {
 	background-color: ${table.thead.action.menu.item.hover.background.color};
 	border-color: ${table.thead.action.menu.item.hover.border.color};
+}
+
+
+div.tableNoData div.buttonrow {
+	margin-top: 20px;
+	margin-left: 232px;
+	padding-bottom: 12px;
+}
+
+span.tableNoData {
+	font-family: 'Roboto';
+	font-size: 16px;
+    margin: 8px 0px 8px 12px;
 }
 
 /*Menu utente */

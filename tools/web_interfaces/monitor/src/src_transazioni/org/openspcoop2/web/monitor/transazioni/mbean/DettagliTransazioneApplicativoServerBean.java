@@ -735,16 +735,17 @@ PdDBaseBean<TransazioneApplicativoServerBean, Long, IService<TransazioneApplicat
 	}
 	
 	public DiagnosticiBean getDiagnosticiBean() {
-		if(this.diagnosticiBean == null) {
+//		if(this.diagnosticiBean == null) {
 			this.diagnosticiBean  = new DiagnosticiBean();
 			this.diagnosticiBean.setIdEgov(this.idEgov);
 			this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
 			this.diagnosticiBean.setIdTransazione(this.idTransazione);
-			if(this.dettaglio != null)
+			if(this.dettaglio != null) {
 				this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
-			this.diagnosticiBean.setNomeServizioApplicativo(this.dettaglio.getNomeServizioApplicativoErogatore());
+				this.diagnosticiBean.setNomeServizioApplicativo(this.dettaglio.getNomeServizioApplicativoErogatore());
+			}
 			this.diagnosticiBean.setForceNomeServizioApplicativoNull(null);
-		}
+//		}
 		
 		return this.diagnosticiBean;
 	}

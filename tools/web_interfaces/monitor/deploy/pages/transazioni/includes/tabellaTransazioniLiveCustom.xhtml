@@ -13,55 +13,82 @@
 		#dtTblLive thead.rich-table-thead { display: none;}
 	</style>
 	
-	<script type="text/javascript">
-		//<![CDATA[
-		   jQuery(document).ready(nascondiChk);
-		   
-		   function nascondiChk(){
-			   // adattare dimensione delle colonne latenza e esito
-			   var larghezzaColonnaLatenza = getLarghezzaMassima("div[id$='sottotitoloInfoLatenzaTransazione']");
-			   
-			   var larghezzaColonnaLatenzaPixel = larghezzaColonnaLatenza + 'px';
-			   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
-			   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
-			   
-			   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
-			   
-			   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
-			   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
-			   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
-			   
-			   if(isIE()){
-					// larghezza della colonna centrale
-				   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
-				   jQuery(".divTitoloEntry").css('width', '0px');
-				   
-				   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
-				   
-				   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
-				   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
-				   
-				   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
-				   
-				   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
-				   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
-			   }
-		   }
-		   
-		   function getLarghezzaMassima(sel){
-			   return Math.max.apply(Math, jQuery(sel).map(function(){  return jQuery(this).width(); }).get());
-		   }
-		   
-		   function completa(evt){   }
-		 //]]>	
-	</script>
+	
 
-	<a4j:outputPanel layout="block" style="width: 100%; height: 8px;" />
+	<a4j:outputPanel layout="block" style="width: 100%; height: 8px;" >
+		<script type="text/javascript">
+		//<![CDATA[
+			visualizzaMessaggioNoData('dtTblLive', 'dtTblLive');
+			
+		   function checkCountNumeroRisultati(tid){
+				return jQuery("table [id$='"+tid+"'] tbody[id$='tb']").children().length > 0;
+			};
+		
+			function visualizzaMessaggioNoData(containerId, tid){
+				var risultatiPresenti = checkCountNumeroRisultati(tid);
+				if(!risultatiPresenti) {
+					jQuery("table [id$='"+tid+"']").hide();
+					jQuery("div [id$='"+containerId+"_nodata']").show();
+				} else {
+					jQuery("table [id$='"+tid+"']").show();
+					jQuery("div [id$='"+containerId+"_nodata']").hide();
+				}
+			};
+		   
+		 //]]>	
+		</script>
+	</a4j:outputPanel>
+	
+	<a4j:outputPanel id="dtTblLive_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+		<a4j:outputPanel layout="block" styleClass="buttonrow">
+			<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+		</a4j:outputPanel>
+	</a4j:outputPanel>
 	<rich:dataTable id="dtTblLive" rowClasses="odd,odd" value="#{value}" var="item" width="100%" >
 		<rich:column id="colCustomContent" sortable="false" label="Transazione">
 			<f:facet name="header">
 				<h:outputText id="outCustomContent1" value="Transazione" />
 			</f:facet>
+			<script type="text/javascript">
+				//<![CDATA[
+				   jQuery(document).ready(nascondiChk);
+				   
+				   function nascondiChk(){
+					   // adattare dimensione delle colonne latenza e esito
+					   var larghezzaColonnaLatenza = getLarghezzaMassima("div[id$='sottotitoloInfoLatenzaTransazione']");
+					   
+					   var larghezzaColonnaLatenzaPixel = larghezzaColonnaLatenza + 'px';
+					   jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css('width', larghezzaColonnaLatenzaPixel);
+					   jQuery("div[id$='entryInfoLatenzaTransazioneSottotitolo']").css('width', larghezzaColonnaLatenzaPixel);
+					   
+					   var larghezzaColonnaEsito = getLarghezzaMassima("div[id$='sottotitoloInfoEsitoTransazione']");;
+					   
+					   var larghezzaColonnaEsitoPixel = larghezzaColonnaEsito + 'px';
+					   jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css('width', larghezzaColonnaEsitoPixel);
+					   jQuery("div[id$='entryInfoEsitoTransazioneSottotitolo']").css('width', larghezzaColonnaEsitoPixel);
+					   
+					   if(isIE()){
+							// larghezza della colonna centrale
+						   var paddinDatiTitoloEntry = parseInt(jQuery(".divTitoloEntry").css("padding-left"), 10) + parseInt(jQuery(".divTitoloEntry").css("padding-right"), 10);
+						   jQuery(".divTitoloEntry").css('width', '0px');
+						   
+						   var larghezzaDatiTransazione = getLarghezzaMassima("div[id$='entryDatiTransazione']");
+						   
+						   var paddinColonnaLatenza = parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoLatenzaTransazioneTitolo']").css("padding-right"), 10);
+						   var paddinColonnaEsito = parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-left"), 10) + parseInt(jQuery("div[id$='entryInfoEsitoTransazioneTitolo']").css("padding-right"), 10);
+						   
+						   var larghezzaDatiTitolo = larghezzaDatiTransazione - (larghezzaColonnaLatenza + larghezzaColonnaEsito + paddinDatiTitoloEntry + paddinColonnaLatenza + paddinColonnaEsito + 10);
+						   
+						   var larghezzaDatiTitoloPixel = larghezzaDatiTitolo + 'px';
+						   jQuery(".divTitoloEntry").css('width', larghezzaDatiTitoloPixel);
+					   }
+				   }
+				   
+				   function getLarghezzaMassima(sel){
+					   return Math.max.apply(Math, jQuery(sel).map(function(){  return jQuery(this).width(); }).get());
+				   }
+				 //]]>	
+			</script>
 			<a4j:outputPanel layout="block" id="rowTransazione" styleClass="rowTransazione" >
 				<a4j:support event="onclick"  action="dettagliMessaggio">
 					<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>

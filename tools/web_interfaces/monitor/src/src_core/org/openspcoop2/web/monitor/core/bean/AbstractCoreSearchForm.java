@@ -73,7 +73,7 @@ public abstract class AbstractCoreSearchForm {
 		this.currentSearchSize = null;
 		this.numeroPagine = 1;
 		this.start = 0;
-		this.limit = 25;
+		//this.limit = 25;
 		this.totalCount = 0;
 		this.aggiornamentoDatiAbilitato = false;
 	}

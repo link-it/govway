@@ -19,6 +19,9 @@
 		</c:if>
 		
 		<c:if test="#{empty rowsToDisplay}">
+			<c:set var="rowsToDisplay" value="#{value.rowsToDisplay}"/>
+		</c:if>	
+		<c:if test="#{empty rowsToDisplay}">
 			<c:set var="rowsToDisplay" value="25"/>
 		</c:if>
 		<c:if test="#{empty showSelectAll}">
@@ -39,6 +42,11 @@
 		<c:if test="#{empty useCount}">
 			<c:set var="useCount" value="true"/>
 		</c:if>
+		<a4j:outputPanel id="#{id}_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+			<a4j:outputPanel layout="block" styleClass="buttonrow">
+				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+			</a4j:outputPanel>
+		</a4j:outputPanel>
 		<a4j:outputPanel id="#{id}" layout="block">
 			
 			<script type="text/javascript">			
@@ -46,6 +54,7 @@
 					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					abilitaColonnaSelectAll('#{id}');
+					visualizzaMessaggioNoData('#{id}');
 				 });
 			</script>
 			<c:if test="#{useCount == true}">

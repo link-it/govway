@@ -15,6 +15,12 @@
 			<c:set var="width" value="100%"/>
 		</c:if>
 		
+		<c:if test="#{empty mostraComandiFooterSelezionePageSize}">
+			<c:set var="mostraComandiFooterSelezionePageSize" value="false"/>
+		</c:if>
+		<c:if test="#{empty rowsToDisplay}">
+			<c:set var="rowsToDisplay" value="#{value.rowsToDisplay}"/>
+		</c:if>
 		<c:if test="#{empty rowsToDisplay}">
 			<c:set var="rowsToDisplay" value="25"/>
 		</c:if>
@@ -39,12 +45,18 @@
 		<c:if test="#{empty rowClasses}">
 			<c:set var="rowClasses" value="even,odd"/>
 		</c:if>
+		<a4j:outputPanel id="#{id}_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+			<a4j:outputPanel layout="block" styleClass="buttonrow">
+				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+			</a4j:outputPanel>
+		</a4j:outputPanel>
 		<a4j:outputPanel id="#{id}" layout="block">
 			<script type="text/javascript">
 				 jQuery(document).ready(function() {
 					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					visualizzaColonnaSelectAll('#{id}');
+					visualizzaMessaggioNoData('#{id}');
 				 });
 			</script>
 			<c:if test="#{useCount == true}">
@@ -169,6 +181,21 @@
 						   renderIfSinglePage="false" 
 						   pagesVar="pages" 
 						   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide">
+						   
+					    <f:facet name="pages">
+					   		<h:panelGrid columns="3">
+								<rich:spacer width="10px"/>
+								<h:panelGroup id="tableDsDownText">
+									<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
+									<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+										<f:selectItems value="#{value.listaNumeroRisultati}"  />
+										<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
+											actionListener="#{value.rowsToDisplaySelected}" />
+									</rich:comboBox>
+								</h:panelGroup>						
+								<rich:spacer width="10px"/>
+							</h:panelGrid>
+						</f:facet>
 						   
 						<f:facet name="previous">
 							<h:graphicImage id="#{id}_prev" value="/images/tema_link/go_prev.png" >
@@ -309,7 +336,12 @@
 										<h:panelGrid columns="3">
 											<rich:spacer width="10px"/>
 											<h:panelGroup id="tableDsDownText">
-												<h:outputText value="Pagina #{value.currentPage}"/>
+												<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
+												<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+													<f:selectItems value="#{value.listaNumeroRisultati}"  />
+													<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
+														actionListener="#{value.rowsToDisplaySelected}" />
+												</rich:comboBox>
 											</h:panelGroup>						
 											<rich:spacer width="10px"/>
 										</h:panelGrid>

@@ -170,7 +170,7 @@
 						mBean="#{configurazioniGeneraliBean}" showSelectAll="true" mostraComandiFooter="true"
 						selectionMapTarget="#{configurazioniGeneraliBean.selectedIds[item]}"
 						headerText="Lista Configurazioni" enableDelete="false"
-						reRenderIds="configurazioniTbl"
+						reRenderIds="configurazioniTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
 						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' and configurazioniGeneraliSearchForm.multitenant}">

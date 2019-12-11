@@ -1058,16 +1058,14 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 	
 	public DiagnosticiBean getDiagnosticiBean() {
-		if(this.diagnosticiBean == null) {
-			this.diagnosticiBean  = new DiagnosticiBean();
-			this.diagnosticiBean.setIdEgov(this.idEgov);
-			this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
-			this.diagnosticiBean.setIdTransazione(this.idTransazione);
-			if(this.dettaglio != null)
-				this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
-			this.diagnosticiBean.setNomeServizioApplicativo(null);
-			this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
-		}
+		this.diagnosticiBean  = new DiagnosticiBean();
+		this.diagnosticiBean.setIdEgov(this.idEgov);
+		this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
+		this.diagnosticiBean.setIdTransazione(this.idTransazione);
+		if(this.dettaglio != null)
+			this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
+		this.diagnosticiBean.setNomeServizioApplicativo(null);
+		this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
 		
 		return this.diagnosticiBean;
 	}
