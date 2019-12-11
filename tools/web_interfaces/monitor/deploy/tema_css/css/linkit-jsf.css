@@ -421,8 +421,9 @@ div.tableNoData div.buttonrow {
 
 span.tableNoData {
 	font-family: 'Roboto';
-	font-size: 16px;
+	font-size: 18px;
     margin: 8px 0px 8px 12px;
+    font-weight: bold;
 }
 
 /*Menu utente */
