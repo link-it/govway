@@ -23,6 +23,7 @@
 	<import file="./ant/govwayAPIConfig-build.xml" />
 	<import file="./ant/govwayAPIMonitor-build.xml" />
 	<import file="./ant/distrib-build.xml" />
+	<import file="./ant/patch-build.xml" />
 	<import file="./ant/jar-build.xml" />
 	<import file="../commons/utils.xml" />
 	
@@ -31,6 +32,7 @@
 	<property name="deploy_sql" location="deploy/sql" />
 	<property name="deploy_ds" location="deploy/datasource" />
 	<property name="deploy_jms" location="deploy/jms" />
+	<property name="deploy_patch" location="deploy/patch" />
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_sql" location="${build}/sql" />
 	<property name="tmp_ds" location="${build}/ds" />
@@ -1885,6 +1887,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 	
 	<target name="setup_finished" depends="_setup_finished"/>
 	<target name="_setup_finished">
+		<antcall target="patch-distrib"/>
 		<antcall target="make-distrib"/>
 		<delete dir="${build}"/>
 	</target>

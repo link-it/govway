@@ -1,3 +1,10 @@
+2019-12-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Risolto Bug
+	Non era possibile eliminare un'azione da un servizio di un'API di tipo SOAP se esistiva un'azione con lo stesso nome in un'altra API.
+	Migliorato logging delle console in caso di inizializzazione fallita.
+
 2019-11-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

@@ -25,15 +25,13 @@
 package org.openspcoop2.web.loader.config;
 
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
+import org.slf4j.Logger;
 
 
 /**
@@ -209,139 +207,6 @@ public class LoaderProperties {
 	
 	public String getConsoleNomeEsteso() throws UtilsException{
 		return this.readProperty(true, "loader.nome.esteso");
-	}
-	
-	public String getConsoleNomeEstesoSuffix() throws UtilsException{
-		if(_consoleReadSuffix==null){
-			LoaderProperties.initConsoleNomeEstesoSuffix(this);
-		}
-		return _consoleSuffix;
-	}
-	
-	private static String _consoleSuffix = null;
-	private static Boolean _consoleReadSuffix = null;
-	private static synchronized void initConsoleNomeEstesoSuffix(LoaderProperties p) throws UtilsException{
-		if(_consoleReadSuffix==null){
-			
-			_consoleReadSuffix = true;
-			
-			String classLicenseValidator = p.readProperty(false, "loader.licenseValidator");
-			String classLicenseValidatorFactory = p.readProperty(false, "loader.licenseValidator.factory");
-			if(classLicenseValidator == null || classLicenseValidatorFactory==null){
-				return;
-			}
-			else{
-				Class<?> cFactory = null;
-				try{
-					cFactory = Class.forName(classLicenseValidatorFactory);
-				}catch(Exception e){
-					throw new UtilsException("[ClassForNameFactory] "+e.getMessage(),e);
-				}
-				Method mFactory = null;
-				try{
-					Method [] ms =cFactory.getMethods();
-					if(ms==null || ms.length<=0){
-						throw new Exception("Non esistono metodi [Factory]");
-					}
-					for (int i = 0; i < ms.length; i++) {
-						
-						if("getInstance".equals(ms[i].getName())==false){
-							continue;
-						}
-						
-						Type[]types = ms[i].getGenericParameterTypes();
-	
-						if(types!=null && types.length==1){
-							if( (types[0].toString().equals("class org.slf4j.Logger")) || (types[0].toString().equals("interface org.slf4j.Logger")) ){
-								mFactory = ms[i];
-								break;
-							}
-						}
-	
-					}
-	
-					if(mFactory==null){
-						throw new Exception("Metodo Factory non trovato");
-					}
-	
-				}catch(Exception e){
-					throw new UtilsException("[getMethodFactory] "+e.getMessage(),e);
-				}
-				Object oFactory = null;
-				try{
-					oFactory = mFactory.invoke(null, p.log);
-				}catch(Exception e){
-					throw new UtilsException("[invokeFactory] "+e.getMessage(),e);
-				}
-				if(oFactory==null){
-					throw new UtilsException("Factory not found");
-				}
-				Class<?> c = null;
-				try{
-					c = Class.forName(classLicenseValidator);
-				}catch(Exception e){
-					throw new UtilsException("[ClassForName] "+e.getMessage(),e);
-				}
-				Method m = null;
-				try{
-					Method [] ms =c.getMethods();
-					if(ms==null || ms.length<=0){
-						throw new Exception("Non esistono metodi");
-					}
-					for (int i = 0; i < ms.length; i++) {
-						Type[]types = ms[i].getGenericParameterTypes();
-	
-						if(types!=null && types.length==3){
-							if( (types[0].toString().equals("class org.slf4j.Logger") || types[0].toString().equals("interface org.slf4j.Logger")) && 
-									(types[1].toString().equals("class "+classLicenseValidatorFactory)) && 
-									(types[2].toString().equals("boolean")) ){
-								m = ms[i];
-								break;
-							}
-						}
-	
-					}
-	
-					if(m==null){
-						throw new Exception("Metodo non trovato");
-					}
-	
-				}catch(Exception e){
-					throw new UtilsException("[getMethod] "+e.getMessage(),e);
-				}
-	
-				Object o = null;
-				try{
-					o = m.invoke(null, p.log, oFactory,true);
-				}catch(Exception e){
-					throw new UtilsException("[invoke] "+e.getMessage(),e);
-				}
-				if(o==null){
-					throw new UtilsException("License not found");
-				}
-				// Recupero titolo
-				Method mTitolo = null;
-				try{
-					mTitolo = o.getClass().getMethod("getTitlePddMonitor");
-				}catch(Exception e){
-					throw new UtilsException("[getMethod_TitoloPddMonitor] "+e.getMessage(),e);
-				}
-				Object oTitoloPddMonitor = null;
-				try{
-					oTitoloPddMonitor = mTitolo.invoke(o);
-				}catch(Exception e){
-					throw new UtilsException("[invoke_TitoloPddMonitor] "+e.getMessage(),e);
-				}
-				if(oTitoloPddMonitor==null){
-					throw new UtilsException("TitoloPddMonitor not found");
-				}
-				if( !(oTitoloPddMonitor instanceof String) ){
-					throw new UtilsException("TitoloPddMonitor with wrong type ["+oTitoloPddMonitor.getClass().getName()+"], excepected: "+String.class.getName());
-				}
-				_consoleSuffix = (String) oTitoloPddMonitor;
-				return;
-			}
-		}
 	}
 	
 	public String getConsoleCSS() throws UtilsException{

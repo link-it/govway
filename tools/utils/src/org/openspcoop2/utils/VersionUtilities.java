@@ -25,6 +25,8 @@ package org.openspcoop2.utils;
 import java.io.InputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
+
 /**	
  * VersionUtilities
  *
@@ -34,7 +36,7 @@ import java.util.Properties;
  */
 public class VersionUtilities {
 
-	private static String PROPERTY_FILE_RESOURCE_NAME = "/op2Version.properties";
+	private static String PROPERTY_FILE_RESOURCE_NAME = "/govwayVersion.properties";
 	public static void setPROPERTY_FILE_RESOURCE_NAME(String PROPERTY_FILE_RESOURCE_NAME) {
 		VersionUtilities.PROPERTY_FILE_RESOURCE_NAME = PROPERTY_FILE_RESOURCE_NAME;
 	}
@@ -44,25 +46,74 @@ public class VersionUtilities {
 		VersionUtilities.BUILD_VERSION_PROPERTY = bUILD_VERSION_PROPERTY;
 	}
 	
-	public static String readBuildVersion() throws UtilsException {
-		InputStream is = VersionUtilities.class.getResourceAsStream(VersionUtilities.PROPERTY_FILE_RESOURCE_NAME);
-		return readBuildVersion(is);
+	private static String VERSION_PROPERTY = "version";
+	public static void setVERSION_PROPERTY(String VERSION_PROPERTY) {
+		VersionUtilities.VERSION_PROPERTY = VERSION_PROPERTY;
 	}
 	
+	private static String INFO_VERSION_PROPERTY = "infoVersion";
+	public static void setINFO_VERSION_PROPERTY(String INFO_VERSION_PROPERTY) {
+		VersionUtilities.INFO_VERSION_PROPERTY = INFO_VERSION_PROPERTY;
+	}
+	
+	public static String readVersion() throws UtilsException {
+		return _read(VersionUtilities.VERSION_PROPERTY);
+	}
+	public static String readVersion(InputStream is) throws UtilsException {
+		return _read(is, VersionUtilities.VERSION_PROPERTY);
+	}
+	public static String readVersion(Properties p) {
+		return _read(p, VersionUtilities.VERSION_PROPERTY);
+	}
+	
+	public static String readBuildVersion() throws UtilsException {
+		return _read(VersionUtilities.BUILD_VERSION_PROPERTY);
+	}
 	public static String readBuildVersion(InputStream is) throws UtilsException {
+		return _read(is, VersionUtilities.BUILD_VERSION_PROPERTY);
+	}
+	public static String readBuildVersion(Properties p) {
+		return _read(p, VersionUtilities.BUILD_VERSION_PROPERTY);
+	}
+	
+	public static IVersionInfo readInfoVersion() throws UtilsException {
+		return _instance(_read(VersionUtilities.INFO_VERSION_PROPERTY));
+	}
+	public static IVersionInfo readInfoVersion(InputStream is) throws UtilsException {
+		return _instance(_read(is, VersionUtilities.INFO_VERSION_PROPERTY));
+	}
+	public static IVersionInfo readInfoVersion(Properties p) throws UtilsException {
+		return _instance(_read(p, VersionUtilities.INFO_VERSION_PROPERTY));
+	}
+	private static IVersionInfo _instance(String className) throws UtilsException {
+		if(className!=null && !StringUtils.isEmpty(className)) {
+			try {
+				return  (IVersionInfo) Class.forName(className).newInstance();
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(), e);
+			}
+		}
+		return null;
+	}
+	
+	private static String _read(String propertyName) throws UtilsException {
+		InputStream is = VersionUtilities.class.getResourceAsStream(VersionUtilities.PROPERTY_FILE_RESOURCE_NAME);
+		return _read(is, propertyName);
+	}
+	private static String _read(InputStream is, String propertyName) throws UtilsException {
 		try {
 			if(is!=null) {
 				Properties p = new Properties();
 				p.load(is);
-				return readBuildVersion(p);
+				return _read(p,propertyName);
 			}
 			return null;
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	public static String readBuildVersion(Properties p) {
-		String s = p.getProperty(VersionUtilities.BUILD_VERSION_PROPERTY);
+	private static String _read(Properties p, String propertyName) {
+		String s = p.getProperty(propertyName);
 		if(s!=null) {
 			s = s.trim();
 		}
@@ -70,3 +121,4 @@ public class VersionUtilities {
 	}
 	
 }
+

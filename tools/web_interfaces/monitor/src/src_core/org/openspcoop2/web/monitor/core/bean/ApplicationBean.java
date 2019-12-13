@@ -31,8 +31,10 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean.RuoloBean;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -974,17 +976,15 @@ public class ApplicationBean implements Serializable {
 
 	public String getIdProdotto(){
 		String pVersion = null;
-//		if(this.consoleNomeEstesoSuffix!=null){
-//			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_AZIONE_NON_SELEZIONATA)){
-//				pVersion = "GovWay "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
-//			}
-//			else{
-//				pVersion = this.consoleNomeEstesoSuffix;
-//			}
-//		}
-//		else {
-			pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
-//		}
+		pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
+		
+		try {
+			String version = VersionUtilities.readVersion();
+			if(version!=null && !StringUtils.isEmpty(version)) {
+				pVersion = version;
+			}
+		}catch(Exception e) {}
+
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
@@ -992,15 +992,54 @@ public class ApplicationBean implements Serializable {
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}
+		
 		return pVersion;
 	}
 	
+	public String getSito(){
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getWebSite())) {
+			return versionInfo.getWebSite();
+		}
+		else {
+			return Costanti.LABEL_OPENSPCOOP2_WEB;
+		}
+	}
+	
 	public String getCopyright(){
-		return CostantiPdD.OPENSPCOOP2_COPYRIGHT;
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo!=null && !StringUtils.isEmpty(versionInfo.getCopyright())) {
+			return versionInfo.getCopyright();
+		}
+		else {
+			return CostantiPdD.OPENSPCOOP2_COPYRIGHT;
+		}
 	}
 	
 	public String getLicenza() {
-		return CostantiPdD.OPENSPCOOP2_LICENSE;
+		IVersionInfo versionInfo = this.loginBean!=null ? this.loginBean.getvInfo() : null;
+		if(versionInfo!=null) {
+			try {
+				return versionInfo.getInfo();
+			}catch(Exception e) {
+				log.error(e.getMessage(),e);
+				return CostantiPdD.OPENSPCOOP2_LICENSE;
+			}
+		}
+		else {
+			return CostantiPdD.OPENSPCOOP2_LICENSE;
+		}
+	}
+	
+	public int getLicenzaRows() {
+		String licenza = getLicenza();
+		String [] split = licenza.split("\n");
+		if(split==null || split.length>11) {
+			return 11;
+		}
+		else {
+			return split.length+1;
+		}
 	}
 	
 	public String getLabelProfilo() {

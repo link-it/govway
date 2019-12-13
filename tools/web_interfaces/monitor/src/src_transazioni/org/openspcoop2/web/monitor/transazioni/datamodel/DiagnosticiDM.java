@@ -71,7 +71,7 @@ public class DiagnosticiDM extends
 
 		} catch (Exception e) {
 			DiagnosticiDM.log
-			.warn("Inizializzazione driverDiagnostici fallita.....",
+			.error("Inizializzazione driverDiagnostici fallita.....",
 					e);
 		}
 	}

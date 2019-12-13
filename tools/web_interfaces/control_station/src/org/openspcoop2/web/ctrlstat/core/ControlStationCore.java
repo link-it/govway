@@ -126,6 +126,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.sdk.registry.IConfigIntegrationReader;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.UtilsException;
@@ -244,7 +245,9 @@ public class ControlStationCore {
 
 
 
-
+	/* ------- INFO ----- */
+	
+	
 
 
 
@@ -253,7 +256,6 @@ public class ControlStationCore {
 	/** Impostazioni grafiche */
 	private String consoleNomeSintesi = null;
 	private String consoleNomeEsteso = null;
-	private String consoleNomeEstesoSuffix = null;
 	private String consoleCSS = null;
 	private String consoleLanguage = null;
 	private int consoleLunghezzaLabel = 50;
@@ -264,12 +266,35 @@ public class ControlStationCore {
 	private transient FontRenderContext fontRenderContext = null;
 	private transient Font defaultFont = null;
 	
+	private String getTitleSuffix(HttpSession session) {
+		IVersionInfo versionInfo = null;
+		try {
+			versionInfo = getInfoVersion(session);
+		}catch(Exception e) {
+			ControlStationLogger.getPddConsoleCoreLogger().error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
+		}
+		String consoleNomeEstesoSuffix = null;
+		if(versionInfo!=null) {
+			if(!StringUtils.isEmpty(versionInfo.getErrorTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfo.getErrorTitleSuffix();
+			}
+			else if(!StringUtils.isEmpty(versionInfo.getWarningTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfo.getWarningTitleSuffix();
+			}
+		}
+		return consoleNomeEstesoSuffix;
+	}
+	
 	public String getConsoleNomeSintesi() {
 		return this.consoleNomeSintesi;
 	}
-	public String getConsoleNomeEsteso(boolean addVersion) {
-		if(addVersion && this.consoleNomeEstesoSuffix!=null){
-			return this.consoleNomeEsteso+this.consoleNomeEstesoSuffix;
+	public String getConsoleNomeEsteso(HttpSession session) {
+		String titleSuffix = getTitleSuffix(session);
+		if(!StringUtils.isEmpty(titleSuffix)){
+			if(!titleSuffix.startsWith(" ")) {
+				titleSuffix = " "+titleSuffix;
+			}
+			return this.consoleNomeEsteso+titleSuffix;
 		}
 		else{
 			return this.consoleNomeEsteso;
@@ -277,17 +302,15 @@ public class ControlStationCore {
 	}
 	public String getProductVersion(){
 		String pVersion = null;
-		if(this.consoleNomeEstesoSuffix!=null){
-			if(this.consoleNomeEstesoSuffix.trim().startsWith(CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO)){
-				pVersion = "GovWay "+ this.consoleNomeEstesoSuffix.trim().substring(1).trim();
+		pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
+		
+		try {
+			String version = VersionUtilities.readVersion();
+			if(version!=null && !StringUtils.isEmpty(version)) {
+				pVersion = version;
 			}
-			else{
-				pVersion = this.consoleNomeEstesoSuffix;
-			}
-		}
-		else {
-			pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
-		}
+		}catch(Exception e) {}
+		
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
@@ -295,6 +318,7 @@ public class ControlStationCore {
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}
+		
 		return pVersion;
 	}
 	public String getConsoleCSS() {
@@ -1443,7 +1467,7 @@ public class ControlStationCore {
 			if(!initForApi) {
 				this.initCoreJmxResources();
 			}
-			
+
 			// inizializza l'AuditManager
 			ControlStationCore.initializeAuditManager(this.tipoDB);
 
@@ -1527,7 +1551,6 @@ public class ControlStationCore {
 		/** Impostazioni grafiche */
 		this.consoleNomeSintesi = core.consoleNomeSintesi;
 		this.consoleNomeEsteso = core.consoleNomeEsteso;
-		this.consoleNomeEstesoSuffix = core.consoleNomeEstesoSuffix;
 		this.consoleCSS = core.consoleCSS;
 		this.consoleLanguage = core.consoleLanguage;
 		this.consoleLunghezzaLabel = core.consoleLunghezzaLabel;
@@ -1895,7 +1918,6 @@ public class ControlStationCore {
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();
 			this.consoleNomeEsteso = consoleProperties.getConsoleNomeEsteso();
-			this.consoleNomeEstesoSuffix = consoleProperties.getConsoleNomeEstesoSuffix();
 			this.consoleCSS = consoleProperties.getConsoleCSS();
 			this.consoleLanguage = consoleProperties.getConsoleLanguage();
 			this.consoleLunghezzaLabel = consoleProperties.getConsoleLunghezzaLabel();
@@ -4944,6 +4966,77 @@ public class ControlStationCore {
 
 	/* ************** UTILITA' GENERALI A TUTTI I CORE ED HELPER ***************** */
 
+	private static final String VERSION_INFO_READ = "VERSION_INFO_READ";
+	private static final String VERSION_INFO = "VERSION_INFO";
+	
+	private IVersionInfo versionInfo = null;
+	private Boolean versionInfoRead = null;
+	private synchronized IVersionInfo initInfoVersion(HttpSession session, String tipoDB) throws UtilsException {
+		
+		if(this.versionInfoRead==null) {
+		
+			try {
+				Boolean versionInfoReadFromSession = ServletUtils.getObjectFromSession(session, Boolean.class, VERSION_INFO_READ);
+				if(versionInfoReadFromSession!=null) {
+					this.versionInfoRead = versionInfoReadFromSession;
+					this.versionInfo = ServletUtils.getObjectFromSession(session, IVersionInfo.class, VERSION_INFO);
+				}
+				else {
+					IVersionInfo vInfo = VersionUtilities.readInfoVersion();
+					if(vInfo!=null) {
+						Connection con = null;
+						try {
+							// prendo una connessione
+							con = ControlStationCore.dbM.getConnection();
+							vInfo.init(ControlStationLogger.getPddConsoleCoreLogger(), con, tipoDB);
+							this.versionInfo = vInfo;
+						} 
+						catch(Exception e) {
+							ControlStationLogger.getPddConsoleCoreLogger().error(e.getMessage(),e);
+						}
+						finally {
+							ControlStationCore.dbM.releaseConnection(con);
+						}
+					}
+					ServletUtils.setObjectIntoSession(session, true, VERSION_INFO_READ);
+					if(vInfo!=null) {
+						ServletUtils.setObjectIntoSession(session, vInfo, VERSION_INFO);
+					}
+				}
+			}finally {
+				this.versionInfoRead = true;
+			}
+			
+		}
+		
+		return this.versionInfo;
+		
+	}
+	public IVersionInfo getInfoVersion(HttpSession session) throws UtilsException {
+		if(this.versionInfoRead==null) {
+			initInfoVersion(session, this.tipoDB);
+		}
+		return this.versionInfo;
+	}
+	public void updateInfoVersion(HttpSession session, String info) throws UtilsException {
+		Connection con = null;
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			IVersionInfo vInfo = getInfoVersion(session);
+			if(vInfo!=null) {
+				vInfo.set(info, ControlStationLogger.getPddConsoleCoreLogger(), con, this.tipoDB);
+			}
+		} 
+		catch(Exception e) {
+			ControlStationLogger.getPddConsoleCoreLogger().error(e.getMessage(),e);
+			throw e;
+		}
+		finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
 	public IRegistryReader getRegistryReader(IProtocolFactory<?> protocolFactory) throws DriverConfigurazioneException{
 		String nomeMetodo = "getRegistryReader";
 		

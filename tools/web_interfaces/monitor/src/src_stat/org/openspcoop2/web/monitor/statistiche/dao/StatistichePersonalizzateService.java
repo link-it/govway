@@ -469,8 +469,7 @@ IStatisticaPersonalizzataService {
 
 			// if(idAccordo==null || nomeServizio==null || nomeAzione==null){
 			if (idAccordo == null || nomeServizio == null) {
-				// log.warn("Impossibile recuperare lista statistiche: idAccordo, nomeServizio e/o nomeAzione non forniti.");
-				StatistichePersonalizzateService.log.warn("Impossibile recuperare lista statistiche: idAccordo e/o nomeServizio non forniti.");
+				StatistichePersonalizzateService.log.error("Impossibile recuperare lista statistiche: idAccordo e/o nomeServizio non forniti.");
 				return new ArrayList<ConfigurazioneStatistica>();
 			}
 
@@ -505,7 +504,7 @@ IStatisticaPersonalizzataService {
 			if (idAccordo == null || nomeServizio == null || nomeAzione == null
 					|| nomeStatistica == null) {
 				StatistichePersonalizzateService.log
-				.warn("Impossibile recuperare lista statistiche: idAccordo, nomeServizio, nomeAzione e/o nomeStatistica non forniti.");
+				.error("Impossibile recuperare lista statistiche: idAccordo, nomeServizio, nomeAzione e/o nomeStatistica non forniti.");
 				return null;
 			}
 

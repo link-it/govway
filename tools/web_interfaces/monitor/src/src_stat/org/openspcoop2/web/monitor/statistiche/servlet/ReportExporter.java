@@ -92,7 +92,7 @@ public class ReportExporter extends HttpServlet{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(ReportExporter.log);
 			this.serviceEnabled = govwayMonitorProperties.isStatisticheAttivoServizioEsportazioneReport();
 		}catch(Exception e){
-			ReportExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
+			ReportExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
 	}
 

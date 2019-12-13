@@ -147,7 +147,7 @@ public class GeneralHelper {
 		GeneralData gd = new GeneralData(CostantiControlStation.LABEL_LINKIT_WEB);
 		gd.setProduct(this.core.getConsoleNomeSintesi());
 		gd.setLanguage(this.core.getConsoleLanguage());
-		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(false)));
+		gd.setTitle(StringEscapeUtils.escapeHtml(this.core.getConsoleNomeEsteso(this.session)));
 		gd.setLogoHeaderImage(this.core.getLogoHeaderImage());
 		gd.setLogoHeaderLink(this.core.getLogoHeaderLink());
 		gd.setLogoHeaderTitolo(this.core.getLogoHeaderTitolo()); 

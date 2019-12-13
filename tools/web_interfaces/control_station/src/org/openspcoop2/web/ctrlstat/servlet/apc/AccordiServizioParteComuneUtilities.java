@@ -455,6 +455,10 @@ public class AccordiServizioParteComuneUtilities {
 					// Se esiste piu' di un'azione con tale identificativo, non posso effettuare il controllo che non vi siano porteApplicative/porteDelegate esistenti,
 					// poichè non saprei se l'azione di una PD/PA si riferisce all'azione in questione.
 					// Allora non permetto l'eliminazione poichè esistono dei servizi che implementano l'accordo
+					
+					// RILASCIO CONTROLLO: non permette di eliminare azioni che comunque non sono usate nelle principali funzionalità sopra verificate.
+					
+					/*
 					if(inUsoMessage.length()>0) {
 						inUsoMessage.append(newLine);
 					}
@@ -463,6 +467,7 @@ public class AccordiServizioParteComuneUtilities {
 						inUsoMessage.append("- "+idServiziWithPortType.get(j).toString()+newLine);
 					}
 					continue;
+					*/
 					
 				}
 				

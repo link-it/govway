@@ -23,6 +23,19 @@
 			</then>
 		</if>
 		
+		<if>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<then>
+				<copy file="${src_loaderConsole}/WEB-INF/${jboss_deployment_structure}.${as}" tofile="${build_loaderConsole}/tmp/${jboss_deployment_structure}" />
+			</then>
+		</if>
+		<if>
+			<matches string="${as}" pattern="wildfly.*"/>
+			<then>
+				<copy file="${src_loaderConsole}/WEB-INF/${jboss_deployment_structure}.wildfly" tofile="${build_loaderConsole}/tmp/${jboss_deployment_structure}" />
+			</then>
+		</if>
+
 		<war destfile="${dist_loaderConsole}/govwayLoader.war" webxml="${src_loaderConsole}/WEB-INF/web.xml">
 
 			<!-- Informazioni sulla versione -->
@@ -48,6 +61,8 @@
 				<include name="struts-config.xml" />
 				<include name="${jboss_classloading}" />
 				<include name="${jboss_scanning}" />
+			</webinf>
+			<webinf dir="${build_loaderConsole}/tmp">
 				<include name="${jboss_deployment_structure}" />
 			</webinf>
 			<classes dir="${cfg}" >
@@ -76,7 +91,8 @@
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
-				<include name="${xalan_serializer_jar}"/>	
+				<include name="${xalan_serializer_jar}"/>
+				<include name="joda-time-2.10.jar"/>	
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/security" >
 				<include name="xmlsec-2.1.2.jar"/>
@@ -86,6 +102,15 @@
 			</lib>
 			<lib dir="${required_lib_loaderConsole}/jax">
 				<include name="${jaxp_ri_jar}" />
+			</lib>
+			<lib dir="${required_lib_loaderConsole}/cxf">
+				<include name="cxf-rt-rs-security-jose-3.2.6-gov4j-1.jar" />
+				<include name="cxf-rt-rs-json-basic-3.2.6.jar" />
+				<include name="cxf-rt-security-3.2.6.jar" />
+				<include name="cxf-core-3.2.6-gov4j-1.jar" />
+			</lib>
+			<lib dir="${required_lib_loaderConsole}/jackson" >
+				<include name="*.jar" />
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>

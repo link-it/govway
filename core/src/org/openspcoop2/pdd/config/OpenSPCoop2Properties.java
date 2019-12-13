@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.IExtendedInfo;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
@@ -126,6 +127,7 @@ import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
@@ -2944,13 +2946,35 @@ public class OpenSPCoop2Properties {
 					v = v.trim();
 					OpenSPCoop2Properties.versione = v;
 				}else{
-					OpenSPCoop2Properties.versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+					OpenSPCoop2Properties.versione = getVersionePdD(null);
 				}
 			}catch(java.lang.Exception e) {
 				OpenSPCoop2Properties.versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
 			}    
 		}
 		return OpenSPCoop2Properties.versione;
+	}
+	public static String getVersionePdD(OpenSPCoop2Properties properties) throws Exception{
+		String versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
+		if(properties!=null){
+			versione = properties.getPddDetailsForServices();
+		}
+		
+		try {
+			String version = VersionUtilities.readVersion();
+			if(version!=null && !StringUtils.isEmpty(version)) {
+				versione = version;
+			}
+		}catch(Exception e) {}
+		
+		String buildVersion = null;
+		try {
+			buildVersion = VersionUtilities.readBuildVersion();
+		}catch(Exception e) {}
+		if(buildVersion!=null) {
+			versione = versione + " (build "+buildVersion+")";
+		}
+		return versione;
 	}
 	
 	private static String details = null;

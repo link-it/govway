@@ -1199,17 +1199,22 @@ public class UtilityTransazioni {
 					.setTipologiaTransazioni(TipologiaTransazioniType.INTEGRATION_MANAGER);
 
 		// tipologia ricerca
-		switch (searchForm.getTipologiaRicercaEnum()) {
-		case ingresso:
-			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE);
-			break;
-		case uscita:
-			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.FRUIZIONE);
-			break;
-		case all:
-		default:
+		if(searchForm.getTipologiaRicercaEnum()==null) {
 			transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE_FRUIZIONE);
-			break;
+		}
+		else {
+			switch (searchForm.getTipologiaRicercaEnum()) {
+			case ingresso:
+				transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE);
+				break;
+			case uscita:
+				transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.FRUIZIONE);
+				break;
+			case all:
+			default:
+				transazione.setTipologiaRicercaTransazioni(TipologiaRicercaTransazioniType.EROGAZIONE_FRUIZIONE);
+				break;
+			}
 		}
 
 		// periodo

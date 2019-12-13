@@ -81,7 +81,7 @@ public class TransazioniExporter extends HttpServlet{
 			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
-			TransazioniExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
+			TransazioniExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
 	}
 

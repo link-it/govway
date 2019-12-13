@@ -164,6 +164,7 @@
 				<include name="snakeyaml-1.22.jar" />
 				<include name="freemarker-2.3.28.jar" />
 				<include name="activation-1.1.1.jar" />
+				<include name="joda-time-2.10.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />

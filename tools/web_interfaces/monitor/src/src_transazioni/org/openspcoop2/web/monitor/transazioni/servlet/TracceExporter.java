@@ -84,7 +84,7 @@ public class TracceExporter extends HttpServlet{
 			
 			this.tracciamentoService = govwayMonitorProperties.getDriverTracciamento();
 		}catch(Exception e){
-			TracceExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
+			TracceExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
 	}
 	

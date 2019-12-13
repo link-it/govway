@@ -40,7 +40,9 @@ import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.crypt.Password;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -282,5 +284,32 @@ public class DBLoginDAO implements ILoginDAO {
 			log.error(e.getMessage(), e);
 			throw new ServiceException(e); 
 		}
+	}
+	
+	@Override
+	public IVersionInfo readVersionInfo() throws ServiceException {
+		IVersionInfo vInfo = null;
+		try {
+			vInfo = VersionUtilities.readInfoVersion();
+		}catch(Exception e) {
+			throw new ServiceException(e.getMessage(),e);
+		}
+		if(vInfo!=null) {
+			Connection con = null;
+			try {
+				// prendo una connessione
+				con = this.driverConfigDB.getConnection("readVersionInfo");
+				String tipoDatabase = DAOFactoryProperties.getInstance(log).getTipoDatabase(org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance());
+				vInfo.init(log, con, tipoDatabase);
+				return vInfo;
+			} 
+			catch(Exception e) {
+				log.error(e.getMessage(), e);
+			}
+			finally {
+				this.driverConfigDB.releaseConnection(con);
+			}
+		}
+		return null;
 	}
 }

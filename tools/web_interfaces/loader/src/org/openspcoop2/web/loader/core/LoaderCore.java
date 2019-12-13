@@ -27,20 +27,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+import javax.servlet.http.HttpSession;
 import javax.sql.DataSource;
 
 import org.slf4j.Logger;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.web.lib.mvc.ServletUtils;
 import org.openspcoop2.web.lib.users.DriverUsersDB;
 import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.User;
@@ -73,12 +78,35 @@ public class LoaderCore{
 	private String logoHeaderTitolo = null;
 	private String logoHeaderLink = null;
 	
+	private String getTitleSuffix(HttpSession session) {
+		IVersionInfo versionInfo = null;
+		try {
+			versionInfo = getInfoVersion(session);
+		}catch(Exception e) {
+			LoaderCore.log.error("Errore durante la lettura delle informazioni sulla versione: "+e.getMessage(),e);
+		}
+		String consoleNomeEstesoSuffix = null;
+		if(versionInfo!=null) {
+			if(!StringUtils.isEmpty(versionInfo.getErrorTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfo.getErrorTitleSuffix();
+			}
+			else if(!StringUtils.isEmpty(versionInfo.getWarningTitleSuffix())) {
+				consoleNomeEstesoSuffix = versionInfo.getWarningTitleSuffix();
+			}
+		}
+		return consoleNomeEstesoSuffix;
+	}
+	
 	public String getLoaderNomeSintesi() {
 		return this.loaderNomeSintesi;
 	}
-	public String getLoaderNomeEsteso(boolean addVersione) {
-		if(addVersione && this.loaderNomeEstesoSuffix!=null){
-			return this.loaderNomeEsteso+this.loaderNomeEstesoSuffix;
+	public String getLoaderNomeEsteso(HttpSession session) {
+		String titleSuffix = getTitleSuffix(session);
+		if(!StringUtils.isEmpty(titleSuffix)){
+			if(!titleSuffix.startsWith(" ")) {
+				titleSuffix = " "+titleSuffix;
+			}
+			return this.loaderNomeEsteso+titleSuffix;
 		}
 		else{
 			return this.loaderNomeEsteso;
@@ -86,17 +114,15 @@ public class LoaderCore{
 	}
 	public String getProductVersion(){
 		String pVersion = null;
-		if(this.loaderNomeEstesoSuffix!=null){
-			if(this.loaderNomeEstesoSuffix.trim().startsWith("-")){
-				pVersion = "GovWay "+ this.loaderNomeEstesoSuffix.trim().substring(1).trim();
+		pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
+		
+		try {
+			String version = VersionUtilities.readVersion();
+			if(version!=null && !StringUtils.isEmpty(version)) {
+				pVersion = version;
 			}
-			else{
-				pVersion = this.loaderNomeEstesoSuffix;
-			}
-		}
-		else {
-			pVersion = "GovWay "+CostantiPdD.OPENSPCOOP2_VERSION;
-		}
+		}catch(Exception e) {}
+		
 		String buildVersion = null;
 		try {
 			buildVersion = VersionUtilities.readBuildVersion();
@@ -104,6 +130,7 @@ public class LoaderCore{
 		if(buildVersion!=null) {
 			pVersion = pVersion + " (build "+buildVersion+")";
 		}
+		
 		return pVersion;
 	}
 	public String getLoaderCSS() {
@@ -204,7 +231,6 @@ public class LoaderCore{
 			// Impostazioni grafiche
 			this.loaderNomeSintesi = loaderProperties.getConsoleNomeSintesi();
 			this.loaderNomeEsteso = loaderProperties.getConsoleNomeEsteso();
-			this.loaderNomeEstesoSuffix = loaderProperties.getConsoleNomeEstesoSuffix();
 			this.loaderCSS = loaderProperties.getConsoleCSS();
 			this.loaderLanguage = loaderProperties.getConsoleLanguage();
 			this.consoleLunghezzaLabel = loaderProperties.getConsoleLunghezzaLabel();
@@ -309,6 +335,65 @@ public class LoaderCore{
 	
 	public String getProtocolloDefault() {
 		return this.protocolloDefault;
+	}
+	
+	
+	
+	private static final String VERSION_INFO_READ = "VERSION_INFO_READ";
+	private static final String VERSION_INFO = "VERSION_INFO";
+	
+	private IVersionInfo versionInfo = null;
+	private Boolean versionInfoRead = null;
+	private synchronized IVersionInfo initInfoVersion(HttpSession session, String tipoDB) throws UtilsException {
+		
+		if(this.versionInfoRead==null) {
+		
+			try {
+				Boolean versionInfoReadFromSession = ServletUtils.getObjectFromSession(session, Boolean.class, VERSION_INFO_READ);
+				if(versionInfoReadFromSession!=null) {
+					this.versionInfoRead = versionInfoReadFromSession;
+					this.versionInfo = ServletUtils.getObjectFromSession(session, IVersionInfo.class, VERSION_INFO);
+				}
+				else {
+					IVersionInfo vInfo = VersionUtilities.readInfoVersion();
+					if(vInfo!=null) {
+						Connection con = null;
+						try {
+							// prendo una connessione
+							GestoreJNDI jndi = new GestoreJNDI(this.ctxDatasourceRegistroServizi);
+							DataSource ds = (DataSource) jndi.lookup(this.dataSourceRegistroServizi);
+							con = ds.getConnection();
+							vInfo.init(LoaderCore.log, con, tipoDB);
+							this.versionInfo = vInfo;
+						} 
+						catch(Exception e) {
+							LoaderCore.log.error(e.getMessage(),e);
+						}
+						finally {
+							try{
+								con.close();
+							}catch(Exception eClose){}
+						}
+					}
+					ServletUtils.setObjectIntoSession(session, true, VERSION_INFO_READ);
+					if(vInfo!=null) {
+						ServletUtils.setObjectIntoSession(session, vInfo, VERSION_INFO);
+					}
+				}
+			}finally {
+				this.versionInfoRead = true;
+			}
+			
+		}
+		
+		return this.versionInfo;
+		
+	}
+	public IVersionInfo getInfoVersion(HttpSession session) throws UtilsException {
+		if(this.versionInfoRead==null) {
+			initInfoVersion(session, this.tipoDatabaseRegistroServizi);
+		}
+		return this.versionInfo;
 	}
 	
 	

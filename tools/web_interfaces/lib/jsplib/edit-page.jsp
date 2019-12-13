@@ -223,10 +223,18 @@ for (int i = 0; i < dati.size(); i++) {
 	        			if (type.equals("link")){
 	        				String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 	        				String selEvtOnClick = !de.getOnClick().equals("") ? (" onClick=\"" + visualizzaAjaxStatus + de.getOnClick() + "\" " ) : " ";
+	        				String deLabelLink = !de.getLabelLink().equals("") ? de.getLabelLink() : "&nbsp;";
+	        				
+	        				String deTarget = " ";
+							if (!de.getTarget().equals("")) {
+					  			deTarget = " target=\""+ de.getTarget() +"\"";
+					  		}
 	        				%>
 	            			<div class="prop prop-link">
-	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>">&nbsp;</label>
-	            				<span><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> ><%= de.getValue() %></a></span>
+	            				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>"><%=deLabelLink %></label>
+	            				<div class="<%=classDivNoEdit %>"> 
+	            					<span><a href="<%= de.getUrl() %>" <%= selEvtOnClick %> <%=deTarget %> ><%= de.getValue() %></a></span>
+	            				</div>
 	            				<% 
 						      		if(deInfo != null){
 						      			String idDivIconInfo = "divIconInfo_"+i;

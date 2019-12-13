@@ -61,4 +61,9 @@ public class AboutCostanti {
 	
 	public final static String LABEL_LICENZA = "Licenza";
 	public final static String LICENSE = CostantiPdD.OPENSPCOOP2_LICENSE;
+	
+	public final static String LABEL_PARAMETRO_ABOUT_INFO = "Licenza";
+	public final static String BUTTON = "Aggiorna Licenza";
+	public final static String PARAMETRO_ABOUT_INFO = "info";
+	public final static String PARAMETRO_ABOUT_INFO_FINISH = "infoFinish";
 }

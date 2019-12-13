@@ -1,0 +1,519 @@
+
+<project name="setup-patch" basedir=".">
+	
+	<description>
+        	PATCH DISTRIB
+
+Directory: asTypeOrAsVersion/archiveName[EstensioneOpzionale]/tipo/operazione
+Esempi:
+- all/all/lib/[add-remove]/*.jar
+- all/all/properties/[add-remove]/*.properties
+- all/govwayConsole.war/lib/[add-remove]/*.jar
+- all/govway.ear/properties/[add-remove]/*.properties
+- wildfly17/all/lib/[add-remove]/*.jar
+- tomcat/all/properties/[add-remove]/*.properties
+- all/all/other/*
+
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<target name="patch-distrib">
+		
+		<if>
+			<available file="${deploy_patch}" type="dir"/>
+			<then>
+				<echo message="Build Patch Version [${deploy_patch}] ..."/>
+				
+				<foreach target="-patch-as" param="asTypeOrAsVersion" inheritall="true">
+					<path>
+						<dirset dir="${deploy_patch}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+
+				<echo message="Build Patch Version [${deploy_patch}] completed"/>
+			</then>
+		</if>
+
+	</target>
+
+	<target name="-patch-as">
+		<basename property="patchAS" file="${asTypeOrAsVersion}"/>
+		<if>
+			<or>
+				<equals arg1="${patchAS}" arg2="all"/>
+				<equals arg1="${patchAS}" arg2="${antinstaller_as}"/>
+				<matches string="${antinstaller_as}" pattern="${patchAS}.*"/>
+			</or>
+			<then>	
+				<echo message="Patch as [${patchAS}] ..."/>
+
+				<foreach target="-patch-archive" param="patchArchive" inheritall="true">
+					<path>
+						<dirset dir="${asTypeOrAsVersion}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+
+				<echo message="Patch as [${patchAS}] ok"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="-patch-archive">
+		<basename property="patchArchiveType" file="${patchArchive}"/>
+
+		<echo message="Patch archiveType [${patchArchiveType}] ..."/>
+
+		<!-- *** Aggiunta dell'applicazione govway ***-->
+		<if>
+			<or>
+				<matches string="${antinstaller_as}" pattern="jboss.*"/>
+				<matches string="${antinstaller_as}" pattern="wildfly.*"/>
+			</or>	
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govway"/>
+						<equals arg1="${patchArchiveType}" arg2="govway.ear"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_archivi}/govway.ear"/>
+						<var name="patchTmpArchiveType" value="ear"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+			<else>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govway"/>
+						<equals arg1="${patchArchiveType}" arg2="govway.war"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_archivi}/govway.war"/>
+						<var name="patchTmpArchiveType" value="war"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+
+						<!-- *** Aggiunta dell'applicazione govwaySec *** -->
+						<if>
+							<istrue value="${build_openspcoop_sec_archive}" />
+							<then>
+								<var name="patchTmpArchive" value="${tmp_archivi}/govwaySec.war"/>
+								<var name="patchTmpArchiveType" value="war"/>
+								<foreach target="-patch-resource" param="patchResource" inheritall="true">
+									<path>
+										<dirset dir="${patchArchive}" casesensitive="yes">
+											<include name="*"/>
+										</dirset>
+									</path>
+								</foreach>
+							</then>
+						</if>
+					</then>
+				</if>				
+			</else>		
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayConsole ***-->
+		<if>
+			<or>
+				<equals arg1="${patchArchiveType}" arg2="all"/>
+				<equals arg1="${patchArchiveType}" arg2="govwayConsole"/>
+				<equals arg1="${patchArchiveType}" arg2="govwayConsole.war"/>
+			</or>
+			<then>
+				<var name="patchTmpArchive" value="${tmp_archivi}/govwayConsole.war"/>
+				<var name="patchTmpArchiveType" value="war"/>
+				<foreach target="-patch-resource" param="patchResource" inheritall="true">
+					<path>
+						<dirset dir="${patchArchive}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayMonitor ***-->
+		<if>
+			<or>
+				<equals arg1="${patchArchiveType}" arg2="all"/>
+				<equals arg1="${patchArchiveType}" arg2="govwayMonitor"/>
+				<equals arg1="${patchArchiveType}" arg2="govwayMonitor.war"/>
+			</or>
+			<then>
+				<var name="patchTmpArchive" value="${tmp_archivi}/govwayMonitor.war"/>
+				<var name="patchTmpArchiveType" value="war"/>
+				<foreach target="-patch-resource" param="patchResource" inheritall="true">
+					<path>
+						<dirset dir="${patchArchive}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayLoader ***-->
+		<if>
+			<and>
+				<istrue value="${antinstaller_loader}"/>
+			</and>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayLoader"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayLoader.war"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_archivi}/govwayLoader.war"/>
+						<var name="patchTmpArchiveType" value="war"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_config}"/>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayAPIConfig"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayAPIConfig.war"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_archivi}/govwayAPIConfig.war"/>
+						<var name="patchTmpArchiveType" value="war"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<!-- *** Aggiunta dell'applicazione govwayAPIMonitor.war ***-->
+		<if>
+			<istrue value="${antinstaller_rs_monitor}"/>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayAPIMonitor"/>
+						<equals arg1="${patchArchiveType}" arg2="govwayAPIMonitor.war"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_archivi}/govwayAPIMonitor.war"/>
+						<var name="patchTmpArchiveType" value="war"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
+		<echo message="Patch archiveType [${patchArchiveType}] ok"/>
+
+	</target>
+		
+
+	<target name="-patch-resource">
+		<basename property="patchResourceType" file="${patchResource}"/>
+
+		<if>
+			<equals arg1="${patchResourceType}" arg2="lib"/>
+			<then>
+				<echo message="lib ..."/>
+				
+				<foreach target="-patch-lib-operation" param="patchLibOperation" inheritall="true">
+					<path>
+						<dirset dir="${patchResource}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+
+				<echo message="lib ok"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${patchResourceType}" arg2="properties"/>
+			<then>
+				<echo message="properties ..."/>
+				
+				<foreach target="-patch-properties-operation" param="patchPropertiesOperation" inheritall="true">
+					<path>
+						<dirset dir="${patchResource}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+
+				<echo message="properties ok"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${patchResourceType}" arg2="other"/>
+			<then>
+				<echo message="other ..."/>
+
+				<foreach target="-patch-other-dir" param="patchOther" inheritall="true">
+					<path>
+						<dirset dir="${patchResource}" casesensitive="yes">
+							<include name="*"/>
+						</dirset>
+					</path>
+				</foreach>
+				<foreach target="-patch-other-file" param="patchOther" inheritall="true">
+					<path>
+						<fileset dir="${patchResource}" casesensitive="yes">
+							<include name="*"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="other ok"/>
+			</then>
+		</if>
+
+	</target>
+
+	<target name="-patch-lib-operation">
+		<basename property="patchLibOperationType" file="${patchLibOperation}"/>
+
+		<if>
+			<equals arg1="${patchLibOperationType}" arg2="add"/>
+			<then>
+				<echo message="add ..."/>
+				<foreach target="-patch-lib-add" param="patchLibAdd" inheritall="true">
+					<path>
+						<fileset dir="${patchLibOperation}" casesensitive="yes">
+							<include name="*"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="add ok"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${patchLibOperationType}" arg2="remove"/>
+			<then>
+				<echo message="remove ..."/>
+				<foreach target="-patch-lib-remove" param="patchLibRemove" inheritall="true">
+					<path>
+						<fileset dir="${patchLibOperation}" casesensitive="yes">
+							<include name="*"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="remove ok"/>
+			</then>
+		</if>
+
+	</target>
+
+	<target name="-patch-lib-add">
+		<basename property="patchLibAddJar" file="${patchLibAdd}"/>
+		<echo message="addOrReplace '${patchLibAddJar}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<copy file="${patchLibAdd}" todir="${patchTmpArchive}/lib" overwrite="true"/>
+			</then>
+			<else>
+				<copy file="${patchLibAdd}" todir="${patchTmpArchive}/WEB-INF/lib" overwrite="true"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="-patch-lib-remove">
+		<basename property="patchLibRemoveJar" file="${patchLibRemove}"/>
+		<echo message="remove '${patchLibRemoveJar}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<delete file="${patchTmpArchive}/lib/${patchLibRemoveJar}"/>
+			</then>
+			<else>
+				<delete file="${patchTmpArchive}/WEB-INF/lib/${patchLibRemoveJar}"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="-patch-properties-operation">
+		<basename property="patchPropertiesOperationType" file="${patchPropertiesOperation}"/>
+
+		<if>
+			<equals arg1="${patchPropertiesOperationType}" arg2="add"/>
+			<then>
+				<echo message="add ..."/>
+				<foreach target="-patch-properties-add" param="patchPropertiesAdd" inheritall="true">
+					<path>
+						<fileset dir="${patchPropertiesOperation}" casesensitive="yes">
+							<include name="*"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="add ok"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${patchPropertiesOperationType}" arg2="remove"/>
+			<then>
+				<echo message="remove ..."/>
+				<foreach target="-patch-properties-remove" param="patchPropertiesRemove" inheritall="true">
+					<path>
+						<fileset dir="${patchPropertiesOperation}" casesensitive="yes">
+							<include name="*"/>
+						</fileset>
+					</path>
+				</foreach>
+
+				<echo message="remove ok"/>
+			</then>
+		</if>
+
+	</target>
+
+	<target name="-patch-properties-add">
+		<basename property="patchPropertiesAddFile" file="${patchPropertiesAdd}"/>
+		<echo message="addOrReplace '${patchPropertiesAddFile}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<var name="patchPropertiesAddFileDaGestire" value="${patchTmpArchive}/properties/${patchPropertiesAddFile}" />
+			</then>
+			<else>
+				<var name="patchPropertiesAddFileDaGestire" value="${patchTmpArchive}/WEB-INF/classes/${patchPropertiesAddFile}" />
+			</else>
+		</if>
+		<if>
+			<available file="${patchPropertiesAddFileDaGestire}" type="file"/>
+			<then>
+				<loadfile property="patchPropertiesAddPROPERTY" srcfile="${patchPropertiesAdd}"/>
+				<for param="line" list="${patchPropertiesAddPROPERTY}" delimiter="${line.separator}">
+					<sequential>
+						<if>
+							<and>
+								<matches string="@{line}" pattern=" *[^ ]+ *= *[^ ]+ *"/> <!-- Struttura nome = valore -->
+								<not>
+									<matches string="@{line}" pattern=" *#. *"/> <!-- Senza commenti -->
+								</not>
+							</and>
+							<then>
+								<!-- <echo message="LINE @{line}"/> -->
+								<propertyregex property="keyProperty"
+								      input="@{line}"
+								      regexp=" *([^ ]+) *= *[^ ]+ *"
+								      select="\1"
+								      casesensitive="false" override="true"/>
+								<propertyregex property="valueProperty"
+								      input="@{line}"
+								      regexp=" *[^ ]+ *= *([^ ]+) *"
+								      select="\1"
+								      casesensitive="false" override="true"/>
+								<!-- <echo message="SET ${keyProperty}=${valueProperty}"/> -->
+								<antcall target="set_property">
+									<param name="file" value="${patchPropertiesAddFileDaGestire}"/>
+									<param name="token" value="${keyProperty}"/>
+									<param name="value" value="${valueProperty}"/>
+								</antcall>
+							</then>
+						</if>
+					</sequential>
+				</for>
+			</then>
+			<else>
+				<copy file="${patchPropertiesAdd}" tofile="${patchPropertiesAddFileDaGestire}" overwrite="true"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="-patch-properties-remove">
+		<basename property="patchPropertiesRemoveFile" file="${patchPropertiesRemove}"/>
+		<echo message="remove '${patchPropertiesRemoveFile}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<delete file="${patchTmpArchive}/properties/${patchPropertiesRemoveFile}"/>
+			</then>
+			<else>
+				<delete file="${patchTmpArchive}/WEB-INF/classes/${patchPropertiesRemoveFile}"/>
+			</else>
+		</if>
+	</target>
+
+	<target name="-patch-other-dir">
+		<basename property="patchOtherResource" file="${patchOther}"/>
+		<echo message="addOrReplace directory '${patchOtherResource}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<var name="otherArchiveDir" value="${patchTmpArchive}" />
+			</then>
+			<else>
+				<var name="otherArchiveDir" value="${patchTmpArchive}"/>
+			</else>
+		</if>
+		<mkdir dir="${otherArchiveDir}/${patchOtherResource}" />
+		<copy todir="${otherArchiveDir}/${patchOtherResource}" overwrite="true" flatten="false">
+			<fileset dir="${patchOther}"/>
+		</copy>
+	</target>
+
+	<target name="-patch-other-file">
+		<basename property="patchOtherResource" file="${patchOther}"/>
+		<echo message="addOrReplace file '${patchOtherResource}'"/>
+		<if>
+			<equals arg1="${patchTmpArchiveType}" arg2="ear"/>
+			<then>
+				<var name="otherArchiveDir" value="${patchTmpArchive}" />
+			</then>
+			<else>
+				<var name="otherArchiveDir" value="${patchTmpArchive}"/>
+			</else>
+		</if>
+		<copy file="${patchOther}" todir="${otherArchiveDir}" overwrite="true"/>
+	</target>
+
+</project>

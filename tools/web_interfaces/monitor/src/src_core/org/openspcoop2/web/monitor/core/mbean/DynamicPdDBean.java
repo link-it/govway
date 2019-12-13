@@ -117,7 +117,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		try {
 			this.dynamicUtils = new DynamicPdDBeanUtils(log);
 		} catch (Exception e) {
-			DynamicPdDBean.log.warn("lettura delle properties fallita.....",
+			DynamicPdDBean.log.error("lettura delle properties fallita.....",
 					e);
 		}
 	}
@@ -126,7 +126,7 @@ public class DynamicPdDBean<T,K,ServiceType extends IService> extends PdDBaseBea
 		try {
 			this.dynamicUtils = new DynamicPdDBeanUtils(serviceManager,log);
 		} catch (Exception e) {
-			DynamicPdDBean.log.warn("lettura delle properties fallita.....",
+			DynamicPdDBean.log.error("lettura delle properties fallita.....",
 					e);
 		}
 	}

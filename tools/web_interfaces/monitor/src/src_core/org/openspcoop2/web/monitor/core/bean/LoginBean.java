@@ -47,6 +47,7 @@ import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.utils.ProtocolUtils;
+import org.openspcoop2.utils.IVersionInfo;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -100,6 +101,8 @@ public class LoginBean extends AbstractLoginBean {
 	private Boolean visualizzaLinkSelezioneSoggetto = null;
 	
 	private Configurazione configurazioneGenerale = null;
+	
+	private IVersionInfo vInfo;
 	
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -156,6 +159,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setDettaglioUtente(this.getLoggedUser().getUtente());
 					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor());
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
+					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
 				}else{
@@ -178,6 +182,7 @@ public class LoginBean extends AbstractLoginBean {
 					this.setModalita(this.getLoggedUser().getUtente().getProtocolloSelezionatoPddMonitor()); 
 					this.setSoggettoPddMonitor(this.getLoggedUser().getUtente().getSoggettoSelezionatoPddMonitor());
 					this.setLoggedIn(true);
+					this.setvInfo(this.getLoginDao().readVersionInfo());
 					this.log.info("Utente ["+this.getUsername()+"] autenticato con successo");
 					return "loginSuccess";
 				}
@@ -904,5 +909,32 @@ public class LoginBean extends AbstractLoginBean {
 			this.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
 		} 
 		return true;
+	}
+	
+	
+	public IVersionInfo getvInfo() {
+		return this.vInfo;
+	}
+
+	public void setvInfo(IVersionInfo vInfo) {
+		this.vInfo = vInfo;
+		if(this.vInfo!=null) {
+			if(!StringUtils.isEmpty(this.vInfo.getErrorTitleSuffix())) {
+				String titolo = this.getTitle();
+				if(!this.vInfo.getErrorTitleSuffix().startsWith(" ")) {
+					titolo = titolo + " ";
+				}
+				titolo = titolo + this.vInfo.getErrorTitleSuffix();
+				this.setTitle(titolo);
+			}
+			else if(!StringUtils.isEmpty(this.vInfo.getWarningTitleSuffix())) {
+				String titolo = this.getTitle();
+				if(!this.vInfo.getWarningTitleSuffix().startsWith(" ")) {
+					titolo = titolo + " ";
+				}
+				titolo = titolo + this.vInfo.getWarningTitleSuffix();
+				this.setTitle(titolo);
+			}
+		}
 	}
 }

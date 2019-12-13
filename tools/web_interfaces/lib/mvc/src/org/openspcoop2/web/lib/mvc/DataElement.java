@@ -79,7 +79,7 @@ public class DataElement {
 		DataElement.escapeMap.put("&lt;/br&gt;", "</br>");
 	}
 
-	String label, labelRight, value, type, name, onChange, selected;
+	String label, labelRight, labelLink, value, type, name, onChange, selected;
 	String [] values = null, names = null;
 	String [] labels = null;
 	int size, cols, rows, id;
@@ -145,6 +145,7 @@ public class DataElement {
 		this.styleClass = Costanti.INPUT_LONG_CSS_CLASS;
 		this.labelStyleClass = null;
 		this.labelRight = null;
+		this.labelLink = null;
 		this.dataAttributes = new HashMap<>();
 	}
 
@@ -613,6 +614,14 @@ public class DataElement {
 
 	public void setLabelRight(String labelRight) {
 		this.labelRight = labelRight;
+	}
+	
+	public String getLabelLink() {
+		return DataElement.checkNull(this.labelLink);
+	}
+
+	public void setLabelLink(String labelLink) {
+		this.labelLink = labelLink;
 	}
 
 	public String getIcon() {

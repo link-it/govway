@@ -29,15 +29,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
-import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.GeneralData;
+import org.openspcoop2.web.lib.mvc.MessageType;
 import org.openspcoop2.web.lib.mvc.PageData;
 import org.openspcoop2.web.lib.mvc.Parameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -85,11 +88,39 @@ public class About extends Action{
 			// preparo i campi
 			Vector<DataElement> dati = new Vector<DataElement>();
 
-			dati = aHelper.addAboutToDati(dati,TipoOperazione.OTHER,userLogin);
+			BinaryParameter infoP = aHelper.getBinaryParameter(AboutCostanti.PARAMETRO_ABOUT_INFO);
 			
-			pd.setMode(Costanti.DATA_ELEMENT_EDIT_MODE_DISABLE_NAME);
+			String infoDone = aHelper.getParameter(AboutCostanti.PARAMETRO_ABOUT_INFO_FINISH);
+			boolean doUpdate = ServletUtils.isCheckBoxEnabled(infoDone);
+			
+			String aggiornamentoNonRiuscito = null;
+			String aggiornamentoEffettuato = null;
+			if(doUpdate) {
+				if(infoP.getValue()!=null) {
+					try {
+						aHelper.getCore().updateInfoVersion(session, new String(infoP.getValue()));
+						aggiornamentoEffettuato = "Aggiornamento completato con successo";
+						gd.setTitle(StringEscapeUtils.escapeHtml(aHelper.getCore().getConsoleNomeEsteso(session)));
+					}catch(Exception e) {
+						aggiornamentoNonRiuscito = "Aggiornamento fallito: "+e.getMessage();
+					}
+				}
+				else {
+					aggiornamentoNonRiuscito = "Licenza non fornita";
+				}
+			}
+			
+			dati = aHelper.addAboutToDati(dati,TipoOperazione.OTHER,userLogin,infoP);
+			
+			if(!StringUtils.isEmpty(aggiornamentoNonRiuscito)) {
+				pd.setMessage(aggiornamentoNonRiuscito, MessageType.ERROR);
+			}
+			else if(!StringUtils.isEmpty(aggiornamentoEffettuato)) {
+				pd.setMessage(aggiornamentoEffettuato, MessageType.INFO);
+			}
+			
 			pd.setDati(dati);
-
+			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 			return ServletUtils.getStrutsForwardEditModeFinished(mapping, AboutCostanti.OBJECT_NAME_ABOUT, 
 					AboutCostanti.TIPO_OPERAZIONE_ABOUT);

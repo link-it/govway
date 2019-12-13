@@ -31,7 +31,9 @@
 							</link:prop>
 							<link:prop label="Sito" rendered="true">
 								<div class="divNoEdit">
-									<h:outputText id="outSitoProdotto" value="https://www.govway.org" styleClass="spanNoEdit" />
+									<h:outputLink id="outSitoProdotto" value="#{applicationBean.sito}" styleClass="spanNoEdit"  target="_blank" >
+										<h:outputText id="outSitoProdottoSpan" value="#{applicationBean.sito}" styleClass="spanNoEdit"/>
+									</h:outputLink>
 								</div>
 							</link:prop>
 							<link:prop label="Copyright" rendered="true">
@@ -40,7 +42,7 @@
 								</div>
 							</link:prop>
 							<link:prop label="Licenza" rendered="true">
-								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="11" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
+								<h:inputTextarea id="outLicenzaProdotto" value="#{applicationBean.licenza}" cols="60" rows="#{applicationBean.licenzaRows}" styleClass="inputLinkLong" readonly="true" style="width: auto;"/>	
 							</link:prop>
 						
 						</link:fieldset>

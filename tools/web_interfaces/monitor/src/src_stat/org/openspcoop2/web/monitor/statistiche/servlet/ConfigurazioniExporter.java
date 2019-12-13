@@ -68,7 +68,7 @@ public class ConfigurazioniExporter extends HttpServlet{
 	public void init() throws ServletException {
 		try{
 		}catch(Exception e){
-			ConfigurazioniExporter.log.warn("Inizializzazione servlet fallita: "+e.getMessage(),e);
+			ConfigurazioniExporter.log.error("Inizializzazione servlet fallita: "+e.getMessage(),e);
 		}
 	}
 

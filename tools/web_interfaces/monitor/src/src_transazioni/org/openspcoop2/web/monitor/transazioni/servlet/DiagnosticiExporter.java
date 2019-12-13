@@ -82,7 +82,7 @@ public class DiagnosticiExporter extends HttpServlet{
 
 			this.diagnosticiService = govwayMonitorProperties.getDriverMsgDiagnostici();
 		}catch(Exception e){
-			DiagnosticiExporter.log.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
+			DiagnosticiExporter.log.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",e);
 		}
 	}
 

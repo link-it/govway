@@ -64,6 +64,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -71,7 +72,6 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.VersionUtilities;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
@@ -472,17 +472,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getVersionePdD(){
 		try{
-			String versione = CostantiPdD.OPENSPCOOP2_PRODUCT_VERSION;
-			if(this.openspcoopProperties!=null){
-				versione = this.openspcoopProperties.getPddDetailsForServices();
-			}
-			String buildVersion = null;
-			try {
-				buildVersion = VersionUtilities.readBuildVersion();
-			}catch(Exception e) {}
-			if(buildVersion!=null) {
-				versione = versione + " (build "+buildVersion+")";
-			}
+			String versione = OpenSPCoop2Properties.getVersionePdD(this.openspcoopProperties);
 			return versione;
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);

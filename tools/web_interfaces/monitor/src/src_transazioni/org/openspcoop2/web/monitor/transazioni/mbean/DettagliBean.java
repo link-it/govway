@@ -150,7 +150,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			
 		} catch (Exception e) {
 			DettagliBean.log
-			.warn("Inizializzazione servlet fallita, setto enableHeaderInfo=false",
+			.error("Inizializzazione servlet fallita, setto enableHeaderInfo=false",
 					e);
 		}
 	}
@@ -169,7 +169,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 		} catch (Exception e) {
 			DettagliBean.log
-			.warn("Inizializzazione driverTracciamento fallita.....",
+			.error("Inizializzazione driverTracciamento fallita.....",
 					e);
 		}
 	}

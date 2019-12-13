@@ -14,7 +14,6 @@ TAG_PDD_MINOR_VERSION=1
 TAG_PDD_PATCHLEVEL=
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
-SVN_SEDE="svn://svn.link.it/branches/products"
 
 #####################################
 # Variabili per la forzatura #######
