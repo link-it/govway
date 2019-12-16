@@ -95,11 +95,11 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   public DettaglioLineeType() {
   }
 
-  public java.lang.Integer getNumeroLinea() {
+  public java.math.BigInteger getNumeroLinea() {
     return this.numeroLinea;
   }
 
-  public void setNumeroLinea(java.lang.Integer numeroLinea) {
+  public void setNumeroLinea(java.math.BigInteger numeroLinea) {
     this.numeroLinea = numeroLinea;
   }
 
@@ -155,15 +155,15 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
     this.descrizione = descrizione;
   }
 
-  public java.lang.Double getQuantita() {
+  public java.math.BigDecimal getQuantita() {
     if(this._decimalWrapper_quantita!=null){
-		return (java.lang.Double) this._decimalWrapper_quantita.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_quantita.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.quantita;
 	}
   }
 
-  public void setQuantita(java.lang.Double quantita) {
+  public void setQuantita(java.math.BigDecimal quantita) {
     if(quantita!=null){
 		this._decimalWrapper_quantita = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,12,2,8,quantita);
 	}
@@ -193,15 +193,15 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
     this.dataFinePeriodo = dataFinePeriodo;
   }
 
-  public java.lang.Double getPrezzoUnitario() {
+  public java.math.BigDecimal getPrezzoUnitario() {
     if(this._decimalWrapper_prezzoUnitario!=null){
-		return (java.lang.Double) this._decimalWrapper_prezzoUnitario.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_prezzoUnitario.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.prezzoUnitario;
 	}
   }
 
-  public void setPrezzoUnitario(java.lang.Double prezzoUnitario) {
+  public void setPrezzoUnitario(java.math.BigDecimal prezzoUnitario) {
     if(prezzoUnitario!=null){
 		this._decimalWrapper_prezzoUnitario = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,8,prezzoUnitario);
 	}
@@ -231,29 +231,29 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
     return this.scontoMaggiorazione.size();
   }
 
-  public java.lang.Double getPrezzoTotale() {
+  public java.math.BigDecimal getPrezzoTotale() {
     if(this._decimalWrapper_prezzoTotale!=null){
-		return (java.lang.Double) this._decimalWrapper_prezzoTotale.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_prezzoTotale.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.prezzoTotale;
 	}
   }
 
-  public void setPrezzoTotale(java.lang.Double prezzoTotale) {
+  public void setPrezzoTotale(java.math.BigDecimal prezzoTotale) {
     if(prezzoTotale!=null){
 		this._decimalWrapper_prezzoTotale = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,8,prezzoTotale);
 	}
   }
 
-  public java.lang.Double getAliquotaIVA() {
+  public java.math.BigDecimal getAliquotaIVA() {
     if(this._decimalWrapper_aliquotaIVA!=null){
-		return (java.lang.Double) this._decimalWrapper_aliquotaIVA.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_aliquotaIVA.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.aliquotaIVA;
 	}
   }
 
-  public void setAliquotaIVA(java.lang.Double aliquotaIVA) {
+  public void setAliquotaIVA(java.math.BigDecimal aliquotaIVA) {
     if(aliquotaIVA!=null){
 		this._decimalWrapper_aliquotaIVA = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,aliquotaIVA);
 	}
@@ -337,7 +337,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="NumeroLinea",required=true,nillable=false)
-  protected java.lang.Integer numeroLinea;
+  protected java.math.BigInteger numeroLinea;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_tipoCessionePrestazione;
@@ -386,7 +386,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_quantita = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double quantita;
+  protected java.math.BigDecimal quantita;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
@@ -409,7 +409,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_prezzoUnitario = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double prezzoUnitario;
+  protected java.math.BigDecimal prezzoUnitario;
 
   @XmlElement(name="ScontoMaggiorazione",required=true,nillable=false)
   protected List<ScontoMaggiorazioneType> scontoMaggiorazione = new ArrayList<ScontoMaggiorazioneType>();
@@ -447,7 +447,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_prezzoTotale = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double prezzoTotale;
+  protected java.math.BigDecimal prezzoTotale;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -455,7 +455,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_aliquotaIVA = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double aliquotaIVA;
+  protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_ritenuta;

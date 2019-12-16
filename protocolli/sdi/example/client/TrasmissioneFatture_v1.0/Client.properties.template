@@ -28,6 +28,9 @@ pa=ENTE/TrasmissioneFatture/v1
 # - AttestazioneTrasmissioneFattura
 tipoOperazione=RicevutaConsegna
 
+# identificativoSDI
+identificativoSDI=99147483647
+
 # Buste
 # Scommentare le seguenti opzioni se si usa il canale SPCoop
 #busta.RicevutaConsegna=spcoopFiles/RicevutaConsegna.xml
@@ -38,27 +41,39 @@ tipoOperazione=RicevutaConsegna
 #busta.AttestazioneTrasmissioneFattura=spcoopFiles/AttestazioneTrasmissioneFattura.xml
 
 # -- RicevutaConsegna
-RicevutaConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_RC_001.xml
+# identificativo SDI maggiore di un integer
+RicevutaConsegna=sdiFiles/esempiMessaggi/IT01234567890_41111_RC_001.xml
+#RicevutaConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_RC_001.xml
 #RicevutaConsegna=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_RC_001.xml
 
 # -- NotificaMancataConsegna
-NotificaMancataConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_MC_001.xml
+# identificativo SDI maggiore di un integer
+NotificaMancataConsegna=sdiFiles/esempiMessaggi/IT01234567890_41111_MC_001.xml
+#NotificaMancataConsegna=sdiFiles/esempiMessaggi/IT01234567890_11111_MC_001.xml
 #NotificaMancataConsegna=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_MC_001.xml
 
 # -- NotificaScarto
-NotificaScarto=sdiFiles/esempiMessaggi/IT01234567890_11111_NS_001.xml
+# identificativo SDI maggiore di un integer
+NotificaScarto=sdiFiles/esempiMessaggi/IT01234567890_41111_NS_001.xml
+#NotificaScarto=sdiFiles/esempiMessaggi/IT01234567890_11111_NS_001.xml
 #NotificaScarto=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_NS_001.xml
 
 # -- NotificaEsito
-NotificaEsito=sdiFiles/esempiMessaggi/IT01234567890_11111_NE_001.xml
+# identificativo SDI maggiore di un integer
+NotificaEsito=sdiFiles/esempiMessaggi/IT01234567890_41111_NE_001.xml
+#NotificaEsito=sdiFiles/esempiMessaggi/IT01234567890_11111_NE_001.xml
 #NotificaEsito=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_NE_001.xml
 
 # -- NotificaDecorrenzaTermini
-NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
+# identificativo SDI maggiore di un integer
+NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_41111_DT_001.xml
+#NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
 #NotificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
 
 # -- AttestazioneTrasmissioneFattura
-AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_11111_AT_001.zip
+# identificativo SDI maggiore di un integer
+AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_41111_AT_001.zip
+#AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_11111_AT_001.zip
 #AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_AT_001.zip
 
 
@@ -71,11 +86,17 @@ AttestazioneTrasmissioneFattura=sdiFiles/esempiMessaggi/IT01234567890_11111_AT_0
 #tipoOperazione=RicevutaConsegna
 
 # -- RicevutaConsegna
+# identificativo SDI maggiore di un integer
+#RicevutaConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_40022_RC_001.xml
 #RicevutaConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_RC_001.xml
 
 # -- NotificaMancataConsegna
+# identificativo SDI maggiore di un integer
+#NotificaMancataConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_40022_MC_001.xml
 #NotificaMancataConsegna=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_MC_001.xml
 
 # -- NotificaScarto
+# identificativo SDI maggiore di un integer
+#NotificaScarto=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_40022_NS_001.xml
 #NotificaScarto=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_NS_001.xml
 #NotificaScarto=sdiFiles/esempiMessaggiB2B/ITHVQWPH73P42H501Y_00022_NS__001.xml

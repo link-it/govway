@@ -47,7 +47,7 @@ public class FileMetadatiTypeModel extends AbstractModel<FileMetadatiType> {
 		this.HASH = new Field("Hash",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.CODICE_DESTINATARIO = new Field("CodiceDestinatario",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.FORMATO = new Field("Formato",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
-		this.TENTATIVI_INVIO = new Field("TentativiInvio",java.lang.Integer.class,"FileMetadati_Type",FileMetadatiType.class);
+		this.TENTATIVI_INVIO = new Field("TentativiInvio",java.math.BigInteger.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.MESSAGE_ID = new Field("MessageId",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.NOTE = new Field("Note",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.VERSIONE = new Field("versione",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
@@ -63,7 +63,7 @@ public class FileMetadatiTypeModel extends AbstractModel<FileMetadatiType> {
 		this.HASH = new ComplexField(father,"Hash",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.CODICE_DESTINATARIO = new ComplexField(father,"CodiceDestinatario",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.FORMATO = new ComplexField(father,"Formato",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
-		this.TENTATIVI_INVIO = new ComplexField(father,"TentativiInvio",java.lang.Integer.class,"FileMetadati_Type",FileMetadatiType.class);
+		this.TENTATIVI_INVIO = new ComplexField(father,"TentativiInvio",java.math.BigInteger.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.MESSAGE_ID = new ComplexField(father,"MessageId",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.NOTE = new ComplexField(father,"Note",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);
 		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"FileMetadati_Type",FileMetadatiType.class);

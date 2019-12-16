@@ -42,15 +42,15 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	
 		super();
 	
-		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new Field("default",org.openspcoop2.protocol.information_missing.Default.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.TIPO = new Field("tipo",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.STATO = new Field("stato",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new Field("conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new Field("replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("header",org.openspcoop2.protocol.information_missing.Description.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new Field("footer",org.openspcoop2.protocol.information_missing.Description.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new Field("default",org.openspcoop2.protocol.information_missing.Default.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.DESCRIZIONE = new Field("descrizione",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.TIPO = new Field("tipo",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.STATO = new Field("stato",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
 	
 	}
 	
@@ -58,15 +58,15 @@ public class AccordoServizioParteComuneModel extends AbstractModel<AccordoServiz
 	
 		super(father);
 	
-		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new ComplexField(father,"default",org.openspcoop2.protocol.information_missing.Default.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class));
-		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
-		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"accordo-servizio-parte-comune",AccordoServizioParteComune.class);
+		this.CONDITIONS = new org.openspcoop2.protocol.information_missing.model.ConditionsTypeModel(new ComplexField(father,"conditions",org.openspcoop2.protocol.information_missing.ConditionsType.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.REPLACE_MATCH = new org.openspcoop2.protocol.information_missing.model.ReplaceMatchTypeModel(new ComplexField(father,"replace-match",org.openspcoop2.protocol.information_missing.ReplaceMatchType.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.HEADER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"header",org.openspcoop2.protocol.information_missing.Description.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.FOOTER = new org.openspcoop2.protocol.information_missing.model.DescriptionModel(new ComplexField(father,"footer",org.openspcoop2.protocol.information_missing.Description.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.DEFAULT = new org.openspcoop2.protocol.information_missing.model.DefaultModel(new ComplexField(father,"default",org.openspcoop2.protocol.information_missing.Default.class,"AccordoServizioParteComune",AccordoServizioParteComune.class));
+		this.DESCRIZIONE = new ComplexField(father,"descrizione",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.TIPO = new ComplexField(father,"tipo",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
+		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"AccordoServizioParteComune",AccordoServizioParteComune.class);
 	
 	}
 	

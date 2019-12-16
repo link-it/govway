@@ -37,7 +37,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="MetadatiInvioFile_Type">
  * 		&lt;sequence>
- * 			&lt;element name="IdentificativoSdI" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}integer" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="IdentificativoSdI" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="NomeFile" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="CodiceDestinatario" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="Formato" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}string" minOccurs="1" maxOccurs="1"/>
@@ -58,7 +58,7 @@ import java.io.Serializable;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MetadatiInvioFile_Type", 
   propOrder = {
-  	"_decimalWrapper_identificativoSdI",
+  	"identificativoSdI",
   	"nomeFile",
   	"codiceDestinatario",
   	"formato",
@@ -74,18 +74,12 @@ public class MetadatiInvioFileType extends org.openspcoop2.utils.beans.BaseBean 
   public MetadatiInvioFileType() {
   }
 
-  public java.lang.Integer getIdentificativoSdI() {
-    if(this._decimalWrapper_identificativoSdI!=null){
-		return (java.lang.Integer) this._decimalWrapper_identificativoSdI.getObject(java.lang.Integer.class);
-	}else{
-		return this.identificativoSdI;
-	}
+  public java.lang.String getIdentificativoSdI() {
+    return this.identificativoSdI;
   }
 
-  public void setIdentificativoSdI(java.lang.Integer identificativoSdI) {
-    if(identificativoSdI!=null){
-		this._decimalWrapper_identificativoSdI = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,12,identificativoSdI);
-	}
+  public void setIdentificativoSdI(java.lang.String identificativoSdI) {
+    this.identificativoSdI = identificativoSdI;
   }
 
   public java.lang.String getNomeFile() {
@@ -112,11 +106,11 @@ public class MetadatiInvioFileType extends org.openspcoop2.utils.beans.BaseBean 
     this.formato = formato;
   }
 
-  public java.lang.Integer getTentativiInvio() {
+  public java.math.BigInteger getTentativiInvio() {
     return this.tentativiInvio;
   }
 
-  public void setTentativiInvio(java.lang.Integer tentativiInvio) {
+  public void setTentativiInvio(java.math.BigInteger tentativiInvio) {
     this.tentativiInvio = tentativiInvio;
   }
 
@@ -160,13 +154,9 @@ public class MetadatiInvioFileType extends org.openspcoop2.utils.beans.BaseBean 
   }
 
 
-  @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
-  @javax.xml.bind.annotation.XmlSchemaType(name="integer")
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="IdentificativoSdI",required=true,nillable=false)
-  org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_identificativoSdI = null;
-
-  @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Integer identificativoSdI;
+  protected java.lang.String identificativoSdI;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="NomeFile",required=true,nillable=false)
@@ -182,7 +172,7 @@ public class MetadatiInvioFileType extends org.openspcoop2.utils.beans.BaseBean 
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="TentativiInvio",required=true,nillable=false)
-  protected java.lang.Integer tentativiInvio;
+  protected java.math.BigInteger tentativiInvio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="MessageId",required=true,nillable=false)

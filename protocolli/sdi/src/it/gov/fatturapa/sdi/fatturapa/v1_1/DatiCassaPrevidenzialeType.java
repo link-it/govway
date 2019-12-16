@@ -97,57 +97,57 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
     this.tipoCassa = tipoCassa;
   }
 
-  public java.lang.Double getAlCassa() {
+  public java.math.BigDecimal getAlCassa() {
     if(this._decimalWrapper_alCassa!=null){
-		return (java.lang.Double) this._decimalWrapper_alCassa.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_alCassa.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.alCassa;
 	}
   }
 
-  public void setAlCassa(java.lang.Double alCassa) {
+  public void setAlCassa(java.math.BigDecimal alCassa) {
     if(alCassa!=null){
 		this._decimalWrapper_alCassa = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,alCassa);
 	}
   }
 
-  public java.lang.Double getImportoContributoCassa() {
+  public java.math.BigDecimal getImportoContributoCassa() {
     if(this._decimalWrapper_importoContributoCassa!=null){
-		return (java.lang.Double) this._decimalWrapper_importoContributoCassa.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importoContributoCassa.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importoContributoCassa;
 	}
   }
 
-  public void setImportoContributoCassa(java.lang.Double importoContributoCassa) {
+  public void setImportoContributoCassa(java.math.BigDecimal importoContributoCassa) {
     if(importoContributoCassa!=null){
 		this._decimalWrapper_importoContributoCassa = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importoContributoCassa);
 	}
   }
 
-  public java.lang.Double getImponibileCassa() {
+  public java.math.BigDecimal getImponibileCassa() {
     if(this._decimalWrapper_imponibileCassa!=null){
-		return (java.lang.Double) this._decimalWrapper_imponibileCassa.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_imponibileCassa.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.imponibileCassa;
 	}
   }
 
-  public void setImponibileCassa(java.lang.Double imponibileCassa) {
+  public void setImponibileCassa(java.math.BigDecimal imponibileCassa) {
     if(imponibileCassa!=null){
 		this._decimalWrapper_imponibileCassa = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,imponibileCassa);
 	}
   }
 
-  public java.lang.Double getAliquotaIVA() {
+  public java.math.BigDecimal getAliquotaIVA() {
     if(this._decimalWrapper_aliquotaIVA!=null){
-		return (java.lang.Double) this._decimalWrapper_aliquotaIVA.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_aliquotaIVA.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.aliquotaIVA;
 	}
   }
 
-  public void setAliquotaIVA(java.lang.Double aliquotaIVA) {
+  public void setAliquotaIVA(java.math.BigDecimal aliquotaIVA) {
     if(aliquotaIVA!=null){
 		this._decimalWrapper_aliquotaIVA = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,aliquotaIVA);
 	}
@@ -217,7 +217,7 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_alCassa = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double alCassa;
+  protected java.math.BigDecimal alCassa;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -225,7 +225,7 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoContributoCassa = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importoContributoCassa;
+  protected java.math.BigDecimal importoContributoCassa;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -233,7 +233,7 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_imponibileCassa = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double imponibileCassa;
+  protected java.math.BigDecimal imponibileCassa;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -241,7 +241,7 @@ public class DatiCassaPrevidenzialeType extends org.openspcoop2.utils.beans.Base
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_aliquotaIVA = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double aliquotaIVA;
+  protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_ritenuta;

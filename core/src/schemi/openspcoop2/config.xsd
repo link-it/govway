@@ -12,7 +12,7 @@
 						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
 					</linkit:authors>
 				</linkit:info>
-				<linkit:jax-ws xml-annotations="true" ws="true" binding-soap-11="true" binding-soap-12="true" all="true"/>
+				<linkit:jax-ws xml-annotations="true" xml-op2-types="true" ws="true" binding-soap-11="true" binding-soap-12="true" all="true"/>
 			</linkit:project_generator>
 			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 				<linkit:dao>

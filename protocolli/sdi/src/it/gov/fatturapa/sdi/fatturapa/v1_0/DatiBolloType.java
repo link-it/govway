@@ -70,15 +70,15 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
     this.numeroBollo = numeroBollo;
   }
 
-  public java.lang.Double getImportoBollo() {
+  public java.math.BigDecimal getImportoBollo() {
     if(this._decimalWrapper_importoBollo!=null){
-		return (java.lang.Double) this._decimalWrapper_importoBollo.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importoBollo.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importoBollo;
 	}
   }
 
-  public void setImportoBollo(java.lang.Double importoBollo) {
+  public void setImportoBollo(java.math.BigDecimal importoBollo) {
     if(importoBollo!=null){
 		this._decimalWrapper_importoBollo = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importoBollo);
 	}
@@ -99,6 +99,6 @@ public class DatiBolloType extends org.openspcoop2.utils.beans.BaseBean implemen
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoBollo = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importoBollo;
+  protected java.math.BigDecimal importoBollo;
 
 }

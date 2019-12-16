@@ -44,7 +44,7 @@ public class PayloadProfileModel extends AbstractModel<PayloadProfile> {
 	
 		this.ATTACHMENT = new eu.domibus.configuration.model.AttachmentModel(new Field("attachment",eu.domibus.configuration.Attachment.class,"payloadProfile",PayloadProfile.class));
 		this.NAME = new Field("name",java.lang.String.class,"payloadProfile",PayloadProfile.class);
-		this.MAX_SIZE = new Field("maxSize",java.lang.Integer.class,"payloadProfile",PayloadProfile.class);
+		this.MAX_SIZE = new Field("maxSize",java.math.BigInteger.class,"payloadProfile",PayloadProfile.class);
 	
 	}
 	
@@ -54,7 +54,7 @@ public class PayloadProfileModel extends AbstractModel<PayloadProfile> {
 	
 		this.ATTACHMENT = new eu.domibus.configuration.model.AttachmentModel(new ComplexField(father,"attachment",eu.domibus.configuration.Attachment.class,"payloadProfile",PayloadProfile.class));
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"payloadProfile",PayloadProfile.class);
-		this.MAX_SIZE = new ComplexField(father,"maxSize",java.lang.Integer.class,"payloadProfile",PayloadProfile.class);
+		this.MAX_SIZE = new ComplexField(father,"maxSize",java.math.BigInteger.class,"payloadProfile",PayloadProfile.class);
 	
 	}
 	

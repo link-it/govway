@@ -42,7 +42,7 @@ public class FileSdITypeModel extends AbstractModel<FileSdIType> {
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"fileSdI_Type",FileSdIType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"fileSdI_Type",FileSdIType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"fileSdI_Type",FileSdIType.class);
 		this.FILE = new Field("File",byte[].class,"fileSdI_Type",FileSdIType.class);
 	
@@ -52,7 +52,7 @@ public class FileSdITypeModel extends AbstractModel<FileSdIType> {
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"fileSdI_Type",FileSdIType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"fileSdI_Type",FileSdIType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"fileSdI_Type",FileSdIType.class);
 		this.FILE = new ComplexField(father,"File",byte[].class,"fileSdI_Type",FileSdIType.class);
 	

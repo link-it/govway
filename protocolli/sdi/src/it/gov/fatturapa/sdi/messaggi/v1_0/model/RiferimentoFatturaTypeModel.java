@@ -43,8 +43,8 @@ public class RiferimentoFatturaTypeModel extends AbstractModel<RiferimentoFattur
 		super();
 	
 		this.NUMERO_FATTURA = new Field("NumeroFattura",java.lang.String.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
-		this.ANNO_FATTURA = new Field("AnnoFattura",java.lang.Integer.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
-		this.POSIZIONE_FATTURA = new Field("PosizioneFattura",java.lang.Integer.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
+		this.ANNO_FATTURA = new Field("AnnoFattura",java.math.BigInteger.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
+		this.POSIZIONE_FATTURA = new Field("PosizioneFattura",java.math.BigInteger.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
 	
 	}
 	
@@ -53,8 +53,8 @@ public class RiferimentoFatturaTypeModel extends AbstractModel<RiferimentoFattur
 		super(father);
 	
 		this.NUMERO_FATTURA = new ComplexField(father,"NumeroFattura",java.lang.String.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
-		this.ANNO_FATTURA = new ComplexField(father,"AnnoFattura",java.lang.Integer.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
-		this.POSIZIONE_FATTURA = new ComplexField(father,"PosizioneFattura",java.lang.Integer.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
+		this.ANNO_FATTURA = new ComplexField(father,"AnnoFattura",java.math.BigInteger.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
+		this.POSIZIONE_FATTURA = new ComplexField(father,"PosizioneFattura",java.math.BigInteger.class,"RiferimentoFattura_Type",RiferimentoFatturaType.class);
 	
 	}
 	

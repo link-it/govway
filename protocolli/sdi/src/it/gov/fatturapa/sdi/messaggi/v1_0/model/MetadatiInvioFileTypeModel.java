@@ -42,11 +42,11 @@ public class MetadatiInvioFileTypeModel extends AbstractModel<MetadatiInvioFileT
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.CODICE_DESTINATARIO = new Field("CodiceDestinatario",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.FORMATO = new Field("Formato",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
-		this.TENTATIVI_INVIO = new Field("TentativiInvio",java.lang.Integer.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
+		this.TENTATIVI_INVIO = new Field("TentativiInvio",java.math.BigInteger.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.MESSAGE_ID = new Field("MessageId",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.NOTE = new Field("Note",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.VERSIONE = new Field("versione",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
@@ -57,11 +57,11 @@ public class MetadatiInvioFileTypeModel extends AbstractModel<MetadatiInvioFileT
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.CODICE_DESTINATARIO = new ComplexField(father,"CodiceDestinatario",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.FORMATO = new ComplexField(father,"Formato",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
-		this.TENTATIVI_INVIO = new ComplexField(father,"TentativiInvio",java.lang.Integer.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
+		this.TENTATIVI_INVIO = new ComplexField(father,"TentativiInvio",java.math.BigInteger.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.MESSAGE_ID = new ComplexField(father,"MessageId",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.NOTE = new ComplexField(father,"Note",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);
 		this.VERSIONE = new ComplexField(father,"versione",java.lang.String.class,"MetadatiInvioFile_Type",MetadatiInvioFileType.class);

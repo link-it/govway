@@ -45,9 +45,9 @@ public class DettaglioPagamentoTypeModel extends AbstractModel<DettaglioPagament
 		this.BENEFICIARIO = new Field("Beneficiario",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.MODALITA_PAGAMENTO = new Field("ModalitaPagamento",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_RIFERIMENTO_TERMINI_PAGAMENTO = new Field("DataRiferimentoTerminiPagamento",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.GIORNI_TERMINI_PAGAMENTO = new Field("GiorniTerminiPagamento",java.lang.Integer.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.GIORNI_TERMINI_PAGAMENTO = new Field("GiorniTerminiPagamento",java.math.BigInteger.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_SCADENZA_PAGAMENTO = new Field("DataScadenzaPagamento",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.IMPORTO_PAGAMENTO = new Field("ImportoPagamento",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.IMPORTO_PAGAMENTO = new Field("ImportoPagamento",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.COD_UFFICIO_POSTALE = new Field("CodUfficioPostale",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.COGNOME_QUIETANZANTE = new Field("CognomeQuietanzante",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.NOME_QUIETANZANTE = new Field("NomeQuietanzante",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
@@ -58,9 +58,9 @@ public class DettaglioPagamentoTypeModel extends AbstractModel<DettaglioPagament
 		this.ABI = new Field("ABI",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.CAB = new Field("CAB",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.BIC = new Field("BIC",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.SCONTO_PAGAMENTO_ANTICIPATO = new Field("ScontoPagamentoAnticipato",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.SCONTO_PAGAMENTO_ANTICIPATO = new Field("ScontoPagamentoAnticipato",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_LIMITE_PAGAMENTO_ANTICIPATO = new Field("DataLimitePagamentoAnticipato",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.PENALITA_PAGAMENTI_RITARDATI = new Field("PenalitaPagamentiRitardati",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.PENALITA_PAGAMENTI_RITARDATI = new Field("PenalitaPagamentiRitardati",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_DECORRENZA_PENALE = new Field("DataDecorrenzaPenale",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.CODICE_PAGAMENTO = new Field("CodicePagamento",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 	
@@ -73,9 +73,9 @@ public class DettaglioPagamentoTypeModel extends AbstractModel<DettaglioPagament
 		this.BENEFICIARIO = new ComplexField(father,"Beneficiario",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.MODALITA_PAGAMENTO = new ComplexField(father,"ModalitaPagamento",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_RIFERIMENTO_TERMINI_PAGAMENTO = new ComplexField(father,"DataRiferimentoTerminiPagamento",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.GIORNI_TERMINI_PAGAMENTO = new ComplexField(father,"GiorniTerminiPagamento",java.lang.Integer.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.GIORNI_TERMINI_PAGAMENTO = new ComplexField(father,"GiorniTerminiPagamento",java.math.BigInteger.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_SCADENZA_PAGAMENTO = new ComplexField(father,"DataScadenzaPagamento",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.IMPORTO_PAGAMENTO = new ComplexField(father,"ImportoPagamento",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.IMPORTO_PAGAMENTO = new ComplexField(father,"ImportoPagamento",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.COD_UFFICIO_POSTALE = new ComplexField(father,"CodUfficioPostale",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.COGNOME_QUIETANZANTE = new ComplexField(father,"CognomeQuietanzante",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.NOME_QUIETANZANTE = new ComplexField(father,"NomeQuietanzante",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
@@ -86,9 +86,9 @@ public class DettaglioPagamentoTypeModel extends AbstractModel<DettaglioPagament
 		this.ABI = new ComplexField(father,"ABI",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.CAB = new ComplexField(father,"CAB",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.BIC = new ComplexField(father,"BIC",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.SCONTO_PAGAMENTO_ANTICIPATO = new ComplexField(father,"ScontoPagamentoAnticipato",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.SCONTO_PAGAMENTO_ANTICIPATO = new ComplexField(father,"ScontoPagamentoAnticipato",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_LIMITE_PAGAMENTO_ANTICIPATO = new ComplexField(father,"DataLimitePagamentoAnticipato",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
-		this.PENALITA_PAGAMENTI_RITARDATI = new ComplexField(father,"PenalitaPagamentiRitardati",java.lang.Double.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
+		this.PENALITA_PAGAMENTI_RITARDATI = new ComplexField(father,"PenalitaPagamentiRitardati",java.math.BigDecimal.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.DATA_DECORRENZA_PENALE = new ComplexField(father,"DataDecorrenzaPenale",java.util.Date.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 		this.CODICE_PAGAMENTO = new ComplexField(father,"CodicePagamento",java.lang.String.class,"DettaglioPagamentoType",DettaglioPagamentoType.class);
 	

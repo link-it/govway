@@ -43,8 +43,8 @@ public class DatiRitenutaTypeModel extends AbstractModel<DatiRitenutaType> {
 		super();
 	
 		this.TIPO_RITENUTA = new Field("TipoRitenuta",java.lang.String.class,"DatiRitenutaType",DatiRitenutaType.class);
-		this.IMPORTO_RITENUTA = new Field("ImportoRitenuta",java.lang.Double.class,"DatiRitenutaType",DatiRitenutaType.class);
-		this.ALIQUOTA_RITENUTA = new Field("AliquotaRitenuta",java.lang.Double.class,"DatiRitenutaType",DatiRitenutaType.class);
+		this.IMPORTO_RITENUTA = new Field("ImportoRitenuta",java.math.BigDecimal.class,"DatiRitenutaType",DatiRitenutaType.class);
+		this.ALIQUOTA_RITENUTA = new Field("AliquotaRitenuta",java.math.BigDecimal.class,"DatiRitenutaType",DatiRitenutaType.class);
 		this.CAUSALE_PAGAMENTO = new Field("CausalePagamento",java.lang.String.class,"DatiRitenutaType",DatiRitenutaType.class);
 	
 	}
@@ -54,8 +54,8 @@ public class DatiRitenutaTypeModel extends AbstractModel<DatiRitenutaType> {
 		super(father);
 	
 		this.TIPO_RITENUTA = new ComplexField(father,"TipoRitenuta",java.lang.String.class,"DatiRitenutaType",DatiRitenutaType.class);
-		this.IMPORTO_RITENUTA = new ComplexField(father,"ImportoRitenuta",java.lang.Double.class,"DatiRitenutaType",DatiRitenutaType.class);
-		this.ALIQUOTA_RITENUTA = new ComplexField(father,"AliquotaRitenuta",java.lang.Double.class,"DatiRitenutaType",DatiRitenutaType.class);
+		this.IMPORTO_RITENUTA = new ComplexField(father,"ImportoRitenuta",java.math.BigDecimal.class,"DatiRitenutaType",DatiRitenutaType.class);
+		this.ALIQUOTA_RITENUTA = new ComplexField(father,"AliquotaRitenuta",java.math.BigDecimal.class,"DatiRitenutaType",DatiRitenutaType.class);
 		this.CAUSALE_PAGAMENTO = new ComplexField(father,"CausalePagamento",java.lang.String.class,"DatiRitenutaType",DatiRitenutaType.class);
 	
 	}

@@ -82,23 +82,23 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
     this.dataDDT = dataDDT;
   }
 
-  public void addRiferimentoNumeroLinea(java.lang.Integer riferimentoNumeroLinea) {
+  public void addRiferimentoNumeroLinea(java.math.BigInteger riferimentoNumeroLinea) {
     this.riferimentoNumeroLinea.add(riferimentoNumeroLinea);
   }
 
-  public java.lang.Integer getRiferimentoNumeroLinea(int index) {
+  public java.math.BigInteger getRiferimentoNumeroLinea(int index) {
     return this.riferimentoNumeroLinea.get( index );
   }
 
-  public java.lang.Integer removeRiferimentoNumeroLinea(int index) {
+  public java.math.BigInteger removeRiferimentoNumeroLinea(int index) {
     return this.riferimentoNumeroLinea.remove( index );
   }
 
-  public List<java.lang.Integer> getRiferimentoNumeroLineaList() {
+  public List<java.math.BigInteger> getRiferimentoNumeroLineaList() {
     return this.riferimentoNumeroLinea;
   }
 
-  public void setRiferimentoNumeroLineaList(List<java.lang.Integer> riferimentoNumeroLinea) {
+  public void setRiferimentoNumeroLineaList(List<java.math.BigInteger> riferimentoNumeroLinea) {
     this.riferimentoNumeroLinea=riferimentoNumeroLinea;
   }
 
@@ -122,23 +122,23 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="RiferimentoNumeroLinea",required=true,nillable=false)
-  protected List<java.lang.Integer> riferimentoNumeroLinea = new ArrayList<java.lang.Integer>();
+  protected List<java.math.BigInteger> riferimentoNumeroLinea = new ArrayList<java.math.BigInteger>();
 
   /**
    * @deprecated Use method getRiferimentoNumeroLineaList
-   * @return List<java.lang.Integer>
+   * @return List<java.math.BigInteger>
   */
   @Deprecated
-  public List<java.lang.Integer> getRiferimentoNumeroLinea() {
+  public List<java.math.BigInteger> getRiferimentoNumeroLinea() {
   	return this.riferimentoNumeroLinea;
   }
 
   /**
    * @deprecated Use method setRiferimentoNumeroLineaList
-   * @param riferimentoNumeroLinea List<java.lang.Integer>
+   * @param riferimentoNumeroLinea List<java.math.BigInteger>
   */
   @Deprecated
-  public void setRiferimentoNumeroLinea(List<java.lang.Integer> riferimentoNumeroLinea) {
+  public void setRiferimentoNumeroLinea(List<java.math.BigInteger> riferimentoNumeroLinea) {
   	this.riferimentoNumeroLinea=riferimentoNumeroLinea;
   }
 

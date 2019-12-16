@@ -82,15 +82,15 @@ public class AltriDatiGestionaliType extends org.openspcoop2.utils.beans.BaseBea
     this.riferimentoTesto = riferimentoTesto;
   }
 
-  public java.lang.Double getRiferimentoNumero() {
+  public java.math.BigDecimal getRiferimentoNumero() {
     if(this._decimalWrapper_riferimentoNumero!=null){
-		return (java.lang.Double) this._decimalWrapper_riferimentoNumero.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_riferimentoNumero.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.riferimentoNumero;
 	}
   }
 
-  public void setRiferimentoNumero(java.lang.Double riferimentoNumero) {
+  public void setRiferimentoNumero(java.math.BigDecimal riferimentoNumero) {
     if(riferimentoNumero!=null){
 		this._decimalWrapper_riferimentoNumero = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,8,riferimentoNumero);
 	}
@@ -124,7 +124,7 @@ public class AltriDatiGestionaliType extends org.openspcoop2.utils.beans.BaseBea
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_riferimentoNumero = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double riferimentoNumero;
+  protected java.math.BigDecimal riferimentoNumero;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="date")

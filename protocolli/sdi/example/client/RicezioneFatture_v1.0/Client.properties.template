@@ -67,9 +67,19 @@ tipoOperazione=riceviFatture
 
 # --- Fattura 1.2 (usata in riceviFatture) ---
 
+# Fattura singola versione 1.2 con più linee di fattura e firma XADES (per PA) (!!costruite a mano, non verificabili!!)
+# con identificativoSDI maggiore di un integer
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_43001.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_43001_MT_001.xml
+
+# Fattura singola versione 1.2 con più linee di fattura e firma XADES (per PR) (!!costruite a mano, non verificabili!!)
+# con identificativoSDI maggiore di un integer
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_43011.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_43011_MT_001.xml
+
 # Fattura singola versione 1.2 (per PA) con una sola linea di fattura:
-fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12001.xml
-metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
+#fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12001.xml
+#metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 
 # Fattura singola versione 1.2 (per Privati) con una sola linea di fattura:
 #fattura=sdiFiles/esempiFatture/1.2/IT01234567890_12011.xml
@@ -118,6 +128,10 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 
 # --- Fattura 1.2 B2B (usata in riceviFatture) ---
 
+# Fattura B2B presa dal sito delle Agenzie Fiscali con xmlSignature e identificativoSDI maggiore di un integer
+fattura=sdiFiles/esempiFattureB2B/1.2/ITHVQWPH73P42H501Y_X4024.xml
+metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_X4024_MT_001.xml
+
 # Fattura B2B presa dal sito delle Agenzie Fiscali
 #fattura=sdiFiles/esempiFattureB2B/1.2/ITHVQWPH73P42H501Y_X0024.xml
 #metadati=sdiFiles/esempiMetadatiB2B/ITHVQWPH73P42H501Y_00022_MT_001.xml
@@ -134,7 +148,12 @@ metadati=sdiFiles/esempiMetadati/1.2/IT01234567890_12001_MT_001.xml
 #notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_11111_DT_001.xml
 
 # Esempio di NotificaDecorrenzaTermini con namespace errato 'http://www.fatturapa.it/sdi/messaggi/v1.0'
-notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
+#notificaDecorrenzaTermini=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_DT_001.xml
+
+# Esempio di NotificaDecorrenzaTermini con namespace corretto 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0' 
+# e firma XADES (!!costruite a mano, non verificabili!!)
+# identificativoSDI maggiore di un integer
+notificaDecorrenzaTermini=sdiFiles/esempiMessaggi/IT01234567890_41112_DT_001.xml
 
 # Esempio di NotificaDecorrenzaTermini con namespace corretto 'http://www.fatturapa.gov.it/sdi/messaggi/v1.0' 
 # e firma XADES (!!costruite a mano, non verificabili!!)

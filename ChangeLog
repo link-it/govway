@@ -1,3 +1,14 @@
+2019-12-16  Andrea Poli <apoli@link.it>
+
+	* [ProtocolloSDI]
+	Risolto Bug OP-930
+	Lo schema xsd 'MessaggiTypes_v1.1.xsd' definisce il tipo 'IdentificativoSdI_Type' di una FatturaPA come xsd:integer con totalDigits=12.
+	Un identificativo SDI può quindi essere più grande di un tipo 'java integer' il quale prevede un massimo di 10 cifre e un valore max di 2147483647.
+	Gli oggetti java generati per gestire l'identificativo SDI, all'interno del protocollo sdi, utilizzavano erroneamente il tipo java Integer
+	e questo comportava che non si riuscisse più a gestire correttamente le Fatture PA ricevute per le quali si era superato il numero limite 2147483647.
+	Il problema è stato superato adeguando la gestione del tipo dell'Identificativo SDI da Integer a String allineandosi con quanto previsto 
+	nella Fattura B2B per la quale lo schema 'MessaggiFatturaTypes_v1.0.xsd' definisce l'identificativo come una stringa con lunghezza da 1 a 36.
+
 2019-12-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

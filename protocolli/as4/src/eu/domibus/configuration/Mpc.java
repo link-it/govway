@@ -67,19 +67,19 @@ public class Mpc extends org.openspcoop2.utils.beans.BaseBean implements Seriali
     this.name = name;
   }
 
-  public java.lang.Integer getRetentionDownloaded() {
+  public java.math.BigInteger getRetentionDownloaded() {
     return this.retentionDownloaded;
   }
 
-  public void setRetentionDownloaded(java.lang.Integer retentionDownloaded) {
+  public void setRetentionDownloaded(java.math.BigInteger retentionDownloaded) {
     this.retentionDownloaded = retentionDownloaded;
   }
 
-  public java.lang.Integer getRetentionUndownloaded() {
+  public java.math.BigInteger getRetentionUndownloaded() {
     return this.retentionUndownloaded;
   }
 
-  public void setRetentionUndownloaded(java.lang.Integer retentionUndownloaded) {
+  public void setRetentionUndownloaded(java.math.BigInteger retentionUndownloaded) {
     this.retentionUndownloaded = retentionUndownloaded;
   }
 
@@ -125,11 +125,11 @@ public class Mpc extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="retention_downloaded",required=true)
-  protected java.lang.Integer retentionDownloaded;
+  protected java.math.BigInteger retentionDownloaded;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="retention_undownloaded",required=true)
-  protected java.lang.Integer retentionUndownloaded;
+  protected java.math.BigInteger retentionUndownloaded;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="default",required=true)

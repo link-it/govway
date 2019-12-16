@@ -72,11 +72,11 @@ public class Mep extends org.openspcoop2.utils.beans.BaseBean implements Seriali
     this.value = value;
   }
 
-  public java.lang.Integer getLegs() {
+  public java.math.BigInteger getLegs() {
     return this.legs;
   }
 
-  public void setLegs(java.lang.Integer legs) {
+  public void setLegs(java.math.BigInteger legs) {
     this.legs = legs;
   }
 
@@ -94,6 +94,6 @@ public class Mep extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="legs",required=false)
-  protected java.lang.Integer legs = java.lang.Integer.valueOf("1");
+  protected java.math.BigInteger legs = new java.math.BigInteger("1");
 
 }

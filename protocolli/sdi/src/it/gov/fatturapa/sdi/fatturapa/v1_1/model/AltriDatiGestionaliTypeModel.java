@@ -44,7 +44,7 @@ public class AltriDatiGestionaliTypeModel extends AbstractModel<AltriDatiGestion
 	
 		this.TIPO_DATO = new Field("TipoDato",java.lang.String.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 		this.RIFERIMENTO_TESTO = new Field("RiferimentoTesto",java.lang.String.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
-		this.RIFERIMENTO_NUMERO = new Field("RiferimentoNumero",java.lang.Double.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
+		this.RIFERIMENTO_NUMERO = new Field("RiferimentoNumero",java.math.BigDecimal.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 		this.RIFERIMENTO_DATA = new Field("RiferimentoData",java.util.Date.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 	
 	}
@@ -55,7 +55,7 @@ public class AltriDatiGestionaliTypeModel extends AbstractModel<AltriDatiGestion
 	
 		this.TIPO_DATO = new ComplexField(father,"TipoDato",java.lang.String.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 		this.RIFERIMENTO_TESTO = new ComplexField(father,"RiferimentoTesto",java.lang.String.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
-		this.RIFERIMENTO_NUMERO = new ComplexField(father,"RiferimentoNumero",java.lang.Double.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
+		this.RIFERIMENTO_NUMERO = new ComplexField(father,"RiferimentoNumero",java.math.BigDecimal.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 		this.RIFERIMENTO_DATA = new ComplexField(father,"RiferimentoData",java.util.Date.class,"AltriDatiGestionaliType",AltriDatiGestionaliType.class);
 	
 	}

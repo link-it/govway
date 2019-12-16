@@ -60,11 +60,11 @@ public class DatiSALType extends org.openspcoop2.utils.beans.BaseBean implements
   public DatiSALType() {
   }
 
-  public java.lang.Integer getRiferimentoFase() {
+  public java.math.BigInteger getRiferimentoFase() {
     return this.riferimentoFase;
   }
 
-  public void setRiferimentoFase(java.lang.Integer riferimentoFase) {
+  public void setRiferimentoFase(java.math.BigInteger riferimentoFase) {
     this.riferimentoFase = riferimentoFase;
   }
 
@@ -74,6 +74,6 @@ public class DatiSALType extends org.openspcoop2.utils.beans.BaseBean implements
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="RiferimentoFase",required=true,nillable=false)
-  protected java.lang.Integer riferimentoFase;
+  protected java.math.BigInteger riferimentoFase;
 
 }

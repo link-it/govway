@@ -21,6 +21,9 @@
  */
 package org.openspcoop2.utils.jaxb;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 /**
  * DecimalWrapper
  *
@@ -107,6 +110,54 @@ public class DecimalWrapper {
 		}
 		else if(this.object instanceof Short){
 			sValue = (Short) this.object;
+		}
+		else if(this.object instanceof BigInteger){
+			BigInteger bigInteger = (BigInteger) this.object;
+			if(c.getName().equals(BigInteger.class.getName())){
+				return bigInteger;
+			}
+			else if(c.getName().equals(Float.class.getName())){
+				fValue = bigInteger.floatValue();
+			}
+			else if(c.getName().equals(Double.class.getName())){
+				dValue = bigInteger.doubleValue();
+			}
+			else if(c.getName().equals(Long.class.getName())){
+				lValue = bigInteger.longValue();
+			}
+			else if(c.getName().equals(Integer.class.getName())){
+				iValue = bigInteger.intValue();
+			}
+			else if(c.getName().equals(Short.class.getName())){
+				sValue = bigInteger.shortValue();
+			}
+			else {
+				throw new RuntimeException("Tipo impostato dal Wrapper ["+this.object.getClass().getName()+"] non gestito rispetto al tipo richiesto '"+c.getName()+"'");
+			}
+		}
+		else if(this.object instanceof BigDecimal){
+			BigDecimal bigDecimal = (BigDecimal) this.object;
+			if(c.getName().equals(BigInteger.class.getName())){
+				return bigDecimal;
+			}
+			else if(c.getName().equals(Float.class.getName())){
+				fValue = bigDecimal.floatValue();
+			}
+			else if(c.getName().equals(Double.class.getName())){
+				dValue = bigDecimal.doubleValue();
+			}
+			else if(c.getName().equals(Long.class.getName())){
+				lValue = bigDecimal.longValue();
+			}
+			else if(c.getName().equals(Integer.class.getName())){
+				iValue = bigDecimal.intValue();
+			}
+			else if(c.getName().equals(Short.class.getName())){
+				sValue = bigDecimal.shortValue();
+			}
+			else {
+				throw new RuntimeException("Tipo impostato dal Wrapper ["+this.object.getClass().getName()+"] non gestito rispetto al tipo richiesto '"+c.getName()+"'");
+			}
 		}
 		else{
 			throw new RuntimeException("Tipo impostato dal Wrapper ["+this.object.getClass().getName()+"] non gestito");

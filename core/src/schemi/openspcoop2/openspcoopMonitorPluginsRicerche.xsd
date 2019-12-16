@@ -13,7 +13,7 @@
 						<linkit:author name="Poli Andrea" mail="poli@link.it"/>
 					</linkit:authors>
 				</linkit:info>
-				<linkit:jax-ws xml-annotations="true" ws="false"/>
+				<linkit:jax-ws xml-annotations="true" xml-op2-types="true" ws="false"/>
 			</linkit:project_generator>
 			<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 				<linkit:dao>

@@ -76,15 +76,15 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   public DatiRiepilogoType() {
   }
 
-  public java.lang.Double getAliquotaIVA() {
+  public java.math.BigDecimal getAliquotaIVA() {
     if(this._decimalWrapper_aliquotaIVA!=null){
-		return (java.lang.Double) this._decimalWrapper_aliquotaIVA.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_aliquotaIVA.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.aliquotaIVA;
 	}
   }
 
-  public void setAliquotaIVA(java.lang.Double aliquotaIVA) {
+  public void setAliquotaIVA(java.math.BigDecimal aliquotaIVA) {
     if(aliquotaIVA!=null){
 		this._decimalWrapper_aliquotaIVA = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,aliquotaIVA);
 	}
@@ -110,57 +110,57 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
     this.natura = natura;
   }
 
-  public java.lang.Double getSpeseAccessorie() {
+  public java.math.BigDecimal getSpeseAccessorie() {
     if(this._decimalWrapper_speseAccessorie!=null){
-		return (java.lang.Double) this._decimalWrapper_speseAccessorie.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_speseAccessorie.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.speseAccessorie;
 	}
   }
 
-  public void setSpeseAccessorie(java.lang.Double speseAccessorie) {
+  public void setSpeseAccessorie(java.math.BigDecimal speseAccessorie) {
     if(speseAccessorie!=null){
 		this._decimalWrapper_speseAccessorie = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,speseAccessorie);
 	}
   }
 
-  public java.lang.Double getArrotondamento() {
+  public java.math.BigDecimal getArrotondamento() {
     if(this._decimalWrapper_arrotondamento!=null){
-		return (java.lang.Double) this._decimalWrapper_arrotondamento.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_arrotondamento.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.arrotondamento;
 	}
   }
 
-  public void setArrotondamento(java.lang.Double arrotondamento) {
+  public void setArrotondamento(java.math.BigDecimal arrotondamento) {
     if(arrotondamento!=null){
 		this._decimalWrapper_arrotondamento = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,8,arrotondamento);
 	}
   }
 
-  public java.lang.Double getImponibileImporto() {
+  public java.math.BigDecimal getImponibileImporto() {
     if(this._decimalWrapper_imponibileImporto!=null){
-		return (java.lang.Double) this._decimalWrapper_imponibileImporto.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_imponibileImporto.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.imponibileImporto;
 	}
   }
 
-  public void setImponibileImporto(java.lang.Double imponibileImporto) {
+  public void setImponibileImporto(java.math.BigDecimal imponibileImporto) {
     if(imponibileImporto!=null){
 		this._decimalWrapper_imponibileImporto = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,imponibileImporto);
 	}
   }
 
-  public java.lang.Double getImposta() {
+  public java.math.BigDecimal getImposta() {
     if(this._decimalWrapper_imposta!=null){
-		return (java.lang.Double) this._decimalWrapper_imposta.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_imposta.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.imposta;
 	}
   }
 
-  public void setImposta(java.lang.Double imposta) {
+  public void setImposta(java.math.BigDecimal imposta) {
     if(imposta!=null){
 		this._decimalWrapper_imposta = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,imposta);
 	}
@@ -204,7 +204,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_aliquotaIVA = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double aliquotaIVA;
+  protected java.math.BigDecimal aliquotaIVA;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_natura;
@@ -218,7 +218,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_speseAccessorie = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double speseAccessorie;
+  protected java.math.BigDecimal speseAccessorie;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -226,7 +226,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_arrotondamento = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double arrotondamento;
+  protected java.math.BigDecimal arrotondamento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -234,7 +234,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_imponibileImporto = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double imponibileImporto;
+  protected java.math.BigDecimal imponibileImporto;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -242,7 +242,7 @@ public class DatiRiepilogoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_imposta = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double imposta;
+  protected java.math.BigDecimal imposta;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_esigibilitaIVA;

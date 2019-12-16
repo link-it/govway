@@ -42,7 +42,7 @@ public class DatiSALTypeModel extends AbstractModel<DatiSALType> {
 	
 		super();
 	
-		this.RIFERIMENTO_FASE = new Field("RiferimentoFase",java.lang.Integer.class,"DatiSALType",DatiSALType.class);
+		this.RIFERIMENTO_FASE = new Field("RiferimentoFase",java.math.BigInteger.class,"DatiSALType",DatiSALType.class);
 	
 	}
 	
@@ -50,7 +50,7 @@ public class DatiSALTypeModel extends AbstractModel<DatiSALType> {
 	
 		super(father);
 	
-		this.RIFERIMENTO_FASE = new ComplexField(father,"RiferimentoFase",java.lang.Integer.class,"DatiSALType",DatiSALType.class);
+		this.RIFERIMENTO_FASE = new ComplexField(father,"RiferimentoFase",java.math.BigInteger.class,"DatiSALType",DatiSALType.class);
 	
 	}
 	

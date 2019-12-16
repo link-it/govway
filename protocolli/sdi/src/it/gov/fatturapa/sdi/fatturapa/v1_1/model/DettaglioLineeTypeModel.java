@@ -42,18 +42,18 @@ public class DettaglioLineeTypeModel extends AbstractModel<DettaglioLineeType> {
 	
 		super();
 	
-		this.NUMERO_LINEA = new Field("NumeroLinea",java.lang.Integer.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.NUMERO_LINEA = new Field("NumeroLinea",java.math.BigInteger.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.TIPO_CESSIONE_PRESTAZIONE = new Field("TipoCessionePrestazione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.CODICE_ARTICOLO = new it.gov.fatturapa.sdi.fatturapa.v1_1.model.CodiceArticoloTypeModel(new Field("CodiceArticolo",it.gov.fatturapa.sdi.fatturapa.v1_1.CodiceArticoloType.class,"DettaglioLineeType",DettaglioLineeType.class));
 		this.DESCRIZIONE = new Field("Descrizione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.QUANTITA = new Field("Quantita",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.QUANTITA = new Field("Quantita",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.UNITA_MISURA = new Field("UnitaMisura",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.DATA_INIZIO_PERIODO = new Field("DataInizioPeriodo",java.util.Date.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.DATA_FINE_PERIODO = new Field("DataFinePeriodo",java.util.Date.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.PREZZO_UNITARIO = new Field("PrezzoUnitario",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.PREZZO_UNITARIO = new Field("PrezzoUnitario",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.SCONTO_MAGGIORAZIONE = new it.gov.fatturapa.sdi.fatturapa.v1_1.model.ScontoMaggiorazioneTypeModel(new Field("ScontoMaggiorazione",it.gov.fatturapa.sdi.fatturapa.v1_1.ScontoMaggiorazioneType.class,"DettaglioLineeType",DettaglioLineeType.class));
-		this.PREZZO_TOTALE = new Field("PrezzoTotale",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.PREZZO_TOTALE = new Field("PrezzoTotale",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.RITENUTA = new Field("Ritenuta",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.NATURA = new Field("Natura",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.RIFERIMENTO_AMMINISTRAZIONE = new Field("RiferimentoAmministrazione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
@@ -65,18 +65,18 @@ public class DettaglioLineeTypeModel extends AbstractModel<DettaglioLineeType> {
 	
 		super(father);
 	
-		this.NUMERO_LINEA = new ComplexField(father,"NumeroLinea",java.lang.Integer.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.NUMERO_LINEA = new ComplexField(father,"NumeroLinea",java.math.BigInteger.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.TIPO_CESSIONE_PRESTAZIONE = new ComplexField(father,"TipoCessionePrestazione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.CODICE_ARTICOLO = new it.gov.fatturapa.sdi.fatturapa.v1_1.model.CodiceArticoloTypeModel(new ComplexField(father,"CodiceArticolo",it.gov.fatturapa.sdi.fatturapa.v1_1.CodiceArticoloType.class,"DettaglioLineeType",DettaglioLineeType.class));
 		this.DESCRIZIONE = new ComplexField(father,"Descrizione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.QUANTITA = new ComplexField(father,"Quantita",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.QUANTITA = new ComplexField(father,"Quantita",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.UNITA_MISURA = new ComplexField(father,"UnitaMisura",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.DATA_INIZIO_PERIODO = new ComplexField(father,"DataInizioPeriodo",java.util.Date.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.DATA_FINE_PERIODO = new ComplexField(father,"DataFinePeriodo",java.util.Date.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.PREZZO_UNITARIO = new ComplexField(father,"PrezzoUnitario",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.PREZZO_UNITARIO = new ComplexField(father,"PrezzoUnitario",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.SCONTO_MAGGIORAZIONE = new it.gov.fatturapa.sdi.fatturapa.v1_1.model.ScontoMaggiorazioneTypeModel(new ComplexField(father,"ScontoMaggiorazione",it.gov.fatturapa.sdi.fatturapa.v1_1.ScontoMaggiorazioneType.class,"DettaglioLineeType",DettaglioLineeType.class));
-		this.PREZZO_TOTALE = new ComplexField(father,"PrezzoTotale",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
-		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.lang.Double.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.PREZZO_TOTALE = new ComplexField(father,"PrezzoTotale",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
+		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.math.BigDecimal.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.RITENUTA = new ComplexField(father,"Ritenuta",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.NATURA = new ComplexField(father,"Natura",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);
 		this.RIFERIMENTO_AMMINISTRAZIONE = new ComplexField(father,"RiferimentoAmministrazione",java.lang.String.class,"DettaglioLineeType",DettaglioLineeType.class);

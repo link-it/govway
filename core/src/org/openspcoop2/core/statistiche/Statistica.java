@@ -58,7 +58,7 @@ import java.io.Serializable;
  * 			&lt;element name="token-mail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="client-address" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
@@ -467,7 +467,7 @@ public class Statistica extends org.openspcoop2.utils.beans.BaseBean implements 
   protected java.lang.String esitoContesto;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
-  @XmlElement(name="client-address",required=false,nillable=false)
+  @XmlElement(name="client-address",required=true,nillable=false)
   protected java.lang.String clientAddress;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")

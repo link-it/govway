@@ -43,8 +43,8 @@ public class ScontoMaggiorazioneTypeModel extends AbstractModel<ScontoMaggiorazi
 		super();
 	
 		this.TIPO = new Field("Tipo",java.lang.String.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
-		this.PERCENTUALE = new Field("Percentuale",java.lang.Double.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
-		this.IMPORTO = new Field("Importo",java.lang.Double.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
+		this.PERCENTUALE = new Field("Percentuale",java.math.BigDecimal.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
+		this.IMPORTO = new Field("Importo",java.math.BigDecimal.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
 	
 	}
 	
@@ -53,8 +53,8 @@ public class ScontoMaggiorazioneTypeModel extends AbstractModel<ScontoMaggiorazi
 		super(father);
 	
 		this.TIPO = new ComplexField(father,"Tipo",java.lang.String.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
-		this.PERCENTUALE = new ComplexField(father,"Percentuale",java.lang.Double.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
-		this.IMPORTO = new ComplexField(father,"Importo",java.lang.Double.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
+		this.PERCENTUALE = new ComplexField(father,"Percentuale",java.math.BigDecimal.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
+		this.IMPORTO = new ComplexField(father,"Importo",java.math.BigDecimal.class,"ScontoMaggiorazioneType",ScontoMaggiorazioneType.class);
 	
 	}
 	

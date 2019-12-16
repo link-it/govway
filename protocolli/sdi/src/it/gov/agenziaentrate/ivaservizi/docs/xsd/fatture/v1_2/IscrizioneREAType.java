@@ -86,15 +86,15 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
     this.numeroREA = numeroREA;
   }
 
-  public java.lang.Double getCapitaleSociale() {
+  public java.math.BigDecimal getCapitaleSociale() {
     if(this._decimalWrapper_capitaleSociale!=null){
-		return (java.lang.Double) this._decimalWrapper_capitaleSociale.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_capitaleSociale.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.capitaleSociale;
 	}
   }
 
-  public void setCapitaleSociale(java.lang.Double capitaleSociale) {
+  public void setCapitaleSociale(java.math.BigDecimal capitaleSociale) {
     if(capitaleSociale!=null){
 		this._decimalWrapper_capitaleSociale = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,capitaleSociale);
 	}
@@ -159,7 +159,7 @@ public class IscrizioneREAType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_capitaleSociale = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double capitaleSociale;
+  protected java.math.BigDecimal capitaleSociale;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_socioUnico;

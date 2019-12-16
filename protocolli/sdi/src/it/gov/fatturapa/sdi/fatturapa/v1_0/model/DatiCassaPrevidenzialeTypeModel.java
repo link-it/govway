@@ -43,10 +43,10 @@ public class DatiCassaPrevidenzialeTypeModel extends AbstractModel<DatiCassaPrev
 		super();
 	
 		this.TIPO_CASSA = new Field("TipoCassa",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.AL_CASSA = new Field("AlCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.IMPORTO_CONTRIBUTO_CASSA = new Field("ImportoContributoCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.IMPONIBILE_CASSA = new Field("ImponibileCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.AL_CASSA = new Field("AlCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.IMPORTO_CONTRIBUTO_CASSA = new Field("ImportoContributoCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.IMPONIBILE_CASSA = new Field("ImponibileCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.RITENUTA = new Field("Ritenuta",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.NATURA = new Field("Natura",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.RIFERIMENTO_AMMINISTRAZIONE = new Field("RiferimentoAmministrazione",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
@@ -58,10 +58,10 @@ public class DatiCassaPrevidenzialeTypeModel extends AbstractModel<DatiCassaPrev
 		super(father);
 	
 		this.TIPO_CASSA = new ComplexField(father,"TipoCassa",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.AL_CASSA = new ComplexField(father,"AlCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.IMPORTO_CONTRIBUTO_CASSA = new ComplexField(father,"ImportoContributoCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.IMPONIBILE_CASSA = new ComplexField(father,"ImponibileCassa",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
-		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.lang.Double.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.AL_CASSA = new ComplexField(father,"AlCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.IMPORTO_CONTRIBUTO_CASSA = new ComplexField(father,"ImportoContributoCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.IMPONIBILE_CASSA = new ComplexField(father,"ImponibileCassa",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
+		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.math.BigDecimal.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.RITENUTA = new ComplexField(father,"Ritenuta",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.NATURA = new ComplexField(father,"Natura",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);
 		this.RIFERIMENTO_AMMINISTRAZIONE = new ComplexField(father,"RiferimentoAmministrazione",java.lang.String.class,"DatiCassaPrevidenzialeType",DatiCassaPrevidenzialeType.class);

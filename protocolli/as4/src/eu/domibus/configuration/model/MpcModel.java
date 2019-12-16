@@ -43,8 +43,8 @@ public class MpcModel extends AbstractModel<Mpc> {
 		super();
 	
 		this.NAME = new Field("name",java.lang.String.class,"mpc",Mpc.class);
-		this.RETENTION_DOWNLOADED = new Field("retention_downloaded",java.lang.Integer.class,"mpc",Mpc.class);
-		this.RETENTION_UNDOWNLOADED = new Field("retention_undownloaded",java.lang.Integer.class,"mpc",Mpc.class);
+		this.RETENTION_DOWNLOADED = new Field("retention_downloaded",java.math.BigInteger.class,"mpc",Mpc.class);
+		this.RETENTION_UNDOWNLOADED = new Field("retention_undownloaded",java.math.BigInteger.class,"mpc",Mpc.class);
 		this.DEFAULT = new Field("default",boolean.class,"mpc",Mpc.class);
 		this.ENABLED = new Field("enabled",boolean.class,"mpc",Mpc.class);
 		this.QUALIFIED_NAME = new Field("qualifiedName",java.lang.String.class,"mpc",Mpc.class);
@@ -56,8 +56,8 @@ public class MpcModel extends AbstractModel<Mpc> {
 		super(father);
 	
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"mpc",Mpc.class);
-		this.RETENTION_DOWNLOADED = new ComplexField(father,"retention_downloaded",java.lang.Integer.class,"mpc",Mpc.class);
-		this.RETENTION_UNDOWNLOADED = new ComplexField(father,"retention_undownloaded",java.lang.Integer.class,"mpc",Mpc.class);
+		this.RETENTION_DOWNLOADED = new ComplexField(father,"retention_downloaded",java.math.BigInteger.class,"mpc",Mpc.class);
+		this.RETENTION_UNDOWNLOADED = new ComplexField(father,"retention_undownloaded",java.math.BigInteger.class,"mpc",Mpc.class);
 		this.DEFAULT = new ComplexField(father,"default",boolean.class,"mpc",Mpc.class);
 		this.ENABLED = new ComplexField(father,"enabled",boolean.class,"mpc",Mpc.class);
 		this.QUALIFIED_NAME = new ComplexField(father,"qualifiedName",java.lang.String.class,"mpc",Mpc.class);

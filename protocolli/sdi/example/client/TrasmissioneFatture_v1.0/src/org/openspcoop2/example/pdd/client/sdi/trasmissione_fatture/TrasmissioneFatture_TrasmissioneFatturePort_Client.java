@@ -132,6 +132,14 @@ public final class TrasmissioneFatture_TrasmissioneFatturePort_Client {
 			isMTOMEnabled = Boolean.parseBoolean(mtom);
 		}
         
+		String identificativoSDI = reader.getProperty("identificativoSDI");
+		if(identificativoSDI==null){
+			throw new Exception("Property [identificativoSDI] not definded");
+		}
+		else{
+			identificativoSDI = identificativoSDI.trim();
+		}
+		
     	String file = reader.getProperty(tipoOperazione);
 		if(file==null){
 			throw new Exception("Property ["+tipoOperazione+"] not definded");
@@ -174,7 +182,7 @@ public final class TrasmissioneFatture_TrasmissioneFatturePort_Client {
         }
         
         org.openspcoop2.example.pdd.client.sdi.trasmissione_fatture.FileSdIType fileSdi = new FileSdIType();
-        fileSdi.setIdentificativoSdI(new BigInteger("111"));
+        fileSdi.setIdentificativoSdI(new BigInteger(identificativoSDI));
         fileSdi.setNomeFile((new File(file).getName()));
         fileSdi.setFile(FileSystemUtilities.readBytesFromFile(file));
         

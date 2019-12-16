@@ -43,7 +43,7 @@ public class DatiBolloTypeModel extends AbstractModel<DatiBolloType> {
 		super();
 	
 		this.BOLLO_VIRTUALE = new Field("BolloVirtuale",java.lang.String.class,"DatiBolloType",DatiBolloType.class);
-		this.IMPORTO_BOLLO = new Field("ImportoBollo",java.lang.Double.class,"DatiBolloType",DatiBolloType.class);
+		this.IMPORTO_BOLLO = new Field("ImportoBollo",java.math.BigDecimal.class,"DatiBolloType",DatiBolloType.class);
 	
 	}
 	
@@ -52,7 +52,7 @@ public class DatiBolloTypeModel extends AbstractModel<DatiBolloType> {
 		super(father);
 	
 		this.BOLLO_VIRTUALE = new ComplexField(father,"BolloVirtuale",java.lang.String.class,"DatiBolloType",DatiBolloType.class);
-		this.IMPORTO_BOLLO = new ComplexField(father,"ImportoBollo",java.lang.Double.class,"DatiBolloType",DatiBolloType.class);
+		this.IMPORTO_BOLLO = new ComplexField(father,"ImportoBollo",java.math.BigDecimal.class,"DatiBolloType",DatiBolloType.class);
 	
 	}
 	

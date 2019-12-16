@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type="text/xsl" href="MT_v1.1.xsl"?>
+<ns3:FileMetadati xmlns:ns3="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0 MessaggiFatturaTypes_v1.0.xsd " versione="1.0">
+<IdentificativoSdI>3147483647</IdentificativoSdI>
+<NomeFile>ITHVQWPH73P42H501Y_X4024.xml</NomeFile>
+<Hash>ef912599ea43cddf0c9ee59e30e38b2a91f0793ef046e61aa120a9d3ee0b5992</Hash>
+<CodiceDestinatario>0000000</CodiceDestinatario>
+<Formato>FPR12</Formato>
+<TentativiInvio>1</TentativiInvio>
+<MessageId>918929440</MessageId>
+</ns3:FileMetadati>

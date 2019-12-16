@@ -44,7 +44,7 @@ public class IscrizioneREATypeModel extends AbstractModel<IscrizioneREAType> {
 	
 		this.UFFICIO = new Field("Ufficio",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.NUMERO_REA = new Field("NumeroREA",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
-		this.CAPITALE_SOCIALE = new Field("CapitaleSociale",java.lang.Double.class,"IscrizioneREAType",IscrizioneREAType.class);
+		this.CAPITALE_SOCIALE = new Field("CapitaleSociale",java.math.BigDecimal.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.SOCIO_UNICO = new Field("SocioUnico",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.STATO_LIQUIDAZIONE = new Field("StatoLiquidazione",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 	
@@ -56,7 +56,7 @@ public class IscrizioneREATypeModel extends AbstractModel<IscrizioneREAType> {
 	
 		this.UFFICIO = new ComplexField(father,"Ufficio",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.NUMERO_REA = new ComplexField(father,"NumeroREA",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
-		this.CAPITALE_SOCIALE = new ComplexField(father,"CapitaleSociale",java.lang.Double.class,"IscrizioneREAType",IscrizioneREAType.class);
+		this.CAPITALE_SOCIALE = new ComplexField(father,"CapitaleSociale",java.math.BigDecimal.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.SOCIO_UNICO = new ComplexField(father,"SocioUnico",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 		this.STATO_LIQUIDAZIONE = new ComplexField(father,"StatoLiquidazione",java.lang.String.class,"IscrizioneREAType",IscrizioneREAType.class);
 	

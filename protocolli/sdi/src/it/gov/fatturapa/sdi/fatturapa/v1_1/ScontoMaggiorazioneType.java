@@ -85,29 +85,29 @@ public class ScontoMaggiorazioneType extends org.openspcoop2.utils.beans.BaseBea
     this.tipo = tipo;
   }
 
-  public java.lang.Double getPercentuale() {
+  public java.math.BigDecimal getPercentuale() {
     if(this._decimalWrapper_percentuale!=null){
-		return (java.lang.Double) this._decimalWrapper_percentuale.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_percentuale.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.percentuale;
 	}
   }
 
-  public void setPercentuale(java.lang.Double percentuale) {
+  public void setPercentuale(java.math.BigDecimal percentuale) {
     if(percentuale!=null){
 		this._decimalWrapper_percentuale = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,percentuale);
 	}
   }
 
-  public java.lang.Double getImporto() {
+  public java.math.BigDecimal getImporto() {
     if(this._decimalWrapper_importo!=null){
-		return (java.lang.Double) this._decimalWrapper_importo.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importo.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importo;
 	}
   }
 
-  public void setImporto(java.lang.Double importo) {
+  public void setImporto(java.math.BigDecimal importo) {
     if(importo!=null){
 		this._decimalWrapper_importo = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importo);
 	}
@@ -129,7 +129,7 @@ public class ScontoMaggiorazioneType extends org.openspcoop2.utils.beans.BaseBea
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_percentuale = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double percentuale;
+  protected java.math.BigDecimal percentuale;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -137,6 +137,6 @@ public class ScontoMaggiorazioneType extends org.openspcoop2.utils.beans.BaseBea
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importo = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importo;
+  protected java.math.BigDecimal importo;
 
 }

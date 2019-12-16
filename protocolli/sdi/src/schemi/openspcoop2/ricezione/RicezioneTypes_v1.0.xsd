@@ -129,9 +129,10 @@
 	
 	<!-- SIMPLE TYPES -->
 	<xsd:simpleType name="identificativoSdI_Type">
-		<xsd:restriction base="xsd:integer">
+		<!-- OP-930 <xsd:restriction base="xsd:integer">
 			<xsd:totalDigits value="12" />
-		</xsd:restriction>
+		</xsd:restriction> -->
+		<xsd:restriction base="xsd:string"/>
 	</xsd:simpleType>
 	
 	<xsd:simpleType name="nomeFile_Type">

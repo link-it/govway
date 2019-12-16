@@ -44,7 +44,7 @@ public class MepModel extends AbstractModel<Mep> {
 	
 		this.NAME = new Field("name",java.lang.String.class,"mep",Mep.class);
 		this.VALUE = new Field("value",java.net.URI.class,"mep",Mep.class);
-		this.LEGS = new Field("legs",java.lang.Integer.class,"mep",Mep.class);
+		this.LEGS = new Field("legs",java.math.BigInteger.class,"mep",Mep.class);
 	
 	}
 	
@@ -54,7 +54,7 @@ public class MepModel extends AbstractModel<Mep> {
 	
 		this.NAME = new ComplexField(father,"name",java.lang.String.class,"mep",Mep.class);
 		this.VALUE = new ComplexField(father,"value",java.net.URI.class,"mep",Mep.class);
-		this.LEGS = new ComplexField(father,"legs",java.lang.Integer.class,"mep",Mep.class);
+		this.LEGS = new ComplexField(father,"legs",java.math.BigInteger.class,"mep",Mep.class);
 	
 	}
 	

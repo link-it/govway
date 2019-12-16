@@ -88,29 +88,29 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
     this.tipoRitenuta = tipoRitenuta;
   }
 
-  public java.lang.Double getImportoRitenuta() {
+  public java.math.BigDecimal getImportoRitenuta() {
     if(this._decimalWrapper_importoRitenuta!=null){
-		return (java.lang.Double) this._decimalWrapper_importoRitenuta.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importoRitenuta.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importoRitenuta;
 	}
   }
 
-  public void setImportoRitenuta(java.lang.Double importoRitenuta) {
+  public void setImportoRitenuta(java.math.BigDecimal importoRitenuta) {
     if(importoRitenuta!=null){
 		this._decimalWrapper_importoRitenuta = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importoRitenuta);
 	}
   }
 
-  public java.lang.Double getAliquotaRitenuta() {
+  public java.math.BigDecimal getAliquotaRitenuta() {
     if(this._decimalWrapper_aliquotaRitenuta!=null){
-		return (java.lang.Double) this._decimalWrapper_aliquotaRitenuta.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_aliquotaRitenuta.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.aliquotaRitenuta;
 	}
   }
 
-  public void setAliquotaRitenuta(java.lang.Double aliquotaRitenuta) {
+  public void setAliquotaRitenuta(java.math.BigDecimal aliquotaRitenuta) {
     if(aliquotaRitenuta!=null){
 		this._decimalWrapper_aliquotaRitenuta = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,3,2,2,aliquotaRitenuta);
 	}
@@ -152,7 +152,7 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoRitenuta = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importoRitenuta;
+  protected java.math.BigDecimal importoRitenuta;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -160,7 +160,7 @@ public class DatiRitenutaType extends org.openspcoop2.utils.beans.BaseBean imple
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_aliquotaRitenuta = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double aliquotaRitenuta;
+  protected java.math.BigDecimal aliquotaRitenuta;
 
   @javax.xml.bind.annotation.XmlTransient
   protected java.lang.String _value_causalePagamento;

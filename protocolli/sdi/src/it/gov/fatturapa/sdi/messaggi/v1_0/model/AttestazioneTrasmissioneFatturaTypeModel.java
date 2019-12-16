@@ -42,7 +42,7 @@ public class AttestazioneTrasmissioneFatturaTypeModel extends AbstractModel<Atte
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.DATA_ORA_RICEZIONE = new Field("DataOraRicezione",java.util.Date.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.RIFERIMENTO_ARCHIVIO = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoArchivioTypeModel(new Field("RiferimentoArchivio",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoArchivioType.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class));
@@ -59,7 +59,7 @@ public class AttestazioneTrasmissioneFatturaTypeModel extends AbstractModel<Atte
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.DATA_ORA_RICEZIONE = new ComplexField(father,"DataOraRicezione",java.util.Date.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class);
 		this.RIFERIMENTO_ARCHIVIO = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoArchivioTypeModel(new ComplexField(father,"RiferimentoArchivio",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoArchivioType.class,"AttestazioneTrasmissioneFattura_Type",AttestazioneTrasmissioneFatturaType.class));

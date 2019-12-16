@@ -50,8 +50,8 @@ public class DatiGeneraliDocumentoTypeModel extends AbstractModel<DatiGeneraliDo
 		this.DATI_BOLLO = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.DatiBolloTypeModel(new Field("DatiBollo",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.DatiBolloType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
 		this.DATI_CASSA_PREVIDENZIALE = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.DatiCassaPrevidenzialeTypeModel(new Field("DatiCassaPrevidenziale",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.DatiCassaPrevidenzialeType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
 		this.SCONTO_MAGGIORAZIONE = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.ScontoMaggiorazioneTypeModel(new Field("ScontoMaggiorazione",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ScontoMaggiorazioneType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
-		this.IMPORTO_TOTALE_DOCUMENTO = new Field("ImportoTotaleDocumento",java.lang.Double.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
-		this.ARROTONDAMENTO = new Field("Arrotondamento",java.lang.Double.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
+		this.IMPORTO_TOTALE_DOCUMENTO = new Field("ImportoTotaleDocumento",java.math.BigDecimal.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
+		this.ARROTONDAMENTO = new Field("Arrotondamento",java.math.BigDecimal.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 		this.CAUSALE = new Field("Causale",java.lang.String.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 		this.ART_73 = new Field("Art73",java.lang.String.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 	
@@ -69,8 +69,8 @@ public class DatiGeneraliDocumentoTypeModel extends AbstractModel<DatiGeneraliDo
 		this.DATI_BOLLO = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.DatiBolloTypeModel(new ComplexField(father,"DatiBollo",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.DatiBolloType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
 		this.DATI_CASSA_PREVIDENZIALE = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.DatiCassaPrevidenzialeTypeModel(new ComplexField(father,"DatiCassaPrevidenziale",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.DatiCassaPrevidenzialeType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
 		this.SCONTO_MAGGIORAZIONE = new it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.model.ScontoMaggiorazioneTypeModel(new ComplexField(father,"ScontoMaggiorazione",it.gov.agenziaentrate.ivaservizi.docs.xsd.fatture.v1_2.ScontoMaggiorazioneType.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class));
-		this.IMPORTO_TOTALE_DOCUMENTO = new ComplexField(father,"ImportoTotaleDocumento",java.lang.Double.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
-		this.ARROTONDAMENTO = new ComplexField(father,"Arrotondamento",java.lang.Double.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
+		this.IMPORTO_TOTALE_DOCUMENTO = new ComplexField(father,"ImportoTotaleDocumento",java.math.BigDecimal.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
+		this.ARROTONDAMENTO = new ComplexField(father,"Arrotondamento",java.math.BigDecimal.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 		this.CAUSALE = new ComplexField(father,"Causale",java.lang.String.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 		this.ART_73 = new ComplexField(father,"Art73",java.lang.String.class,"DatiGeneraliDocumentoType",DatiGeneraliDocumentoType.class);
 	

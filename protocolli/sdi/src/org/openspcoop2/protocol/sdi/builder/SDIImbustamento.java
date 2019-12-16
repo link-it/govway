@@ -22,6 +22,7 @@
 package org.openspcoop2.protocol.sdi.builder;
 
 import java.io.ByteArrayInputStream;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -517,7 +518,7 @@ public class SDIImbustamento {
 			}
 			
 			// identificativoSdi
-			Integer identificativoSdi = null;
+			String identificativoSdi = null;
 			String tmpIdentificativoSdi = null;
 			if(msg.getTransportRequestContext()!=null){
 				tmpIdentificativoSdi =  msg.getTransportRequestContext().getParameterFormBased(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_INTEGRAZIONE_URLBASED_IDENTIFICATIVO_SDI);
@@ -534,7 +535,11 @@ public class SDIImbustamento {
 			}
 			if(tmpIdentificativoSdi!=null) {
 				try {
-					identificativoSdi = Integer.valueOf(tmpIdentificativoSdi);
+					if(this.sdiProperties.isEnable_InputIdSDIValidationAsBigInteger_NotificaDaInviare()) {
+						BigInteger bigInteger = new BigInteger(tmpIdentificativoSdi);
+						bigInteger.toString(); // validazione superata
+					}
+					identificativoSdi = tmpIdentificativoSdi;
 				}catch(Exception e) {
 					throw new Exception("IdentificativoSdi fornito non possiede un valore valido: "+e.getMessage());
 				}

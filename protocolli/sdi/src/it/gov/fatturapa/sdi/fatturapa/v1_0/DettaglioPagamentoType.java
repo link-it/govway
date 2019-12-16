@@ -137,11 +137,11 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
     this.dataRiferimentoTerminiPagamento = dataRiferimentoTerminiPagamento;
   }
 
-  public java.lang.Integer getGiorniTerminiPagamento() {
+  public java.math.BigInteger getGiorniTerminiPagamento() {
     return this.giorniTerminiPagamento;
   }
 
-  public void setGiorniTerminiPagamento(java.lang.Integer giorniTerminiPagamento) {
+  public void setGiorniTerminiPagamento(java.math.BigInteger giorniTerminiPagamento) {
     this.giorniTerminiPagamento = giorniTerminiPagamento;
   }
 
@@ -153,15 +153,15 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
     this.dataScadenzaPagamento = dataScadenzaPagamento;
   }
 
-  public java.lang.Double getImportoPagamento() {
+  public java.math.BigDecimal getImportoPagamento() {
     if(this._decimalWrapper_importoPagamento!=null){
-		return (java.lang.Double) this._decimalWrapper_importoPagamento.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importoPagamento.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importoPagamento;
 	}
   }
 
-  public void setImportoPagamento(java.lang.Double importoPagamento) {
+  public void setImportoPagamento(java.math.BigDecimal importoPagamento) {
     if(importoPagamento!=null){
 		this._decimalWrapper_importoPagamento = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importoPagamento);
 	}
@@ -247,15 +247,15 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
     this.bic = bic;
   }
 
-  public java.lang.Double getScontoPagamentoAnticipato() {
+  public java.math.BigDecimal getScontoPagamentoAnticipato() {
     if(this._decimalWrapper_scontoPagamentoAnticipato!=null){
-		return (java.lang.Double) this._decimalWrapper_scontoPagamentoAnticipato.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_scontoPagamentoAnticipato.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.scontoPagamentoAnticipato;
 	}
   }
 
-  public void setScontoPagamentoAnticipato(java.lang.Double scontoPagamentoAnticipato) {
+  public void setScontoPagamentoAnticipato(java.math.BigDecimal scontoPagamentoAnticipato) {
     if(scontoPagamentoAnticipato!=null){
 		this._decimalWrapper_scontoPagamentoAnticipato = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,scontoPagamentoAnticipato);
 	}
@@ -269,15 +269,15 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
     this.dataLimitePagamentoAnticipato = dataLimitePagamentoAnticipato;
   }
 
-  public java.lang.Double getPenalitaPagamentiRitardati() {
+  public java.math.BigDecimal getPenalitaPagamentiRitardati() {
     if(this._decimalWrapper_penalitaPagamentiRitardati!=null){
-		return (java.lang.Double) this._decimalWrapper_penalitaPagamentiRitardati.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_penalitaPagamentiRitardati.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.penalitaPagamentiRitardati;
 	}
   }
 
-  public void setPenalitaPagamentiRitardati(java.lang.Double penalitaPagamentiRitardati) {
+  public void setPenalitaPagamentiRitardati(java.math.BigDecimal penalitaPagamentiRitardati) {
     if(penalitaPagamentiRitardati!=null){
 		this._decimalWrapper_penalitaPagamentiRitardati = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,penalitaPagamentiRitardati);
 	}
@@ -321,7 +321,7 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="GiorniTerminiPagamento",required=false,nillable=false)
-  protected java.lang.Integer giorniTerminiPagamento;
+  protected java.math.BigInteger giorniTerminiPagamento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="date")
@@ -334,7 +334,7 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoPagamento = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importoPagamento;
+  protected java.math.BigDecimal importoPagamento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
@@ -387,7 +387,7 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_scontoPagamentoAnticipato = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double scontoPagamentoAnticipato;
+  protected java.math.BigDecimal scontoPagamentoAnticipato;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="date")
@@ -400,7 +400,7 @@ public class DettaglioPagamentoType extends org.openspcoop2.utils.beans.BaseBean
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_penalitaPagamentiRitardati = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double penalitaPagamentiRitardati;
+  protected java.math.BigDecimal penalitaPagamentiRitardati;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Date2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="date")

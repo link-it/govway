@@ -108,11 +108,11 @@ public class DatiTrasportoType extends org.openspcoop2.utils.beans.BaseBean impl
     this.causaleTrasporto = causaleTrasporto;
   }
 
-  public java.lang.Integer getNumeroColli() {
+  public java.math.BigInteger getNumeroColli() {
     return this.numeroColli;
   }
 
-  public void setNumeroColli(java.lang.Integer numeroColli) {
+  public void setNumeroColli(java.math.BigInteger numeroColli) {
     this.numeroColli = numeroColli;
   }
 
@@ -132,29 +132,29 @@ public class DatiTrasportoType extends org.openspcoop2.utils.beans.BaseBean impl
     this.unitaMisuraPeso = unitaMisuraPeso;
   }
 
-  public java.lang.Double getPesoLordo() {
+  public java.math.BigDecimal getPesoLordo() {
     if(this._decimalWrapper_pesoLordo!=null){
-		return (java.lang.Double) this._decimalWrapper_pesoLordo.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_pesoLordo.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.pesoLordo;
 	}
   }
 
-  public void setPesoLordo(java.lang.Double pesoLordo) {
+  public void setPesoLordo(java.math.BigDecimal pesoLordo) {
     if(pesoLordo!=null){
 		this._decimalWrapper_pesoLordo = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,4,1,2,pesoLordo);
 	}
   }
 
-  public java.lang.Double getPesoNetto() {
+  public java.math.BigDecimal getPesoNetto() {
     if(this._decimalWrapper_pesoNetto!=null){
-		return (java.lang.Double) this._decimalWrapper_pesoNetto.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_pesoNetto.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.pesoNetto;
 	}
   }
 
-  public void setPesoNetto(java.lang.Double pesoNetto) {
+  public void setPesoNetto(java.math.BigDecimal pesoNetto) {
     if(pesoNetto!=null){
 		this._decimalWrapper_pesoNetto = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,4,1,2,pesoNetto);
 	}
@@ -219,7 +219,7 @@ public class DatiTrasportoType extends org.openspcoop2.utils.beans.BaseBean impl
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="NumeroColli",required=false,nillable=false)
-  protected java.lang.Integer numeroColli;
+  protected java.math.BigInteger numeroColli;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")
@@ -237,7 +237,7 @@ public class DatiTrasportoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_pesoLordo = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double pesoLordo;
+  protected java.math.BigDecimal pesoLordo;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -245,7 +245,7 @@ public class DatiTrasportoType extends org.openspcoop2.utils.beans.BaseBean impl
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_pesoNetto = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double pesoNetto;
+  protected java.math.BigDecimal pesoNetto;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.DateTime2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")

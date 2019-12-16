@@ -42,12 +42,12 @@ public class DatiRiepilogoTypeModel extends AbstractModel<DatiRiepilogoType> {
 	
 		super();
 	
-		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.ALIQUOTA_IVA = new Field("AliquotaIVA",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.NATURA = new Field("Natura",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.SPESE_ACCESSORIE = new Field("SpeseAccessorie",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.ARROTONDAMENTO = new Field("Arrotondamento",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.IMPONIBILE_IMPORTO = new Field("ImponibileImporto",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.IMPOSTA = new Field("Imposta",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.SPESE_ACCESSORIE = new Field("SpeseAccessorie",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.ARROTONDAMENTO = new Field("Arrotondamento",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.IMPONIBILE_IMPORTO = new Field("ImponibileImporto",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.IMPOSTA = new Field("Imposta",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.ESIGIBILITA_IVA = new Field("EsigibilitaIVA",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.RIFERIMENTO_NORMATIVO = new Field("RiferimentoNormativo",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 	
@@ -57,12 +57,12 @@ public class DatiRiepilogoTypeModel extends AbstractModel<DatiRiepilogoType> {
 	
 		super(father);
 	
-		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.ALIQUOTA_IVA = new ComplexField(father,"AliquotaIVA",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.NATURA = new ComplexField(father,"Natura",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.SPESE_ACCESSORIE = new ComplexField(father,"SpeseAccessorie",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.ARROTONDAMENTO = new ComplexField(father,"Arrotondamento",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.IMPONIBILE_IMPORTO = new ComplexField(father,"ImponibileImporto",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
-		this.IMPOSTA = new ComplexField(father,"Imposta",java.lang.Double.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.SPESE_ACCESSORIE = new ComplexField(father,"SpeseAccessorie",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.ARROTONDAMENTO = new ComplexField(father,"Arrotondamento",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.IMPONIBILE_IMPORTO = new ComplexField(father,"ImponibileImporto",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
+		this.IMPOSTA = new ComplexField(father,"Imposta",java.math.BigDecimal.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.ESIGIBILITA_IVA = new ComplexField(father,"EsigibilitaIVA",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 		this.RIFERIMENTO_NORMATIVO = new ComplexField(father,"RiferimentoNormativo",java.lang.String.class,"DatiRiepilogoType",DatiRiepilogoType.class);
 	

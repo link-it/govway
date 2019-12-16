@@ -42,7 +42,7 @@ public class FileSdIConMetadatiTypeModel extends AbstractModel<FileSdIConMetadat
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.FILE = new Field("File",byte[].class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.NOME_FILE_METADATI = new Field("NomeFileMetadati",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
@@ -54,7 +54,7 @@ public class FileSdIConMetadatiTypeModel extends AbstractModel<FileSdIConMetadat
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.FILE = new ComplexField(father,"File",byte[].class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);
 		this.NOME_FILE_METADATI = new ComplexField(father,"NomeFileMetadati",java.lang.String.class,"fileSdIConMetadati_Type",FileSdIConMetadatiType.class);

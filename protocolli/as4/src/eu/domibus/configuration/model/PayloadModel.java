@@ -47,7 +47,7 @@ public class PayloadModel extends AbstractModel<Payload> {
 		this.MIME_TYPE = new Field("mimeType",java.lang.String.class,"payload",Payload.class);
 		this.IN_BODY = new Field("inBody",java.lang.String.class,"payload",Payload.class);
 		this.SCHEMA_FILE = new Field("schemaFile",java.net.URI.class,"payload",Payload.class);
-		this.MAX_SIZE = new Field("maxSize",java.lang.Integer.class,"payload",Payload.class);
+		this.MAX_SIZE = new Field("maxSize",java.math.BigInteger.class,"payload",Payload.class);
 		this.REQUIRED = new Field("required",boolean.class,"payload",Payload.class);
 	
 	}
@@ -61,7 +61,7 @@ public class PayloadModel extends AbstractModel<Payload> {
 		this.MIME_TYPE = new ComplexField(father,"mimeType",java.lang.String.class,"payload",Payload.class);
 		this.IN_BODY = new ComplexField(father,"inBody",java.lang.String.class,"payload",Payload.class);
 		this.SCHEMA_FILE = new ComplexField(father,"schemaFile",java.net.URI.class,"payload",Payload.class);
-		this.MAX_SIZE = new ComplexField(father,"maxSize",java.lang.Integer.class,"payload",Payload.class);
+		this.MAX_SIZE = new ComplexField(father,"maxSize",java.math.BigInteger.class,"payload",Payload.class);
 		this.REQUIRED = new ComplexField(father,"required",boolean.class,"payload",Payload.class);
 	
 	}

@@ -42,7 +42,7 @@ public class NotificaEsitoCommittenteTypeModel extends AbstractModel<NotificaEsi
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
 		this.RIFERIMENTO_FATTURA = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoFatturaTypeModel(new Field("RiferimentoFattura",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class));
 		this.ESITO = new Field("Esito",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
 		this.DESCRIZIONE = new Field("Descrizione",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
@@ -55,7 +55,7 @@ public class NotificaEsitoCommittenteTypeModel extends AbstractModel<NotificaEsi
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
 		this.RIFERIMENTO_FATTURA = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoFatturaTypeModel(new ComplexField(father,"RiferimentoFattura",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class));
 		this.ESITO = new ComplexField(father,"Esito",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);
 		this.DESCRIZIONE = new ComplexField(father,"Descrizione",java.lang.String.class,"NotificaEsitoCommittente_Type",NotificaEsitoCommittenteType.class);

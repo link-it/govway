@@ -72,19 +72,19 @@ public class RiferimentoFatturaType extends org.openspcoop2.utils.beans.BaseBean
     this.numeroFattura = numeroFattura;
   }
 
-  public java.lang.Integer getAnnoFattura() {
+  public java.math.BigInteger getAnnoFattura() {
     return this.annoFattura;
   }
 
-  public void setAnnoFattura(java.lang.Integer annoFattura) {
+  public void setAnnoFattura(java.math.BigInteger annoFattura) {
     this.annoFattura = annoFattura;
   }
 
-  public java.lang.Integer getPosizioneFattura() {
+  public java.math.BigInteger getPosizioneFattura() {
     return this.posizioneFattura;
   }
 
-  public void setPosizioneFattura(java.lang.Integer posizioneFattura) {
+  public void setPosizioneFattura(java.math.BigInteger posizioneFattura) {
     this.posizioneFattura = posizioneFattura;
   }
 
@@ -99,10 +99,10 @@ public class RiferimentoFatturaType extends org.openspcoop2.utils.beans.BaseBean
 
   @javax.xml.bind.annotation.XmlSchemaType(name="nonNegativeInteger")
   @XmlElement(name="AnnoFattura",required=true,nillable=false)
-  protected java.lang.Integer annoFattura;
+  protected java.math.BigInteger annoFattura;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="positiveInteger")
   @XmlElement(name="PosizioneFattura",required=false,nillable=false)
-  protected java.lang.Integer posizioneFattura;
+  protected java.math.BigInteger posizioneFattura;
 
 }

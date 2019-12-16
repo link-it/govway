@@ -42,7 +42,7 @@ public class RispostaSdIRiceviFileTypeModel extends AbstractModel<RispostaSdIRic
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 		this.DATA_ORA_RICEZIONE = new Field("DataOraRicezione",java.util.Date.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 		this.ERRORE = new Field("Errore",java.lang.String.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 	
@@ -52,7 +52,7 @@ public class RispostaSdIRiceviFileTypeModel extends AbstractModel<RispostaSdIRic
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 		this.DATA_ORA_RICEZIONE = new ComplexField(father,"DataOraRicezione",java.util.Date.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 		this.ERRORE = new ComplexField(father,"Errore",java.lang.String.class,"rispostaSdIRiceviFile_Type",RispostaSdIRiceviFileType.class);
 	

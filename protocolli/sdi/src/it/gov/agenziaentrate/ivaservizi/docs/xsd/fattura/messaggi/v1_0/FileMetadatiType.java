@@ -116,11 +116,11 @@ public class FileMetadatiType extends org.openspcoop2.utils.beans.BaseBean imple
     this.formato = formato;
   }
 
-  public java.lang.Integer getTentativiInvio() {
+  public java.math.BigInteger getTentativiInvio() {
     return this.tentativiInvio;
   }
 
-  public void setTentativiInvio(java.lang.Integer tentativiInvio) {
+  public void setTentativiInvio(java.math.BigInteger tentativiInvio) {
     this.tentativiInvio = tentativiInvio;
   }
 
@@ -186,7 +186,7 @@ public class FileMetadatiType extends org.openspcoop2.utils.beans.BaseBean imple
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlElement(name="TentativiInvio",required=true,nillable=false)
-  protected java.lang.Integer tentativiInvio;
+  protected java.math.BigInteger tentativiInvio;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="MessageId",required=true,nillable=false)

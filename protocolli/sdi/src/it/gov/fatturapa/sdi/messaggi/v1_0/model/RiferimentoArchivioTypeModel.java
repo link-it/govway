@@ -42,7 +42,7 @@ public class RiferimentoArchivioTypeModel extends AbstractModel<RiferimentoArchi
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
 	
 	}
@@ -51,7 +51,7 @@ public class RiferimentoArchivioTypeModel extends AbstractModel<RiferimentoArchi
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"RiferimentoArchivio_Type",RiferimentoArchivioType.class);
 	
 	}

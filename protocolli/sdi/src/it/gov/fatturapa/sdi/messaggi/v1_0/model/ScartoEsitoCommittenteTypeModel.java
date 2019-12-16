@@ -42,7 +42,7 @@ public class ScartoEsitoCommittenteTypeModel extends AbstractModel<ScartoEsitoCo
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
 		this.RIFERIMENTO_FATTURA = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoFatturaTypeModel(new Field("RiferimentoFattura",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class));
 		this.SCARTO = new Field("Scarto",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
 		this.MESSAGE_ID = new Field("MessageId",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
@@ -57,7 +57,7 @@ public class ScartoEsitoCommittenteTypeModel extends AbstractModel<ScartoEsitoCo
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
 		this.RIFERIMENTO_FATTURA = new it.gov.fatturapa.sdi.messaggi.v1_0.model.RiferimentoFatturaTypeModel(new ComplexField(father,"RiferimentoFattura",it.gov.fatturapa.sdi.messaggi.v1_0.RiferimentoFatturaType.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class));
 		this.SCARTO = new ComplexField(father,"Scarto",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);
 		this.MESSAGE_ID = new ComplexField(father,"MessageId",java.lang.String.class,"ScartoEsitoCommittente_Type",ScartoEsitoCommittenteType.class);

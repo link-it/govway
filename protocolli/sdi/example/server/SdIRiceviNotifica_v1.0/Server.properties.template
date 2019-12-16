@@ -14,5 +14,7 @@ endpoint=http://localhost:8888/ricevi_notifica
 esitoNotifica=ES01
 
 # Notifica di Scarto Esito Committente
-notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi/IT01234567890_11111_SE_001.xml
+# Notifica con identificativo SDI maggiore di un integer
+notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi/IT01234567890_41111_SE_001.xml
+#notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi/IT01234567890_11111_SE_001.xml
 #notificaScartoEsitoCommittente=sdiFiles/esempiMessaggi.namespaceSenzaGov/IT01234567890_11111_SE_001.xml

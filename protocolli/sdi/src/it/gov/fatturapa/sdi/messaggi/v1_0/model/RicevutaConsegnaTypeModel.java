@@ -42,7 +42,7 @@ public class RicevutaConsegnaTypeModel extends AbstractModel<RicevutaConsegnaTyp
 	
 		super();
 	
-		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.Integer.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
+		this.IDENTIFICATIVO_SD_I = new Field("IdentificativoSdI",java.lang.String.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.NOME_FILE = new Field("NomeFile",java.lang.String.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.DATA_ORA_RICEZIONE = new Field("DataOraRicezione",java.util.Date.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.DATA_ORA_CONSEGNA = new Field("DataOraConsegna",java.util.Date.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
@@ -60,7 +60,7 @@ public class RicevutaConsegnaTypeModel extends AbstractModel<RicevutaConsegnaTyp
 	
 		super(father);
 	
-		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.Integer.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
+		this.IDENTIFICATIVO_SD_I = new ComplexField(father,"IdentificativoSdI",java.lang.String.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.NOME_FILE = new ComplexField(father,"NomeFile",java.lang.String.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.DATA_ORA_RICEZIONE = new ComplexField(father,"DataOraRicezione",java.util.Date.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);
 		this.DATA_ORA_CONSEGNA = new ComplexField(father,"DataOraConsegna",java.util.Date.class,"RicevutaConsegna_Type",RicevutaConsegnaType.class);

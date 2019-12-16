@@ -42,7 +42,7 @@ public class DatiDocumentiCorrelatiTypeModel extends AbstractModel<DatiDocumenti
 	
 		super();
 	
-		this.RIFERIMENTO_NUMERO_LINEA = new Field("RiferimentoNumeroLinea",java.lang.Integer.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
+		this.RIFERIMENTO_NUMERO_LINEA = new Field("RiferimentoNumeroLinea",java.math.BigInteger.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.ID_DOCUMENTO = new Field("IdDocumento",java.lang.String.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.DATA = new Field("Data",java.util.Date.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.NUM_ITEM = new Field("NumItem",java.lang.String.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
@@ -56,7 +56,7 @@ public class DatiDocumentiCorrelatiTypeModel extends AbstractModel<DatiDocumenti
 	
 		super(father);
 	
-		this.RIFERIMENTO_NUMERO_LINEA = new ComplexField(father,"RiferimentoNumeroLinea",java.lang.Integer.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
+		this.RIFERIMENTO_NUMERO_LINEA = new ComplexField(father,"RiferimentoNumeroLinea",java.math.BigInteger.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.ID_DOCUMENTO = new ComplexField(father,"IdDocumento",java.lang.String.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.DATA = new ComplexField(father,"Data",java.util.Date.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);
 		this.NUM_ITEM = new ComplexField(father,"NumItem",java.lang.String.class,"DatiDocumentiCorrelatiType",DatiDocumentiCorrelatiType.class);

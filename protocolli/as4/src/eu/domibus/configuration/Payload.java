@@ -100,11 +100,11 @@ public class Payload extends org.openspcoop2.utils.beans.BaseBean implements Ser
     this.schemaFile = schemaFile;
   }
 
-  public java.lang.Integer getMaxSize() {
+  public java.math.BigInteger getMaxSize() {
     return this.maxSize;
   }
 
-  public void setMaxSize(java.lang.Integer maxSize) {
+  public void setMaxSize(java.math.BigInteger maxSize) {
     this.maxSize = maxSize;
   }
 
@@ -146,7 +146,7 @@ public class Payload extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="maxSize",required=false)
-  protected java.lang.Integer maxSize;
+  protected java.math.BigInteger maxSize;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="required",required=true)

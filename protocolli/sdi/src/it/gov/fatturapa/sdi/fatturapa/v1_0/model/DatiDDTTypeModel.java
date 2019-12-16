@@ -44,7 +44,7 @@ public class DatiDDTTypeModel extends AbstractModel<DatiDDTType> {
 	
 		this.NUMERO_DDT = new Field("NumeroDDT",java.lang.String.class,"DatiDDTType",DatiDDTType.class);
 		this.DATA_DDT = new Field("DataDDT",java.util.Date.class,"DatiDDTType",DatiDDTType.class);
-		this.RIFERIMENTO_NUMERO_LINEA = new Field("RiferimentoNumeroLinea",java.lang.Integer.class,"DatiDDTType",DatiDDTType.class);
+		this.RIFERIMENTO_NUMERO_LINEA = new Field("RiferimentoNumeroLinea",java.math.BigInteger.class,"DatiDDTType",DatiDDTType.class);
 	
 	}
 	
@@ -54,7 +54,7 @@ public class DatiDDTTypeModel extends AbstractModel<DatiDDTType> {
 	
 		this.NUMERO_DDT = new ComplexField(father,"NumeroDDT",java.lang.String.class,"DatiDDTType",DatiDDTType.class);
 		this.DATA_DDT = new ComplexField(father,"DataDDT",java.util.Date.class,"DatiDDTType",DatiDDTType.class);
-		this.RIFERIMENTO_NUMERO_LINEA = new ComplexField(father,"RiferimentoNumeroLinea",java.lang.Integer.class,"DatiDDTType",DatiDDTType.class);
+		this.RIFERIMENTO_NUMERO_LINEA = new ComplexField(father,"RiferimentoNumeroLinea",java.math.BigInteger.class,"DatiDDTType",DatiDDTType.class);
 	
 	}
 	

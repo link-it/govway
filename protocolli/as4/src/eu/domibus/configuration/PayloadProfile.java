@@ -97,11 +97,11 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
     this.name = name;
   }
 
-  public java.lang.Integer getMaxSize() {
+  public java.math.BigInteger getMaxSize() {
     return this.maxSize;
   }
 
-  public void setMaxSize(java.lang.Integer maxSize) {
+  public void setMaxSize(java.math.BigInteger maxSize) {
     this.maxSize = maxSize;
   }
 
@@ -145,6 +145,6 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @javax.xml.bind.annotation.XmlSchemaType(name="integer")
   @XmlAttribute(name="maxSize",required=true)
-  protected java.lang.Integer maxSize;
+  protected java.math.BigInteger maxSize;
 
 }

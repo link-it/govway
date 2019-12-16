@@ -8,7 +8,7 @@ mtom=true
 endpoint=http://localhost:8888/ricevi_file
 
 # Identificativo SDI
-identificativoSDI=111
+identificativoSDI=932147483647
 
 # [Opzionale] Errore
 # EI01 = FILE VUOTO

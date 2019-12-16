@@ -279,7 +279,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 	private byte[] imbustamentoSDI(Busta busta,byte[]xml,byte[]metadati) throws SerializerException{
 		it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.ObjectFactory of = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.ObjectFactory();
 		it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.FileSdIConMetadatiType sdi = new it.gov.fatturapa.sdi.ws.ricezione.v1_0.types.FileSdIConMetadatiType();
-		sdi.setIdentificativoSdI(Integer.parseInt(busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI)));
+		sdi.setIdentificativoSdI(busta.getProperty(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI));
 		sdi.setNomeFile(busta.getProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE));
 		sdi.setFile(xml);
 		sdi.setNomeFileMetadati(busta.getProperty(SDICostanti.SDI_BUSTA_EXT_NOME_FILE_METADATI));

@@ -194,29 +194,29 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
     return this.scontoMaggiorazione.size();
   }
 
-  public java.lang.Double getImportoTotaleDocumento() {
+  public java.math.BigDecimal getImportoTotaleDocumento() {
     if(this._decimalWrapper_importoTotaleDocumento!=null){
-		return (java.lang.Double) this._decimalWrapper_importoTotaleDocumento.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_importoTotaleDocumento.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.importoTotaleDocumento;
 	}
   }
 
-  public void setImportoTotaleDocumento(java.lang.Double importoTotaleDocumento) {
+  public void setImportoTotaleDocumento(java.math.BigDecimal importoTotaleDocumento) {
     if(importoTotaleDocumento!=null){
 		this._decimalWrapper_importoTotaleDocumento = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,importoTotaleDocumento);
 	}
   }
 
-  public java.lang.Double getArrotondamento() {
+  public java.math.BigDecimal getArrotondamento() {
     if(this._decimalWrapper_arrotondamento!=null){
-		return (java.lang.Double) this._decimalWrapper_arrotondamento.getObject(java.lang.Double.class);
+		return (java.math.BigDecimal) this._decimalWrapper_arrotondamento.getObject(java.math.BigDecimal.class);
 	}else{
 		return this.arrotondamento;
 	}
   }
 
-  public void setArrotondamento(java.lang.Double arrotondamento) {
+  public void setArrotondamento(java.math.BigDecimal arrotondamento) {
     if(arrotondamento!=null){
 		this._decimalWrapper_arrotondamento = new org.openspcoop2.utils.jaxb.DecimalWrapper(1,11,2,2,arrotondamento);
 	}
@@ -346,7 +346,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_importoTotaleDocumento = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double importoTotaleDocumento;
+  protected java.math.BigDecimal importoTotaleDocumento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(org.openspcoop2.utils.jaxb.Decimal2String.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="decimal")
@@ -354,7 +354,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
   org.openspcoop2.utils.jaxb.DecimalWrapper _decimalWrapper_arrotondamento = null;
 
   @javax.xml.bind.annotation.XmlTransient
-  protected java.lang.Double arrotondamento;
+  protected java.math.BigDecimal arrotondamento;
 
   @javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter(javax.xml.bind.annotation.adapters.NormalizedStringAdapter.class)
   @javax.xml.bind.annotation.XmlSchemaType(name="normalizedString")

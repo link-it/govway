@@ -99,10 +99,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativa }
+     */
+    public PortaApplicativa createPortaApplicativa() {
+        return new PortaApplicativa();
+    }
+
+    /**
      * Create an instance of {@link RequisitoInput }
      */
     public RequisitoInput createRequisitoInput() {
         return new RequisitoInput();
+    }
+
+    /**
+     * Create an instance of {@link ReplaceFruitoreMatchType }
+     */
+    public ReplaceFruitoreMatchType createReplaceFruitoreMatchType() {
+        return new ReplaceFruitoreMatchType();
     }
 
     /**
@@ -124,6 +138,13 @@ public class ObjectFactory {
      */
     public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
         return new AccordoServizioParteSpecifica();
+    }
+
+    /**
+     * Create an instance of {@link PortaDelegata }
+     */
+    public PortaDelegata createPortaDelegata() {
+        return new PortaDelegata();
     }
 
     /**
@@ -217,17 +238,17 @@ public class ObjectFactory {
         return new Openspcoop2();
     }
 
-    private final static QName _Footer = new QName("http://www.openspcoop2.org/protocol/information_missing", "footer");
+    private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link AccordoServizioParteComune }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="footer")
-    public JAXBElement<Description> createFooter() {
-        return new JAXBElement<Description>(_Footer, Description.class, null, this.createDescription());
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="accordo-servizio-composto")
+    public JAXBElement<AccordoServizioParteComune> createAccordoServizioComposto() {
+        return new JAXBElement<AccordoServizioParteComune>(_AccordoServizioComposto, AccordoServizioParteComune.class, null, this.createAccordoServizioParteComune());
     }
-    public JAXBElement<Description> createFooter(Description footer) {
-        return new JAXBElement<Description>(_Footer, Description.class, null, footer);
+    public JAXBElement<AccordoServizioParteComune> createAccordoServizioComposto(AccordoServizioParteComune accordoServizioComposto) {
+        return new JAXBElement<AccordoServizioParteComune>(_AccordoServizioComposto, AccordoServizioParteComune.class, null, accordoServizioComposto);
     }
 
     private final static QName _Header = new QName("http://www.openspcoop2.org/protocol/information_missing", "header");
@@ -243,17 +264,17 @@ public class ObjectFactory {
         return new JAXBElement<Description>(_Header, Description.class, null, header);
     }
 
-    private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");
+    private final static QName _Footer = new QName("http://www.openspcoop2.org/protocol/information_missing", "footer");
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AccordoServizioParteComune }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Description }{@code >}}
      */
-    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="accordo-servizio-composto")
-    public JAXBElement<AccordoServizioParteComune> createAccordoServizioComposto() {
-        return new JAXBElement<AccordoServizioParteComune>(_AccordoServizioComposto, AccordoServizioParteComune.class, null, this.createAccordoServizioParteComune());
+    @XmlElementDecl(namespace = "http://www.openspcoop2.org/protocol/information_missing", name="footer")
+    public JAXBElement<Description> createFooter() {
+        return new JAXBElement<Description>(_Footer, Description.class, null, this.createDescription());
     }
-    public JAXBElement<AccordoServizioParteComune> createAccordoServizioComposto(AccordoServizioParteComune accordoServizioComposto) {
-        return new JAXBElement<AccordoServizioParteComune>(_AccordoServizioComposto, AccordoServizioParteComune.class, null, accordoServizioComposto);
+    public JAXBElement<Description> createFooter(Description footer) {
+        return new JAXBElement<Description>(_Footer, Description.class, null, footer);
     }
 
 
