@@ -255,18 +255,18 @@
 	ifProperty="${antinstaller_modalita_installazione}==nuova">
 
 		<validated defaultValue="amministratore" property="antinstaller_pddconsole_username" displayText="Username Amministratore (govwayConsole)" regex="^[0-9A-Za-z]+$"/>
-		<validated property="antinstaller_pddconsole_password" displayText="Password Amministratore" regex="^[^ ]+$" />
+		<validated property="antinstaller_pddconsole_password" displayText="Password Amministratore" regex="^[^ &amp;]+$" />
 
 		<comment displayText=""/>	
 		
 		<validated defaultValue="operatore" property="antinstaller_pddmonitor_username" displayText="Username Operatore (govwayMonitor)" regex="^[0-9A-Za-z]+$"/>
-		<validated property="antinstaller_pddmonitor_password" displayText="Password Operatore" regex="^[^ ]+$" />
+		<validated property="antinstaller_pddmonitor_password" displayText="Password Operatore" regex="^[^ &amp;]+$" />
 
 		<comment displayText=""/>	
 
 		<comment displayText="Raccomandazioni sulla password sono indicate di seguito:" bold="true"/>
-		<comment displayText="- differente dall'username"/>
-		<comment displayText="- contenga almeno 8 caratteri"/>
+		<comment displayText="- non deve contenere spazi e/o il carattere '&amp;'"/>
+		<comment displayText="- differente dall'username e contenga almeno 8 caratteri"/>
 		<comment displayText="- contenga almeno un carattere alfabetico, un numero ed un simbolo non alfanumerico"/>
 
     </page>
