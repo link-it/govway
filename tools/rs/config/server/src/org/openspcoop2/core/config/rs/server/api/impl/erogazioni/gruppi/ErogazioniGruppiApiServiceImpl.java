@@ -467,7 +467,10 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 				throw FaultCode.NOT_FOUND.toException("Nessuna porta associata al servizio: " + idAsps.toString());
 			}
 			
-			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
+			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaGruppi.class);
 			
 			for (MappingErogazionePortaApplicativa m : mappings) {
 				final PortaApplicativa pd = env.paCore.getPortaApplicativa(m.getIdPortaApplicativa());

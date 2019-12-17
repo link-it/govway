@@ -31,6 +31,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.slf4j.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 /**	
@@ -82,6 +83,21 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
             	problem = new ProblemValidation(FaultCode.RICHIESTA_NON_VALIDA.toFault());
             	((ProblemValidation) problem).addInvalidParam(jsonMappingException.getPathReference(), jsonMappingException.getMessage(), null);
             } 
+            else if(e.getCause() instanceof JsonParseException) {
+            	JsonParseException jsonParseException = (JsonParseException) e.getCause();
+            	problem = new ProblemValidation(FaultCode.RICHIESTA_NON_VALIDA.toFault());
+            	if(jsonParseException.getOriginalMessage()!=null) {
+            		((ProblemValidation) problem).addInvalidParam("body", jsonParseException.getOriginalMessage(), null);
+            	}
+            	else {
+            		((ProblemValidation) problem).addInvalidParam("body", jsonParseException.getMessage(), null);
+            	}
+            	if(jsonParseException.getLocation()!=null) {
+            		StringBuffer bf = new StringBuffer();
+            		bf.append("line: ").append(jsonParseException.getLocation().getLineNr()).append(", column: ").append(jsonParseException.getLocation().getColumnNr());
+            		((ProblemValidation) problem).addInvalidParam("position", bf.toString(), null);
+            	}
+            }
             else {
             	problem = FaultCode.RICHIESTA_NON_VALIDA.toFault();
             }

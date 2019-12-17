@@ -128,7 +128,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				eventiService.setSearch(search);	
 				List<EventoBean> listEventiDB = eventiService.findAll(Converter.toOffset(offset), Converter.toLimit(limit));
 				ListaEventi ret = ListaUtils.costruisciLista(
-						context.getServletRequest().getRequestURI(),
+						context.getUriInfo(),
 						Converter.toOffset(offset), Converter.toLimit(limit), 
 						listEventiDB!=null ? listEventiDB.size() : 0, 
 								ListaEventi.class

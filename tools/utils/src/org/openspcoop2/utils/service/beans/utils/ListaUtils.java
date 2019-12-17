@@ -22,7 +22,11 @@
 
 package org.openspcoop2.utils.service.beans.utils;
 
+import java.util.Iterator;
+import java.util.List;
+
 import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
@@ -37,52 +41,156 @@ import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
  */
 public class ListaUtils {
 
+	
+	
+	public static final Lista costruisciListaPaginata(UriInfo uriInfo, Integer offset, Integer limit, long total) throws InstantiationException, IllegalAccessException {
+		return costruisciListaPaginata(uriInfo, offset, limit, total, Lista.class);
+	}
 	public static final Lista costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total) throws InstantiationException, IllegalAccessException {
 		return costruisciListaPaginata(requestURI, offset, limit, total, Lista.class);
+	}
+	
+	public static final <T extends Lista> T costruisciListaPaginata(UriInfo uriInfo, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
+		return costruisciListaPaginata(getUrl(uriInfo), offset, limit, total, lclass);
 	}
 	public static final <T extends Lista> T costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
 		T l = lclass.newInstance();
 		
-		l = costruisciLista(requestURI, offset, limit, total, lclass);
+		if (total < 0)
+			throw new IllegalArgumentException("Il numero totale di elementi deve essere positivo");
 		
-		if (offset == null || offset < 0) offset = 0;
-		if (limit == null || limit <= 0 ) limit = Integer.MAX_VALUE;
+		l = _costruisciLista(requestURI, offset, limit, total, -1, lclass);
 		
-		if (limit < total - offset) {
-			l.setLast(UriBuilder.fromUri(requestURI).queryParam("offset", (total / limit) * limit).build().toString());
-		}		
+		int realOffset = (offset == null || offset < 0) ? 0 : offset;
+		int realLimit  = (limit == null || limit <= 0 ) ? -1 : limit;
+		
+		if(realLimit>0) {
+		
+			long numeroPagineTotali = (total / realLimit);
+			long resto = (total % realLimit);
+			if(resto>0) {
+				numeroPagineTotali++;
+			}
+			int paginaCorrente = (realOffset / realLimit) +1;
+			
+			if (paginaCorrente<numeroPagineTotali)
+			{
+				long lastOffset = (numeroPagineTotali-1)*realLimit;
+				if (limit == null)
+					l.setLast(UriBuilder.fromUri(requestURI).queryParam("offset", lastOffset).build().toString());
+				else
+					l.setLast(UriBuilder.fromUri(requestURI).queryParam("offset", lastOffset).queryParam("limit", limit).build().toString());
+			}		
+			
+		}
 		        
 		l.setTotal(total);
 		
 		return l;
 	}
 	
-	public static final ListaSenzaTotale costruisciLista(String requestURI, Integer offset, Integer limit, long total) throws InstantiationException, IllegalAccessException {
-		return costruisciLista(requestURI, offset, limit, total, ListaSenzaTotale.class);
+	
+	public static final ListaSenzaTotale costruisciLista(UriInfo uriInfo, Integer offset, Integer limit, long pageCurrentSize) throws InstantiationException, IllegalAccessException {
+		return costruisciLista(getUrl(uriInfo), offset, limit, pageCurrentSize, ListaSenzaTotale.class);
 	}
-	public static final <T extends ListaSenzaTotale> T costruisciLista(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
+	public static final ListaSenzaTotale costruisciLista(String requestURI, Integer offset, Integer limit, long pageCurrentSize) throws InstantiationException, IllegalAccessException {
+		return costruisciLista(requestURI, offset, limit, pageCurrentSize, ListaSenzaTotale.class);
+	}
+	
+	public static final <T extends ListaSenzaTotale> T costruisciLista(UriInfo uriInfo, Integer offset, Integer limit, long pageCurrentSize, Class<T> lclass) throws InstantiationException, IllegalAccessException {
+		return costruisciLista(getUrl(uriInfo), offset, limit, pageCurrentSize, lclass);
+	}
+	public static final <T extends ListaSenzaTotale> T costruisciLista(String requestURI, Integer offset, Integer limit, long pageCurrentSize, Class<T> lclass) throws InstantiationException, IllegalAccessException {
+		return _costruisciLista(requestURI, offset, limit, null, pageCurrentSize, lclass);
+	}
+	
+	
+
+	
+	private static final <T extends ListaSenzaTotale> T _costruisciLista(String requestURI, Integer offset, Integer limit, Long total, long pageCurrentSize, Class<T> lclass) throws InstantiationException, IllegalAccessException {
 		T l = lclass.newInstance();
+	
+		int realOffset = (offset == null || offset < 0) ? 0 : offset;
+		int realLimit  = (limit == null || limit <= 0 ) ? -1 : limit;
 		
-		if (total < 0)
-			throw new IllegalArgumentException("Il numero totale di elementi deve essere positivo");
-		
-		if (offset == null || offset < 0) offset = 0;
-		if (limit == null || limit <= 0 ) limit = Integer.MAX_VALUE;
-		
-		if(offset > 0)
-			l.setFirst(UriBuilder.fromUri(requestURI).queryParam("offset", 0).build().toString());
-		
-		if(offset > limit)
-        	l.setPrev(UriBuilder.fromUri(requestURI).queryParam("offset", offset - limit).build().toString());
-		
-		if (limit < total - offset) {
-			l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", offset + limit).build().toString());
-		}		
-		        
-        l.setOffset(offset.longValue());
-        l.setLimit(limit == Integer.MAX_VALUE ? 0 : limit);
+		if(realLimit>0) {
+			int paginaCorrente = (realOffset / realLimit) +1;
+					
+			if(paginaCorrente>1)
+			{
+				if (limit == null || limit<=0)
+					l.setFirst(UriBuilder.fromUri(requestURI).queryParam("offset", 0).build().toString());
+				else
+					l.setFirst(UriBuilder.fromUri(requestURI).queryParam("offset", 0).queryParam("limit", limit).build().toString());
+			}
+			
+			
+			if(paginaCorrente>1)
+			{
+				if (limit == null || limit<=0)
+					l.setPrev(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset - realLimit).build().toString());
+				else
+					l.setPrev(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset - realLimit).queryParam("limit", limit).build().toString());
+			}
+			
+			if(total!=null && total>0) {
+			
+				long numeroPagineTotali = (total.longValue() / realLimit);
+				long resto = (total.longValue() % realLimit);
+				if(resto>0) {
+					numeroPagineTotali++;
+				}
+				
+				if (paginaCorrente<numeroPagineTotali)
+				{
+					if (limit == null || limit<=0)
+						l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset + realLimit).build().toString());
+					else
+						l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset + realLimit).queryParam("limit", limit).build().toString());
+				}		
+			}
+			else {
+				
+				if(pageCurrentSize>=realLimit) {
+					if (limit == null || limit<=0)
+						l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset + realLimit).build().toString());
+					else
+						l.setNext(UriBuilder.fromUri(requestURI).queryParam("offset", realOffset + realLimit).queryParam("limit", limit).build().toString());
+				}
+				
+			}
+			
+			l.setLimit(realLimit);
+	        l.setOffset(Long.valueOf(realOffset));
+		}	        
 		
 		return l;
 	}
 	
+	private static String getUrl(UriInfo uriInfo) {
+		StringBuilder sb = new StringBuilder();
+		String path = uriInfo.getPath();
+		if(path.startsWith("/")==false) {
+			sb.append("/");
+		}
+		sb.append(path);
+		UriBuilder urlBuilder = UriBuilder.fromUri(sb.toString());
+		if(uriInfo.getQueryParameters()!=null && !uriInfo.getQueryParameters().isEmpty()) {
+			Iterator<String> it = uriInfo.getQueryParameters().keySet().iterator();
+			while (it.hasNext()) {
+				String nome = (String) it.next();
+				if("offset".equalsIgnoreCase(nome) || "limit".equalsIgnoreCase(nome)) {
+					continue;
+				}
+				List<String> values = uriInfo.getQueryParameters().get(nome);
+				if(values!=null && !values.isEmpty()) {
+					for (String value : values) {
+						urlBuilder.queryParam(nome, value);						
+					}
+				}
+			}
+		}
+		return urlBuilder.build().toString();
+	}
+
 }

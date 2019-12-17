@@ -358,8 +358,10 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				throw FaultCode.NOT_FOUND.toException("Nessuna erogazione presente");
 			}
 
-			final ListaErogazioni ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(),
-					offset, limit, ricerca.getNumEntries(idLista), ListaErogazioni.class);
+			final ListaErogazioni ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaErogazioni.class);
 
 			lista.forEach(asps -> {
 				ret.addItemsItem(ErogazioniApiHelper
@@ -400,7 +402,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			final AccordoServizioParteSpecifica asps = BaseHelper.supplyOrNotFound(() -> ErogazioniApiHelper
 					.getServizioIfErogazione(tipoServizio, nome, versione, env.idSoggetto.toIDSoggetto(), env), "Erogazione");
 			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset,
-					context.getServletRequest().getRequestURI(), env, asps);
+					context.getUriInfo(), env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;

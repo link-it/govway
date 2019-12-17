@@ -230,9 +230,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto corrisponde ai criteri di ricerca specificati");
 			
 			final ListaSoggetti ret = ListaUtils.costruisciListaPaginata(
-					context.getServletRequest().getRequestURI(),
-					offset, 
-					limit, 
+					context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
 					ricerca.getNumEntries(idLista), 
 					ListaSoggetti.class
 				); 

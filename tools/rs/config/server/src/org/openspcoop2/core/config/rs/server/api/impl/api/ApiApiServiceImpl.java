@@ -917,8 +917,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			final String tipoAccordo = "apc"; // Dal debug.
 			final List<AccordoServizioParteComuneSintetico> lista = AccordiServizioParteComuneUtilities
 					.accordiList(env.apcCore, env.userLogin, ricerca, tipoAccordo);
-			final ListaApi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset,
-					limit, ricerca.getNumEntries(idLista), ListaApi.class);
+			
+			final ListaApi ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaApi.class);
 
 			if (env.findall_404 && lista.isEmpty())
 				throw FaultCode.NOT_FOUND.toException("Nessuna Api corrisponde ai criteri di ricerca");
@@ -970,8 +973,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (docsRegistro.size() == 0 && env.findall_404)
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");
 
-			final ListaApiAllegati ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(),
-					offset, limit, ricerca.getNumEntries(idLista), ListaApiAllegati.class);
+			final ListaApiAllegati ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaApiAllegati.class);
 			docsRegistro.forEach(d -> ret.addItemsItem(ApiApiHelper.documentoToApiAllegatoItem(d)));
 
 			context.getLogger().info("Invocazione completata con successo");
@@ -1026,8 +1031,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (azioniServizio.size() == 0 && env.findall_404)
 				throw FaultCode.NOT_FOUND.toException("Nessua azione dell'Api specificata corrisponde ai criteri di ricerca");
 
-			final ListaApiAzioni ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset,
-					limit, ricerca.getNumEntries(idLista), ListaApiAzioni.class);
+			final ListaApiAzioni ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaApiAzioni.class);
 
 			azioniServizio.forEach(op -> ret.addItemsItem(ApiApiHelper.operazioneToApiAzione(op)));
 
@@ -1074,8 +1081,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (httpMethod != null)
 				ricerca.addFilter(idLista, Filtri.FILTRO_HTTP_METHOD, httpMethod.toString());
 
-			final ListaApiRisorse ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(),
-					offset, limit, ricerca.getNumEntries(idLista), ListaApiRisorse.class);
+			final ListaApiRisorse ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaApiRisorse.class);
 			List<Resource> risorse = env.apcCore.accordiResourceList(as.getId().intValue(), ricerca);
 
 			if (risorse.size() == 0 && env.findall_404)
@@ -1125,8 +1134,10 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			List<PortType> servizi = env.apcCore.accordiPorttypeList(as.getId().intValue(), ricerca);
 
-			final ListaApiServizi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(),
-					offset, limit, ricerca.getNumEntries(idLista), ListaApiServizi.class);
+			final ListaApiServizi ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaApiServizi.class);
 
 			if (servizi.size() == 0 && env.findall_404)
 				throw FaultCode.NOT_FOUND.toException("Nessun allegato dell'Api specificata corrisponde ai criteri di ricerca");

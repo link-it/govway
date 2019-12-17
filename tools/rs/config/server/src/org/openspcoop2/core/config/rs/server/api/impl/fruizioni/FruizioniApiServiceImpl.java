@@ -383,8 +383,10 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 				throw FaultCode.NOT_FOUND.toException("Nessuna fruizione presente nel registro");
 			}
 
-			final ListaFruizioni ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset,
-					limit, ricerca.getNumEntries(idLista), ListaFruizioni.class);
+			final ListaFruizioni ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaFruizioni.class);
 
 			// Prendo le fruizioni una ad una dagli asps
 			lista.forEach(asps -> {
@@ -447,7 +449,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 					"Fruizione");
 
 			ListaApiImplAllegati ret = ErogazioniApiHelper.findAllAllegati(q, limit, offset,
-					context.getServletRequest().getRequestURI(), env, asps);
+					context.getUriInfo(), env, asps);
 
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;

@@ -186,9 +186,9 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			}
 		
 			final ListaScope ret = ListaUtils.costruisciListaPaginata(
-					context.getServletRequest().getRequestURI(),
-					offset, 
-					limit, 
+					context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
 					ricerca.getNumEntries(idLista), 
 					ListaScope.class
 				); 

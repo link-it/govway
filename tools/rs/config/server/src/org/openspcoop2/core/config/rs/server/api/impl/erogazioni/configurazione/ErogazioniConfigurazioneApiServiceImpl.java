@@ -1077,7 +1077,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaRateLimitingPolicy ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaRateLimitingPolicy.class);
+			ListaRateLimitingPolicy ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaRateLimitingPolicy.class);
 			
 			policies.forEach( p -> {
 				RateLimitingPolicyItem item = new RateLimitingPolicyItem();
@@ -1126,7 +1129,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaCorrelazioneApplicativaRichiesta ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRichiesta.class);
+			ListaCorrelazioneApplicativaRichiesta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRichiesta.class);
 			
 			lista.forEach( c -> {
 				CorrelazioneApplicativaRichiestaItem item = new CorrelazioneApplicativaRichiestaItem();
@@ -1180,7 +1186,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.NOT_FOUND.toException("Nessuna policy di rate limiting associata");
 			}
 			
-			ListaCorrelazioneApplicativaRisposta ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRisposta.class);
+			ListaCorrelazioneApplicativaRisposta ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaCorrelazioneApplicativaRisposta.class);
 			
 			lista.forEach( c -> {
 				CorrelazioneApplicativaRispostaItem item = new CorrelazioneApplicativaRispostaItem();

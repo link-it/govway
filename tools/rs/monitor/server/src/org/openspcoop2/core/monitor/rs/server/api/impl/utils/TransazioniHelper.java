@@ -360,7 +360,7 @@ public class TransazioniHelper {
 				}
 			}
 			
-			ListaTransazioni ret = ListaUtils.costruisciLista(env.context.getServletRequest().getRequestURI(),
+			ListaTransazioni ret = ListaUtils.costruisciLista(env.context.getUriInfo(),
 					Converter.toOffset(offset), Converter.toLimit(limit),
 					listTransazioniDB != null ? listTransazioniDB.size() : 0, ListaTransazioni.class);
 

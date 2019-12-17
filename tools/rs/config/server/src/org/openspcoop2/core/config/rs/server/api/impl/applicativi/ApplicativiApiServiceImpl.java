@@ -226,9 +226,9 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			List<ServizioApplicativo> saLista = env.saCore.soggettiServizioApplicativoList(null, ricerca);
 			
 			final ListaApplicativi ret = ListaUtils.costruisciListaPaginata(
-					context.getServletRequest().getRequestURI(),
-					offset, 
-					limit, 
+					context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
 					ricerca.getNumEntries(idLista), 
 					ListaApplicativi.class
 				); 

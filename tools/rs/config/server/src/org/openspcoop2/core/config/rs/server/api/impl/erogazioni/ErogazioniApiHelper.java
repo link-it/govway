@@ -34,6 +34,8 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import javax.ws.rs.core.UriInfo;
+
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.commons.CoreException;
@@ -2584,7 +2586,7 @@ public class ErogazioniApiHelper {
 
 
 
-	public static final ListaApiImplAllegati findAllAllegati(String q, Integer limit, Integer offset, String requestURI,
+	public static final ListaApiImplAllegati findAllAllegati(String q, Integer limit, Integer offset, UriInfo uriInfo,
 			final ErogazioniEnv env, final AccordoServizioParteSpecifica asps)
 			throws DriverRegistroServiziException, InstantiationException, IllegalAccessException, CoreException {
 		int idLista = Liste.SERVIZI_ALLEGATI;
@@ -2597,9 +2599,9 @@ public class ErogazioniApiHelper {
 		}
 		
 		ListaApiImplAllegati ret = ListaUtils.costruisciListaPaginata(
-				requestURI,
-				offset, 
-				limit, 
+				uriInfo,
+				ricerca.getIndexIniziale(idLista),
+				ricerca.getPageSize(idLista), 
 				ricerca.getNumEntries(idLista), 
 				ListaApiImplAllegati.class
 			);

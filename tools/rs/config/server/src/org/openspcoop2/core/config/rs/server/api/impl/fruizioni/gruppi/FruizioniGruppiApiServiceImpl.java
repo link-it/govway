@@ -482,7 +482,10 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 				throw FaultCode.NOT_FOUND.toException("Nessun gruppo associato alla fruizione");
 			}
 			
-			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(), offset, limit, ricerca.getNumEntries(idLista), ListaGruppi.class);
+			ListaGruppi ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(), 
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
+					ricerca.getNumEntries(idLista), ListaGruppi.class);
 			
 			for (MappingFruizionePortaDelegata m : mappings) {
 				final PortaDelegata pd = env.pdCore.getPortaDelegata(m.getIdPortaDelegata());

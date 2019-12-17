@@ -247,7 +247,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 				configurazioniService.setSearch(search);
 				List<ConfigurazioneGenerale> listDB = configurazioniService.findAll(Converter.toOffset(offset),
 						Converter.toLimit(limit));
-				ListaRiepilogoApi ret = ListaUtils.costruisciListaPaginata(context.getServletRequest().getRequestURI(),
+				ListaRiepilogoApi ret = ListaUtils.costruisciListaPaginata(context.getUriInfo(),
 						Converter.toOffset(offset), Converter.toLimit(limit), listDB != null ? listDB.size() : 0,
 						ListaRiepilogoApi.class);
 

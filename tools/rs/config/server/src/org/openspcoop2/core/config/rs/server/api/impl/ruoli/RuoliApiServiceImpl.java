@@ -203,9 +203,9 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			}
 			
 			final ListaRuoli ret = ListaUtils.costruisciListaPaginata(
-					context.getServletRequest().getRequestURI(),
-					offset, 
-					limit, 
+					context.getUriInfo(),
+					ricerca.getIndexIniziale(idLista),
+					ricerca.getPageSize(idLista), 
 					ricerca.getNumEntries(idLista), 
 					ListaRuoli.class
 				); 
