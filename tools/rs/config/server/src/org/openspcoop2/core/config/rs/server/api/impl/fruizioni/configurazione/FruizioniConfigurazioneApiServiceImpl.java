@@ -1148,9 +1148,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				
 				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(p.getNome())).findAny();
 				if (prop.isPresent() && prop.get().getValore().equals(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE))
-					config.setForward(true);
-				else
 					config.setForward(false);
+				else
+					config.setForward(true);
 				autRet.setConfigurazione(config);
 				break;
 			}
@@ -1212,9 +1212,9 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				// IsForward
 				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(p.getNome())).findAny();
 				if (prop.isPresent() && ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(prop.get().getValore()))
-					config.setForward(true);
-				else
 					config.setForward(false);
+				else
+					config.setForward(true);
 				
 				autRet.setConfigurazione(config);
 				break;

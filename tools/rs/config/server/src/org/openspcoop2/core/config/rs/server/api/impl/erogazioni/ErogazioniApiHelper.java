@@ -645,7 +645,12 @@ public class ErogazioniApiHelper {
 		if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
 			APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
 			try {
-				authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+				
+				if(config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
+					authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
+				} else {
+					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+				}
 				return Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
 			} catch (Exception e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
@@ -661,7 +666,12 @@ public class ErogazioniApiHelper {
 				APIImplAutenticazioneConfigurazioneBasic authConfig = null;
 				
 				try {
-					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazioneBasic.class);
+					if(config instanceof APIImplAutenticazioneConfigurazioneBasic) {
+						authConfig = (APIImplAutenticazioneConfigurazioneBasic) config;
+					}
+					else {
+						authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazioneBasic.class);
+					}
 				} catch (Exception e) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage());
 				}
@@ -670,10 +680,10 @@ public class ErogazioniApiHelper {
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION);
         			if(authConfig.isForward()) {	
-        				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_TRUE);
+        				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_FALSE);
         			}
         			else {
-        				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_FALSE);
+        				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_TRUE);
         			}
         			listConfig.add(propertyAutenticazione);
         		}
@@ -689,7 +699,11 @@ public class ErogazioniApiHelper {
         		APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
         		
         		try {
-					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+    				if(config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
+    					authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
+    				} else {
+    					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
+    				}
 				} catch (Exception e) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
 				}
@@ -775,13 +789,14 @@ public class ErogazioniApiHelper {
 				}
         		
         		if(authConfig.isForward()!=null) {
+        			
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL);
         			if(authConfig.isForward()) {
-        				propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE);
+        				propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_FALSE);
         			}
         			else {
-        				propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_FALSE);
+        				propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE);
         			}
         			listConfig.add(propertyAutenticazione);
         		}

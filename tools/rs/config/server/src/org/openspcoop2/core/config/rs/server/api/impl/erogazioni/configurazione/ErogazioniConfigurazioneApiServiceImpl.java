@@ -1282,9 +1282,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				
 				Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(p.getNome())).findAny();
 				if (prop.isPresent() && prop.get().getValore().equals(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE))
-					config.setForward(true);
-				else
 					config.setForward(false);
+				else
+					config.setForward(true);
 				autRet.setConfigurazione(config);
 				break;
 			}
@@ -1346,9 +1346,9 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				// IsForward
 				Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(p.getNome())).findAny();
 				if (prop.isPresent() && ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(prop.get().getValore()))
-					config.setForward(true);
-				else
 					config.setForward(false);
+				else
+					config.setForward(true);
 				
 				autRet.setConfigurazione(config);
 				break;
