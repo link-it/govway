@@ -15,7 +15,7 @@ numfig = True
 # The short X.Y version
 version = '3.2.1'
 # The full version, including alpha/beta/rc tags
-release = '3.2.1'
+release = '3.2.1.p1'
 
 
 # -- General configuration ---------------------------------------------------
