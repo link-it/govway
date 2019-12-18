@@ -44,6 +44,7 @@
 									</fileset>
 									<fileset dir="${rootDir}/dist" >
 										<include name="*.jar"/>
+										<exclude name="openspcoop2_as4-protocol*.jar"/> <!-- richiede la presenza della directory -->
 									</fileset>
 								</path>
 
