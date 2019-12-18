@@ -33,7 +33,10 @@ import javax.security.auth.x500.X500Principal;
 import org.apache.xml.security.utils.RFC2253Parser;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.resources.Charset;
 import org.slf4j.Logger;
+import org.springframework.web.util.UriUtils;
 
 /**
  * CertificateUtils
@@ -678,5 +681,59 @@ public class CertificateUtils {
 		}
 		return found;
 	}
+	
+	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam) throws UtilsException {
+		return readCertificate(config, certificateParam, Charset.UTF_8.getValue());
+	}
+	public static Certificate readCertificate(CertificateDecodeConfig config, String certificateParam, String charset) throws UtilsException {
+		
+		if(certificateParam==null || "".equals(certificateParam)){
+			throw new UtilsException("Certificate non fornito");
+		}
+		
+		try {
+		
+			String certificate = certificateParam;
+			
+			if(config.isUrlDecode()) {
+				certificate = UriUtils.decode(certificate, charset);
+			}
+			
+			if(config.isReplace()) {
+				int index = 0; // per evitare bug di cicli infiniti
+				while(certificate.contains(config.getReplaceSource()) && index<10000) {
+					certificate = certificate.replace(config.getReplaceSource(), config.getReplaceDest());
+					index++;
+				}
+			}
+			
+			if(config.isEnrich_BEGIN_END()) {
+				String BEGIN = "----BEGIN CERTIFICATE----";
+				String END = "----END CERTIFICATE----";
+				if(certificate.startsWith(BEGIN)==false) {
+					certificate = BEGIN+"\n"+certificate;
+				}
+				if(certificate.endsWith(END)==false) {
+					certificate = certificate+ "\n"+END;
+				}
+			}
+			
+			byte [] certBytes = null;
+			if(config.isBase64Decode()) {
+				certBytes = Base64Utilities.decode(certificate);
+			}
+			else {
+				certBytes = certificate.getBytes(charset);
+			}
+			
+			// Per adesso l'utility di load gestisce solo il tipo DER. La decodifica in base64 è quindi essenziale, a meno che non sia un DER.
+			
+			return ArchiveLoader.load(certBytes);
+			
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(), e);
+		}
+		
+	} 
 }
 

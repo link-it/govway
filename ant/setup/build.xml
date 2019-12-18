@@ -530,9 +530,10 @@
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+							    	<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -541,9 +542,10 @@
 					<istrue value="${antinstaller_protocollo_modipa}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_modipa-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -552,9 +554,10 @@
 					<istrue value="${antinstaller_protocollo_spcoop}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -563,9 +566,10 @@
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_as4-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 						<if>
 							<equals arg1="${antinstaller_as4_as}" arg2="tomcat"/>
@@ -607,9 +611,10 @@
 					<istrue value="${antinstaller_protocollo_sdi}" />
 					<then>
 						<copy todir="${tmp_archivi}/govway.ear/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_sdi-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -752,9 +757,10 @@
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_trasparente-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -763,9 +769,10 @@
 			<istrue value="${antinstaller_protocollo_modipa}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_modipa-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_modipa-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -774,9 +781,10 @@
 			<istrue value="${antinstaller_protocollo_spcoop}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_spcoop-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -785,9 +793,10 @@
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_as4-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_as4-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
 				    <fileset dir="${deploy_sw}/jars">
@@ -802,9 +811,10 @@
 			<istrue value="${antinstaller_protocollo_sdi}" />
 			<then>
 				<copy todir="${tomcat_war}/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_sdi-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1405,9 +1415,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_trasparente-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1416,9 +1427,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_modipa}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_modipa-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_modipa-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1427,9 +1439,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_spcoop-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1438,10 +1451,11 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				        <include name="openspcoop2_as4-protocol_*.jar"/>
-					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_as4-protocol_*.jar"/>
+						<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1450,9 +1464,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayConsole.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_sdi-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1494,9 +1509,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_trasparente}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_trasparente-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1505,9 +1521,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_modipa}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_modipa-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_modipa-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1516,9 +1533,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_spcoop}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_spcoop-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1527,10 +1545,11 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_as4}" />
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				        <include name="openspcoop2_as4-protocol_*.jar"/>
-					<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_as4-protocol_*.jar"/>
+						<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1539,9 +1558,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			<istrue value="${antinstaller_protocollo_sdi}"/>
 			<then>
 				<copy todir="${tmp_archivi}/govwayMonitor.war/WEB-INF/lib">
-				    <fileset dir="${deploy_sw}">
-				      <include name="openspcoop2_sdi-protocol_*.jar"/>
-				    </fileset>
+					<fileset dir="${deploy_sw}">
+						<include name="openspcoop2_sdi-protocol_*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 				</copy>
 			</then>
 		</if>
@@ -1584,9 +1604,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1595,9 +1616,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_modipa-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1606,9 +1628,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1617,10 +1640,11 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-							<include name="openspcoop2_as4-protocol_*.jar"/>
-							<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1629,9 +1653,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayLoader.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_sdi-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1678,9 +1703,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1689,9 +1715,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_modipa-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1700,9 +1727,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1711,10 +1739,11 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-							<include name="openspcoop2_as4-protocol_*.jar"/>
-							<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1723,9 +1752,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIConfig.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_sdi-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1769,9 +1799,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_trasparente}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_trasparente-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1780,9 +1811,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_modipa}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_modipa-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1791,9 +1823,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_spcoop}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_spcoop-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1802,10 +1835,11 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-							<include name="openspcoop2_as4-protocol_*.jar"/>
-							<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>
@@ -1814,9 +1848,10 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<istrue value="${antinstaller_protocollo_sdi}"/>
 					<then>
 						<copy todir="${tmp_archivi}/govwayAPIMonitor.war/WEB-INF/lib">
-						    <fileset dir="${deploy_sw}">
-						      <include name="openspcoop2_sdi-protocol_*.jar"/>
-						    </fileset>
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
 						</copy>
 					</then>
 				</if>

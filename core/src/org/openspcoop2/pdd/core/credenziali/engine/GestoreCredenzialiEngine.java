@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.credenziali.engine;
 
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
@@ -30,12 +31,10 @@ import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiConfigurationException;
 import org.openspcoop2.pdd.core.credenziali.GestoreCredenzialiException;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
-import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.CertificateDecodeConfig;
+import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
-import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
-import org.springframework.web.util.UriUtils;
 
 /**     
  * GestoreCredenzialiEngine
@@ -231,8 +230,12 @@ public class GestoreCredenzialiEngine {
 		String headerNameSSLSubject = null;
 		String headerNameSSLIssuer = null;
 		String headerNameSSLCertificate = null;
-		boolean sslCertificateUrlDecode = false;
-		boolean sslCertificateBase64Decode = false;
+		boolean sslCertificate_urlDecode = false;
+		boolean sslCertificate_base64Decode = false;
+		boolean sslCertificate_enrich_BEGIN_END = false;
+		boolean sslCertificate_replace = false;
+		String sslCertificate_replaceSource= null;
+		String sslCertificate_replaceDest = null;
 		boolean verificaIdentitaSSL = false;
 		try {
 			if(this.portaApplicativa){
@@ -252,14 +255,32 @@ public class GestoreCredenzialiEngine {
 			}
 			if(headerNameSSLCertificate!=null) {
 				if(this.portaApplicativa){
-					sslCertificateUrlDecode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateUrlDecode();
+					sslCertificate_urlDecode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateUrlDecode();
 				}else{
-					sslCertificateUrlDecode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateUrlDecode();
+					sslCertificate_urlDecode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateUrlDecode();
 				} 
 				if(this.portaApplicativa){
-					sslCertificateBase64Decode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateBase64Decode();
+					sslCertificate_base64Decode = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateBase64Decode();
 				}else{
-					sslCertificateBase64Decode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateBase64Decode();
+					sslCertificate_base64Decode = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateBase64Decode();
+				} 
+				if(this.portaApplicativa){
+					sslCertificate_enrich_BEGIN_END = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateEnrich_BEGIN_END();
+				}else{
+					sslCertificate_enrich_BEGIN_END = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateEnrich_BEGIN_END();
+				} 
+				if(this.portaApplicativa){
+					sslCertificate_replace = op2Properties.isGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters();
+					if(sslCertificate_replace) {
+						sslCertificate_replaceSource = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters_source();
+						sslCertificate_replaceDest = op2Properties.getGestoreCredenzialiPortaApplicativaHeaderSslCertificateReplaceCharacters_dest();
+					}
+				}else{
+					sslCertificate_replace = op2Properties.isGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters();
+					if(sslCertificate_replace) {
+						sslCertificate_replaceSource = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters_source();
+						sslCertificate_replaceDest = op2Properties.getGestoreCredenzialiPortaDelegataHeaderSslCertificateReplaceCharacters_dest();
+					}
 				} 
 			}
 			verificaIdentitaSSL = headerNameSSLSubject!=null || headerNameSSLCertificate!=null;
@@ -367,33 +388,22 @@ public class GestoreCredenzialiEngine {
 					throw new GestoreCredenzialiConfigurationException("Certificate non fornito nell'header del trasporto "+headerNameSSLCertificate);
 				}
 				
-				if(sslCertificateUrlDecode) {
-					certificate = UriUtils.decode(certificate, Charset.UTF_8.getValue());
-				}
-				
-				byte [] certBytes = null;
-				if(sslCertificateBase64Decode) {
-					certBytes = Base64Utilities.decode(certificate);
-				}
-				else {
-
-					boolean enrichPrefixCERT = false; // TODO se serve. Per ora non e' agganciata
-					String BEGIN = "----BEGIN CERTIFICATE----";
-					String END = "----END CERTIFICATE----";
-					if(enrichPrefixCERT) {
-						if(certificate.startsWith(BEGIN)==false) {
-							certificate = BEGIN+"\n"+certificate;
-						}
-						if(certificate.endsWith(END)==false) {
-							certificate = certificate+ "\n"+END;
-						}
+				CertificateDecodeConfig config = new CertificateDecodeConfig();
+				config.setUrlDecode(sslCertificate_urlDecode);
+				config.setBase64Decode(sslCertificate_base64Decode);
+				config.setEnrich_BEGIN_END(sslCertificate_enrich_BEGIN_END);
+				config.setReplace(sslCertificate_replace);
+				if(sslCertificate_replace) {
+					if(sslCertificate_replaceSource!=null && !StringUtils.isEmpty(sslCertificate_replaceSource)) {
+						config.setReplaceSource(sslCertificate_replaceSource);
 					}
-
-					certBytes = certificate.getBytes();
+					if(sslCertificate_replaceDest!=null && !StringUtils.isEmpty(sslCertificate_replaceDest)) {
+						config.setReplaceDest(sslCertificate_replaceDest);
+					}
 				}
-				
+
 				try{
-					c.setCertificate(ArchiveLoader.load(certBytes));
+					c.setCertificate(CertificateUtils.readCertificate(config, certificate));
 					
 					String subject = c.getCertificate().getCertificate().getSubject().toString();
 					String issuer = c.getCertificate().getCertificate().getIssuer().toString();

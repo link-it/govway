@@ -46,10 +46,34 @@
 				              regexp="^(.+)\.txt$"
 				              select="\1"
 				              casesensitive="false" override="true"/>
-				<echo message="FILE [@{fileName}]->[${fileNameWithoutTXT}]"/>
-				<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
+				<if>
+					<and>
+						<matches string="${fileNameWithoutTXT}" pattern="^openspcoop2_.*RELEASE.jar$"/>
+					</and>
+					<then>
+						<antcall target="ripristina_jar_releaseVersion">
+							<param name="__ripri__fileNameWithoutTXT" value="${fileNameWithoutTXT}"/>
+							<param name="__ripri__fileName" value="@{fileName}"/>
+							<param name="jarsDir" value="${jarsDir}"/>
+							<param name="archiveFileJarLocation" value="${archiveFileJarLocation}"/>
+						</antcall>
+					</then>
+					<else>
+						<echo message="FILE [@{fileName}]->[${fileNameWithoutTXT}]"/>
+						<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
+					</else>
+				</if>
 			</sequential>
 		</for>
+	</target>
+	<target name="ripristina_jar_releaseVersion">
+		<propertyregex property="__ripri__fileNameWithoutTXT_releaseVersion"
+			input="${__ripri__fileNameWithoutTXT}"
+			regexp="_RELEASE.jar"
+			replace="-${antinstaller_versione_attuale_con_p_level}.jar"
+			global="true" />
+		<echo message="FILE [${__ripri__fileName}]->[${__ripri__fileNameWithoutTXT_releaseVersion}]"/>
+		<copy file="${jarsDir}/${__ripri__fileNameWithoutTXT}" tofile="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT_releaseVersion}"/>
 	</target>
 	
 	<!--

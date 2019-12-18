@@ -467,6 +467,24 @@
 		<delete includeEmptyDirs="true">
 			<fileset dir="${dist}" excludes="*.jar"/>
 		</delete>
+		<if>
+			<not>
+				<equals arg1="${govway.version}" arg2="$${govway.version}" />
+			</not>
+			<then>
+				<move todir="${dist}.backup">
+					<fileset dir="${dist}"/>
+				</move>
+				<mkdir dir="${dist}"/>	
+				<move todir="${dist}">
+					<fileset dir="${dist}.backup">
+						<include name="*.jar"/>
+					</fileset>
+					<globmapper from="*_RELEASE.jar" to="*-${govway.version}.jar"/>
+				</move>
+				<delete dir="${dist}.backup"/>	
+			</then>
+		</if>
 		
 	</target>
 	

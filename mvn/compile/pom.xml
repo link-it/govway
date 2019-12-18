@@ -27,6 +27,7 @@
 									classpathref="maven.plugin.classpath" />
 								<ant antfile="../../build.xml" useNativeBasedir="true">
 									<property name="rootDir" location="../../" />
+									<property name="govway.version" value="${govway.version}" />
 									<target name="build"/>
 								</ant>
 							</target>

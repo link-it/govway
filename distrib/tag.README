@@ -5,24 +5,28 @@ Per creare una tag version:
 2. Inserire la versione del rilascio in ChangeLog
 
 3. Inserire la versione corretta in ant/setup/antinstall-config.xml:
-   - 3 occorrenze della versione (2 display e proprietà 'antinstaller_versione_attuale')
-     NOTA: per le due versioni display usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
+   - 4 occorrenze della versione (2 display, proprietà 'antinstaller_versione_attuale_con_p_level' e proprietà 'antinstaller_versione_attuale')
+     NOTA: per le due versioni display e per la proprietà 'antinstaller_versione_attuale_con_p_level' 
+           usare anche i suffissi 'rc' o 'beta' nel caso di rilasci di versioni non finali.
+	   NON usarlo invece per la proprietà 'antinstaller_versione_attuale' la quale NON DEVE possedere il patch level.
    - Sistemare versioni precedenti nella maschera 'aggiornamentoSceltaVersione' (NOTA: in questo caso utilizzare solamente versioni stabili)
 
-4. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
+4. Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
 
-5. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
+5. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
 
-6. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
+6. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
 
-7. Eseguire i test di verifica JavaDoc, GPL e XSD.
+7. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
 
-8. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
+8. Eseguire i test di verifica JavaDoc, GPL e XSD.
 
-9. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
+9. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
+
+10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
 
-10. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+11. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.2.1:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva e copiarla dentro la directory compose_bin/ di govway-docker

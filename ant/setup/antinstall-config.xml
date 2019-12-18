@@ -27,6 +27,7 @@
             <option value="aggiornamento" text="Aggiornamento"/>
         </large-select>	
 
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.1"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
 	<hidden property="antinstaller_versione_attuale" value="3.2.1"/>	
     </page>
 
