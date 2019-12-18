@@ -57,6 +57,7 @@
 								<unzip dest="build_testunits">
 									<fileset dir="${rootDir}/dist">
 										<include name="openspcoop2_utils-test_*.jar"/>
+										<include name="openspcoop2_utils-test-*.jar"/> <!-- nomi generati con rilascio della versione -->
 									</fileset>
 								</unzip>
 
