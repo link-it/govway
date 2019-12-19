@@ -35,6 +35,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 import javax.xml.transform.dom.DOMSource;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
@@ -51,6 +52,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.PdDContext;
+import org.openspcoop2.pdd.core.dynamic.DynamicException;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
@@ -697,6 +699,15 @@ public class GestoreTrasformazioniUtilities {
 						
 						addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
 						
+						if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+							if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
+								GestoreTrasformazioniUtilities.injectNewRestParameter(message, 
+										trasformazioneRest_method, 
+										trasformazioneRest_path, 
+										dynamicMap, pddContext);
+							}
+						}
+						
 						return message;
 						
 					}
@@ -730,6 +741,15 @@ public class GestoreTrasformazioniUtilities {
 								
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
 								
+								if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+									if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
+										GestoreTrasformazioniUtilities.injectNewRestParameter(message, 
+												trasformazioneRest_method, 
+												trasformazioneRest_path, 
+												dynamicMap, pddContext);
+									}
+								}
+								
 								return message;
 								
 							}
@@ -738,6 +758,15 @@ public class GestoreTrasformazioniUtilities {
 								message.castAsRestJson().updateContent(risultato.getContenutoAsString());
 								
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								
+								if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+									if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
+										GestoreTrasformazioniUtilities.injectNewRestParameter(message, 
+												trasformazioneRest_method, 
+												trasformazioneRest_path, 
+												dynamicMap, pddContext);
+									}
+								}
 								
 								return message;
 								
@@ -753,9 +782,21 @@ public class GestoreTrasformazioniUtilities {
 						else {
 							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
 						}
+						
 						OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
 						message.copyResourcesTo(newMsg, !skipTransportInfo); // devo preservare gli header in questo caso
+						
 						addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+						
+						if(ServiceBinding.REST.equals(newMsg.getServiceBinding())) {
+							if(StringUtils.isNotEmpty(trasformazioneRest_method) || StringUtils.isNotEmpty(trasformazioneRest_path)) {
+								GestoreTrasformazioniUtilities.injectNewRestParameter(newMsg, 
+										trasformazioneRest_method, 
+										trasformazioneRest_path, 
+										dynamicMap, pddContext);
+							}
+						}
+						
 						return newMsg;
 						
 					}
@@ -768,6 +809,20 @@ public class GestoreTrasformazioniUtilities {
 				log.error("Trasformazione non riuscita per il contenuto: ["+risultato.getContenutoAsString()+"]",t);
 			}
 			throw t;
+		}
+	}
+	
+	public static void injectNewRestParameter(OpenSPCoop2Message message, String trasformazioneRest_method, String trasformazioneRest_path,
+			Map<String, Object> dynamicMap, PdDContext pddContext) throws DynamicException {
+		if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+			if(StringUtils.isNotEmpty(trasformazioneRest_method)) {
+				String newMethod = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_method", trasformazioneRest_method, dynamicMap, pddContext, true);
+				message.getTransportRequestContext().setRequestType(newMethod);
+			}
+			if(StringUtils.isNotEmpty(trasformazioneRest_path)) {
+				String newPath = DynamicUtils.convertDynamicPropertyValue("trasformazioneRest_path", trasformazioneRest_path, dynamicMap, pddContext, true);
+				message.getTransportRequestContext().setFunctionParameters(newPath);
+			}
 		}
 	}
 	

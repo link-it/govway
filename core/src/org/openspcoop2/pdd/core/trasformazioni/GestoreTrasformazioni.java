@@ -28,6 +28,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
@@ -364,9 +365,39 @@ public class GestoreTrasformazioni {
 				bf.append("soap ");	
 			}
 			else if(richiesta.getTrasformazioneRest()!=null) {
-				bf.append("rest ");	
+				if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+					if(richiesta.getTrasformazioneRest()!=null) {
+						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
+							bf.append("method ");	
+						}
+						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
+							bf.append("path ");	
+						}
+					}
+				}
+				else {
+					bf.append("rest ");
+				}
 			}
 			bf.append(richiesta.getConversioneTipo());	
+		}
+		else {
+			if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+				if(richiesta.getTrasformazioneRest()!=null) {
+					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
+						if(bf.length()>0) {
+							bf.append(" ");	
+						}
+						bf.append("method");	
+					}
+					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
+						if(bf.length()>0) {
+							bf.append(" ");	
+						}
+						bf.append("path");	
+					}
+				}
+			}
 		}
 		if(richiesta.getHeaderList()!=null && !richiesta.getHeaderList().isEmpty()) {
 			if(bf.length()>0) {
@@ -457,6 +488,20 @@ public class GestoreTrasformazioni {
 			
 			if(!trasformazioneContenuto) {
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, forceAddUrl, null, message);
+				
+				if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+					if(richiesta.getTrasformazioneRest()!=null) {
+						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo()) || StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
+							GestoreTrasformazioniUtilities.injectNewRestParameter(message, 
+									richiesta.getTrasformazioneRest().getMetodo(), 
+									richiesta.getTrasformazioneRest().getPath(), 
+									dynamicMap, this.pddContext);
+						}
+					}
+				}
+
+				this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaEffettuato");
+				
 				return message;
 			}
 			
@@ -781,6 +826,9 @@ public class GestoreTrasformazioni {
 					forceResponseStatus = httpStatus;
 				}
 				GestoreTrasformazioniUtilities.addTransportInfo(forceAddTrasporto, null, forceResponseStatus, message);
+				
+				this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaEffettuato");
+				
 				return message;
 			}
 			

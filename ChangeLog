@@ -1,6 +1,14 @@
 2019-12-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
+	Aggiunta funzionalità OP-936
+	(https://github.com/link-it/govway/issues/48)
+	Per una API di tipo REST, all'interno della trasformazione della richiesta nella sezione 'trasporto', 
+	è adesso possibile modificare sia il metodo http che il path appeso alla base url utilizzata per invocare l'applicativo di backend.
+
+2019-12-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
 	Aggiunta funzionalità OP-932
 	(https://github.com/link-it/govway/issues/54)
 	Nel dettaglio di una API è adesso disponibile il pulsante di creazione di una nuova versione dell'API.

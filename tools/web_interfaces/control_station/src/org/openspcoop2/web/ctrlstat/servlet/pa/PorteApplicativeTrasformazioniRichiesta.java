@@ -163,8 +163,10 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 					trasformazioneSoapEnvelopeTipo = org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.EMPTY;
 					trasformazioneSoapVersion = CostantiControlStation.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_SOAP_VERSION_11;
 					trasformazioneRestAbilitato = false;
-					trasformazioneRestMethod = "";
-					trasformazioneRestPath = ""; 
+					if(ServiceBinding.SOAP.equals(serviceBindingMessage)) {
+						trasformazioneRestMethod = "";
+						trasformazioneRestPath = ""; 
+					}
 					
 					porteApplicativeHelper.deleteBinaryParameters(trasformazioneContenutoTemplate, trasformazioneSoapEnvelopeTemplate);
 				}
@@ -424,6 +426,16 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 							reg.getRichiesta().getTrasformazioneRest().setPath(trasformazioneRestPath);
 						} else {
 							reg.getRichiesta().setTrasformazioneRest(null);
+							
+							if(ServiceBinding.REST.equals(serviceBindingMessage)) {
+								if(StringUtils.isNotEmpty(trasformazioneRestMethod) || StringUtils.isNotEmpty(trasformazioneRestPath)) {
+									if(reg.getRichiesta().getTrasformazioneRest() == null) 
+										reg.getRichiesta().setTrasformazioneRest(new TrasformazioneRest());
+									
+									reg.getRichiesta().getTrasformazioneRest().setMetodo(trasformazioneRestMethod);
+									reg.getRichiesta().getTrasformazioneRest().setPath(trasformazioneRestPath);
+								} 
+							}
 						}
 						
 						if(trasformazioneSoapAbilitato) {
@@ -466,6 +478,18 @@ public class PorteApplicativeTrasformazioniRichiesta extends Action {
 						reg.getRichiesta().setConversioneTipo(null);
 						reg.getRichiesta().setTrasformazioneRest(null);
 						reg.getRichiesta().setTrasformazioneSoap(null);
+						
+						if(ServiceBinding.REST.equals(serviceBindingMessage)) {
+							if(StringUtils.isNotEmpty(trasformazioneRestMethod) || StringUtils.isNotEmpty(trasformazioneRestPath)) {
+								if(reg.getRichiesta().getTrasformazioneRest() == null) 
+									reg.getRichiesta().setTrasformazioneRest(new TrasformazioneRest());
+								
+								reg.getRichiesta().getTrasformazioneRest().setMetodo(trasformazioneRestMethod);
+								reg.getRichiesta().getTrasformazioneRest().setPath(trasformazioneRestPath);
+							} else {
+								reg.getRichiesta().setTrasformazioneRest(null);
+							}
+						}
 					}
 					
 					break;

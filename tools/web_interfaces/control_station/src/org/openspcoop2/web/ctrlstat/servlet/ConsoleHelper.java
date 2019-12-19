@@ -7119,7 +7119,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+	public void setStatoTrasformazioni(DataElement de, Trasformazioni trasformazioni, ServiceBinding serviceBindingMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
@@ -7154,7 +7154,17 @@ public class ConsoleHelper implements IConsoleHelper {
 				if(trasformazioneRegola.getRichiesta()!=null) {
 					richiestaDefinita = trasformazioneRegola.getRichiesta().isConversione() || 
 							trasformazioneRegola.getRichiesta().sizeHeaderList()>0 ||
-							trasformazioneRegola.getRichiesta().sizeParametroUrlList() >0;
+							trasformazioneRegola.getRichiesta().sizeParametroUrlList()>0 ||
+							(
+									ServiceBinding.REST.equals(serviceBindingMessage) && 
+									trasformazioneRegola.getRichiesta().getTrasformazioneRest()!=null &&
+									(
+										StringUtils.isNotEmpty(trasformazioneRegola.getRichiesta().getTrasformazioneRest().getMetodo())
+										||
+										StringUtils.isNotEmpty(trasformazioneRegola.getRichiesta().getTrasformazioneRest().getPath())
+									)
+							)
+						;
 				}
 				
 				if(trasformazioneRegola.sizeRispostaList()>0) {
@@ -12314,6 +12324,26 @@ public class ConsoleHelper implements IConsoleHelper {
 				}
 			}
 			
+			
+			if(ServiceBinding.REST.equals(serviceBindingMessage)) {
+			
+				String trasformazioneRestMethod = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
+				if (!StringUtils.isEmpty(trasformazioneRestMethod)) {
+					if (!this.checkLength255(trasformazioneRestMethod, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD)) {
+						return false;
+					}
+				}
+				
+				String trasformazioneRestPath = this.getParameter(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+				if (!StringUtils.isEmpty(trasformazioneRestPath)) {
+					if (!this.checkLength4000(trasformazioneRestPath, CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH)) {
+						return false;
+					}
+				}
+				
+			}
+			
+			
 			return true;
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -13006,6 +13036,33 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.SUBTITLE);
 		dati.addElement(de);
 		
+		if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding) && !trasformazioneSoapAbilitato) {
+			
+			// method
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
+			de.setValue(trasformazioneRestMethod);
+			de.setType(DataElementType.TEXT_EDIT);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_METHOD);
+			de.setSize(this.getSize());
+			de.setInfo(dInfoPatternTrasporto);
+			dati.addElement(de);
+			
+			//  path
+			de = new DataElement();
+			de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+			de.setValue(trasformazioneRestPath);
+			de.setType(DataElementType.TEXT_AREA);
+			de.setRows(1);
+			de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH);
+			de.setSize(this.getSize());
+			de.setInfo(dInfoPatternTrasporto);
+			de.setNote(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REST_PATH_NOTE);
+			dati.addElement(de);
+						
+		}
+		
+		
 		// Header
 		de = new DataElement();
 		de.setType(DataElementType.LINK);
@@ -13026,6 +13083,9 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRI);
 		de.setUrl(servletTrasformazioniRichiestaParametriList, parametriInvocazioneServletTrasformazioniRichiestaParametri.toArray(new Parameter[parametriInvocazioneServletTrasformazioniRichiestaParametri.size()]));
 		dati.addElement(de);
+		
+		
+		
 		
 		// sezione contenuto
 		de = new DataElement();

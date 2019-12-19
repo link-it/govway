@@ -3012,7 +3012,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					//fix: idsogg e' il soggetto proprietario della porta applicativa, e nn il soggetto virtuale
 					de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_TRASFORMAZIONI_LIST, pIdSogg, pIdPorta, pIdAsps);
 					if(visualizzazioneTabs) {
-						setStatoTrasformazioni(de, paAssociata.getTrasformazioni());
+						setStatoTrasformazioni(de, paAssociata.getTrasformazioni(), serviceBindingMessage);
 					}
 					else {
 						if(contaListe) {
@@ -4591,7 +4591,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_TRASFORMAZIONI);
 					de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_TRASFORMAZIONI_LIST, pIdPD, pIdSoggPD, pIdAsps, pIdFruitore);
 					if(visualizzazioneTabs) {
-						setStatoTrasformazioni(de, pdAssociata.getTrasformazioni());
+						setStatoTrasformazioni(de, pdAssociata.getTrasformazioni(), serviceBindingMessage);
 					}
 					else {
 						if(contaListe) {
