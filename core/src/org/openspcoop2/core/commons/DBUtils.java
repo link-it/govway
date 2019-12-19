@@ -804,6 +804,59 @@ public class DBUtils {
 		}
 	}
 	
+	public static int getAccordoServizioParteComuneNextVersion(IDAccordo idAccordo,Connection con, String tipoDB) throws CoreException{
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+		try
+		{
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
+			sqlQueryObject.addSelectField("versione");
+			sqlQueryObject.addWhereCondition("nome = ?");
+			sqlQueryObject.addWhereCondition("id_referente = ?");
+			sqlQueryObject.addOrderBy("versione");
+			sqlQueryObject.setSortType(false);
+			sqlQueryObject.setANDLogicOperator(true);
+			String query = sqlQueryObject.createSQLQuery();
+			stm=con.prepareStatement(query);
+			stm.setString(1, idAccordo.getNome());
+			
+			long idSoggettoReferente =  0;
+			if(idAccordo.getSoggettoReferente()!=null){
+				idSoggettoReferente = DBUtils.getIdSoggetto(idAccordo.getSoggettoReferente().getNome(), idAccordo.getSoggettoReferente().getTipo(), con, tipoDB);
+				if(idSoggettoReferente<=0){
+					throw new CoreException("[getIdAccordoServizioParteComune] Soggetto Referente ["+idAccordo.getSoggettoReferente().toString()+"] non esiste");
+				}
+			}
+			stm.setLong(2, idSoggettoReferente);
+				
+			rs=stm.executeQuery();
+
+			if(rs.next()){
+				int versione = rs.getInt("versione");
+				if(versione>0) {
+					return versione+1;
+				}
+			}
+
+			return 1; // accordo non esistente
+
+		}catch (SQLException e) {
+			throw new CoreException(e);
+		}catch (Exception e) {
+			throw new CoreException(e);
+		}finally
+		{
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+		}
+	}
 	
 	
 	

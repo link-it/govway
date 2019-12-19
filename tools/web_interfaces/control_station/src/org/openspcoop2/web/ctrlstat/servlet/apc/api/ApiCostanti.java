@@ -91,8 +91,10 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_LABEL_GESTIONE_ALLEGATI = "Allegati";
 	public final static String APC_API_LABEL_GESTIONE_OPZIONI_AVANZATE = "Opzioni Avanzate";
 	public final static String APC_API_LABEL_GESTIONE_GRUPPI = GruppiCostanti.LABEL_GRUPPI;
+	public final static String APC_API_LABEL_NUOVA_VERSIONE_API = "Nuova Versione";
 	
 	public final static String PARAMETRO_APC_API_GESTIONE_GRUPPO = AccordiServizioParteComuneCostanti.PARAMETRO_APC_GRUPPO;
+	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE = AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE;
 	
 	public final static String PARAMETRO_APC_API_GESTIONE_PARZIALE = "apiGestioneParziale";
 	public final static String VALORE_PARAMETRO_APC_API_INFORMAZIONI_GENERALI = "apiInfoGenerali";
@@ -107,5 +109,6 @@ public class ApiCostanti extends AccordiServizioParteComuneCostanti {
 	public final static String APC_API_ICONA_GESTIONE_RISORSE = "&#xE896;";
 	public final static String APC_API_ICONA_GESTIONE_SERVIZI = "&#xE896;";
 	public final static String APC_API_ICONA_GESTIONE_ALLEGATI = "&#xE2BC;";
+	public final static String APC_API_ICONA_NUOVA_VERSIONE_API = "&#xE02E;";
 	public final static String APC_API_ICONA_GESTIONE_OPZIONI_AVANZATE = "&#xE8B8;";
 }

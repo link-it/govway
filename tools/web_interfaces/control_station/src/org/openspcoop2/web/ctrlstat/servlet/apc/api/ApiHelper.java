@@ -722,6 +722,19 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			dati.addElement(de);
 		}
 		
+		de = new DataElement();
+		de.setType(DataElementType.LINK);
+		List<Parameter> listParametersNuovaVersione = new ArrayList<>();
+		listParametersNuovaVersione.add(new Parameter(ApiCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE, Costanti.CHECK_BOX_ENABLED_TRUE));
+		listParametersNuovaVersione.add(pIdAccordo);
+		listParametersNuovaVersione.add(pTipoAccordo);
+		de.setUrl(ApiCostanti.SERVLET_NAME_APC_API_ADD, listParametersNuovaVersione.toArray(new Parameter[1]));
+		de.setValue(ApiCostanti.APC_API_LABEL_NUOVA_VERSIONE_API);
+		de.setIcon(ApiCostanti.APC_API_ICONA_NUOVA_VERSIONE_API);
+		de.spostaLinkADestra();
+		dati.addElement(de);
+		
+		
 		return datiPagina;
 	}
 	

@@ -7,9 +7,10 @@ Funzionalità Avanzate
 .. toctree::
         :maxdepth: 2
         
-        config_manuale
-        identificazione_azione
         modalita_avanzata
+        config_manuale
+	versionamento
+        identificazione_azione
         multitenant
         header_integrazione/index.rst
         errori_gw/index.rst

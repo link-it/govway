@@ -1243,6 +1243,31 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 
 	}
+	
+	public int getAccordoServizioParteComuneNextVersion(IDAccordo idAccordo) throws DriverRegistroServiziNotFound, DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getAccordoServizioParteComuneNextVersion";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getAccordoServizioParteComuneNextVersion(idAccordo);
+
+		} catch (DriverRegistroServiziNotFound de) {
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] Exception :" + de.getMessage(),de);
+			throw de;
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
 
 	public boolean isAzioneInUso(String nomeAzione) throws DriverRegistroServiziException {
 		Connection con = null;

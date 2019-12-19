@@ -17,6 +17,7 @@ nell'intestazione della pagina.
         definizioneApi
 	erogazione
 	fruizione
+	versionamentoApi
 	configurazione
 	cors
 	configSpecificaRisorsa

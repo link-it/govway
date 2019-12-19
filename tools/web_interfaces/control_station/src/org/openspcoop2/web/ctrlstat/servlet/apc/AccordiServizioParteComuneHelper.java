@@ -2960,7 +2960,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			String tipoProtocollo, List<String> listaTipiProtocollo, boolean used, boolean asWithAllegatiXSD,
 			IProtocolFactory<?> protocolFactory,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
-			String gruppi, List<String> elencoGruppi
+			String gruppi, List<String> elencoGruppi,
+			boolean gestioneNuovaVersione, int gestioneNuovaVersione_min, boolean gestioneNuovaVersione_ridefinisciInterfaccia, long gestioneNuovaVersione_oldIdApc
 			) throws Exception {
 
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
@@ -3043,6 +3044,29 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			}
 		}
 		
+		if(gestioneNuovaVersione) {
+			de = new DataElement();
+			de.setValue(gestioneNuovaVersione+"");
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setValue(gestioneNuovaVersione_min+"");
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_MIN);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setValue(gestioneNuovaVersione_oldIdApc+"");
+			de.setType(DataElementType.HIDDEN);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+			
+		}
 		
 		de = new DataElement();
 		de.setValue(tipoAccordo);
@@ -3126,7 +3150,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		// Gestione del tipo protocollo per la maschera add
 		if(TipoOperazione.ADD.equals(tipoOperazione)){
 			de = new DataElement();
-			if(listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
+			if(!gestioneNuovaVersione && listaTipiProtocollo != null && listaTipiProtocollo.size() > 1){
 				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_PROTOCOLLO);
 				de.setValues(listaTipiProtocollo);
 				de.setLabels(this.getLabelsProtocolli(listaTipiProtocollo));
@@ -3149,6 +3173,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		boolean usedCheckForServiceBinding = used;
 		if( gestioneInformazioniGenerali && TipoOperazione.CHANGE.equals(tipoOperazione)  ) {
 			usedCheckForServiceBinding = true; // forzo l'indicazione in modo che il tipo rest/soap in change informazioni generali non sia modificabile
+		}
+		if(gestioneNuovaVersione) {
+			forceHiddenServiceBinding = true;
 		}
 		de = this.getServiceBindingDataElement(protocolFactory, usedCheckForServiceBinding, serviceBinding, forceHiddenServiceBinding);
 		dati.addElement(de);
@@ -3188,7 +3215,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
 				}
 			}
-			if( modificheAbilitate && modificaAbilitataServizioComposto ){
+			if( modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione ){
 	
 				de.setType(DataElementType.SELECT);
 				de.setValues(providersList);
@@ -3230,7 +3257,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = new DataElement();
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_ACCORDO_COOPERAZIONE);
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ACCORDO_COOPERAZIONE);
-			if( gestioneInformazioniGenerali && modificheAbilitate && modificaAbilitataServizioComposto ){
+			if( gestioneInformazioniGenerali && modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione){
 				de.setType(DataElementType.SELECT);
 				de.setValues(accordiCooperazioneEsistenti);
 				de.setLabels(accordiCooperazioneEsistentiLabel);
@@ -3266,8 +3293,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		de.setValue(nome);
 		//if (tipoOp.equals("add")) {
 		if( tipoOperazione.equals(TipoOperazione.ADD) || (gestioneInformazioniGenerali && modificheAbilitate) ){
-			de.setType(DataElementType.TEXT_EDIT);
-			de.setRequired(true);
+			if(gestioneNuovaVersione) {
+				de.setType(DataElementType.TEXT);
+			}
+			else {
+				de.setType(DataElementType.TEXT_EDIT);
+				de.setRequired(true);
+			}
 		}else{
 			if(gestioneInformazioniGenerali) {
 				de.setType(DataElementType.TEXT);
@@ -3352,6 +3384,9 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de = this.getVersionDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE, 
 					AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE, 
 					versione, false);
+			if(gestioneNuovaVersione) {
+				de.setMinValue(gestioneNuovaVersione_min);
+			}
 		}else{
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_VERSIONE);
 			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_VERSIONE);
@@ -3634,76 +3669,129 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 
-		List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocolFactory, serviceBinding);
-		
-		// interfacetype
-		DataElement deInterfaceType = this.getInterfaceTypeDataElement(tipoOperazione,protocolFactory, serviceBinding,interfaceType);
-		if(interfaceTypeList == null || interfaceTypeList.size() == 0) {
-			dati.addElement(deInterfaceType);
-		} else {
+		if(gestioneNuovaVersione && !gestioneNuovaVersione_ridefinisciInterfaccia) {
 			
-			if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
-				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
-			}
-				
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
+			de.setType(DataElementType.TITLE);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+		}
+		else {
+		
+			List<org.openspcoop2.protocol.manifest.constants.InterfaceType> interfaceTypeList = this.core.getInterfaceTypeList(protocolFactory, serviceBinding);
+			
 			// interfacetype
-			dati.addElement(deInterfaceType);
-			
-			if((tipoOperazione.equals(TipoOperazione.ADD)) && !showConversazioni) {
-				dati.addElement(deValidazione);
-			}
-			
-			if(isInterfacciaAvanzata){
-				if (tipoOperazione.equals(TipoOperazione.ADD)) {
-					if(serviceBinding.equals(ServiceBinding.SOAP)) {
-						
-						//visualizza il link al wsdl definitorio se e' abilitato
-						if(showWsdlDefinitorio){
-							dati.add(wsdldef.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO, "", getSize()));
-							dati.addAll(wsdldef.getFileNameDataElement());
-							dati.add(wsdldef.getFileIdDataElement());
-						} else {
-							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-							String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
-							de.setValue(wsdldefS);
-							de.setType(DataElementType.HIDDEN);
-							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
-							dati.addElement(de);
-						}
-		
-						//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
-		
-						if(showWsdlAsincroni){
+			DataElement deInterfaceType = this.getInterfaceTypeDataElement(tipoOperazione,protocolFactory, serviceBinding,interfaceType);
+			if(interfaceTypeList == null || interfaceTypeList.size() == 0) {
+				dati.addElement(deInterfaceType);
+			} else {
+				
+				if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_INTERFACCE);
+					de.setType(DataElementType.TITLE);
+					dati.addElement(de);
+				}
+				
+				if(gestioneNuovaVersione) {
+					de = new DataElement();
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+					de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(gestioneNuovaVersione_ridefinisciInterfaccia);
+					de.setPostBack(true);
+					dati.addElement(de);
+				}
+				
+				// interfacetype
+				dati.addElement(deInterfaceType);
+				
+				if((tipoOperazione.equals(TipoOperazione.ADD)) && !showConversazioni) {
+					dati.addElement(deValidazione);
+				}
+				
+				if(isInterfacciaAvanzata){
+					if (tipoOperazione.equals(TipoOperazione.ADD)) {
+						if(serviceBinding.equals(ServiceBinding.SOAP)) {
 							
-							dati.add(wsdlconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE, "", getSize()));
+							//visualizza il link al wsdl definitorio se e' abilitato
+							if(showWsdlDefinitorio){
+								dati.add(wsdldef.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO, "", getSize()));
+								dati.addAll(wsdldef.getFileNameDataElement());
+								dati.add(wsdldef.getFileIdDataElement());
+							} else {
+								de = new DataElement();
+								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+								String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
+								de.setValue(wsdldefS);
+								de.setType(DataElementType.HIDDEN);
+								de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+								dati.addElement(de);
+							}
+			
+							//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
+			
+							if(showWsdlAsincroni){
+								
+								dati.add(wsdlconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE, "", getSize()));
+								dati.addAll(wsdlconc.getFileNameDataElement());
+								dati.add(wsdlconc.getFileIdDataElement());
+								
+								dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE, "", getSize()));
+								dati.addAll(wsdlserv.getFileNameDataElement());
+								dati.add(wsdlserv.getFileIdDataElement());
+								
+								dati.add(wsdlservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE, "", getSize()));
+								dati.addAll(wsdlservcorr.getFileNameDataElement());
+								dati.add(wsdlservcorr.getFileIdDataElement());
+								
+							} else {
+								de = new DataElement();
+								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+								String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
+								de.setValue(wsdlconcS);
+								de.setType(DataElementType.HIDDEN);
+								de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+								dati.addElement(de);
+								
+								dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO, "", getSize()));
+								dati.addAll(wsdlserv.getFileNameDataElement());
+								dati.add(wsdlserv.getFileIdDataElement());
+			
+								de = new DataElement();
+								de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+								String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
+								de.setValue(wsdlservcorrS);
+								de.setType(DataElementType.HIDDEN);
+								de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+								dati.addElement(de);
+							}
+						} else { // Service Binding REST
+							// Formato Specifica
+							
+							// campo wsdconcettuale utilizzato per la specifica 
+							String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+							dati.add(wsdlconc.getFileDataElement(labelWsdlCon, "", getSize()));
 							dati.addAll(wsdlconc.getFileNameDataElement());
 							dati.add(wsdlconc.getFileIdDataElement());
 							
-							dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE, "", getSize()));
-							dati.addAll(wsdlserv.getFileNameDataElement());
-							dati.add(wsdlserv.getFileIdDataElement());
-							
-							dati.add(wsdlservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE, "", getSize()));
-							dati.addAll(wsdlservcorr.getFileNameDataElement());
-							dati.add(wsdlservcorr.getFileIdDataElement());
-							
-						} else {
 							de = new DataElement();
-							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
-							String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
-							de.setValue(wsdlconcS);
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+							String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
+							de.setValue(wsdlservS);
 							de.setType(DataElementType.HIDDEN);
-							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
 							dati.addElement(de);
 							
-							dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO, "", getSize()));
-							dati.addAll(wsdlserv.getFileNameDataElement());
-							dati.add(wsdlserv.getFileIdDataElement());
-		
 							de = new DataElement();
 							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
 							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
@@ -3711,53 +3799,83 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							de.setType(DataElementType.HIDDEN);
 							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
 							dati.addElement(de);
+							
 						}
-					} else { // Service Binding REST
-						// Formato Specifica
-						
-						// campo wsdconcettuale utilizzato per la specifica 
-						String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
-						dati.add(wsdlconc.getFileDataElement(labelWsdlCon, "", getSize()));
-						dati.addAll(wsdlconc.getFileNameDataElement());
-						dati.add(wsdlconc.getFileIdDataElement());
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
-						String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
-						de.setValue(wsdlservS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-						dati.addElement(de);
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-						String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
-						de.setValue(wsdlservcorrS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
-						dati.addElement(de);
-						
-					}
-				} else {
-					if(gestioneSpecificaInterfacce) {
-						if(serviceBinding.equals(ServiceBinding.SOAP)) {
-							//visualizza il link al wsdl definitorio se e' abilitato
-							if(showWsdlDefinitorio){
-								de = new DataElement();
-								de.setType(DataElementType.LINK);
-								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO),
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-										pApiGestioneParziale);
-								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-								dati.addElement(de);
-							}
-			
-							//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
-			
-							if(showWsdlAsincroni){
-			
+					} else {
+						if(gestioneSpecificaInterfacce) {
+							if(serviceBinding.equals(ServiceBinding.SOAP)) {
+								//visualizza il link al wsdl definitorio se e' abilitato
+								if(showWsdlDefinitorio){
+									de = new DataElement();
+									de.setType(DataElementType.LINK);
+									de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+											pApiGestioneParziale);
+									de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+									dati.addElement(de);
+								}
+				
+								//se il protocollo supporta almeno un profilo asincrono tengo la visualizzazione attuale altrimenti mostro solo un elemento WSDL Logico.
+				
+								if(showWsdlAsincroni){
+				
+									de = new DataElement();
+									de.setType(DataElementType.LINK);
+									de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+											pApiGestioneParziale);
+									de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+									dati.addElement(de);
+				
+									de = new DataElement();
+									de.setType(DataElementType.LINK);
+									de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+											pApiGestioneParziale);
+									de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+									dati.addElement(de);
+				
+									de = new DataElement();
+									de.setType(DataElementType.LINK);
+									de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+											pApiGestioneParziale);
+									de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+									dati.addElement(de);
+								}else {
+									de = new DataElement();
+									de.setType(DataElementType.LINK);
+									de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE),
+											AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+											pApiGestioneParziale);
+									de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO);
+									dati.addElement(de);
+								}
+								
+								if(asWithAllegatiXSD){
+									DataElement saveAs = new DataElement();
+									saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
+									saveAs.setType(DataElementType.LINK);
+									saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+											new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
+											new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION),
+											pApiGestioneParziale);
+									saveAs.setDisabilitaAjaxStatus();
+									dati.add(saveAs);
+								}
+							} else { // Service Binding REST
+								String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
 								de = new DataElement();
 								de.setType(DataElementType.LINK);
 								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
@@ -3765,9 +3883,58 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE),
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
 										pApiGestioneParziale);
-								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+								de.setValue(labelWsdlCon);
 								dati.addElement(de);
+								
+								if(asWithAllegatiXSD){
+									DataElement saveAs = new DataElement();
+									saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
+									saveAs.setType(DataElementType.LINK);
+									saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+											new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
+											new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
+											new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION),
+											pApiGestioneParziale);
+									saveAs.setDisabilitaAjaxStatus();
+									dati.add(saveAs);
+								}
+							}	
+						}
+					}
+				}else{
+					// Interfaccia standard mostro solo quello LogicoErogatore, lascio gli altri campi hidden
+					if(serviceBinding.equals(ServiceBinding.SOAP)) {
+						if (tipoOperazione.equals(TipoOperazione.ADD)) {
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+							String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
+							de.setValue(wsdldefS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+							dati.addElement(de);
 			
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
+							String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
+							de.setValue(wsdlconcS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
+							dati.addElement(de);
+			
+							dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL, "", getSize()));
+							dati.addAll(wsdlserv.getFileNameDataElement());
+							dati.add(wsdlserv.getFileIdDataElement());
+							
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
+							de.setValue(wsdlservcorrS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+							dati.addElement(de);
+						} else {
+							//L'interfaccia standard deve far vedere solo il link al wsdl del servzio
+							if(gestioneSpecificaInterfacce) {
 								de = new DataElement();
 								de.setType(DataElementType.LINK);
 								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
@@ -3775,247 +3942,145 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE),
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
 										pApiGestioneParziale);
-								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL);
 								dati.addElement(de);
+							}
 			
+						}
+					} else { // Service Binding REST
+						if (tipoOperazione.equals(TipoOperazione.ADD)) {
+							
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
+							String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
+							de.setValue(wsdldefS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
+							dati.addElement(de);
+							
+							// campo wsdconcettuale utilizzato per la specifica 
+							String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
+							dati.add(wsdlconc.getFileDataElement(labelWsdlCon, "", getSize()));
+							dati.addAll(wsdlconc.getFileNameDataElement());
+							dati.add(wsdlconc.getFileIdDataElement());
+							
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
+							String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
+							de.setValue(wsdlservS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
+							dati.addElement(de);
+							
+							de = new DataElement();
+							de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
+							String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
+							de.setValue(wsdlservcorrS);
+							de.setType(DataElementType.HIDDEN);
+							de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
+							dati.addElement(de);
+						} else {
+							if(gestioneSpecificaInterfacce) {
+								String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
 								de = new DataElement();
 								de.setType(DataElementType.LINK);
 								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
 										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE),
+										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE),
 										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
 										pApiGestioneParziale);
-								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-								dati.addElement(de);
-							}else {
-								de = new DataElement();
-								de.setType(DataElementType.LINK);
-								de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE),
-										AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-										pApiGestioneParziale);
-								de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_LOGICO);
+								de.setValue(labelWsdlCon);
 								dati.addElement(de);
 							}
-							
-							if(asWithAllegatiXSD){
-								DataElement saveAs = new DataElement();
-								saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
-								saveAs.setType(DataElementType.LINK);
-								saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
-										new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
-										new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION),
-										pApiGestioneParziale);
-								saveAs.setDisabilitaAjaxStatus();
-								dati.add(saveAs);
-							}
-						} else { // Service Binding REST
-							String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
-							de = new DataElement();
-							de.setType(DataElementType.LINK);
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-									pApiGestioneParziale);
-							de.setValue(labelWsdlCon);
-							dati.addElement(de);
-							
-							if(asWithAllegatiXSD){
-								DataElement saveAs = new DataElement();
-								saveAs.setValue(AccordiServizioParteComuneCostanti.LABEL_XSD_SCHEMA_COLLECTION);
-								saveAs.setType(DataElementType.LINK);
-								saveAs.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
-										new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_ID_ACCORDO, id),
-										new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_PARTE_COMUNE),
-										new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_XSD_SCHEMA_COLLECTION),
-										pApiGestioneParziale);
-								saveAs.setDisabilitaAjaxStatus();
-								dati.add(saveAs);
-							}
-						}	
-					}
-				}
-			}else{
-				// Interfaccia standard mostro solo quello LogicoErogatore, lascio gli altri campi hidden
-				if(serviceBinding.equals(ServiceBinding.SOAP)) {
-					if (tipoOperazione.equals(TipoOperazione.ADD)) {
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-						String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
-						de.setValue(wsdldefS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
-						dati.addElement(de);
-		
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_CONCETTUALE);
-						String wsdlconcS = wsdlconc.getValue() != null ?  new String(wsdlconc.getValue()) : "";
-						de.setValue(wsdlconcS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE);
-						dati.addElement(de);
-		
-						dati.add(wsdlserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL, "", getSize()));
-						dati.addAll(wsdlserv.getFileNameDataElement());
-						dati.add(wsdlserv.getFileIdDataElement());
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-						String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
-						de.setValue(wsdlservcorrS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
-						dati.addElement(de);
-					} else {
-						//L'interfaccia standard deve far vedere solo il link al wsdl del servzio
-						if(gestioneSpecificaInterfacce) {
-							de = new DataElement();
-							de.setType(DataElementType.LINK);
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-									pApiGestioneParziale);
-							de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL);
-							dati.addElement(de);
-						}
-		
-					}
-				} else { // Service Binding REST
-					if (tipoOperazione.equals(TipoOperazione.ADD)) {
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_DEFINITORIO);
-						String wsdldefS = wsdldef.getValue() != null ?  new String(wsdldef.getValue()) : "";
-						de.setValue(wsdldefS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_DEFINITORIO);
-						dati.addElement(de);
-						
-						// campo wsdconcettuale utilizzato per la specifica 
-						String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
-						dati.add(wsdlconc.getFileDataElement(labelWsdlCon, "", getSize()));
-						dati.addAll(wsdlconc.getFileNameDataElement());
-						dati.add(wsdlconc.getFileIdDataElement());
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_EROGATORE);
-						String wsdlservS = wsdlserv.getValue() != null ?  new String(wsdlserv.getValue()) : "";
-						de.setValue(wsdlservS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE);
-						dati.addElement(de);
-						
-						de = new DataElement();
-						de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_WSDL_FRUITORE);
-						String wsdlservcorrS = wsdlservcorr.getValue() != null ?  new String(wsdlservcorr.getValue()) : "";
-						de.setValue(wsdlservcorrS);
-						de.setType(DataElementType.HIDDEN);
-						de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_FRUITORE);
-						dati.addElement(de);
-					} else {
-						if(gestioneSpecificaInterfacce) {
-							String labelWsdlCon = this.getLabelWSDLFromFormatoSpecifica(interfaceType);
-							de = new DataElement();
-							de.setType(DataElementType.LINK);
-							de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-									new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE),
-									AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-									pApiGestioneParziale);
-							de.setValue(labelWsdlCon);
-							dati.addElement(de);
 						}
 					}
 				}
 			}
-		}
-
-		if(showConversazioni){
-
-			if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
-				de = new DataElement();
-				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_CONVERSAZIONI);
-				de.setType(DataElementType.TITLE);
-				dati.addElement(de);
-			}
-
-			if (tipoOperazione.equals(TipoOperazione.ADD)) {
-				
-				dati.add(wsblconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE, "", getSize()));
-				dati.addAll(wsblconc.getFileNameDataElement());
-				dati.add(wsblconc.getFileIdDataElement());
-
-				dati.add(wsblserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE, "", getSize()));
-				dati.addAll(wsblserv.getFileNameDataElement());
-				dati.add(wsblserv.getFileIdDataElement());
-				
-				dati.add(wsblservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE, "", getSize()));
-				dati.addAll(wsblservcorr.getFileNameDataElement());
-				dati.add(wsblservcorr.getFileIdDataElement());
-				
-//				de = new DataElement();
-//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-//				de.setValue("");
-//				de.setType(DataElementType.FILE);
-//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-//				de.setSize(this.getSize());
-//				dati.addElement(de);
-//
-//				de = new DataElement();
-//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-//				de.setValue("");
-//				de.setType(DataElementType.FILE);
-//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-//				de.setSize(this.getSize());
-//				dati.addElement(de);
-//
-//				de = new DataElement();
-//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-//				de.setValue("");
-//				de.setType(DataElementType.FILE);
-//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
-//				de.setSize(this.getSize());
-//				dati.addElement(de);
-
-			} else {
-
-				if(gestioneSpecificaInterfacce) {
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-							pApiGestioneParziale);
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
-					dati.addElement(de);
 	
-					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-							pApiGestioneParziale);
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
-					dati.addElement(de);
+			if(showConversazioni){
 	
+				if(tipoOperazione.equals(TipoOperazione.ADD) || gestioneSpecificaInterfacce) {
 					de = new DataElement();
-					de.setType(DataElementType.LINK);
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
-							pApiGestioneParziale);
-					de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+					de.setLabel(AccordiServizioParteComuneCostanti.LABEL_SPECIFICA_CONVERSAZIONI);
+					de.setType(DataElementType.TITLE);
 					dati.addElement(de);
 				}
+	
+				if (tipoOperazione.equals(TipoOperazione.ADD)) {
+					
+					dati.add(wsblconc.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE, "", getSize()));
+					dati.addAll(wsblconc.getFileNameDataElement());
+					dati.add(wsblconc.getFileIdDataElement());
+	
+					dati.add(wsblserv.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE, "", getSize()));
+					dati.addAll(wsblserv.getFileNameDataElement());
+					dati.add(wsblserv.getFileIdDataElement());
+					
+					dati.add(wsblservcorr.getFileDataElement(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE, "", getSize()));
+					dati.addAll(wsblservcorr.getFileNameDataElement());
+					dati.add(wsblservcorr.getFileIdDataElement());
+					
+	//				de = new DataElement();
+	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+	//				de.setValue("");
+	//				de.setType(DataElementType.FILE);
+	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+	//				de.setSize(this.getSize());
+	//				dati.addElement(de);
+	//
+	//				de = new DataElement();
+	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+	//				de.setValue("");
+	//				de.setType(DataElementType.FILE);
+	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+	//				de.setSize(this.getSize());
+	//				dati.addElement(de);
+	//
+	//				de = new DataElement();
+	//				de.setLabel(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+	//				de.setValue("");
+	//				de.setType(DataElementType.FILE);
+	//				de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+	//				de.setSize(this.getSize());
+	//				dati.addElement(de);
+	
+				} else {
+	
+					if(gestioneSpecificaInterfacce) {
+						de = new DataElement();
+						de.setType(DataElementType.LINK);
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+								pApiGestioneParziale);
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_CONCETTUALE);
+						dati.addElement(de);
+		
+						de = new DataElement();
+						de.setType(DataElementType.LINK);
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+								pApiGestioneParziale);
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_EROGATORE);
+						dati.addElement(de);
+		
+						de = new DataElement();
+						de.setType(DataElementType.LINK);
+						de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_WSDL_CHANGE, 
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, id),
+								new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_WSDL,AccordiServizioParteComuneCostanti.PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE),
+								AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo),
+								pApiGestioneParziale);
+						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_SPECIFICA_CONVERSAZIONE_FRUITORE);
+						dati.addElement(de);
+					}
+				}
+	
 			}
-
+			
 		}
 
 		Boolean gestioneInfoProtocollo = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_INFO_PROTOCOLLO);

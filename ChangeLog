@@ -1,6 +1,16 @@
+2019-12-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-932
+	(https://github.com/link-it/govway/issues/54)
+	Nel dettaglio di una API è adesso disponibile il pulsante di creazione di una nuova versione dell'API.
+	Durante la creazione della nuova versione, dove viene vincolato il nome dell'API, 
+	è possibile scegliere se fornire una nuova specifica dell'interfaccia o ereditarla (insieme alle azioni/risorse e agli allegati) dalla precedente.
+
 2019-12-17  Francesco Scarlato <scarlato@link.it>
 
 	* [ApiRsConfigurazione, ApiRsMonitoraggio]
+	Risolto Bug OP-933
 	Aggiunta gestione 'JsonParseException' in WebApplicationExceptionMapper.
 	Migliorata gestione delle liste paginate e delle liste senza totali in ListaUtils:
 	- Le liste adesso vengono correttamente valorizzate con gli elementi 'next', 'prev', 'last' e 'first'.
@@ -10,6 +20,7 @@
 2019-12-17  Giovanni Bussu <bussu@link.it>
 
 	* [ApiRsConfigurazione]
+	Risolto Bug OP-933
 	Corretto bug che invertiva il valore salvato per l'opzione 'forward' in caso di autenticazione basic o principal.
 	Corrette api al fine di essere utilizzate tramite chiamate java.
 

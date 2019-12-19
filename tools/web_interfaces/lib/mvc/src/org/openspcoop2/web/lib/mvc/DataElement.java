@@ -845,4 +845,7 @@ public class DataElement {
 		this.showAjaxStatus = showAjaxStatus;
 	}
 	
+	public void spostaLinkADestra() {
+		this.setStyle("margin-left: auto;");
+	}
 }

@@ -12,7 +12,14 @@ Nel caso si avesse la necessità di ricorrere a configurazioni più
 specifiche, non contemplate nella modalità standard, è possibile passare
 alla visualizzazione dell'interfaccia nella *Modalità Avanzata*
 utilizzando la voce omonima del menu a discesa che compare selezionando
-l'icona in alto a destra (nella testata della govwayConsole).
+l'icona in alto a destra (nella testata della govwayConsole) come mostrato nella figura :numref:`MenuSceltaModalitaAvanzata`.
+
+.. figure:: ../_figure_console/MenuSceltaModalitaAvanzata.png
+    :scale: 100%
+    :align: center
+    :name: MenuSceltaModalitaAvanzata
+
+    Selezione Modalità Avanzata
 
 Operando in modalità avanzata, in ciascuno dei contesti di
 configurazione già descritti in questo manuale, compariranno opzioni

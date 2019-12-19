@@ -1225,7 +1225,44 @@ IDriverWS ,IMonitoraggioRisorsa{
 
 
 
+	public int getAccordoServizioParteComuneNextVersion(IDAccordo idAccordo) throws DriverRegistroServiziException,DriverRegistroServiziNotFound {
+		// conrollo consistenza
+		if (idAccordo == null)
+			throw new DriverRegistroServiziException("[getAccordoServizioParteComuneNextVersion] Parametro idAccordo is null");
+		if (idAccordo.getNome() == null)
+			throw new DriverRegistroServiziException("[getAccordoServizioParteComuneNextVersion] Parametro idAccordo.getNome is null");
+		if (idAccordo.getNome().trim().equals(""))
+			throw new DriverRegistroServiziException("[getAccordoServizioParteComuneNextVersion] Parametro idAccordo.getNome non e' definito");
 
+		this.log.debug("richiesto getAccordoServizioParteComuneNextVersion: " + idAccordo.toString());
+
+		int nextVersion = -1;
+		Connection con = null;
+		try {
+			this.log.debug("operazione atomica = " + this.atomica);
+			// prendo la connessione dal pool
+			if (this.atomica)
+				con = this.getConnectionFromDatasource("getAccordoServizioParteComuneNextVersion(idAccordo)");
+			else
+				con = this.globalConnection;
+			
+			nextVersion = DBUtils.getAccordoServizioParteComuneNextVersion(idAccordo, con, this.tipoDB);
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComuneNextVersion] Exception :" + se.getMessage(),se);
+		} finally {
+
+			try {
+				if (this.atomica) {
+					this.log.debug("rilascio connessione al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore
+			}
+
+		}
+		return nextVersion;
+	}	
 	
 	
 	

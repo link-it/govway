@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +42,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
@@ -48,12 +51,15 @@ import org.openspcoop2.core.registry.GruppiAccordo;
 import org.openspcoop2.core.registry.Gruppo;
 import org.openspcoop2.core.registry.GruppoAccordo;
 import org.openspcoop2.core.registry.IdSoggetto;
+import org.openspcoop2.core.registry.ProtocolProperty;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.FiltroRicercaGruppi;
+import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -129,6 +135,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 	
 	private String gruppi;
 	
+	private boolean nuovaVersione;
 
 	private BinaryParameter wsdlservcorr, wsdldef, wsdlserv, wsdlconc, wsblconc, wsblserv, wsblservcorr;
 
@@ -247,7 +254,6 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			GruppiCore gruppiCore = new GruppiCore(apcCore);
 			String labelAccordoServizio = AccordiServizioParteComuneUtilities.getTerminologiaAccordoServizio(this.tipoAccordo);
 			
-
 			// Tipi protocollo supportati
 			// Controllo comunque quelli operativi, almeno uno deve esistere
 			List<String> listaTipiProtocollo = apcCore.getProtocolliByFilter(session, true, PddTipologia.OPERATIVO, false, this.isServizioComposto);
@@ -257,6 +263,93 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			if(this.tipoProtocollo == null){
 				this.tipoProtocollo = apcCore.getProtocolloDefault(session, listaTipiProtocollo);
 			}
+			
+			String nuovaVersioneTmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE);
+			this.nuovaVersione = ServletUtils.isCheckBoxEnabled(nuovaVersioneTmp);
+			int gestioneNuovaVersione_min = 1;
+			boolean nuovaVersioneRidefinisciInterfaccia = true;
+			long gestioneNuovaVersione_oldIdApc = -1;
+			List<ProtocolProperty> gestioneNuovaVersione_oldProtocolProperties = null;
+			if(this.nuovaVersione) {
+				
+				String nuovaVersioneTmp_minVersion = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_MIN);
+				if(!StringUtils.isEmpty(nuovaVersioneTmp_minVersion)) {
+					gestioneNuovaVersione_min = Integer.parseInt(nuovaVersioneTmp_minVersion);
+				}
+								
+				String tmpIdPrecedenteAccordo = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID);
+				if(!StringUtils.isEmpty(tmpIdPrecedenteAccordo)) {
+					
+					// ci entro solamente la prima volta al "click" sulla nuova versione
+					
+					nuovaVersioneRidefinisciInterfaccia = true; // default
+					
+					// fisso alcuni valori
+					long idAccordoPrec = Long.valueOf(tmpIdPrecedenteAccordo);
+					gestioneNuovaVersione_oldIdApc = idAccordoPrec;
+					AccordoServizioParteComune aspc = apcCore.getAccordoServizioFull(idAccordoPrec);
+					gestioneNuovaVersione_oldProtocolProperties = aspc.getProtocolPropertyList();
+					IDAccordo idAccordoPrecedente = IDAccordoFactory.getInstance().getIDAccordoFromAccordo(aspc);
+					this.nome = aspc.getNome();
+					this.referente = soggettiCore.getSoggetto(aspc.getSoggettoReferente().toIDSoggetto()).getId().longValue()+"";
+					this.tipoProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(aspc.getSoggettoReferente().getTipo());
+					this.serviceBinding = apcCore.toMessageServiceBinding(aspc.getServiceBinding());
+					if(aspc.getMessageType()!=null) {
+						this.messageType = apcCore.toMessageMessageType(aspc.getMessageType());
+					}
+					if(aspc.getServizioComposto()!=null && aspc.getServizioComposto().getAccordoCooperazione()!=null && !"".equals(aspc.getServizioComposto().getAccordoCooperazione())) {
+						IDAccordoCooperazione idAccordoCooperazione = IDAccordoCooperazioneFactory.getInstance().getIDAccordoFromUri(aspc.getServizioComposto().getAccordoCooperazione());
+						this.accordoCooperazione = acCore.getAccordoCooperazione(idAccordoCooperazione).getId().longValue()+"";
+						this.isServizioComposto = true;
+					}
+					if(this.interfaceType==null) {
+						this.interfaceType = apcCore.formatoSpecifica2InterfaceType(aspc.getFormatoSpecifica());
+					}
+					if(this.descr==null || StringUtils.isEmpty(this.descr)) {
+						this.descr = aspc.getDescrizione();
+					}
+					if(this.gruppi==null || StringUtils.isEmpty(this.gruppi)) {
+						if(aspc.getGruppi()!=null && aspc.getGruppi().getGruppoList()!=null && !aspc.getGruppi().getGruppoList().isEmpty()) {
+							List<String> nomiGruppi = aspc.getGruppi().getGruppoList().stream().flatMap(e-> Stream.of(e.getNome())).collect(Collectors.toList());
+							this.gruppi = StringUtils.join(nomiGruppi, ",");
+						}
+					}
+					if(this.profcoll==null || StringUtils.isEmpty(this.profcoll)) {
+						this.profcoll = AccordiServizioParteComuneHelper.convertProfiloCollaborazioneDB2View(aspc.getProfiloCollaborazione());
+					}
+					if(this.filtrodup==null || StringUtils.isEmpty(this.filtrodup)) {
+						this.filtrodup = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(aspc.getFiltroDuplicati());
+					}
+					if(this.confric==null || StringUtils.isEmpty(this.confric)) {
+						this.confric = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(aspc.getConfermaRicezione());
+					}
+					if(this.idcoll==null || StringUtils.isEmpty(this.idcoll)) {
+						this.idcoll = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(aspc.getIdCollaborazione());
+					}
+					if(this.idRifRichiesta==null || StringUtils.isEmpty(this.idRifRichiesta)) {
+						this.idRifRichiesta = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(aspc.getIdRiferimentoRichiesta());
+					}
+					if(this.consord==null || StringUtils.isEmpty(this.consord)) {
+						this.consord = AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(aspc.getConsegnaInOrdine());
+					}
+					if(this.scadenza==null || StringUtils.isEmpty(this.scadenza)) {
+						this.scadenza = aspc.getScadenza() != null ? aspc.getScadenza() : "";
+					}
+					
+					gestioneNuovaVersione_min = apcCore.getAccordoServizioParteComuneNextVersion(idAccordoPrecedente);
+					if(this.versione==null || StringUtils.isEmpty(this.versione)) {
+						this.versione = gestioneNuovaVersione_min+"";
+					}
+				}
+				else {
+					String nuovaVersioneRidefinisciInterfaccia_tmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA);
+					nuovaVersioneRidefinisciInterfaccia = ServletUtils.isCheckBoxEnabled(nuovaVersioneRidefinisciInterfaccia_tmp);
+				
+					String nuovaVersioneOldIdApc_tmp = apcHelper.getParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC);
+					gestioneNuovaVersione_oldIdApc = Long.valueOf(nuovaVersioneOldIdApc_tmp);
+				}
+			}
+			
 			this.protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.tipoProtocollo);
 			this.consoleDynamicConfiguration =  this.protocolFactory.createDynamicConfigurationConsole();
 			this.registryReader = soggettiCore.getRegistryReader(this.protocolFactory); 
@@ -280,7 +373,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 			
 			// ID Accordo Null per default
-			IDAccordo idApc = null;
+			IDAccordo idApc = null;			
 			this.consoleConfiguration = this.tipoAccordo.equals(ProtocolPropertiesCostanti.PARAMETRO_VALORE_PP_TIPO_ACCORDO_PARTE_COMUNE) ? 
 					this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteComune(this.consoleOperationType, apcHelper, 
 							this.registryReader, this.configRegistryReader, idApc)
@@ -288,6 +381,10 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.registryReader, this.configRegistryReader, idApc);
 					
 			this.protocolProperties = apcHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);
+			
+			if(this.nuovaVersione && gestioneNuovaVersione_oldProtocolProperties!=null && !gestioneNuovaVersione_oldProtocolProperties.isEmpty()){
+				ProtocolPropertiesUtils.mergeProtocolPropertiesRegistry(this.protocolProperties, gestioneNuovaVersione_oldProtocolProperties, this.consoleOperationType);
+			}
 
 			// Flag per controllare il mapping automatico di porttype e operation
 			boolean enableAutoMapping = apcCore.isEnableAutoMappingWsdlIntoAccordo();
@@ -390,7 +487,7 @@ public final class AccordiServizioParteComuneAdd extends Action {
 
 			org.openspcoop2.core.registry.Soggetto soggettoReferente = null;
 			try{
-				soggettoReferente = soggettiCore.getSoggettoRegistro(Integer.parseInt(this.referente));
+				soggettoReferente = soggettiCore.getSoggettoRegistro(Long.valueOf(this.referente));
 			}catch(Exception e){}
 			List<String> tipiSoggettiCompatibili = new ArrayList<String>();
 			if(soggettoReferente!=null){
@@ -543,7 +640,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
+						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
+						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -637,7 +735,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
+						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
+						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -764,6 +863,23 @@ public final class AccordiServizioParteComuneAdd extends Action {
 				}
 			}
 
+			if(this.nuovaVersione && !nuovaVersioneRidefinisciInterfaccia) {
+				IDAccordo idAcc = apcCore.getIdAccordoServizio(gestioneNuovaVersione_oldIdApc);
+				AccordoServizioParteComune aspcOld = apcCore.getAccordoServizioFull(idAcc, true); // devo leggere anche gli allegati
+				as.setAllegatoList(aspcOld.getAllegatoList());
+				as.setSpecificaSemiformaleList(aspcOld.getSpecificaSemiformaleList());
+				as.setAzioneList(aspcOld.getAzioneList());
+				as.setPortTypeList(aspcOld.getPortTypeList());
+				as.setResourceList(aspcOld.getResourceList());
+				as.setByteWsdlDefinitorio(aspcOld.getByteWsdlDefinitorio());
+				as.setByteWsdlConcettuale(aspcOld.getByteWsdlConcettuale());
+				as.setByteWsdlLogicoErogatore(aspcOld.getByteWsdlLogicoErogatore());
+				as.setByteWsdlLogicoFruitore(aspcOld.getByteWsdlLogicoFruitore());
+				as.setByteSpecificaConversazioneConcettuale(aspcOld.getByteSpecificaConversazioneConcettuale());
+				as.setByteSpecificaConversazioneErogatore(aspcOld.getByteSpecificaConversazioneErogatore());
+				as.setByteSpecificaConversazioneFruitore(aspcOld.getByteSpecificaConversazioneFruitore());
+			}
+			
 
 			// Check stato
 			if(apcHelper.isShowGestioneWorkflowStatoDocumenti()){
@@ -800,7 +916,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.privato, this.isServizioComposto, accordiCooperazioneEsistenti, accordiCooperazioneEsistentiLabel, 
 							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 							this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
-							this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi);
+							this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
+							this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
 
 					// aggiunta campi custom
 					dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -815,9 +932,11 @@ public final class AccordiServizioParteComuneAdd extends Action {
 			}
 
 			// Automapping
-			AccordiServizioParteComuneUtilities.mapppingAutomaticoInterfaccia(as, apcCore, 
-					enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard, 
-					this.tipoProtocollo, this.interfaceType);
+			if(!this.nuovaVersione || nuovaVersioneRidefinisciInterfaccia) {
+				AccordiServizioParteComuneUtilities.mapppingAutomaticoInterfaccia(as, apcCore, 
+						enableAutoMapping, this.validazioneDocumenti, enableAutoMapping_estraiXsdSchemiFromWsdlTypes, facilityUnicoWSDL_interfacciaStandard, 
+						this.tipoProtocollo, this.interfaceType);
+			}
 
 			//imposto properties custom
 			as.setProtocolPropertyList(ProtocolPropertiesUtils.toProtocolPropertiesRegistry(this.protocolProperties, this.consoleOperationType,null));

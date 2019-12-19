@@ -436,7 +436,7 @@
 				        		} %>	
 								
 								<tr>
-									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px;">
+									<td colspan="2" class="tdTextRiepilogo" style="padding-left: 0px; padding-right: 0px;">
 										<div class="riepilogo-links">
 											
 											<%	
@@ -446,14 +446,16 @@
 												String deName = !de.getName().equals("") ? de.getName() : "de_name_"+i;
 											  	String type = de.getType();
 											  	String deTip =  de.getToolTip() != null && !de.getToolTip().equals("") ? " title=\"" + de.getToolTip() + "\"" : "";
-											  	String classInput= de.getStyleClass();
+											  	String classInput = de.getStyleClass();
 											  	String labelStyleClass= de.getLabelStyleClass();
 											  	String iconLink =  de.getIcon();
 											  	String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
+											  	String styleLink = de.getStyle() != null && !de.getStyle().equals("") ? " style=\"" + de.getStyle() + "\"" : "";
+											  	
 											  	
 											  	if (type.equals("link")){
 							        				%>
-							        					<div class="riepilogo-links-button-div">
+							        					<div class="riepilogo-links-button-div" <%= styleLink %>>
 							        						<a href="<%= de.getUrl() %>" <%= deTip %> class="riepilogo-links-button" onClick="<%= visualizzaAjaxStatus %>return true;">
 									            				<i class="material-icons md-36"><%=iconLink %></i>							            				
 									            				<span class="riepilogo-links-button-text"><%= de.getValue() %></span>

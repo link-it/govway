@@ -337,6 +337,10 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String PARAMETRO_APC_GRUPPI = "gruppi";
 	public final static String PARAMETRO_APC_GRUPPO = "gruppo";
 	public final static String PARAMETRO_APC_GRUPPI_SUPPORTO_COLORI = "__gruppi_colors";
+	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE = "apiNewVersion";
+	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_MIN = "apiNewVersionMin";
+	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA = "apiNewVersionRedefine";
+	public final static String PARAMETRO_APC_API_NUOVA_VERSIONE_OLD_ID_APC = "apiNewVersionOldIdApc";
 
 	public final static String PARAMETRO_APC_AZIONI_NOME = "nomeaz";
 	public final static String PARAMETRO_APC_AZIONI_CORRELATA = "azicorr";
@@ -491,6 +495,7 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_INTERFACE_TYPE_OPEN_API_3 = CostantiControlStation.LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3;
 	public final static String LABEL_PARAMETRO_APC_GRUPPI = GruppiCostanti.LABEL_GRUPPI;
 	public final static String LABEL_PARAMETRO_APC_GRUPPO = GruppiCostanti.LABEL_GRUPPO;
+	public final static String LABEL_PARAMETRO_APC_API_NUOVA_VERSIONE_RIDEFINISCI_INTERFACCIA = "Ridefinisci Interfaccia";
 
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_RUOLO = "Ruolo";
 	public final static String LABEL_PARAMETRO_APC_ALLEGATI_TIPO_FILE = "Tipo";
