@@ -71,6 +71,7 @@ import org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.autenticazione.pd.IAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -570,36 +571,42 @@ public class GestoreAutenticazione {
     }
     
     public static String getLabel(GestioneTokenAutenticazione gestioneTokenAutenticazione) {
+    	return _getActions(gestioneTokenAutenticazione);
+    }
+    public static String getActions(GestioneTokenAutenticazione gestioneTokenAutenticazione) {
+    	return _getActions(gestioneTokenAutenticazione);
+    }
+    private static String _getActions(GestioneTokenAutenticazione gestioneTokenAutenticazione) {
     	StringBuffer bf = new StringBuffer();
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getIssuer())) {
     		if(bf.length()>0) {
     			bf.append(",");
     		}
-    		bf.append("Issuer");
+    		bf.append(Costanti.GESTIONE_TOKEN_AUTENTICAZIONE_ISSUER);
     	}
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getClientId())) {
     		if(bf.length()>0) {
     			bf.append(",");
     		}
-    		bf.append("ClientId");
+    		bf.append(Costanti.GESTIONE_TOKEN_AUTENTICAZIONE_CLIENT_ID);
     	}
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getSubject())) {
     		if(bf.length()>0) {
     			bf.append(",");
     		}
-    		bf.append("Subject");
+    		bf.append(Costanti.GESTIONE_TOKEN_AUTENTICAZIONE_SUBJECT);
     	}
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getUsername())) {
     		if(bf.length()>0) {
     			bf.append(",");
     		}
-    		bf.append("Username");
+    		bf.append(Costanti.GESTIONE_TOKEN_AUTENTICAZIONE_USERNAME);
     	}
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getEmail())) {
     		if(bf.length()>0) {
     			bf.append(",");
     		}
-    		bf.append("eMail");
+    		bf.append(Costanti.GESTIONE_TOKEN_AUTENTICAZIONE_EMAIL);
     	}
     	return bf.toString();
     }

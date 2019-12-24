@@ -18,9 +18,9 @@ A tale scopo sarà necessario:
    ::
 
       # JMX Resources
-      org.govway.pdd.checkPdD.readJMXResources.enabled=true
-      org.govway.pdd.checkPdD.readJMXResources.username=#USERNAME#
-      org.govway.pdd.checkPdD.readJMXResources.password=#PASSWORD#
+      org.openspcoop2.pdd.check.readJMXResources.enabled=true
+      org.openspcoop2.pdd.check.readJMXResources.username=#USERNAME#
+      org.openspcoop2.pdd.check.readJMXResources.password=#PASSWORD#
                           
 
    inserendo al posto di #USERNAME# e #PASSWORD# le credenziali che
@@ -44,7 +44,7 @@ A tale scopo sarà necessario:
 
    ::
 
-      'org.govway.pdd.cluster_id' del file govway_local.properties
+      org.openspcoop2.pdd.cluster_id del file govway_local.properties
 
    Per ogni identificativo devono inoltre essere fornite le seguenti
    informazioni:
@@ -53,13 +53,13 @@ A tale scopo sarà necessario:
 
       # Configurazione IDGW1
       #IDGW1#.risorseJmxPdd.descrizione=#DESCRIZIONEGW1#
-      #IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/GovWay/checkPdD
+      #IDGW1#.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1#/govway/check
       #IDGW1#.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
       #IDGW1#.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
       ...
       # Configurazione IDGWN
       #IDGWN#.risorseJmxPdd.descrizione=#DESCRIZIONEGWN#
-      #IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/GovWay/checkPdD
+      #IDGWN#.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN#/govway/check
       #IDGWN#.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
       #IDGWN#.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
                               
@@ -70,8 +70,8 @@ A tale scopo sarà necessario:
    ::
 
       govway_local.properties, proprietà
-      'org.govway.pdd.checkPdD.readJMXResources.username' e
-      'org.govway.pdd.checkPdD.readJMXResources.password'
+      org.openspcoop2.pdd.check.readJMXResources.username e
+      org.openspcoop2.pdd.check.readJMXResources.password
 
    Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
    porta con cui è raggiungibile GovWay. Infine deve anche essere
@@ -80,12 +80,12 @@ A tale scopo sarà necessario:
 
 #. Editare il file <directory-lavoro>/monitor_local.properties
    Disabilitare la configurazione per la singola istanza commentando la
-   proprietà statoPdD.sonde.standard.Gateway.url:
+   proprietà 'statoPdD.sonde.standard.Gateway.url':
 
    ::
 
       # Configurazione PdD in Singola Istanza
-      statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/checkPdD?forceInvocationDisablePdD=true
+      #statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/check
                               
 
    Aggiungere le seguenti righe al fine di configurare la govwayMonitor
@@ -102,24 +102,22 @@ A tale scopo sarà necessario:
 
    Devono essere elencati tutti gli identificativi, di ogni PdD in Load
    Balancing, registrati nel file govway_local.properties nella
-   proprietà 'org.govway.pdd.cluster_id' come descritto in precedenza.
+   proprietà 'org.openspcoop2.pdd.cluster_id' come descritto in precedenza.
    Per ogni identificativo devono inoltre essere fornite le seguenti
    informazioni:
 
    ::
 
       # Configurazione IDGW1
-      statoPdD.sonde.pddOE.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/SondaPdD/check?forceInvocationDisablePdD=true
-      #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http:// #HOSTGW1# : #PORTGW1
-      # /govway/checkPdD
+      statoPdD.sonde.standard.#IDGW1#.url=http://#HOSTGW1#:#PORTGW1#/govway/check
+      #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGW1#:#PORTGW1/govway/check
       #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGW1#
       #IDGW1#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGW1#
       ...
       # Configurazione IDGWN
-      statoPdD.sonde.pddOE.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/SondaPdD/check?forceInvocationDisablePdD=true
+      statoPdD.sonde.standard.#IDGWN#.url=http://#HOSTGWN#:#PORTGWN#/govway/check
       #IDGWN#.configurazioni.risorseJmxPdd.tipoAccesso=openspcoop
-      #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN
-      #/govway/checkPdD
+      #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.url=http://#HOSTGWN#:#PORTGWN/govway/check
       #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.username=#USERNAMEGWN#
       #IDGWN#.configurazioni.risorseJmxPdd.remoteAccess.password=#PASSWORDGWN#
                               
@@ -130,8 +128,8 @@ A tale scopo sarà necessario:
    ::
 
       govway_local.properties, proprietà
-      'org.govway.pdd.checkPdD.readJMXResources.username' e
-      'org.govway.pdd.checkPdD.readJMXResources.password'
+      org.openspcoop2.pdd.check.readJMXResources.username e
+      org.openspcoop2.pdd.check.readJMXResources.password
 
    Indicare inoltre al posto di #HOSTGW# e #PORTGW# l'hostname e la
    porta con cui è raggiungibile GovWay.

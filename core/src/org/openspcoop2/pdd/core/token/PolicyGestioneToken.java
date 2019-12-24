@@ -164,6 +164,35 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 		}
 	}
 	
+	public String getAzioniGestioneToken() {
+		StringBuffer bf = new StringBuffer();
+		if(this.isValidazioneJWT() || this.isIntrospection() || this.isUserInfo()) {
+			boolean first = true;
+			if(this.isValidazioneJWT()) {
+				bf.append(Costanti.GESTIONE_TOKEN_VALIDATION_ACTION_JWT);
+				first = false;
+			}
+			if(this.isIntrospection()) {
+				if(!first) {
+					bf.append(",");
+				}
+				bf.append(Costanti.GESTIONE_TOKEN_VALIDATION_ACTION_INTROSPECTION);
+				first = false;
+			}
+			if(this.isUserInfo()) {
+				if(!first) {
+					bf.append(",");
+				}
+				bf.append(Costanti.GESTIONE_TOKEN_VALIDATION_ACTION_USER_INFO);
+				first = false;
+			}
+			return bf.toString();
+		}
+		else {
+			return Costanti.GESTIONE_TOKEN_VALIDATION_ACTION_NONE;
+		}
+	}
+	
 	public String getTipoToken() {
 		return this.defaultProperties.getProperty(Costanti.POLICY_TOKEN_TYPE);
 	}

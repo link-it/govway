@@ -1605,6 +1605,7 @@ public class RicezioneContenutiApplicativi {
 								identita = "Gestore delle credenziali di tipo "+RicezioneContenutiApplicativi.tipiGestoriCredenziali[i];
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							pddContext.addObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
 							msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							inRequestContext.getConnettore().setCredenziali(credenzialiRitornate);
@@ -1710,7 +1711,9 @@ public class RicezioneContenutiApplicativi {
 							policyGestioneToken.isMessageErrorGenerateGenericMessage());
 					
 					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_GESTIONE, tipoGestioneToken);
+					this.msgContext.getIntegrazione().setTokenPolicy(tipoGestioneToken);
 					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_POLICY_AZIONI, policyGestioneToken.getLabelAzioniGestioneToken());
+					this.msgContext.getIntegrazione().setTokenPolicy_actions(policyGestioneToken.getAzioniGestioneToken());
 					msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_TIPO, policyGestioneToken.getLabelTipoToken());
 					msgDiag.logPersonalizzato("gestioneTokenInCorso");
 					
@@ -2118,7 +2121,8 @@ public class RicezioneContenutiApplicativi {
 							GestoreAutenticazione.verificaAutenticazionePortaDelegata(tipoAutenticazione, 
 									datiInvocazioneAutenticazione, new ParametriAutenticazione(portaDelegata.getProprietaAutenticazioneList()), 
 									pddContext, protocolFactory, requestMessage); 
-					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE);
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{
@@ -2152,6 +2156,9 @@ public class RicezioneContenutiApplicativi {
 							eAutenticazione = esito.getEccezioneProcessamento();
 							errorMessageAutenticazione = esito.getErrorMessage();
 							wwwAuthenticateErrorHeader = esito.getWwwAuthenticateErrorHeader();
+							
+							// evito comunque di ripresentarle nei successivi diagnostici, l'informazione l'ho gia' visualizzata nei diagnostici dell'autenticazione
+							msgDiag.addKeyword(CostantiPdD.KEY_CREDENZIALI_SA_FRUITORE, ""); // per evitare di visualizzarle anche nei successivi diagnostici
 						}
 					}
 					
@@ -2260,6 +2267,7 @@ public class RicezioneContenutiApplicativi {
 				String checkAuthnToken = GestoreAutenticazione.getLabel(gestioneTokenAutenticazione);
 				msgDiag.addKeyword(CostantiPdD.KEY_TOKEN_AUTHN_CHECK, checkAuthnToken);
 				msgDiag.logPersonalizzato("autenticazioneTokenInCorso");
+				this.msgContext.getIntegrazione().setTokenPolicy_authn(GestoreAutenticazione.getActions(gestioneTokenAutenticazione));
 				
 				ErroreIntegrazione erroreIntegrazione = null;
 				Exception eAutenticazione = null;
@@ -2872,7 +2880,8 @@ public class RicezioneContenutiApplicativi {
 				try {						
 					EsitoAutorizzazionePortaDelegata esito = 
 							GestoreAutorizzazione.verificaAutorizzazionePortaDelegata(tipoAutorizzazione, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore); 
-					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE);
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{
@@ -3681,7 +3690,8 @@ public class RicezioneContenutiApplicativi {
 					// Controllo Autorizzazione
 					EsitoAutorizzazionePortaDelegata esito = 
 							GestoreAutorizzazione.verificaAutorizzazioneContenutoPortaDelegata(tipoAutorizzazioneContenuto, datiInvocazione, pddContext, protocolFactory, requestMessage, logCore);
-					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache());
+					CostantiPdD.addKeywordInCache(msgDiag, esito.isEsitoPresenteInCache(),
+							pddContext, CostantiPdD.KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI);
 					if(esito.getDetails()==null){
 						msgDiag.addKeyword(CostantiPdD.KEY_DETAILS, "");
 					}else{

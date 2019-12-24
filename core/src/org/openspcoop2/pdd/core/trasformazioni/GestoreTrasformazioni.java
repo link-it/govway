@@ -358,65 +358,13 @@ public class GestoreTrasformazioni {
 		
 		// *** EmissioneDiagnostico ****
 		
-		StringBuffer bf = new StringBuffer();
 		TrasformazioneRegolaRichiesta richiesta = this.regolaTrasformazione.getRichiesta();
-		if(richiesta.getConversione()) {
-			if(richiesta.getTrasformazioneSoap()!=null) {
-				bf.append("soap ");	
-			}
-			else if(richiesta.getTrasformazioneRest()!=null) {
-				if(ServiceBinding.REST.equals(message.getServiceBinding())) {
-					if(richiesta.getTrasformazioneRest()!=null) {
-						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
-							bf.append("method ");	
-						}
-						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
-							bf.append("path ");	
-						}
-					}
-				}
-				else {
-					bf.append("rest ");
-				}
-			}
-			bf.append(richiesta.getConversioneTipo());	
-		}
-		else {
-			if(ServiceBinding.REST.equals(message.getServiceBinding())) {
-				if(richiesta.getTrasformazioneRest()!=null) {
-					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
-						if(bf.length()>0) {
-							bf.append(" ");	
-						}
-						bf.append("method");	
-					}
-					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
-						if(bf.length()>0) {
-							bf.append(" ");	
-						}
-						bf.append("path");	
-					}
-				}
-			}
-		}
-		if(richiesta.getHeaderList()!=null && !richiesta.getHeaderList().isEmpty()) {
-			if(bf.length()>0) {
-				bf.append(" ");	
-			}
-			bf.append("headers");	
-		}
-		if(richiesta.getParametroUrlList()!=null && !richiesta.getParametroUrlList().isEmpty()) {
-			if(bf.length()>0) {
-				bf.append(" ");	
-			}
-			bf.append("queryParameters");	
-		}
-		if(bf.length()<=0) {
-			bf.append("nessuna");	
-		}
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, bf.toString());
+		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRichiesta(richiesta, message);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRichiestaInCorso");
-		
+		if(this.pddContext!=null) {
+			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RICHIESTA, labelTrasformazione);
+		}
 		
 		
 		
@@ -732,29 +680,12 @@ public class GestoreTrasformazioni {
 		
 		// *** EmissioneDiagnostico ****
 		
-		StringBuffer bf = new StringBuffer();
-		if(trasformazioneRisposta.getConversione()) {
-			// !inverto!
-			if(this.regolaTrasformazione.getRichiesta().getTrasformazioneRest()!=null) {
-				bf.append("soap ");	
-			}
-			else if(this.regolaTrasformazione.getRichiesta().getTrasformazioneSoap()!=null) {
-				bf.append("rest ");	
-			}
-			bf.append(trasformazioneRisposta.getConversioneTipo());	
-		}
-		if(trasformazioneRisposta.getHeaderList()!=null && !trasformazioneRisposta.getHeaderList().isEmpty()) {
-			if(bf.length()>0) {
-				bf.append(" ");	
-			}
-			bf.append("headers");	
-		}
-		if(bf.length()<=0) {
-			bf.append("nessuna");	
-		}
-		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, bf.toString());
+		String labelTrasformazione = GestoreTrasformazioniUtilities.getLabelTipoTrasformazioneRisposta(this.regolaTrasformazione.getRichiesta(), trasformazioneRisposta);
+		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
 		this.msgDiag.logPersonalizzato("trasformazione.processamentoRispostaInCorso");
-		
+		if(this.pddContext!=null) {
+			this.pddContext.addObject(CostantiPdD.KEY_TIPO_TRASFORMAZIONE_RISPOSTA, labelTrasformazione);
+		}
 		
 		
 		

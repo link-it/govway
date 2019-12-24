@@ -31,10 +31,12 @@ import org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedExcep
 import org.openspcoop2.pdd.logger.DumpUtility;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -43,6 +45,8 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InResponseContext;
 import org.slf4j.Logger;
@@ -294,7 +298,33 @@ public class InResponseHandler extends FirstPositionHandler implements  org.open
 				try{
 					// update location impostata nel OutRequest (location modificata dal connettore)
 					//System.out.println("SET LOCATION ["+context.getConnettore().getLocation()+"]");
-					tr.setLocation(context.getConnettore().getLocation());
+					String connettoreRequestUrl = null;
+					String connettoreRequestMethod = null;
+					if(context.getPddContext()!=null) {
+						if(context.getPddContext().containsKey(CostantiPdD.CONNETTORE_REQUEST_URL)) {
+							connettoreRequestUrl = (String) context.getPddContext().getObject(CostantiPdD.CONNETTORE_REQUEST_URL);
+						}
+						if(context.getPddContext().containsKey(CostantiPdD.CONNETTORE_REQUEST_METHOD)) {
+							Object o = context.getPddContext().getObject(CostantiPdD.CONNETTORE_REQUEST_METHOD);
+							if(o instanceof String) {
+								connettoreRequestMethod = (String) o;
+							}
+							else if(o instanceof HttpRequestMethod) {
+								HttpRequestMethod oConnettoreRequestMethod = (HttpRequestMethod) o;
+								connettoreRequestMethod = oConnettoreRequestMethod.name();
+							}
+						}
+					}
+					if(!StringUtils.isEmpty(connettoreRequestUrl) && !StringUtils.isEmpty(connettoreRequestMethod)) {
+						String prefix = "";
+						if(ConnettoreBase.LOCATION_CACHED.equals(context.getConnettore().getLocation())){
+							prefix = context.getConnettore().getLocation()+ConnettoreBase.LOCATION_CACHED_SEPARATOR_REQUEST_URL;
+						}
+						tr.setLocation(prefix+CostantiPdD.getConnettoreRequest(connettoreRequestUrl, connettoreRequestMethod));
+					}
+					else {
+						tr.setLocation(context.getConnettore().getLocation());
+					}
 				}catch(TransactionDeletedException e){
 					//System.out.println("@@@@@REPOSITORY@@@@@ OutRequestHandler SET LOCATION ["+context.getConnettore().getLocation()+"]");
 					// INEFFICENTE: RepositoryGestioneStateful.addLocation(idTransazione, context.getConnettore().getLocation());

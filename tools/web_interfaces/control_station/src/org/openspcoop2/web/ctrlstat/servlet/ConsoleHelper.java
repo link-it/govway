@@ -10336,7 +10336,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		//		de.setLabel("Livello Severita Log4J");
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+		if(this.core.isVisualizzazioneConfigurazioneDiagnosticaLog4J()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoMsg);
 			de.setSelected(severita_log4j);

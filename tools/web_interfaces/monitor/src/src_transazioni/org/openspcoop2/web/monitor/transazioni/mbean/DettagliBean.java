@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
@@ -813,8 +814,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	public String getTextCredenziali() {
 		if(StringUtils.isNotEmpty(this.dettaglio.getCredenziali())) {
 			String cr = this.dettaglio.getCredenziali();
-			if(cr.startsWith(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI)) {
-				return cr.substring(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI.length());
+			if(GestoreCredenzialiEngine.containsPrefixGatewayCredenziali(cr)) {
+				return GestoreCredenzialiEngine.erasePrefixGatewayCredenziali(cr);
 			}
 			else {
 				return cr;
@@ -855,6 +856,17 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	public void setVisualizzaTextAreaTrasportoMittente(boolean visualizzaTextAreaTrasportoMittente) {
+	}
+	
+	public boolean isVisualizzaTextAreaLocationConnettore () {
+		if(StringUtils.isNotEmpty(this.dettaglio.getLocationConnettore())) {
+			if(this.dettaglio.getLocationConnettore().length() > 150 || this.dettaglio.getLocationConnettore().startsWith(ConnettoreBase.LOCATION_CACHED))
+				return true;
+		} 
+		return false;
+	}
+
+	public void setVisualizzaTextAreaLocationConnettore(boolean visualizzaTextAreaLocationConnettore) {
 	}
 	
 	public boolean isVisualizzaTokenInfo(){

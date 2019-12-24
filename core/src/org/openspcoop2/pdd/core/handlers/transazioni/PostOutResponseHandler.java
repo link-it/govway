@@ -561,7 +561,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					StatoSalvataggioTracce statoTracciaRichiesta =  
 							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRichiesta(this.log, context, transaction, transazioneDTO, pddStateless);
 					if(statoTracciaRichiesta!=null) {
-						registraTracciaRichiesta = (statoTracciaRichiesta.isCompresso()==false) && (statoTracciaRichiesta.isErrore()==false);
+						registraTracciaRichiesta = (statoTracciaRichiesta.isCompresso()==false);
 						informazioneTracciaRichiestaDaSalvare = statoTracciaRichiesta.getInformazioneCompressa();
 					}
 					if(this.debug){
@@ -585,7 +585,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					StatoSalvataggioTracce statoTracciaRisposta =  
 							this.salvataggioTracceManager.getInformazioniSalvataggioTracciaRisposta(this.log, context, transaction, transazioneDTO, pddStateless);
 					if(statoTracciaRisposta!=null) {
-						registraTracciaRisposta = (statoTracciaRisposta.isCompresso()==false) && (statoTracciaRisposta.isErrore()==false);
+						registraTracciaRisposta = (statoTracciaRisposta.isCompresso()==false);
 						informazioneTracciaRispostaDaSalvare = statoTracciaRisposta.getInformazioneCompressa();
 					}
 					if(this.debug){
@@ -609,7 +609,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					StatoSalvataggioDiagnostici statoDiagnostici =  
 							this.salvataggioDiagnosticiManager.getInformazioniSalvataggioDiagnostici(this.log, context, transaction, transazioneDTO, pddStateless);
 					if(statoDiagnostici!=null) {
-						registrazioneMessaggiDiagnostici = (statoDiagnostici.isCompresso()==false) && (statoDiagnostici.isErrore()==false);
+						registrazioneMessaggiDiagnostici = (statoDiagnostici.isCompresso()==false);
 						informazioniDiagnosticiDaSalvare = statoDiagnostici.getInformazioneCompressa();
 					}
 					if(this.debug){

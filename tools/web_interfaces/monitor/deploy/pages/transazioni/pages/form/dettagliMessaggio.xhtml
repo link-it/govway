@@ -645,9 +645,11 @@
 							<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.soggettoPdd}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 																		
 							<h:outputText styleClass="outputFieldLabel" id="outLabelConnettore" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Connettore' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Connettore' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Connettore' : 'Connettore'}"
-							rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
-							<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
-
+								rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
+							<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore and not dettagliBean.visualizzaTextAreaLocationConnettore}"/>
+							<h:inputTextarea id="outConnettoreTextArea" value="#{dettagliBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
+								rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore and dettagliBean.visualizzaTextAreaLocationConnettore}" />
+								
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso and dettagliBean.dettaglio.codiceRispostaIngresso != '0'}"/>
 							<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso and dettagliBean.dettaglio.codiceRispostaIngresso != '0'}"/>
 							

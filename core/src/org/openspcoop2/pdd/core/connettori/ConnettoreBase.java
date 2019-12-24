@@ -82,7 +82,9 @@ import org.slf4j.Logger;
  */
 public abstract class ConnettoreBase extends AbstractCore implements IConnettore {
 
+	public final static String RESPONSE_FROM_CACHE = "RESPONSE_READED_FROM_CACHE";
 	public final static String LOCATION_CACHED = "govway://responseCaching";
+	public final static String LOCATION_CACHED_SEPARATOR_REQUEST_URL = "\n";
 	
 	/** Proprieta' del connettore */
 	protected java.util.Hashtable<String,String> properties;
@@ -372,7 +374,12 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 								
 								this.contentLength = responseCached.getMessageLength();
 								
+								if(this.getPddContext()!=null) {
+									this.getPddContext().addObject(RESPONSE_FROM_CACHE, true);
+								}
+								
 								this.location = LOCATION_CACHED;
+								
 								
 								this.responseAlready = true;
 								

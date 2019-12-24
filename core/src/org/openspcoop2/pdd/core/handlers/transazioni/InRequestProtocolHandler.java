@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.handlers.transazioni;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
@@ -74,9 +75,12 @@ public class InRequestProtocolHandler extends FirstPositionHandler implements  o
 						credenzialiModificateTramiteGateway=true;
 					}
 				}
-				if(credenzialiModificateTramiteGateway==true){					
-					tr.setCredenziali(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI+credenzialiFornite);
-					//System.out.println("SET CREDENZIALI VIA GATEWAY ["+credenzialiFornite+"]");
+				if(credenzialiModificateTramiteGateway==true){	
+					if(context.getPddContext()!=null && context.getPddContext().containsKey(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI)) {
+						String identitaGateway = (String) context.getPddContext().getObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI);
+						tr.setCredenziali(GestoreCredenzialiEngine.getDBValuePrefixGatewayCredenziali(identitaGateway,credenzialiFornite));
+						//System.out.println("SET CREDENZIALI VIA GATEWAY ["+credenzialiFornite+"]");
+					}
 				}
 			}
 			

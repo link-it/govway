@@ -349,6 +349,37 @@ public class CostantiPdD {
     public final static String CHECK_STATO_PDD_RESOURCE_NAME = "resourceName";
     public final static String CHECK_STATO_PDD_PARAM_VALUE = "paramValue";
     
+    
+    
+	public final static String CONNETTORE_REQUEST_URL = "CONNETTORE_REQUEST_URL";
+	public final static String CONNETTORE_REQUEST_METHOD = "CONNETTORE_REQUEST_METHOD";
+	public final static String CONNETTORE_REQUEST_PREFIX_METHOD = "[";
+	public final static String CONNETTORE_REQUEST_SUFFIX_METHOD = "]";
+	public final static String CONNETTORE_REQUEST_SEPARATOR = " ";
+	public final static String getConnettoreRequest(String url, String method) {
+		return CONNETTORE_REQUEST_PREFIX_METHOD+method+CONNETTORE_REQUEST_SUFFIX_METHOD+CONNETTORE_REQUEST_SEPARATOR+url;
+	}
+	public final static String readUrlFromConnettoreRequest(String request) {
+		String splitSeparator = CONNETTORE_REQUEST_SUFFIX_METHOD+CONNETTORE_REQUEST_SEPARATOR;
+		int indexOf = request.indexOf(splitSeparator);
+		if(indexOf>0 && request.length()>(indexOf+splitSeparator.length())) {
+			return request.substring(indexOf+splitSeparator.length());
+		}
+		return null;
+	}
+	public final static String readMethodFromConnettoreRequest(String request) {
+		String splitSeparator = CONNETTORE_REQUEST_SUFFIX_METHOD+CONNETTORE_REQUEST_SEPARATOR;
+		int indexOf = request.indexOf(splitSeparator);
+		if(indexOf>0) {
+			String s = request.substring(0,indexOf);
+			if(s.startsWith(CONNETTORE_REQUEST_PREFIX_METHOD)) {
+				return s.substring(CONNETTORE_REQUEST_PREFIX_METHOD.length());
+			}
+		}
+		return null;
+	}
+    
+    
        
     
     /* Proprieta di una busta: renderle reperibili TUTTE quando si è letta una busta, in ogni servizio/modulo */
@@ -691,12 +722,16 @@ public class CostantiPdD {
     /** Costante che identifica una keyword per rappresentare l'informazione in cache */
     private final static String KEY_INFO_IN_CACHE = "@INFO_IN_CACHE@";
     private final static String KEY_INFO_IN_CACHE_VALUE = " (in cache)";
-    public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache) {
+    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTENTICAZIONE = "RESULT_AUTHN_IN_CACHE";
+    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE = "RESULT_AUTHZ_IN_CACHE";
+    public final static String KEY_INFO_IN_CACHE_FUNZIONE_AUTORIZZAZIONE_CONTENUTI = "RESULT_AUTHZ_CONTENUTI_IN_CACHE";
+    public final static void addKeywordInCache(MsgDiagnostico msgDiag, boolean isEsitoPresenteInCache, PdDContext pddContext, String ID_FUNCTION) {
     	if(isEsitoPresenteInCache){
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, CostantiPdD.KEY_INFO_IN_CACHE_VALUE);
 		}else{
 			msgDiag.addKeyword(CostantiPdD.KEY_INFO_IN_CACHE, "");
 		}
+    	pddContext.addObject(ID_FUNCTION, isEsitoPresenteInCache);
     }
    
 }

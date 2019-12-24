@@ -271,6 +271,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 								identita = "Gestore delle credenziali di tipo "+this.tipiGestoriCredenziali[i];
 							}
 							msgDiag.addKeyword(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
+							pddContext.addObject(CostantiPdD.KEY_IDENTITA_GESTORE_CREDENZIALI, identita);
 							msgDiag.logPersonalizzato("gestoreCredenziali.nuoveCredenziali");
 							// update credenziali
 							infoConnettoreIngresso.setCredenziali(credenzialiRitornate);	

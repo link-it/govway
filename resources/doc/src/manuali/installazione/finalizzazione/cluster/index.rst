@@ -26,7 +26,7 @@ a. Editare il file <directory-lavoro>/govway_local.properties
    ::
 
       # Identificativo univoco della macchina 
-      org.govway.pdd.cluster_id=#IDGW#
+      org.openspcoop2.pdd.cluster_id=#IDGW#
                               
 
    inserendo al posto di #IDGW# l'identificatore unico associato alla
@@ -41,9 +41,9 @@ b. Nel caso del protocollo SPCoop, editare il file
    ::
 
       # Tipo di generazione dell'identificativo
-      org.govway.protocol.spcoop.id.tipo=static
+      org.openspcoop2.protocol.spcoop.id.tipo=static
       # Prefisso dell'identificativo (opzionale)
-      org.govway.protocol.spcoop.id.prefix=#NUMERO#
+      org.openspcoop2.protocol.spcoop.id.prefix=#NUMERO#
                               
 
    inserendo al posto di #NUMERO# l'identificatore unico associato a

@@ -32,7 +32,7 @@
 	<classpathentry kind="src" path="tools/web_interfaces/lib/queue/src"/>
 	<classpathentry kind="src" path="tools/web_interfaces/lib/users/src"/>
 	<classpathentry excluding="*/jboss*.xml|*/web.xml" kind="src" path="tools/web_interfaces/control_station/src"/>
-	<classpathentry excluding="*/jboss*.xml|*/struts-config.xml|*/web.xml" kind="src" path="tools/web_interfaces/loader/src"/>
+	<classpathentry excluding="*/jboss*.xml|*/jboss*.xml.jboss7|*/jboss*.xml.wildfly|*/struts-config.xml|*/web.xml" kind="src" path="tools/web_interfaces/loader/src"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_core"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_transazioni"/>
 	<classpathentry excluding="*/faces-config.xml|*/faces-config.xml.*|*/conf/spring/applicationContext*.xml|*/.gitignore" kind="src" path="tools/web_interfaces/monitor/src/src_stat"/>
@@ -50,8 +50,8 @@
 	<classpathentry kind="src" path="tools/ws/tracciamento/client/src"/>
 	<classpathentry excluding="*/jboss*" kind="src" path="tools/ws/transazioni/server/src"/>
 	<classpathentry kind="src" path="tools/ws/transazioni/client/src"/>
-        <classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/monitor/server/src"/>
-        <classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/config/server/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/monitor/server/src"/>
+	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/config/server/src"/>
 	<classpathentry excluding="*/jboss*|*/web.xml|*/applicationContext-*.xml|*/*.yaml" kind="src" path="tools/rs/traccia/server/src"/>
 	<classpathentry kind="src" path="tools/command_line_interfaces/monitor_pdd/src"/>
 	<classpathentry kind="src" path="tools/batch/statistiche/src"/>

@@ -54,6 +54,17 @@ public class Costanti {
 	
 	// Policy id
 	
+	public final static String GESTIONE_TOKEN_VALIDATION_ACTION_NONE = "NessunaValidazione";
+	public final static String GESTIONE_TOKEN_VALIDATION_ACTION_JWT = "JWT";
+	public final static String GESTIONE_TOKEN_VALIDATION_ACTION_INTROSPECTION = "Introspection";
+	public final static String GESTIONE_TOKEN_VALIDATION_ACTION_USER_INFO = "UserInfo";
+	
+	public final static String GESTIONE_TOKEN_AUTENTICAZIONE_ISSUER="Issuer";
+	public final static String GESTIONE_TOKEN_AUTENTICAZIONE_SUBJECT= "Subject";
+	public final static String GESTIONE_TOKEN_AUTENTICAZIONE_CLIENT_ID="ClientId";
+	public final static String GESTIONE_TOKEN_AUTENTICAZIONE_USERNAME="Username";
+	public final static String GESTIONE_TOKEN_AUTENTICAZIONE_EMAIL="eMail";
+	
 	public final static String POLICY_REALM = "policy.realm";
 	public final static String POLICY_MESSAGE_ERROR_BODY_EMPTY = "policy.messageError.bodyEmpty";
 	public final static String POLICY_MESSAGE_ERROR_GENERIC_MESSAGE = "policy.messageError.genericMessage";

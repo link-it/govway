@@ -715,8 +715,8 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "menu.proprietaFruizioni.showModalitaStandard");
 	}
 	
-	public Boolean isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura() throws UtilsException{
-		String p = "menu.configurazione.visualizzazioneDiagnosticaTracciatura.standard";
+	public Boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J() throws UtilsException{
+		String p = "menu.configurazione.visualizzazioneDiagnostica.standard";
 		String tmp = this.readProperty(false, p);
 		if(tmp==null){
 			return true; // standard per default

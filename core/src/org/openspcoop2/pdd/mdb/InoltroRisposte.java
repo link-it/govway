@@ -56,6 +56,7 @@ import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.MTOMProcessor;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.pdd.core.connettori.ConnettoreUtils;
@@ -1060,6 +1061,9 @@ public class InoltroRisposte extends GenericLib{
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
+				
+				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);
+				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_URL, locationWithUrl);
 			}
 			else{
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, "N.D.");
@@ -1140,9 +1144,25 @@ public class InoltroRisposte extends GenericLib{
 				// Il Connettore potrebbe aggiungere informazioni alla location.
 				String tmpLocation = connectorSender.getLocation();
 				if(tmpLocation!=null){
+					
+					// salvo la request url originale, se la risposta non è letta dalla cache
+					boolean responseCached = false;
+					if(pddContext.containsKey(ConnettoreBase.RESPONSE_FROM_CACHE)) {
+						responseCached = (Boolean) pddContext.getObject(ConnettoreBase.RESPONSE_FROM_CACHE);
+					}
+					if(!responseCached) {
+						pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);
+						pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_URL, tmpLocation);
+					}
+					
 					// aggiorno
 					location = tmpLocation;
-					msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
+					if(responseCached) {
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, location);
+					}
+					else {
+						msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, location));
+					}
 				}
 				
 				//	dump applicativo

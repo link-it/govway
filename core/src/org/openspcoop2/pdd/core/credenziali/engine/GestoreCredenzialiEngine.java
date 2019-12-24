@@ -45,7 +45,39 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public class GestoreCredenzialiEngine {
 
-	public static String KEYWORD_GATEWAY_CREDENZIALI = "@@GatewayCredenziali@@";
+	private static String KEYWORD_GATEWAY_CREDENZIALI = "@@GatewayCredenziali@@";
+	public static String getDBValuePrefixGatewayCredenziali(String identitaGateway, String credenzialiFornite) {
+		return KEYWORD_GATEWAY_CREDENZIALI+identitaGateway+"@@"+credenzialiFornite;
+	}
+	public static boolean containsPrefixGatewayCredenziali(String value) {
+		return value.startsWith(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI);
+	}
+	public static String erasePrefixGatewayCredenziali(String value) {
+		if(value.startsWith(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI)) {
+			String s = value.substring(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI.length());
+			if(s.contains("@@")) {
+				s = s.substring(s.indexOf("@@")+2);
+			}
+			return s;
+		}
+		else {
+			return value;
+		}
+	}
+	public static String readIdentitaGatewayCredenziali(String value) {
+		if(value.startsWith(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI)) {
+			String s = value.substring(GestoreCredenzialiEngine.KEYWORD_GATEWAY_CREDENZIALI.length());
+			if(s.contains("@@")) {
+				return s.substring(0,s.indexOf("@@"));
+			}
+			else {
+				return null;
+			}
+		}
+		else {
+			return null;
+		}
+	}
 	
 	private String identita = null;
 	private boolean portaApplicativa = false;

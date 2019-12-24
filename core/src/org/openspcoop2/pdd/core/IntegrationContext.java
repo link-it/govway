@@ -102,6 +102,21 @@ public class IntegrationContext {
 	private String tipoMessageSecurityRisposta;
 	
 	/**
+	 * Tipo di token policy;
+	 */
+	private String tokenPolicy;
+	
+	/**
+	 * Azioni intraprese per validare il token;
+	 */
+	private String tokenPolicy_actions;
+	
+	/**
+	 * Azioni intraprese per autenticare il token;
+	 */
+	private String tokenPolicy_authn;
+	
+	/**
 	 * Identificativo della Porta Applicativa
 	 */
 	private IDPortaApplicativa idPA;
@@ -233,5 +248,24 @@ public class IntegrationContext {
 	}
 	public void setIdPD(IDPortaDelegata idPD) {
 		this.idPD = idPD;
+	}
+	
+	public String getTokenPolicy() {
+		return this.tokenPolicy;
+	}
+	public void setTokenPolicy(String tokenPolicy) {
+		this.tokenPolicy = tokenPolicy;
+	}
+	public String getTokenPolicy_actions() {
+		return this.tokenPolicy_actions;
+	}
+	public void setTokenPolicy_actions(String tokenPolicy_actions) {
+		this.tokenPolicy_actions = tokenPolicy_actions;
+	}
+	public String getTokenPolicy_authn() {
+		return this.tokenPolicy_authn;
+	}
+	public void setTokenPolicy_authn(String tokenPolicy_authn) {
+		this.tokenPolicy_authn = tokenPolicy_authn;
 	}
 }

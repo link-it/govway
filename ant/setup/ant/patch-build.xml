@@ -14,6 +14,16 @@ Esempi:
 - tomcat/all/properties/[add-remove]/*.properties
 - all/all/other/*
 
+NOTA: se nella radice esiste il file incremental patch, la prima directory rappresenta il numero incrementale della patch
+Esempi:
+- incremental.patch
+- 001/all/all/lib/[add-remove]/*.jar
+- 001/all/all/properties/[add-remove]/*.properties
+- 002/all/govwayConsole.war/lib/[add-remove]/*.jar
+- 003/all/govway.ear/properties/[add-remove]/*.properties
+- 003/wildfly17/all/lib/[add-remove]/*.jar
+- 004/tomcat/all/properties/[add-remove]/*.properties
+- 004/all/all/other/*
 	</description>
 
 	<import file="../../commons/utils.xml" />
@@ -25,18 +35,56 @@ Esempi:
 			<then>
 				<echo message="Build Patch Version [${deploy_patch}] ..."/>
 				
-				<foreach target="-patch-as" param="asTypeOrAsVersion" inheritall="true">
-					<path>
-						<dirset dir="${deploy_patch}" casesensitive="yes">
-							<include name="*"/>
-						</dirset>
-					</path>
-				</foreach>
+				<if>
+					<available file="${deploy_patch}/incremental.patch" type="file"/>
+					<then>
+						<echo message="Incremental patch mode"/>
+
+						<foreach target="-patch-number" param="number" inheritall="true">
+							<path>
+								<dirset dir="${deploy_patch}" casesensitive="yes">
+									<include name="*"/>
+									<!-- e' un file, quindi con dirset gia' non dovrebbe essre considerato -->
+									<exclude name="incremental.patch"/>
+								</dirset>
+							</path>
+						</foreach>
+
+					</then>
+					<else>
+
+						<echo message="Flat patch mode"/>
+
+						<foreach target="-patch-as" param="asTypeOrAsVersion" inheritall="true">
+							<path>
+								<dirset dir="${deploy_patch}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+
+					</else>
+				</if>
 
 				<echo message="Build Patch Version [${deploy_patch}] completed"/>
 			</then>
 		</if>
 
+	</target>
+
+	<target name="-patch-number">
+		<basename property="patchNumber" file="${number}"/>
+		<echo message="Patch number [${patchNumber}] ..."/>
+
+		<foreach target="-patch-as" param="asTypeOrAsVersion" inheritall="true">
+			<path>
+				<dirset dir="${number}" casesensitive="yes">
+					<include name="*"/>
+				</dirset>
+			</path>
+		</foreach>
+
+		<echo message="Patch number [${patchNumber}] ok"/>
 	</target>
 
 	<target name="-patch-as">

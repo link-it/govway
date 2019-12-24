@@ -39,6 +39,8 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.TrasformazioneRegolaParametro;
+import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
+import org.openspcoop2.core.config.TrasformazioneRegolaRisposta;
 import org.openspcoop2.core.config.constants.TrasformazioneRegolaParametroTipoAzione;
 import org.openspcoop2.core.config.constants.VersioneSOAP;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -852,6 +854,106 @@ public class GestoreTrasformazioniUtilities {
 		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {
 			msg.setForcedResponseCode(forceResponseStatus.intValue()+"");
 		}
+	}
+	
+	public static final String TIPO_TRASFORMAZIONE_SEPARATOR = " ";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_SOAP = "soap";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_REST = "rest";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_METHOD = "method";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_PATH = "path";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_HEADERS = "headers";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_QUERY_PARAMETERS = "queryParameters";
+	public static final String TIPO_TRASFORMAZIONE_CONVERSIONE_RETURN_CODE = "returnCode";
+	public static final String TIPO_TRASFORMAZIONE_NESSUNA = "nessuna";
+	
+	public static String getLabelTipoTrasformazioneRichiesta(TrasformazioneRegolaRichiesta richiesta, OpenSPCoop2Message message) {
+		StringBuffer bf = new StringBuffer();
+		if(richiesta.getConversione()) {
+			if(richiesta.getTrasformazioneSoap()!=null) {
+				bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_SOAP).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			else if(richiesta.getTrasformazioneRest()!=null) {
+				if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+					if(richiesta.getTrasformazioneRest()!=null) {
+						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
+							bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_METHOD).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+						}
+						if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
+							bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_PATH).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+						}
+					}
+				}
+				else {
+					bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_REST).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+				}
+			}
+			bf.append(richiesta.getConversioneTipo());	
+		}
+		else {
+			if(ServiceBinding.REST.equals(message.getServiceBinding())) {
+				if(richiesta.getTrasformazioneRest()!=null) {
+					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getMetodo())) {
+						if(bf.length()>0) {
+							bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+						}
+						bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_METHOD);	
+					}
+					if(StringUtils.isNotEmpty(richiesta.getTrasformazioneRest().getPath())) {
+						if(bf.length()>0) {
+							bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+						}
+						bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_PATH);	
+					}
+				}
+			}
+		}
+		if(richiesta.getHeaderList()!=null && !richiesta.getHeaderList().isEmpty()) {
+			if(bf.length()>0) {
+				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_HEADERS);	
+		}
+		if(richiesta.getParametroUrlList()!=null && !richiesta.getParametroUrlList().isEmpty()) {
+			if(bf.length()>0) {
+				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_QUERY_PARAMETERS);	
+		}
+		if(bf.length()<=0) {
+			bf.append(TIPO_TRASFORMAZIONE_NESSUNA);	
+		}
+		return bf.toString();
+		
+	}
+	
+	public static String getLabelTipoTrasformazioneRisposta(TrasformazioneRegolaRichiesta richiesta,TrasformazioneRegolaRisposta trasformazioneRisposta) {
+		StringBuffer bf = new StringBuffer();
+		if(trasformazioneRisposta.getConversione()) {
+			// !inverto!
+			if(richiesta.getTrasformazioneRest()!=null) {
+				bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_SOAP).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			else if(richiesta.getTrasformazioneSoap()!=null) {
+				bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_REST).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			bf.append(trasformazioneRisposta.getConversioneTipo());	
+		}
+		if(trasformazioneRisposta.getHeaderList()!=null && !trasformazioneRisposta.getHeaderList().isEmpty()) {
+			if(bf.length()>0) {
+				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_HEADERS);	
+		}
+		if(trasformazioneRisposta.getReturnCode()!=null && trasformazioneRisposta.getReturnCode()>0) {
+			if(bf.length()>0) {
+				bf.append(TIPO_TRASFORMAZIONE_SEPARATOR);	
+			}
+			bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_RETURN_CODE);	
+		}
+		if(bf.length()<=0) {
+			bf.append(TIPO_TRASFORMAZIONE_NESSUNA);	
+		}
+		return bf.toString();
 	}
 }
 

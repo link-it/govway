@@ -3902,19 +3902,13 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DUMP_APPLICATIVO);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoDump);
-			de.setSelected(dumpApplicativo);
-			de.setPostBack(true);
-		}
-		else{
-			de.setType(DataElementType.HIDDEN);
-			de.setValue(dumpApplicativo);
-		}
+		de.setType(DataElementType.SELECT);
+		de.setValues(tipoDump);
+		de.setSelected(dumpApplicativo);
+		de.setPostBack(true);
 		dati.addElement(de);
 		
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
+		if(dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
 			String oldDumpApplicativo =null;
 			if(configurazione.getDump().getStato()!=null)
 				oldDumpApplicativo = configurazione.getDump().getStato().toString();
@@ -4004,12 +3998,12 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de;
 		
 		boolean showTitleSection = 
-				(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()) 
+				(this.isModalitaCompleta()) 
 				||
 				(this.isModalitaAvanzata() && (this.confCore.isTracce_showConfigurazioneCustomAppender() || this.confCore.isTracce_showSorgentiDatiDatabase()));
 				
 		if(showTitleSection) {
-			if(this.core.isShowConfigurazioneTracciamentoDiagnostica() || this.isModalitaAvanzata()){
+			if(this.isModalitaAvanzata()){
 				de = new DataElement();
 				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_TRACCE);
 				de.setType(DataElementType.TITLE);
@@ -4024,7 +4018,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de = new DataElement();
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO);
-		if(this.core.isShowConfigurazioneTracciamentoDiagnostica() && this.isModalitaCompleta()){
+		if(this.isModalitaCompleta()){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoBuste);
 			de.setSelected(registrazioneTracce);
@@ -4562,7 +4556,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = newDataElementStyleRuntime();
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_LIVELLO_SEVERITA_LOG4J);
-			if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+			if(this.core.isVisualizzazioneConfigurazioneDiagnosticaLog4J()){
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoMsg);
 				de.setSelected(livelloSeverita);
@@ -4661,7 +4655,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_TRACCE);
 			String v = enable ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue();
 			if(this.isModalitaAvanzata()) {
-				if(this.core.isShowConfigurazioneTracciamentoDiagnostica()){
+				if(this.isModalitaCompleta()){
 					de.setType(DataElementType.SELECT);
 					de.setValues(tipoMsg);
 					de.setSelected(v);

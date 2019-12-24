@@ -609,7 +609,7 @@ public class ControlStationCore {
 	private boolean isProprietaErogazioni_showModalitaStandard;
 	private boolean isProprietaFruizioni_showModalitaStandard;
 	private boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = false;
-	private boolean showConfigurazioneTracciamentoDiagnostica = true;
+	private boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J = true;
 	private String tokenPolicyForceId = null;
 	private boolean tokenPolicyForceIdEnabled = false;
 	private Properties tokenPolicyTipologia = null;
@@ -692,8 +692,8 @@ public class ControlStationCore {
 	public boolean isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona() {
 		return this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
 	}
-	public boolean isShowConfigurazioneTracciamentoDiagnostica() {
-		return this.showConfigurazioneTracciamentoDiagnostica;
+	public boolean isVisualizzazioneConfigurazioneDiagnosticaLog4J() {
+		return this.isVisualizzazioneConfigurazioneDiagnosticaLog4J;
 	}
 	public String getTokenPolicyForceId() {
 		return this.tokenPolicyForceId;
@@ -1673,7 +1673,7 @@ public class ControlStationCore {
 		this.isProprietaErogazioni_showModalitaStandard = core.isProprietaErogazioni_showModalitaStandard;
 		this.isProprietaFruizioni_showModalitaStandard = core.isProprietaFruizioni_showModalitaStandard;
 		this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = core.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona;
-		this.showConfigurazioneTracciamentoDiagnostica = core.showConfigurazioneTracciamentoDiagnostica;
+		this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = core.isVisualizzazioneConfigurazioneDiagnosticaLog4J;
 		this.tokenPolicyForceId = core.tokenPolicyForceId;
 		this.tokenPolicyForceIdEnabled = core.tokenPolicyForceIdEnabled;
 		this.tokenPolicyTipologia = core.tokenPolicyTipologia;
@@ -1959,7 +1959,7 @@ public class ControlStationCore {
 			this.isProprietaErogazioni_showModalitaStandard = consoleProperties.isProprietaErogazioni_showModalitaStandard();
 			this.isProprietaFruizioni_showModalitaStandard = consoleProperties.isProprietaFruizioni_showModalitaStandard();
 			this.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona = consoleProperties.isElenchiSA_asincroniNonSupportati_VisualizzaRispostaAsincrona();
-			this.showConfigurazioneTracciamentoDiagnostica = consoleProperties.isMenuConfigurazioneVisualizzazioneDiagnosticaTracciatura();
+			this.isVisualizzazioneConfigurazioneDiagnosticaLog4J = consoleProperties.isVisualizzazioneConfigurazioneDiagnosticaLog4J();
 			this.tokenPolicyForceId = consoleProperties.getTokenPolicyForceId();
 			this.tokenPolicyForceIdEnabled = StringUtils.isNotEmpty(this.tokenPolicyForceId);
 			this.tokenPolicyTipologia = consoleProperties.getTokenPolicyTipologia();
