@@ -26,8 +26,11 @@ package org.openspcoop2.protocol.basic.dump;
 
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 
 import org.openspcoop2.core.config.OpenspcoopAppender;
 import org.openspcoop2.core.transazioni.DumpAllegato;
@@ -38,6 +41,7 @@ import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager;
+import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.MessageType;
@@ -98,6 +102,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 	 */
 	@Override
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException{
+		this.dump(conOpenSPCoopPdD, messaggio, false);
+	}
+	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
 
 		if(messaggio==null)
 			throw new DumpException("Errore durante il dump: messaggio is null");
@@ -180,6 +187,10 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					if(this.debug){
 						this.log.debug("Dump "+messaggio.getBodyMultipartInfo().getHeaders().size()+" multipart-body headers");
 					}
+					
+					Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+					List<DumpMultipartHeader> backupFailed = new ArrayList<DumpMultipartHeader>();
+					
 					Iterator<String> keys = messaggio.getBodyMultipartInfo().getHeaders().keySet().iterator();
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
@@ -188,15 +199,37 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 						if(value==null){
 							value = ""; // puo' succedere in alcuni casi.
 						}
-						
-						DumpMultipartHeader headerMultipart = new DumpMultipartHeader();
-						headerMultipart.setNome(key);
 						if(this.debug){
 							this.log.debug("\t\t"+key+"="+value);
 						}
+						
+						DumpMultipartHeader headerMultipart = new DumpMultipartHeader();
+						headerMultipart.setNome(key);
 						headerMultipart.setValore(value.toString());
 						headerMultipart.setDumpTimestamp(gdo);
-						dumpMessaggio.addMultipartHeader(headerMultipart);
+						
+						if(headersCompact) {
+							propertiesHdr.put(key, value);
+							backupFailed.add(headerMultipart);
+						}
+						else {
+							dumpMessaggio.addMultipartHeader(headerMultipart);
+						}
+					}
+					
+					if(headersCompact) {
+						PropertiesSerializator ps = new PropertiesSerializator(propertiesHdr);
+						try{
+							dumpMessaggio.setMultipartHeaderExt(ps.convertToDBColumnValue());
+							backupFailed.clear();
+							backupFailed = null;
+						}catch(Throwable e){
+							// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+							this.log.error("Errore durante la conversione degli header multipart: "+e.getMessage(),e);
+							for (DumpMultipartHeader dumpMultipartHeader : backupFailed) {
+								dumpMessaggio.addMultipartHeader(dumpMultipartHeader);
+							}
+						}
 					}
 				}
 			}
@@ -211,6 +244,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					this.log.debug("Dump "+messaggio.getHeaders().size()+" headers");
 				}
 
+				Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+				List<DumpHeaderTrasporto> backupFailed = new ArrayList<DumpHeaderTrasporto>();
+				
 				Iterator<String> keys = messaggio.getHeaders().keySet().iterator();
 				while (keys.hasNext()) {
 					String key = (String) keys.next();
@@ -219,15 +255,37 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 					if(value==null){
 						value = ""; // puo' succedere in alcuni casi.
 					}
-
-					DumpHeaderTrasporto headerTrasporto = new DumpHeaderTrasporto();
-					headerTrasporto.setNome(key);
 					if(this.debug){
 						this.log.debug("\t\t"+key+"="+value);
 					}
+
+					DumpHeaderTrasporto headerTrasporto = new DumpHeaderTrasporto();
+					headerTrasporto.setNome(key);
 					headerTrasporto.setValore(value.toString());
 					headerTrasporto.setDumpTimestamp(gdo);
-					dumpMessaggio.addHeaderTrasporto(headerTrasporto);
+					
+					if(headersCompact) {
+						propertiesHdr.put(key, value);
+						backupFailed.add(headerTrasporto);
+					}
+					else {
+						dumpMessaggio.addHeaderTrasporto(headerTrasporto);
+					}
+				}
+				
+				if(headersCompact) {
+					PropertiesSerializator ps = new PropertiesSerializator(propertiesHdr);
+					try{
+						dumpMessaggio.setHeaderExt(ps.convertToDBColumnValue());
+						backupFailed.clear();
+						backupFailed = null;
+					}catch(Throwable e){
+						// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+						this.log.error("Errore durante la conversione degli header: "+e.getMessage(),e);
+						for (DumpHeaderTrasporto dumpHeader : backupFailed) {
+							dumpMessaggio.addHeaderTrasporto(dumpHeader);
+						}
+					}
 				}
 			}
 			
@@ -266,6 +324,9 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 							this.log.debug("Dump "+attach.getHeaders().size()+" headers dell'allegato con id ["+attach.getContentId()+"]");
 						}
 
+						Hashtable<String, String> propertiesHdr = new Hashtable<String, String>();
+						List<DumpHeaderAllegato> backupFailed = new ArrayList<DumpHeaderAllegato>();
+												
 						Iterator<String> keys = attach.getHeaders().keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -274,15 +335,37 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 							if(value==null){
 								value = ""; // puo' succedere in alcuni casi.
 							}
-
-							DumpHeaderAllegato headerAllegato = new DumpHeaderAllegato();
-							headerAllegato.setNome(key);
 							if(this.debug){
 								this.log.debug("\t\t"+key+"="+value);
 							}
+
+							DumpHeaderAllegato headerAllegato = new DumpHeaderAllegato();
+							headerAllegato.setNome(key);
 							headerAllegato.setValore(value.toString());
 							headerAllegato.setDumpTimestamp(gdo);
-							dumpAllegato.addHeader(headerAllegato);
+							
+							if(headersCompact) {
+								propertiesHdr.put(key, value);
+								backupFailed.add(headerAllegato);
+							}
+							else {
+								dumpAllegato.addHeader(headerAllegato);
+							}
+						}
+						
+						if(headersCompact) {
+							PropertiesSerializator ps = new PropertiesSerializator(propertiesHdr);
+							try{
+								dumpAllegato.setHeaderExt(ps.convertToDBColumnValue());
+								backupFailed.clear();
+								backupFailed = null;
+							}catch(Throwable e){
+								// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+								this.log.error("Errore durante la conversione degli header dell'allegato '"+attach.getContentId()+"': "+e.getMessage(),e);
+								for (DumpHeaderAllegato dumpHeader : backupFailed) {
+									dumpAllegato.addHeader(dumpHeader);
+								}
+							}
 						}
 					}
 				}

@@ -877,7 +877,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 			return false;
 		
 		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, false);
 		if(errore!= null)
 			return false;
 
@@ -889,7 +889,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		String toRet = null;
 		if(f !=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, true);
 			if(errore!= null)
 				return "";
 		 

@@ -232,6 +232,8 @@ CREATE TABLE dump_messaggi
 	post_process_config_id VARCHAR(2000),
 	post_process_timestamp TIMESTAMP,
 	post_processed INT DEFAULT 1,
+	multipart_header_ext CLOB,
+	header_ext CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE NO CACHE),
 	-- check constraints
@@ -294,6 +296,7 @@ CREATE TABLE dump_allegati
 	content_location VARCHAR(255),
 	allegato BLOB,
 	dump_timestamp TIMESTAMP NOT NULL,
+	header_ext CLOB,
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 CYCLE NO CACHE),
 	id_messaggio BIGINT NOT NULL,

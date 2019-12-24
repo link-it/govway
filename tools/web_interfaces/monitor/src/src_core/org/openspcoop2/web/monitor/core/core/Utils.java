@@ -134,7 +134,7 @@ public class Utils {
 		return res;
 	} 
 	
-	 public static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer) {
+	 public static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer, boolean logError) {
 		 try{
 			 // 1024 = 1K
 			 // Visualizzo al massimo 250K
@@ -153,7 +153,12 @@ public class Utils {
 			 return null;
 
 		 }catch(Exception e){
-			 log.error("getTestoVisualizzabile error", e);
+			 if(logError) {
+				 log.error("getTestoVisualizzabile error", e);
+			 }
+			 else {
+				 log.debug("getTestoVisualizzabile error", e);
+			 }
 			 return e.getMessage();
 		 }
 

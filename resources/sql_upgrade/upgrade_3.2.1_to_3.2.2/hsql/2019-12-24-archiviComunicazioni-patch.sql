@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/hsql/archiviComunicazioni/2019-12-24-patch.sql

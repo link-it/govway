@@ -115,6 +115,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 	private boolean transazioniRegistrazioneTempiElaborazione = false;
 	private ISalvataggioTracceManager salvataggioTracceManager = null;
 	private ISalvataggioDiagnosticiManager salvataggioDiagnosticiManager = null;
+	private boolean transazioniRegistrazioneDumpHeadersCompactEnabled = false;
 
 	/**
 	 * Logger
@@ -272,6 +273,9 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 				this.transazioniRegistrazioneTracceProtocolPropertiesEnabled =  this.openspcoopProperties.isTransazioniRegistrazioneTracceProtocolPropertiesEnabled();
 				this.transazioniRegistrazioneTracceHeaderRawEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceHeaderRawEnabled();
 				this.transazioniRegistrazioneTracceDigestEnabled = this.openspcoopProperties.isTransazioniRegistrazioneTracceDigestEnabled();
+				
+				// Indicazioni sulle modalita' di salvataggio degli header del dump
+				this.transazioniRegistrazioneDumpHeadersCompactEnabled = this.openspcoopProperties.isTransazioniRegistrazioneDumpHeadersCompactEnabled();
 				
 				// Configurazione
 				Transazioni configTransazioni = this.configPdDManager.getTransazioniConfigurazione();
@@ -781,7 +785,12 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					}
 					if(this.debug)
 						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] ...");
-					this.dumpOpenSPCoopAppender.dump(connection,messaggio);
+					if(this.dumpOpenSPCoopAppender instanceof org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender) {
+						((org.openspcoop2.pdd.logger.DumpOpenSPCoopProtocolAppender)this.dumpOpenSPCoopAppender).dump(connection,messaggio,this.transazioniRegistrazioneDumpHeadersCompactEnabled);
+					}
+					else {
+						this.dumpOpenSPCoopAppender.dump(connection,messaggio);
+					}
 					if(this.debug)
 						this.log.debug("["+idTransazione+"] registrazione di tipo ["+messaggio.getTipoMessaggio()+"] completata");
 				}

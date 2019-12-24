@@ -102,7 +102,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 				return false;
 
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer, false);
 			if(errore!= null)
 				return false;
 
@@ -140,7 +140,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer, true);
 			if(errore!= null)
 				return "";
 
@@ -274,7 +274,7 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	public String getErroreVisualizzaMessaggio(){
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer,false);
 			return errore;
 		}
 

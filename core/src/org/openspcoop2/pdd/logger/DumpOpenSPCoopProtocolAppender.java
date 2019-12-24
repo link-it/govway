@@ -30,6 +30,7 @@ import java.util.Hashtable;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
+import org.openspcoop2.protocol.basic.dump.DumpProducer;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -110,6 +111,21 @@ public class DumpOpenSPCoopProtocolAppender implements IDumpProducer{
 		try{
 			if(messaggio.getProtocollo()!=null){
 				DumpOpenSPCoopProtocolAppender.getProtocolAppender(messaggio.getProtocollo()).dump(conOpenSPCoopPdD,messaggio);
+			}
+		}catch(Exception e){
+			throw new DumpException(e.getMessage(),e);
+		}
+	}
+	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
+		try{
+			if(messaggio.getProtocollo()!=null){
+				IDumpProducer dumpAppender = DumpOpenSPCoopProtocolAppender.getProtocolAppender(messaggio.getProtocollo());
+				if(dumpAppender instanceof DumpProducer) {
+					((DumpProducer)dumpAppender).dump(conOpenSPCoopPdD,messaggio,headersCompact);
+				}
+				else {
+					dumpAppender.dump(conOpenSPCoopPdD,messaggio);
+				}
 			}
 		}catch(Exception e){
 			throw new DumpException(e.getMessage(),e);

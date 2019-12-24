@@ -538,6 +538,12 @@
 			    <xsd:element default="1" minOccurs="0" name="post-processed" type="xsd:int">
 			    	
 			    </xsd:element>
+				<xsd:element minOccurs="0" name="multipart-header-ext" type="xsd:string">
+					
+				</xsd:element>
+				<xsd:element minOccurs="0" name="header-ext" type="xsd:string">
+					
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -593,6 +599,9 @@
 		    <xsd:element name="dump-timestamp" type="xsd:dateTime">
 		    	
 		    </xsd:element>
+			<xsd:element minOccurs="0" name="header-ext" type="xsd:string">
+				
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 

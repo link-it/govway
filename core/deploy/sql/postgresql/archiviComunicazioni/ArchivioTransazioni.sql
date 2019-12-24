@@ -236,6 +236,8 @@ CREATE TABLE dump_messaggi
 	post_process_config_id VARCHAR(2000),
 	post_process_timestamp TIMESTAMP,
 	post_processed INT DEFAULT 1,
+	multipart_header_ext TEXT,
+	header_ext TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_dump_messaggi') NOT NULL,
 	-- check constraints
@@ -304,6 +306,7 @@ CREATE TABLE dump_allegati
 	content_location VARCHAR(255),
 	allegato BYTEA,
 	dump_timestamp TIMESTAMP NOT NULL,
+	header_ext TEXT,
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_dump_allegati') NOT NULL,
 	id_messaggio BIGINT NOT NULL,

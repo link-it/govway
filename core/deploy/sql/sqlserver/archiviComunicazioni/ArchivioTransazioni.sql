@@ -232,6 +232,8 @@ CREATE TABLE dump_messaggi
 	post_process_config_id VARCHAR(2000),
 	post_process_timestamp DATETIME2,
 	post_processed INT DEFAULT 1,
+	multipart_header_ext VARCHAR(max),
+	header_ext VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- check constraints
@@ -294,6 +296,7 @@ CREATE TABLE dump_allegati
 	content_location VARCHAR(255),
 	allegato VARBINARY(MAX),
 	dump_timestamp DATETIME2 NOT NULL,
+	header_ext VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	id_messaggio BIGINT NOT NULL,

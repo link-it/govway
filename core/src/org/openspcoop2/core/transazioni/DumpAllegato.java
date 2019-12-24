@@ -45,6 +45,7 @@ import java.util.List;
  * 			&lt;element name="allegato" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/transazioni}dump-header-allegato" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
+ * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -63,7 +64,8 @@ import java.util.List;
   	"contentLocation",
   	"allegato",
   	"header",
-  	"dumpTimestamp"
+  	"dumpTimestamp",
+  	"headerExt"
   }
 )
 
@@ -151,6 +153,14 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
     this.dumpTimestamp = dumpTimestamp;
   }
 
+  public java.lang.String getHeaderExt() {
+    return this.headerExt;
+  }
+
+  public void setHeaderExt(java.lang.String headerExt) {
+    this.headerExt = headerExt;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -209,5 +219,9 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlElement(name="dump-timestamp",required=true,nillable=false,type=java.lang.String.class)
   protected java.util.Date dumpTimestamp;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="header-ext",required=false,nillable=false)
+  protected java.lang.String headerExt;
 
 }

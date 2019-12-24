@@ -1964,6 +1964,30 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 			    		</xsd:appinfo>
 			    	</xsd:annotation>
 			    </xsd:element>
+				<xsd:element name="multipart-header-ext" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping long-text="true" name="multipart_header_ext"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Header di trasporto all'interno della parte del Multipart contenente il messaggio principale]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="header-ext" type="xsd:string" minOccurs="0">
+					<xsd:annotation>
+						<xsd:appinfo>
+							<linkit:generator
+								xmlns:linkit="http://www.link.it/project_generator">
+								<linkit:sql-column-mapping long-text="true" name="header_ext"/>
+								<linkit:sql-ddl-column-comment><![CDATA[Header di trasporto associati ai messaggi transitati nella Porta di Dominio]]></linkit:sql-ddl-column-comment>
+								<linkit:ws-field-mapping filter="false" />
+							</linkit:generator>
+						</xsd:appinfo>
+					</xsd:annotation>
+				</xsd:element>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -2152,6 +2176,18 @@ e altre informazioni utilizzate nei profili asincroni]]></linkit:sql-ddl-column-
 		    		</xsd:appinfo>
 		    	</xsd:annotation>
 		    </xsd:element>
+			<xsd:element name="header-ext" type="xsd:string" minOccurs="0">
+				<xsd:annotation>
+					<xsd:appinfo>
+						<linkit:generator
+							xmlns:linkit="http://www.link.it/project_generator">
+							<linkit:sql-column-mapping long-text="true" name="header_ext"/>
+							<linkit:sql-ddl-column-comment><![CDATA[Header di trasporto associati ad un allegato transitato nella Porta di Dominio]]></linkit:sql-ddl-column-comment>
+							<linkit:ws-field-mapping filter="false" />
+						</linkit:generator>
+					</xsd:appinfo>
+				</xsd:annotation>
+			</xsd:element>
 		</xsd:sequence>
 	</xsd:complexType>
 

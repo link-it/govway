@@ -60,6 +60,8 @@ import java.util.List;
  * 			&lt;element name="post-process-config-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="post-process-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="post-processed" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="1"/>
+ * 			&lt;element name="multipart-header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
  * </pre>
@@ -92,7 +94,9 @@ import java.util.List;
   	"postProcessContent",
   	"postProcessConfigId",
   	"postProcessTimestamp",
-  	"postProcessed"
+  	"postProcessed",
+  	"multipartHeaderExt",
+  	"headerExt"
   }
 )
 
@@ -352,6 +356,22 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
     this.postProcessed = postProcessed;
   }
 
+  public java.lang.String getMultipartHeaderExt() {
+    return this.multipartHeaderExt;
+  }
+
+  public void setMultipartHeaderExt(java.lang.String multipartHeaderExt) {
+    this.multipartHeaderExt = multipartHeaderExt;
+  }
+
+  public java.lang.String getHeaderExt() {
+    return this.headerExt;
+  }
+
+  public void setHeaderExt(java.lang.String headerExt) {
+    this.headerExt = headerExt;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -560,5 +580,13 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="post-processed",required=false,nillable=false,defaultValue="1")
   protected int postProcessed = 1;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="multipart-header-ext",required=false,nillable=false)
+  protected java.lang.String multipartHeaderExt;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="header-ext",required=false,nillable=false)
+  protected java.lang.String headerExt;
 
 }

@@ -244,7 +244,7 @@ public class TransazioneBean extends Transazione{
 		String toRet = null;
 		if(f !=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, true);
 			if(errore!= null)
 				return "";
 
@@ -288,7 +288,7 @@ public class TransazioneBean extends Transazione{
 			return false;
 
 		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, false);
 		if(errore!= null)
 			return false;
 
@@ -352,7 +352,7 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultCooperazione();
 		if(f!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
 			return errore;
 		}
 
@@ -364,7 +364,7 @@ public class TransazioneBean extends Transazione{
 		String toRet = null;
 		if(f !=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,true);
 			if(errore!= null)
 				return "";
 
@@ -408,7 +408,7 @@ public class TransazioneBean extends Transazione{
 			return false;
 
 		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
 		if(errore!= null)
 			return false;
 
@@ -472,7 +472,7 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultIntegrazione();
 		if(f!=null) {
 			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer);
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
 			return errore;
 		}
 

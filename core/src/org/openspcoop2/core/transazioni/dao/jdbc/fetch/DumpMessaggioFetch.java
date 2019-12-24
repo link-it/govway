@@ -92,6 +92,10 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "post_process_timestamp", DumpMessaggio.model().POST_PROCESS_TIMESTAMP.getFieldType()));
 				setParameter(object, "setPostProcessed", DumpMessaggio.model().POST_PROCESSED.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "post_processed", DumpMessaggio.model().POST_PROCESSED.getFieldType()));
+				setParameter(object, "setMultipartHeaderExt", DumpMessaggio.model().MULTIPART_HEADER_EXT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "multipart_header_ext", DumpMessaggio.model().MULTIPART_HEADER_EXT.getFieldType()));
+				setParameter(object, "setHeaderExt", DumpMessaggio.model().HEADER_EXT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "header_ext", DumpMessaggio.model().HEADER_EXT.getFieldType()));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
@@ -132,6 +136,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					jdbcParameterUtilities.readParameter(rs, "allegato", DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
 					jdbcParameterUtilities.readParameter(rs, "dump_timestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()));
+				setParameter(object, "setHeaderExt", DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType(),
+					jdbcParameterUtilities.readParameter(rs, "header_ext", DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType()));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){
@@ -212,6 +218,10 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"post-process-timestamp"));
 				setParameter(object, "setPostProcessed", DumpMessaggio.model().POST_PROCESSED.getFieldType(),
 					this.getObjectFromMap(map,"post-processed"));
+				setParameter(object, "setMultipartHeaderExt", DumpMessaggio.model().MULTIPART_HEADER_EXT.getFieldType(),
+					this.getObjectFromMap(map,"multipart-header-ext"));
+				setParameter(object, "setHeaderExt", DumpMessaggio.model().HEADER_EXT.getFieldType(),
+					this.getObjectFromMap(map,"header-ext"));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().MULTIPART_HEADER)){
@@ -252,6 +262,8 @@ public class DumpMessaggioFetch extends AbstractJDBCFetch {
 					this.getObjectFromMap(map,"allegato.allegato"));
 				setParameter(object, "setDumpTimestamp", DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType(),
 					this.getObjectFromMap(map,"allegato.dump-timestamp"));
+				setParameter(object, "setHeaderExt", DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType(),
+					this.getObjectFromMap(map,"allegato.header-ext"));
 				return object;
 			}
 			if(model.equals(DumpMessaggio.model().ALLEGATO.HEADER)){

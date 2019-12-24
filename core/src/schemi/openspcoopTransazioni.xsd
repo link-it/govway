@@ -276,6 +276,9 @@
 				<xsd:element name="post-process-config-id" type="xsd:string" minOccurs="0"/> <!-- nome PD o PA, oppure null se e' la configurazione di default -->
 			    <xsd:element name="post-process-timestamp"  type="xsd:dateTime" minOccurs="0"/>
 			    <xsd:element name="post-processed" type="xsd:int" minOccurs="0" default="1" /> <!-- Stato regola (1/0/-2) -->
+				<!-- Header -->
+				<xsd:element name="multipart-header-ext" type="xsd:string" minOccurs="0"/>
+				<xsd:element name="header-ext" type="xsd:string" minOccurs="0"/>
 			</xsd:sequence>
 		</xsd:complexType>
 	</xsd:element>
@@ -305,6 +308,7 @@
 			<xsd:element name="header" type="dump-header-allegato" minOccurs="0"
 				maxOccurs="unbounded"/>
 		    <xsd:element name="dump-timestamp"  type="xsd:dateTime" />
+			<xsd:element name="header-ext" type="xsd:string" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 	

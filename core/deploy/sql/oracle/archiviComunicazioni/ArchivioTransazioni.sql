@@ -265,6 +265,8 @@ CREATE TABLE dump_messaggi
 	post_process_config_id VARCHAR2(2000),
 	post_process_timestamp TIMESTAMP,
 	post_processed NUMBER,
+	multipart_header_ext CLOB,
+	header_ext CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- check constraints
@@ -369,6 +371,7 @@ CREATE TABLE dump_allegati
 	content_location VARCHAR2(255),
 	allegato BLOB,
 	dump_timestamp TIMESTAMP NOT NULL,
+	header_ext CLOB,
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	id_messaggio NUMBER NOT NULL,

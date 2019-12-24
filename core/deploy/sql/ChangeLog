@@ -1,3 +1,10 @@
+2019-12-24  Andrea Poli <apoli@link.it>
+	
+	Gestite colonne per salvataggio headers in una unica riga	
+	ALTER TABLE dump_messaggi ADD COLUMN multipart_header_ext TEXT;
+	ALTER TABLE dump_messaggi ADD COLUMN header_ext TEXT;
+	ALTER TABLE dump_allegati ADD COLUMN header_ext TEXT;
+
 2019-11-08  Andrea Poli <apoli@link.it>
 
 	Corrette configurazioni esistenti SPCoop, poichè è stata aggiunta la possibilità di impostare l'autenticazione sulle erogazioni.

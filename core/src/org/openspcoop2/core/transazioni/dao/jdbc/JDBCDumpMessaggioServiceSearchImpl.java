@@ -579,7 +579,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		return this._get(jdbcProperties, log, connection, sqlQueryObject, Long.valueOf(tableId), idMappingResolutionBehaviour);
 	}
 	
-	private DumpMessaggio _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
+	protected DumpMessaggio _get(JDBCServiceManagerProperties jdbcProperties, Logger log, Connection connection, ISQLQueryObject sqlQueryObject, Long tableId, org.openspcoop2.generic_project.beans.IDMappingBehaviour idMappingResolutionBehaviour) throws NotFoundException, MultipleResultException, NotImplementedException, ServiceException, Exception {
 	
 		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities jdbcUtilities = 
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCPreparedStatementUtilities(sqlQueryObject.getTipoDatabaseOpenSPCoop2(), log, connection);
@@ -610,6 +610,8 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_CONFIG_ID,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_TIMESTAMP,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESSED,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER_EXT,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().HEADER_EXT,true));
 		sqlQueryObjectGet_dumpMessaggio.addWhereCondition("id=?");
 
 		// Get dumpMessaggio
@@ -688,6 +690,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION,true));
 		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ALLEGATO,true));
 		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,true));
+		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER_EXT,true));
 		sqlQueryObjectGet_dumpMessaggio_dumpAllegato.addWhereCondition("id_messaggio=?");
 
 		// Get dumpMessaggio_dumpAllegato

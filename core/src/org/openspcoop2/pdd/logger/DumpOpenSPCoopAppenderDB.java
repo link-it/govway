@@ -83,6 +83,9 @@ public class DumpOpenSPCoopAppenderDB implements IDumpProducer{
 	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio) throws DumpException{
 		this.dumpBase.dump(conOpenSPCoopPdD, messaggio);
 	}
+	public void dump(Connection conOpenSPCoopPdD,Messaggio messaggio,boolean headersCompact) throws DumpException{
+		this.dumpBase.dump(conOpenSPCoopPdD,messaggio,headersCompact);
+	}
 
 
 

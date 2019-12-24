@@ -229,6 +229,13 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return "dump_timestamp";
 			}
 		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".header_ext";
+			}else{
+				return "header_ext";
+			}
+		}
 		if(field.equals(DumpMessaggio.model().CONTENUTO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -304,6 +311,20 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".post_processed";
 			}else{
 				return "post_processed";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_header_ext";
+			}else{
+				return "multipart_header_ext";
+			}
+		}
+		if(field.equals(DumpMessaggio.model().HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".header_ext";
+			}else{
+				return "header_ext";
 			}
 		}
 
@@ -388,6 +409,9 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP)){
 			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
 		}
+		if(field.equals(DumpMessaggio.model().ALLEGATO.HEADER_EXT)){
+			return this.toTable(DumpMessaggio.model().ALLEGATO, returnAlias);
+		}
 		if(field.equals(DumpMessaggio.model().CONTENUTO.NOME)){
 			return this.toTable(DumpMessaggio.model().CONTENUTO, returnAlias);
 		}
@@ -419,6 +443,12 @@ public class DumpMessaggioFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 		if(field.equals(DumpMessaggio.model().POST_PROCESSED)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().MULTIPART_HEADER_EXT)){
+			return this.toTable(DumpMessaggio.model(), returnAlias);
+		}
+		if(field.equals(DumpMessaggio.model().HEADER_EXT)){
 			return this.toTable(DumpMessaggio.model(), returnAlias);
 		}
 

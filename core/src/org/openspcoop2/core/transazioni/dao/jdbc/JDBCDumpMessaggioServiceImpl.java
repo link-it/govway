@@ -90,6 +90,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_CONFIG_ID,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESS_TIMESTAMP,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESSED,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER_EXT,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().HEADER_EXT,false),"?");
 
 		// Insert dumpMessaggio
 		org.openspcoop2.utils.jdbc.IKeyGeneratorObject keyGenerator = this.getDumpMessaggioFetch().getKeyGeneratorObject(DumpMessaggio.model());
@@ -109,7 +111,9 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getPostProcessContent(),DumpMessaggio.model().POST_PROCESS_CONTENT.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getPostProcessConfigId(),DumpMessaggio.model().POST_PROCESS_CONFIG_ID.getFieldType()),
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getPostProcessTimestamp(),DumpMessaggio.model().POST_PROCESS_TIMESTAMP.getFieldType()),
-			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getPostProcessed(),DumpMessaggio.model().POST_PROCESSED.getFieldType())
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getPostProcessed(),DumpMessaggio.model().POST_PROCESSED.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getMultipartHeaderExt(),DumpMessaggio.model().MULTIPART_HEADER_EXT.getFieldType()),
+			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getHeaderExt(),DumpMessaggio.model().HEADER_EXT.getFieldType())
 		);
 		dumpMessaggio.setId(id);
 
@@ -125,6 +129,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 			sqlQueryObjectInsert_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION,false),"?");
 			sqlQueryObjectInsert_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ALLEGATO,false),"?");
 			sqlQueryObjectInsert_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,false),"?");
+			sqlQueryObjectInsert_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER_EXT,false),"?");
 			sqlQueryObjectInsert_allegato.addInsertField("id_messaggio","?");
 
 			// Insert dumpMessaggio.getAllegatoList().get(i)
@@ -135,6 +140,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getContentLocation(),DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getAllegato(),DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()),
+				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio.getAllegatoList().get(i).getHeaderExt(),DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType()),
 				new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 			);
 			dumpMessaggio.getAllegatoList().get(i).setId(id_allegato);
@@ -330,6 +336,10 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getPostProcessTimestamp(), DumpMessaggio.model().POST_PROCESS_TIMESTAMP.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().POST_PROCESSED,false), "?");
 		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getPostProcessed(), DumpMessaggio.model().POST_PROCESSED.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().MULTIPART_HEADER_EXT,false), "?");
+		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getMultipartHeaderExt(), DumpMessaggio.model().MULTIPART_HEADER_EXT.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().HEADER_EXT,false), "?");
+		lstObjects_dumpMessaggio.add(new JDBCObject(dumpMessaggio.getHeaderExt(), DumpMessaggio.model().HEADER_EXT.getFieldType()));
 		sqlQueryObjectUpdate.addWhereCondition("id=?");
 		lstObjects_dumpMessaggio.add(new JDBCObject(tableId, Long.class));
 
@@ -533,6 +543,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectInsert_dumpMessaggio_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION,false),"?");
 				sqlQueryObjectInsert_dumpMessaggio_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.ALLEGATO,false),"?");
 				sqlQueryObjectInsert_dumpMessaggio_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,false),"?");
+				sqlQueryObjectInsert_dumpMessaggio_allegato.addInsertField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER_EXT,false),"?");
 				sqlQueryObjectInsert_dumpMessaggio_allegato.addInsertField("id_messaggio","?");
 
 				// Insert dumpMessaggio_allegato
@@ -543,6 +554,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getContentLocation(),DumpMessaggio.model().ALLEGATO.CONTENT_LOCATION.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getAllegato(),DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getDumpTimestamp(),DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()),
+					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(dumpMessaggio_allegato.getHeaderExt(),DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType()),
 					new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(Long.valueOf(id),Long.class)
 				);
 				dumpMessaggio_allegato.setId(id_dumpMessaggio_allegato);
@@ -597,6 +609,8 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(dumpMessaggio_allegato.getAllegato(), DumpMessaggio.model().ALLEGATO.ALLEGATO.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP,false), "?");
 				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(dumpMessaggio_allegato.getDumpTimestamp(), DumpMessaggio.model().ALLEGATO.DUMP_TIMESTAMP.getFieldType()));
+				sqlQueryObjectUpdate_dumpMessaggio_allegato.addUpdateField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ALLEGATO.HEADER_EXT,false), "?");
+				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(dumpMessaggio_allegato.getHeaderExt(), DumpMessaggio.model().ALLEGATO.HEADER_EXT.getFieldType()));
 				sqlQueryObjectUpdate_dumpMessaggio_allegato.addWhereCondition("id=?");
 				ids_dumpMessaggio_allegato_da_non_eliminare.add(dumpMessaggio_allegato.getId());
 				lstObjects_dumpMessaggio_allegato.add(new JDBCObject(Long.valueOf(dumpMessaggio_allegato.getId()),Long.class));

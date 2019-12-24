@@ -62,6 +62,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		this.POST_PROCESS_CONFIG_ID = new Field("post-process-config-id",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.POST_PROCESS_TIMESTAMP = new Field("post-process-timestamp",java.util.Date.class,"dump-messaggio",DumpMessaggio.class);
 		this.POST_PROCESSED = new Field("post-processed",int.class,"dump-messaggio",DumpMessaggio.class);
+		this.MULTIPART_HEADER_EXT = new Field("multipart-header-ext",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.HEADER_EXT = new Field("header-ext",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 	
 	}
 	
@@ -89,6 +91,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 		this.POST_PROCESS_CONFIG_ID = new ComplexField(father,"post-process-config-id",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.POST_PROCESS_TIMESTAMP = new ComplexField(father,"post-process-timestamp",java.util.Date.class,"dump-messaggio",DumpMessaggio.class);
 		this.POST_PROCESSED = new ComplexField(father,"post-processed",int.class,"dump-messaggio",DumpMessaggio.class);
+		this.MULTIPART_HEADER_EXT = new ComplexField(father,"multipart-header-ext",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.HEADER_EXT = new ComplexField(father,"header-ext",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 	
 	}
 	
@@ -133,6 +137,10 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	public IField POST_PROCESS_TIMESTAMP = null;
 	 
 	public IField POST_PROCESSED = null;
+	 
+	public IField MULTIPART_HEADER_EXT = null;
+	 
+	public IField HEADER_EXT = null;
 	 
 
 	@Override

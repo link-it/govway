@@ -48,6 +48,7 @@ public class DumpAllegatoModel extends AbstractModel<DumpAllegato> {
 		this.ALLEGATO = new Field("allegato",byte[].class,"dump-allegato",DumpAllegato.class);
 		this.HEADER = new org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel(new Field("header",org.openspcoop2.core.transazioni.DumpHeaderAllegato.class,"dump-allegato",DumpAllegato.class));
 		this.DUMP_TIMESTAMP = new Field("dump-timestamp",java.util.Date.class,"dump-allegato",DumpAllegato.class);
+		this.HEADER_EXT = new Field("header-ext",java.lang.String.class,"dump-allegato",DumpAllegato.class);
 	
 	}
 	
@@ -61,6 +62,7 @@ public class DumpAllegatoModel extends AbstractModel<DumpAllegato> {
 		this.ALLEGATO = new ComplexField(father,"allegato",byte[].class,"dump-allegato",DumpAllegato.class);
 		this.HEADER = new org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel(new ComplexField(father,"header",org.openspcoop2.core.transazioni.DumpHeaderAllegato.class,"dump-allegato",DumpAllegato.class));
 		this.DUMP_TIMESTAMP = new ComplexField(father,"dump-timestamp",java.util.Date.class,"dump-allegato",DumpAllegato.class);
+		this.HEADER_EXT = new ComplexField(father,"header-ext",java.lang.String.class,"dump-allegato",DumpAllegato.class);
 	
 	}
 	
@@ -77,6 +79,8 @@ public class DumpAllegatoModel extends AbstractModel<DumpAllegato> {
 	public org.openspcoop2.core.transazioni.model.DumpHeaderAllegatoModel HEADER = null;
 	 
 	public IField DUMP_TIMESTAMP = null;
+	 
+	public IField HEADER_EXT = null;
 	 
 
 	@Override

@@ -250,6 +250,8 @@ CREATE TABLE dump_messaggi
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	post_process_timestamp TIMESTAMP(3) DEFAULT 0,
 	post_processed INT DEFAULT 1,
+	multipart_header_ext LONGTEXT,
+	header_ext LONGTEXT,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	-- check constraints
@@ -315,6 +317,7 @@ CREATE TABLE dump_allegati
 	allegato LONGBLOB,
 	-- Precisione ai millisecondi supportata dalla versione 5.6.4, se si utilizza una versione precedente non usare il suffisso '(3)'
 	dump_timestamp TIMESTAMP(3) NOT NULL DEFAULT 0,
+	header_ext LONGTEXT,
 	-- fk/pk columns
 	id BIGINT AUTO_INCREMENT,
 	id_messaggio BIGINT NOT NULL,

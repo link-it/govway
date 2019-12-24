@@ -866,6 +866,13 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return "dump_timestamp";
 			}
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".header_ext";
+			}else{
+				return "header_ext";
+			}
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME)){
 			if(appendTablePrefix){
 				return this.toAliasTable(field)+".nome";
@@ -941,6 +948,20 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 				return this.toAliasTable(field)+".post_processed";
 			}else{
 				return "post_processed";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".multipart_header_ext";
+			}else{
+				return "multipart_header_ext";
+			}
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_EXT)){
+			if(appendTablePrefix){
+				return this.toAliasTable(field)+".header_ext";
+			}else{
+				return "header_ext";
 			}
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
@@ -1312,6 +1333,9 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.DUMP_TIMESTAMP)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
 		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.ALLEGATO.HEADER_EXT)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO.ALLEGATO, returnAlias);
+		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.CONTENUTO.NOME)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO.CONTENUTO, returnAlias);
 		}
@@ -1343,6 +1367,12 @@ public class TransazioneFieldConverter extends AbstractSQLFieldConverter {
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().DUMP_MESSAGGIO.POST_PROCESSED)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.MULTIPART_HEADER_EXT)){
+			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
+		}
+		if(field.equals(Transazione.model().DUMP_MESSAGGIO.HEADER_EXT)){
 			return this.toTable(Transazione.model().DUMP_MESSAGGIO, returnAlias);
 		}
 		if(field.equals(Transazione.model().TRANSAZIONE_EXTENDED_INFO.NOME)){
