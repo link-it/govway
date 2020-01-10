@@ -93,28 +93,28 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.attachment.repositoryDir"/>
-			<param name="value" value="${work_dir}/attachments"/>
+			<param name="value" value="${log_dir}/attachments"/>
 		</antcall>
 
 		<!-- DumpNonRealTime -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.dump.nonRealTime.msgRepository"/>
-			<param name="value" value="${work_dir}/dumpNonRealTime"/>
+			<param name="value" value="${log_dir}/dumpNonRealTime"/>
 		</antcall>
 
 		<!-- FileSystemRecovery -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.resources.fileSystemRecovery.repository"/>
-			<param name="value" value="${work_dir}/resources"/>
+			<param name="value" value="${log_dir}/resources"/>
 		</antcall>
 
 		<!-- ControlloTraffico -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="org.openspcoop2.pdd.controlloTraffico.gestorePolicy.fileSystemRecovery.repository"/>
-			<param name="value" value="${work_dir}/controlloTraffico"/>
+			<param name="value" value="${log_dir}/controlloTraffico"/>
 		</antcall>
 
 		<!-- Preloading -->

@@ -32,7 +32,7 @@
 		<module>cxf</module>
 		<module>commons</module>
 		<module>faces</module>
-		<module>git</module>
+		<!-- <module>git</module> -->
 		<module>httpcore</module>
 		<module>jackson</module>
 		<module>javax</module>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.2.1" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.2.2" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,7 +8,7 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.2.1">
+    <page type="input" name="intro" displayText="Installer GovWay v3.2.2">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -27,14 +27,15 @@
             <option value="aggiornamento" text="Aggiornamento"/>
         </large-select>	
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.1"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
-	<hidden property="antinstaller_versione_attuale" value="3.2.1"/>	
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.2"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale" value="3.2.2"/>	
     </page>
 
     <page name="aggiornamentoSceltaVersione" type="input" displayText="Informazioni Prodotto"
 	  ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
+	    <option value="3.2.1" text="3.2.1"/>
 	    <option value="3.2.0" text="3.2.0"/>
 	    <option value="3.1.1" text="3.1.1"/>
 	    <option value="3.1.0" text="3.1.0"/>
