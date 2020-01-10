@@ -295,7 +295,7 @@ public class SplitWSDL {
 		
 		try{
 		
-			this.xmlUtils = XMLUtils.getInstance();
+			this.xmlUtils = XMLUtils.DEFAULT;
 			this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 			
 			/** Carico i wsdl necessari */
@@ -512,7 +512,7 @@ public class SplitWSDL {
 				output_importsWsdl.add(newImport);
 				
 				/** Aggiungo il documento importato alla lista degli schemi */
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 				Document doc = xmlUtils.newDocument(importedFile);
 				if(isErogatore) 
 					addSchemaErogatore(doc.getDocumentElement(), schemaFilename, importedFile, true, permettiSchemaLocationNonDefiniti);
@@ -696,7 +696,7 @@ public class SplitWSDL {
 	private void addSchema(Element xml, String filename, File xmlSource, List<SchemaXSDAccordoServizio> schemi, 
 			boolean check, boolean permettiSchemaLocationNonDefiniti) throws ParserConfigurationException, SAXException, IOException, SchemaXSDNamingException, XMLException{
 		
-		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 				
 		// Indica se il filename deve essere forzato ad essere quello indicato
 		boolean force = false;

@@ -31,6 +31,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -74,6 +75,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	private SDIValidazioneSintattica sdiValidazioneSintattica;
 	private SDIValidazioneSemantica sdiValidazioneSemantica;
 	private OpenSPCoop2Message msg;
+	private OpenSPCoop2MessageFactory messageFactory;
 	private boolean isRichiesta;
 	private SOAPElement sdiMessage;
 	private String namespace;
@@ -84,6 +86,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			SOAPElement sdiMessage,Busta busta){
 		this.sdiValidazioneSintattica = sdiValidazioneSintattica;
 		this.msg = msg;
+		this.messageFactory = this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.isRichiesta = isRichiesta;
 		this.sdiMessage = sdiMessage;
 		this.namespace = ProjectInfo.getInstance().getProjectNamespace();
@@ -94,6 +97,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			SOAPElement sdiMessage,Busta busta){
 		this.sdiValidazioneSemantica = sdiValidazioneSemantica;
 		this.msg = msg;
+		this.messageFactory = this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.isRichiesta = isRichiesta;
 		this.sdiMessage = sdiMessage;
 		this.namespace = ProjectInfo.getInstance().getProjectNamespace();
@@ -413,7 +417,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			Iterator<?> nodeFileIt = this.sdiMessage.getChildElements(qnameFile);
 			SOAPElement nodeFile = (SOAPElement) nodeFileIt.next();
 			
-			Element xomReference = MTOMUtilities.getIfExistsXomReference(nodeFile);
+			Element xomReference = MTOMUtilities.getIfExistsXomReference(this.messageFactory, nodeFile);
 			if(xomReference!=null){
 				try{
 					String cid = MTOMUtilities.getCidXomReference(xomReference);
@@ -543,7 +547,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();
@@ -778,7 +782,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();
@@ -1002,7 +1006,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 			String namespace = null;
 			Throwable eMalformato = null;
 			try {
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 				Document docXML = xmlUtils.newDocument(xmlDoc);
 				Element elemXML = docXML.getDocumentElement();
 				namespace = elemXML.getNamespaceURI();

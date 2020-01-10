@@ -1047,7 +1047,7 @@ public class SOAPMessageScorretti {
 						boolean match = false;
 						for (String erroreParser : motivoErroreParser) {
 							try{
-								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
+								Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
 										//Utilities.testSuiteProperties.getIdentitaDefault_dominio(),
 										CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),
 										"RicezioneContenutiApplicativiHTTP", 

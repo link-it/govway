@@ -55,7 +55,7 @@ public class XMLSecAttachmentContentTransform extends TransformSpi {
 	private AbstractXMLUtils xmlUtils = null;
 	
     public XMLSecAttachmentContentTransform(){
-    	this.xmlUtils = XMLUtils.getInstance();
+    	this.xmlUtils = XMLUtils.DEFAULT;
     }
     
 	@Override

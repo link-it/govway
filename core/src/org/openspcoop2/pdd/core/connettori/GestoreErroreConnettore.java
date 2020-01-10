@@ -333,7 +333,7 @@ public class GestoreErroreConnettore {
 				if( match ){
 					if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
 						try{
-							this.errore = "errore applicativo, "+SoapUtils.toString(this.fault);
+							this.errore = "errore applicativo, "+SoapUtils.toString(messageResponse.getFactory(), this.fault);
 						}catch(Exception e){
 							this.errore = "errore applicativo SoapFault";
 							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
@@ -383,7 +383,7 @@ public class GestoreErroreConnettore {
 					this.errore = "errore di trasporto, codice "+codiceTrasporto;
 					if(this.fault!=null){
 						try{
-							this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+							this.errore = this.errore + " (" +SoapUtils.toString(messageResponse.getFactory(), this.fault)+ ")";
 						}catch(Exception e){
 							this.errore = "errore applicativo SoapFault";
 							GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);
@@ -419,7 +419,7 @@ public class GestoreErroreConnettore {
 			this.errore = "errore di trasporto, codice "+codiceTrasporto;
 			if(this.fault!=null){
 				try{
-					this.errore = this.errore + " (" +SoapUtils.toString(this.fault)+ ")";
+					this.errore = this.errore + " (" +SoapUtils.toString(messageResponse.getFactory(), this.fault)+ ")";
 				}catch(Exception e){
 					this.errore = "errore applicativo SoapFault";
 					GestoreErroreConnettore.log.error("Serializzazione SOAPFault non riuscita: "+e.getMessage(),e);

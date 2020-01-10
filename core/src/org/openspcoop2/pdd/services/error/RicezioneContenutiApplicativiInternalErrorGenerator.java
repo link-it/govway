@@ -109,7 +109,7 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 		}
 	}
 	
@@ -126,7 +126,7 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 		}
 	}
 	
@@ -144,7 +144,7 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
 			try{
-				OpenSPCoop2Message msgError = OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
+				OpenSPCoop2Message msgError = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 				java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
 				msgError.writeTo(bout,true);
 				bout.flush();

@@ -67,6 +67,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -4856,6 +4857,22 @@ public class RicezioneContenutiApplicativi {
 					&&
 				 ((OpenSPCoopStateless)openspcoopstate).getDestinatarioResponseMsgLib()==null ){
 						
+				
+				
+				/* ------------ Rilascio risorsa se e' presente rinegoziamento delle risorse ------------------ */
+				// Rinegozio la connessione SOLO se siamo in oneway o sincrono stateless puro (non oneway11)
+				if( rinegoziamentoConnessione ){
+					msgDiag.highDebug("ConsegnaContenutiApplicativi stateless (commit) ...");
+					openspcoopstate.setUseConnection(true);
+					try{
+						openspcoopstate.commit();
+					}catch(Exception e){}
+					openspcoopstate.releaseResource();
+					openspcoopstate.setUseConnection(false);
+				}
+				
+				
+				
 				/*
 				 * ---------------------- CONSEGNA CONTENUTI APPLICATIVI ------------------
 				 */
@@ -5180,7 +5197,8 @@ public class RicezioneContenutiApplicativi {
 				// Gestione stateful
 				
 				try {
-					responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
+					responseMessage = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+							requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 
 					String classType = null;
 					INodeReceiver nodeReceiver = null;
@@ -5409,7 +5427,8 @@ public class RicezioneContenutiApplicativi {
 						if(propertiesReader.processHeaderIntegrazionePDResponse(false)){
 							if(propertiesReader.deleteHeaderIntegrazioneResponsePD()){
 								if(responseMessage==null){
-									responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
+									responseMessage = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+											requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 									outResponsePDMessage.setMessage(responseMessage);
 								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);
@@ -5418,7 +5437,8 @@ public class RicezioneContenutiApplicativi {
 							}
 						}else{
 							if(responseMessage==null){
-								responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
+								responseMessage = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+										requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE);
 								outResponsePDMessage.setMessage(responseMessage);
 							}
 							gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);

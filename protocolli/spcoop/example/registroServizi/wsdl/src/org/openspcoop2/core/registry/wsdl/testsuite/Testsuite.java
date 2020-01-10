@@ -838,7 +838,7 @@ public class Testsuite {
 			throw new Exception("Creazione directory fallita: "+outputDirTest.getAbsolutePath());
 		}
 		
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		
 		
@@ -1660,7 +1660,7 @@ public class Testsuite {
 		
 		
 		
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		WSDLUtilities wsdlUtilities = WSDLUtilities.getInstance(xmlUtils);
 		
 		
@@ -2284,7 +2284,7 @@ public class Testsuite {
 		}
 		
 			
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		
 		
 		// TEST A.

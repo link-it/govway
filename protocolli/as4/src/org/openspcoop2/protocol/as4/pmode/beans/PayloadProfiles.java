@@ -67,7 +67,7 @@ public class PayloadProfiles {
 		
 		for(byte[] content: contents) {
 			
-			Document doc = XMLUtils.getInstance().newDocument(content);
+			Document doc = XMLUtils.DEFAULT.newDocument(content);
 			doc.getDocumentElement().normalize();
 	
 			NodeList payloadList = doc.getElementsByTagName("payload");

@@ -102,7 +102,7 @@ public class SPCoopDiagnosticSerializer extends DiagnosticSerializer implements 
 				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					bout.write(org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(this.toElement(msgDiag)));
+					bout.write(org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(this.toElement(msgDiag)));
 					bout.flush();
 					bout.close();
 					return bout;

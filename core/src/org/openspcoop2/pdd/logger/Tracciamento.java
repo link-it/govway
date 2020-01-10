@@ -877,7 +877,7 @@ public class Tracciamento {
 							bf.append(esito.getDettaglio());
 							bf.append("\n");
 						}
-						bf.append(SoapUtils.toString(body.getFault()));
+						bf.append(SoapUtils.toString(msg.getFactory(), body.getFault()));
 						traccia.getEsitoElaborazioneMessaggioTracciato().setDettaglio(bf.toString());
 					}
 				}

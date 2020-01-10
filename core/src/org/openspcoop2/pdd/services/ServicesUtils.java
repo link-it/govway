@@ -55,6 +55,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -112,7 +113,6 @@ import org.slf4j.Logger;
  * @version $Rev$, $Date$
  */
 public class ServicesUtils {
-
 	
 	public static ServiceIdentificationReader getServiceIdentificationReader(Logger logCore, RequestInfo requestInfo) throws Exception{
 		IRegistryReader registryReader = new CachedRegistryReader(logCore, requestInfo.getProtocolFactory());
@@ -273,13 +273,13 @@ public class ServicesUtils {
 					}
 					Object h = null;
 					SOAPHeader header = null;
-					if(b==null || body==null || SoapUtils.getFirstNotEmptyChildNode(body, false)==null ){
+					if(b==null || body==null || SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), body, false)==null ){
 						//potenziale msg inutile.
 						h = soap.getSOAPHeader();
 						if(h!=null){
 							header = (SOAPHeader) h;
 						}
-						if(h==null || header==null ||  SoapUtils.getFirstNotEmptyChildNode(header,false)==null ){
+						if(h==null || header==null ||  SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), header,false)==null ){
 							//System.out.println("MESSAGGIO INUTILE");
 							rispostaPresente = false;
 						}else{
@@ -536,9 +536,9 @@ public class ServicesUtils {
 				}
 				if(wsdlLogico!=null) {
 					// wsdl logico utilizzato dentro wsdlWrapperUtilities
-					XMLUtils xmlUtils = XMLUtils.getInstance();
+					XMLUtils xmlUtils = XMLUtils.DEFAULT;
 					WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
-					AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(logCore);
+					AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), logCore);
 					wsdlWrapperUtilities.setAccordoServizio(new AccordoServizioWrapper());
 					wsdlWrapperUtilities.getAccordoServizioWrapper().setAccordoServizio(aspc);
 					javax.wsdl.Definition wsdlDefinition = null;

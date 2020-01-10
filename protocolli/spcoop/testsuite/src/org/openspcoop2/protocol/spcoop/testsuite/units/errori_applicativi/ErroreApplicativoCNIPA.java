@@ -31,6 +31,7 @@ import java.util.Vector;
 
 import org.apache.axis.AxisFault;
 import org.apache.axis.Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
@@ -186,10 +187,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);	
@@ -304,7 +305,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiHTTP", 
 						codice, 
 						msg, equalsMatch);	
@@ -420,10 +421,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativi", 
 						codice, 
 						msg, equalsMatch);	
@@ -529,7 +530,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
 						idPorta,"RicezioneContenutiApplicativiHTTP", 
 						codice, 
 						msg, equalsMatch);	
@@ -691,6 +692,8 @@ public class ErroreApplicativoCNIPA {
 		Object response = null;
 		try{
 
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -730,7 +733,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						fault = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 
@@ -764,7 +767,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 				
@@ -820,6 +823,8 @@ public class ErroreApplicativoCNIPA {
 		Object response = null;
 		try{
 
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -859,7 +864,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						fault = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 
@@ -893,7 +898,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 				
@@ -955,6 +960,8 @@ public class ErroreApplicativoCNIPA {
 		java.io.FileInputStream fin = null;
 		try{
 
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
 			byte[]bytes = new byte[2048];
@@ -993,7 +1000,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 
-				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
+				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo);
 				Assert.assertTrue("Fault".equals(fault.getLocalName()));
 				Assert.assertTrue("http://schemas.xmlsoap.org/soap/envelope/".equals(fault.getNamespaceURI()));
 				
@@ -1342,7 +1349,8 @@ public class ErroreApplicativoCNIPA {
 		
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -1382,7 +1390,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						fault = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 
@@ -1416,7 +1424,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 				
@@ -1472,7 +1480,8 @@ public class ErroreApplicativoCNIPA {
 		
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
 			client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 			client.setPortaDelegata(portaDelegata);
@@ -1512,7 +1521,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						fault = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						fault = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 
@@ -1546,7 +1555,7 @@ public class ErroreApplicativoCNIPA {
 				for (int i = 0; i < nL.getLength(); i++) {
 					Node n = nL.item(i);
 					if(Costanti.SOAP_ENVELOPE_NAMESPACE.equals(n.getNamespaceURI()) && "Body".equals(n.getLocalName())){
-						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(n, false);
+						faultAtteso = SoapUtils.getFirstNotEmptyChildNode(messageFactory, n, false);
 					}
 				}
 				
@@ -1608,7 +1617,8 @@ public class ErroreApplicativoCNIPA {
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
 			bout = new ByteArrayOutputStream();
 			byte[]bytes = new byte[2048];
@@ -1647,7 +1657,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 
-				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo);
+				Element fault = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo);
 				Assert.assertTrue("Fault".equals(fault.getLocalName()));
 				Assert.assertTrue("http://schemas.xmlsoap.org/soap/envelope/".equals(fault.getNamespaceURI()));
 				
@@ -1761,7 +1771,8 @@ public class ErroreApplicativoCNIPA {
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS;
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -1809,10 +1820,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1870,7 +1881,8 @@ public class ErroreApplicativoCNIPA {
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SINCRONO_STATELESS;
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -1918,7 +1930,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -1990,7 +2002,8 @@ public class ErroreApplicativoCNIPA {
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS;
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -2037,10 +2050,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -2099,7 +2112,8 @@ public class ErroreApplicativoCNIPA {
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS;
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -2146,7 +2160,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -2220,7 +2234,8 @@ public class ErroreApplicativoCNIPA {
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -2269,10 +2284,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -2330,7 +2345,8 @@ public class ErroreApplicativoCNIPA {
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_PDD_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -2379,7 +2395,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"InoltroBuste", 
 						codice, 
 						msg, equalsMatch);	
@@ -2451,7 +2467,8 @@ public class ErroreApplicativoCNIPA {
 		DatabaseComponent dbComponentErogatore = null;
 		Object response = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
 			
 			ClientHttpGenerico client=new ClientHttpGenerico(new Repository());
@@ -2499,10 +2516,10 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
 				response = msgRisposta.getSOAPBody();
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	
@@ -2561,7 +2578,8 @@ public class ErroreApplicativoCNIPA {
 		ByteArrayOutputStream bout = null;
 		java.io.FileInputStream fin = null;
 		try{
-
+			OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			String portaDelegata = CostantiTestSuite.PORTA_DELEGATA_CONNETTORE_ERRATO_SA_SINCRONO_STATELESS_CONNECT_TIMED_OUT;
 			
 			fin = new java.io.FileInputStream(new File(Utilities.testSuiteProperties.getXmlSenzaSoapFileName()));
@@ -2609,7 +2627,7 @@ public class ErroreApplicativoCNIPA {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo), 
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
 						idPorta,"SbustamentoRisposte", 
 						codice, 
 						msg, equalsMatch);	

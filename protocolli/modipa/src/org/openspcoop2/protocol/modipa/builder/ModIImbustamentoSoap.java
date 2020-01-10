@@ -36,6 +36,7 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
@@ -240,6 +241,8 @@ public class ModIImbustamentoSoap {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
+		OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 		SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
 		
@@ -446,9 +449,9 @@ public class ModIImbustamentoSoap {
 		
 		SOAPHeaderElement securityHeader = messageSecurityContext.getSecurityHeader(msg, modIProperties.getSoapSecurityTokenActor());
 		
-		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(securityHeader);
+		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(securityHeader);
 		String wsuNamespace = "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd";
-		XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
 		
 		String patternCreated = "//{"+wsuNamespace+"}Timestamp/{"+wsuNamespace+"}Created/text()";
 		String created = null;

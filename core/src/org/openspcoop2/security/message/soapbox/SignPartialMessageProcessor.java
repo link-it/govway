@@ -107,8 +107,6 @@ public class SignPartialMessageProcessor implements Processor {
 		this.useXMLSec = useXMLSec;
 	}
 	
-	private AbstractXMLUtils xmlUtils = null;
-	
 	protected List<QName> signQNames;
     protected List<Boolean> elementsSignatureContent;
     protected List<AttachmentPart> signAttachments;
@@ -126,7 +124,6 @@ public class SignPartialMessageProcessor implements Processor {
 	}
     
 	public SignPartialMessageProcessor() {
-		this.xmlUtils = XMLUtils.getInstance();
 		this.signQNames = new ArrayList<QName>();
 		this.signAttachments = new ArrayList<AttachmentPart>();
 		this.elementsSignatureContent = new ArrayList<Boolean>();
@@ -144,6 +141,8 @@ public class SignPartialMessageProcessor implements Processor {
     @Override
 	public void process(SecurityConfig secConfig, MessageSecurityContext msgSecCtx) {
 
+    	AbstractXMLUtils xmlUtils = XMLUtils.getInstance(this.message.getFactory());
+    	
         SignatureRequest signReq = msgSecCtx.getSignatureRequest();
 
        // System.out.println("SIGN XMLSEC["+this.useXMLSec+"]");
@@ -293,7 +292,7 @@ public class SignPartialMessageProcessor implements Processor {
         		throw new SecurityFailureException(e.getMessage(),e);
         	}
         }
-        signAttachments(this.signAttachments, signReq, sigSUN, sigXMLSec);
+        signAttachments(xmlUtils, this.signAttachments, signReq, sigSUN, sigXMLSec);
         
         
         
@@ -484,7 +483,8 @@ public class SignPartialMessageProcessor implements Processor {
     }
     
 //    protected void signAttachments(List<AttachmentPart> part, SignatureRequest signReq, SignatureHeaderBlock signatureHeaderBlock) throws Exception {
-    protected void signAttachments(List<AttachmentPart> part, SignatureRequest signReq,
+    protected void signAttachments(AbstractXMLUtils xmlUtils,
+    		List<AttachmentPart> part, SignatureRequest signReq,
     		com.sun.org.apache.xml.internal.security.signature.XMLSignature sigSUN, org.apache.xml.security.signature.XMLSignature sigXMLSec) {
 		
     	try {
@@ -547,7 +547,7 @@ public class SignPartialMessageProcessor implements Processor {
             			//transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
             			if (signReq.isWsiBPCompliant()) {
             				byte[]raw = p.getRawContentBytes();
-            				Element signElement = this.xmlUtils.newElement(raw);
+            				Element signElement = xmlUtils.newElement(raw);
             				transforms.item(0).getElement().appendChild(new com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces(
             						this.message.getSOAPHeader().getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
             			}
@@ -571,7 +571,7 @@ public class SignPartialMessageProcessor implements Processor {
             			//transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
             			if (signReq.isWsiBPCompliant()) {
             				byte[]raw = p.getRawContentBytes();
-            				Element signElement = this.xmlUtils.newElement(raw);
+            				Element signElement = xmlUtils.newElement(raw);
             				transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
             						this.message.getSOAPHeader().getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
             			}

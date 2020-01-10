@@ -201,7 +201,7 @@ public class BasicArchive extends BasicComponentFactory implements IArchive {
 		
 		try{
 		
-			AbstractXMLUtils xmlUtils = XMLUtils.getInstance(); 
+			AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT;
 			WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
 			Document d = xmlUtils.newDocument(wsdlBytes);
 			wsdlUtilities.removeTypes(d);

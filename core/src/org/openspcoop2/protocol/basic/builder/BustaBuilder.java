@@ -34,12 +34,10 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SOAPFaultCode;
-import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
@@ -64,7 +62,6 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 /**	
  * BustaBuilder
@@ -75,15 +72,11 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  */
 public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory implements org.openspcoop2.protocol.sdk.builder.IBustaBuilder<BustaRawType> {
 	
-	protected OpenSPCoop2MessageFactory msgFactory;
-	protected AbstractXMLUtils xmlUtils;
 	protected ITraduttore traduttore;
 	protected IErroreApplicativoBuilder erroreApplicativoBuilder = null;
 		
 	public BustaBuilder(IProtocolFactory<?> factory, IState state) throws ProtocolException{
 		super(factory,state);
-		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
-		this.xmlUtils = XMLUtils.getInstance();
 		this.traduttore = this.protocolFactory.createTraduttore();
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
 	}

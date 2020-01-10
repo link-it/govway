@@ -27,6 +27,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -43,11 +44,11 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  */
 public class OpenSPCoop2Message_json_impl extends AbstractBaseOpenSPCoop2RestMessage<String> implements OpenSPCoop2RestJsonMessage {
 
-	public OpenSPCoop2Message_json_impl() {
-		super();
+	public OpenSPCoop2Message_json_impl(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
 	}
-	public OpenSPCoop2Message_json_impl(InputStream is,String contentType) throws MessageException {
-		super(is, contentType);
+	public OpenSPCoop2Message_json_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
+		super(messageFactory, is, contentType);
 	}
 	
 	@Override

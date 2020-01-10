@@ -41,6 +41,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
+import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.protocol.engine.builder.Imbustamento;
 import org.openspcoop2.protocol.engine.builder.Sbustamento;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
@@ -159,7 +160,8 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			}
 			
 			ByteArrayInputStream bin = new ByteArrayInputStream(bout.toByteArray());
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
+			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);
+			OpenSPCoop2MessageParseResult pr = messageFactory.createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
 					this.requestMsg.getContentType(),
 					bin,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());

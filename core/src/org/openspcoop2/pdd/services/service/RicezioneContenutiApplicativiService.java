@@ -37,7 +37,6 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -111,8 +110,6 @@ import org.slf4j.Logger;
 public class RicezioneContenutiApplicativiService {
 
 	
-	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-
 	private RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore;
 	
 	public RicezioneContenutiApplicativiService(RicezioneContenutiApplicativiInternalErrorGenerator generatoreErrore){
@@ -866,11 +863,11 @@ public class RicezioneContenutiApplicativiService {
 					if(body!=null && body.hasFault()){
 						consume = false; // può essere usato nel post out response handler
 						statoServletResponse = 500;
-						descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
+						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessage.getFactory(), body.getFault(), false)+")";
 					}
 					else if(statoServletResponse==500) {
 						// in SOAP 500 deve essere associato con un fault
-						if(body!=null && SoapUtils.getFirstNotEmptyChildNode(body, false)!=null) {
+						if(body!=null && SoapUtils.getFirstNotEmptyChildNode(responseMessage.getFactory(), body, false)!=null) {
 							statoServletResponse = 200;
 						}
 						else {
@@ -1044,7 +1041,7 @@ public class RicezioneContenutiApplicativiService {
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500;
 						res.setStatus(statoServletResponse);
-						descrizioneSoapFault = " ("+SoapUtils.toString(body.getFault(), false)+")";
+						descrizioneSoapFault = " ("+SoapUtils.toString(responseMessageError.getFactory(), body.getFault(), false)+")";
 					}
 				}
 				

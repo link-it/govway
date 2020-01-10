@@ -2119,7 +2119,7 @@ public class GestoreToken {
 			break;
 		}
 		
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		connettoreMsg.setRequestMessage(msg);
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);
@@ -2543,7 +2543,7 @@ public class GestoreToken {
 		contentString = contentString.substring(prefixUrl.length());
 		content = contentString.getBytes();
 			
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
+		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, content);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		connettoreMsg.setRequestMessage(msg);
 		connettoreMsg.setGenerateErrorWithConnectorPrefix(false);

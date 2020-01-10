@@ -243,7 +243,7 @@ public class LoaderCore{
 			throw new Exception("[OpenSPCoopLoader::initCore] Impossibile leggere i dati dal file loader.properties:" + e.toString());
 		} 
 		
-		this.xmlUtils = XMLUtils.getInstance();
+		this.xmlUtils = XMLUtils.DEFAULT;
 	}
 	
 	public LoaderCore(LoaderCore core) throws Exception{
@@ -282,7 +282,7 @@ public class LoaderCore{
 		this.logoHeaderLink = core.logoHeaderLink;
 		this.logoHeaderTitolo =  core.logoHeaderTitolo;
 		
-		this.xmlUtils = XMLUtils.getInstance();
+		this.xmlUtils = XMLUtils.DEFAULT;
 	}
 
 	public static Logger getLog() {

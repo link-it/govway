@@ -54,7 +54,14 @@ public class RequestInfo implements java.io.Serializable {
 	private IDSoggetto fruitore;
 	private IDServizio idServizio;
 	private String idTransazione;
+	private String messageFactory;
 	
+	public String getMessageFactory() {
+		return this.messageFactory;
+	}
+	public void setMessageFactory(String messageFactory) {
+		this.messageFactory = messageFactory;
+	}
 	public String getIdTransazione() {
 		return this.idTransazione;
 	}

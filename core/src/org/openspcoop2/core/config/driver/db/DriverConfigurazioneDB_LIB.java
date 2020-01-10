@@ -1818,6 +1818,8 @@ public class DriverConfigurazioneDB_LIB {
 				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
+				// options
+				sqlQueryObject.addInsertField("options", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				int index = 1;
@@ -1966,6 +1968,9 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, aPD.getIdAccordo()!=null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() !=null ? aPD.getIdPortType() : -1L);
 				
+				// options
+				stm.setString(index++, aPD.getOptions());
+				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query: " + 
 						DBUtils.formatSQLString(sqlQuery, nomePorta, descrizione, 
 								idSoggettoErogatore, tipoSoggErogatore, nomeSoggErogatore, 
@@ -2010,7 +2015,8 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								aPD.getIdAccordo(),aPD.getIdPortType()));
+								aPD.getIdAccordo(),aPD.getIdPortType(),
+								aPD.getOptions()));
 				n = stm.executeUpdate();
 				stm.close();
 
@@ -2624,6 +2630,8 @@ public class DriverConfigurazioneDB_LIB {
 				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
+				// options
+				sqlQueryObject.addUpdateField("options", "?");
 				sqlQueryObject.addWhereCondition("id=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -2762,6 +2770,8 @@ public class DriverConfigurazioneDB_LIB {
 				//idAccordo
 				stm.setLong(index++,aPD.getIdAccordo() != null ? aPD.getIdAccordo() : -1L);
 				stm.setLong(index++, aPD.getIdPortType() != null ? aPD.getIdPortType() : -1L);
+				// options
+				stm.setString(index++, aPD.getOptions());
 				
 				// where
 				stm.setLong(index++, idPortaDelegata);
@@ -4773,6 +4783,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
 				sqlQueryObject.addInsertField("scadenza_correlazione_appl", "?");
+				// options
+				sqlQueryObject.addInsertField("options", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 				
@@ -4920,6 +4932,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// ScadenzaCorrelazioneApplicativa
 				stm.setString(index++, aPA.getCorrelazioneApplicativa()!=null ? aPA.getCorrelazioneApplicativa().getScadenza() : null);
+				
+				// options
+				stm.setString(index++, aPA.getOptions());
 				
 				n = stm.executeUpdate();
 				stm.close();
@@ -5574,6 +5589,9 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
 				sqlQueryObject.addUpdateField("scadenza_correlazione_appl", "?");
+				// options
+				sqlQueryObject.addUpdateField("options", "?");
+				
 				sqlQueryObject.addWhereCondition("nome_porta=?");
 				sqlQueryObject.setANDLogicOperator(true);
 				sqlQuery = sqlQueryObject.createSQLUpdate();
@@ -5720,6 +5738,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setLong(index++, aPA.getIdPortType() !=null ? aPA.getIdPortType() : -1L);
 				// ScadenzaCorrelazioneApplicativa
 				stm.setString(index++, aPA.getCorrelazioneApplicativa()!=null ? aPA.getCorrelazioneApplicativa().getScadenza() : null);
+				// options
+				stm.setString(index++, aPA.getOptions());
 				
 				// where
 				stm.setString(index++, oldNomePA);

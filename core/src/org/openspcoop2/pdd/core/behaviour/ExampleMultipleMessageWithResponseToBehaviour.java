@@ -56,7 +56,7 @@ public class ExampleMultipleMessageWithResponseToBehaviour implements IBehaviour
 				
 				BehaviourForwardTo forwardTo = new BehaviourForwardTo();
 				
-				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST).castAsSoap();
+				OpenSPCoop2SoapMessage msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST).castAsSoap();
 				if(msg.getSOAPHeader()==null){
 					msg.getSOAPPart().getEnvelope().addHeader();
 				}

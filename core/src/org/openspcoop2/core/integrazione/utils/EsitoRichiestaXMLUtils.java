@@ -34,6 +34,7 @@ import java.io.OutputStream;
 import org.slf4j.Logger;
 import org.openspcoop2.core.integrazione.EsitoRichiesta;
 import org.openspcoop2.core.integrazione.constants.Costanti;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
@@ -59,7 +60,7 @@ public class EsitoRichiestaXMLUtils  {
 		if(EsitoRichiestaXMLUtils.validatoreXSD==null){
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
 			xsdResourceResolver.addResource("soapEnvelope.xsd", EsitoRichiestaXMLUtils.class.getResourceAsStream("/soapEnvelope.xsd"));
-			EsitoRichiestaXMLUtils.validatoreXSD = new ValidatoreXSD(log,xsdResourceResolver,EsitoRichiestaXMLUtils.class.getResourceAsStream("/openspcoopPresaInCarico.xsd"));
+			EsitoRichiestaXMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,xsdResourceResolver,EsitoRichiestaXMLUtils.class.getResourceAsStream("/openspcoopPresaInCarico.xsd"));
 		}
 		return EsitoRichiestaXMLUtils.validatoreXSD;
 	}
@@ -268,7 +269,7 @@ public class EsitoRichiestaXMLUtils  {
 	
 	public static boolean isEsitoRichiesta(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return EsitoRichiestaXMLUtils.isEsitoRichiesta_engine(elemXML);

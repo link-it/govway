@@ -142,7 +142,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 					if(samlVersion!=null && !"".equals(samlVersion)) {
 						
 						SOAPHeaderElement securityHeader = this.messageSecurityContext.getSecurityHeader(message, actor); // verificato prima
-						SOAPElement samlToken = this.messageSecurityContext.getSAMLTokenInSecurityHeader(securityHeader, samlVersion);
+						SOAPElement samlToken = this.messageSecurityContext.getSAMLTokenInSecurityHeader(message.getFactory(), securityHeader, samlVersion);
 						if(samlToken==null) {
 							this.msgErrore =  "SAMLToken (versione:"+samlVersion+"), richiesto dalla configurazione (action:"+action+"), non riscontrato nell'header Message Security presente all'interno della SOAPEnvelope ricevuta";
 							this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_PRESENTE;
@@ -151,7 +151,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 						
 						String samlConfirmationType = (String) this.messageSecurityContext.getIncomingProperties().get(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID);
 						if(samlConfirmationType!=null && !"".equals(samlConfirmationType)) {
-							String confirmationMethod = this.messageSecurityContext.getSAMLTokenSubjectConfirmationMethodInSecurityHeader(samlToken, samlVersion);
+							String confirmationMethod = this.messageSecurityContext.getSAMLTokenSubjectConfirmationMethodInSecurityHeader(message.getFactory(), samlToken, samlVersion);
 							if(confirmationMethod==null) {
 								this.msgErrore =  "SAMLToken (versione:"+samlVersion+"), richiesto dalla configurazione (action:"+action+"), non possiede un metodo di subject confirmation";
 								this.codiceErrore = CodiceErroreCooperazione.SICUREZZA_TOKEN_NON_VALIDO;

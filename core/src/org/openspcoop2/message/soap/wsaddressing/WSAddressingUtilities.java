@@ -24,11 +24,14 @@
 
 package org.openspcoop2.message.soap.wsaddressing;
 
+import java.util.HashMap;
+
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -218,32 +221,36 @@ public class WSAddressingUtilities {
 	
 	// ***** VALIDATE *****
 	
-	private static ValidatoreXSD _validatoreXSD = null;
-	private static synchronized void _initValidatore(Logger log){
-		if(_validatoreXSD==null) {
+	private static HashMap<String, ValidatoreXSD> _validatoreXSDMap = new HashMap<>();
+	private static synchronized void _initValidatore(OpenSPCoop2MessageFactory messageFactory, Logger log){
+		String key = messageFactory.getClass().getName();
+		if(!_validatoreXSDMap.containsKey(key)){
 			try{
-				_validatoreXSD = new ValidatoreXSD(log,WSAddressingUtilities.class.getResourceAsStream("/ws-addr.xsd"));
+				ValidatoreXSD val = new ValidatoreXSD(messageFactory, log,WSAddressingUtilities.class.getResourceAsStream("/ws-addr.xsd"));
+				_validatoreXSDMap.put(key, val);
 			}catch(Exception e){
 				log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
 			}
 		}
 	}
-	private ValidatoreXSD getValidatoreXSD() {
-		if(_validatoreXSD==null) {
-			_initValidatore(this.log);
+	public ValidatoreXSD getValidatoreXSD(OpenSPCoop2MessageFactory messageFactory){
+		String key = messageFactory.getClass().getName();
+		if(!_validatoreXSDMap.containsKey(key)){
+			_initValidatore(messageFactory, this.log);
 		}
-		return _validatoreXSD;
+		return _validatoreXSDMap.get(key);
 	}
+	
 	
 	public void validate(OpenSPCoop2SoapMessage message, WSAddressingHeader header) throws MessageException {
 		this.log.debug("Validazione XSD...");
-		_validaElementoWSA(getValidatoreXSD(),header.getTo(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getFrom(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getAction(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getId(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getRelatesTo(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getReplyTo(),message);
-		_validaElementoWSA(getValidatoreXSD(),header.getFaultTo(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getTo(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getFrom(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getAction(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getId(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getRelatesTo(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getReplyTo(),message);
+		_validaElementoWSA(getValidatoreXSD(message.getFactory()),header.getFaultTo(),message);
 		this.log.debug("Validazione XSD effettuate");
 	}
 	

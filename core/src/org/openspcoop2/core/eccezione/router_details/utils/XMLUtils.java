@@ -40,6 +40,7 @@ import javax.xml.soap.SOAPFault;
 import org.openspcoop2.core.eccezione.router_details.DettaglioRouting;
 import org.openspcoop2.core.eccezione.router_details.Dominio;
 import org.openspcoop2.core.eccezione.router_details.constants.Costanti;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.slf4j.Logger;
@@ -63,7 +64,7 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/openspcoopRouterDetail.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopRouterDetail.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -314,7 +315,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isDettaglioRouting(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								DettaglioRouting de = XMLUtils.getDettaglioRouting(log,xml);
@@ -335,7 +336,7 @@ public class XMLUtils  {
 	
 	public static boolean isDettaglioRouting(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isDettaglioRouting_engine(elemXML);

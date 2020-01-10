@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -59,12 +60,14 @@ public class AccordoServizioUtils {
 	private Logger logger = null;
 	private AbstractXMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
-	public AccordoServizioUtils(Logger log){
+	private OpenSPCoop2MessageFactory messageFactory;
+	public AccordoServizioUtils(OpenSPCoop2MessageFactory messageFactory, Logger log){
 		if(log!=null)
 			this.logger = log;
 		else
 			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioUtils.class);
-		this.xmlUtils = XMLUtils.getInstance();
+		this.messageFactory = messageFactory;
+		this.xmlUtils = XMLUtils.getInstance(this.messageFactory);
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 	}
 	

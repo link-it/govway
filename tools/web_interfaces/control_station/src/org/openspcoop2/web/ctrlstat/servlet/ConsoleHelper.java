@@ -151,6 +151,7 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaScope;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
@@ -5947,6 +5948,26 @@ public class ConsoleHelper implements IConsoleHelper {
 		return stato;
 	}
 	
+	public String getStatoOpzioniAvanzatePortaDelegataDefault(PortaDelegata pdAssociata) throws Exception {
+		return _getStatoOpzioniAvanzatePortaApplicativaDefault(pdAssociata.getOptions());
+	}
+	public String getStatoOpzioniAvanzatePortaApplicativaDefault(PortaApplicativa paAssociata) throws Exception {
+		return _getStatoOpzioniAvanzatePortaApplicativaDefault(paAssociata.getOptions());
+	}
+	private String _getStatoOpzioniAvanzatePortaApplicativaDefault(String options) throws Exception {
+		String stato = null;
+		
+		Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		if(props==null || props.size()<=0) {
+			stato = StatoFunzionalita.DISABILITATO.getValue();
+		}
+		else {
+			stato = StatoFunzionalita.ABILITATO.getValue();
+		}
+		
+		return stato;
+	}
+	
 	public String getStatoControlloAccessiPortaApplicativa(String protocollo, PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
 		return this._getStatoControlloAccessiPortaApplicativa(protocollo, paAssociata, null);
 	}
@@ -6941,6 +6962,52 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setStatusType(statusType);
 		de.setStatusValue(statusValue);
 		de.setStatusToolTip(statusTooltip);
+	}
+	
+	
+	public void setStatoOpzioniAvanzatePortaDelegataDefault(DataElement de, String options) throws Exception {
+		this._setStatoOpzioniAvanzatePortaDefault(de, options);
+	}
+	public void setStatoOpzioniAvanzatePortaApplicativaDefault(DataElement de, String options) throws Exception {
+		this._setStatoOpzioniAvanzatePortaDefault(de, options);
+	}
+	private void _setStatoOpzioniAvanzatePortaDefault(DataElement de, String options) throws Exception {
+		
+		de.setType(DataElementType.CHECKBOX);
+		
+		Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(options);
+		StringBuffer bf = new StringBuffer();
+		StringBuffer bfTooltip = new StringBuffer();
+		if(props!=null && props.size()>0) {
+			Enumeration<String> en = props.keys();
+			while (en.hasMoreElements()) {
+				String key = (String) en.nextElement();
+				String value = props.get(key);
+				if(bf.length()>0) {
+					bf.append(", ");
+				}
+				bf.append(key);
+				
+				if(bfTooltip.length()>0) {
+					bfTooltip.append(", ");
+				}
+				bfTooltip.append(key);
+				bfTooltip.append(" '");
+				bfTooltip.append(value);
+				bfTooltip.append("'");
+			}
+		}
+		
+		
+		if(bf.length()>0) {
+			de.setStatusType(CheckboxStatusType.CONFIG_ENABLE);
+			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_ABILITATO)+" [ "+bf.toString()+" ]");
+			de.setStatusToolTip(bfTooltip.toString());
+		}
+		else {
+			de.setStatusType(CheckboxStatusType.CONFIG_DISABLE);
+			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));
+		}
 	}
 	
 	public void setStatoCachingRisposta(DataElement de, ResponseCachingConfigurazione rcPorta, Configurazione configurazioneGenerale) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {

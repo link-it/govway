@@ -263,9 +263,9 @@ public class ItemBean extends BaseItemBean<Item>{
 			valueToCheck = ServletUtils.isCheckBoxEnabled(value) ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
 		}
 
-		if(valueToCheck == null){
-			valueToCheck = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
-		}
+//		if(valueToCheck == null){
+//			valueToCheck = this.getItem().getDefaultSelected() ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED;
+//		}
 
 		return valueToCheck;
 	}

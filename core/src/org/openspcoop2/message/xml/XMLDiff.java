@@ -36,19 +36,25 @@ import org.w3c.dom.Element;
  */
 public class XMLDiff extends org.openspcoop2.utils.xml.AbstractXMLDiff {
 
+	private OpenSPCoop2MessageFactory messageFactory;
+	
+	public XMLDiff(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+	
 	@Override
 	public AbstractXMLUtils getXMLUtils() {
-		return org.openspcoop2.message.xml.XMLUtils.getInstance();
+		return org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 	}
 
 	@Override
 	public Element readXPathElement(Element contenutoAsElement){
-		return OpenSPCoop2MessageFactory.getMessageFactory().convertoForXPathSearch(contenutoAsElement);
+		return this.messageFactory.convertoForXPathSearch(contenutoAsElement);
 	}
 
 	@Override
 	public void normalizeDocument(Document document) {
-		OpenSPCoop2MessageFactory.getMessageFactory().normalizeDocument(document);
+		this.messageFactory.normalizeDocument(document);
 	}
 	
 }

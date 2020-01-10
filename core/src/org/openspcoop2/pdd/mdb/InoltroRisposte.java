@@ -43,6 +43,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -111,6 +112,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -772,8 +774,12 @@ public class InoltroRisposte extends GenericLib{
 
 				
 				try{
-					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
-						securityInfo = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(), responseMessage);
+					IDigestReader digestReader = null;
+					if(messageSecurityContext != null) {
+						digestReader = messageSecurityContext.getDigestReader(responseMessage!=null ? responseMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+					}
+					if(digestReader!=null){
+						securityInfo = validazioneSemantica.readSecurityInformation(digestReader, responseMessage);
 					}
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e,"ErroreLetturaInformazioniSicurezza");
@@ -1007,6 +1013,7 @@ public class InoltroRisposte extends GenericLib{
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
 			SOAPFault faultConnectionReply = null;
+			OpenSPCoop2MessageFactory faultConnectionReplyMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
 			// Ricerco connettore
@@ -1123,6 +1130,7 @@ public class InoltroRisposte extends GenericLib{
 				}
 				// raccolta risultati del connettore
 				faultConnectionReply = gestoreErrore.getFault();
+				faultConnectionReplyMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				codiceRitornato = connectorSender.getCodiceTrasporto();
 				responseHttpReply = connectorSender.getResponse();
 				Properties headerTrasportoReply = connectorSender.getHeaderTrasporto();
@@ -1294,7 +1302,7 @@ public class InoltroRisposte extends GenericLib{
 			else if(errorConsegna && presenzaRispostaProtocolConnectionReply==false){
 				//	Effettuo log dell'eventuale fault
 				if(faultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReply));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, faultConnectionReply));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				String motivazioneErrore = "Errore duranta la spedizione della busta: "+motivoErroreConsegna;
@@ -1428,7 +1436,7 @@ public class InoltroRisposte extends GenericLib{
 			else if(responseHttpReply != null ){
 				// potenziale Fault (inserito dopo il codice soprastante, per fare decriptare il body al MessageSecurity se presente)
 				if(faultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReply));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, faultConnectionReply));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 			}

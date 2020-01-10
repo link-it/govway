@@ -38,7 +38,6 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -455,14 +454,15 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				
 				if(imbustamentoConAttachment){
 					tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+tipoAttachment;
-					requestMessage = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageTypeReq,MessageRole.REQUEST,inputBody,tipoAttachment,
+					requestMessage = TunnelSoapUtils.imbustamentoMessaggioConAttachment(org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(logCore,requestInfo, MessageRole.REQUEST),
+							messageTypeReq,MessageRole.REQUEST,inputBody,tipoAttachment,
 							MailcapActivationReader.existsDataContentHandler(tipoAttachment),req.getContentType(), openSPCoopProperties.getHeaderSoapActorIntegrazione());					
 					requestMessage.setTransportRequestContext(requestInfo.getProtocolContext());				
 				}else{
 					tipoLetturaRisposta = "Imbustamento messaggio in un messaggio SOAP";
 					String contentTypeForEnvelope = null; // todo renderlo parametrico soprattutto per soap1.2
 					String soapAction = "\"OpenSPCoop2\""; // todo renderlo parametrico
-					OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
+					OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(logCore,requestInfo, MessageRole.REQUEST).
 							envelopingMessage(messageTypeReq, contentTypeForEnvelope, soapAction, 
 							requestInfo.getProtocolContext(), inputBody, notifierInputStreamParams, 
 							openSPCoopProperties.getAttachmentsProcessingMode(), 
@@ -786,9 +786,9 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					byte[] risposta = null;
 					if(body!=null && body.hasFault()){
 						statoServletResponse = 500; // cmq e' un errore come l'errore applicativo
-						String msgError = SoapUtils.toString(body.getFault(), false);
+						String msgError = SoapUtils.toString(responseMessage.getFactory(), body.getFault(), false);
 						//risposta=msgError.getBytes();
-						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(responseMessage.getFactory());
 						risposta=xmlUtils.toByteArray(body.getFault(), true);
 						//System.out.println("ELABORATO:"+new String(risposta));
 						contentTypeRisposta = responseMessage.getContentType();
@@ -810,7 +810,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 							}
 							
 							// Non serve la updateContentType. Il messaggio e' gia' stato serializzato ed il cType e' corretto.  
-							if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(body)){
+							if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(responseMessage.getFactory(), body)){
 								contentTypeRisposta = TunnelSoapUtils.getContentTypeTunnelOpenSPCoopSoap(body);
 							}else{
 								contentTypeRisposta = responseMessage.getContentType();

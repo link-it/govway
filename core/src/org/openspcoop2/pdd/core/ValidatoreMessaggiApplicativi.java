@@ -185,7 +185,7 @@ public class ValidatoreMessaggiApplicativi {
 		this.idServizio = idServizio;
 		
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.message.getFactory());
 		
 		try{
 			if(readWSDLAccordoServizio){

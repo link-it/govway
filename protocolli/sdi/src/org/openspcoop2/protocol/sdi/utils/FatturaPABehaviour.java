@@ -28,7 +28,6 @@ import java.util.List;
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
@@ -139,7 +138,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				BehaviourResponseTo responseTo = new BehaviourResponseTo();
 				responseTo.setResponseTo(true);
 				behaviour.setResponseTo(responseTo);
-				OpenSPCoop2Message replyTo = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
+				OpenSPCoop2Message replyTo = msg.getFactory().createEmptyMessage(msg.getMessageType(),MessageRole.RESPONSE);
 				
 				SDIImbustamento sdiImbustamento = new SDIImbustamento((SDIBustaBuilder) gestoreMessaggioRichiesta.getProtocolFactory().createBustaBuilder(state));
 				
@@ -230,7 +229,7 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 						xml = imbustamentoSDI(busta, xml, metadati);
 					}
 					
-					OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
+					OpenSPCoop2MessageParseResult pr = msg.getFactory().
 							envelopingMessage(msg.getMessageType(), MessageRole.REQUEST, HttpConstants.CONTENT_TYPE_TEXT_XML, 
 									"OpenSPCoop", xml, null, openspcoop2Properties.getAttachmentsProcessingMode(), 
 									true);

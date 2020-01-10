@@ -88,6 +88,7 @@ import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -2667,7 +2668,9 @@ public class RegistroServizi  {
 		accordoServizioWrapper.setBytesWsdlImplementativoErogatore(servizio.getByteWsdlImplementativoErogatore());
 		accordoServizioWrapper.setBytesWsdlImplementativoFruitore(servizio.getByteWsdlImplementativoFruitore());
 		
-		AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(this.log);
+		OpenSPCoop2MessageFactory defaultMessageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
+		AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(defaultMessageFactory, this.log);
 		wsdlWrapperUtilities.setAccordoServizio(accordoServizioWrapper);
 			
 		if(buildSchemaXSD){
@@ -2707,7 +2710,7 @@ public class RegistroServizi  {
 				}
 				
 				this.log.debug("Costruisco WSDLAccordoServizio from AccordoServizio (Step2)...");
-				AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = new AccordoServizioWrapperUtilities(this.log);
+				AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = new AccordoServizioWrapperUtilities(defaultMessageFactory, this.log);
 				AccordoServizioWrapper accordoServizioWrapperStep2 = accordoServizioWrapper.clone(false);
 				wsdlWrapperUtilitiesStep2.setAccordoServizio(accordoServizioWrapperStep2);
 				try{
@@ -2735,7 +2738,7 @@ public class RegistroServizi  {
 				}
 				
 				this.log.debug("Costruisco WSDLAccordoServizio from WSDL (Step2)...");
-				AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = new AccordoServizioWrapperUtilities(this.log);
+				AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = new AccordoServizioWrapperUtilities(defaultMessageFactory, this.log);
 				AccordoServizioWrapper accordoServizioWrapperStep2 = accordoServizioWrapper.clone(false);
 				wsdlWrapperUtilitiesStep2.setAccordoServizio(accordoServizioWrapperStep2);
 				try{
@@ -3031,8 +3034,10 @@ public class RegistroServizi  {
 		
 		accordoServizioWrapper.setRegistroServiziDB(asWrapper.registroServiziDB);
 		
+		OpenSPCoop2MessageFactory defaultMessageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities wsdlWrapperUtilities = 
-				new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(this.log, accordoServizioWrapper);
+				new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(defaultMessageFactory, this.log, accordoServizioWrapper);
 			
 
 		try{
@@ -3062,7 +3067,7 @@ public class RegistroServizi  {
 				this.log.debug("Costruisco API tramite il registro (Step2)...");
 				org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapperStep2 = accordoServizioWrapper.clone();
 				org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = 
-						new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(this.log, accordoServizioWrapperStep2);
+						new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(defaultMessageFactory, this.log, accordoServizioWrapperStep2);
 				try{
 					wsdlWrapperUtilitiesStep2.buildApiFromRegistry(registroServiziDB, buildSchemi);
 				}catch(DriverRegistroServiziException e){
@@ -3090,7 +3095,7 @@ public class RegistroServizi  {
 				this.log.debug("Costruisco API tramite la specifica (Step2)...");
 				org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapperStep2 = accordoServizioWrapper.clone();
 				org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = 
-						new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(this.log, accordoServizioWrapperStep2);
+						new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(defaultMessageFactory, this.log, accordoServizioWrapperStep2);
 				try{
 					wsdlWrapperUtilitiesStep2.buildApiFromSpecific(registroServiziDB, buildSchemi);
 				}catch(DriverRegistroServiziException e){

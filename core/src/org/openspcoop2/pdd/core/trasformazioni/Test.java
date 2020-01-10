@@ -586,15 +586,17 @@ public class Test {
 		parametriUrl.put(QUERY3, QUERY3_VALORE);
 		parametriUrl.put(QUERY4, QUERY4_VALORE);
 		
-		Element elementRequest = XMLUtils.getInstance().newElement(XML_REQUEST.getBytes());
-		Element elementResponse = XMLUtils.getInstance().newElement(XML_RESPONSE.getBytes());
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		OpenSPCoop2Message jsonMessageRequest = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.JSON, MessageRole.REQUEST, 
+		Element elementRequest = XMLUtils.getInstance(messageFactory).newElement(XML_REQUEST.getBytes());
+		Element elementResponse = XMLUtils.getInstance(messageFactory).newElement(XML_RESPONSE.getBytes());
+		
+		OpenSPCoop2Message jsonMessageRequest = messageFactory.createMessage(MessageType.JSON, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_REQUEST.getBytes()).getMessage();
-		OpenSPCoop2Message jsonMessageResponse = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.JSON, MessageRole.RESPONSE, 
+		OpenSPCoop2Message jsonMessageResponse = messageFactory.createMessage(MessageType.JSON, MessageRole.RESPONSE, 
 				HttpConstants.CONTENT_TYPE_JSON, JSON_RESPONSE.getBytes()).getMessage();
 		
-		OpenSPCoop2Message xmlMessageRequest = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+		OpenSPCoop2Message xmlMessageRequest = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_REQUEST.getBytes()).getMessage();
 		AttachmentPart ap1 = xmlMessageRequest.castAsSoap().createAttachmentPart();
 		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
@@ -602,7 +604,7 @@ public class Test {
 		AttachmentPart ap2 = xmlMessageRequest.castAsSoap().createAttachmentPart();
 		ap2.setContent(HELLO_WORLD_PLAIN, HttpConstants.CONTENT_TYPE_PLAIN);
 		xmlMessageRequest.castAsSoap().addAttachmentPart(ap2);
-		OpenSPCoop2Message xmlMessageResponse = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
+		OpenSPCoop2Message xmlMessageResponse = messageFactory.createMessage(MessageType.SOAP_11, MessageRole.RESPONSE, 
 				HttpConstants.CONTENT_TYPE_SOAP_1_1, XML_RESPONSE.getBytes()).getMessage();
 		ap1 = xmlMessageResponse.castAsSoap().createAttachmentPart();
 		ap1.setContent(JSON_REQUEST, HttpConstants.CONTENT_TYPE_JSON);
@@ -645,11 +647,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.TEMPLATE.equals(tipoTest)) {
 		
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null, JSON_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null, JSON_TEMPLATE_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null, XML_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_RESPONSE.getBytes());
 			
@@ -657,11 +659,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTest)) {
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  JSON_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null,  JSON_TEMPLATE_FREEMARKER_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE.getBytes());
 			
@@ -679,7 +681,7 @@ public class Test {
 			zipEntriesFreeMarkerJsonResponse.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
 			zipEntriesFreeMarkerJsonResponse.add(new Entry(JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
 			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesFreeMarkerJsonResponse);		
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  zipJsonRequest, 
 					dynamicMapXmlResponse, null,  zipJsonResponse);
 			
@@ -693,7 +695,7 @@ public class Test {
 			zipEntriesFreeMarkerXmlResponse.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_1.getBytes()));
 			zipEntriesFreeMarkerXmlResponse.add(new Entry(XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2_PATH, XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_CONTENT_2.getBytes()));
 			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesFreeMarkerXmlResponse);		
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  zipXmlRequest, 
 					dynamicMapJsonResponse, null, zipXmlResponse);
 			
@@ -701,11 +703,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTest)) {
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  JSON_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null,  JSON_TEMPLATE_VELOCITY_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE.getBytes());
 			
@@ -723,7 +725,7 @@ public class Test {
 			zipEntriesVelocityJsonResponse.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
 			zipEntriesVelocityJsonResponse.add(new Entry(JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, JSON_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
 			byte [] zipJsonResponse = ZipUtilities.zip(zipEntriesVelocityJsonResponse);		
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "xml", pddContext, 
 					dynamicMapXmlRequest, null,  zipJsonRequest, 
 					dynamicMapXmlResponse, null,  zipJsonResponse);
 			
@@ -737,7 +739,7 @@ public class Test {
 			zipEntriesVelocityXmlResponse.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_1.getBytes()));
 			zipEntriesVelocityXmlResponse.add(new Entry(XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2_PATH, XML_TEMPLATE_VELOCITY_BODY_INCLUDE_CONTENT_2.getBytes()));
 			byte [] zipXmlResponse = ZipUtilities.zip(zipEntriesVelocityXmlResponse);		
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE_ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  zipXmlRequest, 
 					dynamicMapJsonResponse, null,  zipXmlResponse);
 			
@@ -745,10 +747,10 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.XSLT.equals(tipoTest)) {
 			
-			elementRequest = XMLUtils.getInstance().newElement(XSLT_XML_INPUT.getBytes());
-			elementResponse = XMLUtils.getInstance().newElement(XSLT_XML_INPUT.getBytes());
+			elementRequest = XMLUtils.getInstance(messageFactory).newElement(XSLT_XML_INPUT.getBytes());
+			elementResponse = XMLUtils.getInstance(messageFactory).newElement(XSLT_XML_INPUT.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.XSLT) , "xml", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.XSLT) , "xml", pddContext, 
 					null, elementRequest,  XSLT_PREFIX_REPLACE_ALL.getBytes(), 
 					null, elementResponse,  XSLT_PREFIX_REPLACE_ONLY_PREFIX.getBytes());
 			
@@ -756,11 +758,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.ZIP.equals(tipoTest)) {
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "soap", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.ZIP) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
 			
@@ -768,11 +770,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.TGZ.equals(tipoTest)) {
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "soap", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TGZ) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
 			
@@ -780,11 +782,11 @@ public class Test {
 		
 		if(tipoTest==null || TipoTrasformazione.TAR.equals(tipoTest)) {
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "soap", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "soap", pddContext, 
 					dynamicMapXmlRequest, null,  COMPRESS_SOAP_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapXmlResponse, null,  COMPRESS_SOAP_TEMPLATE_RESPONSE.getBytes());
 			
-			test(log, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "json", pddContext, 
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.TAR) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  COMPRESS_REST_TEMPLATE_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  COMPRESS_REST_TEMPLATE_RESPONSE.getBytes());
 			
@@ -792,7 +794,7 @@ public class Test {
 		
 	}
 	
-	private static void test(Logger log, TipoTrasformazione tipoTest, String prefix,
+	private static void test(Logger log, OpenSPCoop2MessageFactory messageFactory, TipoTrasformazione tipoTest, String prefix,
 			PdDContext pddContext,
 			Map<String, Object> dynamicMapRequest, Element elementRequest, byte[] templateRequest, 
 			Map<String, Object> dynamicMapResponse, Element elementResponse, byte[] templateResponse) throws Exception {
@@ -911,7 +913,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateRequest));
-				System.out.println("PRIMA: "+XMLUtils.getInstance().toString(elementRequest));
+				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(elementRequest));
 				System.out.println("DOPO: "+contenuto);
 
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");
@@ -1039,7 +1041,7 @@ public class Test {
 			if(contenuto.contains(PREFIX_ORIGINALE)) {
 				
 				System.out.println("Template:\n "+new String(templateResponse));
-				System.out.println("PRIMA: "+XMLUtils.getInstance().toString(elementResponse));
+				System.out.println("PRIMA: "+XMLUtils.getInstance(messageFactory).toString(elementResponse));
 				System.out.println("DOPO: "+contenuto);
 				
 				throw new Exception("Trovato '"+PREFIX_ORIGINALE+"' non atteso");

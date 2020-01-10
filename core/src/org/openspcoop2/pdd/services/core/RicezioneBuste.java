@@ -65,6 +65,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.CredenzialiMittente;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -6608,7 +6609,7 @@ public class RicezioneBuste {
 		if(functionAsRouter){
 			if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
 					newConnectionForResponse ) {
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(),MessageRole.RESPONSE));
+				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
 				return;
 			}
 			richiestaRispostaProtocollo = false;
@@ -6634,7 +6635,7 @@ public class RicezioneBuste {
 			if ( utilizzoIndirizzoTelematico && bustaRichiesta.getIndirizzoMittente()!=null &&
 					moduleManager.isUtilizzoIndirizzoSoggettoPresenteBusta() &&
 					(!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless)  ){
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(),MessageRole.RESPONSE));
+				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
 				if(portaStateless){
 					openspcoopstate.releaseResource();
 				}
@@ -6642,7 +6643,7 @@ public class RicezioneBuste {
 			} else if( (org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(bustaRichiesta.getProfiloDiCollaborazione())==false) &&
 					newConnectionForResponse &&
 					(!oneWayStateless) && (!sincronoStateless) && (!asincronoStateless) ) {
-				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(),MessageRole.RESPONSE));
+				this.msgContext.setMessageResponse(MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE));
 				if(portaStateless){
 					openspcoopstate.releaseResource();
 				}
@@ -6675,7 +6676,7 @@ public class RicezioneBuste {
 
 
 		GestoreMessaggi msgResponse = null;
-		OpenSPCoop2Message responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(),MessageRole.RESPONSE);
+		OpenSPCoop2Message responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(),MessageRole.RESPONSE);
 		//TempiAttraversamentoPDD tempiAttraversamentoGestioneMessaggi = null;
 		//DimensioneMessaggiAttraversamentoPdD dimensioneMessaggiAttraversamentoGestioneMessaggi = null;
 
@@ -7240,9 +7241,9 @@ public class RicezioneBuste {
 							EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();
 					SecurityInfo securityInfoResponse  = null;
 					if(functionAsRouter==false){
-						if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+						if(messageSecurityContext!=null && messageSecurityContext.getDigestReader(responseMessage.getFactory())!=null){
 							IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopstate.getStatoRichiesta());
-							securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
+							securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(responseMessage.getFactory()),responseMessage);
 						}
 					}
 					tracciamento.registraRisposta(responseMessage,securityInfoResponse,headerBustaRisposta,bustaRisposta,esitoTraccia,
@@ -7377,7 +7378,7 @@ public class RicezioneBuste {
 							if(gestore instanceof IGestoreIntegrazionePASoap){
 								if(propertiesReader.deleteHeaderIntegrazioneResponsePA()){
 									if(responseMessage==null){
-										responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(), MessageRole.RESPONSE);
+										responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
 										outResponsePAMessage.setMessage(responseMessage);
 									}
 									gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
@@ -7386,7 +7387,7 @@ public class RicezioneBuste {
 								}
 							}else{
 								if(responseMessage==null){
-									responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getMessageType(), MessageRole.RESPONSE);
+									responseMessage = MessageUtilities.buildEmptyMessage(requestMessage.getFactory(),requestMessage.getMessageType(), MessageRole.RESPONSE);
 									outResponsePAMessage.setMessage(responseMessage);
 								}
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
@@ -7677,9 +7678,9 @@ public class RicezioneBuste {
 				SecurityInfo securityInfoResponse  = null;
 				boolean functionAsRouter = false; // In questo caso dovrebbe essere sempre false?
 				if(functionAsRouter){
-					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader(responseErrorMessage.getFactory())!=null){
 						IValidazioneSemantica validazioneSemantica = protocolFactory.createValidazioneSemantica(openspcoopState.getStatoRichiesta());
-						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseErrorMessage);
+						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(responseErrorMessage.getFactory()),responseErrorMessage);
 					}
 				}
 				Validatore v = new Validatore(responseErrorMessage,this.msgContext.getPddContext().getContext(),openspcoopState.getStatoRichiesta(),
@@ -7808,7 +7809,8 @@ public class RicezioneBuste {
 				}
 
 				// Imposto messaggio ritornato nella connection-reply
-				OpenSPCoop2Message soapBodyEmpty = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
+				OpenSPCoop2Message soapBodyEmpty = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+						requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 				this.msgContext.setMessageResponse(soapBodyEmpty);
 				
 			}else{
@@ -8715,12 +8717,14 @@ public class RicezioneBuste {
 		}
 
 		if(bustaHTTPReply==null){
-			return MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
+			return MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+					requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 		}else{
 						
 			OpenSPCoop2Message msg = null;
 			if(http200){
-				msg = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
+				msg = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+						requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 			}
 			else{
 				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);

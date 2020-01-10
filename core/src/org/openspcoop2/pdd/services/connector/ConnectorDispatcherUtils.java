@@ -207,7 +207,7 @@ public class ConnectorDispatcherUtils {
 				}
 				
 				byte[] b = bout.toByteArray();
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 				Document d = xmlUtils.newDocument(b);
 				d.getFirstChild().appendChild(d.createComment(versione));
 				xmlUtils.writeTo(d, res.getOutputStream());

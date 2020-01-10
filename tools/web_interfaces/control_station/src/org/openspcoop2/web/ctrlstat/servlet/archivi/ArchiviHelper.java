@@ -2457,9 +2457,6 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		if (issuer == null) {
 			issuer = "";
 		}
-		if(tipoCredenzialiSSLSorgente == null) {
-			tipoCredenzialiSSLSorgente = ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE;
-		}
 		org.openspcoop2.utils.certificate.ArchiveType tipoCredenzialiSSLTipoArchivio= null;
 		if(tipoCredenzialiSSLTipoArchivioS == null) {
 			tipoCredenzialiSSLTipoArchivio = org.openspcoop2.utils.certificate.ArchiveType.CER; 

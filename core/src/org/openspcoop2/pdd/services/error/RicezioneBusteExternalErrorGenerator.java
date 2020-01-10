@@ -102,7 +102,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse,useProblemRFC7807, e);
 		}
 	}
 	
@@ -121,7 +121,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
 	
@@ -141,7 +141,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
 	
@@ -160,7 +160,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
 	public OpenSPCoop2Message buildErroreIntestazione(IntegrationError integrationError, CodiceErroreCooperazione codiceErroreCooperazione, String descrizione) {
@@ -179,7 +179,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
 	
@@ -219,7 +219,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 		
 	}
@@ -259,7 +259,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 		
 	}
@@ -299,7 +299,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 		
 	}
@@ -338,7 +338,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
 	
@@ -380,7 +380,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 		
 	}

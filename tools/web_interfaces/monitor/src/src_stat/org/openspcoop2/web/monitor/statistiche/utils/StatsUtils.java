@@ -1017,9 +1017,6 @@ public class StatsUtils {
 
 		int numeroCategorie = 1;
 
-		if(color==null){
-			color = Colors.CODE_TOTALE;
-		}
 		color = "paletteColors='"+ color + "' ";
 
 		String xName = "Data";

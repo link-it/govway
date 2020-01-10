@@ -268,7 +268,8 @@ public class SDIProtocolManager extends BasicManager {
 			if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
 				if(transportResponseContext==null || transportResponseContext.getErrore()==null){
 					// creo un nuovo messaggio, l'imbustamento si occupera' di creare la struttura
-					OpenSPCoop2Message msgR = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.RESPONSE,notifierInputStreamParams);
+					OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+					OpenSPCoop2Message msgR = messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.RESPONSE,notifierInputStreamParams);
 					msgR.setTransportRequestContext(transportRequestContext);
 					msgR.setTransportResponseContext(transportResponseContext);
 					return msgR;

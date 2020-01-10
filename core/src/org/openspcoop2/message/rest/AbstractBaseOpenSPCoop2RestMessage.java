@@ -31,6 +31,7 @@ import org.apache.commons.io.input.CountingInputStream;
 import org.apache.commons.io.output.CountingOutputStream;
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
 import org.openspcoop2.message.MessageUtils;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -57,11 +58,13 @@ public abstract class AbstractBaseOpenSPCoop2RestMessage<T> extends AbstractBase
 	
 	/* Costruttore */
 	
-	protected AbstractBaseOpenSPCoop2RestMessage() {
+	protected AbstractBaseOpenSPCoop2RestMessage(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
 		this.hasContent = false;
 	}
 	
-	protected AbstractBaseOpenSPCoop2RestMessage(InputStream isParam,String contentType) throws MessageException {
+	protected AbstractBaseOpenSPCoop2RestMessage(OpenSPCoop2MessageFactory messageFactory, InputStream isParam,String contentType) throws MessageException {
+		super(messageFactory);
 		try{
 			this.contentType = contentType;
 			if(contentType!=null){

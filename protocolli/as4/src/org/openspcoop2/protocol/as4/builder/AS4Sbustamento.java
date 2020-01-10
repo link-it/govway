@@ -94,6 +94,8 @@ public class AS4Sbustamento {
 			IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		try{
 			
+			OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			Object o = msg.getContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE);
 			if(o==null) {
 				throw new ProtocolException("UserMessage not found in context");
@@ -213,7 +215,7 @@ public class AS4Sbustamento {
 				// ----- checkEnvelope----
 				Element envelope = null;
 				try {
-					envelope = XMLUtils.getInstance().newElement(contentRoot);
+					envelope = XMLUtils.getInstance(messageFactory).newElement(contentRoot);
 				}catch(Throwable e) {
 					String s = "";
 					try {
@@ -294,8 +296,8 @@ public class AS4Sbustamento {
 			
 			OpenSPCoop2MessageParseResult result = null;
 			if(MessageType.MIME_MULTIPART.equals(messageType)==false) {
-				result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, contentRoot);
-	//			result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.REQUEST, 
+				result = messageFactory.createMessage(messageType, transportRequestContext, contentRoot);
+	//			result = messageFactory.createMessage(messageType, MessageRole.REQUEST, 
 	//					mimeTypeRoot, contentRoot);
 				try {
 					newMessage = result.getMessage_throwParseThrowable();
@@ -383,7 +385,7 @@ public class AS4Sbustamento {
 					mm.writeTo(bout);
 					bout.flush();
 					bout.close();
-					result = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, bout.toByteArray());
+					result = messageFactory.createMessage(messageType, transportRequestContext, bout.toByteArray());
 					newMessage = result.getMessage_throwParseThrowable();
 				}
 				

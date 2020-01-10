@@ -33,6 +33,7 @@ import org.openspcoop2.core.eccezione.details.utils.XMLUtils;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.exception.ParseException;
@@ -1135,7 +1136,8 @@ public class SbustamentoRisposte extends GenericLib {
 					msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi, oneway con scenario sincrono...");
 
 					if(protocolManager.isHttpEmptyResponseOneWay())
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+								requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 					else
 						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 					

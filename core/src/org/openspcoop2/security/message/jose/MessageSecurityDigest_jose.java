@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.security.message.jose;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityDigest;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -36,7 +37,7 @@ import org.openspcoop2.utils.digest.IDigestReader;
 public class MessageSecurityDigest_jose implements IMessageSecurityDigest{
 
 	@Override
-	public IDigestReader getDigestReader(MessageSecurityContext messageSecurityContext) throws SecurityException {
+	public IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory, MessageSecurityContext messageSecurityContext) throws SecurityException {
 		return null;
 	}
 	

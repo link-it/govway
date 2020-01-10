@@ -57,6 +57,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -1532,6 +1533,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
 			SOAPFault fault = null;
+			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
 			// Ricerco connettore
@@ -1978,6 +1980,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();
+					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
 					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
 							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
@@ -2411,7 +2414,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					    ) 
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
 				}
 				else{
@@ -2576,7 +2579,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			// Effettuo log del fault
 			if(fault!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
 			}
 			
@@ -2651,7 +2654,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						else{
 							msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-									MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE),profiloGestione,
+									MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+											requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE),profiloGestione,
 									idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore);
 						}
 					}
@@ -2751,7 +2755,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								&& portaDiTipoStateless
 								&& (!isRicevutaAsincrona) ){
 							rispostaVuotaValidaPerAsincroniStateless_modalitaAsincrona = true;
-							responseMessage = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
+							responseMessage = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+									requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE); // Costruisce messaggio vuoto per inserire busta (ricevuta asincrona)
 						}
 						else{
 							msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, ("risposta applicativa attesa ma non ricevuta"));
@@ -2801,7 +2806,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									OpenSPCoop2SoapMessage soapMsg = responseMessage.castAsSoap();
 									hasContent = soapMsg.getSOAPBody()!=null;
 									if(hasContent){
-										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getFactory(), soapMsg.getSOAPBody(), false)!=null;
 									}
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}

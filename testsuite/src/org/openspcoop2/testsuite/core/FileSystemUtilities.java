@@ -31,6 +31,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.openspcoop2.core.diagnostica.utils.XMLUtils;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.testng.Assert;
@@ -187,7 +188,8 @@ public class FileSystemUtilities {
 		Assert.assertTrue(logs.length>0);
 
 		Reporter.log("LOG DIRECTORY["+logDirectory+"]: "+logs.length);
-		ValidatoreXSD validatoreXSDBase = new ValidatoreXSD(LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
+		ValidatoreXSD validatoreXSDBase = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+				LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
 				FileSystemUtilities.class.getResourceAsStream("/openspcoopDiagnostica.xsd"));
 		
 		for(int i=0; i<logs.length; i++){
@@ -306,7 +308,8 @@ public class FileSystemUtilities {
 		Assert.assertTrue(logs.length>0);
 
 		Reporter.log("LOG DIRECTORY["+logDirectory+"]: "+logs.length);
-		ValidatoreXSD validatoreXSDBase = new ValidatoreXSD(LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
+		ValidatoreXSD validatoreXSDBase = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+				LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
 				FileSystemUtilities.class.getResourceAsStream("/openspcoopTracciamento.xsd"));
 		
 		

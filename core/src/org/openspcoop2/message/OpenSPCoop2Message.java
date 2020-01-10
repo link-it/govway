@@ -49,9 +49,15 @@ import org.w3c.dom.Node;
 
 public interface OpenSPCoop2Message {
 	
+	/* Message Factory */
+	
+	public OpenSPCoop2MessageFactory getFactory();
+	
+	
 	/* Normalize to SAAJ */
 	
 	public OpenSPCoop2Message normalizeToSaajImpl() throws MessageException;
+	
 	
 	/* Copy Resources to another instance */
 	

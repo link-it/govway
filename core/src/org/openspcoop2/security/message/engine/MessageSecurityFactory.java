@@ -25,6 +25,7 @@ package org.openspcoop2.security.message.engine;
 import java.lang.reflect.Constructor;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContextParameters;
@@ -64,11 +65,11 @@ public class MessageSecurityFactory {
 		}
 	}
 	
-	public static IDigestReader getMessageSecurityDigestReader(SecurityType securityType, Logger log) throws SecurityException{
+	public static IDigestReader getMessageSecurityDigestReader(OpenSPCoop2MessageFactory messageFactory, SecurityType securityType, Logger log) throws SecurityException{
 		try{
 			Constructor<?> constructor = Class.forName(MessageSecurityFactory.messageSecurityDigestReaderImplClass).getConstructor(Logger.class);
 			MessageSecurityDigestReader digestReader = (MessageSecurityDigestReader) constructor.newInstance(log);
-			return digestReader.getDigestReader(securityType);
+			return digestReader.getDigestReader(messageFactory, securityType);
 		}catch(Exception e){
 			throw new SecurityException(e.getMessage(),e);
 		}

@@ -37,7 +37,6 @@ import org.openspcoop2.core.tracciamento.constants.TipoInoltro;
 import org.openspcoop2.core.tracciamento.constants.TipoProfiloCollaborazione;
 import org.openspcoop2.core.tracciamento.constants.TipoRilevanzaEccezione;
 import org.openspcoop2.core.tracciamento.constants.TipoTempo;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -65,14 +64,12 @@ import org.w3c.dom.Element;
  */
 public class TracciaSerializer extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer {
 	
-	protected OpenSPCoop2MessageFactory fac = null;
 	protected AbstractXMLUtils xmlUtils;
 	
 
 	public TracciaSerializer(IProtocolFactory<?> factory) throws ProtocolException {
 		super(factory);
-		this.fac = OpenSPCoop2MessageFactory.getMessageFactory();
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 	}
 
 

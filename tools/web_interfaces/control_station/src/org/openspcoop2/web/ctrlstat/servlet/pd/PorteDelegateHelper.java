@@ -150,7 +150,8 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
-			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy) throws Exception {
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch, BinaryParameter allegatoXacmlPolicy,
+			String messageEngine) throws Exception {
 
 		boolean multitenant = this.pddCore.isMultitenant();
 
@@ -164,12 +165,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		boolean isConfigurazione = parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE; 
 		
 		boolean datiInvocazione = false;
-		boolean datiAltro = false;
+		boolean datiAltroPorta = false;
+		boolean datiAltroApi = false; // indipendente dalla porta (viene utilizzata sempre la porta di default)
 		if(isConfigurazione) {
 			if(usataInConfigurazioneDefault) {
 				datiInvocazione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 			}
-			datiAltro = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO));
+			datiAltroPorta = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
+			datiAltroApi = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
 			
 			DataElement de = new DataElement();
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE);
@@ -178,9 +181,15 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO);
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA);
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(datiAltro+"");
+			de.setValue(datiAltroPorta+"");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(datiAltroApi+"");
 			dati.addElement(de);
 		}
 		
@@ -221,7 +230,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		// *************** Dati Generali: Nome/Descrizione *********************
 		
-		if(datiInvocazione || !datiAltro) {
+		if(datiInvocazione || (!datiAltroPorta && !datiAltroApi)) {
 			de = new DataElement();
 			if(datiInvocazione) {
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_TITOLO_PORTE_DELEGATE_DATI_INVOCAZIONE);
@@ -846,7 +855,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			de.setValue(integrazione);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
 			de.setSize(alternativeSize);
-			if(this.isModalitaStandard() || (isConfigurazione && !datiAltro)){
+			if(this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)){
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}else{
@@ -866,7 +875,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_STATELESS);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_STATELESS);
-		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltro)){
+		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltroPorta)){
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(stateless);
 			dati.addElement(de);
@@ -918,7 +927,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		if(deIntegrazione.size()>0){
 			
-			if(!isConfigurazione || datiAltro) {
+			if(!isConfigurazione || datiAltroPorta) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_INTEGRAZIONE);
@@ -931,7 +940,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		}
 		
 		
-		boolean localForwardDisable = !this.porteDelegateCore.isShowPortaDelegataLocalForward() || this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltro);
+		boolean localForwardDisable = !this.porteDelegateCore.isShowPortaDelegataLocalForward() || this.isModalitaStandard() || !multitenant || localForwardShow==false || (isConfigurazione && !datiAltroPorta);
 		
 		if(!localForwardDisable) {
 			de = new DataElement();
@@ -1086,55 +1095,46 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		// *************** Asincroni *********************
 		
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
-		
-		if (this.isModalitaStandard() || !supportoAsincroni || datiInvocazione) {
-
+		if(supportoAsincroni) {
 			de = new DataElement();
-			de.setType(DataElementType.HIDDEN);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA);
+			if ( this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+				de.setType(DataElementType.HIDDEN);
+			}else{
+				de.setType(DataElementType.TITLE);
+			}
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA );
 			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_ABILITATO);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO);
-			dati.addElement(de);
-		} else {
-
-			de = new DataElement();
-			de.setType(DataElementType.TITLE);
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_ASINCRONA);
-			dati.addElement(de);
-
+	
 			String[] tipoRicsim = {PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_ABILITATO
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA_DISABILITATO};
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			de.setType(DataElementType.SELECT);
+			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(ricsim);
+			}else{
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoRicsim);
+				de.setSelected(ricsim);
+			}
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			de.setValues(tipoRicsim);
-			de.setSelected(ricsim);
 			dati.addElement(de);
-
+	
 			String[] tipoRicasim = { PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_ABILITATO
 					, PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA_DISABILITATO};
 			de = new DataElement();
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			de.setType(DataElementType.SELECT);
+			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(ricasim);
+			}else{
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoRicasim);
+				de.setSelected(ricasim);
+			}
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			de.setValues(tipoRicasim);
-			de.setSelected(ricasim);
 			dati.addElement(de);
 		}
-
 		
 		
 		
@@ -1142,47 +1142,102 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) && ServiceBinding.SOAP.equals(serviceBinding) ) {
+		boolean viewSoapWithAttachments = this.isModalitaAvanzata() && (!isConfigurazione || datiAltroPorta) && ServiceBinding.SOAP.equals(serviceBinding);
+		
+		if (viewSoapWithAttachments) {
 		
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_SOAP_WITH_ATTACHMENTS);
 			dati.addElement(de);
+			
+		}
 	
-			String[] tipoGestBody = {PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_NONE ,
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_ALLEGA, 
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_SCARTA };
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
+		String[] tipoGestBody = {PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_NONE ,
+				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_ALLEGA, 
+				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_BODY_SCARTA };
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
+		if (viewSoapWithAttachments) {
 			de.setType(DataElementType.SELECT);
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_BODY);
 			de.setValues(tipoGestBody);
 			de.setSelected(gestBody);
-			dati.addElement(de);
-	
-			String[] tipoGestManifest = {
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DEFAULT,
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_ABILITATO,
-					PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO };
-			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
-			if(isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(gestBody);
+		}
+		dati.addElement(de);
+
+		String[] tipoGestManifest = {
+				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DEFAULT,
+				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_ABILITATO,
+				PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO };
+		de = new DataElement();
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
+		if(isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(viewSoapWithAttachments) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);
-			}else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO );
 			}
-			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MANIFEST);
-			dati.addElement(de);
-		
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(gestManifest);
+			}
+		}else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_GEST_MANIFEST_DISABILITATO );
 		}
+		dati.addElement(de);
+		
 	
 //		if(configurazioneStandardNonApplicabile){
 //			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 //			this.pd.disableEditMode();
 //		}
+		
+		
+		
+		
+		
+		
+		
+		
+		// ***************  MESSAGE FACTORY *********************
+		
+		if(!this.isModalitaStandard() && datiAltroApi) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_ENGINE);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
+		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
+		if(!this.isModalitaStandard() && datiAltroApi) {
+			de.setType(DataElementType.SELECT);
+			List<String> lS = new ArrayList<String>();
+			lS.add(CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT);
+			lS.addAll(this.porteDelegateCore.getMessageEngines());
+			de.setValues(lS);
+			if(messageEngine==null || !lS.contains(messageEngine)) {
+				messageEngine = CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT;
+			}
+			de.setSelected(messageEngine);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(messageEngine);
+		}
+		dati.addElement(de);
+		
+		
+		
+		
 		
 		return dati;
 	}

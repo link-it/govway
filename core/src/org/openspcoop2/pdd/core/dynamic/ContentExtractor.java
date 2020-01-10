@@ -130,7 +130,7 @@ public class ContentExtractor {
 				if(this.message.castAsSoap().getSOAPPart()==null || this.message.castAsSoap().getSOAPPart().getEnvelope()==null) {
 					throw new Exception("Messaggio senza una busta SOAP");
 				}
-				return TunnelSoapUtils.sbustamentoSOAPEnvelope(this.message.castAsSoap().getSOAPPart().getEnvelope(), false);
+				return TunnelSoapUtils.sbustamentoSOAPEnvelope(this.message.getFactory(), this.message.castAsSoap().getSOAPPart().getEnvelope(), false);
 			}
 			else {
 				throw new Exception("Funzionalità utilizzabile solamente con service binding soap");

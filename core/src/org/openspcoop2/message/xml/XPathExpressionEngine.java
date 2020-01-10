@@ -38,10 +38,16 @@ import org.w3c.dom.Element;
  */
 public class XPathExpressionEngine extends org.openspcoop2.utils.xml.AbstractXPathExpressionEngine {
 
+	private OpenSPCoop2MessageFactory messageFactory;
+	
+	public XPathExpressionEngine(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+	
 	@Override
 	public String getAsString(SOAPElement element) {
 		try{
-			return OpenSPCoop2MessageFactory.getAsString(element, false);
+			return OpenSPCoop2MessageFactory.getAsString(this.messageFactory, element, false);
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);
 		}
@@ -49,11 +55,11 @@ public class XPathExpressionEngine extends org.openspcoop2.utils.xml.AbstractXPa
 
 	@Override
 	public AbstractXMLUtils getXMLUtils() {
-		return org.openspcoop2.message.xml.XMLUtils.getInstance();
+		return org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 	}
 
 	@Override
 	public Element readXPathElement(Element contenutoAsElement){
-		return OpenSPCoop2MessageFactory.getMessageFactory().convertoForXPathSearch(contenutoAsElement);
+		return this.messageFactory.convertoForXPathSearch(contenutoAsElement);
 	}
 }

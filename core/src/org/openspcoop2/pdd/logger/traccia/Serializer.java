@@ -140,7 +140,7 @@ public class Serializer {
 			bout.flush();
 			bout.close();
 			
-			XMLUtils xmlUtils = XMLUtils.getInstance();
+			XMLUtils xmlUtils = XMLUtils.DEFAULT;
 			Element element = xmlUtils.newElement(bout.toByteArray());
 			Document dom = xmlUtils.newDocument();
 			Element elementNew = dom.createElementNS(this.xml_namespace, this.xml_localName);

@@ -204,7 +204,7 @@ public class Validatore {
 			listaFileAttesiComplessivi.add(listaFilesAttesiFruitore[k]);
 		}
 				
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");
@@ -237,7 +237,7 @@ public class Validatore {
 	}
 	public static void validaOutputErogatore(String base, String[] portTypes,String[] operations,String [] listaFilesAttesi,String [] listaFilesAttesiBinding) throws Exception { 
 
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");
@@ -260,7 +260,7 @@ public class Validatore {
 	}
 	public static void validaOutputFruitore(String base, String[] portTypes,String[] operations,String [] listaFilesAttesi,String [] listaFilesAttesiBinding) throws Exception { 
 
-		XMLUtils xmlUtils = XMLUtils.getInstance();
+		XMLUtils xmlUtils = XMLUtils.DEFAULT;
 		
 		// WSDL Concettuale
 		System.out.println("\tWSDL Concettuale ...");

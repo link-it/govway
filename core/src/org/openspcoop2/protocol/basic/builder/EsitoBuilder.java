@@ -332,7 +332,8 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(soapBody!=null) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, soapBody, tipoContext, erroreGovway);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
+										erroreApplicativo, soapBody, tipoContext, erroreGovway);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -348,7 +349,8 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(MessageRole.FAULT.equals(message.getMessageRole())) {
 						if(checkElementSeContieneFaultPdD) {
 							if(message.castAsRestXml().hasContent()) {
-								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway);
+								EsitoTransazione esitoErrore = getEsitoMessaggioApplicativo(message.getFactory(),
+										erroreApplicativo, message.castAsRestXml().getContent(), tipoContext, erroreGovway);
 								if(esitoErrore!=null) {
 									return esitoErrore;
 								}
@@ -606,11 +608,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		}
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
+			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
 		if(erroreApplicativo!=null){
 			Node childNode = body.getFirstChild();
 			if(childNode!=null){
-				return getEsitoMessaggioApplicativo(erroreApplicativo, childNode, tipoContext, erroreGovway);
+				return getEsitoMessaggioApplicativo(messageFactory, erroreApplicativo, childNode, tipoContext, erroreGovway);
 			}
 		}
 
@@ -618,7 +621,8 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 
 	}
 	
-	protected EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway) throws ProtocolException{
+	protected EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
+			ProprietaErroreApplicativo erroreApplicativo,Node childNode,String tipoContext, String erroreGovway) throws ProtocolException{
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){
 				
@@ -650,7 +654,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(XMLUtils.isErroreApplicativo(childNode)){
 						
 						try{
-							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(childNode,true);
+							byte[] xml = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(childNode,true);
 							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
 							Eccezione ecc = erroreApplicativoObject.getException();
 							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){

@@ -62,6 +62,7 @@ import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper;
 import org.openspcoop2.core.registry.wsdl.AccordoServizioWrapperUtilities;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -259,7 +260,7 @@ public class DocumentoExporter extends HttpServlet {
 
 						AccordoServizioParteComune asConAllegati = asCore.getAccordoServizioFull(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true);
 						try{
-							AccordoServizioUtils asUtils = new AccordoServizioUtils(ControlStationCore.getLog());
+							AccordoServizioUtils asUtils = new AccordoServizioUtils(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), ControlStationCore.getLog());
 							XSDSchemaCollection schemaCollection = asUtils.buildSchemaCollection(asConAllegati, true);
 							fileName = Costanti.OPENSPCOOP2_ARCHIVE_ACCORDI_FILE_XSD_SCHEMA_COLLECTION;
 							//docBytes = schemaCollection.serialize(ControlStationCore.getLog());
@@ -402,9 +403,9 @@ public class DocumentoExporter extends HttpServlet {
 							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: tipo non supportato");
 						}
 						
-						if(fileName==null) {
-							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
-						}
+//						if(fileName==null) {
+//							throw new ServletException("Tipo documento ["+tipoDocumentoDaScaricare+"] '"+tipo+"' non disponibile per il tipo archivio ["+tipoDocumento+"]: contenuto vuoto o non presente");
+//						}
 
 						docBytes = richiesta.getConversioneTemplate();
 					}else if(ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_PORTA_APPLICATIVA_CONFIGURAZIONE_TRASFORMAZIONI_SOAP_ENVELOPE_TEMPLATE.equals(tipoDocumentoDaScaricare)){
@@ -986,10 +987,10 @@ public class DocumentoExporter extends HttpServlet {
 	}
 	private void writeWsdl(Logger log,String nomeFile, ZipOutputStream zipOut, boolean erogatore, AccordoServizioParteComune asConAllegati) throws IOException{
 		try{
-			AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(log);
+			AccordoServizioWrapperUtilities wsdlWrapperUtilities = new AccordoServizioWrapperUtilities(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log);
 			wsdlWrapperUtilities.setAccordoServizio(new AccordoServizioWrapper());
 			wsdlWrapperUtilities.getAccordoServizioWrapper().setAccordoServizio((AccordoServizioParteComune)asConAllegati.clone());
-			WSDLUtilities wsdlUtilities = new WSDLUtilities(XMLUtils.getInstance());
+			WSDLUtilities wsdlUtilities = new WSDLUtilities(XMLUtils.DEFAULT);
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			javax.wsdl.Definition wsdl = null;
 			if(erogatore){

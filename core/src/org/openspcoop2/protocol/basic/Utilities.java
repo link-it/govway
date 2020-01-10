@@ -28,7 +28,6 @@ import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 
 /**	
  * Utilities
@@ -39,17 +38,16 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
  */
 public class Utilities {
 
-	private static AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
-	
-	public static String toString(SOAPElement soapElement,boolean consume)
+	public static String toString(OpenSPCoop2MessageFactory messageFactory, SOAPElement soapElement,boolean consume)
 			throws ProtocolException {
 		if(soapElement == null){
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			String xml = OpenSPCoop2MessageFactory.getAsString(soapElement,consume);
+			XMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+			String xml = OpenSPCoop2MessageFactory.getAsString(messageFactory, soapElement,consume);
 			if(xml==null){
-				xml = Utilities.xmlUtils.toString(soapElement,true);
+				xml = xmlUtils.toString(soapElement,true);
 				if(xml==null){
 					throw new Exception("Conversione in stringa non riuscita");
 				}
@@ -62,15 +60,16 @@ public class Utilities {
 		}
 	}
 
-	public static byte[] toByteArray(SOAPElement soapElement,boolean consume)
+	public static byte[] toByteArray(OpenSPCoop2MessageFactory messageFactory, SOAPElement soapElement,boolean consume)
 			throws ProtocolException {
 		if(soapElement == null){
 			throw new ProtocolException("Conversione in element non riuscita");
 		}
 		try{
-			byte[] xml = OpenSPCoop2MessageFactory.getAsByte(soapElement,consume);
+			XMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+			byte[] xml = OpenSPCoop2MessageFactory.getAsByte(messageFactory, soapElement,consume);
 			if(xml==null){
-				xml = Utilities.xmlUtils.toByteArray(soapElement,true);
+				xml = xmlUtils.toByteArray(soapElement,true);
 				if(xml==null){
 					throw new Exception("Conversione in bytes non riuscita");
 				}

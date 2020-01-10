@@ -99,13 +99,13 @@ public class TunnelSoapUtils {
 			if(body.hasFault()){
 				throw new Exception("Body contenente un SOAPFault");
 			}
-			List<Node> listNode = SoapUtils.getNotEmptyChildNodes(body, false);
+			List<Node> listNode = SoapUtils.getNotEmptyChildNodes(message.getFactory(), body, false);
 			boolean bodyWithMultiRootElement = false;
 			if(listNode!=null && listNode.size()>1){
 				//System.out.println("MULTI ELEMENT: "+listNode.size());
 				bodyWithMultiRootElement = true;
 			}
-			byte[] bodySbustato = TunnelSoapUtils.sbustamentoSOAPEnvelope(soapMessage.getSOAPPart().getEnvelope());
+			byte[] bodySbustato = TunnelSoapUtils.sbustamentoSOAPEnvelope(message.getFactory(), soapMessage.getSOAPPart().getEnvelope());
 			AttachmentPart ap = null;
 			if(bodyWithMultiRootElement){
 				//System.out.println("OCTECT");
@@ -116,7 +116,7 @@ public class TunnelSoapUtils {
 				//System.out.println("XML");
 				Element e = null;
 				try{
-					e = XMLUtils.getInstance().newElement(bodySbustato);
+					e = XMLUtils.getInstance(message.getFactory()).newElement(bodySbustato);
 					Source streamSource = new DOMSource(e);
 					ap = soapMessage.createAttachmentPart();
 					ap.setContent(streamSource, HttpConstants.CONTENT_TYPE_TEXT_XML);
@@ -151,8 +151,11 @@ public class TunnelSoapUtils {
 	
 	/* ********  S B U S T A M E N T O    M E S S A G G I  ******** */ 
 
-	public static boolean isTunnelOpenSPCoopSoap(SOAPBody body){
-		List<Node> bodyChildren = SoapUtils.getNotEmptyChildNodes(body);
+	public static boolean isTunnelOpenSPCoopSoap(OpenSPCoop2SoapMessage message) throws MessageException, MessageNotSupportedException{
+		return isTunnelOpenSPCoopSoap(message.getFactory(), message.getSOAPBody());
+	}
+	public static boolean isTunnelOpenSPCoopSoap(OpenSPCoop2MessageFactory messageFactory, SOAPBody body){
+		List<Node> bodyChildren = SoapUtils.getNotEmptyChildNodes(messageFactory, body);
 		if(body!=null && 
 				bodyChildren.size() > 0 && 
 				bodyChildren.get(0)!=null &&
@@ -206,7 +209,7 @@ public class TunnelSoapUtils {
 			// Sbustamento Con Attachmnets
 			else{
 				SOAPBody body = msg.getSOAPBody();
-				if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(body)){
+				if(TunnelSoapUtils.isTunnelOpenSPCoopSoap(msgParam.getFactory(), body)){
 					// Sbustamento OpenSPCoop
 					AttachmentPart ap  = (AttachmentPart) msg.getAttachments().next();
 					Object o = ap.getContent();
@@ -324,10 +327,10 @@ public class TunnelSoapUtils {
 	 * @param env SoapEnvelope da sbustare
 	 * 
 	 */
-	public static byte[] sbustamentoSOAPEnvelope(SOAPEnvelope env) throws MessageException, MessageNotSupportedException{
-		return sbustamentoSOAPEnvelope(env, true);
+	public static byte[] sbustamentoSOAPEnvelope(OpenSPCoop2MessageFactory messageFactory, SOAPEnvelope env) throws MessageException, MessageNotSupportedException{
+		return sbustamentoSOAPEnvelope(messageFactory, env, true);
 	}
-	public static byte[] sbustamentoSOAPEnvelope(SOAPEnvelope env, boolean consume) throws MessageException, MessageNotSupportedException{
+	public static byte[] sbustamentoSOAPEnvelope(OpenSPCoop2MessageFactory messageFactory, SOAPEnvelope env, boolean consume) throws MessageException, MessageNotSupportedException{
 		ByteArrayOutputStream bout = null;
 		
 		try{
@@ -335,7 +338,7 @@ public class TunnelSoapUtils {
 			byte[] body = null;
 			if(bd.hasFault()){
 				SOAPFault fault = bd.getFault();
-				body = OpenSPCoop2MessageFactory.getAsByte(fault, consume);
+				body = OpenSPCoop2MessageFactory.getAsByte(messageFactory, fault, consume);
 			}else{
 				bout = new ByteArrayOutputStream();
 				java.util.Iterator<?> it = bd.getChildElements();
@@ -345,7 +348,7 @@ public class TunnelSoapUtils {
 						continue;
 					}
 					SOAPElement bodyElement = (SOAPElement) bodyElementObj;
-					bout.write(OpenSPCoop2MessageFactory.getAsByte(bodyElement, consume));
+					bout.write(OpenSPCoop2MessageFactory.getAsByte(messageFactory, bodyElement, consume));
 				}
 				bout.flush();
 				bout.close();
@@ -386,7 +389,7 @@ public class TunnelSoapUtils {
 	 * @return msg Messaggio Soap imbustato
 	 * 
 	 */
-	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(MessageType messageType, MessageRole messageRole, 
+	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, MessageRole messageRole, 
 			InputStream inputBody,String tipoAttachment,boolean buildAsDataHandler,String contentTypeMessaggioOriginale, String ns) throws MessageException, MessageNotSupportedException{
 		
 		if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
@@ -405,7 +408,7 @@ public class TunnelSoapUtils {
 				throw new MessageException("Contenuto da imbustare non presente");
 			}
 			
-			return TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageType, messageRole, byteBuffer.toByteArray(), tipoAttachment, buildAsDataHandler, contentTypeMessaggioOriginale, ns);
+			return TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageFactory, messageType, messageRole, byteBuffer.toByteArray(), tipoAttachment, buildAsDataHandler, contentTypeMessaggioOriginale, ns);
 			
 		}
 		catch (MessageException e){
@@ -419,7 +422,7 @@ public class TunnelSoapUtils {
 		}
 	}
 	
-	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(MessageType messageType, MessageRole messageRole, 
+	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, MessageRole messageRole, 
 			byte [] inputBody,String tipoAttachment,boolean buildAsDataHandler,String contentTypeMessaggioOriginale, String ns) throws MessageException, MessageNotSupportedException{
 		
 		if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
@@ -427,8 +430,7 @@ public class TunnelSoapUtils {
 		}
 		OpenSPCoop2Message msg = null;
 		try{
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			msg = mf.createEmptyMessage(messageType,messageRole);
+			msg = messageFactory.createEmptyMessage(messageType,messageRole);
 			return imbustamentoMessaggioConAttachment(msg, inputBody, tipoAttachment, buildAsDataHandler, contentTypeMessaggioOriginale, ns);
 		}
 		catch (MessageException e){
@@ -526,7 +528,7 @@ public class TunnelSoapUtils {
 	 * @return msg Messaggio Soap imbustato
 	 * 
 	 */
-	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(MessageType messageType, MessageRole messageRole, byte [] body, String contentTypeMessaggioOriginale, String ns) throws MessageException, MessageNotSupportedException{
+	public static OpenSPCoop2Message imbustamentoMessaggioConAttachment(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, MessageRole messageRole, byte [] body, String contentTypeMessaggioOriginale, String ns) throws MessageException, MessageNotSupportedException{
 		
 		if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
 			throw MessageNotSupportedException.newMessageNotSupportedException(messageType);
@@ -534,7 +536,7 @@ public class TunnelSoapUtils {
 		
 		OpenSPCoop2Message risposta = null;
 		try{	    
-			risposta = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageType, messageRole, body,HttpConstants.CONTENT_TYPE_PLAIN,false, contentTypeMessaggioOriginale, ns);
+			risposta = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageFactory, messageType, messageRole, body,HttpConstants.CONTENT_TYPE_PLAIN,false, contentTypeMessaggioOriginale, ns);
 			return risposta;
 		}
 		catch (MessageException e){

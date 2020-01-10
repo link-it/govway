@@ -33,6 +33,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.MimeHeaders;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageException;
@@ -114,8 +115,8 @@ public class MTOMUtilities {
 			
 			boolean restoredXomReference = false;
 			
-			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			Object oNode = null;
 			try{
 				oNode = xpathEngine.getMatchPattern(element, dnc, org.openspcoop2.message.soap.mtom.Costanti.MTOM_XOP_REFERENCES, XPathReturnType.NODESET);
@@ -273,8 +274,8 @@ public class MTOMUtilities {
 			if(element==null){
 				return list;
 			}
-			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			
 			boolean addAttachment = false;
 			
@@ -316,13 +317,13 @@ public class MTOMUtilities {
 					Node elementBase64Binary = nodeList.item(i);
 					
 					// verifico che non sia gia un xom reference
-					if(MTOMUtilities.getIfExistsXomReference((Element)elementBase64Binary)!=null){
+					if(MTOMUtilities.getIfExistsXomReference(msgParam.getFactory(), (Element)elementBase64Binary)!=null){
 						continue; // esiste gia' una xom reference.
 					}
 					
 					QName qname = new QName(elementBase64Binary.getNamespaceURI(), elementBase64Binary.getLocalName());
 					//System.out.println("Found Element ["+qname.toString()+"]");
-					List<Node> elementBase64BinaryChilds = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
+					List<Node> elementBase64BinaryChilds = SoapUtils.getNotEmptyChildNodes(msgParam.getFactory(), elementBase64Binary,false);
 					if(elementBase64BinaryChilds!=null && elementBase64BinaryChilds.size()>0){
 						throw new MessageException("XpathEngine (expr("+xpathExpressionName+"):"+xpathExpression+") found element ("+qname+
 								") with childs, mtom optimize packaging is only valid for base64Binary xsd element");
@@ -464,8 +465,8 @@ public class MTOMUtilities {
 			if(element==null){
 				return list;
 			}
-			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine();
-			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
+			AbstractXPathExpressionEngine xpathEngine = new XPathExpressionEngine(msgParam.getFactory());
+			DynamicNamespaceContext dnc = org.openspcoop2.message.xml.DynamicNamespaceContextFactory.getInstance(msgParam.getFactory()).getNamespaceContext(element);
 			
 			if(packageInfos==null || packageInfos.size()<=0){
 				return list;
@@ -534,7 +535,7 @@ public class MTOMUtilities {
 						}
 							
 					}
-					List<Node> nodeListBase64 = SoapUtils.getNotEmptyChildNodes(elementBase64Binary,false);
+					List<Node> nodeListBase64 = SoapUtils.getNotEmptyChildNodes(msgParam.getFactory(), elementBase64Binary,false);
 					if(nodeListBase64==null || nodeListBase64.size()<=0){
 						throw new MessageException("XpathEngine (expr("+xpathExpressionName+"):"+xpathExpression+") found element ("+qname+
 								") without childs, mtom optimize packaging require xop:"+org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME+" element");
@@ -674,10 +675,10 @@ public class MTOMUtilities {
 		
 	}
 	
-	public static Element getIfExistsXomReference(Element element){
+	public static Element getIfExistsXomReference(OpenSPCoop2MessageFactory messageFactory, Element element){
 		
 		try{
-			Node n = SoapUtils.getFirstNotEmptyChildNode(element,false);
+			Node n = SoapUtils.getFirstNotEmptyChildNode(messageFactory, element,false);
 			if(org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_LOCAL_NAME.equals(n.getLocalName()) &&
 					org.openspcoop2.message.soap.mtom.Costanti.XOP_INCLUDE_NAMESPACE.equals(n.getNamespaceURI())){
 				return (Element)n;

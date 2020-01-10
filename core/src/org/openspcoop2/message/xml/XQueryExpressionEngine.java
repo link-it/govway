@@ -36,13 +36,19 @@ import org.w3c.dom.Element;
  */
 public class XQueryExpressionEngine extends org.openspcoop2.utils.xml.AbstractXQueryExpressionEngine {
 
+	private OpenSPCoop2MessageFactory messageFactory;
+	
+	public XQueryExpressionEngine(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+	
 	@Override
 	public AbstractXMLUtils getXMLUtils() {
-		return org.openspcoop2.message.xml.XMLUtils.getInstance();
+		return org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 	}
 
 	@Override
 	public Element readXPathElement(Element contenutoAsElement){
-		return OpenSPCoop2MessageFactory.getMessageFactory().convertoForXPathSearch(contenutoAsElement);
+		return this.messageFactory.convertoForXPathSearch(contenutoAsElement);
 	}
 }

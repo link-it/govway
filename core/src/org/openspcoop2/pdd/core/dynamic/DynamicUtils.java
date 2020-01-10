@@ -41,6 +41,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -253,7 +254,8 @@ public class DynamicUtils {
 			dynamicMap.put(Costanti.MAP_ELEMENT_URL_REGEXP.toLowerCase(), urle);
 		}
 		if(dynamicInfo!=null && dynamicInfo.getXml()!=null) {
-			PatternExtractor pe = new PatternExtractor(dynamicInfo.getXml(), log);
+			OpenSPCoop2MessageFactory messageFactory = dynamicInfo.getMessage()!=null ? dynamicInfo.getMessage().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			PatternExtractor pe = new PatternExtractor(messageFactory,dynamicInfo.getXml(), log);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH, pe);
 			dynamicMap.put(Costanti.MAP_ELEMENT_XML_XPATH.toLowerCase(), pe);
 		}
@@ -734,7 +736,7 @@ public class DynamicUtils {
 		try {
 			Source xsltSource = new StreamSource(new ByteArrayInputStream(template));
 			Source xmlSource = new DOMSource(element);
-			Transformer trans = XMLUtils.getInstance().getTransformerFactory().newTransformer(xsltSource);
+			Transformer trans = XMLUtils.DEFAULT.getTransformerFactory().newTransformer(xsltSource);
 			trans.transform(xmlSource, new StreamResult(out));
 			out.flush();
 		}catch(Exception e) {

@@ -107,7 +107,7 @@ public class ImporterInformationMissingUtils {
 		this.validateDocuments = validateDocuments;
 		this.protocolFactory = protocolFactory;
 		this.validatoreDocumenti = this.protocolFactory.createValidazioneDocumenti();
-		this.xmlUtils = XMLUtils.getInstance();
+		this.xmlUtils = XMLUtils.DEFAULT;
 		this.registryReader = registryReader;
 		this.archive = archive;
 	}

@@ -90,6 +90,7 @@ import java.util.List;
  * 		&lt;attribute name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
  * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
  * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
+ * 		&lt;attribute name="options" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
  * &lt;/complexType>
  * </pre>
  * 
@@ -745,6 +746,14 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
     this.oraRegistrazione = oraRegistrazione;
   }
 
+  public java.lang.String getOptions() {
+    return this.options;
+  }
+
+  public void setOptions(java.lang.String options) {
+    this.options = options;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -1112,5 +1121,9 @@ public class PortaApplicativa extends org.openspcoop2.utils.beans.BaseBean imple
   @javax.xml.bind.annotation.XmlSchemaType(name="dateTime")
   @XmlAttribute(name="ora-registrazione",required=false)
   protected java.util.Date oraRegistrazione;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlAttribute(name="options",required=false)
+  protected java.lang.String options;
 
 }

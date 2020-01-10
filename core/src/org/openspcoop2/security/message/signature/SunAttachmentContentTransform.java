@@ -56,7 +56,7 @@ public class SunAttachmentContentTransform extends TransformSpi {
 	private AbstractXMLUtils xmlUtils = null;
 	
     public SunAttachmentContentTransform(){
-    	this.xmlUtils = XMLUtils.getInstance();
+    	this.xmlUtils = XMLUtils.DEFAULT;
     }
     
 	@Override

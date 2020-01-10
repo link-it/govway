@@ -65,8 +65,6 @@ import org.slf4j.Logger;
  */
 public class AS4ConnectorInMessage implements ConnectorInMessage {
 
-	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-	
 	private OpenSPCoop2Message message;
 	private Logger log;
 	private String idModulo;
@@ -82,7 +80,7 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 	
 	public AS4ConnectorInMessage(UserMessage userMessage,HashMap<String, byte[]> content) throws ConnectorException{
 		try{
-			this.message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.REQUEST);
+			this.message = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.SOAP_12, MessageRole.REQUEST);
 			this.message.addContextProperty(AS4Costanti.AS4_CONTEXT_USER_MESSAGE, userMessage);
 			this.message.addContextProperty(AS4Costanti.AS4_CONTEXT_CONTENT, content);
 			

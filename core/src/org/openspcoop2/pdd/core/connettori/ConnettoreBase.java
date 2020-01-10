@@ -38,6 +38,7 @@ import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -347,7 +348,9 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							
 							if(responseCached!=null) {
 							
-								OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(this.openspcoopProperties.getAttachmentsProcessingMode(),
+								OpenSPCoop2Message msgResponse = responseCached.toOpenSPCoop2Message(
+										org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(), this.requestMsg, this.requestInfo, MessageRole.RESPONSE),
+										this.openspcoopProperties.getAttachmentsProcessingMode(),
 										this.openspcoopProperties.getCachingResponseHeaderCacheKey());
 														
 								this.responseMsg = msgResponse;
@@ -1074,4 +1077,5 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		}
 
     }
+    
 }

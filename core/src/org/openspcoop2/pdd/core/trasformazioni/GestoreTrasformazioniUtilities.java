@@ -371,6 +371,8 @@ public class GestoreTrasformazioniUtilities {
 		
 		try {
 		
+			OpenSPCoop2MessageFactory messageFactory = message.getFactory();
+			
 			// TransportRequest
 			Integer forceResponseStatus = null;
 			TransportRequestContext transportRequestContext = null;
@@ -438,20 +440,20 @@ public class GestoreTrasformazioniUtilities {
 					OpenSPCoop2MessageParseResult pr = null;
 					if(risultato.isEmpty()) {
 						if(transportRequestContext!=null) {
-							newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+							newMsg = messageFactory.createEmptyMessage(messageType, MessageRole.REQUEST);
 							newMsg.setTransportRequestContext(transportRequestContext);
 						}
 						else {
-							newMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+							newMsg = messageFactory.createEmptyMessage(messageType, MessageRole.RESPONSE);
 							newMsg.setTransportResponseContext(transportResponseContext);
 						}
 					}
 					else {
 						if(transportRequestContext!=null) {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(messageType, transportRequestContext, risultato.getContenuto());
 						}
 						else {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(messageType, transportResponseContext, risultato.getContenuto());
 						}
 						newMsg = pr.getMessage_throwParseThrowable();
 					}
@@ -469,10 +471,10 @@ public class GestoreTrasformazioniUtilities {
 						// converto
 						OpenSPCoop2MessageParseResult pr = null;
 						if(transportRequestContext!=null) {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportRequestContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(MessageType.BINARY, transportRequestContext, risultato.getContenuto());
 						}
 						else {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.BINARY, transportResponseContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(MessageType.BINARY, transportResponseContext, risultato.getContenuto());
 						}
 						OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
 						message.copyResourcesTo(newMsg, skipTransportInfo);
@@ -552,11 +554,11 @@ public class GestoreTrasformazioniUtilities {
 					OpenSPCoop2Message messageSoap = null;
 					if(risultato.isEmpty()) {
 						if(transportRequestContext!=null) {
-							messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+							messageSoap = messageFactory.createEmptyMessage(messageType, MessageRole.REQUEST);
 							messageSoap.setTransportRequestContext(transportRequestContext);
 						}
 						else {
-							messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+							messageSoap = messageFactory.createEmptyMessage(messageType, MessageRole.RESPONSE);
 							messageSoap.setTransportResponseContext(transportResponseContext);
 						}
 					}
@@ -575,11 +577,11 @@ public class GestoreTrasformazioniUtilities {
 							try {
 								if(risultatoEnvelopeBody.isEmpty()) {
 									if(transportRequestContext!=null) {
-										messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.REQUEST);
+										messageSoap = messageFactory.createEmptyMessage(messageType, MessageRole.REQUEST);
 										messageSoap.setTransportRequestContext(transportRequestContext);
 									}
 									else {
-										messageSoap = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType, MessageRole.RESPONSE);
+										messageSoap = messageFactory.createEmptyMessage(messageType, MessageRole.RESPONSE);
 										messageSoap.setTransportResponseContext(transportResponseContext);
 									}
 								}
@@ -587,11 +589,11 @@ public class GestoreTrasformazioniUtilities {
 									if(trasformazioneSoap_envelope) {
 										OpenSPCoop2MessageParseResult pr = null;
 										if(transportRequestContext!=null) {
-											pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
 													soapAction, transportRequestContext, risultatoEnvelopeBody.getContenuto(), null, true);
 										}
 										else {
-											pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+											pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
 													soapAction, transportResponseContext, risultatoEnvelopeBody.getContenuto(), null, true);
 										}
 										messageSoap = pr.getMessage_throwParseThrowable();
@@ -599,11 +601,11 @@ public class GestoreTrasformazioniUtilities {
 									else {
 										OpenSPCoop2MessageParseResult pr = null;
 										if(transportRequestContext!=null) {
-											pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, 
+											pr = messageFactory.createMessage(messageType, transportRequestContext, 
 													risultatoEnvelopeBody.getContenuto());
 										}
 										else {
-											pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, 
+											pr = messageFactory.createMessage(messageType, transportResponseContext, 
 													risultatoEnvelopeBody.getContenuto());
 										}
 										messageSoap = pr.getMessage_throwParseThrowable();
@@ -657,11 +659,11 @@ public class GestoreTrasformazioniUtilities {
 							if(trasformazioneSoap_envelope) {
 								OpenSPCoop2MessageParseResult pr = null;
 								if(transportRequestContext!=null) {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
 											soapAction, transportRequestContext, risultato.getContenuto(), null, true);
 								}
 								else {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().envelopingMessage(messageType, contentTypeForEnvelope, 
+									pr = messageFactory.envelopingMessage(messageType, contentTypeForEnvelope, 
 											soapAction, transportResponseContext, risultato.getContenuto(), null, true);
 								}
 								messageSoap = pr.getMessage_throwParseThrowable();
@@ -669,10 +671,10 @@ public class GestoreTrasformazioniUtilities {
 							else {
 								OpenSPCoop2MessageParseResult pr = null;
 								if(transportRequestContext!=null) {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+									pr = messageFactory.createMessage(messageType, transportRequestContext, risultato.getContenuto());
 								}
 								else {
-									pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+									pr = messageFactory.createMessage(messageType, transportResponseContext, risultato.getContenuto());
 								}
 								messageSoap = pr.getMessage_throwParseThrowable();
 							}
@@ -739,7 +741,7 @@ public class GestoreTrasformazioniUtilities {
 							
 							if(MessageType.XML.equals(messageType)) {
 								
-								message.castAsRestXml().updateContent(XMLUtils.getInstance().newElement(risultato.getContenuto()));
+								message.castAsRestXml().updateContent(XMLUtils.getInstance(messageFactory).newElement(risultato.getContenuto()));
 								
 								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
 								
@@ -779,10 +781,10 @@ public class GestoreTrasformazioniUtilities {
 						// converto
 						OpenSPCoop2MessageParseResult pr = null;
 						if(transportRequestContext!=null) {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportRequestContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(messageType, transportRequestContext, risultato.getContenuto());
 						}
 						else {
-							pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, transportResponseContext, risultato.getContenuto());
+							pr = messageFactory.createMessage(messageType, transportResponseContext, risultato.getContenuto());
 						}
 						
 						OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();

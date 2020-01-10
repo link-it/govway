@@ -734,6 +734,9 @@ public class CostantiPdD {
     	pddContext.addObject(ID_FUNCTION, isEsitoPresenteInCache);
     }
    
+    
+    
+    public final static String OPTIONS_MESSAGE_FACTORY = "MessageEngine";
 }
 
 

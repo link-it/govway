@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
@@ -68,7 +69,7 @@ public class SDIValidazioneConSchema extends ValidazioneConSchema {
 
 
 	@Override
-	public boolean initialize() {
+	public boolean initialize(OpenSPCoop2MessageFactory messageFactory) {
 		return true;
 	}
 

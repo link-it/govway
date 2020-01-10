@@ -33,7 +33,6 @@ import java.util.Hashtable;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
@@ -392,7 +391,7 @@ public class ModIImbustamentoRest {
 		}
 		
 		String jsonPayload = jsonUtils.toString(payloadToken);
-		OpenSPCoop2Message payload = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.JSON, msg.getMessageRole(), 
+		OpenSPCoop2Message payload = msg.getFactory().createMessage(MessageType.JSON, msg.getMessageRole(), 
 				HttpConstants.CONTENT_TYPE_JSON, jsonPayload.getBytes(), null, null).getMessage_throwParseException();
 		
 		

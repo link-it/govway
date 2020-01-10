@@ -26,6 +26,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pd;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -70,7 +71,9 @@ import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -152,7 +155,9 @@ public final class PorteDelegateChange extends Action {
 			String ricasim = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_RICEVUTA_ASINCRONA_ASIMMETRICA);
 			String scadcorr = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_SCADENZA_CORRELAZIONE_APPLICATIVA);
 			String forceWsdlBased = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
-			
+
+			String messageEngine = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE);
+						
 			String idAsps = porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_ASPS);
 			if(idAsps == null)
 				idAsps = "";
@@ -175,7 +180,8 @@ public final class PorteDelegateChange extends Action {
 			
 			boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 				
-			boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO));
+			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA));
+			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteDelegateHelper.getParameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API));
 			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 			Integer parentPD = ServletUtils.getIntegerAttributeFromSession(PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT, session);
@@ -606,7 +612,7 @@ public final class PorteDelegateChange extends Action {
 					}
 					nomeBreadCrumb=null;
 				}
-				else if(datiAltro) {
+				else if(datiAltroPorta) {
 					String labelPerPorta = null;
 					if(parentPD!=null && (parentPD.intValue() == PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE)) {
 						labelPerPorta = porteDelegateCore.getLabelRegolaMappingFruizionePortaDelegata(
@@ -620,6 +626,15 @@ public final class PorteDelegateChange extends Action {
 					}				
 					lstParam.add(new Parameter(labelPerPorta,  null));
 					//lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else if(datiAltroApi) {
+					lstParam.remove(lstParam.size()-1);
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE,null));
+					} else {
+						lstParam.add(new Parameter(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE_DI + porteDelegateHelper.getLabelIdServizio(asps),null));
+					}
 					nomeBreadCrumb=null;
 				}
 				else {
@@ -718,6 +733,18 @@ public final class PorteDelegateChange extends Action {
 				}
 				if (integrazione == null) {
 					integrazione = pde.getIntegrazione();
+				}
+				
+				if (messageEngine == null) {
+					if(pde.getOptions()!=null) {
+						Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pde.getOptions());
+						if(props!=null && props.size()>0) {
+							String msgFactory = props.get(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+							if(msgFactory!=null) {
+								messageEngine = msgFactory;
+							}
+						}
+					}
 				}
 
 				if ((scadcorr == null) && (ca != null)) {
@@ -962,7 +989,8 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						messageEngine);
 
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1125,7 +1153,8 @@ public final class PorteDelegateChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						messageEngine);
 				
 				dati = porteDelegateHelper.addHiddenFieldsToDati(TipoOperazione.CHANGE, null, null, null, idAsps, 
 						idFruizione, pde.getTipoSoggettoProprietario(), pde.getNomeSoggettoProprietario(), dati);
@@ -1196,6 +1225,19 @@ public final class PorteDelegateChange extends Action {
 				portaDelegata.setLocalForward(new PortaDelegataLocalForward());
 				portaDelegata.getLocalForward().setStato(StatoFunzionalita.toEnumConstant(localForward));
 				portaDelegata.getLocalForward().setPortaApplicativa(paLocalForward);
+			}
+			
+			Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(portaDelegata.getOptions());
+			props.remove(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+			if(messageEngine!=null && !"".equals(messageEngine) && !CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT.equals(messageEngine)) {
+				props.put(CostantiPdD.OPTIONS_MESSAGE_FACTORY, messageEngine);
+			}
+			if(props.size()>0) {
+				PropertiesSerializator ps = new PropertiesSerializator(props);
+				portaDelegata.setOptions(ps.convertToDBColumnValue());
+			}
+			else {
+				portaDelegata.setOptions(null);
 			}
 
 			PortaDelegataSoggettoErogatore pdSogg = new PortaDelegataSoggettoErogatore();
@@ -1341,7 +1383,7 @@ public final class PorteDelegateChange extends Action {
 				
 				AccordiServizioParteSpecificaHelper apsHelper = new AccordiServizioParteSpecificaHelper(request, pd, session);
 				
-				if(datiInvocazione) {
+				if(datiInvocazione || datiAltroApi) {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, 
@@ -1418,7 +1460,7 @@ public final class PorteDelegateChange extends Action {
 			
 			ForwardParams fwP = ForwardParams.CHANGE();
 			
-			if(datiAltro && !porteDelegateHelper.isModalitaCompleta()) {
+			if(datiAltroPorta && !porteDelegateHelper.isModalitaCompleta()) {
 				fwP = PorteDelegateCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 			

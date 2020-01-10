@@ -26,6 +26,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMimeMultipartMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.mime.MimeMultipart;
@@ -39,11 +40,11 @@ import org.openspcoop2.utils.mime.MimeMultipart;
  */
 public class OpenSPCoop2Message_mimeMultipart_impl extends AbstractBaseOpenSPCoop2RestMessage<MimeMultipart> implements OpenSPCoop2RestMimeMultipartMessage {
 
-	public OpenSPCoop2Message_mimeMultipart_impl() {
-		super();
+	public OpenSPCoop2Message_mimeMultipart_impl(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
 	}
-	public OpenSPCoop2Message_mimeMultipart_impl(InputStream is,String contentType) throws MessageException {
-		super(is, contentType);
+	public OpenSPCoop2Message_mimeMultipart_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
+		super(messageFactory, is, contentType);
 	}
 	
 	@Override

@@ -98,7 +98,7 @@ public class StandardWSDL {
 	
 	public StandardWSDL (String implementativoErogatorePath, String implementativoFruitorePath, StandardWSDLOutputMode outputMode) throws WSDLException, StandardWSDLException, IOException, ParserConfigurationException, SAXException, XMLException{
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		
@@ -136,7 +136,7 @@ public class StandardWSDL {
 			List<SchemaXSDAccordoServizio> schemiFruitore, byte[] logicoFruitore, byte[] implementativoFruitore,
 			StandardWSDLOutputMode outputMode) throws WSDLException, StandardWSDLException, IOException, ParserConfigurationException, SAXException, org.openspcoop2.utils.wsdl.WSDLException, XMLException{
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		

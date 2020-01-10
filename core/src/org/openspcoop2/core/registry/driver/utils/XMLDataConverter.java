@@ -89,6 +89,7 @@ import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.core.registry.driver.uddi.DriverRegistroServiziUDDI;
 import org.openspcoop2.core.registry.driver.web.DriverRegistroServiziWEB;
 import org.openspcoop2.core.registry.driver.xml.DriverRegistroServiziXML;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -569,7 +570,7 @@ public class XMLDataConverter {
 		// ValidatoreXSD
 		ValidatoreXSD validatoreRegistro = null;
 		try{
-			validatoreRegistro = new ValidatoreXSD(this.log,DriverRegistroServiziXML.class.getResourceAsStream("/registroServizi.xsd"));
+			validatoreRegistro = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.log,DriverRegistroServiziXML.class.getResourceAsStream("/registroServizi.xsd"));
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException("Riscontrato errore durante l'inizializzazione dello schema del Registro dei Servizi di OpenSPCoop: "+e.getMessage());
 		}
@@ -661,7 +662,7 @@ public class XMLDataConverter {
 		// ValidatoreXSD
 		ValidatoreXSD validatoreRegistro = null;
 		try{
-			validatoreRegistro = new ValidatoreXSD(this.log,DriverRegistroServiziXML.class.getResourceAsStream("/registroServizi.xsd"));
+			validatoreRegistro = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.log,DriverRegistroServiziXML.class.getResourceAsStream("/registroServizi.xsd"));
 		}catch (Exception e) {
 			throw new DriverRegistroServiziException("Riscontrato errore durante l'inizializzazione dello schema del Registro dei Servizi di OpenSPCoop: "+e.getMessage());
 		}

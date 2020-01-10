@@ -77,7 +77,8 @@ public class Test {
 		byte [] messaggioArray = messaggio.getBytes();
 		
 		ByteArrayInputStream bin = new ByteArrayInputStream(messaggioArray);
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11,protocolContext,
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		OpenSPCoop2MessageParseResult pr = messageFactory.createMessage(MessageType.SOAP_11,protocolContext,
 				bin,null);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 		msg.addContextProperty("CONT1", "V1");
@@ -123,7 +124,7 @@ public class Test {
 		int seconds = 300;
 		ResponseCached rCached = ResponseCached.toResponseCached(msg,seconds);
 		AttachmentsProcessingMode attachmentProcessingMode = AttachmentsProcessingMode.getMemoryCacheProcessingMode();
-		OpenSPCoop2Message msgRebuild = rCached.toOpenSPCoop2Message(attachmentProcessingMode, "GovWay-CacheKey");
+		OpenSPCoop2Message msgRebuild = rCached.toOpenSPCoop2Message(messageFactory, attachmentProcessingMode, "GovWay-CacheKey");
 		System.out.println("TESTRebuild ok: "+generator.buildKeyCache(msgRebuild, requestInfo, responseCachingConfig));
 		
 		System.out.println("TEST print: "+rCached.print());

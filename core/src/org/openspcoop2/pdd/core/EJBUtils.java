@@ -868,7 +868,7 @@ public class EJBUtils {
 				}  
 				msgSbloccoRicezioneContenutiApplicativi = new GestoreMessaggi( this.openSPCoopState, false, idSbloccoRicezioneContenutiApplicativi,Costanti.INBOX,this.msgDiag,this.pddContext);
 				if(this.protocolManager.isHttpEmptyResponseOneWay())
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(responseMessageError.getMessageType(), MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(responseMessageError.getFactory(), responseMessageError.getMessageType(), MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				else
 					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(responseMessageError.getMessageType(),this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaRiferimentoMessaggio(this.idSessione);
@@ -1125,7 +1125,7 @@ public class EJBUtils {
 					throw new Exception("Versione messaggio non definita");
 				}
 				if(this.protocolManager.isHttpEmptyResponseOneWay())
-					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(msgTypeSblocco, MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
+					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), msgTypeSblocco, MessageRole.RESPONSE),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				else
 					msgSbloccoRicezioneContenutiApplicativi.registraMessaggio(this.buildOpenSPCoopOK(msgTypeSblocco,this.idSessione),correlazioneApplicativa,correlazioneApplicativaRisposta);
 				msgSbloccoRicezioneContenutiApplicativi.aggiornaRiferimentoMessaggio(this.idSessione);
@@ -2592,7 +2592,7 @@ public class EJBUtils {
 					this.propertiesReader.getGestioneSerializableDB_AttesaAttiva(),
 					this.propertiesReader.getGestioneSerializableDB_CheckInterval(),
 					RuoloMessaggio.RISPOSTA);
-		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE)
+		return sendBustaRisposta(idModuloInAttesa,null,MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE)
 				,idSblocco,null,null,null,null);
 	}
 	
@@ -2875,7 +2875,7 @@ public class EJBUtils {
 	 */
 	public OpenSPCoop2Message buildOpenSPCoopOK(MessageType messageType, String id) throws UtilsException{
 		try{
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 						
 			EsitoRichiesta esito = new EsitoRichiesta();
 			esito.setMessageId(id);

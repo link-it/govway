@@ -23,6 +23,7 @@
 package org.openspcoop2.message.xml;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPEnvelope;
@@ -44,18 +45,28 @@ import org.xml.sax.SAXException;
 public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.DynamicNamespaceContextFactory {
 
 
-	private static DynamicNamespaceContextFactory dncfactory = null;
-	private static synchronized void init(){
-		if(DynamicNamespaceContextFactory.dncfactory==null){
-			DynamicNamespaceContextFactory.dncfactory = new DynamicNamespaceContextFactory();
+	private static HashMap<String, DynamicNamespaceContextFactory> dncfactoryMap = new HashMap<>();
+	private static synchronized void init(OpenSPCoop2MessageFactory messageFactory){
+		String key = messageFactory.getClass().getName();
+		if(!DynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
+			DynamicNamespaceContextFactory fac = new DynamicNamespaceContextFactory(messageFactory);
+			dncfactoryMap.put(key, fac);
 		}
 	}
-	public static DynamicNamespaceContextFactory getInstance(){
-		if(DynamicNamespaceContextFactory.dncfactory==null){
-			DynamicNamespaceContextFactory.init();
+	public static DynamicNamespaceContextFactory getInstance(OpenSPCoop2MessageFactory messageFactory){
+		String key = messageFactory.getClass().getName();
+		if(!DynamicNamespaceContextFactory.dncfactoryMap.containsKey(key)){
+			DynamicNamespaceContextFactory.init(messageFactory);
 		}
-		return DynamicNamespaceContextFactory.dncfactory;
+		return DynamicNamespaceContextFactory.dncfactoryMap.get(key);
 	}
+	
+	private OpenSPCoop2MessageFactory messageFactory;
+	
+	public DynamicNamespaceContextFactory(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+	
 	
 	
 	@Override
@@ -63,7 +74,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 			byte[] soapenvelope) throws SAXException, SOAPException,
 			IOException, Exception {
 		
-		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_11, soapenvelope);
+		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(this.messageFactory, MessageType.SOAP_11, soapenvelope);
 		return this.getNamespaceContextFromSoapEnvelope(MessageType.SOAP_11, envelope);
 	}
 
@@ -72,7 +83,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 			byte[] soapenvelope) throws SAXException, SOAPException,
 			IOException, Exception {
 		
-		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_12, soapenvelope);
+		SOAPEnvelope envelope = (SOAPEnvelope) OpenSPCoop2MessageFactory.createSOAPElement(this.messageFactory, MessageType.SOAP_12, soapenvelope);
 		return this.getNamespaceContextFromSoapEnvelope(MessageType.SOAP_12, envelope);
 	}
 
@@ -99,7 +110,7 @@ public class DynamicNamespaceContextFactory extends org.openspcoop2.utils.xml.Dy
 		}else{
 			String prefix = null;
 			try {
-				prefix = OpenSPCoop2MessageFactory.getFirstChildElement(messageType,body).getPrefix();
+				prefix = OpenSPCoop2MessageFactory.getFirstChildElement(this.messageFactory, messageType,body).getPrefix();
 			} catch (Throwable e) {
 				prefix = body.getFirstChild().getPrefix();
 			}

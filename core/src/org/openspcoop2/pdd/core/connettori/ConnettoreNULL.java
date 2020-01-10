@@ -28,6 +28,7 @@ package org.openspcoop2.pdd.core.connettori;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.pdd.core.Utilities;
 
 
 /**
@@ -113,7 +114,8 @@ public class ConnettoreNULL extends ConnettoreBase {
 		
 		try{
 					
-			this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE);
+			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);
+			this.responseMsg = messageFactory.createEmptyMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE);
 			
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;

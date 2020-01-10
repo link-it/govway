@@ -43,7 +43,7 @@ public class RegistroServiziUtils {
 	}
 	public static boolean isRegistroServizi(byte [] doc,String localName){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return RegistroServiziUtils.isRegistroServizi_engine(elemXML,localName);

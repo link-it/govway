@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.util.List;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.json.JsonPathNotFoundException;
 import org.openspcoop2.utils.json.JsonPathNotValidException;
@@ -47,13 +48,15 @@ public class PatternExtractor {
 
 	private Logger log;
 	
+	private OpenSPCoop2MessageFactory messageFactory;
 	private Element element = null;
 	private Boolean refresh = null;
 	private DynamicNamespaceContext dnc;
 	
 	private String elementJson = null;
 	
-	public PatternExtractor(Element element, Logger log) {
+	public PatternExtractor(OpenSPCoop2MessageFactory messageFactory, Element element, Logger log) {
+		this.messageFactory = messageFactory;
 		this.element = element; 
 		this.dnc = new DynamicNamespaceContext();
 		this.dnc.findPrefixNamespace(element);
@@ -74,7 +77,7 @@ public class PatternExtractor {
 		try {
 			this.refresh = true;
 			if(this.element!=null) {
-				XMLUtils xmlUtils = XMLUtils.getInstance();
+				XMLUtils xmlUtils = XMLUtils.getInstance(this.messageFactory);
 				this.element = xmlUtils.newElement(xmlUtils.toByteArray(this.element));
 			}
 		}catch(Exception e){
@@ -91,7 +94,7 @@ public class PatternExtractor {
 		String valore = null;
 		try {
 			if(this.element!=null) {
-				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
 				valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(this.element, this.dnc, xPathEngine, pattern, this.log);
 			}
 			else {
@@ -147,7 +150,7 @@ public class PatternExtractor {
 		List<String> valore = null;
 		try {
 			if(this.element!=null) {
-				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.messageFactory);
 				xPathEngine.getMatchPattern(this.element, this.dnc, pattern, XPathReturnType.BOOLEAN);
 				valore = AbstractXPathExpressionEngine.extractAndConvertResultAsList(this.element, this.dnc, xPathEngine, pattern, this.log);
 			}

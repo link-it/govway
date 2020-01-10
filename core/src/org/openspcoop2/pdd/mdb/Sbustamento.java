@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.utils.MessageUtilities;
@@ -930,8 +931,9 @@ public class Sbustamento extends GenericLib{
 	
 							// Re-invio Riscontro
 							msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-									MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
-									idCorrelazioneApplicativa,servizioApplicativoFruitore);
+									MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+											requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+											idCorrelazioneApplicativa,servizioApplicativoFruitore);
 						}
 						// 1b) 
 						else if( org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ONEWAY.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
@@ -1063,8 +1065,9 @@ public class Sbustamento extends GenericLib{
 								}
 								//	Re-invio Ricevuta
 								msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-										MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
-										idCorrelazioneApplicativa,servizioApplicativoFruitore);	
+										MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+												requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+												idCorrelazioneApplicativa,servizioApplicativoFruitore);	
 							}
 	
 						}
@@ -2205,7 +2208,8 @@ public class Sbustamento extends GenericLib{
 							bustaReplyTo = behaviour.getResponseTo().getBusta();
 						}
 						if(msgReplyTo==null){
-							msgReplyTo = MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE);
+							msgReplyTo = MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+									requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE);
 						}
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi (Behaviour)...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),
@@ -2226,8 +2230,9 @@ public class Sbustamento extends GenericLib{
 						// Invio risposta immediata in seguito alla richiesta ricevuta
 						msgDiag.mediumDebug("Invio messaggio a Ricezione/Consegna ContenutiApplicativi...");
 						msgResponse = ejbUtils.buildAndSendBustaRisposta(richiestaApplicativa.getIdModuloInAttesa(),bustaHTTPReply,
-								MessageUtilities.buildEmptyMessage(requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
-								idCorrelazioneApplicativa,servizioApplicativoFruitore);
+								MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+										requestInfo.getProtocolRequestMessageType(),MessageRole.RESPONSE),profiloGestione,
+										idCorrelazioneApplicativa,servizioApplicativoFruitore);
 					}
 				}catch(Exception e){
 					msgDiag.logErroreGenerico(e, "GenerazioneMsgOK(Riscontro/Ricevuta/Sblocco)");

@@ -75,7 +75,7 @@ public class EngineTest {
 			QName body = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Body");
 			
 			MessageType messageType = MessageType.SOAP_11;
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.REQUEST,
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(messageType,MessageRole.REQUEST,
 					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), EngineTest.TEST_MSG_1.getBytes());
 			OpenSPCoop2SoapMessage openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 
@@ -237,7 +237,7 @@ public class EngineTest {
 			//String envelope = openspcoop2Message.getAsString(openspcoop2Message.getSOAPPart().getEnvelope(),false);
 			//String envelope = XMLUtils.getInstance().toString(openspcoop2Message.getSOAPPart().getEnvelope());
 			//InputStream is2 = new ByteArrayInputStream(envelope.getBytes());
-			pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType,MessageRole.RESPONSE,
+			pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(messageType,MessageRole.RESPONSE,
 					org.openspcoop2.message.utils.MessageUtilities.getDefaultContentType(messageType), is2, null);
 			openspcoop2Message = pr.getMessage_throwParseException().castAsSoap();
 			

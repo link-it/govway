@@ -5811,7 +5811,7 @@ public class GestoreMessaggi  {
 					"</richiesta></pubblicazioneMessaggio>\n"+
 					"</soapenv:Body>\n"+
 					"</soapenv:Envelope>";
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 					MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
 					msg.getBytes());
 			return pr.getMessage_throwParseException();
@@ -5850,7 +5850,7 @@ public class GestoreMessaggi  {
 			bout.write(msgDown.getBytes());
 			bout.flush();
 			bout.close();
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageType, MessageRole.RESPONSE, 
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(messageType, MessageRole.RESPONSE, 
 					MessageUtilities.getDefaultContentType(messageType),
 					bout.toByteArray());
 			return pr.getMessage_throwParseException();

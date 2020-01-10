@@ -39,6 +39,7 @@ import org.openspcoop2.core.registry.Property;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -98,9 +99,12 @@ public class AS4ProtocolManager extends BasicManager {
 		try {
 			if(busta!=null && msg!=null && ServiceBinding.SOAP.equals(msg.getServiceBinding())) {
 				OpenSPCoop2SoapMessage soapMsg = (OpenSPCoop2SoapMessage) msg.castAsSoap();
+				
+				OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+				
 				if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()==false) {
 					
-					List<Node> list = SoapUtils.getNotEmptyChildNodes(soapMsg.getSOAPBody(), false);
+					List<Node> list = SoapUtils.getNotEmptyChildNodes(messageFactory, soapMsg.getSOAPBody(), false);
 					if(list.size()==1) {
 						Node n = list.get(0);
 						// provo a vedere se si tratta di una risposta
@@ -109,7 +113,7 @@ public class AS4ProtocolManager extends BasicManager {
 							
 							// recupero id
 							backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer deserializer = new backend.ecodex.org._1_1.utils.serializer.JaxbDeserializer();
-							byte[]b=XMLUtils.getInstance().toByteArray(n);
+							byte[]b=XMLUtils.getInstance(messageFactory).toByteArray(n);
 							SubmitResponse submitResponse = deserializer.readSubmitResponse(b);
 							String responseId = submitResponse.getMessageIDList().get(0);
 							busta.addProperty(AS4Costanti.AS4_BUSTA_SERVIZIO_MESSAGE_INFO_ID, responseId);

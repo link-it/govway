@@ -95,6 +95,8 @@ public class ImbustamentoErrore  {
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
+	protected OpenSPCoop2MessageFactory errorFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 	/** Logger utilizzato per debug. */
 	private Logger log = null;
 	private org.openspcoop2.protocol.sdk.IProtocolFactory<?> protocolFactory;
@@ -117,7 +119,7 @@ public class ImbustamentoErrore  {
 			this.log = LoggerWrapperFactory.getLogger(ImbustamentoErrore.class);
 		this.protocolFactory = protocolFactory;
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.errorFactory);
 		
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		
@@ -448,7 +450,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					messageType, rfc7807, httpStatus, nomePorta, 
 					setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
 		}catch(Exception e){
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, useProblemRFC7807, "Errore buildSoapFaultProtocollo_processamento: "+e.getMessage());
+			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807, "Errore buildSoapFaultProtocollo_processamento: "+e.getMessage());
 		}
 	}
 	
@@ -510,7 +512,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+			OpenSPCoop2MessageFactory mf = this.errorFactory;
 			switch (messageType) {
 				case XML:
 					if(dettaglioEccezione==null){
@@ -646,7 +648,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			
 		} catch(Exception e) {
 			this.log.error("Build msgErrore non riuscito: " + e.getMessage(),e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, useProblemRFC7807); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
+			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807); // ritorno ErroreProcessamento per non far "uscire fuori" l'errore
 		}
 
 
@@ -960,7 +962,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 		}catch(Exception e) {
 			this.log.error("Build msgErroreProcessamento non riuscito: "+e.getMessage(),e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, useProblemRFC7807);
+			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807);
 		}
 
 	}
@@ -1146,7 +1148,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 		}catch(Exception e) {
 			this.log.error("Build msgErroreProtocollo_Validazione non riuscito: "+e.getMessage(), e);
-			return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(messageType, useProblemRFC7807);
+			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807);
 		}
 	}
 

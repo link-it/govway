@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.spcoop.builder;
 
 import javax.xml.soap.SOAPBody;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.builder.EsitoBuilder;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -50,7 +51,8 @@ public class SPCoopEsitoBuilder extends EsitoBuilder {
 	}
 	
 	@Override
-	public EsitoTransazione getEsitoMessaggioApplicativo(ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
+	public EsitoTransazione getEsitoMessaggioApplicativo(OpenSPCoop2MessageFactory messageFactory,
+			ProprietaErroreApplicativo erroreApplicativo,SOAPBody body,String tipoContext, String erroreGovway) throws ProtocolException{
 		Node childNode = body.getFirstChild();
 		if(childNode!=null){
 			if(childNode.getNextSibling()==null){

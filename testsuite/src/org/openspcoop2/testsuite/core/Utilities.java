@@ -302,7 +302,7 @@ public class Utilities {
 			}
 			for (int i = 0; i < lista.getLength(); i++) {
 				Node n = lista.item(i);
-				byte[] xml = XMLUtils.getInstance().toByteArray(n);
+				byte[] xml = XMLUtils.DEFAULT.toByteArray(n);
 				if(EsitoRichiestaXMLUtils.isEsitoRichiesta(xml)){
 					EsitoRichiesta esito = EsitoRichiestaXMLUtils.getEsitoRichiesta(log, xml);
 					return esito.getMessageId();

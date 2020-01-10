@@ -214,7 +214,7 @@ public class ErroreApplicativoMessageUtils {
 			Element elementDettaglioRouting = xmlUtils.newElement(xmlDettaglioRouting);
 			addPrefixToElement(elementDettaglioRouting,"op2RoutingDetail");
 			
-			SOAPFactory sf = SoapUtils.getSoapFactory(msg.getMessageType());
+			SOAPFactory sf = SoapUtils.getSoapFactory(msg.getFactory(), msg.getMessageType());
 			SOAPElement dettaglioRoutingElementSOAP =  sf.createElement(elementDettaglioRouting);
 			
 			addErroreApplicativoIntoSOAPFaultDetail(dettaglioRoutingElementSOAP, msg, log);

@@ -27,6 +27,7 @@ package org.openspcoop2.protocol.sdk.validator;
 import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -47,7 +48,7 @@ public interface IValidazioneConSchema  extends IComponentFactory {
 	 * 
 	 * @return true se l'inizializzazione va a buon fine
 	 */
-	public boolean initialize();
+	public boolean initialize(OpenSPCoop2MessageFactory messageFactory);
 		
 	/**
 	 * Effettua la validazione utilizzando gli schemi formali che definiscono i dati raw del protocollo

@@ -26,6 +26,7 @@ package org.openspcoop2.web.ctrlstat.servlet.pa;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
@@ -68,7 +69,9 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaServizi;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -153,6 +156,8 @@ public final class PorteApplicativeChange extends Action {
 			String azid = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_AZIONE_ID);
 			String modeaz = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_AZIONE);
 			String forceWsdlBased = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_FORCE_INTERFACE_BASED);
+			
+			String messageEngine = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE);
 			
 			BinaryParameter allegatoXacmlPolicy = porteApplicativeHelper.getBinaryParameter(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
 			
@@ -586,7 +591,9 @@ public final class PorteApplicativeChange extends Action {
 			List<Parameter> lstParm = porteApplicativeHelper.getTitoloPA(parentPA, idsogg, idAsps);
 			
 			Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
-			boolean datiAltro = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
+			boolean datiAltroPorta = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
+			boolean datiAltroApi = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
+						
 			
 			String nomeBreadCrumb = oldNomePA;
 			if(parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE) {
@@ -615,7 +622,7 @@ public final class PorteApplicativeChange extends Action {
 					}
 					nomeBreadCrumb=null;
 				}
-				else if(datiAltro) {
+				else if(datiAltroPorta) {
 					String labelPerPorta = null;
 					if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
 						labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
@@ -630,6 +637,15 @@ public final class PorteApplicativeChange extends Action {
 					
 					lstParm.add(new Parameter(labelPerPorta,  null));
 					//lstParm.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					nomeBreadCrumb=null;
+				}
+				else if(datiAltroApi) {
+					lstParm.remove(lstParm.size()-1);
+					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+						lstParm.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE,null));
+					} else {
+						lstParm.add(new Parameter(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE_DI + porteApplicativeHelper.getLabelIdServizio(asps),null));
+					}
 					nomeBreadCrumb=null;
 				}
 				else {
@@ -705,6 +721,19 @@ public final class PorteApplicativeChange extends Action {
 				if (integrazione == null) {
 					integrazione = pa.getIntegrazione();
 				}
+				
+				if (messageEngine == null) {
+					if(pa.getOptions()!=null) {
+						Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
+						if(props!=null && props.size()>0) {
+							String msgFactory = props.get(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+							if(msgFactory!=null) {
+								messageEngine = msgFactory;
+							}
+						}
+					}
+				}
+				
 				if (soggvirt == null) {
 					// soggvirt = risultato.getString("soggvirt");
 					PortaApplicativaSoggettoVirtuale pasv = pa.getSoggettoVirtuale();
@@ -987,7 +1016,8 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						messageEngine);
 
 				pd.setDati(dati);
 
@@ -1158,7 +1188,8 @@ public final class PorteApplicativeChange extends Action {
 						gestioneTokenValidazioneInput,gestioneTokenIntrospection,gestioneTokenUserInfo,gestioneTokenTokenForward,
 						autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						autorizzazione_token,autorizzazione_tokenOptions,
-						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy);
+						autorizzazioneScope,numScope, autorizzazioneScopeMatch,allegatoXacmlPolicy,
+						messageEngine);
 
 				pd.setDati(dati);
 
@@ -1199,6 +1230,20 @@ public final class PorteApplicativeChange extends Action {
 				pa.setGestioneManifest(StatoFunzionalita.toEnumConstant(gestManifest));
 			pa.setRicevutaAsincronaSimmetrica(StatoFunzionalita.toEnumConstant(ricsim));
 			pa.setRicevutaAsincronaAsimmetrica(StatoFunzionalita.toEnumConstant(ricasim));
+			
+			Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(pa.getOptions());
+			props.remove(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+			if(messageEngine!=null && !"".equals(messageEngine) && !CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT.equals(messageEngine)) {
+				props.put(CostantiPdD.OPTIONS_MESSAGE_FACTORY, messageEngine);
+			}
+			if(props.size()>0) {
+				PropertiesSerializator ps = new PropertiesSerializator(props);
+				pa.setOptions(ps.convertToDBColumnValue());
+			}
+			else {
+				pa.setOptions(null);
+			}
+			
 			if (idSoggettoVirtuale!=null) {
 				String tipoSoggVirt = idSoggettoVirtuale.getTipo();
 				String nomeSoggVirt = idSoggettoVirtuale.getNome();
@@ -1318,7 +1363,8 @@ public final class PorteApplicativeChange extends Action {
 			case PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE:
 				
 				boolean datiInvocazione = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
-				if(datiInvocazione) {
+				boolean datiAltroApiCheck = ServletUtils.isCheckBoxEnabled(porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
+				if(datiInvocazione || datiAltroApiCheck) {
 					if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 						ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);
 						erogazioniHelper.prepareErogazioneChange(TipoOperazione.CHANGE, asps, null);
@@ -1381,7 +1427,7 @@ public final class PorteApplicativeChange extends Action {
 			
 			ForwardParams fwP = ForwardParams.CHANGE();
 			
-			if(datiAltro && !porteApplicativeHelper.isModalitaCompleta()) {
+			if(datiAltroPorta && !porteApplicativeHelper.isModalitaCompleta()) {
 				fwP = PorteApplicativeCostanti.TIPO_OPERAZIONE_CONFIGURAZIONE;
 			}
 			// Forward control to the specified success URI

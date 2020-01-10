@@ -48,6 +48,7 @@ import org.openspcoop2.core.registry.constants.BindingUse;
 import org.openspcoop2.core.registry.driver.AccordoServizioUtils;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -76,16 +77,19 @@ public class AccordoServizioWrapperUtilities {
 	private AbstractXMLUtils xmlUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
 	private AccordoServizioUtils accordoServizioUtils = null;
+	private OpenSPCoop2MessageFactory messageFactory;
 	
-	public AccordoServizioWrapperUtilities(Logger log){
+	public AccordoServizioWrapperUtilities(OpenSPCoop2MessageFactory messageFactory, Logger log){
 		if(log!=null)
 			this.logger = log;
 		else
 			this.logger = LoggerWrapperFactory.getLogger(AccordoServizioWrapperUtilities.class);
-		this.openspcoopUtilities = new RegistroOpenSPCoopUtilities(this.logger);
-		this.xmlUtils = XMLUtils.getInstance();
+		
+		this.messageFactory = messageFactory;
+		this.openspcoopUtilities = new RegistroOpenSPCoopUtilities(this.messageFactory, this.logger);
+		this.xmlUtils = XMLUtils.getInstance(this.messageFactory);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
-		this.accordoServizioUtils = new AccordoServizioUtils(this.logger);
+		this.accordoServizioUtils = new AccordoServizioUtils(this.messageFactory, this.logger);
 	}
 	
 	
@@ -187,14 +191,13 @@ public class AccordoServizioWrapperUtilities {
 	}
 	private javax.wsdl.Definition buildWsdl(String url) throws DriverRegistroServiziException{
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 						
 			// Costruttore WSDL
 			Document document = null;
 			if(url.startsWith("http://") || url.startsWith("file://")){
-				document = xmlUtils.newDocument(HttpUtilities.requestHTTPFile(url));
+				document = this.xmlUtils.newDocument(HttpUtilities.requestHTTPFile(url));
 			}else{
-				document = xmlUtils.newDocument(FileSystemUtilities.readBytesFromFile(url));
+				document = this.xmlUtils.newDocument(FileSystemUtilities.readBytesFromFile(url));
 			}
 			
 			// Elimino schema xsd e import di altri wsdl, non servono per la validazione wsdl di openspcoop

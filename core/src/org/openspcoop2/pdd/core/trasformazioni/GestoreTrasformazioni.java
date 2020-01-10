@@ -295,7 +295,7 @@ public class GestoreTrasformazioni {
 						String valore = null;
 						try {
 							if(element!=null) {
-								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
 							}
 							else {
@@ -634,7 +634,7 @@ public class GestoreTrasformazioni {
 						String valore = null;
 						try {
 							if(element!=null) {
-								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 								valore = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, check.getApplicabilita().getPattern(), this.log);
 							}
 							else {

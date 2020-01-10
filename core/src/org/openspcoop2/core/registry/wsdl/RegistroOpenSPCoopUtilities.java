@@ -38,6 +38,7 @@ import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
@@ -64,18 +65,20 @@ public class RegistroOpenSPCoopUtilities {
 	private org.openspcoop2.message.xml.XMLUtils xmlUtils = null;
 	private XSDUtils xsdUtils = null;
 	private WSDLUtilities wsdlUtilities = null;
+	private OpenSPCoop2MessageFactory messageFactory;
 	
 	// Factory
 	private IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
 		
 	
-	public RegistroOpenSPCoopUtilities(Logger log){
+	public RegistroOpenSPCoopUtilities(OpenSPCoop2MessageFactory messageFactory, Logger log){
 		if(log!=null)
 			this.logger = log;
 		else
 			this.logger = LoggerWrapperFactory.getLogger(RegistroOpenSPCoopUtilities.class);
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.messageFactory = messageFactory;
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.messageFactory);
 		this.xsdUtils = new XSDUtils(this.xmlUtils);
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 	}

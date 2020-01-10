@@ -87,6 +87,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.RICERCA_PORTA_AZIONE_DELEGATA = new Field("ricerca-porta-azione-delegata",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATO = new Field("stato",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new Field("ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
+		this.OPTIONS = new Field("options",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 	
 	}
 	
@@ -139,6 +140,7 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 		this.RICERCA_PORTA_AZIONE_DELEGATA = new ComplexField(father,"ricerca-porta-azione-delegata",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 		this.ORA_REGISTRAZIONE = new ComplexField(father,"ora-registrazione",java.util.Date.class,"porta-delegata",PortaDelegata.class);
+		this.OPTIONS = new ComplexField(father,"options",java.lang.String.class,"porta-delegata",PortaDelegata.class);
 	
 	}
 	
@@ -233,6 +235,8 @@ public class PortaDelegataModel extends AbstractModel<PortaDelegata> {
 	public IField STATO = null;
 	 
 	public IField ORA_REGISTRAZIONE = null;
+	 
+	public IField OPTIONS = null;
 	 
 
 	@Override

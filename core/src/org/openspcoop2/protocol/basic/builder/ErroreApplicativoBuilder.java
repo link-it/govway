@@ -94,15 +94,15 @@ import org.w3c.dom.Node;
 public class ErroreApplicativoBuilder extends BasicComponentFactory implements org.openspcoop2.protocol.sdk.builder.IErroreApplicativoBuilder {
 
 	protected ITraduttore traduttore;
-	protected OpenSPCoop2MessageFactory msgFactory = null;
+	protected OpenSPCoop2MessageFactory errorFactory = null;
 	protected org.openspcoop2.message.xml.XMLUtils xmlUtils;
 	protected boolean omitXMLDeclaration;
 	
 	public ErroreApplicativoBuilder(IProtocolFactory<?> factory) throws ProtocolException{
 		super(factory);
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 		this.traduttore = factory.createTraduttore();
-		this.msgFactory = OpenSPCoop2MessageFactory.getMessageFactory();
+		this.errorFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.omitXMLDeclaration = false;
 	}
 
@@ -332,7 +332,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				messageType = eccezioneIntegrazione.getMessageType();
 			}
 			
-			SOAPFactory sf = SoapUtils.getSoapFactory(messageType);
+			SOAPFactory sf = SoapUtils.getSoapFactory(this.errorFactory, messageType);
 			SOAPElement erroreApplicativoElementSOAP =  sf.createElement(elementErroreApplicativo);
 			
 			return erroreApplicativoElementSOAP;
@@ -698,7 +698,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				case XML:
 				
 					byte[] bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.XML, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
-					OpenSPCoop2MessageParseResult pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
+					OpenSPCoop2MessageParseResult pr = this.errorFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_XML, bytes);
 					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 					if(useProblemRFC7807) {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_XML_PROBLEM_DETAILS_RFC_7807);
@@ -713,7 +713,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				case JSON:
 				
 					bytes = this._buildErroreApplicativo_ByteArray(TipoErroreApplicativo.JSON, !omitXMLDeclaration, eccezioneProtocollo, eccezioneIntegrazione);
-					pr = this.msgFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
+					pr = this.errorFactory.createMessage(messageType, MessageRole.FAULT, HttpConstants.CONTENT_TYPE_JSON, bytes);
 					msg = pr.getMessage_throwParseException();
 					if(useProblemRFC7807) {
 						msg.setContentType(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807);
@@ -728,7 +728,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 				case BINARY:
 				case MIME_MULTIPART:
 					// Viene usato per l'opzione None dove viene ritornato solamente il return code
-					msg = this.msgFactory.createEmptyMessage(messageType, MessageRole.FAULT);
+					msg = this.errorFactory.createEmptyMessage(messageType, MessageRole.FAULT);
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
 					return msg;
@@ -777,7 +777,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					// ELEMENT RISPOSTA APPLICATIVA ERRORE			
 					SOAPElement rispostaApplicativaElement = this._buildErroreApplicativo_SoapElement(eccezioneProtocollo, eccezioneIntegrazione);
 
-					OpenSPCoop2Message responseMessageError = this.msgFactory.createEmptyMessage(messageType,MessageRole.FAULT);
+					OpenSPCoop2Message responseMessageError = this.errorFactory.createEmptyMessage(messageType,MessageRole.FAULT);
 					OpenSPCoop2SoapMessage soapMessageError = responseMessageError.castAsSoap();
 					SOAPBody soapBody = soapMessageError.getSOAPBody();
 					SOAPFaultCode code = null;
@@ -816,7 +816,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 							d.appendChild(d.getOwnerDocument().importNode(rispostaApplicativaElement, true));
 							
 						}else{
-							fault.setFaultString(Utilities.toString(rispostaApplicativaElement, true));
+							fault.setFaultString(Utilities.toString(this.errorFactory, rispostaApplicativaElement, true));
 						}
 						
 						// DettaglioEccezione
@@ -852,7 +852,7 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di errore applicativo",e);
-			return this.msgFactory.createFaultMessage(messageType,useProblemRFC7807,"ErroreDiProcessamento");
+			return this.errorFactory.createFaultMessage(messageType,useProblemRFC7807,"ErroreDiProcessamento");
 		}
 	}
 	

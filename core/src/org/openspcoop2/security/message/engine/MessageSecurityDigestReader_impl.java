@@ -22,6 +22,7 @@
 package org.openspcoop2.security.message.engine;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.security.message.MessageSecurityDigestReader;
@@ -44,12 +45,12 @@ public class MessageSecurityDigestReader_impl extends MessageSecurityDigestReade
 	}
 
 	@Override
-	public IDigestReader getDigestReader(SecurityType securityType) {
+	public IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory, SecurityType securityType) {
 		switch (securityType) {
 		case WSSecurity:
-			return new WSSecurityDigestReader(this.log,XMLUtils.getInstance(),new XPathExpressionEngine());
+			return new WSSecurityDigestReader(this.log,XMLUtils.getInstance(messageFactory),new XPathExpressionEngine(messageFactory));
 		case XMLSecurity:
-			return new XMLSecurityDigestReader(this.log,XMLUtils.getInstance(),new XPathExpressionEngine());
+			return new XMLSecurityDigestReader(this.log,XMLUtils.getInstance(messageFactory),new XPathExpressionEngine(messageFactory));
 		default:
 			return null;
 		}

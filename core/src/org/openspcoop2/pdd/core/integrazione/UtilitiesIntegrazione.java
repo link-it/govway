@@ -39,7 +39,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
-
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -147,12 +147,17 @@ public class UtilitiesIntegrazione {
 	private HashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
 	
 	private OpenSPCoop2Properties openspcoopProperties = null;
-	private ValidatoreXSD validatoreXSD_soap11 = null;
-	private ValidatoreXSD validatoreXSD_soap12 = null;
+	private HashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new HashMap<String, ValidatoreXSD>();
+	private HashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new HashMap<String, ValidatoreXSD>();
 	
 	private boolean request;
 	
+	private Logger log;
+	
 	private UtilitiesIntegrazione(Logger log, boolean portaDelegata, boolean request){
+		
+		this.log = log;
+		
 		this.openspcoopProperties = OpenSPCoop2Properties.getInstance();
 		
 		this.request = request;
@@ -201,22 +206,54 @@ public class UtilitiesIntegrazione {
 			log.error("Integrazione, errore durante la lettura del file di configurazione: "+e.getMessage(),e);
 		}
 		
-		try{
-			XSDResourceResolver xsdResourceResolver_soap11 = new XSDResourceResolver();
-			xsdResourceResolver_soap11.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
-			this.validatoreXSD_soap11 = new ValidatoreXSD(log,xsdResourceResolver_soap11,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione_soap11.xsd"));
-		}catch(Exception e){
-			log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd per Soap11: "+e.getMessage(),e);
+	}
+	
+	private synchronized void initValidatoreXSD(OpenSPCoop2MessageFactory messageFactory) {
+		String key = messageFactory.getClass().getName();
+			
+		if(!this.validatoreXSD_soap11_map.containsKey(key)) {
+			try{
+				XSDResourceResolver xsdResourceResolver_soap11 = new XSDResourceResolver();
+				xsdResourceResolver_soap11.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
+				this.validatoreXSD_soap11_map.put(key, new ValidatoreXSD(messageFactory, this.log,xsdResourceResolver_soap11,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione_soap11.xsd")));
+			}catch(Exception e){
+				this.log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd per Soap11: "+e.getMessage(),e);
+			}
 		}
 		
-		try{
-			XSDResourceResolver xsdResourceResolver_soap12 = new XSDResourceResolver();
-			xsdResourceResolver_soap12.addResource("soapEnvelope12.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope12.xsd"));
-			xsdResourceResolver_soap12.addResource("xml.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/xml.xsd"));
-			this.validatoreXSD_soap12 = new ValidatoreXSD(log,xsdResourceResolver_soap12,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione_soap12.xsd"));
-		}catch(Exception e){
-			log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd per Soap11: "+e.getMessage(),e);
+		if(!this.validatoreXSD_soap12_map.containsKey(key)) {
+			try{
+				XSDResourceResolver xsdResourceResolver_soap12 = new XSDResourceResolver();
+				xsdResourceResolver_soap12.addResource("soapEnvelope12.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope12.xsd"));
+				xsdResourceResolver_soap12.addResource("xml.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/xml.xsd"));
+				this.validatoreXSD_soap12_map.put(key, new ValidatoreXSD(messageFactory, this.log,xsdResourceResolver_soap12,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione_soap12.xsd")));
+			}catch(Exception e){
+				this.log.error("Integrazione.xsd, errore durante la costruzione del validatore xsd per Soap12: "+e.getMessage(),e);
+			}
 		}
+		
+	}
+	private void checkInitValidatoreXSD(OpenSPCoop2MessageFactory messageFactory) {
+		String key = messageFactory.getClass().getName();
+		if(!this.validatoreXSD_soap11_map.containsKey(key)) {
+			initValidatoreXSD(messageFactory);
+		}
+		if(!this.validatoreXSD_soap12_map.containsKey(key)) {
+			initValidatoreXSD(messageFactory);
+		}
+	}
+	private ValidatoreXSD getValidatoreXSD(boolean soap12, OpenSPCoop2MessageFactory messageFactory) {
+		
+		checkInitValidatoreXSD(messageFactory);
+		
+		String key = messageFactory.getClass().getName();
+		if(soap12) {
+			return this.validatoreXSD_soap12_map.get(key);
+		}
+		else {
+			return this.validatoreXSD_soap11_map.get(key);
+		}
+		
 	}
 	
 	public void readTransportProperties(java.util.Properties prop,
@@ -651,14 +688,16 @@ public class UtilitiesIntegrazione {
 			
 			// validazione XSD
 			if(MessageType.SOAP_11.equals(message.getMessageType())){
-				if(this.validatoreXSD_soap11==null)
+				ValidatoreXSD validatoreXSD_soap11 = getValidatoreXSD(false, message.getFactory());
+				if(validatoreXSD_soap11==null)
 					throw new Exception("Validatore XSD (Soap11) non istanziato");
-				this.validatoreXSD_soap11.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
+				validatoreXSD_soap11.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
 			}
 			else if(MessageType.SOAP_12.equals(message.getMessageType())){
-				if(this.validatoreXSD_soap12==null)
+				ValidatoreXSD validatoreXSD_soap12 = getValidatoreXSD(false, message.getFactory());
+				if(validatoreXSD_soap12==null)
 					throw new Exception("Validatore XSD (Soap12) non istanziato");
-				this.validatoreXSD_soap12.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
+				validatoreXSD_soap12.valida(new java.io.ByteArrayInputStream(message.getAsByte(headerElement, false)));
 			}
 			else{
 				throw MessageNotSupportedException.newMessageNotSupportedException(message.getMessageType());

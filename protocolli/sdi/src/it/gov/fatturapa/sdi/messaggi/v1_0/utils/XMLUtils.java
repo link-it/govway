@@ -40,7 +40,7 @@ public class XMLUtils {
 		
 	public static boolean isNotificaPA(byte [] doc, boolean compatibilitaNamespaceSenzaGov){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isNotificaPA_engine(elemXML, compatibilitaNamespaceSenzaGov);

@@ -1097,7 +1097,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getMessageFactory(){
 		try{
-			OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
+			OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 			return "OpenSPCoopMessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+") "+factory.getClass().getName();
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);

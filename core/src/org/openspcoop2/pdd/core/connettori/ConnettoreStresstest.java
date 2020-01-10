@@ -239,7 +239,8 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			byte [] messaggioArray = messaggio.getBytes();
 			
 			ByteArrayInputStream bin = new ByteArrayInputStream(messaggioArray);
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
+			OpenSPCoop2MessageFactory messageFactory = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.RESPONSE);
+			OpenSPCoop2MessageParseResult pr = messageFactory.createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,
 					this.requestMsg.getContentType(),
 					bin,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());

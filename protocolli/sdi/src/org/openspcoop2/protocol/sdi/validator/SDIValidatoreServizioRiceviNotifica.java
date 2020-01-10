@@ -30,6 +30,7 @@ import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
@@ -63,6 +64,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 	private SDIValidazioneSintattica sdiValidazioneSintattica;
 	private SDIValidazioneSemantica sdiValidazioneSemantica;
 	private OpenSPCoop2Message msg;
+	private OpenSPCoop2MessageFactory messageFactory;
 	private boolean isRichiesta;
 	private SOAPElement sdiMessage;
 	private String namespace;
@@ -74,6 +76,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			SOAPElement sdiMessage,Busta busta){
 		this.sdiValidazioneSintattica = sdiValidazioneSintattica;
 		this.msg = msg;
+		this.messageFactory = this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.isRichiesta = isRichiesta;
 		this.sdiMessage = sdiMessage;
 		this.namespace = ProjectInfo.getInstance().getProjectNamespace();
@@ -84,6 +87,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			SOAPElement sdiMessage,Busta busta){
 		this.sdiValidazioneSemantica = sdiValidazioneSemantica;
 		this.msg = msg;
+		this.messageFactory = this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.isRichiesta = isRichiesta;
 		this.sdiMessage = sdiMessage;
 		this.namespace = SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA_NAMESPACE;
@@ -249,7 +253,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 			Iterator<?> nodeEsitoIt = this.sdiMessage.getChildElements(qnameEsito);
 			SOAPElement nodeEsito = (SOAPElement) nodeEsitoIt.next();
 			
-			Element xomReference = MTOMUtilities.getIfExistsXomReference(nodeEsito);
+			Element xomReference = MTOMUtilities.getIfExistsXomReference(this.messageFactory, nodeEsito);
 			if(xomReference!=null){
 				try{
 					String cid = MTOMUtilities.getCidXomReference(xomReference);
@@ -580,7 +584,7 @@ public class SDIValidatoreServizioRiceviNotifica {
 				}
 				
 				if(nodeEsitoFile!=null){
-					Element xomReference = MTOMUtilities.getIfExistsXomReference(nodeEsitoFile);
+					Element xomReference = MTOMUtilities.getIfExistsXomReference(this.messageFactory, nodeEsitoFile);
 					if(xomReference!=null){
 						try{
 							String cid = MTOMUtilities.getCidXomReference(xomReference);

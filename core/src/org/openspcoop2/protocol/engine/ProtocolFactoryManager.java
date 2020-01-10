@@ -33,6 +33,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.engine.mapping.InformazioniServizioURLMapping;
 import org.openspcoop2.protocol.manifest.DefaultIntegrationError;
@@ -268,7 +269,7 @@ public class ProtocolFactoryManager {
 				// Factory
 				IProtocolFactory<?> p = this.getProtocolFactoryEngine(manifestOpenspcoop2);
 				p.init(configPdD.getLog(), protocolManifest, configPdD,manifestOpenspcoop2);
-				if(!p.createValidazioneConSchema(null).initialize()){
+				if(!p.createValidazioneConSchema(null).initialize(OpenSPCoop2MessageFactory.getDefaultMessageFactory())){
 					throw new Exception("[protocol:"+protocolManifest+"] Inizialize with error for ValidazioneConSchema");
 				}
 				tmp_factories.put(protocolManifest, p);

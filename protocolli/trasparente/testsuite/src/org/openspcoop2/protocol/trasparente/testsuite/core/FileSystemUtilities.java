@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.core;
 
 import java.util.Date;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.testsuite.core.ErroreAttesoOpenSPCoopLogCore;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -53,7 +54,8 @@ public class FileSystemUtilities {
 	public static void verificaMsgDiagnosticiXML() throws Exception{
 		org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties testsuiteProperties = org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance();
 		String logDirectory = testsuiteProperties.getLogDirectoryOpenSPCoop();
-		ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
+		ValidatoreXSD validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+				LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
 				FileSystemUtilities.class.getResourceAsStream("/openspcoopDiagnostica.xsd"));
 		org.openspcoop2.testsuite.core.FileSystemUtilities.verificaMsgDiagnosticiXML(logDirectory, validatoreXSD);
 	}
@@ -62,7 +64,8 @@ public class FileSystemUtilities {
 	public static void verificaTracciaturaXML() throws Exception{
 		org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties testsuiteProperties = org.openspcoop2.protocol.trasparente.testsuite.core.TestSuiteProperties.getInstance();
 		String logDirectory = testsuiteProperties.getLogDirectoryOpenSPCoop();
-		ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
+		ValidatoreXSD validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+				LoggerWrapperFactory.getLogger(FileSystemUtilities.class),
 				FileSystemUtilities.class.getResourceAsStream("/openspcoopTracciamento.xsd"));
 		org.openspcoop2.testsuite.core.FileSystemUtilities.verificaTracciaturaXML(logDirectory, validatoreXSD);
 	}

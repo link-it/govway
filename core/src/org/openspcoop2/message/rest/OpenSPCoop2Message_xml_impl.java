@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -44,11 +45,11 @@ import org.xml.sax.InputSource;
  */
 public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMessage<Element> implements OpenSPCoop2RestXmlMessage {
 
-	public OpenSPCoop2Message_xml_impl() {
-		super();
+	public OpenSPCoop2Message_xml_impl(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
 	}
-	public OpenSPCoop2Message_xml_impl(InputStream is,String contentType) throws MessageException {
-		super(is, contentType);
+	public OpenSPCoop2Message_xml_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
+		super(messageFactory, is, contentType);
 	}
 	
 	@Override
@@ -58,7 +59,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 		try{
 			isr = new InputStreamReader(this.countingInputStream,this.contentTypeCharsetName);
 			isSax = new InputSource(isr);
-			return XMLUtils.getInstance().newElement(isSax);
+			return XMLUtils.getInstance(this.messageFactory).newElement(isSax);
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}finally{
@@ -85,7 +86,7 @@ public class OpenSPCoop2Message_xml_impl extends AbstractBaseOpenSPCoop2RestMess
 	@Override
 	protected void serializeContent(OutputStream os, boolean consume) throws MessageException {
 		try{
-			XMLUtils.getInstance().writeTo(this.content, os, true);
+			XMLUtils.getInstance(this.messageFactory).writeTo(this.content, os, true);
 			os.flush();
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);

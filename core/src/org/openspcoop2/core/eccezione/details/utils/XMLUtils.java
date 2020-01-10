@@ -45,6 +45,7 @@ import org.openspcoop2.core.eccezione.details.Eccezione;
 import org.openspcoop2.core.eccezione.details.constants.Costanti;
 import org.openspcoop2.core.eccezione.details.utils.serializer.JsonJacksonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -72,7 +73,7 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/openspcoopDetail.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopDetail.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -368,7 +369,7 @@ public class XMLUtils  {
 				if(rest.hasContent()){
 					Element element = rest.getContent();
 					if(XMLUtils.isDettaglioEccezione(element)){
-						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 						byte [] xml = xmlUtils.toByteArray(element);
 						//System.out.println("XML S: "+new String(xml));
 						DettaglioEccezione de = XMLUtils.getDettaglioEccezione(log,xml);
@@ -432,7 +433,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isDettaglioEccezione(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								DettaglioEccezione de = XMLUtils.getDettaglioEccezione(log,xml);
@@ -453,7 +454,7 @@ public class XMLUtils  {
 	
 	public static boolean isDettaglioEccezione(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isDettaglioEccezione_engine(elemXML);

@@ -2279,7 +2279,7 @@ public class RichiesteApplicativeScorrette {
 				byte [] xmlErroreApplicativo = client.getMessaggioXMLRisposta();
 				Assert.assertTrue(xmlErroreApplicativo!=null);
 				
-				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance().newElement(xmlErroreApplicativo),
+				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo),
 						CostantiTestSuite.SPCOOP_SOGGETTO_FRUITORE.getCodicePorta(),"RicezioneContenutiApplicativiHTTP", 
 						Utilities.toString(CodiceErroreIntegrazione.CODICE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA), 
 						CostantiErroriIntegrazione.MSG_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA, Utilities.CONTROLLO_DESCRIZIONE_TRAMITE_METODO_CONTAINS);

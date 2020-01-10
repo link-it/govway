@@ -22,10 +22,18 @@
 package org.openspcoop2.pdd.core;
 
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.services.connector.ConnectorException;
+import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 
 /**
  * Utilities PdD
@@ -86,4 +94,30 @@ public class Utilities {
 		}
 	}
 
+	
+	private static OpenSPCoop2MessageFactory _factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+	public static OpenSPCoop2MessageFactory getOpenspcoop2MessageFactory(Logger log, RequestInfo requestInfo, MessageRole role) throws ConnectorException{
+		return getOpenspcoop2MessageFactory(log, null, requestInfo, role);
+	}
+	public static OpenSPCoop2MessageFactory getOpenspcoop2MessageFactory(Logger log, OpenSPCoop2Message requestMessage, RequestInfo requestInfo, MessageRole role) throws ConnectorException{
+		OpenSPCoop2MessageFactory useFactory = _factory;
+		if(requestMessage!=null && requestMessage.getFactory()!=null) {
+			useFactory = requestMessage.getFactory();
+		}
+		else {
+			if(requestInfo!=null && requestInfo.getMessageFactory()!=null) {
+				String classNameMessageFactory = ClassNameProperties.getInstance().getOpenSPCoop2MessageFactory(requestInfo.getMessageFactory());
+				if(classNameMessageFactory==null) {
+					throw new ConnectorException("MessageFactory '"+requestInfo.getMessageFactory()+"' not found");
+				}
+				try {
+					useFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(classNameMessageFactory);
+				}catch(Exception e){
+					throw new ConnectorException(e.getMessage(),e);
+				}	
+			}
+		}
+		log.debug("MessageEngineFactory ["+role+"] ["+useFactory.getClass().getName()+"]");
+		return useFactory;
+	}
 }

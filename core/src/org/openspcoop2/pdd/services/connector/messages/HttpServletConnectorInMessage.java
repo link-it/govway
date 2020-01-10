@@ -29,8 +29,8 @@ import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
+import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseExceptionUtils;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -58,8 +58,6 @@ import org.slf4j.Logger;
  */
 public class HttpServletConnectorInMessage implements ConnectorInMessage {
 
-	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-	
 	protected RequestInfo requestInfo;
 	protected HttpServletRequest req;
 	protected OpenSPCoop2Properties openspcoopProperties;
@@ -162,11 +160,11 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			throw new ConnectorException(e.getMessage(),e);
 		}
 	}
-	
+		
 	@Override
 	public OpenSPCoop2MessageParseResult getRequest(NotifierInputStreamParams notifierInputStreamParams) throws ConnectorException{
 		try{
-			OpenSPCoop2MessageParseResult pr = factory.createMessage(this.requestMessageType,
+			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					this.is,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());
@@ -194,7 +192,7 @@ public class HttpServletConnectorInMessage implements ConnectorInMessage {
 			if(b!=null) {
 				buffer.write(b);
 			}
-			OpenSPCoop2MessageParseResult pr = factory.createMessage(this.requestMessageType,
+			OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.log,this.requestInfo, MessageRole.REQUEST).createMessage(this.requestMessageType,
 					this.requestInfo.getProtocolContext(),
 					bin,notifierInputStreamParams,
 					this.openspcoopProperties.getAttachmentsProcessingMode());

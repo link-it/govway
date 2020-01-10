@@ -35,6 +35,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -213,7 +214,7 @@ public class InitListener implements ServletContextListener {
 		
 		InitListener.log.info("Inizializzazione XMLDiff in corso...");
 		try{
-			XMLDiff diff = new XMLDiff();
+			XMLDiff diff = new XMLDiff(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 			diff.initialize(XMLDiffImplType.XML_UNIT, new XMLDiffOptions());
 		}catch(Exception e){
 			throw new RuntimeException(e.getMessage(),e);

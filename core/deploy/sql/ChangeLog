@@ -5,6 +5,10 @@
 	ALTER TABLE dump_messaggi ADD COLUMN header_ext TEXT;
 	ALTER TABLE dump_allegati ADD COLUMN header_ext TEXT;
 
+	Aggiunta possibilità di configurare ulteriori opzioni nelle porte delegate e applicative
+	ALTER TABLE porte_delegate ADD COLUMN options VARCHAR(4000);
+	ALTER TABLE porte_applicative ADD COLUMN options VARCHAR(4000);
+
 2019-11-08  Andrea Poli <apoli@link.it>
 
 	Corrette configurazioni esistenti SPCoop, poichè è stata aggiunta la possibilità di impostare l'autenticazione sulle erogazioni.

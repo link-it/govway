@@ -539,7 +539,7 @@ public class SavedMessage implements java.io.Serializable {
 				}
 				
 				// CostruzioneMessaggio
-				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				NotifierInputStreamParams notifierInputStreamParams = null; // Non dovrebbe servire, un eventuale handler attaccato, dovrebbe gia aver ricevuto tutto il contenuto una volta serializzato il messaggio su database.
 				OpenSPCoop2MessageParseResult pr = null;
 				pr = mf.createMessage(mt,mr,contentType,

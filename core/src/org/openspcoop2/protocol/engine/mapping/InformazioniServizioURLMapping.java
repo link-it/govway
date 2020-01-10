@@ -418,8 +418,8 @@ public class InformazioniServizioURLMapping {
 					}
 				}
 				if(element!=null) {
-					dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContext(element);
-					xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+					dnc = DynamicNamespaceContextFactory.getInstance(this.msg.getFactory()).getNamespaceContext(element);
+					xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(this.msg.getFactory());
 				}
 			}catch(Exception e){
 				throw new ProtocolException(e.getMessage(),e);

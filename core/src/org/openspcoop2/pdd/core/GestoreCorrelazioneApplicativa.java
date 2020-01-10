@@ -268,7 +268,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 		
 		/** Gestioni correlazioni, in modo da avere lo '*' in fondo */
 		java.util.List<CorrelazioneApplicativaElemento> c = new java.util.ArrayList<CorrelazioneApplicativaElemento>();
@@ -669,7 +669,7 @@ public class GestoreCorrelazioneApplicativa {
 		}
 		
 		// XPathExpressionEngine
-		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+		AbstractXPathExpressionEngine xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 		
 		/** Fase di identificazione dell'id di correlazione */
 		boolean checkElementiInTransito = false;

@@ -51,7 +51,7 @@ public class ExampleResponseToNewMessageBehaviour implements IBehaviour {
 			
 			String xml = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">"+
 					"<soapenv:Body><prova>CIAO</prova></soapenv:Body></soapenv:Envelope>";
-			OpenSPCoop2SoapMessage msgReplyTo = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST,
+			OpenSPCoop2SoapMessage msgReplyTo = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST,
 					MessageUtilities.getDefaultContentType(MessageType.SOAP_11),
 					xml.getBytes()).getMessage_throwParseException().castAsSoap();
 			responseTo.setMessage(msgReplyTo);

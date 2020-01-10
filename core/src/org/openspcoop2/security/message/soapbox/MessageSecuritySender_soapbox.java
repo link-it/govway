@@ -67,9 +67,6 @@ import org.openspcoop2.utils.xml.AbstractXMLUtils;
 public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 
 	
-	private AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
-	
-
 	@Override
 	public void process(org.openspcoop2.security.message.MessageSecurityContext messageSecurityContext,OpenSPCoop2Message messageParam) throws SecurityException{
 		try{ 	
@@ -78,6 +75,7 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				throw new SecurityException("SoapBox Engine usable only with SOAP Binding");
 			}
 			OpenSPCoop2SoapMessage message = messageParam.castAsSoap();
+			AbstractXMLUtils xmlUtils = XMLUtils.getInstance(message.getFactory());
 			
 
 
@@ -531,8 +529,8 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				}
 				else if(SecurityConstants.SIGNATURE_ACTION.equals(actions[i].trim())){
 					if(actionSignatureOrEncryptDo){
-						byte[]xmlCifrato=this.xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
-						message.getSOAPPart().setContent(new DOMSource(this.xmlUtils.newElement(xmlCifrato)));
+						byte[]xmlCifrato=xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
+						message.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(xmlCifrato)));
 						signMsgProc.setMessage(message);
 					}
 					signMsgProc.process(securityConfig_signature, msgSecCtx);

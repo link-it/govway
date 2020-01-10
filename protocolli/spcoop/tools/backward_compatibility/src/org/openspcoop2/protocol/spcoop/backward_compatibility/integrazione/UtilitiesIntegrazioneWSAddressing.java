@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.core.integrazione.HeaderIntegrazione;
@@ -316,7 +317,7 @@ public class UtilitiesIntegrazioneWSAddressing {
 	
 	private UtilitiesIntegrazioneWSAddressing(Logger log){
 		try{
-			this.validatoreXSD = new ValidatoreXSD(log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
+			this.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,UtilitiesIntegrazione.class.getResourceAsStream("/ws-addr.xsd"));
 		}catch(Exception e){
 			log.error("ws-addr.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
 		}

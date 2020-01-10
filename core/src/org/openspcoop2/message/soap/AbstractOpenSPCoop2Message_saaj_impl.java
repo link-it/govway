@@ -86,7 +86,8 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		return this.soapMessage;
 	}
 
-	public AbstractOpenSPCoop2Message_saaj_impl(SOAPMessage soapMessage){
+	public AbstractOpenSPCoop2Message_saaj_impl(OpenSPCoop2MessageFactory messageFactory, SOAPMessage soapMessage){
+		super(messageFactory);
 		this.soapMessage = soapMessage;
 	}
 	
@@ -205,7 +206,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 					// javax.xml.soap.SOAPException: no object DCH for MIME type text/xml
 					//    at com.sun.xml.messaging.saaj.soap.MessageImpl.writeTo(MessageImpl.java:1396) ~[saaj-impl-1.3.28.jar:?]
 					//System.out.println("XML (DOMSource)");
-					streamSource = new DOMSource(XMLUtils.getInstance().newElement(content));
+					streamSource = new DOMSource(XMLUtils.getInstance(this.messageFactory).newElement(content));
 				}
 				else {
 					// Se è registrato un content handler per text/xml
@@ -387,15 +388,15 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		try{
 			SOAPFactory soapFactory = null;
 			if(MessageType.SOAP_11.equals(this.getMessageType())){
-				soapFactory = OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11();
+				soapFactory = this.messageFactory.getSoapFactory11();
 			}
 			else if(MessageType.SOAP_12.equals(this.getMessageType())){
-				soapFactory = OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory12();
+				soapFactory = this.messageFactory.getSoapFactory12();
 			}
 			else{
 				throw new MessageException("MessageType ["+this.getMessageType()+"] not supported");
 			}
-			return soapFactory.createElement(XMLUtils.getInstance().newElement(bytes));
+			return soapFactory.createElement(XMLUtils.getInstance(this.messageFactory).newElement(bytes));
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}
@@ -532,12 +533,12 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 				    			
 				    			DynamicNamespaceContext dnc = null;
 				    			if(MessageType.SOAP_11.equals(this.getMessageType())) {
-				    				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(soapEnvelope);
+				    				dnc = DynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope11(soapEnvelope);
 				    			} else {
-				    				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(soapEnvelope);
+				    				dnc = DynamicNamespaceContextFactory.getInstance(this.messageFactory).getNamespaceContextFromSoapEnvelope12(soapEnvelope);
 				    			}
 				    	    	
-				    			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+				    			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(this.messageFactory);
 				    			
 				    			try {
 				    				String xpath = Costanti.XPATH_SAML_20_ASSERTION + "[@"+Costanti.SAML_20_ASSERTION_ID+"='"+reference+"']";

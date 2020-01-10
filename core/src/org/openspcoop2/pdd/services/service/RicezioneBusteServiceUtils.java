@@ -23,10 +23,12 @@
 package org.openspcoop2.pdd.services.service;
 
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.CorsConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -34,6 +36,7 @@ import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
@@ -187,6 +190,22 @@ public class RicezioneBusteServiceUtils {
 				logCore.debug("Recupero porta default fallita: "+e.getMessage(),e);
 			}
 			
+			// Lettura eventuale MessageFactory da utilizzare
+			try {
+				if(paDefault!=null && paDefault.getOptions()!=null && !StringUtils.isEmpty(paDefault.getOptions())) {
+					Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(paDefault.getOptions());
+					if(props!=null && props.size()>0) {
+						String msgFactory = props.get(CostantiPdD.OPTIONS_MESSAGE_FACTORY);
+						if(msgFactory!=null) {
+							requestInfo.setMessageFactory(msgFactory);
+						}
+					}
+				}
+			}catch(Throwable e){
+				logCore.debug("Lettura Message Factory fallita: "+e.getMessage(),e);
+			}
+			
+			// Lettura Azione
 			try{
 				if(idServizio.getAzione()!=null) {
 					

@@ -75,7 +75,6 @@ import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorType;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Node;
 
@@ -101,7 +100,6 @@ public class SPCoopImbustamento {
 	private SPCoopValidazioneSemantica validazioneSemantica = null;
 	private SPCoopValidazioneSintattica validazioneSintattica = null;
 	@SuppressWarnings("unused")
-	private AbstractXMLUtils xmlUtils = null;
 	private ITraduttore traduttore = null;
 	private IProtocolManager protocolManager = null;
 	private IState state;
@@ -118,8 +116,6 @@ public class SPCoopImbustamento {
 		
 		this.validazioneSemantica = (SPCoopValidazioneSemantica) this.factory.createValidazioneSemantica(this.state);
 		this.validazioneSintattica = (SPCoopValidazioneSintattica) this.factory.createValidazioneSintattica(this.state);
-		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
 		
 		this.traduttore = this.factory.createTraduttore();
 		
@@ -305,7 +301,7 @@ public class SPCoopImbustamento {
 
 			OpenSPCoop2SoapMessage soapMsg = null;
 			if(msg==null){
-				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
+				OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				soapMsg = mf.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap();
 			}
 			else{
@@ -888,7 +884,7 @@ public class SPCoopImbustamento {
 		try{
 
 			// Descrizione
-			SOAPElement descrizione = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+			SOAPElement descrizione = msg.getFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
 					getSOAPBody().addChildElement(new QName(SPCoopCostanti.NAMESPACE_EGOV, "Descrizione",SPCoopCostanti.PREFIX_EGOV));
 			
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap(); 
@@ -961,7 +957,7 @@ public class SPCoopImbustamento {
 			// Body into Attachments
 			if(proprietaManifestAttachments.isScartaBody() == false){
 				Utilities.printFreeMemory("Imbustamento - Scarta Body");
-				byte [] body = TunnelSoapUtils.sbustamentoSOAPEnvelope(soapMsg.getSOAPPart().getEnvelope());
+				byte [] body = TunnelSoapUtils.sbustamentoSOAPEnvelope(soapMsg.getFactory(), soapMsg.getSOAPPart().getEnvelope());
 				AttachmentPart ap = null;
 				//ByteArrayInputStream isContent = new ByteArrayInputStream(body);
 				//ap.setContent(isContent,"text/xml; charset=UTF-8");
@@ -976,7 +972,7 @@ public class SPCoopImbustamento {
 					//System.out.println("PATCH ["+new String(body)+"]");
 				}
 				else{
-					List<Node> listNode = SoapUtils.getNotEmptyChildNodes(soapMsg.getSOAPPart().getEnvelope().getBody(), false);
+					List<Node> listNode = SoapUtils.getNotEmptyChildNodes(soapMsg.getFactory(), soapMsg.getSOAPPart().getEnvelope().getBody(), false);
 					if(listNode!=null && listNode.size()>1){
 						//System.out.println("MULTI ELEMENT: "+listNode.size());
 						bodyWithMultiRootElement = true;
@@ -1161,7 +1157,7 @@ public class SPCoopImbustamento {
 			
 			// Creo nuovo header egov
 			eGovHeaderNEW = 
-				OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
+					message.getFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().
 					getSOAPHeader().addHeaderElement(
 						new QName(eGovHeaderOLD.getNamespaceURI(),eGovHeaderOLD.getLocalName(),eGovHeaderOLD.getPrefix()));
 			

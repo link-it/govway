@@ -204,7 +204,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		AbstractValidatoreXSD validatoreBodyApplicativo = null;
 		try{
 			
-			AccordoServizioUtils accordoServizioUtils = new AccordoServizioUtils(this.logger);
+			AccordoServizioUtils accordoServizioUtils = new AccordoServizioUtils(this.message.getFactory(), this.logger);
 			boolean fromBytes = this.accordoServizioWrapper.isRegistroServiziDB();
 			javax.xml.validation.Schema schema = accordoServizioUtils.buildSchema(this.accordoServizioWrapper.getAccordoServizio(), fromBytes);
 			
@@ -286,7 +286,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			OpenSPCoop2Properties op2PropertieS = OpenSPCoop2Properties.getInstance();
 			apiValidator = ApiFactory.newApiValidator(format);
 			validatorConfig = new ApiValidatorConfig();
-			validatorConfig.setXmlUtils(XMLUtils.getInstance());
+			validatorConfig.setXmlUtils(XMLUtils.getInstance(this.message.getFactory()));
 			validatorConfig.setVerbose(op2PropertieS.isValidazioneContenutiApplicativi_debug());
 			validatorConfig.setPolicyAdditionalProperties(op2PropertieS.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
 			apiValidator.init(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);

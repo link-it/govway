@@ -28,6 +28,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -123,8 +124,10 @@ public class ServizioApplicativoContentBasedBehaviour implements IBehaviour {
 				
 				Element element = null;
 				String elementJson = null;
+				OpenSPCoop2MessageFactory messageFactory = null;
 				try{
 					OpenSPCoop2Message message = gestoreMessaggioRichiesta.getMessage();
+					messageFactory = message.getFactory();
 					if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
 						OpenSPCoop2SoapMessage soapMessage = message.castAsSoap();
 						element = soapMessage.getSOAPPart().getEnvelope();
@@ -154,7 +157,7 @@ public class ServizioApplicativoContentBasedBehaviour implements IBehaviour {
 						throw new Exception("Contenuto non disponibile su cui effettuare un match");
 					}
 					if(element!=null) {
-						XPathExpressionEngine xPathEngine = new XPathExpressionEngine();
+						XPathExpressionEngine xPathEngine = new XPathExpressionEngine(messageFactory);
 						saNome = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, patternUsed, OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
 					}
 					else {

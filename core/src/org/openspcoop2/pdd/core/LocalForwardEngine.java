@@ -39,6 +39,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
@@ -82,6 +83,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Node;
 
@@ -392,11 +394,15 @@ public class LocalForwardEngine {
 			
 			/* *** ReadSecurityInformation *** */
 			if(erroreIntegrazione==null && codiceErroreCooperazione==null){
-				if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+				IDigestReader digestReader = null;
+				if(messageSecurityContext != null) {
+					digestReader = messageSecurityContext.getDigestReader(requestMessage!=null ? requestMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+				}
+				if(digestReader!=null){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PD) ...");
 						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
-						this.securityInfoRequest = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
+						this.securityInfoRequest = validazioneSemantica.readSecurityInformation(digestReader,requestMessage);
 					}catch(Exception e){
 						posizione = "LetturaInformazioniSicurezzaPDRequest";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -524,9 +530,10 @@ public class LocalForwardEngine {
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
-							byte[] bytes = XMLUtils.getInstance().toByteArray(n);
+							XMLUtils xmlUtils = XMLUtils.getInstance(requestMessage.getFactory());
+							byte[] bytes = xmlUtils.toByteArray(n);
 //							System.out.println("BABA:"+new String(bytes));
-							soapMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
+							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));
 //							System.out.println("BBBBB");
 //							requestMessage.writeTo(System.out, false);
 						}
@@ -557,16 +564,22 @@ public class LocalForwardEngine {
 			}
 			
 			/* *** ReadSecurityInformation *** */
-			if(erroreIntegrazione==null && messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
-				try{
-					this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA) ...");
-					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
-					this.securityInfoRequest = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessage);
-				}catch(Exception e){
-					posizione = "LetturaInformazioniSicurezzaPARequest";
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
-					configException = e;
+			if(erroreIntegrazione==null && messageSecurityContext!=null){
+				IDigestReader digestReader = null;
+				if(messageSecurityContext != null) {
+					digestReader = messageSecurityContext.getDigestReader(requestMessage!=null ? requestMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+				}
+				if(digestReader!=null) {
+					try{
+						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA) ...");
+						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
+						this.securityInfoRequest = validazioneSemantica.readSecurityInformation(digestReader,requestMessage);
+					}catch(Exception e){
+						posizione = "LetturaInformazioniSicurezzaPARequest";
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
+						configException = e;
+					}
 				}
 			}
 			
@@ -705,7 +718,7 @@ public class LocalForwardEngine {
 				}
 				if(responseToMessage==null){
 					if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay()){
-						responseToMessage =  MessageUtilities.buildEmptyMessage(this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE);
+						responseToMessage =  MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE);
 					}
 					else{
 						responseToMessage = this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getIntegrationRequestMessageType(), this.localForwardParameter.getIdRequest());
@@ -722,7 +735,7 @@ public class LocalForwardEngine {
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");	
 				
 				if(this.localForwardParameter.getProtocolFactory().createProtocolManager().isHttpEmptyResponseOneWay())
-					msgOK = this.ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),this.richiestaDelegata,this.pd,this.sa);
+					msgOK = this.ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),this.richiestaDelegata,this.pd,this.sa);
 				else
 					msgOK = this.ejbUtils.sendRispostaApplicativaOK(this.ejbUtils.buildOpenSPCoopOK(this.requestInfo.getIntegrationRequestMessageType(), this.localForwardParameter.getIdRequest()),
 							this.richiestaDelegata,this.pd,this.sa);
@@ -849,16 +862,22 @@ public class LocalForwardEngine {
 			}
 			
 			/* *** ReadSecurityInformation *** */
-			if(erroreIntegrazione==null && messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
-				try{
-					this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA-Response) ...");
-					IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
-					this.securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
-				}catch(Exception e){
-					posizione = "LetturaInformazioniSicurezzaPAResponse";
-					erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
-						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
-					configException = e;
+			if(erroreIntegrazione==null && messageSecurityContext!=null){
+				IDigestReader digestReader = null;
+				if(messageSecurityContext != null) {
+					digestReader = messageSecurityContext.getDigestReader(responseMessage!=null ? responseMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+				}
+				if(digestReader!=null) {
+					try{
+						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PA-Response) ...");
+						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
+						this.securityInfoResponse = validazioneSemantica.readSecurityInformation(digestReader,responseMessage);
+					}catch(Exception e){
+						posizione = "LetturaInformazioniSicurezzaPAResponse";
+						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_549_SECURITY_INFO_READER_ERROR);
+						configException = e;
+					}
 				}
 			}
 			
@@ -1017,9 +1036,10 @@ public class LocalForwardEngine {
 //							requestMessage.writeTo(System.out, false);
 							DOMSource s = (DOMSource) soapMessage.getSOAPPart().getContent();
 							Node n = s.getNode();
-							byte[] bytes = XMLUtils.getInstance().toByteArray(n);
+							XMLUtils xmlUtils = XMLUtils.getInstance(responseMessage.getFactory());
+							byte[] bytes = xmlUtils.toByteArray(n);
 //							System.out.println("BABA:"+new String(bytes));
-							soapMessage.getSOAPPart().setContent(new DOMSource(XMLUtils.getInstance().newElement(bytes)));
+							soapMessage.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(bytes)));
 //							System.out.println("BBBBB");
 //							requestMessage.writeTo(System.out, false);
 						}
@@ -1073,11 +1093,15 @@ public class LocalForwardEngine {
 			
 			/* *** ReadSecurityInformation *** */
 			if(erroreIntegrazione==null && codiceErroreCooperazione==null){
-				if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+				IDigestReader digestReader = null;
+				if(messageSecurityContext != null) {
+					digestReader = messageSecurityContext.getDigestReader(responseMessage!=null ? responseMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+				}
+				if(digestReader!=null){
 					try{
 						this.localForwardParameter.getMsgDiag().mediumDebug("ReadSecurityInformation (PD-Response) ...");
 						IValidazioneSemantica validazioneSemantica = this.localForwardParameter.getProtocolFactory().createValidazioneSemantica(state);
-						this.securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
+						this.securityInfoResponse = validazioneSemantica.readSecurityInformation(digestReader,responseMessage);
 					}catch(Exception e){
 						posizione = "LetturaInformazioniSicurezzaPDResponse";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

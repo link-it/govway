@@ -101,8 +101,6 @@ import org.slf4j.Logger;
  */
 public class RicezioneContenutiApplicativiIntegrationManagerService {
 
-	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-	
 	public IntegrationManagerMessage process(String tipoOperazione, String portaDelegata, IntegrationManagerMessage msg,
 			String idInvocazionePerRiferimento,
 			Logger logCore, javax.servlet.http.HttpServletRequest req, HttpServletResponse res,
@@ -533,6 +531,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 					ByteArrayInputStream bin = new ByteArrayInputStream(msg.getMessage());
 					
 					OpenSPCoop2MessageParseResult pr = null;
+					OpenSPCoop2MessageFactory factory = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(logCore,requestInfo, MessageRole.REQUEST);
 					if(msg.getImbustamento()){
 						pr = factory.envelopingMessage(messageType, MessageRole.REQUEST, contentType, soapAction, bin, 
 								notifierInputStreamParams, openSPCoopProperties.getAttachmentsProcessingMode(), 
@@ -755,7 +754,7 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 						OpenSPCoop2SoapMessage soapMessage = msgResponse.castAsSoap();
 						if(soapMessage.getSOAPBody().hasFault()){
 	
-							descrizioneSoapFault = " ("+SoapUtils.toString(soapMessage.getSOAPBody().getFault(), false)+")";
+							descrizioneSoapFault = " ("+SoapUtils.toString(soapMessage.getFactory(), soapMessage.getSOAPBody().getFault(), false)+")";
 							
 							// Potenziale MsgErroreApplicativo
 							SOAPFault fault = soapMessage.getSOAPBody().getFault();

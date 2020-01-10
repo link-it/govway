@@ -88,6 +88,7 @@ import org.openspcoop2.core.registry.driver.IDriverRegistroServiziCRUD;
 import org.openspcoop2.core.registry.driver.IDriverRegistroServiziGet;
 import org.openspcoop2.core.registry.driver.ProtocolPropertiesUtilities;
 import org.openspcoop2.core.registry.driver.web.XMLLib;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
@@ -191,7 +192,7 @@ public class DriverRegistroServiziUDDI extends BeanUtilities
 
 			/* --- Costruzione Validatore XSD -- */
 			try{
-				this.validatoreRegistro = new ValidatoreXSD(this.log,DriverRegistroServiziUDDI.class.getResourceAsStream("/registroServizi.xsd"));
+				this.validatoreRegistro = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.log,DriverRegistroServiziUDDI.class.getResourceAsStream("/registroServizi.xsd"));
 			}catch (Exception e) {
 				throw new Exception("Riscontrato errore durante l'inizializzazione dello schema del Registro dei Servizi di OpenSPCoop: "+e.getMessage(),e);
 			}

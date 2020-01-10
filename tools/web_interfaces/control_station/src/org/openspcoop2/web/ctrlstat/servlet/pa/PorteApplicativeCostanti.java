@@ -470,7 +470,8 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_NOME_SOGGETTO = "nomeprov";
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
-	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
+	public final static String PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
 	public final static String PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODE = CostantiControlStation.PARAMETRO_MODE_CORRELAZIONE_APPLICATIVA;
@@ -518,6 +519,8 @@ public class PorteApplicativeCostanti {
 	public final static String PARAMETRO_PORTE_APPLICATIVE_ABILITA = CostantiControlStation.PARAMETRO_ABILITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE = ConnettoriCostanti.PARAMETRO_CONNETTORE_MODALITA;
 	public final static String PARAMETRO_PORTE_APPLICATIVE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
+	
+	public final static String PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = "gestMessageEngine";
 	
 	public final static String ATTRIBUTO_PORTE_APPLICATIVE_PARENT = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT;
 	public final static int ATTRIBUTO_PORTE_APPLICATIVE_PARENT_NONE = CostantiControlStation.ATTRIBUTO_CONFIGURAZIONE_PARENT_NONE;
@@ -734,6 +737,9 @@ public class PorteApplicativeCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODALITA_CONNETTORE_DEFAULT = ConnettoriCostanti.LABEL_PARAMETRO_MODALITA_CONNETTORE_DEFAULT;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
+	
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_ENGINE = "Message Engine";
+	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE = CostantiControlStation.LABEL_GESTIONE_MESSAGE_ENGINE;
 	
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED = "header-based";

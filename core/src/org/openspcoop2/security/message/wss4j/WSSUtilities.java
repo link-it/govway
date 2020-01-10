@@ -237,7 +237,7 @@ public class WSSUtilities {
 					if(testXml){
 						try{
 							if(n==null){
-								n = XMLUtils.getInstance().newElement(bufferArray);
+								n = XMLUtils.getInstance(message.getFactory()).newElement(bufferArray);
 							}
 						}catch(Exception e){
 							// no xml

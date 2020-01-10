@@ -52,6 +52,7 @@ import org.openspcoop2.core.tracciamento.Trasmissione;
 import org.openspcoop2.core.tracciamento.Trasmissioni;
 import org.openspcoop2.core.tracciamento.constants.CostantiTracciamento;
 import org.openspcoop2.core.tracciamento.utils.serializer.JsonJacksonDeserializer;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.w3c.dom.Document;
@@ -74,7 +75,7 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/openspcoopTracciamento.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopTracciamento.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -518,7 +519,7 @@ public class XMLUtils  {
 	
 	public static boolean isTraccia(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isTraccia_engine(elemXML);

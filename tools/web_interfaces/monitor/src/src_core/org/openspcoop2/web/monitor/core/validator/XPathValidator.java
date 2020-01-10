@@ -30,6 +30,7 @@ import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.utils.xml.XPathNotValidException;
 
@@ -50,7 +51,7 @@ public class XPathValidator implements Validator {
 			throws ValidatorException {
 
 		try{
-			XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+			XPathExpressionEngine xpathEngine = new XPathExpressionEngine(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 			String xpath = (String)value;
 			xpathEngine.validate(xpath);
 		}catch(XPathNotValidException e){

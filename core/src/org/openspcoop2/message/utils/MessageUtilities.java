@@ -87,11 +87,10 @@ public class MessageUtilities {
 	}
 	
 	
-	public static OpenSPCoop2Message buildEmptyMessage(MessageType messageType,MessageRole messageRole) {
+	public static OpenSPCoop2Message buildEmptyMessage(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,MessageRole messageRole) {
 
 		try{
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			OpenSPCoop2Message msg = mf.createEmptyMessage(messageType,messageRole);
+			OpenSPCoop2Message msg = messageFactory.createEmptyMessage(messageType,messageRole);
 			return msg;
 		} catch(Exception e) {
 			return null;

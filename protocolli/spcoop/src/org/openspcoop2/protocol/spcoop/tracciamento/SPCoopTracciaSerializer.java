@@ -65,7 +65,7 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 			throws ProtocolException {
 		try{
 			
-			SOAPFactory sf = SoapUtils.getSoapFactory(MessageType.SOAP_11);
+			SOAPFactory sf = SoapUtils.getSoapFactory(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), MessageType.SOAP_11);
 			SOAPElement traccia = sf.createElement("traccia","eGov_IT_Trac","http://www.cnipa.it/schemas/2003/eGovIT/Tracciamento1_0/");
 			
 			SOAPElement GDO =  traccia.addChildElement("GDO","eGov_IT_Trac","http://www.cnipa.it/schemas/2003/eGovIT/Tracciamento1_0/");
@@ -93,10 +93,10 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 				hdrEGov = ((SPCoopBustaRawContent) bustaInDom).getElement();
 			}else if(bustaAsString != null) {
 				// Tracciamento dai byte di una Busta
-				hdrEGov = OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_11,bustaAsString.getBytes());
+				hdrEGov = OpenSPCoop2MessageFactory.createSOAPElement(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),MessageType.SOAP_11,bustaAsString.getBytes());
 			}else if(bustaInByte != null) {
 				// Tracciamento dai byte di una Busta
-				hdrEGov = OpenSPCoop2MessageFactory.createSOAPElement(MessageType.SOAP_11,bustaInByte);
+				hdrEGov = OpenSPCoop2MessageFactory.createSOAPElement(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),MessageType.SOAP_11,bustaInByte);
 			}else if(busta!=null){
 				// Tracciamento dall'oggetto Busta
 				hdrEGov = this.imbustamento.build_eGovHeader(null, busta, false, true); 
@@ -128,7 +128,7 @@ public class SPCoopTracciaSerializer extends TracciaSerializer implements ITracc
 				case DEFAULT:
 					
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					bout.write(org.openspcoop2.message.xml.XMLUtils.getInstance().toByteArray(this.toElement(traccia)));
+					bout.write(org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(this.toElement(traccia)));
 					bout.flush();
 					bout.close();
 					return bout;

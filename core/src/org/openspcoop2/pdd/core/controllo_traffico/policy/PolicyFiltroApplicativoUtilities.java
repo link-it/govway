@@ -76,7 +76,7 @@ public class PolicyFiltroApplicativoUtilities {
 				}
 			}
 			if(element!=null) {
-				xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+				xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(context.getMessaggio().getFactory());
 				return AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, nome,  log);
 			}
 			else {

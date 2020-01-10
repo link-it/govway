@@ -27,6 +27,7 @@ package org.openspcoop2.protocol.spcoop.testsuite.core;
 import java.io.File;
 
 import org.apache.axis.AxisFault;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -75,10 +76,10 @@ public class Utilities {
 	
 	public static String readApplicationServerVersion() throws Exception{
 		byte[] local_env = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new File("local_env.xml"));
-		AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
-		XPathExpressionEngine engine = new XPathExpressionEngine();
+		AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT;
+		XPathExpressionEngine engine = new XPathExpressionEngine(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 		Document local_env_document = xmlUtils.newDocument(local_env);
-		String version_jbossas = engine.getStringMatchPattern(local_env_document, DynamicNamespaceContextFactory.getInstance().getNamespaceContext(local_env_document), "//property[@name='as']/@value");
+		String version_jbossas = engine.getStringMatchPattern(local_env_document, DynamicNamespaceContextFactory.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory()).getNamespaceContext(local_env_document), "//property[@name='as']/@value");
 		return version_jbossas;
 	}
 	
@@ -203,7 +204,7 @@ public class Utilities {
 		try{
 
 			Assert.assertTrue(erroreApplicativo!=null);
-			xml = XMLUtils.getInstance().toString(erroreApplicativo);
+			xml = XMLUtils.DEFAULT.toString(erroreApplicativo);
 			Reporter.log("Errore Applicativo CNIPA ("+erroreApplicativo.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue("http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/".equals(erroreApplicativo.getNamespaceURI()));
 			
@@ -212,7 +213,7 @@ public class Utilities {
 			xsdResourceResolver.addResource("Busta.xsd", Utilities.class.getResourceAsStream("/Busta.xsd"));
 			xsdResourceResolver.addResource("soapEnvelope.xsd", Utilities.class.getResourceAsStream("/soapEnvelope.xsd"));
 			xsdResourceResolver.addResource("wssecurityUtility.xsd", Utilities.class.getResourceAsStream("/wssecurityUtility.xsd"));
-			ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(Utilities.class),
+			ValidatoreXSD validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),LoggerWrapperFactory.getLogger(Utilities.class),
 					xsdResourceResolver,Utilities.class.getResourceAsStream("/EccezioneCNIPA.xsd"));
 			validatoreXSD.valida(erroreApplicativo);
 			
@@ -432,7 +433,7 @@ public class Utilities {
 		try{
 
 			Assert.assertTrue(erroreIntegrationManagerException!=null);
-			xml = XMLUtils.getInstance().toString(erroreIntegrationManagerException);
+			xml = XMLUtils.DEFAULT.toString(erroreIntegrationManagerException);
 			Reporter.log("Errore IntegrationManagerException ("+erroreIntegrationManagerException.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue("http://services.pdd.openspcoop2.org".equals(erroreIntegrationManagerException.getNamespaceURI()));
 			

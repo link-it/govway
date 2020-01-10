@@ -28,6 +28,7 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPMessage;
 
 import org.openspcoop2.message.AbstractBaseOpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
@@ -50,6 +51,11 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 
 	/* SOAPAction */
 	public String soapAction;
+
+	
+	public AbstractBaseOpenSPCoop2SoapMessage(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
+	}
 	
 	
 	/* Copy Resources to another instance */

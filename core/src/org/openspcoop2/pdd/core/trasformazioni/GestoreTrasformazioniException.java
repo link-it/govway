@@ -78,7 +78,7 @@ public class GestoreTrasformazioniException extends Exception  {
 		if(this.errorMessage==null) {
 			return null;
 		}
-		OpenSPCoop2Message op2ErrorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
+		OpenSPCoop2Message op2ErrorMessage = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
 		op2ErrorMessage.forceResponse(this.errorMessage);
 		return op2ErrorMessage;
 	}

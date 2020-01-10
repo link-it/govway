@@ -67,21 +67,23 @@ public class Client {
 				
 	}
 	
-	public Client(MessageType messageType, String messageFactory, boolean addAttachInMsgOriginale) throws Exception {
+	public Client(MessageType messageType, String messageFactoryClass, boolean addAttachInMsgOriginale) throws Exception {
 		
-		if(messageFactory!=null){
-			OpenSPCoop2MessageFactory.setMessageFactoryImpl(messageFactory);
+		if(messageFactoryClass!=null){
+			OpenSPCoop2MessageFactory.setMessageFactoryImpl(messageFactoryClass);
 		}
 		
+		OpenSPCoop2MessageFactory.initDefaultMessageFactory();
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
-		Document d = XMLUtils.getInstance().newDocument("<prova xmlns=\"www.openspcoop.org\"><esempio>Esempio di Utilizzo</esempio></prova>".getBytes());
+		Document d = XMLUtils.getInstance(messageFactory).newDocument("<prova xmlns=\"www.openspcoop.org\"><esempio>Esempio di Utilizzo</esempio></prova>".getBytes());
 		Element contenuto1 = d.createElementNS("www.openspcoop.org", "contenuto1");
 		contenuto1.setTextContent(Base64Utilities.encodeAsString("<esempioXml xmlns=\"www.openspcoop.org/example1\">PROVA</esempioXml>".getBytes()));
 		d.getFirstChild().appendChild(contenuto1);
 		Element contenuto2 = d.createElementNS("www.openspcoop.org", "contenuto2");
 		contenuto2.setTextContent(Base64Utilities.encodeAsString("<esempioXml2 xmlns=\"www.openspcoop.org/example2\"><nodoInterno>PROVA</nodoInterno></esempioXml2>".getBytes()));
 		d.getLastChild().appendChild(contenuto2);
-		byte[]xmlOriginale = XMLUtils.getInstance().toByteArray(d,true);
+		byte[]xmlOriginale = XMLUtils.getInstance(messageFactory).toByteArray(d,true);
 		
 		
 		String soap11Prefix = "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\">\n\t<soapenv:Body>\n";
@@ -92,7 +94,6 @@ public class Client {
 		
 		
 		// SOAP
-		OpenSPCoop2MessageFactory.initMessageFactory();
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		if(MessageType.SOAP_11.equals(messageType)){
 			bout.write(soap11Prefix.getBytes());
@@ -104,7 +105,7 @@ public class Client {
 			bout.write(xmlOriginale);
 			bout.write(soap12Suffix.getBytes());
 		}
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
+		OpenSPCoop2MessageParseResult pr = messageFactory.
 				createMessage(messageType, MessageRole.REQUEST, MessageUtilities.getDefaultContentType(messageType), bout.toByteArray());
 		OpenSPCoop2Message omsg  = pr.getMessage_throwParseException();
 		OpenSPCoop2SoapMessage msg = omsg.castAsSoap();

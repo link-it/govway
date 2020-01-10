@@ -43,6 +43,7 @@ import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.JaxbUtils;
@@ -232,7 +233,7 @@ public class XMLUtils  {
 	
 	private static byte[] unescapeXMLForClientSICA(byte [] xml) throws Exception{
 		
-		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
+		AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
 		Document docXML = xmlUtils.newDocument(xml);
 		Element elemXML = docXML.getDocumentElement();
 		String prefixRootElement = elemXML.getPrefix();
@@ -346,7 +347,7 @@ public class XMLUtils  {
 	
 	public static boolean isProfiloCollaborazioneEGOV(byte [] doc){
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			//System.out.println("LOCAL["+Costanti.ROOT_LOCAL_NAME+"]vs["+elemXML.getLocalName()+"]  NAMESPACE["+Costanti.TARGET_NAMESPACE+"]vs["+elemXML.getNamespaceURI()+"]");
@@ -399,7 +400,7 @@ public class XMLUtils  {
 		// Lettura specifica come document
 		Hashtable<String, String> mapPrefixNamespaces = new Hashtable<String, String>();
 		try{
-			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();		
+			AbstractXMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;		
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			NamedNodeMap map = elemXML.getAttributes();
@@ -591,9 +592,10 @@ public class XMLUtils  {
 			try{
 				byte[] wsdlConcettuale = as.getByteWsdlConcettuale();
 				if(wsdlConcettuale!=null){
-					RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(null);
+					OpenSPCoop2MessageFactory defaultFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+					RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, null);
 					wsdlConcettuale = wsdlUtility.eliminaImportASParteComune(wsdlConcettuale);
-					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.xml.XMLUtils.getInstance());
+					DefinitionWrapper wsdl = new DefinitionWrapper(wsdlConcettuale,org.openspcoop2.message.xml.XMLUtils.DEFAULT);
 					String targetNamespace = wsdl.getTargetNamespace();
 					String prefix = null;
 					if(targetNamespace!=null){

@@ -67,7 +67,7 @@ public class ErroreApplicativoBuilder  {
 
 	/** Logger utilizzato per debug. */
 	protected Logger log = null;
-	protected OpenSPCoop2MessageFactory fac = OpenSPCoop2MessageFactory.getMessageFactory();
+	protected OpenSPCoop2MessageFactory errorFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 	private IProtocolFactory<?> protocolFactory;
 	private IProtocolManager protocolManager;
 	private IErroreApplicativoBuilder erroreApplicativoBuilder;
@@ -127,7 +127,7 @@ public class ErroreApplicativoBuilder  {
 			this.log = LoggerWrapperFactory.getLogger(ErroreApplicativoBuilder.class);
 		this.protocolFactory = protocolFactory;
 		
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(this.errorFactory);
 		
 		this.protocolManager = this.protocolFactory.createProtocolManager();
 		this.erroreApplicativoBuilder = this.protocolFactory.createErroreApplicativoBuilder();
@@ -302,7 +302,7 @@ public class ErroreApplicativoBuilder  {
 			return msg;
 		}catch(Exception e){
 			this.log.error("Errore durante la costruzione del messaggio di eccezione integrazione",e);
-			return this.fac.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
+			return this.errorFactory.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
 		}
 	}
 
@@ -317,7 +317,7 @@ public class ErroreApplicativoBuilder  {
 			return this.erroreApplicativoBuilder.toMessage(parameters);
 		} catch (Exception e) {
 			this.log.error("Errore durante la costruzione del messaggio di eccezione busta",e);
-			return this.fac.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
+			return this.errorFactory.createFaultMessage(this.messageType, this.useProblemRFC7807, "ErroreDiProcessamento");
 		}
 	}
 

@@ -180,7 +180,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				if(this.headerSOAP==null){
 					this.headerSOAP = this.msg.getSOAPHeader();
 				}
-				this.headerEGov = this.getHeaderEGov(this.headerSOAP);
+				this.headerEGov = this.getHeaderEGov(this.msg.getFactory(), this.headerSOAP);
 				return this.headerEGov;
 			}
 		}catch(Exception e){
@@ -273,6 +273,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 */
 	public boolean valida(boolean localizzaSolamenteDatiIdentificativiMinimi){
 
+		OpenSPCoop2MessageFactory messageFactory = null;
 		try{
 
 			/** ------ CONTROLLO PRESENZA BUSTA SPCOOP ----- */
@@ -284,16 +285,19 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				this.msgErrore =  "Analizzato un messaggio senza header";
 				this.codiceErrore = CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO;
 				return false;
-			}	
+			}
+			
+			messageFactory = this.msg.getFactory();
+			
 			// Estraggo busta SPCoop
 			if(this.headerEGov==null)
-				this.headerEGov = getHeaderEGov(this.headerSOAP);
+				this.headerEGov = getHeaderEGov(messageFactory, this.headerSOAP);
 			if(this.headerEGov==null){
 				this.msgErrore =  "Analizzato un messaggio senza busta SPCoop";
 				this.codiceErrore = CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO;
 				return false;
 			}	    
-
+			
 		} catch(StrutturaBustaException e) {
 			this.log.error("Struttura della busta non corretta: "+e.getMessage(),e);
 			this.msgErrore =  e.getMessage();
@@ -346,7 +350,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MUST_UNDERSTAND.toString());
 				this.erroriValidazione.add(ecc);
 			}
-			List<Node> list = SoapUtils.getNotEmptyChildNodes(this.headerEGov.getElement());
+			List<Node> list = SoapUtils.getNotEmptyChildNodes(messageFactory, this.headerEGov.getElement());
 
 			//	Controllo value prefix
 			if(SPCoopCostanti.NAMESPACE_EGOV.equals(this.headerEGov.getElement().getNamespaceURI())==false){
@@ -360,7 +364,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 			// intestazione messaggio
 			Node intestazioneMsg = list.get(0);
-			List<Node> headerMsg = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
+			List<Node> headerMsg = SoapUtils.getNotEmptyChildNodes(messageFactory, intestazioneMsg);
 			boolean mittenteGiaTrovato = false;
 			boolean destinatarioGiaTrovato = false;
 			boolean profiloCollaborazioneGiaTrovato = false;
@@ -373,9 +377,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			for(int i =0; i<headerMsg.size();i++){
 				Node child = headerMsg.get(i);
 				//if((child.getNodeName().equals(xmlns+"Mittente"))){
-				if(SoapUtils.matchLocalName(child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				if(SoapUtils.matchLocalName(messageFactory, child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(mittenteGiaTrovato==false){
-						validazioneMittente(child,xmlns);
+						validazioneMittente(messageFactory, child,xmlns);
 						mittenteGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -394,9 +398,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Destinatario"))){
-				else if(SoapUtils.matchLocalName(child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(destinatarioGiaTrovato==false){
-						validazioneDestinatario(child,xmlns);
+						validazioneDestinatario(messageFactory, child,xmlns);
 						destinatarioGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -415,11 +419,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloCollaborazione"))){
-				else if(SoapUtils.matchLocalName(child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					// Serve per poter riconoscere il caso del profilo asincrono in modo da non localizzare una porta applicativa
 					//if(localizzaSolamenteDatiIdentificativiMinimi==false){
 					if(profiloCollaborazioneGiaTrovato==false){
-						validazioneProfiloCollaborazione(child,xmlns);
+						validazioneProfiloCollaborazione(messageFactory, child,xmlns);
 						profiloCollaborazioneGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -438,10 +442,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Collaborazione"))){
-				else if(SoapUtils.matchLocalName(child, "Collaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Collaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(localizzaSolamenteDatiIdentificativiMinimi==false){
 						if(collaborazioneGiaTrovato==false){
-							validazioneCollaborazione(child);
+							validazioneCollaborazione(messageFactory, child);
 							collaborazioneGiaTrovato = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -461,9 +465,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Servizio"))){
-				else if(SoapUtils.matchLocalName(child, "Servizio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Servizio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(servizioGiaTrovato==false){
-						validazioneServizio(child,xmlns);
+						validazioneServizio(messageFactory, child,xmlns);
 						servizioGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -482,9 +486,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Azione"))){
-				else if(SoapUtils.matchLocalName(child, "Azione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Azione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(azioneGiaTrovato==false){
-						validazioneAzione(child);
+						validazioneAzione(messageFactory, child);
 						azioneGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -503,11 +507,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Messaggio"))){
-				else if(SoapUtils.matchLocalName(child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					// Serve per poter riconoscere il caso del profilo asincrono in modo da non localizzare una porta applicativa
 					//if(localizzaSolamenteDatiIdentificativiMinimi==false){
 					if(messaggioGiaTrovato==false){
-						validazioneMessaggio(child,xmlns);
+						validazioneMessaggio(messageFactory, child,xmlns);
 						messaggioGiaTrovato = true;
 					}else{
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -527,10 +531,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					//}
 				}
 				//else if((child.getNodeName().equals(xmlns+"ProfiloTrasmissione"))){
-				else if(SoapUtils.matchLocalName(child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(localizzaSolamenteDatiIdentificativiMinimi==false){
 						if(profiloTrasmissioneGiaTrovato==false){
-							validazioneProfiloTrasmissione(child,xmlns);
+							validazioneProfiloTrasmissione(messageFactory, child,xmlns);
 							profiloTrasmissioneGiaTrovato = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -550,10 +554,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 				}
 				//else if((child.getNodeName().equals(xmlns+"Sequenza"))){
-				else if(SoapUtils.matchLocalName(child, "Sequenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+				else if(SoapUtils.matchLocalName(messageFactory, child, "Sequenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(localizzaSolamenteDatiIdentificativiMinimi==false){
 						if(sequenzaGiaTrovato==false){
-							validazioneSequenza(child,xmlns);
+							validazioneSequenza(messageFactory, child,xmlns);
 							sequenzaGiaTrovato = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -641,7 +645,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				boolean listaEccezioniGiaPresente = false;
 				for(int i =1; i<list.size();i++){
 					Node child = list.get(i);
-					if(SoapUtils.matchLocalName(child, "IntestazioneMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+					if(SoapUtils.matchLocalName(messageFactory, child, "IntestazioneMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
 							throw new StrutturaBustaException("Header egov con più di un elemento IntestazioneMessaggio","IntestazioneMessaggio");
 						}else{
@@ -657,9 +661,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}
 					//else if((child.getNodeName().equals(xmlns+"ListaRiscontri"))){
-					else if(SoapUtils.matchLocalName(child, "ListaRiscontri", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+					else if(SoapUtils.matchLocalName(messageFactory, child, "ListaRiscontri", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 						if(listaRiscontriGiaPresente==false){
-							validazioneListaRiscontri(child,xmlns);
+							validazioneListaRiscontri(messageFactory, child,xmlns);
 							listaRiscontriGiaPresente = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -678,9 +682,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}
 					//else if((child.getNodeName().equals(xmlns+"ListaTrasmissioni"))){
-					else if(SoapUtils.matchLocalName(child, "ListaTrasmissioni", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+					else if(SoapUtils.matchLocalName(messageFactory, child, "ListaTrasmissioni", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 						if(listaTrasmissioniGiaPresente==false){
-							validazioneListaTrasmissioni(child,xmlns);
+							validazioneListaTrasmissioni(messageFactory, child,xmlns);
 							listaTrasmissioniGiaPresente = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -699,9 +703,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}
 					//else if((child.getNodeName().equals(xmlns+"ListaEccezioni"))){
-					else if(SoapUtils.matchLocalName(child, "ListaEccezioni", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+					else if(SoapUtils.matchLocalName(messageFactory, child, "ListaEccezioni", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 						if(listaEccezioniGiaPresente==false){
-							validazioneListaEccezioni(child,xmlns);
+							validazioneListaEccezioni(messageFactory, child,xmlns);
 							listaEccezioniGiaPresente = true;
 						}else{
 							if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -825,13 +829,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @return null se la verifica ha successo, altrimenti l'header eGov presente (non estratto).
 	 * 
 	 */
-	public SPCoopBustaRawContent getHeaderEGov(SOAPHeader header) throws ProtocolException,StrutturaBustaException{
+	public SPCoopBustaRawContent getHeaderEGov(OpenSPCoop2MessageFactory messageFactory, SOAPHeader header) throws ProtocolException,StrutturaBustaException{
 		try{	
 
 			if(header == null)
 				return null;
-
-			
 			
 			// cerco la busta per l'actor
 			java.util.Iterator<?> it = header.examineAllHeaderElements();
@@ -879,7 +881,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// header egov non trovato
 				String msgHeader = "";
 				try{
-					msgHeader = " header-soap: "+OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(header, false);
+					msgHeader = " header-soap: "+messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(header, false);
 				}catch(Exception e){}
 				throw new Exception("Header eGov non presente ("+bf.toString()+")"+msgHeader);
 			}
@@ -912,7 +914,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			
 			// Controllo presenza elementi obbligatori che contraddistingono un header eGov: Intestazione
 			//if(headerElementEGov.getNodeName().equals(xmlns+"Intestazione") == false){
-			if(SoapUtils.matchLocalName(headerElementEGov, "Intestazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV) == false ){
+			if(SoapUtils.matchLocalName(messageFactory, headerElementEGov, "Intestazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV) == false ){
 				this.bustaErroreHeaderIntestazione = errore;
 				this.bustaErroreHeaderIntestazione.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.FORMATO_NON_CORRETTO, 
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_NON_CORRETTO_POSIZIONE.toString(),this.protocolFactory));
@@ -920,7 +922,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			}
 
 			// Controllo elementi che contraddistingono un header eGov : Intestazione Messaggio
-			List<Node> list = SoapUtils.getNotEmptyChildNodes(headerElementEGov);
+			List<Node> list = SoapUtils.getNotEmptyChildNodes(messageFactory, headerElementEGov);
 			if(list==null || list.size() == 0){ 
 				this.bustaErroreHeaderIntestazione = errore;
 				this.bustaErroreHeaderIntestazione.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
@@ -929,14 +931,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			} 
 			Node intestazioneMsg = list.get(0);
 			//if( (intestazioneMsg==null) ||  (!(intestazioneMsg.getNodeName().equals(xmlns+"IntestazioneMessaggio")))  ) {
-			if( (intestazioneMsg==null) ||   (!SoapUtils.matchLocalName(intestazioneMsg, "IntestazioneMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)) ) {
+			if( (intestazioneMsg==null) ||   (!SoapUtils.matchLocalName(messageFactory, intestazioneMsg, "IntestazioneMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)) ) {
 				this.bustaErroreHeaderIntestazione = errore;
 				this.bustaErroreHeaderIntestazione.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_INTESTAZIONE_MESSAGGIO.toString(),this.protocolFactory));
 				throw new Exception("Header eGov con header intestazione che possiede first child ["+intestazioneMsg.getNodeName()+"] diverso da IntestazioneMessaggio");
 			}
 			
-			List<Node> intestMsgChild = SoapUtils.getNotEmptyChildNodes(intestazioneMsg);
+			List<Node> intestMsgChild = SoapUtils.getNotEmptyChildNodes(messageFactory, intestazioneMsg);
 			
 			// Controllo elementi principali
 			Node mittente = null;
@@ -951,15 +953,15 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				}
 				if(child!=null && child.getNodeName()!=null){
 					//if( (mittente==null) && ((child.getNodeName().equals(xmlns+"Mittente")))){
-					if( (mittente==null) && (SoapUtils.matchLocalName(child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
+					if( (mittente==null) && (SoapUtils.matchLocalName(messageFactory, child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
 						mittente = child; 
 					}
 					//else if( (destinatario==null) && ((child.getNodeName().equals(xmlns+"Destinatario")))){
-					else if( (destinatario==null) && (SoapUtils.matchLocalName(child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
+					else if( (destinatario==null) && (SoapUtils.matchLocalName(messageFactory, child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
 						destinatario = child;
 					}
 					//else if( (messaggio==null) && ((child.getNodeName().equals(xmlns+"Messaggio")))){
-					else if( (messaggio==null) && (SoapUtils.matchLocalName(child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
+					else if( (messaggio==null) && (SoapUtils.matchLocalName(messageFactory, child, "Messaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV))){
 						messaggio = child;
 					}
 				}
@@ -975,7 +977,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE.toString(),this.protocolFactory));
 				eccezioneStrutturaMittente = true;
 			}else{
-				List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente); // identificativoParte mitt
+				List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente); // identificativoParte mitt
 				if( (headerMittente==null) || (headerMittente.size() == 0) ){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -984,13 +986,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					for(int i=0; i<headerMittente.size(); i++){
 						Node idParteMittente = headerMittente.get(i);
 						//if( !(idParteMittente.getNodeName().equals(xmlns+"IdentificativoParte"))  ){ 
-						if( !(SoapUtils.matchLocalName(idParteMittente, "IdentificativoParte", xmlns, SPCoopCostanti.NAMESPACE_EGOV))  ){ 
+						if( !(SoapUtils.matchLocalName(messageFactory, idParteMittente, "IdentificativoParte", xmlns, SPCoopCostanti.NAMESPACE_EGOV))  ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_PRESENTE, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
 							eccezioneStrutturaMittente = true;
 							break;
 						}
-						List<Node> valueIDParteMitt = SoapUtils.getNotEmptyChildNodes(idParteMittente);
+						List<Node> valueIDParteMitt = SoapUtils.getNotEmptyChildNodes(messageFactory, idParteMittente);
 						if( (valueIDParteMitt==null) || (valueIDParteMitt.size() == 0) || (valueIDParteMitt.size() > 1) ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.MITTENTE_NON_VALORIZZATO, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_MITTENTE_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1012,9 +1014,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						String tipoMittente = null;
 						Node hrefFindMitt = null;
 						if(this.readQualifiedAttribute){
-							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(idParteMittente, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteMittente, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindMitt = SoapUtils.getAttributeNode(idParteMittente, "tipo");
+							hrefFindMitt = SoapUtils.getAttributeNode(messageFactory, idParteMittente, "tipo");
 						}
 						if(hrefFindMitt!=null){
 							try{
@@ -1060,7 +1062,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE.toString(),this.protocolFactory));
 				eccezioneStrutturaDestinatario = true;
 			}else{
-				List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(destinatario); // identificativoParte dest
+				List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario); // identificativoParte dest
 				if( (headerDestinatario==null) || (headerDestinatario.size() == 0) ){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.DESTINATARIO_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1069,13 +1071,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					for(int i=0; i<headerDestinatario.size(); i++){
 						Node idParteDestinatario = headerDestinatario.get(i);
 						//if( !(idParteDestinatario.getNodeName().equals(xmlns+"IdentificativoParte"))  ){
-						if( !(SoapUtils.matchLocalName(idParteDestinatario, "IdentificativoParte", xmlns, SPCoopCostanti.NAMESPACE_EGOV))  ){ 
+						if( !(SoapUtils.matchLocalName(messageFactory, idParteDestinatario, "IdentificativoParte", xmlns, SPCoopCostanti.NAMESPACE_EGOV))  ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.DESTINATARIO_NON_VALIDO, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
 							eccezioneStrutturaDestinatario = true;
 							break;
 						}
-						List<Node> valueIDParteDest = SoapUtils.getNotEmptyChildNodes(idParteDestinatario);
+						List<Node> valueIDParteDest = SoapUtils.getNotEmptyChildNodes(messageFactory, idParteDestinatario);
 						if( (valueIDParteDest==null) || (valueIDParteDest.size() == 0) || (valueIDParteDest.size() > 1) ){ 
 							errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.DESTINATARIO_NON_VALIDO, 
 									SPCoopCostantiPosizioneEccezione.ECCEZIONE_DESTINATARIO_SCONOSCIUTO_POSIZIONE_IDENTIFICATIVO_PARTE.toString(),this.protocolFactory));
@@ -1097,9 +1099,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						String tipoDestinatario = null;
 						Node hrefFindDest = null;
 						if(this.readQualifiedAttribute){
-							hrefFindDest = SoapUtils.getQualifiedAttributeNode(idParteDestinatario, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindDest = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteDestinatario, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindDest = SoapUtils.getAttributeNode(idParteDestinatario, "tipo");
+							hrefFindDest = SoapUtils.getAttributeNode(messageFactory, idParteDestinatario, "tipo");
 						}
 						if(hrefFindDest!=null){
 							try{
@@ -1145,7 +1147,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						SPCoopCostantiPosizioneEccezione.ECCEZIONE_FORMATO_INTESTAZIONE_NON_CORRETTO_POSIZIONE_MESSAGGIO.toString(),this.protocolFactory));
 				eccezioneStrutturaMessaggio = true;
 			}else{
-				List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
+				List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messageFactory, messaggio);
 				if( (contenutoMsg.size() <= 0)){
 					errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_PRESENTE, 
 							SPCoopCostantiPosizioneEccezione.ECCEZIONE_ID_MESSAGGIO_NON_DEFINITO_POSIZIONE.toString(),this.protocolFactory));
@@ -1157,14 +1159,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					for(int j =0; j<contenutoMsg.size();j++){
 						Node childMsg = contenutoMsg.get(j);
 						//if((childMsg.getNodeName().equals(xmlns+"Identificatore"))){
-						if(SoapUtils.matchLocalName(childMsg, "Identificatore", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+						if(SoapUtils.matchLocalName(messageFactory, childMsg, "Identificatore", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 							identificatoreTrovato = true;
-							if (SoapUtils.getNotEmptyChildNodes(childMsg).size() != 1){
+							if (SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).size() != 1){
 								errore.addEccezione(Eccezione.getEccezioneValidazione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALORIZZATO, 
 										SPCoopCostantiPosizioneEccezione.ECCEZIONE_ID_MESSAGGIO_NON_DEFINITO_POSIZIONE.toString(),this.protocolFactory));
 							}else{
 								try{
-									identificatore = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+									identificatore = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 								} catch(Exception e) {}
 							}
 							break;
@@ -1206,35 +1208,35 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				for(int i=0;i<intestMsgChild.size();i++){
 					Node child = intestMsgChild.get(i);
 					//if( (mittente==null) && ((child.getNodeName().equals(xmlns+"Mittente")))){
-					if( (mittente==null) && ((SoapUtils.matchLocalName(child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					if( (mittente==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Mittente", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						mittente = child; 
 					}
 					//else if( (destinatario==null) && ((child.getNodeName().equals(xmlns+"Destinatario")))){
-					else if( (destinatario==null) && ((SoapUtils.matchLocalName(child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (destinatario==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Destinatario", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						destinatario = child;
 					}
 					//else if( (servizio==null) && ((child.getNodeName().equals(xmlns+"Servizio")))){
-					else if( (servizio==null) && ((SoapUtils.matchLocalName(child, "Servizio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (servizio==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Servizio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						servizio = child;
 					}
 					//else if( (azione==null) && ((child.getNodeName().equals(xmlns+"Azione")))){
-					else if( (azione==null) && ((SoapUtils.matchLocalName(child, "Azione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (azione==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Azione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						azione = child;
 					}
 					//else if( (profiloCollaborazione==null) && ((child.getNodeName().equals(xmlns+"ProfiloCollaborazione")))){
-					else if( (profiloCollaborazione==null) && ((SoapUtils.matchLocalName(child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (profiloCollaborazione==null) && ((SoapUtils.matchLocalName(messageFactory, child, "ProfiloCollaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						profiloCollaborazione = child;
 					}
 					//else if( (collaborazione==null) && ((child.getNodeName().equals(xmlns+"Collaborazione")))){
-					else if( (collaborazione==null) && ((SoapUtils.matchLocalName(child, "Collaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (collaborazione==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Collaborazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						collaborazione = child;
 					}
 					//else if( (profiloTrasmissione==null) && ((child.getNodeName().equals(xmlns+"ProfiloTrasmissione")))){
-					else if( (profiloTrasmissione==null) && ((SoapUtils.matchLocalName(child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (profiloTrasmissione==null) && ((SoapUtils.matchLocalName(messageFactory, child, "ProfiloTrasmissione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						profiloTrasmissione = child;
 					}
 					//else if( (sequenza==null) && ((child.getNodeName().equals(xmlns+"Sequenza")))){
-					else if( (sequenza==null) && ((SoapUtils.matchLocalName(child, "Sequenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
+					else if( (sequenza==null) && ((SoapUtils.matchLocalName(messageFactory, child, "Sequenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)))){
 						sequenza = child;
 					}
 				}
@@ -1242,18 +1244,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// Mittente
 				if(mittente!=null){
 					try{
-						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
-						errore.setMittente(SoapUtils.getNotEmptyChildNodes(idParteMittente).get(0).getNodeValue());
+						errore.setMittente(SoapUtils.getNotEmptyChildNodes(messageFactory, idParteMittente).get(0).getNodeValue());
 					}catch(Exception e){}
 					try{
-						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
 						Node hrefFindMitt = null;
 						if(this.readQualifiedAttribute){
-							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(idParteMittente, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteMittente, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindMitt = SoapUtils.getAttributeNode(idParteMittente, "tipo");
+							hrefFindMitt = SoapUtils.getAttributeNode(messageFactory, idParteMittente, "tipo");
 						}
 						String itValue = hrefFindMitt.getNodeValue();
 						if(itValue!=null) {
@@ -1265,13 +1267,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}catch(Exception e){}
 					try{
-						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(mittente);
+						List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, mittente);
 						Node idParteMittente = headerMittente.get(0);
 						Node hrefFindMitt = null;
 						if(this.readQualifiedAttribute){
-							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(idParteMittente, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindMitt = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteMittente, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindMitt = SoapUtils.getAttributeNode(idParteMittente, "indirizzoTelematico");
+							hrefFindMitt = SoapUtils.getAttributeNode(messageFactory, idParteMittente, "indirizzoTelematico");
 						}
 						String itValue = hrefFindMitt.getNodeValue();
 						errore.setIndirizzoMittente(itValue);
@@ -1281,18 +1283,18 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// Destinatario
 				if(destinatario!=null){
 					try{
-						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
-						errore.setDestinatario(SoapUtils.getNotEmptyChildNodes(idParteDest).get(0).getNodeValue());
+						errore.setDestinatario(SoapUtils.getNotEmptyChildNodes(messageFactory, idParteDest).get(0).getNodeValue());
 					}catch(Exception e){}
 					try{
-						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
 						Node hrefFindDest = null;
 						if(this.readQualifiedAttribute){
-							hrefFindDest = SoapUtils.getQualifiedAttributeNode(idParteDest, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindDest = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteDest, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindDest = SoapUtils.getAttributeNode(idParteDest, "tipo");
+							hrefFindDest = SoapUtils.getAttributeNode(messageFactory, idParteDest, "tipo");
 						}
 						String itValue = hrefFindDest.getNodeValue();
 						if(itValue!=null) {
@@ -1304,13 +1306,13 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}catch(Exception e){}
 					try{
-						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(destinatario);
+						List<Node> headerDest = SoapUtils.getNotEmptyChildNodes(messageFactory, destinatario);
 						Node idParteDest = headerDest.get(0);
 						Node hrefFindDest = null;
 						if(this.readQualifiedAttribute){
-							hrefFindDest = SoapUtils.getQualifiedAttributeNode(idParteDest, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFindDest = SoapUtils.getQualifiedAttributeNode(messageFactory, idParteDest, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFindDest = SoapUtils.getAttributeNode(idParteDest, "indirizzoTelematico");
+							hrefFindDest = SoapUtils.getAttributeNode(messageFactory, idParteDest, "indirizzoTelematico");
 						}
 						String itValue = hrefFindDest.getNodeValue();
 						errore.setIndirizzoDestinatario(itValue);
@@ -1320,14 +1322,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// Servizio
 				if(servizio!=null){
 					try{
-						errore.setServizio(SoapUtils.getNotEmptyChildNodes(servizio).get(0).getNodeValue());
+						errore.setServizio(SoapUtils.getNotEmptyChildNodes(messageFactory, servizio).get(0).getNodeValue());
 					}catch(Exception e){}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(servizio, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, servizio, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(servizio, "tipo");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, servizio, "tipo");
 						}
 						String value = hrefFind.getNodeValue();
 						if(value!=null) {
@@ -1343,22 +1345,22 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// Azione
 				if(azione!=null){
 					try{
-						errore.setAzione(SoapUtils.getNotEmptyChildNodes(azione).get(0).getNodeValue());
+						errore.setAzione(SoapUtils.getNotEmptyChildNodes(messageFactory, azione).get(0).getNodeValue());
 					}catch(Exception e){}
 				}
 				
 				// ProfiloDiCollaborazione
 				if(profiloCollaborazione!=null){
 					try{
-						String profilovalue = SoapUtils.getNotEmptyChildNodes(profiloCollaborazione).get(0).getNodeValue();
+						String profilovalue = SoapUtils.getNotEmptyChildNodes(messageFactory, profiloCollaborazione).get(0).getNodeValue();
 						errore.setProfiloDiCollaborazione(toProfilo(profilovalue), profilovalue);
 					}catch(Exception e){}
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(profiloCollaborazione, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, profiloCollaborazione, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(profiloCollaborazione, "tipo");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, profiloCollaborazione, "tipo");
 						}
 						String value = hrefFind.getNodeValue();
 						if(value!=null) {
@@ -1372,9 +1374,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(profiloCollaborazione, "servizioCorrelato", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, profiloCollaborazione, "servizioCorrelato", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(profiloCollaborazione, "servizioCorrelato");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, profiloCollaborazione, "servizioCorrelato");
 						}
 						errore.setServizioCorrelato(hrefFind.getNodeValue());
 					}catch(Exception e){}
@@ -1383,43 +1385,43 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				// Collaborazione
 				if(collaborazione!=null){
 					try{
-						errore.setCollaborazione(SoapUtils.getNotEmptyChildNodes(collaborazione).get(0).getNodeValue());
+						errore.setCollaborazione(SoapUtils.getNotEmptyChildNodes(messageFactory, collaborazione).get(0).getNodeValue());
 					}catch(Exception e){}
 				}
 				
 				// Messaggio
 				if(messaggio!=null){
 					try{
-						List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messaggio);
+						List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messageFactory, messaggio);
 						for(int j =0; j<contenutoMsg.size();j++){
 							Node childMsg = contenutoMsg.get(j);
 							//if((childMsg.getNodeName().equals(xmlns+"RiferimentoMessaggio"))){
-							if(SoapUtils.matchLocalName(childMsg, "RiferimentoMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+							if(SoapUtils.matchLocalName(messageFactory, childMsg, "RiferimentoMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 								try{
-									errore.setRiferimentoMessaggio(SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue());
+									errore.setRiferimentoMessaggio(SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue());
 								}catch(Exception e){}
 							}
 							//else if((childMsg.getNodeName().equals(xmlns+"Scadenza"))){
-							else if(SoapUtils.matchLocalName(childMsg, "Scadenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+							else if(SoapUtils.matchLocalName(messageFactory, childMsg, "Scadenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 								try{
-									String scadenza = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+									String scadenza = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 									Date scadenzaDate = validazioneData(scadenza);
 									errore.setScadenza(scadenzaDate);
 								}catch(Exception e){}
 							}
 							//else if((childMsg.getNodeName().equals(xmlns+"OraRegistrazione"))){
-							else if(SoapUtils.matchLocalName(childMsg, "OraRegistrazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+							else if(SoapUtils.matchLocalName(messageFactory, childMsg, "OraRegistrazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 								try{
-									String oraRegistrazione = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+									String oraRegistrazione = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 									Date oraDate = validazioneData(oraRegistrazione);
 									errore.setOraRegistrazione(oraDate);
 								}catch(Exception e){}
 								try{
 									Node hrefFind = null;
 									if(this.readQualifiedAttribute){
-										hrefFind = SoapUtils.getQualifiedAttributeNode(childMsg, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
+										hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, childMsg, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
 									}else{
-										hrefFind = SoapUtils.getAttributeNode(childMsg, "tempo");
+										hrefFind = SoapUtils.getAttributeNode(messageFactory, childMsg, "tempo");
 									}
 									String tipoOraRegistrazioneValue = hrefFind.getNodeValue();
 									errore.setTipoOraRegistrazione(toTipoOra(tipoOraRegistrazioneValue), tipoOraRegistrazioneValue);
@@ -1434,9 +1436,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(profiloTrasmissione, "confermaRicezione", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, profiloTrasmissione, "confermaRicezione", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(profiloTrasmissione, "confermaRicezione");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, profiloTrasmissione, "confermaRicezione");
 						}
 						if(hrefFind.getNodeValue().equals("true"))
 							errore.setConfermaRicezione(true);
@@ -1446,9 +1448,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(profiloTrasmissione, "inoltro", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, profiloTrasmissione, "inoltro", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(profiloTrasmissione, "inoltro");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, profiloTrasmissione, "inoltro");
 						}
 						String inoltro = hrefFind.getNodeValue();
 						errore.setInoltro(toInoltro(inoltro), inoltro);
@@ -1460,9 +1462,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(sequenza, "numeroProgressivo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, sequenza, "numeroProgressivo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(sequenza, "numeroProgressivo");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, sequenza, "numeroProgressivo");
 						}
 						Long test = Long.valueOf(hrefFind.getNodeValue());
 						errore.setSequenza(test.longValue());
@@ -1638,21 +1640,21 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneMittente(Node child,String prefix) throws ProtocolException{
+	private void validazioneMittente(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws ProtocolException{
 
 		//log.info("Validazione Mittente...");
 
-		List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> headerMittente = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 		Node idParte = headerMittente.get(0);
 		//log.info("esamino ["+idParte.getNodeName()+"]"); 
-		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(messageFactory, idParte);
 		String value =  valueIDParte.get(0).getNodeValue();
 		//log.info("Value identificativo parte Mittente ["+value+"]");
 		Node hrefFind = null;
 		if(this.readQualifiedAttribute){
-			hrefFind = SoapUtils.getQualifiedAttributeNode(idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+			hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 		}else{
-			hrefFind = SoapUtils.getAttributeNode(idParte, "tipo");
+			hrefFind = SoapUtils.getAttributeNode(messageFactory, idParte, "tipo");
 		}
 		String tipo = hrefFind.getNodeValue();
 		//log.info("Tipo identificativo parte Mittente ["+tipo+"]");
@@ -1677,9 +1679,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFindT = null;
 			if(this.readQualifiedAttribute){
-				hrefFindT = SoapUtils.getQualifiedAttributeNode(idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFindT = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFindT = SoapUtils.getAttributeNode(idParte, "indirizzoTelematico");
+				hrefFindT = SoapUtils.getAttributeNode(messageFactory, idParte, "indirizzoTelematico");
 			}
 			if(hrefFindT != null)
 				indTelematico = hrefFindT.getNodeValue();
@@ -1722,21 +1724,21 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneDestinatario(Node child,String prefix) throws ProtocolException{
+	private void validazioneDestinatario(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws ProtocolException{
 
 		//log.info("Validazione Destinatario...");
 
-		List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> headerDestinatario = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 		Node idParte = headerDestinatario.get(0);
 		//log.info("esamino ["+idParte.getNodeName()+"]"); 
-		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+		List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(messageFactory, idParte);
 		String value =  valueIDParte.get(0).getNodeValue();
 		//log.info("Value identificativo parte Destinatario ["+value+"]");
 		Node hrefFind = null;
 		if(this.readQualifiedAttribute){
-			hrefFind = SoapUtils.getQualifiedAttributeNode(idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+			hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 		}else{
-			hrefFind = SoapUtils.getAttributeNode(idParte, "tipo");
+			hrefFind = SoapUtils.getAttributeNode(messageFactory, idParte, "tipo");
 		}
 		String tipo = hrefFind.getNodeValue();
 		//log.info("Tipo identificativo parte Destinatario ["+tipo+"]");
@@ -1762,9 +1764,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFindT = null;
 			if(this.readQualifiedAttribute){
-				hrefFindT = SoapUtils.getQualifiedAttributeNode(idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFindT = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFindT = SoapUtils.getAttributeNode(idParte, "indirizzoTelematico");
+				hrefFindT = SoapUtils.getAttributeNode(messageFactory, idParte, "indirizzoTelematico");
 			}
 			if(hrefFindT != null)
 				indTelematico = hrefFindT.getNodeValue();
@@ -1809,12 +1811,12 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneProfiloCollaborazione(Node child,String prefix) throws ProtocolException{
+	private void validazioneProfiloCollaborazione(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws ProtocolException{
 
 		//log.info("Validazione Profilo di Collaborazione...");
 		String profilo = null;
 
-		List<Node> valueProfiloDiCollaborazione = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> valueProfiloDiCollaborazione = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 		if( valueProfiloDiCollaborazione.size() == 0 || valueProfiloDiCollaborazione.size() > 1  ){ 
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -1853,9 +1855,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "tipo");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "tipo");
 			}
 			if(hrefFind != null)
 				tipo = hrefFind.getNodeValue();
@@ -1909,9 +1911,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "servizioCorrelato", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "servizioCorrelato", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "servizioCorrelato");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "servizioCorrelato");
 			}
 			if(hrefFind != null)
 				servizioCorrelato = hrefFind.getNodeValue();
@@ -1963,10 +1965,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneCollaborazione(Node child) throws ProtocolException{
+	private void validazioneCollaborazione(OpenSPCoop2MessageFactory messageFactory, Node child) throws ProtocolException{
 
 		//log.info("Validazione Collaborazione...");
-		if ( SoapUtils.getNotEmptyChildNodes(child).size() != 1 ){
+		if ( SoapUtils.getNotEmptyChildNodes(messageFactory, child).size() != 1 ){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.COLLABORAZIONE_NON_VALIDA);
@@ -1977,7 +1979,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		}
 		String coll = null;
 		try{
-			coll = SoapUtils.getNotEmptyChildNodes(child).get(0).getNodeValue();
+			coll = SoapUtils.getNotEmptyChildNodes(messageFactory, child).get(0).getNodeValue();
 		} catch(Exception e) {
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2002,10 +2004,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneServizio(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneServizio(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione servizio...");
-		if (SoapUtils.getNotEmptyChildNodes(child).size() != 1){
+		if (SoapUtils.getNotEmptyChildNodes(messageFactory, child).size() != 1){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.SERVIZIO_NON_VALIDO);
@@ -2017,7 +2019,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 		String serv = null;
 		try{
-			serv = SoapUtils.getNotEmptyChildNodes(child).get(0).getNodeValue();
+			serv = SoapUtils.getNotEmptyChildNodes(messageFactory, child).get(0).getNodeValue();
 		} catch(Exception e) {
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2035,9 +2037,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "tipo");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "tipo");
 			}
 			if(hrefFind != null)
 				tipo = hrefFind.getNodeValue();
@@ -2098,11 +2100,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneAzione(Node child) throws ProtocolException{
+	private void validazioneAzione(OpenSPCoop2MessageFactory messageFactory, Node child) throws ProtocolException{
 
 		//log.info("Validazione azione...");
 
-		if (SoapUtils.getNotEmptyChildNodes(child).size() != 1){
+		if (SoapUtils.getNotEmptyChildNodes(messageFactory, child).size() != 1){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.AZIONE_NON_VALIDA);
@@ -2114,7 +2116,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 		String azione = null;
 		try{
-			azione = SoapUtils.getNotEmptyChildNodes(child).get(0).getNodeValue();
+			azione = SoapUtils.getNotEmptyChildNodes(messageFactory, child).get(0).getNodeValue();
 		} catch(Exception e) {
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2140,14 +2142,14 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneMessaggio(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneMessaggio(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		// Prefix eGov
 		String xmlns = getPrefix();
 
 		//log.info("Validazione Messaggio...");
 
-		List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> contenutoMsg = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 		if( (contenutoMsg.size() == 0) || (contenutoMsg.size() > 4)){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2166,7 +2168,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			Node childMsg = contenutoMsg.get(j);
 
 			//if((childMsg.getNodeName().equals(xmlns+"Identificatore"))){
-			if(SoapUtils.matchLocalName(childMsg, "Identificatore", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+			if(SoapUtils.matchLocalName(messageFactory, childMsg, "Identificatore", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 				
 				
 				if(presenzaID){
@@ -2189,7 +2191,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					//log.info("Validazione identificatore...");
 					presenzaID = true;
 	
-					if (SoapUtils.getNotEmptyChildNodes(childMsg).size() != 1){
+					if (SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).size() != 1){
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 						ecc.setCodiceEccezione(CodiceErroreCooperazione.IDENTIFICATIVO_MESSAGGIO_NON_VALORIZZATO);
@@ -2200,7 +2202,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 					String id = null;
 					try{
-						id = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+						id = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 					} catch(Exception e) {
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2224,7 +2226,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				}
 
 			//}else if((childMsg.getNodeName().equals(xmlns+"OraRegistrazione"))){
-			}else if(SoapUtils.matchLocalName(childMsg, "OraRegistrazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+			}else if(SoapUtils.matchLocalName(messageFactory, childMsg, "OraRegistrazione", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 				
 				if(presenzaOra){
 					if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -2246,7 +2248,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					//log.info("Validazione Ora Registrazione...");
 					presenzaOra = true;
 	
-					if (SoapUtils.getNotEmptyChildNodes(childMsg).size() != 1){
+					if (SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).size() != 1){
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 						ecc.setCodiceEccezione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_PRESENTE);
@@ -2257,7 +2259,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 					String ora = null;
 					try{
-						ora = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+						ora = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 					} catch(Exception e) {
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2288,9 +2290,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					try{
 						Node hrefFind = null;
 						if(this.readQualifiedAttribute){
-							hrefFind = SoapUtils.getQualifiedAttributeNode(childMsg, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
+							hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, childMsg, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
 						}else{
-							hrefFind = SoapUtils.getAttributeNode(childMsg, "tempo");
+							hrefFind = SoapUtils.getAttributeNode(messageFactory, childMsg, "tempo");
 						}
 						tipoOra = hrefFind.getNodeValue();
 					} catch(Exception e) {
@@ -2319,7 +2321,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				}
 
 			//}else if((childMsg.getNodeName().equals(xmlns+"RiferimentoMessaggio"))){
-			}else if(SoapUtils.matchLocalName(childMsg, "RiferimentoMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){	
+			}else if(SoapUtils.matchLocalName(messageFactory, childMsg, "RiferimentoMessaggio", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){	
 				//log.info("Validazione RiferimentoMessaggio...");
 
 				if(presenzaRifMessaggio){
@@ -2341,7 +2343,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				
 					presenzaRifMessaggio = true;
 					
-					if (SoapUtils.getNotEmptyChildNodes(childMsg).size() != 1){
+					if (SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).size() != 1){
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 						ecc.setCodiceEccezione(CodiceErroreCooperazione.RIFERIMENTO_MESSAGGIO_NON_VALORIZZATO);
@@ -2352,7 +2354,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 					String rifID = null;
 					try{
-						rifID = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+						rifID = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 					} catch(Exception e) {
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2376,7 +2378,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				}
 
 			//}else if((childMsg.getNodeName().equals(xmlns+"Scadenza"))){
-			}else if(SoapUtils.matchLocalName(childMsg, "Scadenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
+			}else if(SoapUtils.matchLocalName(messageFactory, childMsg, "Scadenza", xmlns, SPCoopCostanti.NAMESPACE_EGOV)){
 				//log.info("Validazione Scadenza...");
 
 				if(presenzaScadenza){
@@ -2398,7 +2400,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					
 					presenzaScadenza = true;
 					
-					if (SoapUtils.getNotEmptyChildNodes(childMsg).size() != 1){
+					if (SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).size() != 1){
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 						ecc.setCodiceEccezione(CodiceErroreCooperazione.SCADENZA_NON_PRESENTE);
@@ -2409,7 +2411,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 					String scadenza = null;
 					try{
-						scadenza = SoapUtils.getNotEmptyChildNodes(childMsg).get(0).getNodeValue();
+						scadenza = SoapUtils.getNotEmptyChildNodes(messageFactory, childMsg).get(0).getNodeValue();
 					} catch(Exception e) {
 						Eccezione ecc = new Eccezione();
 						ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -2487,16 +2489,16 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneProfiloTrasmissione(Node child,String prefix) throws ProtocolException{
+	private void validazioneProfiloTrasmissione(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws ProtocolException{
 
 		//log.info("Validazione profilo Trasmissione...");
 
-		if (SoapUtils.getNotEmptyChildNodes(child).size() != 0){
+		if (SoapUtils.getNotEmptyChildNodes(messageFactory, child).size() != 0){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.PROFILO_TRASMISSIONE_NON_VALIDO);
 			ecc.setRilevanza(LivelloRilevanza.ERROR);
-			ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE+" child size:"+SoapUtils.getNotEmptyChildNodes(child).size());
+			ecc.setDescrizione(SPCoopCostantiPosizioneEccezione.ECCEZIONE_PROFILO_TRASMISSIONE_NON_VALIDO_POSIZIONE+" child size:"+SoapUtils.getNotEmptyChildNodes(messageFactory,child).size());
 			this.erroriValidazione.add(ecc);
 		}
 		String inoltro = null;
@@ -2504,9 +2506,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "inoltro", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "inoltro", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "inoltro");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "inoltro");
 			}
 			inoltro = hrefFind.getNodeValue();
 			//log.info("Inoltro ["+inoltro+"]");
@@ -2514,9 +2516,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "confermaRicezione", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "confermaRicezione", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "confermaRicezione");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "confermaRicezione");
 			}
 			confermaRicezione = hrefFind.getNodeValue();
 			//log.info("confermaRicezione ["+confermaRicezione+"]");
@@ -2575,11 +2577,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneSequenza(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneSequenza(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione sequenza...");
 
-		if (SoapUtils.getNotEmptyChildNodes(child).size() != 0){
+		if (SoapUtils.getNotEmptyChildNodes(messageFactory, child).size() != 0){
 			Eccezione ecc = new Eccezione();
 			ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 			ecc.setCodiceEccezione(CodiceErroreCooperazione.CONSEGNA_IN_ORDINE_NON_VALIDA);
@@ -2591,9 +2593,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		try{
 			Node hrefFind = null;
 			if(this.readQualifiedAttribute){
-				hrefFind = SoapUtils.getQualifiedAttributeNode(child, "numeroProgressivo", SPCoopCostanti.NAMESPACE_EGOV);
+				hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, child, "numeroProgressivo", SPCoopCostanti.NAMESPACE_EGOV);
 			}else{
-				hrefFind = SoapUtils.getAttributeNode(child, "numeroProgressivo");
+				hrefFind = SoapUtils.getAttributeNode(messageFactory, child, "numeroProgressivo");
 			}
 			seq = hrefFind.getNodeValue();
 			//log.info("Sequenza ["+seq+"]");
@@ -2640,10 +2642,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneListaRiscontri(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneListaRiscontri(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione Lista Riscontri...");
-		List<Node> riscontri = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> riscontri = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 
 		if(riscontri.size() <= 0 ){		   
 			Eccezione ecc = new Eccezione();
@@ -2662,7 +2664,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			Node riscontro = riscontri.get(i);
 			//log.info("esamino["+child.getNodeName()+"]");
 			//if(!(riscontro.getNodeName().equals(xmlns+"Riscontro"))){
-			if(!(SoapUtils.matchLocalName(riscontro, "Riscontro", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
+			if(!(SoapUtils.matchLocalName(messageFactory, riscontro, "Riscontro", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.RISCONTRO_NON_VALIDO);
@@ -2672,7 +2674,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				continue;
 			}
 
-			List<Node> childsRiscontro = SoapUtils.getNotEmptyChildNodes(riscontro);
+			List<Node> childsRiscontro = SoapUtils.getNotEmptyChildNodes(messageFactory, riscontro);
 			/*if(childsRiscontro.getLength() != 2){		   
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(Costanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
@@ -2696,7 +2698,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			for(int j=0; j<childsRiscontro.size();j++){
 				Node elem = childsRiscontro.get(j);
 				//if(elem.getNodeName().equals(xmlns+"Identificatore")){
-				if(SoapUtils.matchLocalName(elem, "Identificatore", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
+				if(SoapUtils.matchLocalName(messageFactory, elem, "Identificatore", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
 					
 					if(presenzaIdentificatore){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -2718,7 +2720,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						presenzaIdentificatore = true;
 					
 						try{
-							id = SoapUtils.getNotEmptyChildNodes(elem).get(0).getNodeValue();
+							id = SoapUtils.getNotEmptyChildNodes(messageFactory, elem).get(0).getNodeValue();
 							findID = true;
 						} catch(Exception e) {
 							Eccezione ecc = new Eccezione();
@@ -2731,7 +2733,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						}
 					}
 				//}else if(elem.getNodeName().equals(xmlns+"OraRegistrazione")){
-				}else if(SoapUtils.matchLocalName(elem, "OraRegistrazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
+				}else if(SoapUtils.matchLocalName(messageFactory, elem, "OraRegistrazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
 					if(presenzaOraRegistrazione){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
 							throw new StrutturaBustaException("Header egov con più di un elemento RiscontroOraRegistrazione","RiscontroOraRegistrazione");
@@ -2751,7 +2753,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						presenzaOraRegistrazione = true;
 					
 						try{
-							ora = SoapUtils.getNotEmptyChildNodes(elem).get(0).getNodeValue();
+							ora = SoapUtils.getNotEmptyChildNodes(messageFactory, elem).get(0).getNodeValue();
 							findOra = true;
 						} catch(Exception e) {
 							Eccezione ecc = new Eccezione();
@@ -2780,9 +2782,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{
 							Node hrefFind = null;
 							if(this.readQualifiedAttribute){
-								hrefFind = SoapUtils.getQualifiedAttributeNode(elem, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, elem, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFind = SoapUtils.getAttributeNode(elem, "tempo");
+								hrefFind = SoapUtils.getAttributeNode(messageFactory, elem, "tempo");
 							}
 							tipoOra = hrefFind.getNodeValue();
 							findTipoOra = true;
@@ -2887,10 +2889,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneListaTrasmissioni(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneListaTrasmissioni(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 		
 		//	log.info("Validazione Lista Trasmissioni...");
-		List<Node> trasmissioni = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> trasmissioni = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 
 		if(trasmissioni.size()<=0){
 			Eccezione ecc = new Eccezione();
@@ -2909,7 +2911,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			Node trasmissione = trasmissioni.get(i);
 			//log.info("esamino["+child.getNodeName()+"]");
 			//if(!(trasmissione.getNodeName().equals(xmlns+"Trasmissione"))){
-			if(!(SoapUtils.matchLocalName(trasmissione, "Trasmissione", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
+			if(!(SoapUtils.matchLocalName(messageFactory, trasmissione, "Trasmissione", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.TRASMISSIONE_NON_PRESENTE);
@@ -2918,7 +2920,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				this.erroriValidazione.add(ecc);
 				continue;
 			}
-			List<Node> childsTrasmissione = SoapUtils.getNotEmptyChildNodes(trasmissione);
+			List<Node> childsTrasmissione = SoapUtils.getNotEmptyChildNodes(messageFactory, trasmissione);
 			/*if(childsTrasmissione.getLength() != 3){		   
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(Costanti.CONTESTO_CODIFICA_ECCEZIONE_VALIDAZIONE);
@@ -2952,7 +2954,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				Node elem = childsTrasmissione.get(j);
 
 				//if(elem.getNodeName().equals(xmlns+"Origine")){
-				if(SoapUtils.matchLocalName(elem, "Origine", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
+				if(SoapUtils.matchLocalName(messageFactory, elem, "Origine", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
 					
 					if(presenzaOrigine){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -2973,12 +2975,12 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					
 						presenzaOrigine = true;
 						
-						if(SoapUtils.getNotEmptyChildNodes(elem).size() != 1){ 
+						if(SoapUtils.getNotEmptyChildNodes(messageFactory, elem).size() != 1){ 
 							Eccezione ecc = new Eccezione();
 							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 							ecc.setCodiceEccezione(CodiceErroreCooperazione.TRASMISSIONE_ORIGINE_NON_PRESENTE);
 							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(SoapUtils.getNotEmptyChildNodes(elem).size() < 1){ 
+							if(SoapUtils.getNotEmptyChildNodes(messageFactory, elem).size() < 1){ 
 								if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
 									throw new StrutturaBustaException("Header egov senza TrasmissioneOrigine IdentificativoParte","TrasmissioneOrigineIdentificativoParte");
 								}else{
@@ -2994,9 +2996,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							errorFind = true;
 							continue;
 						}
-						Node idParte = SoapUtils.getNotEmptyChildNodes(elem).get(0);
+						Node idParte = SoapUtils.getNotEmptyChildNodes(messageFactory, elem).get(0);
 						try{ 
-							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(messageFactory, idParte);
 							origine =  valueIDParte.get(0).getNodeValue();
 							findOrigine = true;
 						} catch(Exception e) {
@@ -3011,9 +3013,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{ 
 							Node hrefFind = null;
 							if(this.readQualifiedAttribute){
-								hrefFind = SoapUtils.getQualifiedAttributeNode(idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFind = SoapUtils.getAttributeNode(idParte, "tipo");
+								hrefFind = SoapUtils.getAttributeNode(messageFactory, idParte, "tipo");
 							}
 							tipoOrigine = hrefFind.getNodeValue();
 							
@@ -3051,9 +3053,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{
 							Node hrefFindT = null;
 							if(this.readQualifiedAttribute){
-								hrefFindT = SoapUtils.getQualifiedAttributeNode(idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFindT = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFindT = SoapUtils.getAttributeNode(idParte, "indirizzoTelematico");
+								hrefFindT = SoapUtils.getAttributeNode(messageFactory, idParte, "indirizzoTelematico");
 							}
 							if(hrefFindT != null)
 								indTelematicoOrigine = hrefFindT.getNodeValue();
@@ -3085,7 +3087,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 
 				//}else if(elem.getNodeName().equals(xmlns+"Destinazione")){
-				}else if(SoapUtils.matchLocalName(elem, "Destinazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
+				}else if(SoapUtils.matchLocalName(messageFactory, elem, "Destinazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
 
 					if(presenzaDestinazione){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -3106,12 +3108,12 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					
 						presenzaDestinazione = true;
 					
-						if(SoapUtils.getNotEmptyChildNodes(elem).size() != 1){ 
+						if(SoapUtils.getNotEmptyChildNodes(messageFactory, elem).size() != 1){ 
 							Eccezione ecc = new Eccezione();
 							ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 							ecc.setCodiceEccezione(CodiceErroreCooperazione.TRASMISSIONE_DESTINAZIONE_NON_VALIDA);
 							ecc.setRilevanza(LivelloRilevanza.ERROR);
-							if(SoapUtils.getNotEmptyChildNodes(elem).size() < 1){ 
+							if(SoapUtils.getNotEmptyChildNodes(messageFactory, elem).size() < 1){ 
 								if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
 									throw new StrutturaBustaException("Header egov senza TrasmissioneDestinazione IdentificativoParte","TrasmissioneDestinazioneIdentificativoParte");
 								}else{
@@ -3127,9 +3129,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 							errorFind = true;
 							continue;
 						}
-						Node idParte = SoapUtils.getNotEmptyChildNodes(elem).get(0);
+						Node idParte = SoapUtils.getNotEmptyChildNodes(messageFactory, elem).get(0);
 						try{ 
-							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(idParte);
+							List<Node> valueIDParte = SoapUtils.getNotEmptyChildNodes(messageFactory, idParte);
 							destinazione =  valueIDParte.get(0).getNodeValue();
 							findDestinazione = true;
 						} catch(Exception e) {
@@ -3144,9 +3146,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{ 
 							Node hrefFind = null;
 							if(this.readQualifiedAttribute){
-								hrefFind = SoapUtils.getQualifiedAttributeNode(idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "tipo", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFind = SoapUtils.getAttributeNode(idParte, "tipo");
+								hrefFind = SoapUtils.getAttributeNode(messageFactory, idParte, "tipo");
 							}
 							tipoDestinazione = hrefFind.getNodeValue();
 							
@@ -3184,9 +3186,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{
 							Node hrefFindT = null;
 							if(this.readQualifiedAttribute){
-								hrefFindT = SoapUtils.getQualifiedAttributeNode(idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFindT = SoapUtils.getQualifiedAttributeNode(messageFactory, idParte, "indirizzoTelematico", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFindT = SoapUtils.getAttributeNode(idParte, "indirizzoTelematico");
+								hrefFindT = SoapUtils.getAttributeNode(messageFactory, idParte, "indirizzoTelematico");
 							}
 							if(hrefFindT != null)
 								indTelematicoDestinazione = hrefFindT.getNodeValue();
@@ -3218,7 +3220,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					}
 
 				//}else if(elem.getNodeName().equals(xmlns+"OraRegistrazione")){
-				}else if(SoapUtils.matchLocalName(elem, "OraRegistrazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
+				}else if(SoapUtils.matchLocalName(messageFactory, elem, "OraRegistrazione", prefix, SPCoopCostanti.NAMESPACE_EGOV)){
 
 					if(presenzaOraRegistrazione){
 						if(this.spcoopProperties.isGenerazioneBustaErrore_strutturaMalformataHeaderProtocollo()==false){
@@ -3241,7 +3243,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 					
 						// ora ...
 						try{
-							ora = SoapUtils.getNotEmptyChildNodes(elem).get(0).getNodeValue();
+							ora = SoapUtils.getNotEmptyChildNodes(messageFactory, elem).get(0).getNodeValue();
 							findOra = true;
 						} catch(Exception e) {
 							Eccezione ecc = new Eccezione();
@@ -3269,9 +3271,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 						try{
 							Node hrefFind = null;
 							if(this.readQualifiedAttribute){
-								hrefFind = SoapUtils.getQualifiedAttributeNode(elem, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
+								hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, elem, "tempo", SPCoopCostanti.NAMESPACE_EGOV);
 							}else{
-								hrefFind = SoapUtils.getAttributeNode(elem, "tempo");
+								hrefFind = SoapUtils.getAttributeNode(messageFactory, elem, "tempo");
 							}
 							tipoOra = hrefFind.getNodeValue();
 							findTipoOra = true;
@@ -3446,10 +3448,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * @throws ProtocolException 
 	 * 
 	 */
-	private void validazioneListaEccezioni(Node child,String prefix) throws StrutturaBustaException, ProtocolException{
+	private void validazioneListaEccezioni(OpenSPCoop2MessageFactory messageFactory, Node child,String prefix) throws StrutturaBustaException, ProtocolException{
 
 		//log.info("Validazione Lista Eccezioni...");
-		List<Node> eccezioni = SoapUtils.getNotEmptyChildNodes(child);
+		List<Node> eccezioni = SoapUtils.getNotEmptyChildNodes(messageFactory, child);
 
 		for(int i=0; i<eccezioni.size();i++){
 
@@ -3458,7 +3460,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			Node eccezione = eccezioni.get(i);
 			//log.info("esamino["+child.getNodeName()+"]");
 			//if(!(eccezione.getNodeName().equals(xmlns+"Eccezione"))){
-			if(!(SoapUtils.matchLocalName(eccezione, "Eccezione", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
+			if(!(SoapUtils.matchLocalName(messageFactory, eccezione, "Eccezione", prefix, SPCoopCostanti.NAMESPACE_EGOV))){
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.INTESTAZIONE_NON_CORRETTA);
@@ -3479,9 +3481,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			try{
 				Node hrefFind = null;
 				if(this.readQualifiedAttribute){
-					hrefFind = SoapUtils.getQualifiedAttributeNode(eccezione, "contestoCodifica", SPCoopCostanti.NAMESPACE_EGOV);
+					hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, eccezione, "contestoCodifica", SPCoopCostanti.NAMESPACE_EGOV);
 				}else{
-					hrefFind = SoapUtils.getAttributeNode(eccezione, "contestoCodifica");
+					hrefFind = SoapUtils.getAttributeNode(messageFactory, eccezione, "contestoCodifica");
 				}
 				contestoCodifica = hrefFind.getNodeValue();
 			} catch(Exception e) {
@@ -3504,9 +3506,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			try{
 				Node hrefFind = null;
 				if(this.readQualifiedAttribute){
-					hrefFind = SoapUtils.getQualifiedAttributeNode(eccezione, "codiceEccezione", SPCoopCostanti.NAMESPACE_EGOV);
+					hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, eccezione, "codiceEccezione", SPCoopCostanti.NAMESPACE_EGOV);
 				}else{
-					hrefFind = SoapUtils.getAttributeNode(eccezione, "codiceEccezione");
+					hrefFind = SoapUtils.getAttributeNode(messageFactory, eccezione, "codiceEccezione");
 				}
 				codiceEccezione = hrefFind.getNodeValue();
 			} catch(Exception e) {
@@ -3529,9 +3531,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			try{
 				Node hrefFind = null;
 				if(this.readQualifiedAttribute){
-					hrefFind = SoapUtils.getQualifiedAttributeNode(eccezione, "rilevanza", SPCoopCostanti.NAMESPACE_EGOV);
+					hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, eccezione, "rilevanza", SPCoopCostanti.NAMESPACE_EGOV);
 				}else{
-					hrefFind = SoapUtils.getAttributeNode(eccezione, "rilevanza");
+					hrefFind = SoapUtils.getAttributeNode(messageFactory, eccezione, "rilevanza");
 				}
 				rilevanza = hrefFind.getNodeValue();
 			} catch(Exception e) {
@@ -3555,9 +3557,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			try{
 				Node hrefFind = null;
 				if(this.readQualifiedAttribute){
-					hrefFind = SoapUtils.getQualifiedAttributeNode(eccezione, "posizione", SPCoopCostanti.NAMESPACE_EGOV);
+					hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, eccezione, "posizione", SPCoopCostanti.NAMESPACE_EGOV);
 				}else{
-					hrefFind = SoapUtils.getAttributeNode(eccezione, "posizione");
+					hrefFind = SoapUtils.getAttributeNode(messageFactory, eccezione, "posizione");
 				}
 				posizione = hrefFind.getNodeValue();
 			} catch(Exception e) {
@@ -3787,6 +3789,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 		SOAPBody soapBody = null;
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			OpenSPCoop2MessageFactory messageFactory = msg.getFactory();
 			
 			java.util.List<String> contentID = new java.util.ArrayList<String>();
 			java.util.List<String> contentLocation = new java.util.ArrayList<String>();
@@ -3805,7 +3808,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			boolean isRisposta = false;
 
 			soapBody = msg.getSOAPBody();
-			List<Node> soapBodyList = SoapUtils.getNotEmptyChildNodes(soapBody);
+			List<Node> soapBodyList = SoapUtils.getNotEmptyChildNodes(messageFactory, soapBody);
 			if(soapBodyList.size()!=1){
 				// Il body deve possedere esattamente un elemento
 				Eccezione ecc = new Eccezione();
@@ -3826,7 +3829,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				prefixManifest = prefixManifest + ":";
 			//log.info("esamino["+descrizione.getNodeName()+"]");
 			//if(!(descrizione.getNodeName().equals(prefixManifest+"Descrizione"))){
-			if(!(SoapUtils.matchLocalName(descrizione, "Descrizione", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){		
+			if(!(SoapUtils.matchLocalName(messageFactory, descrizione, "Descrizione", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){		
 				// Elemento Descrizione non esistente
 				Eccezione ecc = new Eccezione();
 				ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -3850,7 +3853,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 
 
-			List<Node> descrizioneMessaggi = SoapUtils.getNotEmptyChildNodes(descrizione);
+			List<Node> descrizioneMessaggi = SoapUtils.getNotEmptyChildNodes(messageFactory, descrizione);
 			if(descrizioneMessaggi.size()<=0){
 				//	Elemento DescrizioneMessaggio non esistente
 				Eccezione ecc = new Eccezione();
@@ -3867,7 +3870,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				Node descrizioneMessaggio = descrizioneMessaggi.get(i);
 				//log.info("esamino["+descrizioneMessaggio.getNodeName()+"]");
 				//if(!(descrizioneMessaggio.getNodeName().equals(prefixManifest+SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO))){
-				if(!(SoapUtils.matchLocalName(descrizioneMessaggio, SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO, prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
+				if(!(SoapUtils.matchLocalName(messageFactory, descrizioneMessaggio, SPCoopCostanti.LOCAL_NAME_MANIFEST_EGOV_DESCRIZIONE_MESSAGGIO, prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
 					//	Elemento DescrizioneMessaggio non esistente
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -3879,7 +3882,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				}
 
 				//log.info("Validazione Riferimento...");
-				List<Node> riferimentoList = SoapUtils.getNotEmptyChildNodes(descrizioneMessaggio);
+				List<Node> riferimentoList = SoapUtils.getNotEmptyChildNodes(messageFactory, descrizioneMessaggio);
 				if(riferimentoList.size()!=1){
 					//	Elemento Riferimento non esistente
 					Eccezione ecc = new Eccezione();
@@ -3893,7 +3896,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				Node riferimento = riferimentoList.get(0);
 				//log.info("esamino["+riferimento.getNodeName()+"]");
 				//if(!(riferimento.getNodeName().equals(prefixManifest+"Riferimento"))){
-				if(!(SoapUtils.matchLocalName(riferimento, "Riferimento", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
+				if(!(SoapUtils.matchLocalName(messageFactory, riferimento, "Riferimento", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
 					//	Elemento Riferimento non esistente
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -3910,9 +3913,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try{
 					Node hrefFind = null;
 					if(this.readQualifiedAttribute){
-						hrefFind = SoapUtils.getQualifiedAttributeNode(riferimento, "href", SPCoopCostanti.NAMESPACE_EGOV);
+						hrefFind = SoapUtils.getQualifiedAttributeNode(messageFactory, riferimento, "href", SPCoopCostanti.NAMESPACE_EGOV);
 					}else{
-						hrefFind = SoapUtils.getAttributeNode(riferimento, "href");
+						hrefFind = SoapUtils.getAttributeNode(messageFactory, riferimento, "href");
 					}
 					href = hrefFind.getNodeValue();
 				} catch(Exception e) {
@@ -3988,9 +3991,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try{
 					Node roleFind = null;
 					if(this.readQualifiedAttribute){
-						roleFind = SoapUtils.getQualifiedAttributeNode(riferimento, "role", SPCoopCostanti.NAMESPACE_EGOV);
+						roleFind = SoapUtils.getQualifiedAttributeNode(messageFactory, riferimento, "role", SPCoopCostanti.NAMESPACE_EGOV);
 					}else{
-						roleFind = SoapUtils.getAttributeNode(riferimento, "role");
+						roleFind = SoapUtils.getAttributeNode(messageFactory, riferimento, "role");
 					}
 					role = roleFind.getNodeValue();
 				} catch(Exception e) {
@@ -4040,7 +4043,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				boolean idError = false;
 				try{
 					// Deve essere sempre preso come qualificato.
-					Node idFind = SoapUtils.getQualifiedAttributeNode(riferimento, "id", SPCoopCostanti.NAMESPACE_EGOV);
+					Node idFind = SoapUtils.getQualifiedAttributeNode(messageFactory, riferimento, "id", SPCoopCostanti.NAMESPACE_EGOV);
 					id = idFind.getNodeValue();
 				} catch(Exception e) {
 					idError = true;
@@ -4060,7 +4063,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 
 				// check elementi Schema e Titolo
-				List<Node> elementiRiferimento = SoapUtils.getNotEmptyChildNodes(riferimento);
+				List<Node> elementiRiferimento = SoapUtils.getNotEmptyChildNodes(messageFactory, riferimento);
 				if(elementiRiferimento.size()!=2){
 					//	Elemento Schema non esistente
 					Eccezione ecc = new Eccezione();
@@ -4076,11 +4079,11 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				Node schema = null;
 				Node titolo = null;
 				//if(child.getNodeName().equals(prefixManifest+"Schema")){
-				if(SoapUtils.matchLocalName(child, "Schema", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV)){
+				if(SoapUtils.matchLocalName(messageFactory, child, "Schema", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV)){
 					schema = child;
 					titolo = elementiRiferimento.get(1);				
 				//}else if(child.getNodeName().equals(prefixManifest+"Titolo")){
-				}else if(SoapUtils.matchLocalName(child, "Titolo", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV)){	
+				}else if(SoapUtils.matchLocalName(messageFactory, child, "Titolo", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV)){	
 					titolo = child;
 					schema = elementiRiferimento.get(1);
 				}else{
@@ -4097,7 +4100,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				//log.info("Validazione Schema...");			
 				//log.info("esamino["+schema.getNodeName()+"]");
 				//if(!(schema.getNodeName().equals(prefixManifest+"Schema"))){
-				if(!(SoapUtils.matchLocalName(schema, "Schema", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
+				if(!(SoapUtils.matchLocalName(messageFactory, schema, "Schema", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
 					//	Elemento Riferimento non esistente
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -4114,9 +4117,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try{
 					Node posizioneFind = null;
 					if(this.readQualifiedAttribute){
-						posizioneFind = SoapUtils.getQualifiedAttributeNode(schema, "posizione", SPCoopCostanti.NAMESPACE_EGOV);
+						posizioneFind = SoapUtils.getQualifiedAttributeNode(messageFactory, schema, "posizione", SPCoopCostanti.NAMESPACE_EGOV);
 					}else{
-						posizioneFind = SoapUtils.getAttributeNode(schema, "posizione");
+						posizioneFind = SoapUtils.getAttributeNode(messageFactory, schema, "posizione");
 					}
 					posizione = posizioneFind.getNodeValue();
 				} catch(Exception e) {
@@ -4140,7 +4143,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				//log.info("Validazione Titolo...");
 				//log.info("esamino["+titolo.getNodeName()+"]");
 				//if(!(titolo.getNodeName().equals(prefixManifest+"Titolo"))){
-				if(!(SoapUtils.matchLocalName(titolo, "Titolo", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
+				if(!(SoapUtils.matchLocalName(messageFactory, titolo, "Titolo", prefixManifest, SPCoopCostanti.NAMESPACE_EGOV))){
 					//	Elemento Riferimento non esistente
 					Eccezione ecc = new Eccezione();
 					ecc.setContestoCodifica(ContestoCodificaEccezione.INTESTAZIONE);
@@ -4156,9 +4159,9 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 				try{
 					Node LinguaFind = null;
 					if(this.readQualifiedAttribute){
-						LinguaFind = SoapUtils.getQualifiedAttributeNode(titolo, "Lingua", SPCoopCostanti.NAMESPACE_EGOV);
+						LinguaFind = SoapUtils.getQualifiedAttributeNode(messageFactory, titolo, "Lingua", SPCoopCostanti.NAMESPACE_EGOV);
 					}else{
-						LinguaFind = SoapUtils.getAttributeNode(titolo, "Lingua");
+						LinguaFind = SoapUtils.getAttributeNode(messageFactory, titolo, "Lingua");
 					}
 					Lingua = LinguaFind.getNodeValue();
 				} catch(Exception e) {}
@@ -4167,7 +4170,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 
 				String valoreTitolo = null;
 				try{
-					valoreTitolo = SoapUtils.getNotEmptyChildNodes(titolo).get(0).getNodeValue();
+					valoreTitolo = SoapUtils.getNotEmptyChildNodes(messageFactory, titolo).get(0).getNodeValue();
 					if(valoreTitolo == null)
 						throw new Exception("valore non presente");
 				} catch(Exception e) {

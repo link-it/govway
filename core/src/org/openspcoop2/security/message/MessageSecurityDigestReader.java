@@ -22,6 +22,7 @@
 package org.openspcoop2.security.message;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.message.constants.SecurityType;
 import org.openspcoop2.utils.digest.IDigestReader;
 
@@ -40,6 +41,6 @@ public abstract class MessageSecurityDigestReader {
 		this.log = log;
 	}
 	
-	public abstract IDigestReader getDigestReader(SecurityType securityType);
+	public abstract IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory, SecurityType securityType);
 	
 }

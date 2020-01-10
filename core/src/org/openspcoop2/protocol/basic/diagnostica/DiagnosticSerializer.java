@@ -46,7 +46,7 @@ public class DiagnosticSerializer extends BasicComponentFactory implements org.o
 
 	public DiagnosticSerializer(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
-		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+		this.xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 	}
 
 	/* --------------------- MESSAGGI DIAGNOSTICI -----------------------*/

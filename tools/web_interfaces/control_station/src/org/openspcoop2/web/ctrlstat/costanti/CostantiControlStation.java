@@ -339,6 +339,9 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_TOKEN_FORWARD = "Token Forward";
 	public final static String LABEL_PARAMETRO_PORTE_ELEMENTO_XML = "Elemento";
 	
+	public final static String LABEL_GESTIONE_MESSAGE_ENGINE = "Tipo";
+	public final static String GESTIONE_MESSAGE_ENGINE_DEFAULT = "Default";
+	
 	public final static String LABEL_PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "Stato";
 	
 	public final static String LABEL_STATO_ABILITATO = "Abilitato";

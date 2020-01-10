@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.spcoop;
 
 import javax.xml.soap.SOAPHeaderElement;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -47,7 +48,7 @@ public class SPCoopBustaRawContent extends BustaRawContent<SOAPHeaderElement> {
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toString(this.element,false);
+			return Utilities.toString(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.element,false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}
@@ -58,7 +59,7 @@ public class SPCoopBustaRawContent extends BustaRawContent<SOAPHeaderElement> {
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toByteArray(this.element,false);
+			return Utilities.toByteArray(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.element,false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}

@@ -112,9 +112,9 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	public OpenSPCoop2Message _createMessage(MessageType messageType, SOAPMessage soapMsg) throws MessageException {
 		OpenSPCoop2Message msg = null;
 		if(MessageType.SOAP_11.equals(messageType)){
-			msg = new OpenSPCoop2Message_saaj_11_impl(soapMsg);
+			msg = new OpenSPCoop2Message_saaj_11_impl(this, soapMsg);
 		} else if(MessageType.SOAP_11.equals(messageType)){
-			msg = new OpenSPCoop2Message_saaj_12_impl(soapMsg);
+			msg = new OpenSPCoop2Message_saaj_12_impl(this, soapMsg);
 		}
 		else{
 			throw new MessageException("Message Type ["+messageType+"] unsupported");
@@ -128,22 +128,22 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 		OpenSPCoop2Message msg = null;
 		switch (messageType) {
 			case SOAP_11:
-				msg = new OpenSPCoop2Message_saaj_11_impl();
+				msg = new OpenSPCoop2Message_saaj_11_impl(this);
 				break;
 			case SOAP_12:
-				msg = new OpenSPCoop2Message_saaj_12_impl();
+				msg = new OpenSPCoop2Message_saaj_12_impl(this);
 				break;
 			case XML:
-				msg = new OpenSPCoop2Message_xml_impl();
+				msg = new OpenSPCoop2Message_xml_impl(this);
 				break;
 			case JSON:
-				msg = new OpenSPCoop2Message_json_impl();
+				msg = new OpenSPCoop2Message_json_impl(this);
 				break;
 			case BINARY:
-				msg = new OpenSPCoop2Message_binary_impl();
+				msg = new OpenSPCoop2Message_binary_impl(this);
 				break;
 			case MIME_MULTIPART:
-				msg = new OpenSPCoop2Message_mimeMultipart_impl();
+				msg = new OpenSPCoop2Message_mimeMultipart_impl(this);
 				break;
 		}
 		
@@ -212,25 +212,25 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 						mhs.setHeader(HttpConstants.CONTENT_TYPE, contentType);
 					}
 					if(MessageType.SOAP_11.equals(messageType)){
-						msg = new OpenSPCoop2Message_saaj_11_impl(mhs, is);
+						msg = new OpenSPCoop2Message_saaj_11_impl(this, mhs, is);
 						((OpenSPCoop2Message_saaj_11_impl)msg).initialize(overhead);
 					}
 					else{
-						msg = new OpenSPCoop2Message_saaj_12_impl(mhs, is);
+						msg = new OpenSPCoop2Message_saaj_12_impl(this, mhs, is);
 						((OpenSPCoop2Message_saaj_12_impl)msg).initialize(overhead);
 					}
 					break;
 				case XML:
-					msg = new OpenSPCoop2Message_xml_impl(is,contentType);
+					msg = new OpenSPCoop2Message_xml_impl(this, is,contentType);
 					break;
 				case JSON:
-					msg = new OpenSPCoop2Message_json_impl(is,contentType);
+					msg = new OpenSPCoop2Message_json_impl(this, is,contentType);
 					break;
 				case BINARY:
-					msg = new OpenSPCoop2Message_binary_impl(is,contentType);
+					msg = new OpenSPCoop2Message_binary_impl(this, is,contentType);
 					break;
 				case MIME_MULTIPART:
-					msg = new OpenSPCoop2Message_mimeMultipart_impl(is,contentType);
+					msg = new OpenSPCoop2Message_mimeMultipart_impl(this, is,contentType);
 					break;
 			}
 					

@@ -24,6 +24,7 @@ package org.openspcoop2.protocol.modipa;
 
 import javax.xml.soap.SOAPEnvelope;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
@@ -46,7 +47,7 @@ public class ModISecuritySoapToken extends AbstractModISecurityToken<SOAPEnvelop
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toString(this.getToken(),false);
+			return Utilities.toString(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}
@@ -57,7 +58,7 @@ public class ModISecuritySoapToken extends AbstractModISecurityToken<SOAPEnvelop
 		switch (tipoSerializzazione) {
 		case XML:
 		case DEFAULT:
-			return Utilities.toByteArray(this.getToken(),false);
+			return Utilities.toByteArray(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), this.getToken(),false);
 		default:
 			throw new ProtocolException("Tipo di serializzazione ["+tipoSerializzazione+"] non supportata");
 		}

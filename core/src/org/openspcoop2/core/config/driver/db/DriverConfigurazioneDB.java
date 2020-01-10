@@ -18645,6 +18645,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_control_nostore");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
+			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id_soggetto = "+this.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_APPLICATIVE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -18665,6 +18666,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				pa.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
 				pa.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
 
+				pa.setOptions(rs.getString("options"));
+				
 				pa.setIdAccordo(rs.getLong("id_accordo"));
 				pa.setIdPortType(rs.getLong("id_port_type"));
 
@@ -19633,6 +19636,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("response_cache_control_nostore");
 			sqlQueryObject.addSelectField("id_accordo");
 			sqlQueryObject.addSelectField("id_port_type");
+			sqlQueryObject.addSelectField("options");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id_soggetto = "+this.tabellaSoggetti+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.PORTE_DELEGATE+".id = ?");
 			sqlQueryObject.setANDLogicOperator(true);
@@ -19647,6 +19651,8 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 				pd = new PortaDelegata();
 
+				pd.setOptions(rs.getString("options"));
+				
 				pd.setTipoSoggettoProprietario(rs.getString("tipo_soggetto"));
 				pd.setNomeSoggettoProprietario(rs.getString("nome_soggetto"));
 

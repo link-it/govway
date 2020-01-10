@@ -159,7 +159,7 @@ public class Signature {
 					this.xmlSignature.addRSAKeyInfo();
 				}
 				
-				this.xmlUtils = XMLUtils.getInstance();
+				this.xmlUtils = XMLUtils.DEFAULT;
 			}
 			catch(Exception e) {
 				throw new TracciaException(e.getMessage(),e);

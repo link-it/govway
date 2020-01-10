@@ -2467,7 +2467,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				@SuppressWarnings("unused")
 				Parameter pConfigurazioneDati = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
-				Parameter pConfigurazioneAltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
+				Parameter pConfigurazioneAltroPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
 
 				// spostata direttamente nell'elenco delle erogazioni
 //				// nome mapping
@@ -3125,7 +3125,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
-						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltro);
+						de.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltroPorta);
 						if(visualizzazioneTabs) {
 							setStatoOpzioniAvanzate(de, 
 									protocollo, serviceBindingMessage,
@@ -3142,7 +3142,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
 							
-							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltro,pIdTAb);
+							image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,pIdSogg, pNomePorta, pIdPorta,pIdAsps,pConfigurazioneAltroPorta,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,	PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							
@@ -4041,7 +4041,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				@SuppressWarnings("unused")
 				Parameter pConfigurazioneDati = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
-				Parameter pConfigurazioneAltro = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
+				Parameter pConfigurazioneAltroPorta = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA, Costanti.CHECK_BOX_ENABLED_TRUE);
 				
 				List<String> listaAzioniPDAssociataMappingNonDefault = null;
 				if(!mapping.isDefault()) {
@@ -4695,7 +4695,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						de = new DataElement();
 						if(visualizzazioneTabs)
 							de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
-						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltro);
+						de.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta);
 						if(visualizzazioneTabs) {
 							setStatoOpzioniAvanzate(de, 
 									protocollo, serviceBindingMessage,
@@ -4710,7 +4710,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						}
 						if(visualizzazioneTabs) {
 							DataElementImage image = new DataElementImage();
-							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltro,pIdTAb);
+							image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pConfigurazioneAltroPorta,pIdTAb);
 							image.setToolTip(MessageFormat.format(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO,PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE));
 							image.setImage(CostantiControlStation.ICONA_MODIFICA_CONFIGURAZIONE);
 							de.setImage(image);

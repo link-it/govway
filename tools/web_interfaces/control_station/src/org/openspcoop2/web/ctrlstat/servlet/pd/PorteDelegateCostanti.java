@@ -470,6 +470,9 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY = "messageSecurity";
 	public final static String PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED = "forceInterfaceBased";
 	public final static String PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY = "listAzioniReadOnly";
+    
+	public final static String PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE = "gestMessageEngine";
+    
 	public final static String PARAMETRO_PORTE_DELEGATE_IDENTIFICAZIONE = "identificazione";
 	public final static String PARAMETRO_PORTE_DELEGATE_NOME_PORTA_DELEGANTE = "nomePortaDelegante";
 	public final static String PARAMETRO_PORTE_DELEGATE_MODE_CREAZIONE = "modeCreazione";
@@ -478,7 +481,8 @@ public class PorteDelegateCostanti {
 	public final static String PARAMETRO_PORTE_DELEGATE_SERVICE_BINDING = CostantiControlStation.PARAMETRO_SERVICE_BINDING;
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
-	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO = "configurazioneAltro";
+	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
+	public final static String PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
 	public final static String PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	public final static String PARAMETRO_PORTE_DELEGATE_MTOM_RICHIESTA = CostantiControlStation.PARAMETRO_MTOM_RICHIESTA;
@@ -697,6 +701,9 @@ public class PorteDelegateCostanti {
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MAPPING_GRUPPO = "Gruppo";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_NOME_GRUPPO = CostantiControlStation.LABEL_PARAMETRO_PORTE_NOME_GRUPPO;
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_ELENCO_AZIONI_GRUPPI_PREFIX = "Elenco ";
+	
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MESSAGE_ENGINE = "Message Engine";
+	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_GESTIONE_MESSAGE_ENGINE = CostantiControlStation.LABEL_GESTIONE_MESSAGE_ENGINE;
 	
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT = "register-input";
 	public final static String LABEL_PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED = "header-based";

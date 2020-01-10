@@ -22,6 +22,8 @@
 
 package org.openspcoop2.message.xml;
 
+import java.util.HashMap;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
@@ -38,23 +40,34 @@ import org.openspcoop2.utils.xml.XMLException;
  */
 public class XMLUtils extends org.openspcoop2.utils.xml.XMLUtils {
 
-	private static XMLUtils xmlUtils = null;
-	private static synchronized void init(){
-		if(XMLUtils.xmlUtils==null){
-			XMLUtils.xmlUtils = new XMLUtils();
+	private static HashMap<String, XMLUtils> xmlUtilsMap = new HashMap<>();
+	private static synchronized void init(OpenSPCoop2MessageFactory messageFactory){
+		String key = messageFactory.getClass().getName();
+		if(!XMLUtils.xmlUtilsMap.containsKey(key)){
+			XMLUtils xmlUtils = new XMLUtils(messageFactory);
+			xmlUtilsMap.put(key, xmlUtils);
 		}
 	}
-	public static XMLUtils getInstance(){
-		if(XMLUtils.xmlUtils==null){
-			XMLUtils.init();
+	public static XMLUtils getInstance(OpenSPCoop2MessageFactory messageFactory){
+		String key = messageFactory.getClass().getName();
+		if(!XMLUtils.xmlUtilsMap.containsKey(key)){
+			XMLUtils.init(messageFactory);
 		}
-		return XMLUtils.xmlUtils;
+		return XMLUtils.xmlUtilsMap.get(key);
+	}
+	
+	public static XMLUtils DEFAULT = XMLUtils.getInstance(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+	
+	private OpenSPCoop2MessageFactory messageFactory;
+	
+	public XMLUtils(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
 	}
 	
 	@Override
 	protected DocumentBuilderFactory newDocumentBuilderFactory() throws XMLException {
 		try{
-			return (DocumentBuilderFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.getMessageFactory().getDocumentBuilderFactoryClass());
+			return (DocumentBuilderFactory) Loader.getInstance().newInstance(this.messageFactory.getDocumentBuilderFactoryClass());
 		}catch(Exception e){
 			throw new XMLException(e.getMessage(),e);
 		}

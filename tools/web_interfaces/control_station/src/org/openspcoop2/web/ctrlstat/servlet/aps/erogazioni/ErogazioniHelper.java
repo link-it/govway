@@ -1426,6 +1426,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		Parameter paIdProvider = null;
 		Parameter paIdPortaPerSA = null;
 		Parameter paConnettoreDaListaAPS = null;
+		Parameter paConfigurazioneAltroApi = null;
 		IDPortaApplicativa idPA = null;
 		PortaApplicativa paDefault = null;
 		PortaApplicativaServizioApplicativo portaApplicativaServizioApplicativo =  null;
@@ -1452,7 +1453,8 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 				paIdProvider = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_PROVIDER, paDefault.getIdSoggetto() + "");
 				paIdPortaPerSA = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_PORTA, ""+paDefault.getId());
 				paConnettoreDaListaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, Costanti.CHECK_BOX_ENABLED_TRUE);
-
+				paConfigurazioneAltroApi = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API, Costanti.CHECK_BOX_ENABLED_TRUE);
+				
 				UrlInvocazioneAPI urlInvocazioneConfig = this.confCore.getConfigurazioneUrlInvocazione(protocollo, RuoloContesto.PORTA_APPLICATIVA, serviceBinding, paDefault.getNome(), 
 						new IDSoggetto(paDefault.getTipoSoggettoProprietario(), paDefault.getNomeSoggettoProprietario()));
 				urlInvocazione = urlInvocazioneConfig.getUrl();
@@ -1568,6 +1570,29 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			
 			de.setImage(image);
 			dati.addElement(de);
+			
+			
+			
+			// Opzioni Avanzate
+			
+			if(!this.isModalitaStandard() && this.apsCore.getMessageEngines()!=null && !this.apsCore.getMessageEngines().isEmpty()) {
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE);
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getStatoOpzioniAvanzatePortaApplicativaDefault(paDefault));
+				if(!this.isModalitaCompleta()) {
+					this.setStatoOpzioniAvanzatePortaApplicativaDefault(de, paDefault.getOptions());
+				}
+				paIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, asps.getIdSoggetto() + "");
+				
+				image = new DataElementImage();
+				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_OPZIONI_AVANZATE));
+				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+				image.setUrl(PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CHANGE,paIdSogg, paNomePorta, paIdPorta,pIdAsps,paConfigurazioneAltroApi);
+				
+				de.setImage(image);
+				dati.addElement(de);
+			}
 		}
 		
 		if(gestioneFruitori) {
@@ -1583,6 +1608,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			Parameter pIdSoggPD = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_ID_SOGGETTO, pdDefault.getIdSoggetto() + "");
 			Parameter pConfigurazioneDati = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_DATI_INVOCAZIONE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConnettoreDaListaAPS = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONNETTORE_DA_LISTA_APS, Costanti.CHECK_BOX_ENABLED_TRUE);
+			Parameter pdConfigurazioneAltroApi = new Parameter(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_CONFIGURAZIONE_ALTRO_API, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
 			
 			// url invocazione
@@ -1731,6 +1757,25 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 			image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_GESTIONE_CORS, pIdPD, pNomePD, pIdSoggPD, pIdAsps, pIdFruitore);
 			de.setImage(image);
 			dati.addElement(de);
+			
+			
+			// Opzioni Avanzate
+			
+			if(!this.isModalitaStandard() && this.apsCore.getMessageEngines()!=null && !this.apsCore.getMessageEngines().isEmpty()) {
+				de = new DataElement();
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE);
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getStatoOpzioniAvanzatePortaDelegataDefault(pdDefault));
+				if(!this.isModalitaCompleta()) {
+					this.setStatoOpzioniAvanzatePortaDelegataDefault(de, pdDefault.getOptions());
+				}
+				image = new DataElementImage();
+				image.setToolTip(MessageFormat.format(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE_TOOLTIP_CON_PARAMETRO, PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_OPZIONI_AVANZATE));
+				image.setImage(ErogazioniCostanti.ASPS_EROGAZIONI_ICONA_MODIFICA_CONFIGURAZIONE);
+				image.setUrl(PorteDelegateCostanti.SERVLET_NAME_PORTE_DELEGATE_CHANGE,pIdPD,pNomePD,pIdSoggPD, pIdAsps, pIdFruitore, pdConfigurazioneAltroApi);
+				de.setImage(image);
+				dati.addElement(de);
+			}
 		}
 		
 

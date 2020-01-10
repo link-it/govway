@@ -141,7 +141,7 @@ public class ResponseCached implements Serializable {
 		return bf.toString();
 	}
 	
-	public OpenSPCoop2Message toOpenSPCoop2Message(AttachmentsProcessingMode attachmentProcessingMode, String headerCacheKey) throws Exception {
+	public OpenSPCoop2Message toOpenSPCoop2Message(OpenSPCoop2MessageFactory messageFactory, AttachmentsProcessingMode attachmentProcessingMode, String headerCacheKey) throws Exception {
 		
 		// Lettura Message Context
 		org.openspcoop2.message.context.utils.serializer.JaxbDeserializer jaxbDeserializer  = 
@@ -175,10 +175,9 @@ public class ResponseCached implements Serializable {
 		}
 		
 		// CostruzioneMessaggio
-		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
 		NotifierInputStreamParams notifierInputStreamParams = null; 
 		OpenSPCoop2MessageParseResult pr = null;
-		pr = mf.createMessage(mt,mr,this.contentType,
+		pr = messageFactory.createMessage(mt,mr,this.contentType,
 				this.message,notifierInputStreamParams,
 				attachmentProcessingMode);
 		OpenSPCoop2Message msg = pr.getMessage_throwParseException();

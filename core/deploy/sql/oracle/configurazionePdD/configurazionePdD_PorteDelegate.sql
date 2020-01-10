@@ -130,6 +130,7 @@ CREATE TABLE porte_delegate
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto NUMBER NOT NULL,
 	ora_registrazione TIMESTAMP,
+	options VARCHAR2(4000),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- unique constraints

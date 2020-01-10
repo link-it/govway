@@ -34,6 +34,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -58,6 +59,7 @@ import org.openspcoop2.protocol.sdk.validator.ProprietaValidazioneErrori;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.digest.IDigestReader;
 import org.slf4j.Logger;
 
 
@@ -398,8 +400,12 @@ public class Validatore  {
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
 			/** Leggo contesto sicurezza prima di processare la parte MessageSecurity */
-			if(messageSecurityContext!= null && messageSecurityContext.getDigestReader()!=null){
-				this.securityInfo = this.protocolFactory.createValidazioneSemantica(this.state).readSecurityInformation(messageSecurityContext.getDigestReader(),
+			IDigestReader digestReader = null;
+			if(messageSecurityContext != null) {
+				digestReader = messageSecurityContext.getDigestReader(this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+			}
+			if(messageSecurityContext!= null && digestReader!=null){
+				this.securityInfo = this.protocolFactory.createValidazioneSemantica(this.state).readSecurityInformation(digestReader,
 						this.msg);
 			}		
 

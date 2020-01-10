@@ -64,6 +64,7 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.wsdl.RegistroOpenSPCoopUtilities;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
@@ -1689,9 +1690,10 @@ public class ImporterArchiveUtils {
 			if(wsdl==null){
 				throw new Exception("WSDLConcettuale non fornito");
 			}
-			RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(this.log);
+			OpenSPCoop2MessageFactory defaultFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			RegistroOpenSPCoopUtilities wsdlUtility = new RegistroOpenSPCoopUtilities(defaultFactory, this.log);
 			wsdl=wsdlUtility.eliminaImportASParteComune(wsdl);
-			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,XMLUtils.getInstance());
+			DefinitionWrapper wsdlObject = new DefinitionWrapper(wsdl,XMLUtils.getInstance(defaultFactory));
 			Hashtable<String, List<String>> mapPortTypeOperations = new Hashtable<String, List<String>>();
 			java.util.Map<?,?> pts = wsdlObject.getAllPortTypes();
 			if(pts==null || pts.size()<=0){

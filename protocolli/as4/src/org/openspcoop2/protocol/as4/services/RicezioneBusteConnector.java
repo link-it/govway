@@ -123,7 +123,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 					OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();
 					if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()) {
 						throw new Exception("Servizio Ricezione Buste terminato con codice '"+as4Out.getResponseStatus()+"' e con un soapFault: "+
-								SoapUtils.toString(soapMsg.getSOAPBody().getFault()));
+								SoapUtils.toString(soapMsg.getFactory(), soapMsg.getSOAPBody().getFault()));
 					}
 					else {
 						throw new Exception("Servizio Ricezione Buste terminato con codice (Messaggio SOAP senza Fault): "+as4Out.getResponseStatus());
@@ -147,7 +147,7 @@ public class RicezioneBusteConnector extends AbstractRicezioneConnector{
 			OpenSPCoop2SoapMessage soapMsg = as4Out.getMessage().castAsSoap();
 			if(soapMsg.getSOAPBody()!=null && soapMsg.getSOAPBody().hasFault()) {
 				throw new Exception("Servizio Ricezione Buste terminato con un soapFault: "+
-						SoapUtils.toString(soapMsg.getSOAPBody().getFault()));
+						SoapUtils.toString(soapMsg.getFactory(), soapMsg.getSOAPBody().getFault()));
 			}
 		}
 	}

@@ -44,6 +44,7 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.pdd.core.Utilities;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -185,7 +186,8 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 			// Consegna
 			if(this.debug)
 				this.logger.debug("Creazione connessione...");	
-			SOAPConnectionFactory soapConnFactory = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory();
+			OpenSPCoop2MessageFactory messageFactory = Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo, MessageRole.NONE);
+			SOAPConnectionFactory soapConnFactory = messageFactory.getSOAPConnectionFactory();
 			SOAPConnection connection = soapConnFactory.createConnection();
 							    
 			
@@ -291,7 +293,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				if(this.debug)
 					this.logger.debug("Send...");
 				
-				this.responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().
+				this.responseMsg = messageFactory.
 						createMessage(this.requestMsg.getMessageType(),MessageRole.RESPONSE,connection.call( this.requestMsg.castAsSoap().getSOAPMessage(),this.location));
 				
 				this.dataAccettazioneRisposta = DateManager.getDate();

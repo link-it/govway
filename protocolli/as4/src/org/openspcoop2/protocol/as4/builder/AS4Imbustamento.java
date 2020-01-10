@@ -115,6 +115,8 @@ public class AS4Imbustamento {
 			IRegistryReader registryReader, IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		
 		try{
+			OpenSPCoop2MessageFactory messageFactory = msg!=null ? msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+			
 			ProtocolMessage protocolMessage = new ProtocolMessage();
 			
 			OpenSPCoop2SoapMessage as4Message = null;
@@ -246,7 +248,7 @@ public class AS4Imbustamento {
 					as4Message = soapMessage; // viene trasformato il messaggio ricevuto per avere benefici di performance
 				}
 				else{
-					as4Message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
+					as4Message = messageFactory.createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
 					msg.copyResourcesTo(as4Message);
 					
 					fillSoap12fromSoap11(as4Message, soapMessage);
@@ -259,7 +261,7 @@ public class AS4Imbustamento {
 			else{
 				
 				OpenSPCoop2RestMessage<?> restMessage = msg.castAsRest();
-				as4Message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
+				as4Message = messageFactory.createEmptyMessage(MessageType.SOAP_12, messageRole).castAsSoap(); // viene creato ad hoc
 				msg.copyResourcesTo(as4Message);
 				
 				mapAS4InfoFromRestMessage(as4Message, restMessage, payloadInfo, submitRequest, mapIdPartInfoToIdAttach,

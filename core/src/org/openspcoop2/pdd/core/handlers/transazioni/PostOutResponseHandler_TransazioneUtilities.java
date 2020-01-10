@@ -340,7 +340,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 									// Pero' non veniva stampato correttamente il SOAPFault. Mi appoggio allora a SoapUtils.
 									//byte [] content = org.openspcoop2.message.soap.TunnelSoapUtils.sbustamentoMessaggio(context.getMessaggio());
 									byte [] content = bout.toByteArray();
-									fault = DumpUtility.toString(XMLUtils.getInstance().newDocument(content), log, context.getMessaggio());
+									fault = DumpUtility.toString(XMLUtils.getInstance(soapMsg.getFactory()).newDocument(content), log, context.getMessaggio());
 									//System.out.println("IMPOSTATO FAULT IN TRANSACTION ["+fault+"]");
 								}
 								else{
@@ -369,7 +369,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 										// Pero' non veniva stampato correttamente il SOAPFault. Mi appoggio allora a SoapUtils.
 										//byte [] content = org.openspcoop2.message.soap.TunnelSoapUtils.sbustamentoMessaggio(context.getMessaggio());
 										byte [] content = bout.toByteArray();
-										fault = DumpUtility.toString(XMLUtils.getInstance().newDocument(content), log, context.getMessaggio());
+										fault = DumpUtility.toString(XMLUtils.getInstance(restMsg.getFactory()).newDocument(content), log, context.getMessaggio());
 										//System.out.println("IMPOSTATO FAULT IN TRANSACTION ["+fault+"]");
 									}
 									else{

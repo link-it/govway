@@ -193,12 +193,12 @@ public abstract class AbstractErrorGenerator {
 		//this.log.error(e.getMessage(),e);
 		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
+		return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 	}
 	public OpenSPCoop2Message buildFault(String errore){
 		//this.log.error(errore);
 		boolean useProblemRFC7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR)!=null;
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(IntegrationError.INTERNAL_ERROR);
-		return OpenSPCoop2MessageFactory.getMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, errore);
+		return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, errore);
 	}
 }

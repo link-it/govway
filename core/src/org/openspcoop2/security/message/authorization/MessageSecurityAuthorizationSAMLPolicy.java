@@ -108,11 +108,9 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	
 	
 	
-	private AbstractXPathExpressionEngine xpathExpressionEngine;
-
+	
     public MessageSecurityAuthorizationSAMLPolicy()  {
     	PolicyDecisionPoint.runInitializers(); //necessario per far inizializzare gli unmarshaller in caso di pdp remoto
-		this.xpathExpressionEngine = new XPathExpressionEngine();
     }
 
 
@@ -262,14 +260,16 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	
 			DynamicNamespaceContext dnc = null;
 			if(MessageType.SOAP_11.equals(soapMessage.getMessageType())) {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope11(soapMessage.getSOAPPart().getEnvelope());
+				dnc = DynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope11(soapMessage.getSOAPPart().getEnvelope());
 			} else {
-				dnc = DynamicNamespaceContextFactory.getInstance().getNamespaceContextFromSoapEnvelope12(soapMessage.getSOAPPart().getEnvelope());
+				dnc = DynamicNamespaceContextFactory.getInstance(soapMessage.getFactory()).getNamespaceContextFromSoapEnvelope12(soapMessage.getSOAPPart().getEnvelope());
 			}
 	    	
+			AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(soapMessage.getFactory());
+						
 			boolean SAML_2_0 = false;
 			try {
-				Object o = this.xpathExpressionEngine.getMatchPattern(security, dnc, SAMLConstants.XPATH_SAML_20_ASSERTION, XPathReturnType.NODE);
+				Object o = xpathExpressionEngine.getMatchPattern(security, dnc, SAMLConstants.XPATH_SAML_20_ASSERTION, XPathReturnType.NODE);
 				SAML_2_0 = (o!=null);
 			} catch(XPathNotFoundException e) {
 				SAML_2_0 = false;
@@ -296,7 +296,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 			}
 			
 	    	// inoltre creare altri attribute del subject che contengano:
-			SAMLAttributes saml = new SAMLAttributes(security, dnc, SAML_2_0, this.xpathExpressionEngine);
+			SAMLAttributes saml = new SAMLAttributes(security, dnc, SAML_2_0, xpathExpressionEngine);
 
 			// il valore del NameID all'interno dell'elemento Subject 
 			if(SAML_2_0){

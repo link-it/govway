@@ -32,6 +32,7 @@ import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.security.Security;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
 
@@ -565,90 +566,134 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			/* ----------- Inizializzazione Risorse DOM/SOAP ------------ */
+			List<OpenSPCoop2MessageFactory> messageFactory = new ArrayList<OpenSPCoop2MessageFactory>();
 			try{
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
-				OpenSPCoop2MessageFactory.initMessageFactory(true);
+				OpenSPCoop2MessageFactory.initDefaultMessageFactory(true);
 								
 				// MessageSecurity
 				MessageSecurityFactory.setMessageSecurityContextClassName(classNameReader.getMessageSecurityContext(propertiesReader.getMessageSecurityContext()));
 				MessageSecurityFactory.setMessageSecurityDigestReaderClassName(classNameReader.getMessageSecurityDigestReader(propertiesReader.getMessageSecurityDigestReader()));
 				
-				// XML
-				org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
-				// XML - XERCES
-				xmlUtils.initDocumentBuilderFactory();
-				xmlUtils.initDatatypeFactory();
-//				xmlUtils.initSAXParserFactory();
-//				xmlUtils.initXMLEventFactory();
-				xmlUtils.initSchemaFactory();
-				// XML - XALAN
-				xmlUtils.initTransformerFactory();
-				xmlUtils.initXPathFactory();
-				// INIT - OTHER
-				xmlUtils.initCalendarConverter();
+				List<String> tipiMessageFactory = new ArrayList<String>();
+				List<String> classiMessageFactory = new ArrayList<String>();
+				String factoryDefault = "@DEFAULT@";
+				tipiMessageFactory.add(factoryDefault);
+				OpenSPCoop2MessageFactory defaultMessageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+				classiMessageFactory.add(defaultMessageFactory.getClass().getName());
+				messageFactory.add(defaultMessageFactory);
 				
-				// SOAP
-				OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11();
-				OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory12();
-				OpenSPCoop2MessageFactory.getMessageFactory().getSoapMessageFactory();
+				String [] tmp_tipiMessageFactory = classNameReader.getOpenSPCoop2MessageFactory();
+				if(tmp_tipiMessageFactory!=null && tmp_tipiMessageFactory.length>0) {
+					OpenSPCoop2Startup.log.info("Analizzo "+tmp_tipiMessageFactory.length+" message factories ...");
+					for (int i = 0; i < tmp_tipiMessageFactory.length; i++) {
+						String tipo = tmp_tipiMessageFactory[i];
+						String classe = classNameReader.getOpenSPCoop2MessageFactory(tipo);
+						if(!classiMessageFactory.contains(classe)) {
+							OpenSPCoop2MessageFactory factory = (OpenSPCoop2MessageFactory) loader.newInstance(classe);
+							tipiMessageFactory.add(tipo);
+							messageFactory.add(factory);
+							classiMessageFactory.add(classe);
+							OpenSPCoop2Startup.log.info("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' terminata");
+						}
+						else {
+							OpenSPCoop2Startup.log.info("Registrazione '"+tipo+"' corrispondente alla classe '"+classe+"' non effettuata. La stessa classe risulta già associata ad altri tipi.");
+						}
+					}
+				}
 				
-				// Log
-				OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-				// stampo comunque saaj factory
-				OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
-				if(propertiesReader.isPrintInfoFactory()){
-					MessageType [] mt = MessageType.values();
-					for (int i = 0; i < mt.length; i++) {
-						OpenSPCoop2Startup.log.info("OpenSPCoop Message ["+mt[i].name()+"]: "+factory.createEmptyMessage(mt[i],MessageRole.NONE).getClass().getName());	
-					}
-					if( OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11()!=null)
-						OpenSPCoop2Startup.log.info("SOAP1.1 Factory: "+ OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11().getClass().getName());
-					else
-						OpenSPCoop2Startup.log.info("SOAP1.1 Factory: not implemented");
-					if(OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory12()!=null){
-						OpenSPCoop2Startup.log.info("SOAP1.2 Factory: "+ OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory12().getClass().getName());
-					}else{
-						OpenSPCoop2Startup.log.info("SOAP1.2 Factory: not implemented");
-					}
-					OpenSPCoop2Startup.log.info("SOAP MessageFactory: "+OpenSPCoop2MessageFactory.getMessageFactory().getSoapMessageFactory().getClass().getName());
-	
-					// XML - XERCES
-					OpenSPCoop2Startup.log.info("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
-//					OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
-//					OpenSPCoop2Startup.log.info("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
+				for (int l = 0; l < tipiMessageFactory.size(); l++) {
+					String tipo = tipiMessageFactory.get(l);
+					String classe = classiMessageFactory.get(l);
+					OpenSPCoop2MessageFactory factory = messageFactory.get(l);
 					
-					// XML - XALAN
-					OpenSPCoop2Startup.log.info("XALAN - TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
-					OpenSPCoop2Startup.log.info("XALAN - XPathFactory: "+xmlUtils.getXPathFactory().getClass().getName());
+					try{
+					
+						OpenSPCoop2Startup.log.info("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' ... ");
+					
+						// XML
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance(factory);
+						// XML - XERCES
+						xmlUtils.initDocumentBuilderFactory();
+						xmlUtils.initDatatypeFactory();
+//						xmlUtils.initSAXParserFactory();
+//						xmlUtils.initXMLEventFactory();
+						xmlUtils.initSchemaFactory();
+						// XML - XALAN
+						xmlUtils.initTransformerFactory();
+						xmlUtils.initXPathFactory();
+						// INIT - OTHER
+						xmlUtils.initCalendarConverter();
+						
+						// SOAP
+						factory.getSoapFactory11();
+						factory.getSoapFactory12();
+						factory.getSoapMessageFactory();
+						
+						// Log
+						// stampo comunque saaj factory
+						OpenSPCoop2Startup.log.info("OpenSPCoop MessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+"): "+factory.getClass().getName());
+						if(propertiesReader.isPrintInfoFactory()){
+							MessageType [] mt = MessageType.values();
+							for (int i = 0; i < mt.length; i++) {
+								OpenSPCoop2Startup.log.info("OpenSPCoop Message ["+mt[i].name()+"]: "+factory.createEmptyMessage(mt[i],MessageRole.NONE).getClass().getName());	
+							}
+							if( factory.getSoapFactory11()!=null)
+								OpenSPCoop2Startup.log.info("SOAP1.1 Factory: "+ factory.getSoapFactory11().getClass().getName());
+							else
+								OpenSPCoop2Startup.log.info("SOAP1.1 Factory: not implemented");
+							if(factory.getSoapFactory12()!=null){
+								OpenSPCoop2Startup.log.info("SOAP1.2 Factory: "+ factory.getSoapFactory12().getClass().getName());
+							}else{
+								OpenSPCoop2Startup.log.info("SOAP1.2 Factory: not implemented");
+							}
+							OpenSPCoop2Startup.log.info("SOAP MessageFactory: "+factory.getSoapMessageFactory().getClass().getName());
+			
+							// XML - XERCES
+							OpenSPCoop2Startup.log.info("XERCES - DocumentFactory: "+xmlUtils.getDocumentBuilderFactory().getClass().getName());
+							OpenSPCoop2Startup.log.info("XERCES - DatatypeFactory: "+xmlUtils.getDatatypeFactory().getClass().getName());
+//							OpenSPCoop2Startup.log.info("XERCES - SAXParserFactory: "+xmlUtils.getSAXParserFactory().getClass().getName());
+//							OpenSPCoop2Startup.log.info("XERCES - XMLEventFactory: "+xmlUtils.getXMLEventFactory().getClass().getName());
+							OpenSPCoop2Startup.log.info("XERCES - SchemaFactory: "+xmlUtils.getSchemaFactory().getClass().getName());
+							
+							// XML - XALAN
+							OpenSPCoop2Startup.log.info("XALAN - TransformerFactory: "+xmlUtils.getTransformerFactory().getClass().getName());
+							OpenSPCoop2Startup.log.info("XALAN - XPathFactory: "+xmlUtils.getXPathFactory().getClass().getName());
 
-				}
-				if(propertiesReader.isPrintInfoMessageSecurity()){
-					OpenSPCoop2Startup.log.info("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
-					OpenSPCoop2Startup.log.info("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
-					OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
-				}
-				
-				// Inizializzo Operazioni "Costose"
-				// Serve per abbassare la latenza del primo messaggio, altrimenti queste operazioni all'interno del metodo di costruzione dell'header costano sui 50ms
-				OpenSPCoop2Message msgTest = factory.createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST);
-				SOAPHeader hdr = msgTest.castAsSoap().getSOAPHeader();
-				if(hdr==null){
-					hdr = msgTest.castAsSoap().getSOAPPart().getEnvelope().addHeader();
-				}
-				String namespaceTest = "http://initialize.openspcoop.org/test";
-				String prefixTest = "op2";
-				QName nameTest = new QName(namespaceTest, "Prova", prefixTest);
-				SOAPHeaderElement testHeader = msgTest.castAsSoap().newSOAPHeaderElement(hdr, nameTest);
-				testHeader.setActor("http://initialize.openspcoop.org/test");
-				testHeader.setMustUnderstand(true);
-				SOAPElement eGovIntestazioneMsg = testHeader.addChildElement("Test",prefixTest,namespaceTest);
-				if(eGovIntestazioneMsg!=null){
-					eGovIntestazioneMsg.toString();
+						}
+						if(propertiesReader.isPrintInfoMessageSecurity()){
+							OpenSPCoop2Startup.log.info("MessageSecurity Context: "+MessageSecurityFactory.messageSecurityContextImplClass);
+							OpenSPCoop2Startup.log.info("MessageSecurity DigestReader: "+MessageSecurityFactory.messageSecurityDigestReaderImplClass);
+							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) EncryptedDataHeaderBlock: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getEncryptedDataHeaderBlockClass());
+							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) ProcessPartialEncryptedMessage: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getProcessPartialEncryptedMessageClass());
+							OpenSPCoop2Startup.log.info("MessageSecurity (SoapBox) getSignPartialMessageProcessor: "+factory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).castAsSoap().getSignPartialMessageProcessorClass());
+						}
+												
+						// Inizializzo Operazioni "Costose"
+						// Serve per abbassare la latenza del primo messaggio, altrimenti queste operazioni all'interno del metodo di costruzione dell'header costano sui 50ms
+						OpenSPCoop2Message msgTest = factory.createEmptyMessage(MessageType.SOAP_11, MessageRole.REQUEST);
+						SOAPHeader hdr = msgTest.castAsSoap().getSOAPHeader();
+						if(hdr==null){
+							hdr = msgTest.castAsSoap().getSOAPPart().getEnvelope().addHeader();
+						}
+						String namespaceTest = "http://initialize.openspcoop.org/test";
+						String prefixTest = "op2";
+						QName nameTest = new QName(namespaceTest, "Prova", prefixTest);
+						SOAPHeaderElement testHeader = msgTest.castAsSoap().newSOAPHeaderElement(hdr, nameTest);
+						testHeader.setActor("http://initialize.openspcoop.org/test");
+						testHeader.setMustUnderstand(true);
+						SOAPElement eGovIntestazioneMsg = testHeader.addChildElement("Test",prefixTest,namespaceTest);
+						if(eGovIntestazioneMsg!=null){
+							eGovIntestazioneMsg.toString();
+						}
+					
+						OpenSPCoop2Startup.log.info("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' effettuata");
+						
+					} catch(Exception e) {
+						this.logError("Inizializzazione '"+tipo+"' corrispondente alla classe '"+classe+"' fallita: "+e.getMessage(),e);
+						return;
+					}
 				}
 								
 			} catch(Exception e) {
@@ -1241,6 +1286,22 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				// Initialize Protocols
 				protocolFactoryManager.initializeAllProtocols();
+				
+				// Inizializzazione schemi per altri message factory
+				if(messageFactory.size()>1) {
+					// La factory alla prima posizione, e' la factory di default già inizializzata
+					for (int i = 1; i < messageFactory.size(); i++) {
+						OpenSPCoop2MessageFactory factory = messageFactory.get(i);
+						Enumeration<String> protocolli = ProtocolFactoryManager.getInstance().getProtocolNames();
+						while (protocolli.hasMoreElements()) {
+							String protocollo = (String) protocolli.nextElement();
+							if(ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo).createValidazioneConSchema(null).initialize(factory)==false) {
+								throw new Exception("Inizializzazione validatore con schemi per il protocollo '"+protocollo+"' e messagefactory '"+factory.getClass().getName()+"' fallita");
+							}
+						}
+					}
+				}
+				
 				OpenSPCoop2Startup.log.info("ProtocolFactory default: "+protocolFactoryManager.getDefaultProtocolFactory().getProtocol());
 			} catch(Exception e) {
 				this.logError("Initialize ProtocolFactoryManager failed: "+e.getMessage());

@@ -168,7 +168,7 @@ public class PreLoadingConfig  {
 							}
 							else {
 							
-								Element element = XMLUtils.getInstance().newElement(bytes);
+								Element element = XMLUtils.DEFAULT.newElement(bytes);
 								if(org.openspcoop2.core.config.utils.XMLUtils.isConfigurazione(element)) {
 									configNameList.add(entryName);
 									configList.add(bytes);

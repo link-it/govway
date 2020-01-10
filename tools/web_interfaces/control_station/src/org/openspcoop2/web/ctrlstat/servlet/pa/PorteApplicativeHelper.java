@@ -1009,7 +1009,8 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer,String autenticazioneTokenClientId,String autenticazioneTokenSubject,String autenticazioneTokenUsername,String autenticazioneTokenEMail,
 			String autorizzazione_token, String autorizzazione_tokenOptions,
-			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy) throws Exception {
+			String autorizzazioneScope, int numScope, String autorizzazioneScopeMatch,BinaryParameter allegatoXacmlPolicy,
+			String messageEngine) throws Exception {
 
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
@@ -1025,12 +1026,14 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		boolean isConfigurazione = parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE; 
 		
 		boolean datiInvocazione = false;
-		boolean datiAltro = false;
+		boolean datiAltroPorta = false;
+		boolean datiAltroApi = false; // indipendente dalla porta (viene utilizzata sempre la porta di default)
 		if(isConfigurazione) {
 			if(usataInConfigurazioneDefault) {
 				datiInvocazione = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE));
 			}
-			datiAltro = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO));
+			datiAltroPorta = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA));
+			datiAltroApi = ServletUtils.isCheckBoxEnabled(this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API));
 			
 			DataElement de = new DataElement();
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_DATI_INVOCAZIONE);
@@ -1039,9 +1042,15 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			dati.addElement(de);
 			
 			de = new DataElement();
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_PORTA);
 			de.setType(DataElementType.HIDDEN);
-			de.setValue(datiAltro+"");
+			de.setValue(datiAltroPorta+"");
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONFIGURAZIONE_ALTRO_API);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(datiAltroApi+"");
 			dati.addElement(de);
 		}
 		
@@ -1062,7 +1071,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		
 		// *************** Nome/Descrizione *********************
 		
-		if(datiInvocazione || !datiAltro) {
+		if(datiInvocazione || (!datiAltroPorta && !datiAltroApi)) {
 			DataElement de = new DataElement();
 			if(datiInvocazione) {
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_TITOLO_PORTE_APPLICATIVE_DATI_INVOCAZIONE);
@@ -1706,7 +1715,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_METADATI);
 			de.setValue(integrazione);
 			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
-			if(this.isModalitaStandard() || (isConfigurazione && !datiAltro) ){
+			if(this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta) ){
 				de.setType(DataElementType.HIDDEN);
 				dati.addElement(de);
 			}else{
@@ -1727,7 +1736,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de = new DataElement();
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_STATELESS);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_STATELESS);
-		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltro)){
+		if(!this.core.isShowJ2eeOptions() || (isConfigurazione && !datiAltroPorta)){
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(stateless);
 			dati.addElement(de);
@@ -1743,7 +1752,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
 		de.setValue(behaviour);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_BEHAVIOUR);
-		if (!this.isModalitaAvanzata() || (isConfigurazione && !datiAltro)) {
+		if (!this.isModalitaAvanzata() || (isConfigurazione && !datiAltroPorta)) {
 			de.setType(DataElementType.HIDDEN);
 			dati.addElement(de);
 		}
@@ -1769,7 +1778,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		
 		if(deIntegrazione.size()>0){
 			
-			if(!isConfigurazione || datiAltro) {
+			if(!isConfigurazione || datiAltroPorta) {
 				de = new DataElement();
 				de.setType(DataElementType.TITLE);
 				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_INTEGRAZIONE);
@@ -1879,7 +1888,7 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		boolean supportoAsincroni = this.core.isProfiloDiCollaborazioneAsincronoSupportatoDalProtocollo(protocollo,serviceBinding);
 		if(supportoAsincroni) {
 			de = new DataElement();
-			if ( this.isModalitaStandard() || (isConfigurazione && !datiAltro)) {
+			if ( this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
 				de.setType(DataElementType.HIDDEN);
 			}else{
 				de.setType(DataElementType.TITLE);
@@ -1893,9 +1902,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_SIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltro)) {
+			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO);
+				de.setValue(ricsim);
 			}else{
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoRicsim);
@@ -1910,9 +1919,9 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 			};
 			de = new DataElement();
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_RICEVUTA_ASINCRONA_ASIMMETRICA);
-			if (this.isModalitaStandard() || (isConfigurazione && !datiAltro)) {
+			if (this.isModalitaStandard() || (isConfigurazione && !datiAltroPorta)) {
 				de.setType(DataElementType.HIDDEN);
-				de.setValue(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_ABILITATO);
+				de.setValue(ricsim);
 			}else{
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoRicasim);
@@ -1930,46 +1939,60 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		
 		// ***************  SOAP With Attachments *********************
 
-		if (this.isModalitaAvanzata() && (!isConfigurazione || datiAltro) && ServiceBinding.SOAP.equals(serviceBinding) ) {
+		boolean viewSoapWithAttachments = this.isModalitaAvanzata() && (!isConfigurazione || datiAltroPorta) && ServiceBinding.SOAP.equals(serviceBinding);
+		
+		if (viewSoapWithAttachments) {
 
 			de = new DataElement();
 			de.setType(DataElementType.TITLE);
 			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_SOAP_WITH_ATTACHMENTS);
 			dati.addElement(de);
+			
+		}
 	
-			String[] tipoGestBody = {
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_NONE,
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_ALLEGA,
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_SCARTA 
-			};
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY);
+		String[] tipoGestBody = {
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_NONE,
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_ALLEGA,
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_BODY_SCARTA 
+		};
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY);
+		if (viewSoapWithAttachments) {
 			de.setType(DataElementType.SELECT);
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_BODY);
 			de.setValues(tipoGestBody);
 			de.setSelected(gestBody);
-			dati.addElement(de);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(gestBody);
+		}
+		dati.addElement(de);
 
-			String[] tipoGestManifest = { 
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT, 
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_ABILITATO, 
-					PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO 
-			};
-			de = new DataElement();
-			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
-			if(this.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+		String[] tipoGestManifest = { 
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DEFAULT, 
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_ABILITATO, 
+				PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO 
+		};
+		de = new DataElement();
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
+		if(this.isFunzionalitaProtocolloSupportataDalProtocollo(protocollo, serviceBinding, FunzionalitaProtocollo.MANIFEST_ATTACHMENTS)){
+			if(viewSoapWithAttachments) {
 				de.setType(DataElementType.SELECT);
 				de.setValues(tipoGestManifest);
 				de.setSelected(gestManifest);
-			}else {
-				de.setType(DataElementType.HIDDEN);
-				de.setValue(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO );
 			}
-	
-			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MANIFEST);
-			dati.addElement(de);
-			
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(gestManifest);
+			}
+		}else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_GEST_MANIFEST_DISABILITATO );
 		}
+		dati.addElement(de);
+			
 		
 //		if(configurazioneStandardNonApplicabile){
 //			this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
@@ -1977,7 +2000,41 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 //		}
 		
 
+		
+		
+		
+		
+		// ***************  MESSAGE FACTORY *********************
+		
+		if(!this.isModalitaStandard() && datiAltroApi) {
+			de = new DataElement();
+			de.setType(DataElementType.TITLE);
+			de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MESSAGE_ENGINE);
+			dati.addElement(de);
+		}
+		
+		de = new DataElement();
+		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_GESTIONE_MESSAGE_ENGINE);
+		if(!this.isModalitaStandard() && datiAltroApi) {
+			de.setType(DataElementType.SELECT);
+			List<String> lS = new ArrayList<String>();
+			lS.add(CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT);
+			lS.addAll(this.porteApplicativeCore.getMessageEngines());
+			de.setValues(lS);
+			if(messageEngine==null || !lS.contains(messageEngine)) {
+				messageEngine = CostantiControlStation.GESTIONE_MESSAGE_ENGINE_DEFAULT;
+			}
+			de.setSelected(messageEngine);
+		}
+		else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(messageEngine);
+		}
+		dati.addElement(de);
 
+
+		
 		return dati;
 	}
 	

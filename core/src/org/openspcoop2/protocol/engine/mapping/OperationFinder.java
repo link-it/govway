@@ -152,7 +152,7 @@ public class OperationFinder {
 								}
 							}
 							if(element!=null) {
-								xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine();
+								xPathEngine = new org.openspcoop2.message.xml.XPathExpressionEngine(message.getFactory());
 								azione = AbstractXPathExpressionEngine.extractAndConvertResultAsString(element, xPathEngine, pattern,  log);
 							}
 							else {

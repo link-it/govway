@@ -33,6 +33,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.utils.MessageUtilities;
@@ -1155,7 +1156,8 @@ public class Imbustamento extends GenericLib{
 				
 				msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");
 				if(protocolManager.isHttpEmptyResponseOneWay())
-					msgOK = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+					msgOK = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+							requestInfo.getIntegrationRequestMessageType(), MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 				else
 					msgOK = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 			}

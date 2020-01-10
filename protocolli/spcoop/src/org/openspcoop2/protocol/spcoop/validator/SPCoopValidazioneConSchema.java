@@ -27,6 +27,7 @@ package org.openspcoop2.protocol.spcoop.validator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.xml.soap.SOAPBody;
@@ -49,7 +50,6 @@ import org.openspcoop2.protocol.sdk.validator.IValidazioneConSchema;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.openspcoop2.utils.xml.XSDResourceResolver;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
@@ -66,14 +66,15 @@ import org.xml.sax.SAXException;
 public class SPCoopValidazioneConSchema extends BasicStateComponentFactory implements IValidazioneConSchema {
 
 	/** Validatore della busta SPCoop */
-	private static ValidatoreXSD validatoreBustaSPCoop = null;
+	private static HashMap<String, ValidatoreXSD> validatoreBustaSPCoop_map = new HashMap<String, ValidatoreXSD>();
 
+	
+	
 	/** Errori di validazione riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
 	private java.util.List<Eccezione> erroriProcessamento;
 
-	private AbstractXMLUtils xmlUtils;
 	
 	
 	
@@ -86,7 +87,6 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 	 */
 	public SPCoopValidazioneConSchema(IProtocolFactory<?> protocolFactory,IState state) throws ProtocolException{
 		super(protocolFactory, state);		
-		this.xmlUtils = XMLUtils.getInstance();
 	}
 
 
@@ -116,30 +116,47 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 	 *
 	 * 
 	 */
-	public static synchronized boolean initializeSchema(Logger log){
-		if(SPCoopValidazioneConSchema.validatoreBustaSPCoop!=null)
-			return true; // schema gia' inizializzato.
-
-		if(log==null)
-			log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
-		
-		try{
-			SPCoopProperties spcoopProperties = SPCoopProperties.getInstance(log);
+	public static synchronized boolean initializeSchema(OpenSPCoop2MessageFactory messageFactory, Logger log) {
+		String key = messageFactory.getClass().getName();
 			
-			log.info("Inizializzazione dello schema per il protocollo spcoop (possono essere necessari alcuni minuti...)");
-			String[] schemiXSDDaImportare = spcoopProperties.getSchemiXSDImportatiValidazioneXSDBusta();
-			String schemaXSD = spcoopProperties.getSchemaXSDValidazioneXSDBusta();
-			SPCoopValidazioneConSchema.validatoreBustaSPCoop = 	SPCoopValidazioneConSchema.createSchemaValidator(log,schemiXSDDaImportare, schemaXSD);
-			log.info("Inizializzazione dello schema per il protocollo spcoop terminata.");
-			return true;
-		}catch (Exception e) {
-			log.error("Riscontrato errore durante l'inizializzazione dello schema per il protocollo spcoop: "+e.getMessage(),e);
-			SPCoopValidazioneConSchema.validatoreBustaSPCoop = null;
-			return false;
+		if(!validatoreBustaSPCoop_map.containsKey(key)) {
+			
+			if(log==null)
+				log = LoggerWrapperFactory.getLogger("ValidazioneConSchemaSPCoop");
+			
+			try{
+				SPCoopProperties spcoopProperties = SPCoopProperties.getInstance(log);
+				
+				log.info("Inizializzazione dello schema per il protocollo spcoop (possono essere necessari alcuni minuti...)");
+				String[] schemiXSDDaImportare = spcoopProperties.getSchemiXSDImportatiValidazioneXSDBusta();
+				String schemaXSD = spcoopProperties.getSchemaXSDValidazioneXSDBusta();
+				ValidatoreXSD val =	SPCoopValidazioneConSchema.createSchemaValidator(messageFactory, log,schemiXSDDaImportare, schemaXSD);
+				validatoreBustaSPCoop_map.put(key, val);
+				log.info("Inizializzazione dello schema per il protocollo spcoop terminata.");
+				return true;
+			}catch (Exception e) {
+				log.error("Riscontrato errore durante l'inizializzazione dello schema per il protocollo spcoop: "+e.getMessage(),e);
+				return false;
+			}
+			
 		}
+		
+		return true; // gia' inizializzato
 	}
 
-	private static ValidatoreXSD createSchemaValidator(Logger log,String[] schemiXSDDaImportare,String schemaXSD) throws Exception{
+	private static ValidatoreXSD getValidatoreXSD(OpenSPCoop2MessageFactory messageFactory, Logger log) {
+
+		String key = messageFactory.getClass().getName();
+		
+		if(!validatoreBustaSPCoop_map.containsKey(key)) {
+			initializeSchema(messageFactory, log);
+		}
+		
+		return validatoreBustaSPCoop_map.get(key);
+		
+	}
+	
+	private static ValidatoreXSD createSchemaValidator(OpenSPCoop2MessageFactory messageFactory,Logger log,String[] schemiXSDDaImportare,String schemaXSD) throws Exception{
 		// ** Schemi importati **
 		XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
 		if(schemiXSDDaImportare!=null){
@@ -173,7 +190,7 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 				is = SPCoopValidazioneConSchema.class.getResourceAsStream("/"+schemaXSD);
 			}
 			// ** Creo Validatore **
-			return new ValidatoreXSD(log,xsdResourceResolver,is);
+			return new ValidatoreXSD(messageFactory,log,xsdResourceResolver,is);
 		}finally{
 			try{
 				if(is!=null){
@@ -199,7 +216,10 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 		this.erroriValidazione = new java.util.ArrayList<Eccezione>();
 		this.erroriProcessamento = new java.util.ArrayList<Eccezione>();
 
-		if(SPCoopValidazioneConSchema.validatoreBustaSPCoop == null){
+		XMLUtils xmlUtils = XMLUtils.getInstance(message.getFactory());
+		ValidatoreXSD validatoreBustaSPCoop = getValidatoreXSD(message.getFactory(), this.log);
+		
+		if(validatoreBustaSPCoop == null){
 			throw new ProtocolException("Validatore con schema XSD non inizializzato");
 		}	  
 		
@@ -212,8 +232,8 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 			if(isSPCoopErroreProcessamento==false && isSPCoopErroreIntestazione==false){
 				
 				// VALIDAZIONE
-				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
-						this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(header,false)));
+				validatoreBustaSPCoop.valida(
+						xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(message.getFactory(), header,false)));
 				
 			}
 			else{
@@ -240,8 +260,8 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 				
 				// VALIDAZIONE
 				if(listaEccezioni!=null){
-					SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(
-							this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(listaEccezioni,false)));
+					validatoreBustaSPCoop.valida(
+							xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(message.getFactory(), listaEccezioni,false)));
 				}
 			}
 					
@@ -273,8 +293,8 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 		if(soapBody!=null && isMessaggioConAttachments && validazioneManifestAttachments){
 			try {	
 				// Validazione
-				Element firstElement = OpenSPCoop2MessageFactory.getFirstChildElement(MessageType.SOAP_11, soapBody);
-				SPCoopValidazioneConSchema.validatoreBustaSPCoop.valida(this.xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(firstElement, false))); 
+				Element firstElement = OpenSPCoop2MessageFactory.getFirstChildElement(message.getFactory(), MessageType.SOAP_11, soapBody);
+				validatoreBustaSPCoop.valida(xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(message.getFactory(), firstElement, false))); 
 			} catch (SAXException e) {
 				// instance document is invalid!
 				Eccezione ecc = new Eccezione();
@@ -297,8 +317,8 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 	}
 
 	@Override
-	public boolean initialize() {
-		return SPCoopValidazioneConSchema.initializeSchema(this.log);
+	public boolean initialize(OpenSPCoop2MessageFactory messageFactory) {
+		return SPCoopValidazioneConSchema.initializeSchema(messageFactory, this.log);
 	}
 
 }

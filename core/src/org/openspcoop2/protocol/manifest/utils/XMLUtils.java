@@ -32,6 +32,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.slf4j.Logger;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.protocol.manifest.Openspcoop2;
 import org.openspcoop2.protocol.manifest.Registry;
@@ -56,7 +57,8 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/protocolManifest.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+					log,XMLUtils.class.getResourceAsStream("/protocolManifest.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -295,7 +297,7 @@ public class XMLUtils  {
 	
 	public static boolean isOpenspcoop2Manifest(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isOpenspcoop2Manifest(elemXML);

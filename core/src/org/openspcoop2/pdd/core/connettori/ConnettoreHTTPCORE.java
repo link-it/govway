@@ -250,7 +250,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				this.logger.debug("Impostazione content type...");
 			String contentTypeRichiesta = null;
 			if(this.isSoap){
-				if(this.sbustamentoSoap && soapMessageRequest.countAttachments()>0 && TunnelSoapUtils.isTunnelOpenSPCoopSoap(soapMessageRequest.getSOAPBody())){
+				if(this.sbustamentoSoap && soapMessageRequest.countAttachments()>0 && TunnelSoapUtils.isTunnelOpenSPCoopSoap(soapMessageRequest)){
 					contentTypeRichiesta = TunnelSoapUtils.getContentTypeTunnelOpenSPCoopSoap(soapMessageRequest.getSOAPBody());
 				}else{
 					contentTypeRichiesta = this.requestMsg.getContentType();

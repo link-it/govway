@@ -42,7 +42,7 @@ public class WWWAuthenticateGenerator {
 	
 	public static OpenSPCoop2Message buildErrorMessage(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
 		
-		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
+		OpenSPCoop2Message errorMessage = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.FAULT);
 		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto

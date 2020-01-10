@@ -316,6 +316,27 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
 	}
 	
+	public List<String> getMessageEngines() throws UtilsException{
+		String s = this.readProperty(false, "messageEngine");
+		List<String>  l = null;
+		if(s!=null && !"".equals(s)) {
+			l = new ArrayList<>();
+			if(s.contains(",")) {
+				String [] tmp = s.split(",");
+				for (String ss : tmp) {
+					String sTmp = ss.trim();
+					if(sTmp!=null && !"".equals(sTmp)) {
+						l.add(sTmp);
+					}
+				}
+			}
+			else {
+				l.add(s);
+			}
+		}
+		return l;
+	}
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	

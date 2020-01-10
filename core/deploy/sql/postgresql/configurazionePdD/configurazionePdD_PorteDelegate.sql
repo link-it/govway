@@ -130,6 +130,7 @@ CREATE TABLE porte_delegate
 	-- proprietario porta delegata (Soggetto fruitore)
 	id_soggetto BIGINT NOT NULL,
 	ora_registrazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	options VARCHAR(4000),
 	-- fk/pk columns
 	id BIGINT DEFAULT nextval('seq_porte_delegate') NOT NULL,
 	-- unique constraints

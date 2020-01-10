@@ -29,7 +29,6 @@ import java.io.SequenceInputStream;
 import java.util.Properties;
 
 import org.apache.commons.io.input.CountingInputStream;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
@@ -223,9 +222,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		responseContext.setContentLength(this.contentLength);
 		responseContext.setParametersTrasporto(this.propertiesTrasportoRisposta);
 		
-		OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
-				isParam,this.notifierInputStreamParams,
-				this.openspcoopProperties.getAttachmentsProcessingMode());	
+		OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
+				createMessage(messageTypeResponse,responseContext,
+						isParam,this.notifierInputStreamParams,
+						this.openspcoopProperties.getAttachmentsProcessingMode());	
 		if(pr.getParseException()!=null){
 			this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 		}
@@ -370,9 +370,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 					tipoLetturaRisposta = "Parsing Risposta SOAP";
 						
 					if(this.contentLength>0){
-						OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
-								this.isResponse,this.notifierInputStreamParams,
-								this.openspcoopProperties.getAttachmentsProcessingMode());	
+						OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
+								createMessage(messageTypeResponse,responseContext,
+										this.isResponse,this.notifierInputStreamParams,
+										this.openspcoopProperties.getAttachmentsProcessingMode());	
 						if(pr.getParseException()!=null){
 							this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 						}
@@ -386,9 +387,10 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 						// L'inputstream è stato normalizzato, quindi se non c'è un contenuto è null
 						// Devo scoprire se c'e' un payload. Costruisco il messaggio e poi provo ad accedere all'envelope
 						try{
-							OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(messageTypeResponse,responseContext,
-									this.isResponse,this.notifierInputStreamParams,
-									this.openspcoopProperties.getAttachmentsProcessingMode());
+							OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE)
+									.createMessage(messageTypeResponse,responseContext,
+											this.isResponse,this.notifierInputStreamParams,
+											this.openspcoopProperties.getAttachmentsProcessingMode());
 							if(pr.getParseException()!=null){
 								this.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO_PARSE_EXCEPTION, pr.getParseException());
 							}
@@ -436,7 +438,8 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								
 								// Imbustamento per Tunnel OpenSPCoop
 								tipoLetturaRisposta = "Costruzione messaggio SOAP per Tunnel con mimeType "+this.mimeTypeAttachment;
-								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(messageTypeResponse,MessageRole.RESPONSE, 
+								this.responseMsg = TunnelSoapUtils.imbustamentoMessaggioConAttachment(org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE),
+										messageTypeResponse,MessageRole.RESPONSE, 
 										cis,this.mimeTypeAttachment,
 										MailcapActivationReader.existsDataContentHandler(this.mimeTypeAttachment),contentTypeTrasporto, 
 										this.openspcoopProperties.getHeaderSoapActorIntegrazione());
@@ -455,7 +458,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 								// Creo nuovo inputStream
 								this.isResponse = new ByteArrayInputStream(msg);
 								
-								OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().
+								OpenSPCoop2MessageParseResult pr = org.openspcoop2.pdd.core.Utilities.getOpenspcoop2MessageFactory(this.logger.getLogger(),this.requestMsg, this.requestInfo,MessageRole.RESPONSE).
 										envelopingMessage(messageTypeResponse, this.tipoRisposta, this.soapAction, responseContext, 
 												this.isResponse, this.notifierInputStreamParams, 
 												this.openspcoopProperties.getAttachmentsProcessingMode(),

@@ -198,7 +198,7 @@ public class ProblemUtilities {
 		try{
 
 			Assert.assertTrue(problemNode!=null);
-			xml = XMLUtils.getInstance().toString(problemNode);
+			xml = XMLUtils.DEFAULT.toString(problemNode);
 			Reporter.log("Namespace Problem ("+problemNode.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue(XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI()));
 			

@@ -56,6 +56,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaAccordi;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.xml.XMLDiff;
 import org.openspcoop2.message.xml.XMLUtils;
@@ -1644,7 +1645,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			
 			try{
 				
-				AbstractXMLUtils xmlUtils = XMLUtils.getInstance(); 
+				AbstractXMLUtils xmlUtils = XMLUtils.DEFAULT; 
 				XSDUtils xsdUtils = new XSDUtils(xmlUtils);
 				WSDLUtilities wsdlUtilities = new WSDLUtilities(xmlUtils);
 				
@@ -1882,7 +1883,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		// check se si tratta di questo documento
 		try{
 			Node n = xmlUtils.newElement(xsdEsistenteContenuto);
-			XMLDiff xmlDiff = new XMLDiff();
+			XMLDiff xmlDiff = new XMLDiff(OpenSPCoop2MessageFactory.getDefaultMessageFactory());
 //			System.out.println("["+vecchioAllegatoTMP.getFile()+"] N:"+xmlUtils.toString(n));
 //			System.out.println("["+vecchioAllegatoTMP.getFile()+"] Schema:"+xmlUtils.toString(schema));
 			// NOTA: la ricostruzione in N2 è necessaria, poichè schema si porta dietro il definition wsdl (non ho capito perchè)

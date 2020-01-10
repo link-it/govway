@@ -83,16 +83,16 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 
 	protected static OpenSPCoop2MessageFactory openspcoopMessageFactory = null;
-	public static OpenSPCoop2MessageFactory getMessageFactory() {
+	public static OpenSPCoop2MessageFactory getDefaultMessageFactory() {
 		if(OpenSPCoop2MessageFactory.openspcoopMessageFactory == null)
-			try { OpenSPCoop2MessageFactory.initMessageFactory(); } catch (Exception e) { throw new RuntimeException(e); }
+			try { OpenSPCoop2MessageFactory.initDefaultMessageFactory(); } catch (Exception e) { throw new RuntimeException(e); }
 		return OpenSPCoop2MessageFactory.openspcoopMessageFactory;
 	}
 	
-	public static void initMessageFactory() throws MessageException {
-		initMessageFactory(false);
+	public static void initDefaultMessageFactory() throws MessageException {
+		initDefaultMessageFactory(false);
 	}
-	public static void initMessageFactory(boolean force) throws MessageException {
+	public static synchronized void initDefaultMessageFactory(boolean force) throws MessageException {
 		try {
 			if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
 				OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
@@ -144,26 +144,25 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** NODE Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
-	public static String getAsString(Node ele, boolean consume){
+	public static String getAsString(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(ele,true);
+		return messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(ele,true);
 	}
-	public static byte[] getAsByte(Node ele, boolean consume){
+	public static byte[] getAsByte(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(ele,true);
+		return messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(ele,true);
 	}
 	
 	
 	// ********** SOAP Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
-	public static SOAPElement createSOAPElement(MessageType messageType,byte[] element) throws MessageException, MessageNotSupportedException{
-		OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-		OpenSPCoop2Message message = mf.createEmptyMessage(messageType,MessageRole.NONE);
+	public static SOAPElement createSOAPElement(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,byte[] element) throws MessageException, MessageNotSupportedException{
+		OpenSPCoop2Message message = messageFactory.createEmptyMessage(messageType,MessageRole.NONE);
 		OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
 		return soapMsg.createSOAPElement(element);
 	}
-	public static Element getFirstChildElement(MessageType messageType,SOAPElement element) throws MessageException, MessageNotSupportedException{
-		return OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(messageType,MessageRole.NONE).castAsSoap().getFirstChildElement(element);
+	public static Element getFirstChildElement(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,SOAPElement element) throws MessageException, MessageNotSupportedException{
+		return messageFactory.createEmptyMessage(messageType,MessageRole.NONE).castAsSoap().getFirstChildElement(element);
 	}
 	
 

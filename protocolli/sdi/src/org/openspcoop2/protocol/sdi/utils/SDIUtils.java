@@ -27,6 +27,7 @@ import java.util.List;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.mtom.MtomXomReference;
@@ -67,6 +68,7 @@ public class SDIUtils {
 
 		List<MtomXomReference> xomReference = null;
 		try{
+			OpenSPCoop2MessageFactory messageFactory = msg.getFactory();
 			SOAPBody soapBody = msg.getSOAPBody();
 			if(soapBody==null || soapBody.hasChildNodes()==false){
 				return null;
@@ -85,7 +87,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -104,7 +106,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -121,7 +123,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -136,11 +138,11 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName())){
-						List<Node> childsScarto = SoapUtils.getNotEmptyChildNodes(child, false);
+						List<Node> childsScarto = SoapUtils.getNotEmptyChildNodes(messageFactory, child, false);
 						for (int j = 0; j < childsScarto.size(); j++) {
 							Node childScarto = childsScarto.get(j);
 							if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE.equals(childScarto.getLocalName())){
@@ -160,7 +162,7 @@ public class SDIUtils {
 				xomReference = msg.mtomFastUnpackagingForXSDConformance();
 				element = (Element)element.cloneNode(true);
 				
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(element, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, element, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
@@ -169,7 +171,7 @@ public class SDIUtils {
 				}
 			}
 			
-			return SoapUtils.getSoapFactory(msg.getMessageType()).createElement(element);
+			return SoapUtils.getSoapFactory(messageFactory, msg.getMessageType()).createElement(element);
 		}catch(Exception e){
 			throw new ProtocolException(e.getMessage(),e);
 		}finally{

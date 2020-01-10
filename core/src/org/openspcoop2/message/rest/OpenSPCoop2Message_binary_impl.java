@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestBinaryMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.Utilities;
@@ -39,11 +40,11 @@ import org.openspcoop2.utils.Utilities;
  */
 public class OpenSPCoop2Message_binary_impl extends AbstractBaseOpenSPCoop2RestMessage<byte[]> implements OpenSPCoop2RestBinaryMessage {
 
-	public OpenSPCoop2Message_binary_impl() {
-		super();
+	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory) {
+		super(messageFactory);
 	}
-	public OpenSPCoop2Message_binary_impl(InputStream is,String contentType) throws MessageException {
-		super(is, contentType);
+	public OpenSPCoop2Message_binary_impl(OpenSPCoop2MessageFactory messageFactory, InputStream is,String contentType) throws MessageException {
+		super(messageFactory, is, contentType);
 	}
 	
 	@Override

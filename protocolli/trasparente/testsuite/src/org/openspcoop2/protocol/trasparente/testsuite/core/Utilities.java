@@ -26,6 +26,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.core;
 
 import java.io.File;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
@@ -58,10 +59,11 @@ public class Utilities {
 	
 	public static String readApplicationServerVersion() throws Exception{
 		byte[] local_env = org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(new File("local_env.xml"));
-		AbstractXMLUtils xmlUtils = XMLUtils.getInstance();
-		XPathExpressionEngine engine = new XPathExpressionEngine();
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		AbstractXMLUtils xmlUtils = XMLUtils.getInstance(messageFactory);
+		XPathExpressionEngine engine = new XPathExpressionEngine(messageFactory);
 		Document local_env_document = xmlUtils.newDocument(local_env);
-		String version_jbossas = engine.getStringMatchPattern(local_env_document, DynamicNamespaceContextFactory.getInstance().getNamespaceContext(local_env_document), "//property[@name='as']/@value");
+		String version_jbossas = engine.getStringMatchPattern(local_env_document, DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContext(local_env_document), "//property[@name='as']/@value");
 		return version_jbossas;
 	}
 	

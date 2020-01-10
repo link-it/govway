@@ -79,16 +79,16 @@ public class SoapUtils {
 	
 	// SOAP FACTORY
 	
-	public static SOAPFactory getSoapFactory(MessageType messageType) throws MessageNotSupportedException {
+	public static SOAPFactory getSoapFactory(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) throws MessageNotSupportedException {
 		if(MessageType.SOAP_11.equals(messageType))
-			return OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory11();
+			return messageFactory.getSoapFactory11();
 		else if(MessageType.SOAP_12.equals(messageType))
-			return OpenSPCoop2MessageFactory.getMessageFactory().getSoapFactory12();
+			return messageFactory.getSoapFactory12();
 		else
 			throw MessageNotSupportedException.newMessageNotSupportedException(messageType);
 	}
-	public static MessageFactory getMessageFactory() throws SOAPException {
-		return OpenSPCoop2MessageFactory.getMessageFactory().getSoapMessageFactory();
+	public static MessageFactory getMessageFactory(OpenSPCoop2MessageFactory messageFactory) throws SOAPException {
+		return messageFactory.getSoapMessageFactory();
 	}
 		
 	
@@ -254,18 +254,18 @@ public class SoapUtils {
 	
 	// GET NODES e ELEMENT
 	
-	public static List<Node> getNotEmptyChildNodes(Node e){
-		return getNotEmptyChildNodes(e, true);
+	public static List<Node> getNotEmptyChildNodes(OpenSPCoop2MessageFactory messageFactory, Node e){
+		return getNotEmptyChildNodes(messageFactory, e, true);
 	}
-	public static List<Node> getNotEmptyChildNodes(Node e, boolean consideraTextNotEmptyAsNode){
-		return XMLUtils.getInstance().getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
+	public static List<Node> getNotEmptyChildNodes(OpenSPCoop2MessageFactory messageFactory, Node e, boolean consideraTextNotEmptyAsNode){
+		return XMLUtils.getInstance(messageFactory).getNotEmptyChildNodes(e, consideraTextNotEmptyAsNode);
 	}
 	
-	public static Node getFirstNotEmptyChildNode(Node e){
-		return getFirstNotEmptyChildNode(e, true);
+	public static Node getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory messageFactory, Node e){
+		return getFirstNotEmptyChildNode(messageFactory, e, true);
 	}
-	public static Node getFirstNotEmptyChildNode(Node e, boolean consideraTextNotEmptyAsNode){
-		return XMLUtils.getInstance().getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
+	public static Node getFirstNotEmptyChildNode(OpenSPCoop2MessageFactory messageFactory, Node e, boolean consideraTextNotEmptyAsNode){
+		return XMLUtils.getInstance(messageFactory).getFirstNotEmptyChildNode(e, consideraTextNotEmptyAsNode);
 	}
 	
 	public static List<SOAPElement> getNotEmptyChildSOAPElement(SOAPElement e){
@@ -364,15 +364,15 @@ public class SoapUtils {
 	
 	// NODE UTILS
 	
-	public static boolean matchLocalName(Node nodo,String nodeName,String prefix,String namespace){
-		return XMLUtils.getInstance().matchLocalName(nodo, nodeName, prefix, namespace);
+	public static boolean matchLocalName(OpenSPCoop2MessageFactory messageFactory, Node nodo,String nodeName,String prefix,String namespace){
+		return XMLUtils.getInstance(messageFactory).matchLocalName(nodo, nodeName, prefix, namespace);
 	} 
 	
-	public static Node getAttributeNode(Node node,String attributeName){
-		return XMLUtils.getInstance().getAttributeNode(node, attributeName);
+	public static Node getAttributeNode(OpenSPCoop2MessageFactory messageFactory, Node node,String attributeName){
+		return XMLUtils.getInstance(messageFactory).getAttributeNode(node, attributeName);
 	}
-	public static Node getQualifiedAttributeNode(Node node,String attributeName,String namespace){
-		return XMLUtils.getInstance().getQualifiedAttributeNode(node, attributeName, namespace);
+	public static Node getQualifiedAttributeNode(OpenSPCoop2MessageFactory messageFactory, Node node,String attributeName,String namespace){
+		return XMLUtils.getInstance(messageFactory).getQualifiedAttributeNode(node, attributeName, namespace);
 	}
 	
 	
@@ -648,16 +648,15 @@ public class SoapUtils {
 	/* ********  FAULT  ******** */ 
 
 
-	public static String toString(SOAPFault fault) throws MessageException{
-		return SoapUtils.toString(fault,true);
+	public static String toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault) throws MessageException{
+		return SoapUtils.toString(messageFactory, fault,true);
 	}
 	
-	public static String toString(SOAPFault fault,boolean printDetails) throws MessageException{
+	public static String toString(OpenSPCoop2MessageFactory messageFactory, SOAPFault fault,boolean printDetails) throws MessageException{
 		try{
 			if(printDetails){
 				if(fault!=null){
-					OpenSPCoop2MessageFactory.getMessageFactory();
-					return OpenSPCoop2MessageFactory.getAsString(fault,true);
+					return OpenSPCoop2MessageFactory.getAsString(messageFactory, fault,true);
 				}else{
 					return "SOAPFault non presente";
 				}	
@@ -719,7 +718,7 @@ public class SoapUtils {
 	 * @return <tt>byte[]</tt> del messaggio Soap Fault costruito in caso di successo, <tt>null</tt> altrimenti.
 	 * 
 	 */
-	public static byte[] build_Soap_Fault(MessageType messageType, String aFault, String aActor, QName aCode, 
+	public static byte[] build_Soap_Fault(OpenSPCoop2MessageFactory messageFactory, MessageType messageType, String aFault, String aActor, QName aCode, 
 			Element dettaglioEccezione,boolean generaDetails) throws MessageException, MessageNotSupportedException  {
 
 		if(!MessageType.SOAP_11.equals(messageType) && !MessageType.SOAP_12.equals(messageType)){
@@ -728,8 +727,7 @@ public class SoapUtils {
 		
 		ByteArrayOutputStream byteMessaggio = null;
 		try{
-			OpenSPCoop2MessageFactory mf = OpenSPCoop2MessageFactory.getMessageFactory();
-			OpenSPCoop2Message msg = mf.createEmptyMessage(messageType,MessageRole.FAULT);
+			OpenSPCoop2Message msg = messageFactory.createEmptyMessage(messageType,MessageRole.FAULT);
 			OpenSPCoop2SoapMessage soapMsg = msg.castAsSoap();
 			SOAPEnvelope env = (soapMsg.getSOAPPart()).getEnvelope();
 

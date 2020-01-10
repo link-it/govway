@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -49,20 +50,20 @@ public class OpenSPCoop2Message_saaj_11_impl extends AbstractOpenSPCoop2Message_
 	
 	/* Costruttori */
 				
-	public OpenSPCoop2Message_saaj_11_impl() {	
-		super(new Message1_1_FIX_Impl());
+	public OpenSPCoop2Message_saaj_11_impl(OpenSPCoop2MessageFactory messageFactory) {	
+		super(messageFactory, new Message1_1_FIX_Impl());
 	}
 	
-	public OpenSPCoop2Message_saaj_11_impl(MimeHeaders mhs, InputStream is) throws SOAPException, IOException{
-		super(new Message1_1_FIX_Impl(mhs, new CountingInputStream(is)));
+	public OpenSPCoop2Message_saaj_11_impl(OpenSPCoop2MessageFactory messageFactory, MimeHeaders mhs, InputStream is) throws SOAPException, IOException{
+		super(messageFactory, new Message1_1_FIX_Impl(mhs, new CountingInputStream(is)));
 	}
 	
-	public OpenSPCoop2Message_saaj_11_impl(SOAPMessage msg) {	
+	public OpenSPCoop2Message_saaj_11_impl(OpenSPCoop2MessageFactory messageFactory, SOAPMessage msg) {	
 		//TODO questo costruttore non funziona con messaggi con attachment. 
 		//C'e' un bug nell'implementazione della sun che non copia gli attachment
 		//In particolare il parametro super.mimePart (protetto non accessibile).
 		// Per questo motivo essite la classe 1_1 FIX che utilizza direttamente il messaggio fornito 
-		super(new Message1_1_FIX_Impl(msg));
+		super(messageFactory, new Message1_1_FIX_Impl(msg));
 	}
 	
 	

@@ -379,6 +379,16 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="options" type="xsd:string" use="optional"> <!-- altri parametri generici -->
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" />
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>
 	</xsd:complexType>
 	<!-- PortaDelegata.SoggettoErogatore -->
 	<xsd:complexType name="porta-delegata-soggetto-erogatore">
@@ -686,6 +696,16 @@
 				</xsd:appinfo>
 			</xsd:annotation>
 		</xsd:attribute>
+		<xsd:attribute name="options" type="xsd:string" use="optional"> <!-- altri parametri generici -->
+			<xsd:annotation>
+				<xsd:appinfo>
+					<linkit:generator
+						xmlns:linkit="http://www.link.it/project_generator">
+						<linkit:ws-field-mapping filter="false" />
+					</linkit:generator>
+				</xsd:appinfo>
+			</xsd:annotation>
+		</xsd:attribute>		
 	</xsd:complexType>
 	<!-- PortaApplicativa.SoggettoVirtuale -->
 	<xsd:complexType name="porta-applicativa-soggetto-virtuale">

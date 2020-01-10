@@ -37,6 +37,7 @@ import org.openspcoop2.core.diagnostica.MessaggioDiagnostico;
 import org.openspcoop2.core.diagnostica.Protocollo;
 import org.openspcoop2.core.diagnostica.constants.CostantiDiagnostica;
 import org.openspcoop2.core.diagnostica.utils.serializer.JsonJacksonDeserializer;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.w3c.dom.Document;
@@ -59,7 +60,7 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/openspcoopDiagnostica.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopDiagnostica.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -320,7 +321,7 @@ public class XMLUtils  {
 	
 	public static boolean isMessaggioDiagnostico(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isMessaggioDiagnostico_engine(elemXML);

@@ -66,7 +66,7 @@ public class MessageUtilities {
 						Node elementFather = (Node) it.item(j);
 						//SOAPElement elementFather = (SOAPElement) it.item(j);
 						//List<SOAPElement> encryptedElements = SoapUtils.getNotEmptyChildSOAPElement(elementFather);
-						List<Node> encryptedElements = SoapUtils.getNotEmptyChildNodes(elementFather, false);
+						List<Node> encryptedElements = SoapUtils.getNotEmptyChildNodes(message.getFactory(), elementFather, false);
 						for (int i = 0; i < encryptedElements.size() && !found; i++) {
 							//SOAPElement actual = encryptedElements.get(i);
 							Node actual = encryptedElements.get(i);

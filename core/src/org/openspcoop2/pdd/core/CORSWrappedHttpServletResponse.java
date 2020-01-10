@@ -61,7 +61,7 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 	
 	public OpenSPCoop2Message buildMessage() {
 		
-		this.message = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.RESPONSE);
+		this.message = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(MessageType.BINARY, MessageRole.RESPONSE);
 		ForcedResponseMessage forcedResponseMessage = new ForcedResponseMessage();
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto

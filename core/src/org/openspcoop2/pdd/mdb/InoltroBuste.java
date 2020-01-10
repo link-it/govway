@@ -57,6 +57,7 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
@@ -162,6 +163,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.TransportResponseContext;
@@ -1666,10 +1668,14 @@ public class InoltroBuste extends GenericLib{
 					msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaDisabilitato");
 				}
 				if(erroreIntegrazione==null && codiceErroreCooperazione==null){
-					if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+					IDigestReader digestReader = null;
+					if(messageSecurityContext != null) {
+						digestReader = messageSecurityContext.getDigestReader(requestMessageTrasformato!=null ? requestMessageTrasformato.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+					}
+					if(digestReader!=null){
 						try{
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta ...");
-							securityInfo = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),requestMessageTrasformato);
+							securityInfo = validazioneSemantica.readSecurityInformation(digestReader,requestMessageTrasformato);
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di richiesta completata con successo");
 						}catch(Exception e){
 							msgDiag.logErroreGenerico(e,"ErroreLetturaInformazioniSicurezza");
@@ -1901,6 +1907,7 @@ public class InoltroBuste extends GenericLib{
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
 			SOAPFault fault = null;
+			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
 			// Ricerco connettore
@@ -2307,6 +2314,7 @@ public class InoltroBuste extends GenericLib{
 					}
 					// raccolta risultati del connettore
 					fault = gestoreErrore.getFault();
+					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
 					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
 							connectorSender.getCodiceTrasporto()+"", connectorSender.getContentLength(), 
@@ -3038,9 +3046,13 @@ public class InoltroBuste extends GenericLib{
 					
 					/* *** ReadSecurityInformation *** */
 					try{
-						if(messageSecurityContext!=null && messageSecurityContext.getDigestReader()!=null){
+						IDigestReader digestReader = null;
+						if(messageSecurityContext != null) {
+							digestReader = messageSecurityContext.getDigestReader(responseMessage!=null ? responseMessage.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory());
+						}
+						if(digestReader!=null){
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di risposta ...");
-							securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),responseMessage);
+							securityInfoResponse = validazioneSemantica.readSecurityInformation(digestReader,responseMessage);
 							msgDiag.mediumDebug("Lettura informazioni sulla Sicurezza dal Messaggio di risposta completata con successo");
 						}
 					}catch(Exception e){
@@ -3334,7 +3346,7 @@ public class InoltroBuste extends GenericLib{
 				}else{
 					//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
 					if( fault!=null && faultLogged==false ){
-						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
 						msgDiag.logPersonalizzato("ricezioneSoapFault");
 						faultLogged = true;
 					}
@@ -4126,7 +4138,7 @@ public class InoltroBuste extends GenericLib{
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
 			if( fault!=null && faultLogged==false ){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(fault));
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
 				faultLogged = true;
 			}
@@ -4163,7 +4175,8 @@ public class InoltroBuste extends GenericLib{
 						sendRispostaApplicativa){
 					msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Carico HTTP Reply vuoto)...");
 					if(protocolManager.isHttpEmptyResponseOneWay())
-						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),
+						msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+								requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),
 								richiestaDelegata,pd,sa);
 					else
 						msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
@@ -4224,7 +4237,8 @@ public class InoltroBuste extends GenericLib{
 					else{
 					
 						if(protocolManager.isHttpEmptyResponseOneWay())
-							msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+							msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+									requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 						else
 							msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 					}
@@ -4386,7 +4400,7 @@ public class InoltroBuste extends GenericLib{
 									OpenSPCoop2SoapMessage soapMsg = responseMessage.castAsSoap();
 									hasContent = soapMsg.getSOAPBody()!=null;
 									if(hasContent){
-										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+										hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getFactory(), soapMsg.getSOAPBody(), false)!=null;
 									}
 									isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(responseMessage.getMessageRole());
 								}
@@ -4692,7 +4706,7 @@ public class InoltroBuste extends GenericLib{
 								OpenSPCoop2SoapMessage soapMsg = responseMessage.castAsSoap();
 								hasContent = soapMsg.getSOAPBody()!=null;
 								if(hasContent){
-									hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+									hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getFactory(), soapMsg.getSOAPBody(), false)!=null;
 								}
 							}
 							else{
@@ -4705,7 +4719,8 @@ public class InoltroBuste extends GenericLib{
 							}
 							msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Carico HTTP Reply vuoto)...");
 							if(protocolManager.isHttpEmptyResponseOneWay())
-								msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
+								msgResponse = ejbUtils.sendRispostaApplicativaOK(MessageUtilities.buildEmptyMessage(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+										requestInfo.getIntegrationRequestMessageType(),MessageRole.RESPONSE),richiestaDelegata,pd,sa);
 							else
 								msgResponse = ejbUtils.sendRispostaApplicativaOK(ejbUtils.buildOpenSPCoopOK(requestInfo.getIntegrationRequestMessageType(), idMessageRequest),richiestaDelegata,pd,sa);
 							fineGestione = false;

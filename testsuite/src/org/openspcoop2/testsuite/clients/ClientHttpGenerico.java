@@ -614,8 +614,8 @@ public class ClientHttpGenerico extends ClientCore{
 												if(detailChilds!=null){
 													for(int j=0; j<detailChilds.getLength(); j++){
 														Node n = detailChilds.item(j);
-														byte [] nByte = XMLUtils.getInstance().toByteArray(n,true);
-														elementsW3C.add(XMLUtils.getInstance().newElement(nByte));
+														byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
+														elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
 													}
 												}
 												

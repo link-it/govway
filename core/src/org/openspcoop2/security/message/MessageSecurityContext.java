@@ -50,6 +50,7 @@ import org.openspcoop2.core.mvc.properties.utils.DBPropertiesUtils;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -489,9 +490,9 @@ public abstract class MessageSecurityContext{
 	public IMessageSecurityDigest getMessageSecurityDigest() {
 		return this.messageSecurityDigest;
 	}
-	public IDigestReader getDigestReader() throws SecurityException{
+	public IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory) throws SecurityException{
 		if(this.messageSecurityDigest!=null){
-			return this.getMessageSecurityDigest().getDigestReader(this);
+			return this.getMessageSecurityDigest().getDigestReader(messageFactory, this);
 		}
 		return null;
 	}
@@ -705,7 +706,7 @@ public abstract class MessageSecurityContext{
 	    	}
 	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 		    	SOAPHeader header = msg.castAsSoap().getSOAPHeader();
-		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(header).size()==0) ){
+		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(msg.getFactory(), header).size()==0) ){
 		    		return false;
 		    	}
 		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
@@ -750,7 +751,7 @@ public abstract class MessageSecurityContext{
 	    	if(ServiceBinding.SOAP.equals(msg.getServiceBinding())){
 	    		SOAPEnvelope envelope = msg.castAsSoap().getSOAPPart().getEnvelope();
 		    	SOAPHeader header = envelope.getHeader();
-		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(header).size()==0) ){
+		    	if(header==null || (SoapUtils.getNotEmptyChildNodes(msg.getFactory(), header).size()==0) ){
 		    		return null;
 		    	}
 		       	java.util.Iterator<?> it = header.examineAllHeaderElements();
@@ -787,14 +788,14 @@ public abstract class MessageSecurityContext{
     }
     
     /** Utility per verificare l'esistenza di un header di sicurezza */
-    public SOAPElement getSAMLTokenInSecurityHeader(SOAPHeaderElement securityHeader,String samlVersion){
+    public SOAPElement getSAMLTokenInSecurityHeader(OpenSPCoop2MessageFactory messageFactory, SOAPHeaderElement securityHeader,String samlVersion){
     	try{
     		SOAPElement samlElement = null;
 						
     		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
     		dnc.findPrefixNamespace(securityHeader);
 						
-    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(messageFactory);
     		String xpath =null;
     		if(SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion)) {
     			xpath = SAMLConstants.XPATH_SAML_20_ASSERTION;
@@ -816,13 +817,13 @@ public abstract class MessageSecurityContext{
     	}
     }
 
-    public String getSAMLTokenSubjectConfirmationMethodInSecurityHeader(SOAPElement samlToken,String samlVersion){
+    public String getSAMLTokenSubjectConfirmationMethodInSecurityHeader(OpenSPCoop2MessageFactory messageFactory, SOAPElement samlToken,String samlVersion){
     	try{
     			
     		DynamicNamespaceContext dnc = new DynamicNamespaceContext();
     		dnc.findPrefixNamespace(samlToken);
 					
-    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine();
+    		AbstractXPathExpressionEngine xpathExpressionEngine = new XPathExpressionEngine(messageFactory);
     		String xpath =null;
     		if(SecurityConstants.SAML_VERSION_XMLCONFIG_ID_VALUE_20.equals(samlVersion)) {
     			xpath = SAMLConstants.XPATH_SAML_20_ASSERTION_SUBJECT_CONFIRMATION_METHOD;

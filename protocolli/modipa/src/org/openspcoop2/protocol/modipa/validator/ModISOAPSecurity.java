@@ -136,7 +136,7 @@ public class ModISOAPSecurity {
 		
 		try {
 			
-			OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getMessageFactory().createEmptyMessage(type, MessageRole.NONE);
+			OpenSPCoop2Message msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createEmptyMessage(type, MessageRole.NONE);
 			OpenSPCoop2SoapMessage soapMessage = msg.castAsSoap();
 			
 			SOAPHeader header = soapMessage.getSOAPHeader();

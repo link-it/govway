@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Vector;
 
 import org.apache.axis.AxisFault;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -895,11 +896,13 @@ public class LocalForward {
 		client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
 		client.run();
 
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()==false); // per via dell'encrypt il body sara' criptato, poiche' c'e' il servizio di Echo.
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getLocalName());
-		Assert.assertTrue("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
+		Assert.assertTrue("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
-		Assert.assertTrue("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
+		Assert.assertTrue("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList!=null && nodeList.getLength()==1);
 	}
@@ -968,11 +971,13 @@ public class LocalForward {
 		client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
 		client.run();
 
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getLocalName());
-		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
+		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
-		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
+		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
 		//		client.getResponseMessage().writeTo(System.out);
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);
@@ -1105,11 +1110,13 @@ public class LocalForward {
 		client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
 		client.run();
 
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()==false); // per via dell'encrypt il body sara' criptato
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getLocalName());
-		Assert.assertTrue("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
+		Assert.assertTrue("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
-		Assert.assertTrue("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
+		Assert.assertTrue("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList!=null && nodeList.getLength()==1);
 	}
@@ -1177,11 +1184,13 @@ public class LocalForward {
 		client.setMessageFromFile(Utilities.testSuiteProperties.getLocalForwardFileName(), false,addIDUnivoco);
 		client.run();
 
+		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
+		
 		Assert.assertTrue(client.isEqualsSentAndResponseMessage()); 
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getLocalName());
-		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getLocalName()));
+		Assert.assertFalse("EncryptedData".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getLocalName()));
 		//System.out.println(client.getResponseMessage().getSOAPBody().getFirstChild().getNamespaceURI());
-		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
+		Assert.assertFalse("http://www.w3.org/2001/04/xmlenc#".equals(SoapUtils.getFirstNotEmptyChildNode(messageFactory, client.getResponseMessage().getSOAPBody()).getNamespaceURI()));
 		//		client.getResponseMessage().writeTo(System.out);
 		NodeList nodeList = client.getResponseMessage().getSOAPHeader().getElementsByTagNameNS("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd", "Security");
 		Assert.assertTrue(nodeList==null || nodeList.getLength()==0);

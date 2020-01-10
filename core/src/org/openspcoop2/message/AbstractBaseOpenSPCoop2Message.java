@@ -76,6 +76,9 @@ import org.w3c.dom.Node;
  */
 public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.message.OpenSPCoop2Message {
 
+	/* Message Factory */
+	protected OpenSPCoop2MessageFactory messageFactory;
+	
 	/* Trasporto */	
 	public TransportRequestContext transportRequestContext;
 	public TransportResponseContext transportResponseContext;	
@@ -120,6 +123,19 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	public boolean normalizeNamespaceXSIType = false;
 	
 
+	public AbstractBaseOpenSPCoop2Message(OpenSPCoop2MessageFactory messageFactory) {
+		this.messageFactory = messageFactory;
+	}
+	
+	
+	/* Message Factory */
+	
+	@Override
+	public OpenSPCoop2MessageFactory getFactory() {
+		return this.messageFactory;
+	}
+	
+	
 	
 	/* Normalize to SAAJ */
 	
@@ -858,7 +874,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				OpenSPCoop2SoapMessage soapMsg = this.castAsSoap();
 				boolean hasContent = soapMsg.getSOAPBody()!=null;
 				if(hasContent){
-					hasContent = SoapUtils.getFirstNotEmptyChildNode(soapMsg.getSOAPBody(), false)!=null;
+					hasContent = SoapUtils.getFirstNotEmptyChildNode(this.messageFactory, soapMsg.getSOAPBody(), false)!=null;
 				}
 				isFault = hasContent && soapMsg.getSOAPBody().hasFault() || MessageRole.FAULT.equals(this.getMessageRole());
 			}
@@ -925,7 +941,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	@Override
 	public String getAsString(Node ele, boolean consume){
 		try {
-			return XMLUtils.getInstance().toString(ele,true);
+			return XMLUtils.getInstance(this.messageFactory).toString(ele,true);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 
@@ -934,7 +950,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 	@Override
 	public byte[] getAsByte(Node ele, boolean consume){
 		try {
-			return XMLUtils.getInstance().toByteArray(ele,true);
+			return XMLUtils.getInstance(this.messageFactory).toByteArray(ele,true);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		} 
@@ -945,7 +961,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 		try {
 			if(this.normalizeNamespaceXSIType) {
 				DynamicNamespaceContext dnc = null;
-				DynamicNamespaceContextFactory dncFactory = DynamicNamespaceContextFactory.getInstance();
+				DynamicNamespaceContextFactory dncFactory = DynamicNamespaceContextFactory.getInstance(this.messageFactory);
 				if(root instanceof javax.xml.soap.SOAPEnvelope) {
 					javax.xml.soap.SOAPEnvelope soapEnvelope = (javax.xml.soap.SOAPEnvelope) root;
 					if(Costanti.SOAP12_ENVELOPE_NAMESPACE.equals(soapEnvelope.getNamespaceURI())) {
@@ -958,7 +974,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				else {
 					dnc = dncFactory.getNamespaceContext(root);
 				}
-				XMLUtils.getInstance().addNamespaceXSITypeIfNotExists(element, dnc, true);
+				XMLUtils.getInstance(this.messageFactory).addNamespaceXSITypeIfNotExists(element, dnc, true);
 			}
 		}catch(Exception e) {
 			throw new MessageException(e.getMessage(),e);

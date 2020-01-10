@@ -265,10 +265,10 @@
     </library>
     <library name="openspcoop2_3.2_lib_axiom" systemlibrary="false">
 	<archive path="/op2_3.2.dev/lib/axiom/apache-mime4j-core-0.8.2.jar"/>
-	<archive path="/op2_3.2.dev/lib/axiom/axiom-api-1.2.13-gov4j-1.jar"/>
+	<archive path="/op2_3.2.dev/lib/axiom/axiom-api-1.2.13-gov4j-2.jar"/>
 	<archive path="/op2_3.2.dev/lib/axiom/axiom-common-impl-1.2.13.jar"/>
-	<archive path="/op2_3.2.dev/lib/axiom/axiom-dom-1.2.13-gov4j-1.jar"/>
-	<archive path="/op2_3.2.dev/lib/axiom/axiom-impl-1.2.13-gov4j-1.jar"/>
+	<archive path="/op2_3.2.dev/lib/axiom/axiom-dom-1.2.13-gov4j-2.jar"/>
+	<archive path="/op2_3.2.dev/lib/axiom/axiom-impl-1.2.13-gov4j-2.jar"/>
     </library>
     <library name="openspcoop2_3.2_lib_faces" systemlibrary="false">
         <archive path="/op2_3.2.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>

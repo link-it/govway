@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.basic.validator;
 import java.util.List;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -66,7 +67,7 @@ public class ValidazioneConSchema extends BasicStateComponentFactory implements
 	}
 
 	@Override
-	public boolean initialize() {
+	public boolean initialize(OpenSPCoop2MessageFactory messageFactory) {
 		return true;
 	}
 

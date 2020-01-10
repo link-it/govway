@@ -35,6 +35,7 @@ import javax.xml.soap.SOAPHeaderElement;
 
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.pdd.config.OpenSPCoop2ConfigurationException;
@@ -96,7 +97,7 @@ public class UtilitiesIntegrazione {
 		try{
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
 			xsdResourceResolver.addResource("soapEnvelope.xsd", UtilitiesIntegrazione.class.getResourceAsStream("/soapEnvelope.xsd"));
-			this.validatoreXSD = new ValidatoreXSD(log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione-OpenSPCoopV1.xsd"));
+			this.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,xsdResourceResolver,UtilitiesIntegrazione.class.getResourceAsStream("/integrazione-OpenSPCoopV1.xsd"));
 		}catch(Exception e){
 			log.error("integrazione-OpenSPCoopV1.xsd, errore durante la costruzione del validatore xsd: "+e.getMessage(),e);
 		}

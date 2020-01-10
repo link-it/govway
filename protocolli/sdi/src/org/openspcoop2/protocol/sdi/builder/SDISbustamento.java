@@ -30,6 +30,7 @@ import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.message.exception.MessageNotSupportedException;
@@ -38,7 +39,6 @@ import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.soap.mtom.MTOMUtilities;
 import org.openspcoop2.message.utils.MessageUtilities;
-import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdi.config.SDIProperties;
 import org.openspcoop2.protocol.sdi.constants.SDICostanti;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
@@ -51,7 +51,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
-import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -69,10 +68,8 @@ public class SDISbustamento {
 
 	private SDIBustaBuilder bustaBuilder = null;
 	@SuppressWarnings("unused")
-	private AbstractXMLUtils xmlUtils = null;
 	public SDISbustamento(SDIBustaBuilder bustaBuilder){
 		this.bustaBuilder = bustaBuilder;
-		this.xmlUtils = XMLUtils.getInstance();
 	}
 	
 	public SOAPElement sbustamentoRisposta_ServizioSdIRiceviFile_AzioneRiceviFile(Busta busta,OpenSPCoop2Message msgParam) throws ProtocolException{
@@ -108,6 +105,7 @@ public class SDISbustamento {
 		
 		try{
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
 			
 			SOAPElement element = null;
 			Object ctxFatturaPA = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_FATTURA);
@@ -147,11 +145,11 @@ public class SDISbustamento {
 				
 				//System.out.println("NON OTTIMIZZATO");
 				Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRicezioneFatture.RICEVI_FATTURE_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
-						Element e = MTOMUtilities.getIfExistsXomReference((Element)child);
+						Element e = MTOMUtilities.getIfExistsXomReference(messageFactory, (Element)child);
 						if(e!=null){
 							//System.out.println("NON OTTIMIZZATO MTOM");
 							// mtom
@@ -224,6 +222,7 @@ public class SDISbustamento {
 		try{
 			
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
 			
 			SOAPElement element = null;
 			Object ctxNotificaScartoEsitoCommittente = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI);
@@ -246,19 +245,19 @@ public class SDISbustamento {
 				
 				//System.out.println("NON OTTIMIZZATO");
 				Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-				List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+				List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, elementBody, false);
 				for (int i = 0; i < childs.size(); i++) {
 					Node child = childs.get(i);
 					if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO.equals(child.getLocalName())){
 						
-						List<Node> elementScartoChilds = SoapUtils.getNotEmptyChildNodes(child, false);
+						List<Node> elementScartoChilds = SoapUtils.getNotEmptyChildNodes(messageFactory, child, false);
 						if(elementScartoChilds!=null){
 							for (int j = 0; j < elementScartoChilds.size(); j++) {
 								Node scartoChild = elementScartoChilds.get(j);
 						
 								if(SDICostantiServizioRiceviNotifica.NOTIFICA_ESITO_RISPOSTA_ELEMENT_SCARTO_ESITO_FILE.equals(scartoChild.getLocalName())){
 									
-									Element e = MTOMUtilities.getIfExistsXomReference((Element)scartoChild);
+									Element e = MTOMUtilities.getIfExistsXomReference(messageFactory, (Element)scartoChild);
 									if(e!=null){
 										//System.out.println("NON OTTIMIZZATO MTOM");
 										// mtom
@@ -332,6 +331,7 @@ public class SDISbustamento {
 		try{
 		
 			OpenSPCoop2SoapMessage msg = msgParam.castAsSoap();
+			OpenSPCoop2MessageFactory messageFactory = msgParam.getFactory();
 			
 			SOAPElement element = null;
 			Object ctxMessaggio = msg.removeContextProperty(SDICostanti.SDI_MESSAGE_CONTEXT_MESSAGGIO_SERVIZIO_SDI);
@@ -408,11 +408,11 @@ public class SDISbustamento {
 				else{
 					//System.out.println("NON OTTIMIZZATO");
 					Element elementBody = SoapUtils.getNotEmptyFirstChildSOAPElement(soapBody);
-					List<Node> childs = SoapUtils.getNotEmptyChildNodes(elementBody, false);
+					List<Node> childs = SoapUtils.getNotEmptyChildNodes(messageFactory, elementBody, false);
 					for (int i = 0; i < childs.size(); i++) {
 						Node child = childs.get(i);
 						if(SDICostantiServizioTrasmissioneFatture.FILE_SDI_TYPE_CONSEGNA_RICHIESTA_ELEMENT_FILE.equals(child.getLocalName())){
-							Element e = MTOMUtilities.getIfExistsXomReference((Element)child);
+							Element e = MTOMUtilities.getIfExistsXomReference(messageFactory, (Element)child);
 							if(e!=null){
 								//System.out.println("NON OTTIMIZZATO MTOM");
 								// mtom

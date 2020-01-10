@@ -103,7 +103,7 @@ public class ServerCongelamentoBuste extends ServerCore{
 			}
 			
 			
-			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
+			OpenSPCoop2MessageParseResult pr = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.REQUEST, 
 					request.getContentType(), bout.toByteArray());
 			OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 			if(msg.castAsSoap().getSoapAction()==null) {
@@ -130,12 +130,12 @@ public class ServerCongelamentoBuste extends ServerCore{
 						sequenza);
 			}
 			
-			SOAPConnection connection = OpenSPCoop2MessageFactory.getMessageFactory().getSOAPConnectionFactory().createConnection();
+			SOAPConnection connection = OpenSPCoop2MessageFactory.getDefaultMessageFactory().getSOAPConnectionFactory().createConnection();
 			javax.xml.messaging.URLEndpoint urlConnection = new  javax.xml.messaging.URLEndpoint(urlForward);
 			Object responseMsgSoapAsObject = connection.call(msg.castAsSoap().getSOAPMessage(),urlConnection);
 			//System.out.println("RESPONSE ["+responseMsgSoapAsObject.getClass().getName()+"] CONNECTION ["+connection.getClass().getName()+"]");
 			SOAPMessage responseMsgSoap = (SOAPMessage) responseMsgSoapAsObject;
-			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getMessageFactory().createMessage(msg.getMessageType(),MessageRole.RESPONSE,responseMsgSoap);
+			OpenSPCoop2Message responseMsg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(msg.getMessageType(),MessageRole.RESPONSE,responseMsgSoap);
 
 			if(responseMsg!=null){
 				ByteArrayOutputStream boutResponse=new ByteArrayOutputStream();

@@ -107,7 +107,7 @@ public class Test {
 		
 		dynamicMap = new HashMap<>();
 		dInfo = new DynamicInfo(connettoreMsg, pddContext);
-		dInfo.setXml(XMLUtils.getInstance().newElement(ENVELOPE.getBytes()));
+		dInfo.setXml(XMLUtils.DEFAULT.newElement(ENVELOPE.getBytes()));
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
 		System.out.println("Pattern1: "+DynamicUtils.convertDynamicPropertyValue("testXml", prefix+"{xPath://{http://schemas.xmlsoap.org/soap/envelope/}:Envelope/{http://schemas.xmlsoap.org/soap/envelope/}:Body/prova/text()}", dynamicMap, pddContext, forceDollaro));

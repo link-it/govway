@@ -46,6 +46,7 @@ import org.openspcoop2.core.eccezione.errore_applicativo.Soggetto;
 import org.openspcoop2.core.eccezione.errore_applicativo.constants.Costanti;
 import org.openspcoop2.core.eccezione.errore_applicativo.utils.serializer.JsonJacksonDeserializer;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -72,7 +73,7 @@ public class XMLUtils  {
 	static ValidatoreXSD validatoreXSD = null;
 	public static synchronized ValidatoreXSD getValidatoreXSD(Logger log) throws Exception{
 		if(XMLUtils.validatoreXSD==null){
-			XMLUtils.validatoreXSD = new ValidatoreXSD(log,XMLUtils.class.getResourceAsStream("/openspcoopErroreApplicativo.xsd"));
+			XMLUtils.validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log,XMLUtils.class.getResourceAsStream("/openspcoopErroreApplicativo.xsd"));
 		}
 		return XMLUtils.validatoreXSD;
 	}
@@ -395,7 +396,7 @@ public class XMLUtils  {
 				if(rest.hasContent()){
 					Element element = rest.getContent();
 					if(XMLUtils.isErroreApplicativo(element)){
-						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+						org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 						byte [] xml = xmlUtils.toByteArray(element);
 						//System.out.println("XML S: "+new String(xml));
 						ErroreApplicativo errore = XMLUtils.getErroreApplicativo(log,xml);
@@ -459,7 +460,7 @@ public class XMLUtils  {
 						try{
 							if(XMLUtils.isErroreApplicativo(elem)){
 								//System.out.println("ITEM ["+elem.getLocalName()+"] TROVATO");
-								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+								org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 								byte [] xml = xmlUtils.toByteArray(elem);
 								//System.out.println("XML S: "+new String(xml));
 								ErroreApplicativo de = XMLUtils.getErroreApplicativo(log,xml);
@@ -480,7 +481,7 @@ public class XMLUtils  {
 	
 	public static boolean isErroreApplicativo(byte [] doc){
 		try{
-			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.getInstance();
+			org.openspcoop2.message.xml.XMLUtils xmlUtils = org.openspcoop2.message.xml.XMLUtils.DEFAULT;
 			Document docXML = xmlUtils.newDocument(doc);
 			Element elemXML = docXML.getDocumentElement();
 			return XMLUtils.isErroreApplicativo_engine(elemXML);

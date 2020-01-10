@@ -563,6 +563,12 @@ public class ControlStationCore {
 		return this.isAccordiCooperazioneEnabled;
 	}
 	
+	/** Message Engine */
+	private List<String> messageEngines;
+	public List<String> getMessageEngines() {
+		return this.messageEngines;
+	}
+
 	/** Parametri pdd */
 	private int portaPubblica = 80;
 	private int portaGestione = 80;
@@ -1641,6 +1647,9 @@ public class ControlStationCore {
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
 		
+		/** Message Engine */
+		this.messageEngines = core.messageEngines;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1914,6 +1923,7 @@ public class ControlStationCore {
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
+			this.messageEngines = consoleProperties.getMessageEngines();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

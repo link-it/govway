@@ -21,6 +21,7 @@
  */
 package org.openspcoop2.security.message.soapbox;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityDigest;
 import org.openspcoop2.security.message.MessageSecurityContext;
@@ -38,8 +39,8 @@ import org.openspcoop2.utils.digest.IDigestReader;
 public class MessageSecurityDigest_soapbox implements IMessageSecurityDigest{
 
 	@Override
-	public IDigestReader getDigestReader(MessageSecurityContext messageSecurityContext) throws SecurityException {
-		return MessageSecurityFactory.getMessageSecurityDigestReader(SecurityType.WSSecurity, messageSecurityContext.getLog());
+	public IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory, MessageSecurityContext messageSecurityContext) throws SecurityException {
+		return MessageSecurityFactory.getMessageSecurityDigestReader(messageFactory, SecurityType.WSSecurity, messageSecurityContext.getLog());
 	}
 
 }

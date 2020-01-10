@@ -22,6 +22,7 @@
 
 package org.openspcoop2.security.message;
 
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.utils.digest.IDigestReader;
 
@@ -40,6 +41,6 @@ public interface IMessageSecurityDigest {
 	 * @return digestReader
 	 * @throws SecurityException
 	 */
-	public IDigestReader getDigestReader(MessageSecurityContext messageSecurityContext) throws SecurityException;
+	public IDigestReader getDigestReader(OpenSPCoop2MessageFactory messageFactory, MessageSecurityContext messageSecurityContext) throws SecurityException;
 	
 }

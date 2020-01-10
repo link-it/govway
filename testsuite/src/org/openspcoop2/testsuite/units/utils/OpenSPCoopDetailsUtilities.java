@@ -29,6 +29,7 @@ import java.util.List;
 import org.apache.axis.AxisFault;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -173,13 +174,14 @@ public class OpenSPCoopDetailsUtilities {
 		try{
 
 			Assert.assertTrue(dettaglioOpenSPCoop!=null);
-			xml = XMLUtils.getInstance().toString(dettaglioOpenSPCoop);
+			xml = XMLUtils.DEFAULT.toString(dettaglioOpenSPCoop);
 			Reporter.log("Dettaglio OpenSPCoop ("+dettaglioOpenSPCoop.getNamespaceURI()+"): "+xml);
 			Assert.assertTrue(org.openspcoop2.core.eccezione.details.constants.Costanti.TARGET_NAMESPACE.equals(dettaglioOpenSPCoop.getNamespaceURI()));
 			
 			Reporter.log("Validazione xsd");
 			XSDResourceResolver xsdResourceResolver = new XSDResourceResolver();
-			ValidatoreXSD validatoreXSD = new ValidatoreXSD(LoggerWrapperFactory.getLogger(OpenSPCoopDetailsUtilities.class),
+			ValidatoreXSD validatoreXSD = new ValidatoreXSD(OpenSPCoop2MessageFactory.getDefaultMessageFactory(),
+					LoggerWrapperFactory.getLogger(OpenSPCoopDetailsUtilities.class),
 					xsdResourceResolver,OpenSPCoopDetailsUtilities.class.getResourceAsStream("/openspcoopDetail.xsd"));
 			validatoreXSD.valida(dettaglioOpenSPCoop);
 			

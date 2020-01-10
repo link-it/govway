@@ -30,7 +30,6 @@ import java.util.Properties;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.pdd.core.CostantiPdD;
@@ -60,8 +59,6 @@ import org.slf4j.Logger;
  */
 public class DirectVMConnectorInMessage implements ConnectorInMessage {
 
-	public static OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getMessageFactory();
-	
 	private OpenSPCoop2Message message;
 	private Logger log;
 	private String idModulo;
