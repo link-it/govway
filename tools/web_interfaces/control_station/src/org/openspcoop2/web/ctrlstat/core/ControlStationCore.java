@@ -568,6 +568,16 @@ public class ControlStationCore {
 	public List<String> getMessageEngines() {
 		return this.messageEngines;
 	}
+	
+	/** Credenziali Basic */
+	private boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword;
+	private boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+	public boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword() {
+		return this.isSoggettiCredenzialiBasicCheckUniqueUsePassword;
+	}
+	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() {
+		return this.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+	}
 
 	/** Parametri pdd */
 	private int portaPubblica = 80;
@@ -1650,6 +1660,10 @@ public class ControlStationCore {
 		/** Message Engine */
 		this.messageEngines = core.messageEngines;
 		
+		/** Credenziali Basic */
+		this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = core.isSoggettiCredenzialiBasicCheckUniqueUsePassword;
+		this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = core.isApplicativiCredenzialiBasicCheckUniqueUsePassword;
+		
 		/** Parametri pdd */
 		this.portaPubblica = core.portaPubblica;
 		this.portaGestione = core.portaGestione;
@@ -1924,6 +1938,8 @@ public class ControlStationCore {
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.messageEngines = consoleProperties.getMessageEngines();
+			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
+			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
 			
 			// Impostazioni grafiche
 			this.consoleNomeSintesi = consoleProperties.getConsoleNomeSintesi();

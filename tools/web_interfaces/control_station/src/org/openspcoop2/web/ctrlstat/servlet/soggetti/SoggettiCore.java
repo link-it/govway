@@ -815,6 +815,29 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
+	public org.openspcoop2.core.registry.Soggetto soggettoWithCredenzialiBasicList(String user, String password, boolean checkPassword) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "soggettoWithCredenzialiBasicList";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().soggettoWithCredenzialiBasicList(user, password, checkPassword);
+
+		} 
+		catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+
+	}
+	
 	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroAutenticatoBasic(String user, String password) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getSoggettoAutenticatoBasic";

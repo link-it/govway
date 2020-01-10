@@ -21,6 +21,7 @@
 
 
 
+<%@page import="org.openspcoop2.utils.crypt.PasswordGenerator"%>
 <%@ page session="true" import="java.util.Vector, org.apache.commons.lang.StringEscapeUtils ,org.openspcoop2.web.lib.mvc.*" %>
 
 <%
@@ -445,26 +446,69 @@ for (int i = 0; i < dati.size(); i++) {
 		                    			<%
 		                    		} else { // else number
 		                    			if (type.equals("crypt")){
+		                    				DataElementPassword dePwd = de.getPassword();
+		                    				boolean visualizzaPasswordChiaro = dePwd.isVisualizzaPasswordChiaro();
+		                    				boolean bottoneGeneraPassword = dePwd.isVisualizzaBottoneGeneraPassword();
+		                    				
+		                    				String dePwdType = visualizzaPasswordChiaro ? "text" : "password";
+		                    				String dePwdNoEdit = visualizzaPasswordChiaro ? de.getValue() : "********";
+		                    				if(bottoneGeneraPassword){
+		                    					classInput = Costanti.INPUT_PWD_CHIARO_CSS_CLASS;
+		                    				}
 		                    				%>
 		                        			<div class="prop">
 		                        				<label class="<%= labelStyleClass %>" id="<%=deLabelId %>" ><%=deLabel %></label>
 		                        				<%
 							          			if (pd.getMode().equals("view") || pd.getMode().equals("view-noeditbutton")) {
-													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>">********</span></div><%
+													%><div class="<%=classDivNoEdit %>"> <span class="<%=classSpanNoEdit %>"><%=dePwdNoEdit %></span></div><%
 							   					} else {
-													%><input class="<%= classInput %>" type="password" name="<%= deName  %>" value="<%= de.getValue()  %>">
+													%><input class="<%= classInput %>" type="<%=dePwdType %>" name="<%= deName  %>" value="<%= de.getValue()  %>">
 						     					<% 
-									      		if(deInfo != null){
+									      		if(deInfo != null || bottoneGeneraPassword){
 									      			String idDivIconInfo = "divIconInfo_"+i;
 									      			String idIconInfo = "iconInfo_"+i; 
+									      			
 											      	%> 	<div class="iconInfoBox" id="<%=idDivIconInfo %>">
+											      		<% 
+									      				if(bottoneGeneraPassword){
+									      					PasswordGenerator pwdGen = dePwd.getPasswordGenerator();
+									      				%>
+									      					<script type="text/javascript">
+									      						var pwdGenerate_<%= deName %>_idx = 0;
+									      						var pwdGenerate_<%= deName %> = [];
+									      					
+									      						<% 
+									      							for(int iPwd = 0; iPwd < dePwd.getNumeroSample(); iPwd ++){
+									      								String pwTmp = pwdGen.generate();
+									      								%> pwdGenerate_<%= deName %>.push('<%= pwTmp  %>'); <%
+									      							}
+									      						%>
+									      						
+									      						function generaPwd(inputElement){
+									      							pwdGenerate_<%= deName %>_idx = pwdGenerate_<%= deName %>_idx % pwdGenerate_<%= deName %>.length;
+									      							
+									      							inputElement.value = pwdGenerate_<%= deName %> [pwdGenerate_<%= deName %>_idx];
+									      							
+									      							pwdGenerate_<%= deName %>_idx ++;
+									      						}
+									      					</script>
+									      					<span class="spanButtonGeneraBox">
+								      							<input class="buttonGeneraPassword" type="button" title="<%=dePwd.getTooltipButtonGeneraPassword() %>"
+								      								onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>generaPwd(<%= deName  %>);<%= Costanti.JS_FUNCTION_NASCONDI_AJAX_STATUS %>" value="<%=dePwd.getLabelButtonGeneraPassword() %>">
+									      					</span>
+									      				<% } %>	
+											      		<% 
+									      				if(deInfo != null){
+									      				%>
 											      			<input type="hidden" name="__i_hidden_title_<%= idIconInfo %>" id="hidden_title_<%= idIconInfo %>"  value="<%= deInfo.getHeaderFinestraModale() %>"/>
 											      			<input type="hidden" name="__i_hidden_body_<%= idIconInfo %>" id="hidden_body_<%= idIconInfo %>"  value="<%= deInfo.getBody() %>"/>
 													      	<span class="spanIconInfoBox">
 																<i class="material-icons md-24" id="<%=idIconInfo %>"><%= deInfo.getButtonIcon() %></i>
 															</span>
+															
+														<% } %>	
 														</div>
-											      	<% }
+											      	<% 
 							   					}
 						     					%>
 						     					<% if(!deNote.equals("")){ %>
@@ -472,6 +516,7 @@ for (int i = 0; i < dati.size(); i++) {
 									      		<% } %>
 		                        			</div>
 		                        			<%
+						   					}
 		                        		} else { // else crypt
 		                        			if (type.equals("textarea") || type.equals("textarea-noedit")){
 		                        				String inputId = "txtA" + i;

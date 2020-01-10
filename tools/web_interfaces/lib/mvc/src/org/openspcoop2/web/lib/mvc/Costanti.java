@@ -179,7 +179,10 @@ public class Costanti {
 	public final static String LABEL_MONITOR_BUTTON_INVIA = "Salva";
 	public final static String LABEL_MONITOR_BUTTON_FILTRA = "Filtra";
 	public final static String LABEL_MONITOR_BUTTON_RIPULISCI = "Ripulisci";
+	public final static String LABEL_MONITOR_BUTTON_GENERA = "Genera";
 	
+	public final static String TOOLTIP_MONITOR_BUTTON_GENERA_PWD = "Genera Password";
+		
 	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_PREFIX = "EseguiConferma(";
 	public final static String LABEL_MONITOR_BUTTON_ESEGUI_OPERAZIONE_CONFERMA_SUFFIX = ")";
 	
@@ -196,6 +199,7 @@ public class Costanti {
 	public final static String CUSTOM_JS_FUNCTION_INPUT_NUMBER_VALIDATION = "customInputNumberChangeEventHandler";
 	
 	public final static String JS_FUNCTION_VISUALIZZA_AJAX_STATUS = "visualizzaAjaxStatus();";
+	public final static String JS_FUNCTION_NASCONDI_AJAX_STATUS = "nascondiAjaxStatus();";
 	
 	/** PARAMETRI BINARI **/
 	
@@ -223,6 +227,7 @@ public class Costanti {
 	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";
+	public final static String INPUT_PWD_CHIARO_CSS_CLASS = "inputLinkLongPwdChiaro";
 	public final static String INPUT_CSS_CLASS = "inputLink";
 	public final static String LABEL_MEDIUM_CSS_CLASS = "labelMedium";
 	public final static String LABEL_LONG_CSS_CLASS = "labelLong";

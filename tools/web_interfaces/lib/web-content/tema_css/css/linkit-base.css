@@ -148,6 +148,13 @@ select[multiple] {
 	color: ${input.color};
 }
 
+.inputLinkLongPwdChiaro {
+	background-color: ${input.background.color} ;	
+	background-image: none !important;
+	width: 332px;
+	color: ${input.color};
+}
+
 textarea.inputLinkLong {
 	background-color: ${input.background.color} ;	
 	background-image: none !important;
@@ -547,6 +554,29 @@ button:hover, input[type="submit"]:hover, input[type="button"]:hover, .buttonrow
    	border: 1px solid ${input.button.hover.border.color};
 	background-color: ${input.button.hover.background.color};
 	color: ${input.button.hover.color};
+	background-image: none;
+	
+}
+
+.buttonGeneraPassword {
+	color: ${input.button.background.color};
+	border: 1px solid ${input.button.border.color};
+	background-color: ${input.button.color};
+	background-image: none;
+	font-size: 14px; 
+	font-weight: bold;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'Roboto';
+    vertical-align: super;
+    margin-right: 4px;
+}
+
+.buttonGeneraPassword:hover {
+	border: 1px solid ${input.button.hover.background.color};
+	background-color: ${configurazione.background.color};
+	color: ${input.button.hover.background.color};
 	background-image: none;
 }
 

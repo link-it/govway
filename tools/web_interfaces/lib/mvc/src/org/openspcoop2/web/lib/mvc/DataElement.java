@@ -114,6 +114,8 @@ public class DataElement {
 
 	private List<String> statusValues = null, statusToolTips = null, statusTypes = null;
 	
+	private DataElementPassword password = null;
+	
 	public String getIdToRemove() {
 		return this.idToRemove;
 	}
@@ -205,7 +207,7 @@ public class DataElement {
 	public void setType(DataElementType s) {
 		this.setType(s.toString());
 	}
-	public void setType(String s) {
+	private void setType(String s) {
 		this.type = s;
 		/*if("hidden".equals(this.type)){
 			this.required = false;
@@ -216,6 +218,10 @@ public class DataElement {
 		}*/
 		if(DataElementType.TEXT_AREA.toString().equals(s) || DataElementType.TEXT_AREA_NO_EDIT.toString().equals(s)){
 			this.setLabelAffiancata(false);
+		}
+		// Carico la configurazione di default per il tipo password
+		if(DataElementType.CRYPT.toString().equals(s)) {
+			this.password = new DataElementPassword();
 		}
 	}
 	public String getType() {
@@ -848,4 +854,14 @@ public class DataElement {
 	public void spostaLinkADestra() {
 		this.setStyle("margin-left: auto;");
 	}
+
+	public DataElementPassword getPassword() {
+		return this.password;
+	}
+
+	public void setPassword(DataElementPassword password) {
+		this.password = password;
+	}
+	
+	
 }

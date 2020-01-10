@@ -16231,7 +16231,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiBasicList(String utente, String password) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiBasicList(String utente, String password, boolean checkPassword) throws DriverConfigurazioneException {
 		String nomeMetodo = "servizioApplicativoWithCredenzialiBasicList";
 		String queryString;
 
@@ -16264,13 +16264,18 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField("id_soggetto");
 			sqlQueryObject.addWhereCondition("tipoauth = ?");
 			sqlQueryObject.addWhereCondition("utente = ?");
-			sqlQueryObject.addWhereCondition("password = ?");
+			if(checkPassword) {
+				sqlQueryObject.addWhereCondition("password = ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			queryString = sqlQueryObject.createSQLQuery();
 			stmt = con.prepareStatement(queryString);
-			stmt.setString(1, CredenzialeTipo.BASIC.getValue());
-			stmt.setString(2, utente);
-			stmt.setString(3, password);			
+			int index = 1;
+			stmt.setString(index++, CredenzialeTipo.BASIC.getValue());
+			stmt.setString(index++, utente);
+			if(checkPassword) {
+				stmt.setString(index++, password);
+			}
 			risultato = stmt.executeQuery();
 
 			ServizioApplicativo sa;

@@ -130,7 +130,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 			DataElement de = new DataElement();
 			de.setLabel(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			de.setValue(id);
-			de.setType("hidden");
+			de.setType(DataElementType.HIDDEN);
 			de.setName(SoggettiCostanti.PARAMETRO_SOGGETTO_ID);
 			dati.addElement(de);
 		}
@@ -830,7 +830,9 @@ public class SoggettiHelper extends ConnettoriHelper {
 			// utilizzate da altri soggetti
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				// recupero soggetto con stesse credenziali
-				Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoBasic(utente, password);
+				//Soggetto soggettoAutenticato = this.soggettiCore.getSoggettoRegistroAutenticatoBasic(utente, password);
+				boolean checkPassword = this.soggettiCore.isSoggettiCredenzialiBasicCheckUniqueUsePassword(); // la password non viene utilizzata per riconoscere se l'username e' già utilizzato.
+				Soggetto soggettoAutenticato = this.soggettiCore.soggettoWithCredenzialiBasicList(utente, password, checkPassword);
 				
 				if(soggettoAutenticato!=null && tipoOp.equals(TipoOperazione.CHANGE)){
 					if(idInt == soggettoAutenticato.getId()){

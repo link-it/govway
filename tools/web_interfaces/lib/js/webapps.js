@@ -50,5 +50,10 @@ function visualizzaAjaxStatus(){
 	if($("#ajax_status_div").length>0){
 		$("#ajax_status_div").css('display', 'block');
 	}
-	
+}
+
+function nascondiAjaxStatus(){
+	if($("#ajax_status_div").length>0){
+		$("#ajax_status_div").css('display', 'none');
+	}
 }

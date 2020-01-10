@@ -337,6 +337,15 @@ public class ConsoleProperties {
 		return l;
 	}
 	
+	public boolean isSoggettiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
+		return this.readBooleanProperty(true, "soggetti.credenzialiBasic.checkUnique.usePassword");
+	}
+	
+	public boolean isApplicativiCredenzialiBasicCheckUniqueUsePassword() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
+	}
+	
+	
 	
 	/* ----- Impostazioni grafiche ------- */
 	

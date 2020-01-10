@@ -1321,7 +1321,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			// utilizzate da altri soggetti
 			if (tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC)) {
 				// recupera lista servizi applicativi con stesse credenziali
-				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiBasicList(utente, password);
+				boolean checkPassword = this.saCore.isApplicativiCredenzialiBasicCheckUniqueUsePassword(); // la password non viene utilizzata per riconoscere se l'username e' già utilizzato.
+				List<ServizioApplicativo> saList = this.saCore.servizioApplicativoWithCredenzialiBasicList(utente, password, checkPassword);
 
 				String portaDominio = null;
 				if(this.core.isRegistroServiziLocale()){

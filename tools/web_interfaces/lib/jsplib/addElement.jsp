@@ -124,9 +124,9 @@ function CheckDati() {
         $(document).ready(function(){
 
         	// info
-        	if($(".iconInfoBox").length>0){
-        		$(".iconInfoBox").click(function(){
-        			var iconInfoBoxId = $(this).attr('id');
+        	if($(".spanIconInfoBox").length>0){
+        		$(".spanIconInfoBox").click(function(){
+        			var iconInfoBoxId = $(this).parent().attr('id');
         			var idx = iconInfoBoxId.substring(iconInfoBoxId.indexOf("_")+1);
         			console.log(idx);
         			if(idx) {

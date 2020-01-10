@@ -86,7 +86,7 @@ public final class UtentiAdd extends Action {
 	
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
-			String confpwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			
 			InterfaceType interfaceType = null;
@@ -144,9 +144,9 @@ public final class UtentiAdd extends Action {
 				if(pwsu==null){
 					pwsu = "";
 				}
-				if(confpwsu==null){
-					confpwsu = "";
-				}
+//				if(confpwsu==null){
+//					confpwsu = "";
+//				}
 				
 				utentiHelper.addUtentiToDati(dati, TipoOperazione.ADD, singlePdD,
 						nomesu,pwsu,confpwsu,interfaceType,

@@ -106,7 +106,7 @@ public final class UtentiChange extends Action {
 
 			String nomesu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
-			String confpwsu = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			String confpwsu = null; //utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 
 			String isServizi = utentiHelper.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);

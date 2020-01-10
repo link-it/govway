@@ -9066,6 +9066,94 @@ IDriverWS ,IMonitoraggioRisorsa{
 	}
 	
 	
+	public Soggetto soggettoWithCredenzialiBasicList(String utente, String password, boolean checkPassword) throws DriverRegistroServiziException {
+		String nomeMetodo = "soggettoWithCredenzialiBasicList";
+		String queryString;
+
+		Connection con = null;
+		boolean error = false;
+		PreparedStatement stmt=null;
+		ResultSet risultato=null;
+		
+		Soggetto sogg = null;
+		
+		if (this.atomica) {
+			try {
+				con = getConnectionFromDatasource(nomeMetodo);
+				con.setAutoCommit(false);
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione this.atomica = " + this.atomica);
+
+		try {
+
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("id");
+			sqlQueryObject.addWhereCondition("tipoauth = ?");
+			sqlQueryObject.addWhereCondition("utente = ?");
+			if(checkPassword) {
+				sqlQueryObject.addWhereCondition("password = ?");
+			}
+			sqlQueryObject.setANDLogicOperator(true);
+			queryString = sqlQueryObject.createSQLQuery();
+			stmt = con.prepareStatement(queryString);
+			int index = 1;
+			stmt.setString(index++, CredenzialeTipo.BASIC.getValue());
+			stmt.setString(index++, utente);
+			if(checkPassword) {
+				stmt.setString(index++, password);
+			}
+			risultato = stmt.executeQuery();
+
+			while (risultato.next()) {
+
+				sogg=this.getSoggetto(risultato.getLong("id"));
+
+			}
+
+			return sogg;
+
+		} catch (Exception qe) {
+			error = true;
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::" + nomeMetodo + "] Errore : " + qe.getMessage(),qe);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(risultato!=null) risultato.close();
+				if(stmt!=null) stmt.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (error && this.atomica) {
+					this.log.debug("eseguo rollback a causa di errori e rilascio connessioni...");
+					con.rollback();
+					con.setAutoCommit(true);
+					con.close();
+
+				} else if (!error && this.atomica) {
+					this.log.debug("eseguo commit e rilascio connessioni...");
+					con.commit();
+					con.setAutoCommit(true);
+					con.close();
+				}
+
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
 	@Override
 	public Soggetto getSoggettoByCredenzialiBasic(
 			String user,String password) throws DriverRegistroServiziException, DriverRegistroServiziNotFound{

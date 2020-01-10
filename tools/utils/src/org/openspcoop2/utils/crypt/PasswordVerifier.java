@@ -57,18 +57,30 @@ public class PasswordVerifier {
 	private final static String PROPERTY_INCLUDE_NOT_ALPHANUMERIC_SYMBOL = "passwordVerifier.includeNotAlphanumericSymbol";
 	private final static String PROPERTY_ALL_DISTINCT_CHARACTERS = "passwordVerifier.allDistinctCharacters";
 	
-	private List<String> regulaExpressions = new ArrayList<>();
-	private boolean notContainsLogin = false;
-	private List<String> restrictedWords = new ArrayList<>();
-	private int minLenght = -1;
-	private int maxLenght = -1;
-	private boolean includeLowerCaseLetter = false;
-	private boolean includeUpperCaseLetter = false;
-	private boolean includeNumber = false;
-	private boolean includeNotAlphanumericSymbol = false;
-	private boolean allDistinctCharacters = false;
+	protected List<String> regulaExpressions = new ArrayList<>();
+	protected boolean notContainsLogin = false;
+	protected List<String> restrictedWords = new ArrayList<>();
+	protected int minLenght = -1;
+	protected int maxLenght = -1;
+	protected boolean includeLowerCaseLetter = false;
+	protected boolean includeUpperCaseLetter = false;
+	protected boolean includeNumber = false;
+	protected boolean includeNotAlphanumericSymbol = false;
+	protected boolean allDistinctCharacters = false;
 
 	public PasswordVerifier(){}
+	public PasswordVerifier(PasswordVerifier pv){
+		this.regulaExpressions = pv.regulaExpressions;
+		this.notContainsLogin = pv.notContainsLogin;
+		this.restrictedWords = pv.restrictedWords;
+		this.minLenght = pv.minLenght;
+		this.maxLenght = pv.maxLenght;
+		this.includeLowerCaseLetter = pv.includeLowerCaseLetter;
+		this.includeUpperCaseLetter = pv.includeUpperCaseLetter;
+		this.includeNumber = pv.includeNumber;
+		this.includeNotAlphanumericSymbol = pv.includeNotAlphanumericSymbol;
+		this.allDistinctCharacters = pv.allDistinctCharacters;
+	}
 	public PasswordVerifier(String resource) throws UtilsException{
 		InputStream is = null;
 		try{

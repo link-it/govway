@@ -36,6 +36,7 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.utils.crypt.PasswordGenerator;
 import org.openspcoop2.utils.crypt.PasswordVerifier;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
@@ -476,22 +477,28 @@ public class UtentiHelper extends ConsoleHelper {
 			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD);
 			de.setValue(pwsu);
 			de.setType(DataElementType.CRYPT);
+			de.getPassword().setVisualizzaPasswordChiaro(true);
+			de.getPassword().setVisualizzaBottoneGeneraPassword(true);
+			if(passwordVerifier != null) {
+				de.getPassword().setPasswordGenerator(new PasswordGenerator(passwordVerifier));
+				de.setNote(passwordVerifier.help("<BR/>"));
+			}
 			de.setName(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
 			de.setSize(this.getSize());
 			de.setRequired(true);
 			dati.addElement(de);
 
-			de = new DataElement();
-			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-			de.setValue(confpwsu);
-			de.setType(DataElementType.CRYPT);
-			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
-			de.setSize(this.getSize());
-			de.setRequired(true);
-			if(passwordVerifier!=null){
-				de.setNote(passwordVerifier.help("<BR/>"));
-			}
-			dati.addElement(de);
+//			de = new DataElement();
+//			de.setLabel(UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+//			de.setValue(confpwsu);
+//			de.setType(DataElementType.CRYPT);
+//			de.setName(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+//			de.setSize(this.getSize());
+//			de.setRequired(true);
+//			if(passwordVerifier!=null){
+//				de.setNote(passwordVerifier.help("<BR/>"));
+//			}
+//			dati.addElement(de);
 			
 		}
 		
@@ -833,7 +840,7 @@ public class UtentiHelper extends ConsoleHelper {
 		try {
 			String nomesu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_USERNAME);
 			String pwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_PASSWORD);
-			String confpwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
+			// String confpwsu = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_CONFERMA_PASSWORD);
 			String tipoGui = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_TIPO_GUI);
 			String isServizi = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_SERVIZI);
 			String isDiagnostica = this.getParameter(UtentiCostanti.PARAMETRO_UTENTI_IS_DIAGNOSTICA);
@@ -878,13 +885,13 @@ public class UtentiHelper extends ConsoleHelper {
 							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_PASSWORD;
 						}
 					}
-					if (confpwsu.equals("")) {
-						if (tmpElenco.equals("")) {
-							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
-						} else {
-							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
-						}
-					}
+//					if (confpwsu.equals("")) {
+//						if (tmpElenco.equals("")) {
+//							tmpElenco = UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
+//						} else {
+//							tmpElenco = tmpElenco + ", "+UtentiCostanti.LABEL_PARAMETRO_UTENTI_CONFERMA_PASSWORD;
+//						}
+//					}
 				}
 				if(!tmpElenco.equals("")){
 					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
@@ -893,7 +900,8 @@ public class UtentiHelper extends ConsoleHelper {
 			}
 
 			// Controllo che non ci siano spazi nei campi di testo
-			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) && ( (pwsu.indexOf(" ") != -1) || (confpwsu.indexOf(" ") != -1)))) {
+//			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) && ( (pwsu.indexOf(" ") != -1) || (confpwsu.indexOf(" ") != -1)))) {
+			if ((nomesu.indexOf(" ") != -1) || ( ServletUtils.isCheckBoxEnabled(changepwd) &&  pwsu.indexOf(" ") != -1 )) {
 				this.pd.setMessage("Non inserire spazi nei campi di testo");
 				return false;
 			}
@@ -1064,10 +1072,10 @@ public class UtentiHelper extends ConsoleHelper {
 				//}
 				checkPassword=false;
 			}
-			if (checkPassword && !pwsu.equals(confpwsu)) {
-				this.pd.setMessage("Le password non corrispondono");
-				return false;
-			}
+//			if (checkPassword && !pwsu.equals(confpwsu)) {
+//				this.pd.setMessage("Le password non corrispondono");
+//				return false;
+//			}
 			
 			if (checkPassword){
 				PasswordVerifier passwordVerifier = this.utentiCore.getPasswordVerifier();

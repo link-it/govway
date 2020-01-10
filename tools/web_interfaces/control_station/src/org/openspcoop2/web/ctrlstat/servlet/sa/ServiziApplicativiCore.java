@@ -140,7 +140,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 
-	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiBasicList(String utente, String password) throws DriverConfigurazioneException {
+	public List<ServizioApplicativo> servizioApplicativoWithCredenzialiBasicList(String utente, String password, boolean checkPassword) throws DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "servizioApplicativoWithCredenzialiBasicList";
 		DriverControlStationDB driver = null;
@@ -151,7 +151,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiBasicList(utente, password);
+			return driver.getDriverConfigurazioneDB().servizioApplicativoWithCredenzialiBasicList(utente, password, checkPassword);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

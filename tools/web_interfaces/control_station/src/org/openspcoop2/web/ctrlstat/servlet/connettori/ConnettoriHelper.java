@@ -1276,6 +1276,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 					de.setName(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				}
 				else{
+					// Nuova visualizzazione Password con bottone genera password
+					de.setType(DataElementType.CRYPT);
+					de.getPassword().setVisualizzaPasswordChiaro(true);
+					de.getPassword().setVisualizzaBottoneGeneraPassword(true);
 					de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				}
 				de.setSize(this.getSize());
