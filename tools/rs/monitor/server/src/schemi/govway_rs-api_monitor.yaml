@@ -26,7 +26,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
- 
     get:
       tags:
         - Monitoraggio
@@ -46,6 +45,7 @@ paths:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -114,7 +114,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-      
     get:
       tags:
         - Monitoraggio
@@ -135,6 +134,7 @@ paths:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/id_cluster'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -209,7 +209,6 @@ paths:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-  
     get:
       tags:
         - Monitoraggio
@@ -259,7 +258,6 @@ paths:
       description: Questa operazione consente di ottenere il dettaglio di una transazione
       parameters:
         - $ref: '#/components/parameters/id_transazione'
-      
       responses:
         200:
           description: dettaglio transazione restituito correttamente
@@ -363,14 +361,13 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
 
-
   # Statistiche
 
   /reportistica/analisi-statistica/distribuzione-temporale:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
-      
+
     get:
       tags:
         - Reportistica
@@ -385,6 +382,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -464,6 +462,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -619,6 +618,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -769,6 +769,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -846,6 +847,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -924,6 +926,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -1001,6 +1004,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -1078,6 +1082,7 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/data_fine"  
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
+        - $ref: '#/components/parameters/soggetto_erogatore'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -1377,8 +1382,6 @@ components:
       schema:
         type: integer
         format: int64
-
-
 
     # Criteri di ricerca obbligatori nella query
 
@@ -1839,11 +1842,11 @@ components:
             mapping:
               erogazione: '#/components/schemas/FiltroErogazione'
               fruizione: '#/components/schemas/FiltroFruizione'
-              qualsiasi: '#/components/schemas/FiltroQualsiasi'
+              qualsiasi: '#/components/schemas/FiltroApiQualsiasi'
           oneOf:
             - $ref: '#/components/schemas/FiltroErogazione'
             - $ref: '#/components/schemas/FiltroFruizione'
-            - $ref: '#/components/schemas/FiltroQualsiasi'
+            - $ref: '#/components/schemas/FiltroApiQualsiasi'
         azione:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         esito:
@@ -1912,11 +1915,11 @@ components:
                 mapping:
                   erogazione: '#/components/schemas/FiltroErogazione'
                   fruizione: '#/components/schemas/FiltroFruizione'
-                  qualsiasi: '#/components/schemas/FiltroQualsiasi'
+                  qualsiasi: '#/components/schemas/FiltroApiQualsiasi'
               oneOf:
                 - $ref: '#/components/schemas/FiltroErogazione'
                 - $ref: '#/components/schemas/FiltroFruizione'
-                - $ref: '#/components/schemas/FiltroQualsiasi'
+                - $ref: '#/components/schemas/FiltroApiQualsiasi'
 
     RicercaStatisticaAndamentoTemporale:
        type: object
@@ -2153,6 +2156,9 @@ components:
 
     FiltroTemporale:
       type: object
+      required:
+        - data_inizio
+        - data_fine
       properties:
         data_inizio:
           type: string
@@ -2181,17 +2187,27 @@ components:
           properties:
             erogatore:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+    
     FiltroErogazione:
       type: object
       allOf:
         - $ref: '#/components/schemas/FiltroApiBase'
-    FiltroQualsiasi:
+
+    FiltroApiQualsiasi:
       type: object
       allOf:
-        - $ref: '#/components/schemas/FiltroApiBase'
+      - $ref: '#/components/schemas/FiltroApiBase'
+      - type: object
+        properties:
+          erogatore:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+          soggetto_remoto:
+            $ref: 'govway_core.yaml#/components/schemas/SimpleName'
            
     FiltroEsito:
       type: object
+      required:
+        - tipo
       properties:
         tipo:
           $ref: '#/components/schemas/EsitoTransazioneFullSearchEnum'
@@ -2231,7 +2247,7 @@ components:
               indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
           oneOf:
             - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
-            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
             - $ref: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
             - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
     FiltroMittenteErogazione:
@@ -2253,13 +2269,16 @@ components:
           oneOf:
             - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto'
             - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
-            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
             - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
             - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
     FiltroMittenteQualsiasi:
       type: object
       description: >-
         Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni o erogazioni di servizio
+      required:
+        - tipo
+        - id
       properties:
         tipo: 
           $ref: '#/components/schemas/TipoFiltroMittenteQualsiasiEnum'
@@ -2271,7 +2290,7 @@ components:
               token_info: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
               indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
           oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
             - $ref: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
             - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
     FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
@@ -2280,7 +2299,7 @@ components:
         Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
       properties:
         tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneEnum'
+          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneSoggettoRemotoEnum'
         id:
           discriminator:
             propertyName: tipo
@@ -2289,7 +2308,7 @@ components:
               token_info: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
               indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
           oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteIdApplicativo'
+            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
             - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
             - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
     FiltroMittenteErogazioneSoggetto:
@@ -2316,7 +2335,7 @@ components:
       properties:
         applicativo:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
-    FiltroMittenteIdApplicativo:
+    FiltroMittenteIdAutenticato:
       type: object
       allOf:
         - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
@@ -2356,7 +2375,7 @@ components:
             tipo:
               $ref: '#/components/schemas/TipoFiltroMittenteIndirizzoIPEnum' 
       
-
+  
 
     # Enum
     EsitoTransazioneSimpleSearchEnum:
@@ -2388,6 +2407,13 @@ components:
       enum:
         - soggetto
         - applicativo
+        - identificativo_autenticato
+        - token_info
+        - indirizzo_ip
+
+    TipoFiltroMittenteErogazioneSoggettoRemotoEnum:
+      type: string
+      enum:
         - identificativo_autenticato
         - token_info
         - indirizzo_ip

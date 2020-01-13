@@ -5,7 +5,7 @@ Background:
 
     * call read('classpath:crud_commons.feature')
     * def setup = callonce read('classpath:prepare_tests.feature')
-    * configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }    
+#    * configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }    
 
     # Rimuovo la lock e do il tempo all'engine di preparare le statistiche.
     * print 'Rimuovo La lock sul db..'
@@ -61,7 +61,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per API
     Then status 200
 
     * set filtro.tipo = 'fruizione'
-    * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
+    * set filtro.api = ({nome: setup.fruizione_petstore.api_nome, versione: setup.fruizione_petstore.api_versione, erogatore: setup.fruizione_petstore.erogatore })
     Given path 'distribuzione-temporale'
     And request filtro
     When method post
@@ -69,6 +69,9 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per API
 
     * set query.tipo = 'fruizione'
     * set query.soggetto_remoto = filtro.api.erogatore
+    * set query.nome_servizio = filtro.api.nome
+    * set query.versione_servizio = filtro.api.versione
+
     Given path 'distribuzione-temporale'
     And params query
     When method get

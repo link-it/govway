@@ -22,13 +22,15 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class FiltroEsito  {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private EsitoTransazioneFullSearchEnum tipo = null;
   
   @Schema(description = "")
@@ -38,6 +40,7 @@ public class FiltroEsito  {
    * @return tipo
   **/
   @JsonProperty("tipo")
+  @NotNull
   @Valid
   public EsitoTransazioneFullSearchEnum getTipo() {
     return this.tipo;

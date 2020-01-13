@@ -21,61 +21,35 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteQualsiasiEnum;
+import org.openspcoop2.utils.service.beans.FiltroRicercaId;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
 import javax.validation.constraints.*;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-/**
-  * Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni o erogazioni di servizio
- **/
-@Schema(description="Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni o erogazioni di servizio")
-public class FiltroMittenteQualsiasi  {
+public class FiltroMittenteIdAutenticato extends FiltroRicercaId {
   
   @Schema(required = true, description = "")
-  private TipoFiltroMittenteQualsiasiEnum tipo = null;
-  
-  @Schema(required = true, description = "")
-  private Object id = null;
+  private TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get autenticazione
+   * @return autenticazione
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("autenticazione")
   @NotNull
   @Valid
-  public TipoFiltroMittenteQualsiasiEnum getTipo() {
-    return this.tipo;
+  public TipoFiltroMittenteIdentificativoAutenticatoEnum getAutenticazione() {
+    return this.autenticazione;
   }
 
-  public void setTipo(TipoFiltroMittenteQualsiasiEnum tipo) {
-    this.tipo = tipo;
+  public void setAutenticazione(TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione) {
+    this.autenticazione = autenticazione;
   }
 
-  public FiltroMittenteQualsiasi tipo(TipoFiltroMittenteQualsiasiEnum tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get id
-   * @return id
-  **/
-  @JsonProperty("id")
-  @NotNull
-  @Valid
-  public Object getId() {
-    return this.id;
-  }
-
-  public void setId(Object id) {
-    this.id = id;
-  }
-
-  public FiltroMittenteQualsiasi id(Object id) {
-    this.id = id;
+  public FiltroMittenteIdAutenticato autenticazione(TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione) {
+    this.autenticazione = autenticazione;
     return this;
   }
 
@@ -83,10 +57,9 @@ public class FiltroMittenteQualsiasi  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroMittenteQualsiasi {\n");
-    
-    sb.append("    tipo: ").append(FiltroMittenteQualsiasi.toIndentedString(this.tipo)).append("\n");
-    sb.append("    id: ").append(FiltroMittenteQualsiasi.toIndentedString(this.id)).append("\n");
+    sb.append("class FiltroMittenteIdAutenticato {\n");
+    sb.append("    ").append(FiltroMittenteIdAutenticato.toIndentedString(super.toString())).append("\n");
+    sb.append("    autenticazione: ").append(FiltroMittenteIdAutenticato.toIndentedString(this.autenticazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

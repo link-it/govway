@@ -112,8 +112,8 @@ Scenario: Configurazione del Rate Limiting filtrando per un'azione inesistente
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'erogazioni', body: erogazione_petstore })
-    * eval policy.filtro.azione = "AzioneInesistente"
-    * eval randomize(policy, ["nome", "filtro.azione"])
+    * eval policy.filtro.azione = ["AzioneInesistente"]
+# la funzione randomize non preserva l'array, e quindi genera una richiesta errata:        * eval randomize(policy, ["nome", "filtro.azione"])
 
     Given url configUrl
     And path erogazione_petstore_path, 'configurazioni', 'rate-limiting'

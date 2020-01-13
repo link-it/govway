@@ -642,17 +642,11 @@ public class ErogazioniApiHelper {
 		return list;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(TipoAutenticazioneNewEnum tipo, Object config){
 		if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
 			APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
 			try {
-				
-				if(config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
-					authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
-				} else {
-					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
-				}
+				authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazionePrincipal.class);
 				return Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
 			} catch (Exception e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
@@ -661,22 +655,12 @@ public class ErogazioniApiHelper {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static List<String> getAutenticazioneParametroList(ErogazioniEnv env,TipoAutenticazioneNewEnum tipo, Object config) {
 		if(TipoAutenticazioneNewEnum.HTTP_BASIC.equals(tipo)) { 
 			if(config!=null) {
 				APIImplAutenticazioneConfigurazioneBasic authConfig = null;
 				
-				try {
-					if(config instanceof APIImplAutenticazioneConfigurazioneBasic) {
-						authConfig = (APIImplAutenticazioneConfigurazioneBasic) config;
-					}
-					else {
-						authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazioneBasic.class);
-					}
-				} catch (Exception e) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage());
-				}
+				authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazioneBasic.class);
         		List<Proprieta> listConfig = new ArrayList<>();
         		if(authConfig != null && authConfig.isForward()!=null) {
         			Proprieta propertyAutenticazione = new Proprieta();
@@ -700,15 +684,7 @@ public class ErogazioniApiHelper {
 			if(config!=null) {
         		APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
         		
-        		try {
-    				if(config instanceof APIImplAutenticazioneConfigurazionePrincipal) {
-    					authConfig = (APIImplAutenticazioneConfigurazionePrincipal) config;
-    				} else {
-    					authConfig = BaseHelper.fromMap( (Map<String,Object>) config,APIImplAutenticazioneConfigurazionePrincipal.class);
-    				}
-				} catch (Exception e) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
-				}
+        		authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazionePrincipal.class);
         		if (authConfig == null || authConfig.getTipo() == null)
         			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato");
         		
@@ -811,7 +787,6 @@ public class ErogazioniApiHelper {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static final void serviziCheckData(	
 			TipoOperazione tipoOp,
 			ErogazioniEnv env,
@@ -950,16 +925,7 @@ public class ErogazioniApiHelper {
         if ( generaPortaApplicativa && as.getServiceBinding() == ServiceBinding.SOAP && authz != null && authz.getTipo() != null ) {
 	        switch ( authz.getTipo() ) {
 	        case ABILITATO:
-	        	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneConfigNew) {
-	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
-	        	}
-	        	else {
-	        		try {
-		        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
-	        		} catch (Exception e) {
-		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-	        		}
-	        	}
+	        	configAuthz = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneConfigNew.class);
 	        	if(configAuthz.getRuoliFonte()!=null) {
 	        		ruoliFonte = configAuthz.getRuoliFonte();
 	        	}
@@ -969,16 +935,7 @@ public class ErogazioniApiHelper {
 	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
 	        	break;
 	        case XACML_POLICY:
-	        	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneXACMLConfig) {
-	        		configAuthXaml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
-	        	}
-	        	else {
-	        		try {
-		        		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthXaml );
-	        		} catch (Exception e) {
-			        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-			        }
-	        	}
+	        	configAuthXaml = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 	        	if (configAuthXaml.getPolicy() == null) {
 	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
 	        	}
@@ -1517,7 +1474,6 @@ public class ErogazioniApiHelper {
 
 	
 	
-	@SuppressWarnings("unchecked")
 	public static final void createAps(
 			ErogazioniEnv env,
 			AccordoServizioParteSpecifica asps,
@@ -1559,16 +1515,7 @@ public class ErogazioniApiHelper {
         if ( evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
 		    case ABILITATO:	
-		    	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneConfigNew) {
-	        		configAuthz = (APIImplAutorizzazioneConfigNew) authz.getConfigurazione();
-	        	}
-	        	else {
-			    	try {
-			    		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthz );
-			    	} catch (Exception e) {
-		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-		        	}
-	        	}
+		    	configAuthz = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneConfigNew.class);
 		    	if(configAuthz.getRuoliFonte()!=null) {
 	        		ruoliFonte = configAuthz.getRuoliFonte();
 		    	}
@@ -1580,16 +1527,7 @@ public class ErogazioniApiHelper {
 	         	
 		    	break;
 		    case XACML_POLICY:
-		    	if(authz.getConfigurazione()!=null && authz.getConfigurazione() instanceof APIImplAutorizzazioneXACMLConfig) {
-	        		configAuthzXacml = (APIImplAutorizzazioneXACMLConfig) authz.getConfigurazione();
-	        	}
-	        	else {
-	        		try {
-			    		BaseHelper.fillFromMap( (Map<String,Object>) authz.getConfigurazione(), configAuthzXacml );
-			    	} catch (Exception e) {
-		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-		        	}
-	        	}
+		    	configAuthzXacml = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
 		    	if (configAuthzXacml.getPolicy() == null) {
 	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
 	        	}
@@ -4029,37 +3967,18 @@ public class ErogazioniApiHelper {
 		return builtIt ? getDataElementModalita(RateLimitingIdentificazionePolicyEnum.CRITERI) : getDataElementModalita(RateLimitingIdentificazionePolicyEnum.POLICY);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public static final String getIdPolicy(RateLimitingPolicyBaseConIdentificazione body, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper) throws Exception {
 		
 		String idPolicy = null;
 		switch (body.getIdentificazione()) {
 		case POLICY:
 			RateLimitingPolicyIdentificativo identificativo = new RateLimitingPolicyIdentificativo();
-        	if(body.getConfigurazione()!=null && body.getConfigurazione() instanceof RateLimitingPolicyIdentificativo) {
-        		identificativo = (RateLimitingPolicyIdentificativo) body.getConfigurazione();
-        	}
-        	else {
-        		try {
-        			BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), identificativo );
-        		} catch (Exception e) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-	        	}
-        	}
+			identificativo = BaseHelper.deserialize(body.getConfigurazione(), RateLimitingPolicyIdentificativo.class);
         	idPolicy = identificativo.getPolicy();
 			break;
 		case CRITERI:
 			RateLimitingPolicyCriteri criteri = new RateLimitingPolicyCriteri();
-        	if(body.getConfigurazione()!=null && body.getConfigurazione() instanceof RateLimitingPolicyCriteri) {
-        		criteri = (RateLimitingPolicyCriteri) body.getConfigurazione();
-        	}
-        	else {
-        		try {
-        			BaseHelper.fillFromMap( (Map<String,Object>) body.getConfigurazione(), criteri );
-        		} catch (Exception e) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto configurazione autorizzazione: " + e.getMessage());
-	        	}
-        	}
+			criteri = BaseHelper.deserialize(body.getConfigurazione(), RateLimitingPolicyCriteri.class);
         	
         	String modalitaRisorsa = getDataElementModalitaRisorsa(criteri.getMetrica());
         	boolean modalitaSimultaneeEnabled = confHelper.isTipoRisorsaNumeroRichiesteSimultanee(modalitaRisorsa);

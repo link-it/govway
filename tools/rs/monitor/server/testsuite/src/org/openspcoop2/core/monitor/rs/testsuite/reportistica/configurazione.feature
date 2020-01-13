@@ -48,6 +48,13 @@ Scenario: Riepilogo di una API
 @ConfigurazioneApi
 Scenario: Recupero Configurazione API
 
+    # Prima faccio una get per recuperare il numero totale di confgurazioni
+    Given params ({tipo: 'erogazione'})
+    When method get
+    Then status 200
+    And match response.total == '#number'
+    * def total = response.total
+
     * def expected =
     """
     ({
@@ -56,12 +63,16 @@ Scenario: Recupero Configurazione API
         versione: setup.erogazione_petstore.api_versione
     })
     """
-    Given url configurazioneUrl
-    And params ({tipo: 'erogazione'})
+    Given params ({tipo: 'erogazione', limit: total})
     When method get
     Then status 200
     And match response.items contains ([expected])
 
+    Given params ({tipo: 'fruizione'})
+    When method get
+    Then status 200
+    And match response.total == '#number'
+    * def total = response.total
     * def expected =
     """
     ({
@@ -71,7 +82,7 @@ Scenario: Recupero Configurazione API
         erogatore: setup.fruizione_petstore.erogatore
     })
     """
-    Given params ({tipo: 'fruizione'})
+    Given params ({tipo: 'fruizione', limit: total})
     When method get
     Then status 200
     And match response.items contains ([expected])

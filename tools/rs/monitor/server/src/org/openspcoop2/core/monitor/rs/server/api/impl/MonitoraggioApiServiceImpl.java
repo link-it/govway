@@ -21,9 +21,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
-import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroApiBase;
-import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroEsito;
-import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.overrideFiltroFruizione;
 import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.searchTransazioni;
 
 import java.sql.Connection;
@@ -36,6 +33,7 @@ import org.openspcoop2.core.monitor.rs.server.api.MonitoraggioApi;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Converter;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.Enums;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.MonitoraggioEnv;
+import org.openspcoop2.core.monitor.rs.server.api.impl.utils.ReportisticaHelper;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities;
 import org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
@@ -44,12 +42,9 @@ import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
@@ -183,16 +178,9 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().debug("Autorizzazione completata con successo");     
 
 			BaseHelper.throwIfNull(body);
-
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
-			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
-					body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
 			
-			TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
-			TransazioniHelper.overrideFiltroMittente(body, search, env);
-			
-			ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
+			ListaTransazioni ret = TransazioniHelper.findAllTransazioni(body, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
@@ -221,21 +209,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().debug("Autorizzazione completata con successo");                             
 			
 			BaseHelper.throwIfNull(body);
-			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
-			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(context, profilo, soggetto, 
-					body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
-			
-			TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
-			//TransazioniHelper.overrideFiltroRicercaId(body.getIdApplicativo(), search, env);
-			// Qui non è overrideFiltroRicercaId ma:
-
-			FiltroRicercaId filtro = body.getIdApplicativo();
-			search.setCorrelazioneApplicativaCaseSensitiveType((BooleanUtils.isTrue(filtro.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
-			search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(filtro.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
-			search.setIdCorrelazioneApplicativa(filtro.getId());			
-			
-			ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
+			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);			
+			ListaTransazioni ret = TransazioniHelper.findAllTransazioniByIdApplicativo(body, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
@@ -256,66 +231,44 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      *
      */
 	@Override
-	public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort, String idCluster,  String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
+	public ListaTransazioni findAllTransazioniByIdApplicativoSimpleSearch(DateTime dataInizio, DateTime dataFine,
+			FiltroRicercaRuoloTransazioneEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto,
+			Integer offset, Integer limit, String sort, String idCluster, String soggettoRemoto,
+			String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio,
+			String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");     
                        
-			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
-			TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(context, profilo, soggetto, 
-					tipo, dataInizio, dataFine);
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			
-			// FiltroApi
-			FiltroApiBase filtroApi = null;
-			switch (tipo) {
-			case EROGAZIONE:
-				filtroApi = new FiltroErogazione();
-				break;
-			case FRUIZIONE:
-				filtroApi = new FiltroFruizione();
-				break;
-			case QUALSIASI:
-				filtroApi = new FiltroQualsiasi();
-				break;
-			}
-			filtroApi.setNome(nomeServizio);
-			filtroApi.setTipo(tipoServizio);
-			filtroApi.setVersione(versioneServizio);
-			switch (tipo) {
-			case EROGAZIONE: {
-				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
-				break;
-			}
-			case FRUIZIONE: {
-				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
-				filtro.setErogatore(soggettoRemoto);
-				overrideFiltroFruizione(tag, filtro, azione, search, env);
-				break;
-			}
-			case QUALSIASI: {
-				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
-				break;
-			}
-			}
+			RicercaIdApplicativo bodyRicerca = new RicercaIdApplicativo();
+			bodyRicerca.setTipo(tipo);
+			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));			
+			FiltroTemporale iTemporale = new FiltroTemporale();
+			iTemporale.setDataInizio(dataInizio);
+			iTemporale.setDataFine(dataFine);
+			bodyRicerca.setIntervalloTemporale(iTemporale);
+			FiltroRicercaId filtroId = new FiltroRicercaId();
+			filtroId.setId(idApplicativo);
+			filtroId.setCaseSensitive(caseSensitive);
+			filtroId.setRicercaEsatta(ricercaEsatta);
+			bodyRicerca.setIdApplicativo(filtroId);
+			bodyRicerca.setIdCluster(idCluster);
+			bodyRicerca.setTag(tag);
+			bodyRicerca.setAzione(azione);
 			
-			// FiltroEsito
+			bodyRicerca.setLimit(limit);
+			bodyRicerca.setOffset(offset);
+			bodyRicerca.setSort(sort);
 			if (esito != null) {
 				FiltroEsito filtroEsito = new FiltroEsito();
 				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
-				overrideFiltroEsito(filtroEsito, search, env);
 			}
 			
-			// Filtro Correlazione Applicativa
-			search.setCorrelazioneApplicativaCaseSensitiveType((BooleanUtils.isTrue(caseSensitive) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
-			search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(ricercaEsatta) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
-			search.setIdCorrelazioneApplicativa(idApplicativo);			
-						
-			search.setClusterId(idCluster);
-			
-			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
+			ListaTransazioni ret = TransazioniHelper.findAllTransazioniByIdApplicativo(bodyRicerca, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		}
@@ -329,117 +282,98 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 		}
     }
     
-    /**
-     * Ricerca semplificata delle transazioni in base all&#x27;identificativo messaggio
-     *
-     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base all&#x27;identificativo messaggio
-     *
-     */
+	/**
+	 * Ricerca semplificata delle transazioni in base all&#x27;identificativo
+	 * messaggio
+	 *
+	 * Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+	 * ricercandole in base all&#x27;identificativo messaggio
+	 *
+	 */
 	@Override
-    public ListaTransazioni findAllTransazioniByIdMessaggio(TipoMessaggioEnum tipoMessaggio, String id, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort) {
+	public ListaTransazioni findAllTransazioniByIdMessaggio(TipoMessaggioEnum tipoMessaggio, String id,
+			ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
-                        
-			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
+			context.getLogger().debug("Autorizzazione completata con successo");
+
+			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 			TransazioniSearchForm search = searchFormUtilities.getIdMessaggioSearchForm(context, profilo, soggetto);
-			
+
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			search.setIdEgov(id);
-			search.setTipoIdMessaggio(tipoMessaggio == TipoMessaggioEnum.RICHIESTA ? "Richiesta" : "Risposta" );
-        
+			search.setTipoIdMessaggio(tipoMessaggio == TipoMessaggioEnum.RICHIESTA ? "Richiesta" : "Risposta");
+
 			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
     
-    /**
-     * Ricerca semplificata delle transazioni in base ai parametri di uso più comune
-     *
-     * Permette di recuperare i dettagli delle transazioni, gestite su GovWay, ricercandole in base a parametri di filtro di uso più comune
-     *
-     */
+	/**
+	 * Ricerca semplificata delle transazioni in base ai parametri di uso più comune
+	 *
+	 * Permette di recuperare i dettagli delle transazioni, gestite su GovWay,
+	 * ricercandole in base a parametri di filtro di uso più comune
+	 *
+	 */
 	@Override
-    public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit, String sort,  String idCluster,  String soggettoRemoto, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito) {
+	public ListaTransazioni findAllTransazioniBySimpleSearch(DateTime dataInizio, DateTime dataFine,
+			FiltroRicercaRuoloTransazioneEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit,
+			String sort, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag,
+			String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
+			EsitoTransazioneSimpleSearchEnum esito) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
-			context.getLogger().debug("Autorizzazione completata con successo");     
+			context.getLogger().debug("Autorizzazione completata con successo");
 
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
-			SearchFormUtilities searchFormUtilities = new SearchFormUtilities();	
-			TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(context, env.profilo, env.soggetto.getNome(), 
-					tipo, dataInizio, dataFine);
-		
-			// FiltroApi
-			FiltroApiBase filtroApi = null;
-			switch (tipo) {
-			case EROGAZIONE:
-				filtroApi = new FiltroErogazione();
-				break;
-			case FRUIZIONE:
-				filtroApi = new FiltroFruizione();
-				break;
-			case QUALSIASI:
-				filtroApi = new FiltroQualsiasi();
-				break;
-			}
-			filtroApi.setNome(nomeServizio);
-			filtroApi.setTipo(tipoServizio);
-			filtroApi.setVersione(versioneServizio);	
-			switch (tipo) {
-			case EROGAZIONE: {
-				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
-				break;
-			}
-			case FRUIZIONE:{
-				FiltroFruizione filtro = (FiltroFruizione) filtroApi;
-				filtro.setErogatore(soggettoRemoto);
-				overrideFiltroFruizione(tag, filtro, azione, search, env);
-				break;
-			}
-			case QUALSIASI: {
-				overrideFiltroApiBase(tag, filtroApi, azione, env.soggetto, search, env);
-				break;
-			}
-			}
-			
+
+			RicercaIntervalloTemporale bodyRicerca = new RicercaIntervalloTemporale();
+			FiltroTemporale intervalloTemporale = new FiltroTemporale();
+			intervalloTemporale.setDataFine(dataFine);
+			intervalloTemporale.setDataInizio(dataInizio);
+			bodyRicerca.setIntervalloTemporale(intervalloTemporale);
+			bodyRicerca.setTipo(tipo);
+			bodyRicerca.setIdCluster(idCluster);
+			bodyRicerca.setTag(tag);
+			bodyRicerca.setAzione(azione);
+
+			bodyRicerca.setSort(sort);
+			bodyRicerca.setLimit(limit);
+			bodyRicerca.setOffset(offset);
+
 			if (esito != null) {
-				// FiltroEsito
 				FiltroEsito filtroEsito = new FiltroEsito();
 				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
-				overrideFiltroEsito(filtroEsito, search, env);
+				bodyRicerca.setEsito(filtroEsito);
 			}
-			
-			search.setClusterId(idCluster);
-        
-			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
+			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio,
+					soggettoRemoto,soggettoErogatore));
+
+			ListaTransazioni ret = TransazioniHelper.findAllTransazioni(bodyRicerca, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
-		}
-		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+		} catch (javax.ws.rs.WebApplicationException e) {
+			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
-		}
-		catch(Throwable e) {
-			context.getLogger().error("Invocazione terminata con errore: %s",e, e.getMessage());
+		} catch (Throwable e) {
+			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
-    }
+	}
     
     /**
      * Dettaglio di un evento

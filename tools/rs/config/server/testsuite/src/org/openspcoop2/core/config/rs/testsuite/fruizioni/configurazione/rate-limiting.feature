@@ -87,36 +87,14 @@ Scenario: Configurazione del Rate Limting filtrando per un applicativo inesisten
     * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
     * call delete ({ resourcePath: api_petstore_path })
 
-
-@FiltroSoggettoFruitoreInesistente400
-Scenario: Configurazione del Rate Limiting filtrando per un soggetto fruitore inesistente
-
-    * call create ({ resourcePath: 'api', body: api_petstore })
-    * call create ({ resourcePath: 'soggetti', body: erogatore })
-    * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
-    * eval policy.filtro.soggetto_fruitore = "SoggettoInesistente"
-    * eval randomize(policy, ["nome", "filtro.soggetto_fruitore"])
-
-    Given url configUrl
-    And path fruizione_petstore_path, 'configurazioni', 'rate-limiting'
-    And header Authorization = govwayConfAuth
-    And request policy
-    And params query_params
-    When method post
-    Then status 400
-
-    * call delete ({ resourcePath: fruizione_petstore_path })
-    * call delete ({ resourcePath: 'soggetti/' + erogatore.nome })
-    * call delete ({ resourcePath: api_petstore_path })
-
 @FiltroAzioneInesistente400
 Scenario: Configurazione del Rate Limiting filtrando per un'azione inesistente
 
     * call create ({ resourcePath: 'api', body: api_petstore })
     * call create ({ resourcePath: 'soggetti', body: erogatore })
     * call create ({ resourcePath: 'fruizioni', body: fruizione_petstore })
-    * eval policy.filtro.azione = "AzioneInesistente"
-    * eval randomize(policy, ["nome", "filtro.azione"])
+    * eval policy.filtro.azione = ["AzioneInesistente"]
+# la funzione randomize non preserva l'array, e quindi genera una richiesta errata:    * eval randomize(policy, ["nome", "filtro.azione"])
 
     Given url configUrl
     And path fruizione_petstore_path, 'configurazioni', 'rate-limiting'

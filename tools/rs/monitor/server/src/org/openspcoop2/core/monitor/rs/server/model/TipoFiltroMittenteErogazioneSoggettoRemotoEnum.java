@@ -21,27 +21,37 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
-public class FiltroQualsiasi extends FiltroApiBase {
+/**
+ * Gets or Sets TipoFiltroMittenteErogazioneSoggettoRemotoEnum
+ */
+public enum TipoFiltroMittenteErogazioneSoggettoRemotoEnum {
+IDENTIFICATIVO_AUTENTICATO("identificativo_autenticato"),
+  TOKEN_INFO("token_info"),
+  INDIRIZZO_IP("indirizzo_ip");
+
+  private String value;
+
+  TipoFiltroMittenteErogazioneSoggettoRemotoEnum(String value) {
+    this.value = value;
+  }
 
   @Override
+  @JsonValue
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroQualsiasi {\n");
-    sb.append("    ").append(FiltroQualsiasi.toIndentedString(super.toString())).append("\n");
-    sb.append("}");
-    return sb.toString();
+    return String.valueOf(this.value);
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
-  private static String toIndentedString(java.lang.Object o) {
-    if (o == null) {
-      return "null";
+  @JsonCreator
+  public static TipoFiltroMittenteErogazioneSoggettoRemotoEnum fromValue(String text) {
+    for (TipoFiltroMittenteErogazioneSoggettoRemotoEnum b : TipoFiltroMittenteErogazioneSoggettoRemotoEnum.values()) {
+      if (String.valueOf(b.value).equals(text)) {
+        return b;
+      }
     }
-    return o.toString().replace("\n", "\n    ");
+    return null;
   }
+  
 }

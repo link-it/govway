@@ -22,8 +22,9 @@
 
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
+import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.isEmpty;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
-import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializev2;
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserialize;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
 import java.sql.Connection;
@@ -43,16 +44,18 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneSoggetto;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneTokenClaim;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneTokenClaim;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdAutenticato;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroQualsiasi;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaTipi;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
@@ -60,6 +63,7 @@ import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportBase
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatisticaSoggetti;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaConfigurazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaAndamentoTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativo;
@@ -76,9 +80,11 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
+import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
 import org.openspcoop2.web.monitor.statistiche.dao.StatisticheGiornaliereService;
 
 
@@ -150,7 +156,7 @@ public class ReportisticaHelper {
 		}
 	}
 
-	public static final void overrideFiltroMittenteIdApplicativo(FiltroMittenteIdApplicativo filtro,
+	public static final void overrideFiltroMittenteIdApplicativo(FiltroMittenteIdAutenticato filtro,
 			HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
@@ -228,7 +234,7 @@ public class ReportisticaHelper {
 				break;
 			}
 			case IDENTIFICATIVO_AUTENTICATO: {
-				FiltroMittenteIdApplicativo fIdent = deserializeFiltroMittenteIdApplicativo(filtro.getId());
+				FiltroMittenteIdAutenticato fIdent = deserializeFiltroMittenteIdAutenticato(filtro.getId());
 				overrideFiltroMittenteIdApplicativo(fIdent, wrap, env);
 				break;
 			}
@@ -255,13 +261,48 @@ public class ReportisticaHelper {
 			}
 			} // switch
 		}
-
 	}
 	
-	public static final FiltroMittenteIdApplicativo deserializeFiltroMittenteIdApplicativo(Object o) {
-		FiltroMittenteIdApplicativo ret = deserializeDefault(o, FiltroMittenteIdApplicativo.class);
+	public static final void overrideFiltroMittenteErogazioneDistribuzioneSoggettoRemoto(FiltroMittenteErogazioneDistribuzioneSoggettoRemoto filtro, HttpRequestWrapper wrap,
+		MonitoraggioEnv env)
+	{
+		if (filtro == null)
+			return;
+		
+		wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE, Enums.toTipoRicercaMittente(filtro.getTipo()));
+		
+		if (filtro.getId() != null) {
+			switch (filtro.getTipo()) {
+		
+			case IDENTIFICATIVO_AUTENTICATO: {
+				FiltroMittenteIdAutenticato fIdent = deserializeFiltroMittenteIdAutenticato(filtro.getId());
+				overrideFiltroMittenteIdApplicativo(fIdent, wrap, env);
+				break;
+			}
+			case TOKEN_INFO: {
+				FiltroMittenteErogazioneTokenClaim fClaim = deserializeFiltroMittenteErogazioneTokenClaim(filtro.getId());
+				wrap.overrideParameter(CostantiExporter.RICERCA_MITTENTE_TIPO_CLAIM, Enums.toTokenClaim.get(fClaim.getClaim()));
+				wrap.overrideParameter(CostantiExporter.IDENTIFICATIVO_RICERCA_MITTENTE, fClaim.getId());
+				wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_ESATTA, fClaim.isRicercaEsatta() + "");
+				wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE_CASE_SENSITIVE, fClaim.isCaseSensitive() + "");
+				if (fClaim.getSoggetto() != null) {
+					wrap.overrideParameter(CostantiExporter.MITTENTE, new IDSoggetto(env.soggetto.getTipo(), fClaim.getSoggetto()).toString());
+				}
+				break;
+			}
+			case INDIRIZZO_IP: {
+				FiltroMittenteIndirizzoIP indirizzoIP = deserializeFiltroMittenteIndirizzoIP(filtro.getId());
+				overrideFiltroMittenteIndirizzoIP(indirizzoIP, wrap, env);
+				break;
+			}
+			} // switch
+		}
+	}
+	
+	public static final FiltroMittenteIdAutenticato deserializeFiltroMittenteIdAutenticato(Object o) {
+		FiltroMittenteIdAutenticato ret = deserializeDefault(o, FiltroMittenteIdAutenticato.class);
 		if (ret.getAutenticazione() == null || StringUtils.isEmpty(ret.getId()))
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteIdApplicativo.class.getName() + ": Indicare i campi obbligatori 'autenticazione' e 'id'");
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteIdAutenticato.class.getName() + ": Indicare i campi obbligatori 'autenticazione' e 'id'");
 
 		return ret;
 	}
@@ -269,7 +310,7 @@ public class ReportisticaHelper {
 	public static final FiltroMittenteIndirizzoIP deserializeFiltroMittenteIndirizzoIP(Object o) {
 		FiltroMittenteIndirizzoIP ret = deserializeDefault(o, FiltroMittenteIndirizzoIP.class);
 		if (StringUtils.isEmpty(ret.getId()))
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteIdApplicativo.class.getName() + ": Indicare il campo obbligatorio 'id'");
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroMittenteIndirizzoIP.class.getName() + ": Indicare il campo obbligatorio 'id'");
 
 		return ret;
 	}
@@ -306,7 +347,7 @@ public class ReportisticaHelper {
 			break;
 		}
 		case IDENTIFICATIVO_AUTENTICATO: {
-			FiltroMittenteIdApplicativo fIdent = deserializeFiltroMittenteIdApplicativo(filtro.getId());
+			FiltroMittenteIdAutenticato fIdent = deserializeFiltroMittenteIdAutenticato(filtro.getId());
 			overrideFiltroMittenteIdApplicativo(fIdent, wrap, env);
 			break;
 		}
@@ -336,7 +377,7 @@ public class ReportisticaHelper {
 		wrap.overrideParameter(CostantiExporter.TIPO_RICERCA_MITTENTE, Enums.toTipoRicercaMittente(filtro.getTipo()));
 		switch (filtro.getTipo()) {
 		case IDENTIFICATIVO_AUTENTICATO: {
-			FiltroMittenteIdApplicativo fIdent = deserializeFiltroMittenteIdApplicativo(filtro.getId());
+			FiltroMittenteIdAutenticato fIdent = deserializeFiltroMittenteIdAutenticato(filtro.getId());
 			overrideFiltroMittenteIdApplicativo(fIdent, wrap, env);
 			break;
 		}
@@ -449,13 +490,13 @@ public class ReportisticaHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroErogazione(body.getTag(),deserializev2(body.getApi(), FiltroErogazione.class), wrap, env);
+			overrideFiltroErogazione(body.getTag(),deserialize(body.getApi(), FiltroErogazione.class), wrap, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroFruizione(body.getTag(),deserializev2(body.getApi(), FiltroFruizione.class), wrap, env);
+			overrideFiltroFruizione(body.getTag(),deserialize(body.getApi(), FiltroFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroQualsiasi(body.getTag(),deserializev2(body.getApi(), FiltroQualsiasi.class), wrap, env);
+			overrideFiltroQualsiasi(body.getTag(),deserialize(body.getApi(), FiltroApiQualsiasi.class), wrap, env);
 			break;
 		}
 	}
@@ -465,12 +506,7 @@ public class ReportisticaHelper {
 		if (body == null) return;
 		
 		IDSoggetto erogatore = new IDSoggetto(env.soggetto.getTipo(), body.getErogatore());
-		
 		overrideFiltroApiBase(tag, body, erogatore, wrap, env);
-		// TODO: Forse fare l'override di destinatario intendendolo come l'erogatore non
-		// va bene, ricontrolla ovunque.
-		if (body.getErogatore() != null)
-			wrap.overrideParameter(CostantiExporter.DESTINATARIO, erogatore.toString() );
 	}
 
 	public static final void overrideFiltroErogazione(String tag, FiltroErogazione body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
@@ -479,55 +515,74 @@ public class ReportisticaHelper {
 		overrideFiltroApiBase(tag, body, env.soggetto, wrap, env);
 	}
 	
-	public static final void overrideFiltroQualsiasi(String tag, FiltroQualsiasi body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
+	public static final void overrideFiltroQualsiasi(String tag, FiltroApiQualsiasi body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if (body == null)
 			return;
-		overrideFiltroApiBase(tag, body, env.soggetto, wrap, env);
-	}
-
-	public static final void overrideFiltroApiBase(String tag, FiltroApiBase body, IDSoggetto erogatore, HttpRequestWrapper wrap, MonitoraggioEnv env) {
-		if (body == null)
-			return;
-
-		if (body.getTipo() == null) {
-			try {
-				IProtocolConfiguration protocolConf = env.protocolFactoryMgr
-						.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration();
-				ServiceBinding defaultBinding = protocolConf.getDefaultServiceBindingConfiguration(null)
-						.getDefaultBinding();
-				body.setTipo(protocolConf.getTipoServizioDefault(defaultBinding));
-			} catch (Exception e) {
-				throw FaultCode.ERRORE_INTERNO
-						.toException("Impossibile determinare il tipo del servizio: " + e.getMessage());
-			}
-
+		
+		IDSoggetto erogatore = new IDSoggetto(env.soggetto.getTipo(), body.getErogatore());
+		overrideFiltroApiBase(tag, body, erogatore, wrap, env);
+		if (!StringUtils.isEmpty(body.getSoggettoRemoto())) {
+			IDSoggetto remoto = new IDSoggetto(env.soggetto.getTipo(), body.getSoggettoRemoto());
+			wrap.overrideParameter(CostantiExporter.TRAFFICO_PER_SOGGETTO, remoto.toString() );
 		}
 		
-		if (body.getVersione() == null) {
-			body.setVersione(1);
-		}
+	}
 
+	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, IDSoggetto erogatore, HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if(tag!=null) {
 			wrap.overrideParameter(CostantiExporter.GRUPPO, tag);
 		}
 		
-		wrap.overrideParameter(CostantiExporter.SERVIZIO,
-				buildNomeServizioForOverride(body.getNome(), body.getTipo(), body.getVersione(), Optional.of(erogatore)));
+		if (filtro_api == null)
+			return;
+		
+		if ( !StringUtils.isEmpty(filtro_api.getNome()) || filtro_api.getVersione() != null || !StringUtils.isEmpty(filtro_api.getTipo())) {
+			
+			if (StringUtils.isEmpty(filtro_api.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il nome della API");
+			}
+						
+			if (erogatore == null || isEmpty(erogatore)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il Soggetto Erogatore (Nelle fruizioni è il soggetto remoto)");
+			}
+			
+			if (filtro_api.getVersione() == null) {
+				filtro_api.setVersione(1);
+			}
+			
+			if (filtro_api.getTipo() == null) {
+				try {
+					IProtocolConfiguration protocolConf = env.protocolFactoryMgr
+							.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration();
+					ServiceBinding defaultBinding = protocolConf.getDefaultServiceBindingConfiguration(null)
+							.getDefaultBinding();
+					filtro_api.setTipo(protocolConf.getTipoServizioDefault(defaultBinding));
+				} catch (Exception e) {
+					throw FaultCode.ERRORE_INTERNO
+							.toException("Impossibile determinare il tipo del servizio: " + e.getMessage());
+				}
+
+			}
+			wrap.overrideParameter(CostantiExporter.SERVIZIO,
+					buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(), filtro_api.getVersione(), Optional.of(erogatore)));
+		}
 	}
 
 	public static final void overrideRicercaStatisticaDistribuzioneApplicativo(
 			RicercaStatisticaDistribuzioneApplicativo body, HttpRequestWrapper wrap, MonitoraggioEnv env) {
 		if (body == null)
 			return;
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
 
 		overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		wrap.overrideParameter(CostantiExporter.AZIONE, body.getAzione());
 		overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
 		overrideFiltroEsito(body.getEsito(), wrap, env);
 	}
-
-	// public static final void
-	// overridericercaStatisticaDistribuzioneSoggettoLocale(/RicercaStatisticaDistribuzioneSoggettoLocale)
+	
 
 	public static final byte[] generateReport(HttpRequestWrapper request, IContext context) throws Exception {
 		DBManager dbManager = DBManager.getInstance();
@@ -565,23 +620,23 @@ public class ReportisticaHelper {
 		switch (body.getTipo()) {
 		case EROGAZIONE:
 			overrideFiltroMittenteErogazione(
-					deserializev2(body.getMittente(), FiltroMittenteErogazione.class), request,
+					deserialize(body.getMittente(), FiltroMittenteErogazione.class), request,
 					env);
 			break;
 		case FRUIZIONE:
 			overrideFiltroMittenteFruizione(
-					deserializev2(body.getMittente(), FiltroMittenteFruizione.class), request, env);
+					deserialize(body.getMittente(), FiltroMittenteFruizione.class), request, env);
 			break;
 		case QUALSIASI:
 			overrideFiltroMittenteQualsiasi(
-					deserializev2(body.getMittente(), FiltroMittenteQualsiasi.class), request, env);
+					deserialize(body.getMittente(), FiltroMittenteQualsiasi.class), request, env);
 			break;
 		}
 		// FiltroEsito
 		overrideFiltroEsito(body.getEsito(), request, env);
 		// Soggetto Erogatore
 		if ( FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.equals(body.getTipo()) && body.getSoggettoErogatore() != null) {
-			request.overrideParameter(CostantiExporter.DESTINATARIO, new IDSoggetto(env.soggetto.getTipo(),deserializev2(body.getSoggettoErogatore(), String.class)));
+			request.overrideParameter(CostantiExporter.DESTINATARIO, new IDSoggetto(env.soggetto.getTipo(),deserialize(body.getSoggettoErogatore(), String.class)));
 		}
 		// Opzioni Report
 		overrideOpzioniGenerazioneReport(body.getReport(), request, env);
@@ -594,6 +649,10 @@ public class ReportisticaHelper {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
 				env.soggetto.getNome(), body.getTipo(), body.getReport().getFormato(), TipoReport.applicativo);
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
 
 		overrideRicercaBaseStatisticaSoggetti(body, wrap, env);
 		overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -614,13 +673,13 @@ public class ReportisticaHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroMittenteErogazione(deserializev2(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
+			overrideFiltroMittenteErogazione(deserialize(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroMittenteFruizione(deserializev2(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
+			overrideFiltroMittenteFruizione(deserialize(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroMittenteQualsiasi(deserializev2(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
+			overrideFiltroMittenteQualsiasi(deserialize(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
 			break;
 		}
 
@@ -628,6 +687,11 @@ public class ReportisticaHelper {
 	}
 
 	public static final byte[] getReportDistribuzioneEsiti(RicercaStatisticaDistribuzioneEsiti body,MonitoraggioEnv env) throws Exception {
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
+		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
 				env.soggetto.getNome(), body.getTipo(), body.getReport().getFormato(), TipoReport.esiti);
@@ -637,16 +701,15 @@ public class ReportisticaHelper {
 		// Mittente
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroMittenteErogazione( deserializev2(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
+			overrideFiltroMittenteErogazione( deserialize(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroMittenteFruizione( deserializev2( body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
+			overrideFiltroMittenteFruizione( deserialize( body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroMittenteQualsiasi( deserializev2( body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
+			overrideFiltroMittenteQualsiasi( deserialize( body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
 			break;
 		}
-
 		wrap.overrideParameter(CostantiExporter.AZIONE, body.getAzione());
 		return generateReport(wrap, env.context);
 	}
@@ -678,24 +741,27 @@ public class ReportisticaHelper {
 
 	public static final byte[] getReportDistribuzioneSoggettoRemoto(RicercaStatisticaDistribuzioneSoggettoRemoto body,
 			MonitoraggioEnv env) throws Exception {
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
 				env.soggetto.getNome(), body.getTipo(), body.getReport().getFormato(), TipoReport.soggetto_remoto);
-
 		overrideRicercaBaseStatistica(body, wrap, env);
 		overrideOpzioniGenerazioneReport(body.getReport(), wrap, env);
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroMittenteErogazione(deserializev2(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
-			overrideFiltroErogazione(body.getTag(), deserializev2(body.getApi(), FiltroErogazione.class), wrap,env);
+			overrideFiltroMittenteErogazioneDistribuzioneSoggettoRemoto(deserialize(body.getMittente(), FiltroMittenteErogazioneDistribuzioneSoggettoRemoto.class), wrap, env); 
+			overrideFiltroErogazione(body.getTag(), deserialize(body.getApi(), FiltroErogazione.class), wrap,env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroMittenteFruizione(deserializev2(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
-			overrideFiltroFruizione(body.getTag(), deserializev2(body.getApi(), FiltroFruizione.class), wrap, env);
+			overrideFiltroMittenteFruizione(deserialize(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
+			overrideFiltroFruizione(body.getTag(), deserialize(body.getApi(), FiltroFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroMittenteQualsiasi(deserializev2(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
-			overrideFiltroQualsiasi(body.getTag(), deserializev2(body.getApi(), FiltroQualsiasi.class), wrap, env);
+			overrideFiltroMittenteQualsiasi(deserialize(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
+			overrideFiltroQualsiasi(body.getTag(), deserialize(body.getApi(), FiltroApiQualsiasi.class), wrap, env);
 			break;
 		}
 		overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -705,6 +771,11 @@ public class ReportisticaHelper {
 	}
 
 	public static final byte[] getReportDistribuzioneTemporale(RicercaStatisticaAndamentoTemporale body,MonitoraggioEnv env) throws Exception {
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
+		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo,
 				env.soggetto.getNome(), body.getTipo(), body.getReport().getFormato(), TipoReport.temporale);
@@ -713,13 +784,13 @@ public class ReportisticaHelper {
 		overrideOpzioniGenerazioneReportMultiLine(body.getReport(), wrap, env);
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroMittenteErogazione(deserializev2(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
+			overrideFiltroMittenteErogazione(deserialize(body.getMittente(), FiltroMittenteErogazione.class), wrap, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroMittenteFruizione(deserializev2(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
+			overrideFiltroMittenteFruizione(deserialize(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroMittenteQualsiasi(deserializev2(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
+			overrideFiltroMittenteQualsiasi(deserialize(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
 			break;
 		}
 		overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -738,7 +809,7 @@ public class ReportisticaHelper {
 		wrap.overrideParameter(CostantiExporter.CLAIM, Enums.toClaim.get(body.getClaim()).toString());
 
 		if (FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.equals(body.getTipo()) && body.getSoggetto() != null) {
-			String nomeMittente = deserializev2(body.getSoggetto(), String.class);
+			String nomeMittente = deserialize(body.getSoggetto(), String.class);
 			wrap.overrideParameter(CostantiExporter.MITTENTE,new IDSoggetto(env.soggetto.getTipo(), nomeMittente).toString());
 		}
 
@@ -747,6 +818,11 @@ public class ReportisticaHelper {
 
 	public static final byte[] getReportDistribuzioneSoggettoLocale(RicercaStatisticaDistribuzioneSoggettoLocale body,
 			MonitoraggioEnv env) throws Exception {
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
+		
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
 		HttpRequestWrapper wrap = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo, null,
 				body.getTipo(), body.getReport().getFormato(), TipoReport.soggetto_locale);
@@ -757,13 +833,13 @@ public class ReportisticaHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroMittenteErogazione(deserializev2(body.getMittente(),FiltroMittenteErogazione.class), wrap, env);
+			overrideFiltroMittenteErogazione(deserialize(body.getMittente(),FiltroMittenteErogazione.class), wrap, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroMittenteFruizione(deserializev2(body.getMittente(),FiltroMittenteFruizione.class), wrap, env);
+			overrideFiltroMittenteFruizione(deserialize(body.getMittente(),FiltroMittenteFruizione.class), wrap, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroMittenteQualsiasi(deserializev2(body.getMittente(),FiltroMittenteQualsiasi.class), wrap, env);
+			overrideFiltroMittenteQualsiasi(deserialize(body.getMittente(),FiltroMittenteQualsiasi.class), wrap, env);
 			break;
 		}
 
@@ -806,8 +882,115 @@ public class ReportisticaHelper {
 		}
 	}
 
-	public static final Map<String, Object> buildFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo, String nomeServizio,
+	public static final byte[] exportConfigurazioneApi(RicercaConfigurazioneApi body, MonitoraggioEnv env) {
+		DBManager dbManager = DBManager.getInstance();
+		Connection connection = null;
+		ConfigurazioniGeneraliService configurazioniService = null;
+		SearchFormUtilities searchFormUtilities = null;
+		HttpRequestWrapper request = null;
+				
+		try {
+			connection = dbManager.getConnectionConfig();
+			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
+			configurazioniService = new ConfigurazioniGeneraliService(connection, true, smp, LoggerProperties.getLoggerDAO());
+			searchFormUtilities = new SearchFormUtilities();
+			request = searchFormUtilities.getHttpRequestWrapper(env.context, env.profilo, env.soggetto.getNome(),
+					body.getTipo(), FormatoReportEnum.CSV, TipoReport.api);
+		}
+		catch (Exception e) {
+			dbManager.releaseConnectionConfig(connection);
+			throw new RuntimeException(e);
+		}
+		
+		String tag = null;
+		switch (body.getTipo()) {
+			case EROGAZIONE: {			
+				ReportisticaHelper.overrideFiltroErogazione(tag, deserialize(body.getApi(), FiltroErogazione.class), request, env);
+				break;
+			}
+			case FRUIZIONE:
+				ReportisticaHelper.overrideFiltroFruizione(tag, deserialize(body.getApi(), FiltroFruizione.class), request, env);
+				break;
+		}
+
+		try {
+			byte[] report = StatsGenerator.generateReport(request, env.context, configurazioniService);
+			return report;
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		} finally {
+			dbManager.releaseConnectionConfig(connection);
+		}
+	}
+	
+	public static final Map<String, Object> parseFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo,
+			String nomeServizio, String tipoServizio, Integer versioneServizio, String soggettoRemoto,
+			String soggettoErogatore) {
+		
+		// In caso di Fruizione, fin'ora si è sempre specificato l'erogatore per mezzo del parametro soggettoRemoto.
+		// Per mantenere i controlli corretti sul filtroApi, nel caso FRUIZIONE se viene specificato il soggettoRemoto
+		// allora si sta specificando un pezzo del filtroAPI, che va specificato per intero.
+		if (tipo == FiltroRicercaRuoloTransazioneEnum.FRUIZIONE) {
+			soggettoErogatore = soggettoRemoto;
+		}
+
+		if (tipo == FiltroRicercaRuoloTransazioneEnum.EROGAZIONE 
+				&& (!StringUtils.isEmpty(soggettoRemoto) || !StringUtils.isEmpty(soggettoErogatore))) {
+			
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nel caso di ruolo <" + tipo
+					+ ">, non bisogna specificare né soggetto_remoto né soggetto_erogatore");
+		}
+
+		if (tipo == FiltroRicercaRuoloTransazioneEnum.FRUIZIONE 
+				&& !StringUtils.isEmpty(soggettoErogatore)
+				&& !StringUtils.isEmpty(soggettoRemoto) 
+				&& !StringUtils.equals(soggettoRemoto, soggettoErogatore)) {
+			
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Ricerca ambigua. Nel caso di ruolo <"
+					+ tipo
+					+ ">, soggettoErogatore e soggettoRemoto specificano la stessa informazione."
+					+ "Se specificati entrambi allora devono essere uguali");
+		}	
+
+		// Se specifico un pezzo del filtroAPI, allora devo avere un filtro completo.
+		// (meno i defaults)
+		if (nomeServizio != null || tipoServizio != null || versioneServizio != null || soggettoErogatore != null) {
+		
+			if (nomeServizio == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare il nome_servizio");
+			}
+
+			if (tipo == FiltroRicercaRuoloTransazioneEnum.FRUIZIONE && (StringUtils.isEmpty(soggettoRemoto) || StringUtils.isEmpty(soggettoErogatore)) ) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificando un filtro API per il ruolo <" + tipo
+						+ ">, è necessario specificare anche il soggetto_remoto (Erogatore in caso di Fruizioni)");
+			}
+			
+			if (tipo == FiltroRicercaRuoloTransazioneEnum.QUALSIASI && StringUtils.isEmpty(soggettoErogatore)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificando un filtro API per il ruolo <" + tipo
+						+ ">, è necessario specificare anche il soggetto_erogatore");
+			}
+			// TODO: Gli altri due hanno i defaults. (Che dovrei metttere ora?)
+		}
+
+		return buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore);
+	}
+	
+	 
+	public static final Map<String, Object> parseFiltroApiMap(TransazioneRuoloEnum tipo, String nomeServizio,
 			String tipoServizio, Integer versioneServizio, String soggettoRemoto) {
+		// In Questo caso non abbiamo il tipo QUALSIASI, quindi parsiamo il filtro senza il soggettoErogatore (ultimo parametro a null)
+		FiltroRicercaRuoloTransazioneEnum newTipo = tipo == TransazioneRuoloEnum.EROGAZIONE ? FiltroRicercaRuoloTransazioneEnum.EROGAZIONE : FiltroRicercaRuoloTransazioneEnum.FRUIZIONE;
+		return parseFiltroApiMap(newTipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,null);
+	}
+	
+	private static final Map<String, Object> buildFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo, String nomeServizio,
+			String tipoServizio, Integer versioneServizio, String soggettoRemoto, String soggettoErogatore) {
+		
+		// Se non ho specificato nessun pezzo del filtro api, allora per le versioni full è come aver passato un FiltroApi a null.
+		if (StringUtils.isEmpty(nomeServizio) && StringUtils.isEmpty(tipoServizio) && StringUtils.isEmpty(soggettoRemoto) && StringUtils.isEmpty(soggettoErogatore) && versioneServizio == null) {
+			return null;
+		}
+		
 		LinkedHashMap<String, Object> filtroApi = new LinkedHashMap<>();
 		filtroApi.put("nome", nomeServizio);
 		filtroApi.put("tipo", tipoServizio);
@@ -817,46 +1000,18 @@ public class ReportisticaHelper {
 		case EROGAZIONE:
 			break;
 		case FRUIZIONE:
+			if (!StringUtils.isEmpty(soggettoErogatore)) {
+				soggettoRemoto = soggettoErogatore;
+			}
 			filtroApi.put("erogatore", soggettoRemoto);
 			break;
 		case QUALSIASI:
+			filtroApi.put("erogatore", soggettoErogatore);
+			filtroApi.put("soggetto_remoto", soggettoRemoto);
 			break;
 		}
 
 		return filtroApi;
 	}
-
-	/*
-	 * public static final <T> Map<String,Object> objectToMap(T object, Class<T>
-	 * type) throws IllegalAccessException, InvocationTargetException,
-	 * NoSuchMethodException { PropertyDescriptor[] descriptors =
-	 * PropertyUtils.getPropertyDescriptors(object);
-	 * 
-	 * 
-	 * //Field[] field = LinkedHashMap<String, Object> ret = new LinkedHashMap<>();
-	 * for (Field field : type.getDeclaredFields() ) { field.setAccessible(true);
-	 * 
-	 * Class<?> source = field.getDeclaringClass(); if ( source == String.class ||
-	 * source == Integer.class || source == Boolean.class || source == boolean.class
-	 * || source == Integer.class ) { ret.put(field.getName(),
-	 * BeanUtils.getProperty(object, field.getName())); // TODO: Trasformare in
-	 * jsoncase il secondo field.getName() }
-	 * 
-	 * if ( source.isEnum() ) { ret.put(field.getName(),
-	 * BeanUtils.getProperty(object, field.getName()).toString()); // TODO:
-	 * Trasformare in jsoncase il secondo field.getName() }
-	 * 
-	 * if ( source == (new byte[0]).getClass() ) { ret.put(field.getName(),
-	 * BeanUtils.getProperty(object, field.getName()).toString()); // TODO:
-	 * Trasformare in jsoncase il secondo field.getName() byte[] v =
-	 * BeanUtils.getProperty(object, field.getName()); }
-	 * 
-	 * 
-	 * }
-	 * 
-	 * return ret;
-	 * 
-	 * }
-	 */
-
+	
 }

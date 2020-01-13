@@ -37,6 +37,7 @@ paths:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -119,6 +120,7 @@ paths:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/id_cluster"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -341,6 +343,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -416,6 +419,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -565,6 +569,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -709,6 +714,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -783,6 +789,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -858,6 +865,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -932,6 +940,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -1006,6 +1015,7 @@ paths:
       - $ref: "#/components/parameters/data_fine"
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
+      - $ref: "#/components/parameters/soggetto_erogatore"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -1501,11 +1511,11 @@ components:
             mapping:
               erogazione: "#/components/schemas/FiltroErogazione"
               fruizione: "#/components/schemas/FiltroFruizione"
-              qualsiasi: "#/components/schemas/FiltroQualsiasi"
+              qualsiasi: "#/components/schemas/FiltroApiQualsiasi"
           oneOf:
           - $ref: "#/components/schemas/FiltroErogazione"
           - $ref: "#/components/schemas/FiltroFruizione"
-          - $ref: "#/components/schemas/FiltroQualsiasi"
+          - $ref: "#/components/schemas/FiltroApiQualsiasi"
         azione:
           $ref: "#/components/schemas/NCName"
         esito:
@@ -1566,11 +1576,11 @@ components:
               mapping:
                 erogazione: "#/components/schemas/FiltroErogazione"
                 fruizione: "#/components/schemas/FiltroFruizione"
-                qualsiasi: "#/components/schemas/FiltroQualsiasi"
+                qualsiasi: "#/components/schemas/FiltroApiQualsiasi"
             oneOf:
             - $ref: "#/components/schemas/FiltroErogazione"
             - $ref: "#/components/schemas/FiltroFruizione"
-            - $ref: "#/components/schemas/FiltroQualsiasi"
+            - $ref: "#/components/schemas/FiltroApiQualsiasi"
     RicercaStatisticaAndamentoTemporale:
       type: "object"
       allOf:
@@ -1781,6 +1791,9 @@ components:
           - $ref: "#/components/schemas/FiltroApiBase"
           - $ref: "#/components/schemas/FiltroFruizione"
     FiltroTemporale:
+      required:
+      - "data_fine"
+      - "data_inizio"
       type: "object"
       properties:
         data_inizio:
@@ -1810,11 +1823,19 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroApiBase"
-    FiltroQualsiasi:
+    FiltroApiQualsiasi:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroApiBase"
+      - type: "object"
+        properties:
+          erogatore:
+            $ref: "#/components/schemas/SimpleName"
+          soggetto_remoto:
+            $ref: "#/components/schemas/SimpleName"
     FiltroEsito:
+      required:
+      - "tipo"
       type: "object"
       properties:
         tipo:
@@ -1852,7 +1873,7 @@ components:
               indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteFruizioneApplicativo"
-          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdAutenticato"
           - $ref: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
           - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
@@ -1874,12 +1895,15 @@ components:
           oneOf:
           - $ref: "#/components/schemas/FiltroMittenteErogazioneSoggetto"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneApplicativo"
-          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdAutenticato"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
           - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
         \ la ricerca di transazioni relative ad erogazioni di servizio"
     FiltroMittenteQualsiasi:
+      required:
+      - "id"
+      - "tipo"
       type: "object"
       properties:
         tipo:
@@ -1892,7 +1916,7 @@ components:
               token_info: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
               indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
-          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdAutenticato"
           - $ref: "#/components/schemas/FiltroMittenteFruizioneTokenClaim"
           - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
@@ -1901,7 +1925,7 @@ components:
       type: "object"
       properties:
         tipo:
-          $ref: "#/components/schemas/TipoFiltroMittenteErogazioneEnum"
+          $ref: "#/components/schemas/TipoFiltroMittenteErogazioneSoggettoRemotoEnum"
         id:
           discriminator:
             propertyName: "tipo"
@@ -1910,7 +1934,7 @@ components:
               token_info: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
               indirizzo_ip: "#/components/schemas/FiltroMittenteIndirizzoIP"
           oneOf:
-          - $ref: "#/components/schemas/FiltroMittenteIdApplicativo"
+          - $ref: "#/components/schemas/FiltroMittenteIdAutenticato"
           - $ref: "#/components/schemas/FiltroMittenteErogazioneTokenClaim"
           - $ref: "#/components/schemas/FiltroMittenteIndirizzoIP"
       description: "Descrive le informazioni di filtraggio relative al mittente per\
@@ -1939,7 +1963,7 @@ components:
       properties:
         applicativo:
           $ref: "#/components/schemas/NCName"
-    FiltroMittenteIdApplicativo:
+    FiltroMittenteIdAutenticato:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/FiltroRicercaId"
@@ -2005,6 +2029,12 @@ components:
       enum:
       - "soggetto"
       - "applicativo"
+      - "identificativo_autenticato"
+      - "token_info"
+      - "indirizzo_ip"
+    TipoFiltroMittenteErogazioneSoggettoRemotoEnum:
+      type: "string"
+      enum:
       - "identificativo_autenticato"
       - "token_info"
       - "indirizzo_ip"
@@ -2480,6 +2510,7 @@ components:
       type: "string"
       enum:
       - "APIGateway"
+      - "ModIPA"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
@@ -3027,7 +3058,7 @@ components:
       name: "profilo"
       in: "query"
       description: "Indica la modalità operativa del Gateway, a scelta tra:\n  * APIGateway;\n\
-        \  * SPCoop;\n  * FatturaPA;\n  * eDelivery."
+        \  * ModIPA;\n  * SPCoop;\n  * FatturaPA;\n  * eDelivery."
       required: false
       schema:
         $ref: "#/components/schemas/ProfiloEnum"

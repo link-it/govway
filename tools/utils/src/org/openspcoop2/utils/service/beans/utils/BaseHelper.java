@@ -27,16 +27,28 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.validation.Configuration;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.cxf.jaxrs.validation.JAXRSParameterNameProvider;
+import org.apache.cxf.validation.ValidationConfiguration;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
+import org.openspcoop2.utils.service.fault.jaxrs.ProblemValidation;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 
 /**
  * Helper
@@ -171,11 +183,7 @@ public class BaseHelper {
 		if (mapObject == null) return null;
 		
 		T ret = toClass.newInstance();
-		//try {
 		fillFromMap(mapObject, ret);
-		/*} catch (Exception e) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + toClass.getName() + ", formato non valido: " + e.getMessage());
-		}*/
 	
 		return ret;
 	}
@@ -282,38 +290,70 @@ public class BaseHelper {
 	public static final Map<ProfiloEnum,String> tipoProtocolloFromProfilo = ProfiloUtils.getMapProfiloToProtocollo();	
 	public static final Map<String,ProfiloEnum> profiloFromTipoProtocollo = ProfiloUtils.getMapProtocolloToProfilo();
 	
-	@SuppressWarnings("unchecked")
-	public static <T> T deserializev2(Object o, Class<T> dest) {
-		if (o == null) 
-			return null;
+
+	public static <T> void validateBean(T bean) {
+		if (bean == null) return;
 		
-		if(dest.isInstance(o))
-			return dest.cast(o);
+		JAXRSParameterNameProvider parameterNameProvider = new JAXRSParameterNameProvider();
+        Configuration<?> factoryCfg = Validation.byDefaultProvider().configure();
+        ValidationConfiguration cfg = new ValidationConfiguration(parameterNameProvider);
+        if (cfg != null) {
+            factoryCfg.parameterNameProvider(cfg.getParameterNameProvider());
+            factoryCfg.messageInterpolator(cfg.getMessageInterpolator());
+            factoryCfg.traversableResolver(cfg.getTraversableResolver());
+            factoryCfg.constraintValidatorFactory(cfg.getConstraintValidatorFactory());
+            for (Map.Entry<String, String> entry : cfg.getProperties().entrySet()) {
+                factoryCfg.addProperty(entry.getKey(), entry.getValue());
+            }
+        }
+
+		ValidatorFactory factory = factoryCfg.buildValidatorFactory();
+		Validator validator = factory.getValidator();
+		Set<ConstraintViolation<T>> violations = validator.validate(bean);
 		
-		try {
-			return fromMap((Map<String, Object>) o,dest);
-		} catch (Exception e) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + dest.getName() + ", formato non valido: " + e.getMessage()); 
+		if (!violations.isEmpty()) {
+        	ProblemValidation problem = new ProblemValidation(FaultCode.RICHIESTA_NON_VALIDA.toFault());
+			
+			for (ConstraintViolation<T> violation : violations) {
+				String msg = bean.getClass().getSimpleName() + "." + violation.getPropertyPath(); 
+				problem.addInvalidParam(msg, violation.getMessage(), null);
+			}
+			
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException(Response.status(problem.getStatus()).entity(problem).type(HttpConstants.CONTENT_TYPE_JSON_PROBLEM_DETAILS_RFC_7807).build());
 		}
 	}
 	
+	
 	@SuppressWarnings("unchecked")
-	public static <T> Optional<T> deserializev3(Object o, Class<T> dest) {
-		if (o == null) 
-			return Optional.empty();
+	public static <T> T deserialize(Object o, Class<T> dest) {
+		T ret = null;
 		
-		if(dest.isInstance(o))
-			return Optional.of(dest.cast(o));
-		
-		try {
-			return Optional.of(fromMap((Map<String, Object>) o,dest));
-		} catch (Exception e) {
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + dest.getName() + ", formato non valido: " + e.getMessage()); 
+		if (o != null) {
+			if(dest.isInstance(o))
+			{
+				ret = dest.cast(o);
+			} 
+			else
+			{
+				try {
+					ret =  fromMap((Map<String, Object>) o,dest);
+				} catch (Exception e) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Impossibile deserializzare l'oggetto " + dest.getName() + ", formato non valido: " + e.getMessage()); 
+				}
+			}
 		}
+		
+		validateBean(ret);
+		return ret;
+	}
+	
+	
+	public static <T> Optional<T> deserializeOptional(Object o, Class<T> dest) {
+		return Optional.ofNullable(deserialize(o,dest));
 	}
 	
 	public static <T> T deserializeDefault(Object o, Class<T> dest) {		
-		Optional<T> ret = deserializev3(o, dest);
+		Optional<T> ret = deserializeOptional(o, dest);
 		if (!ret.isPresent() || (ret.isPresent() && ret.get() == null)) {
 			try {
 				return dest.newInstance();
@@ -322,8 +362,7 @@ public class BaseHelper {
 			}
 		} else {
 			return ret.get();
-		}	
-		
+		}		
 	}
 	
 	

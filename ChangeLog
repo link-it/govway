@@ -1,3 +1,17 @@
+2020-01-13  Francesco Scarlato <scarlato@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug OP-944
+	- Nei metodi GET è adesso possibile indicare il soggetto erogatore di una api.
+	- Nei metodi POST è adesso possibile indicare, con tipologia di ricerca qualsiasi delle transazioni,
+	  il soggetto remoto e/o il soggetto erogatore di una api.
+	- Nello schema yaml del servizio sono stati aggiunti criteri di obbligatorietà i campi 'data_inizio' e 'data_fine' dell'oggetto FiltroTemporale e
+	  il campo tipo per l'oggetto FiltroEsito
+	- Il FiltroMittenteErogazioneDistribuzioneSoggettoRemoto è stato modificato per utilizzare una enumeration personalizzata, 
+	  relativamente al tipo di ricerca, che non contiene il soggetto.
+	- Migliorate validazioni degli oggetti allOf dove è stata agganciata una validazione sintattica degli oggetti forniti rispetto al parametro discriminator.
+	- Aggiunte validazioni semantiche dei parametri in funzione del tipo di ricerca attuata.
+
 2020-01-13  Andrea Poli <apoli@link.it>
 
 	* [GovWayMonitor]

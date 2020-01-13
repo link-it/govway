@@ -21,35 +21,55 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.utils.service.beans.FiltroRicercaId;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteIdApplicativo extends FiltroRicercaId {
+public class FiltroApiQualsiasi extends FiltroApiBase {
   
-  @Schema(required = true, description = "")
-  private TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione = null;
+  @Schema(description = "")
+  private String erogatore = null;
+  
+  @Schema(description = "")
+  private String soggettoRemoto = null;
  /**
-   * Get autenticazione
-   * @return autenticazione
+   * Get erogatore
+   * @return erogatore
   **/
-  @JsonProperty("autenticazione")
-  @NotNull
+  @JsonProperty("erogatore")
   @Valid
-  public TipoFiltroMittenteIdentificativoAutenticatoEnum getAutenticazione() {
-    return this.autenticazione;
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
+    return this.erogatore;
   }
 
-  public void setAutenticazione(TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione) {
-    this.autenticazione = autenticazione;
+  public void setErogatore(String erogatore) {
+    this.erogatore = erogatore;
   }
 
-  public FiltroMittenteIdApplicativo autenticazione(TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione) {
-    this.autenticazione = autenticazione;
+  public FiltroApiQualsiasi erogatore(String erogatore) {
+    this.erogatore = erogatore;
+    return this;
+  }
+
+ /**
+   * Get soggettoRemoto
+   * @return soggettoRemoto
+  **/
+  @JsonProperty("soggetto_remoto")
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggettoRemoto() {
+    return this.soggettoRemoto;
+  }
+
+  public void setSoggettoRemoto(String soggettoRemoto) {
+    this.soggettoRemoto = soggettoRemoto;
+  }
+
+  public FiltroApiQualsiasi soggettoRemoto(String soggettoRemoto) {
+    this.soggettoRemoto = soggettoRemoto;
     return this;
   }
 
@@ -57,9 +77,10 @@ public class FiltroMittenteIdApplicativo extends FiltroRicercaId {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroMittenteIdApplicativo {\n");
-    sb.append("    ").append(FiltroMittenteIdApplicativo.toIndentedString(super.toString())).append("\n");
-    sb.append("    autenticazione: ").append(FiltroMittenteIdApplicativo.toIndentedString(this.autenticazione)).append("\n");
+    sb.append("class FiltroApiQualsiasi {\n");
+    sb.append("    ").append(FiltroApiQualsiasi.toIndentedString(super.toString())).append("\n");
+    sb.append("    erogatore: ").append(FiltroApiQualsiasi.toIndentedString(this.erogatore)).append("\n");
+    sb.append("    soggettoRemoto: ").append(FiltroApiQualsiasi.toIndentedString(this.soggettoRemoto)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -176,10 +176,6 @@ public class DBManager {
 	/**
 	 * Il Metodo si occupa di inizializzare il propertiesReader del QueueManager
 	 * 
-	 * @param jndiName
-	 *            Nome JNDI del Datasource
-	 * @param context
-	 *            Contesto JNDI da utilizzare
 	 */
 	public static boolean initialize(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
 			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 

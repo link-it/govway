@@ -23,7 +23,7 @@
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 
-import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializev2;
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserialize;
 
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -46,11 +46,13 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneToke
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneTokenClaim;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdAutenticato;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseTransazione;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -75,31 +77,54 @@ import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
  * 
  */
 public class TransazioniHelper {
+	
+	public static boolean isEmpty(IDSoggetto _this) {
+		return StringUtils.isEmpty(_this.getTipo()) || StringUtils.isEmpty(_this.getNome()); 
+	}
 
 	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
 		
 		search.setGruppo(tag);
+		search.setNomeAzione(azione);
 		
 		if (filtro_api == null)
 			return;
-
-		if (filtro_api.getTipo() == null) {
-			try {
-				IProtocolConfiguration protocolConf = env.protocolFactoryMgr
-						.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration();
-				ServiceBinding defaultBinding = protocolConf.getDefaultServiceBindingConfiguration(null)
-						.getDefaultBinding();
-				filtro_api.setTipo(protocolConf.getTipoServizioDefault(defaultBinding));
-			} catch (Exception e) {
-				throw FaultCode.ERRORE_INTERNO
-						.toException("Impossibile determinare il tipo del servizio: " + e.getMessage());
+		
+		if ( !StringUtils.isEmpty(filtro_api.getNome()) || filtro_api.getVersione() != null || !StringUtils.isEmpty(azione) || !StringUtils.isEmpty(filtro_api.getTipo())) {
+			
+			if (StringUtils.isEmpty(filtro_api.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il nome della API");
 			}
+						
+			if (erogatore == null || isEmpty(erogatore)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il Soggetto Erogatore (Nelle fruizioni è il soggetto remoto)");
+			}
+			
+			if (filtro_api.getVersione() == null) {
+				filtro_api.setVersione(1);
+			}
+			
+			if (filtro_api.getTipo() == null) {
+				try {
+					IProtocolConfiguration protocolConf = env.protocolFactoryMgr
+							.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration();
+					ServiceBinding defaultBinding = protocolConf.getDefaultServiceBindingConfiguration(null)
+							.getDefaultBinding();
+					filtro_api.setTipo(protocolConf.getTipoServizioDefault(defaultBinding));
+				} catch (Exception e) {
+					throw FaultCode.ERRORE_INTERNO
+							.toException("Impossibile determinare il tipo del servizio: " + e.getMessage());
+				}
 
+			}
+			
+			String uri = ReportisticaHelper.buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(), filtro_api.getVersione(), Optional.of(erogatore));
+			if (uri == null) {
+				throw FaultCode.ERRORE_INTERNO.toException("Non sono riuscito a costruire la URI dell'Id Servizio");
+			}
+			
+			search.setNomeServizio(uri);			
 		}
-
-		String uri = ReportisticaHelper.buildNomeServizioForOverride(filtro_api.getNome(), filtro_api.getTipo(), filtro_api.getVersione(), Optional.of(erogatore));
-		search.setNomeServizio(uri);
-		search.setNomeAzione(azione);
 	}
 
 	public static final void overrideFiltroFruizione(String tag, FiltroFruizione filtro, String azione,
@@ -108,10 +133,18 @@ public class TransazioniHelper {
 			return;
 
 		overrideFiltroApiBase(tag, filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
-		if (filtro.getErogatore() != null)
-			search.setTipoNomeDestinatario(new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()).toString());
 	}
+	
+	public static final void overrideFiltroQualsiasi(String tag, FiltroApiQualsiasi filtro, String azione,
+			TransazioniSearchForm search, MonitoraggioEnv env) {
+		if (filtro == null)
+			return;
 
+		overrideFiltroApiBase(tag, filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		if (!StringUtils.isEmpty(filtro.getSoggettoRemoto()))
+			search.setTipoNomeTrafficoPerSoggetto(new IDSoggetto(env.soggetto.getTipo(), filtro.getSoggettoRemoto()).toString());	
+	}
+	
 	public static final void overrideFiltroRicercaId(FiltroRicercaId filtro, TransazioniSearchForm search,
 			MonitoraggioEnv env, String tipoRiconoscimento) {
 		if (filtro == null)
@@ -126,7 +159,7 @@ public class TransazioniHelper {
 		search.setRiconoscimento(tipoRiconoscimento);
 	}
 
-	public static final void overrideFiltroMittenteIdApplicativo(FiltroMittenteIdApplicativo filtro,
+	public static final void overrideFiltroMittenteIdApplicativo(FiltroMittenteIdAutenticato filtro,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
@@ -187,16 +220,20 @@ public class TransazioniHelper {
 			MonitoraggioEnv env) {
 		if (body == null)
 			return;
+		
+		if (body.getAzione() != null && body.getApi() == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
+		}
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(body.getTag(), deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			overrideFiltroApiBase(body.getTag(), deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroFruizione(body.getTag(), deserializev2(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			overrideFiltroFruizione(body.getTag(), deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroApiBase(body.getTag(), deserializev2(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			overrideFiltroQualsiasi(body.getTag(), deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
 			break;
 		}
 
@@ -215,7 +252,7 @@ public class TransazioniHelper {
 		final String tipo_soggetto = env.soggetto.getTipo();
 		switch (body.getTipo()) {
 		case FRUIZIONE: {
-			FiltroMittenteFruizione fMittente = deserializev2(body.getMittente(),FiltroMittenteFruizione.class);
+			FiltroMittenteFruizione fMittente = deserialize(body.getMittente(),FiltroMittenteFruizione.class);
 			if (fMittente == null)
 				break;
 
@@ -227,7 +264,7 @@ public class TransazioniHelper {
 				break;
 			}
 			case IDENTIFICATIVO_AUTENTICATO: {
-				TransazioniHelper.overrideFiltroMittenteIdApplicativo(ReportisticaHelper.deserializeFiltroMittenteIdApplicativo(fMittente.getId()), search, env);
+				TransazioniHelper.overrideFiltroMittenteIdApplicativo(ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId()), search, env);
 				break;
 			}
 
@@ -251,7 +288,7 @@ public class TransazioniHelper {
 		}
 
 		case EROGAZIONE: {
-			FiltroMittenteErogazione fMittente = deserializev2(body.getMittente(),FiltroMittenteErogazione.class);
+			FiltroMittenteErogazione fMittente = deserialize(body.getMittente(),FiltroMittenteErogazione.class);
 			
 			if (fMittente == null)
 				break;
@@ -265,7 +302,7 @@ public class TransazioniHelper {
 				break;
 			}
 			case IDENTIFICATIVO_AUTENTICATO: {
-				FiltroMittenteIdApplicativo fIdent = ReportisticaHelper.deserializeFiltroMittenteIdApplicativo(fMittente.getId());
+				FiltroMittenteIdAutenticato fIdent = ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId());
 				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdent, search, env);
 				break;
 			}
@@ -297,7 +334,7 @@ public class TransazioniHelper {
 		}
 		
 		case QUALSIASI: {
-			FiltroMittenteQualsiasi fMittente = deserializev2(body.getMittente(),FiltroMittenteQualsiasi.class);
+			FiltroMittenteQualsiasi fMittente = deserialize(body.getMittente(),FiltroMittenteQualsiasi.class);
 			
 			if (fMittente == null)
 				break;
@@ -305,7 +342,7 @@ public class TransazioniHelper {
 			switch (fMittente.getTipo()) {
 			
 			case IDENTIFICATIVO_AUTENTICATO: {
-				FiltroMittenteIdApplicativo fIdent = ReportisticaHelper.deserializeFiltroMittenteIdApplicativo(fMittente.getId());
+				FiltroMittenteIdAutenticato fIdent = ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId());
 				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdent, search, env);
 				break;
 			}
@@ -334,6 +371,9 @@ public class TransazioniHelper {
 		}
 	}
 
+	/**
+	 * Effettua la ricerca delle transazioni dato un oggetto TransazioniSearchForm correttamente popolato
+	 */
 	public static final ListaTransazioni searchTransazioni(TransazioniSearchForm search, Integer offset, Integer limit,
 			String sort, MonitoraggioEnv env) throws UtilsException, InstantiationException, IllegalAccessException {
 		DBManager dbManager = DBManager.getInstance();
@@ -383,5 +423,34 @@ public class TransazioniHelper {
 		} finally {
 			dbManager.releaseConnectionTracce(connection);
 		}
+	}
+	
+	
+	public static final ListaTransazioni findAllTransazioniByIdApplicativo(RicercaIdApplicativo body, MonitoraggioEnv env) throws Exception {
+		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+		TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
+				body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
+		
+		TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
+
+		FiltroRicercaId filtro = body.getIdApplicativo();
+		search.setCorrelazioneApplicativaCaseSensitiveType((BooleanUtils.isTrue(filtro.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString() );
+		search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(filtro.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
+		search.setIdCorrelazioneApplicativa(filtro.getId());			
+		
+		ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
+		return ret;
+	}
+	
+	
+	public static final ListaTransazioni findAllTransazioni(RicercaIntervalloTemporale body, MonitoraggioEnv env) throws Exception {
+		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
+		TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
+				body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
+		
+		TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
+		TransazioniHelper.overrideFiltroMittente(body, search, env);
+		
+		return searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);	
 	}
 }

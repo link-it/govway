@@ -22,7 +22,7 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneSoggettoRemotoEnum;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
@@ -33,7 +33,7 @@ import javax.validation.Valid;
 public class FiltroMittenteErogazioneDistribuzioneSoggettoRemoto  {
   
   @Schema(description = "")
-  private TipoFiltroMittenteErogazioneEnum tipo = null;
+  private TipoFiltroMittenteErogazioneSoggettoRemotoEnum tipo = null;
   
   @Schema(description = "")
   private Object id = null;
@@ -43,15 +43,15 @@ public class FiltroMittenteErogazioneDistribuzioneSoggettoRemoto  {
   **/
   @JsonProperty("tipo")
   @Valid
-  public TipoFiltroMittenteErogazioneEnum getTipo() {
+  public TipoFiltroMittenteErogazioneSoggettoRemotoEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(TipoFiltroMittenteErogazioneEnum tipo) {
+  public void setTipo(TipoFiltroMittenteErogazioneSoggettoRemotoEnum tipo) {
     this.tipo = tipo;
   }
 
-  public FiltroMittenteErogazioneDistribuzioneSoggettoRemoto tipo(TipoFiltroMittenteErogazioneEnum tipo) {
+  public FiltroMittenteErogazioneDistribuzioneSoggettoRemoto tipo(TipoFiltroMittenteErogazioneSoggettoRemotoEnum tipo) {
     this.tipo = tipo;
     return this;
   }

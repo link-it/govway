@@ -34,6 +34,7 @@ import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneSoggettoRemotoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteFruizioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIndirizzoIPEnum;
@@ -182,6 +183,17 @@ public class Enums {
 		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.EROGAZIONE, CostantiExporter.TIPOLOGIA_EROGAZIONE);
 		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.FRUIZIONE, CostantiExporter.TIPOLOGIA_FRUIZIONE);
 		toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.QUALSIASI, CostantiExporter.TIPOLOGIA_EROGAZIONE_FRUIZIONE);
+	}
+	
+	public static final String toTipoRicercaMittente(TipoFiltroMittenteErogazioneSoggettoRemotoEnum v) {
+		if (v == null) return null;
+		
+		switch (v) {
+		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
+		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
+		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
+		default: return null;
+		}
 	}
 	
 	public static final String toTipoRicercaMittente(TipoFiltroMittenteErogazioneEnum v) {

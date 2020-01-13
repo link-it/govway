@@ -22,22 +22,25 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.joda.time.DateTime;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class FiltroTemporale  {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private DateTime dataInizio = null;
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private DateTime dataFine = null;
  /**
    * Get dataInizio
    * @return dataInizio
   **/
   @JsonProperty("data_inizio")
+  @NotNull
   @Valid
   public DateTime getDataInizio() {
     return this.dataInizio;
@@ -57,6 +60,7 @@ public class FiltroTemporale  {
    * @return dataFine
   **/
   @JsonProperty("data_fine")
+  @NotNull
   @Valid
   public DateTime getDataFine() {
     return this.dataFine;

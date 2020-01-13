@@ -1,0 +1,17 @@
+{
+    "unita_tempo": "orario",
+    "intervallo_temporale": {
+      "data_inizio": "2012-04-29T06:51:05.860Z"
+    },
+    "tipo": "erogazione",
+    "report": {
+      "formato": "csv",
+      "tipo": "table",
+      "tipo_informazione": {
+        "tipo": "numero_transazioni"
+      }
+    },
+    "esito": {
+      "tipo": "ok"
+    }
+  }
