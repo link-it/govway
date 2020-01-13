@@ -1,3 +1,12 @@
+2020-01-13  Andrea Poli <apoli@link.it>
+
+	* [GovWayMonitor]
+	Risolto Bug OP-942
+	- Nella ricerca transazioni, in ciascuna delle ricerche per mittente (Token Info, Soggetto ecc..), quando viene cambiata la Tipologia 
+	(Fruzione,Erogazione,Qualsiasi), scomparivano gli input sotto la sezione "Dati Mittente".
+	- Sia per la ricerca di transazioni che di informazioni statistiche, quando il valore della lista 'Tipologia' non veniva impostato, 
+	non veniva visualizzato il campo che consente di indicare il Soggetto Remoto.
+
 2020-01-10  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, Utils]
@@ -5,6 +14,8 @@
 	(https://github.com/link-it/govway/issues/56)
 	In caso di registrazione di un applicativo o di un soggetto, con autenticazione di tipo http/basic, è necessario registrare una password non banale.
 	A tale scopo è stato aggiunto un bottone per il fill del campo password con una password generata random in accordo a criteri minimi di qualità.
+	Non è inoltre adesso più possibile registrare un applicativo o soggetto con identico username e password differente. 
+	L'username deve essere differente per ogni applicativo o soggetto.
 
 2019-12-19  Andrea Poli <apoli@link.it>
 

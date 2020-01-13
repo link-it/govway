@@ -60,6 +60,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipoMatch;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -646,8 +647,35 @@ Context, Cloneable {
 		this.nomeRisorsa = null;
 		this.valoreRisorsa = null;
 		this.evento = null;
+		
+		if(!this.isLive()){
+			this.updateRiconoscimentoByModalitaRicercaStorico();
+		}
 	}
 
+	public void updateRiconoscimentoByModalitaRicercaStorico(){
+		ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(this.getModalitaRicercaStorico());
+		switch (t) { 
+		case MITTENTE_TOKEN_INFO:
+			this.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
+			break;
+		case MITTENTE_SOGGETTO:
+			this.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO);
+			break;
+		case MITTENTE_APPLICATIVO:
+			this.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
+			break;
+		case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
+			this.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+			break;
+		case MITTENTE_INDIRIZZO_IP:
+			this.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
+			break;
+		default:
+			break;
+		}
+	}
+	
 	@Override
 	public void periodoListener(ActionEvent ae) {
 		super.periodoListener(ae);

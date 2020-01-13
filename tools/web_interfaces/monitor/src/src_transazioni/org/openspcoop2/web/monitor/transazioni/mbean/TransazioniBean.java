@@ -47,7 +47,6 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
-import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
@@ -982,27 +981,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 				((TransazioniSearchForm)this.search).setTipologiaRicerca("--"); // in modo da far comparire la lista con il suggerimento di selezione come per gli altri
 			}
 			
-			
-			ModalitaRicercaTransazioni t = ModalitaRicercaTransazioni.getFromString(((TransazioniSearchForm)this.search).getModalitaRicercaStorico());
-			switch (t) { 
-			case MITTENTE_TOKEN_INFO:
-				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
-				break;
-			case MITTENTE_SOGGETTO:
-				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO);
-				break;
-			case MITTENTE_APPLICATIVO:
-				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
-				break;
-			case MITTENTE_IDENTIFICATIVO_AUTENTICATO:
-				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
-				break;
-			case MITTENTE_INDIRIZZO_IP:
-				this.search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
-				break;
-			default:
-				break;
-			}
+			((TransazioniSearchForm)this.search).updateRiconoscimentoByModalitaRicercaStorico();
 			
 			this.updateTipoStorico = false;
 		}

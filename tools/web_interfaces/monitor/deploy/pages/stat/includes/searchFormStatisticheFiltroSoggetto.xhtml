@@ -76,7 +76,7 @@
 					</c:if>
 					
 					<c:if test="#{tipo_filtro_soggetti == 'soggetto_remoto'}">
-						<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all'}">
+						<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 							<h:inputText id="sogCombo" value="#{sf_labelTrafficoPerSoggetto}" styleClass="inputLinkLong"/>
 							<rich:suggestionbox
 										id="sogRemotoSuggestion" 
@@ -180,7 +180,7 @@
 				</c:if>
 				
 				<c:if test="#{tipo_filtro_soggetti == 'soggetto_remoto'}">
-					<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all'}">
+					<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 						<h:inputText id="sogCombo" value="#{sf_labelTrafficoPerSoggetto}" styleClass="inputLinkLong"/>
 						<rich:suggestionbox
 									id="sogRemotoSuggestion" 
@@ -254,7 +254,7 @@
 					</c:if>
 					
 					<c:if test="#{tipo_filtro_soggetti == 'soggetto_remoto'}">
-						<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all'}">
+						<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 							<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 								defaultLabel="#{msg['stats.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 								width="416"   enableManualInput="false">
@@ -324,7 +324,7 @@
 				</c:if>
 				
 				<c:if test="#{tipo_filtro_soggetti == 'soggetto_remoto'}">
-					<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all'}">
+					<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 						<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 							defaultLabel="#{msg['stats.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 							width="416"   enableManualInput="false">

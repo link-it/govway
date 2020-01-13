@@ -31,7 +31,7 @@
 				<rich:toolTip rendered="#{not empty sf_nomeDestinatario}" direction="top-right" for="sogDestCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeDestinatarioTooltip}"/>
 		</link:prop>
 		 
-		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
+		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca)}">
 				<h:inputText id="sogCombo" value="#{sf_labelTrafficoPerSoggetto}" styleClass="inputLinkLong"/>
 				<rich:suggestionbox
 							id="sogRemotoSuggestion" 
@@ -66,7 +66,7 @@
 			<rich:toolTip rendered="#{not empty sf_nomeDestinatario}" direction="top-right" for="sogDestCombo" showDelay="200" styleClass="tooltip" layout="block" value="#{sf_bean.tipoNomeDestinatarioTooltip}"/>
 		</link:prop>
   
-		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'all'}">
+		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca)}">
 			<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 					defaultLabel="#{msg['transazioni.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
 					width="416"   enableManualInput="false">
