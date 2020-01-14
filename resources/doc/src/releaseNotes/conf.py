@@ -20,7 +20,7 @@
 # -- Project information -----------------------------------------------------
 
 project = u'Release Notes'
-copyright = u'Copyright (c) 2005-2019 Link.it srl (http://link.it).'
+copyright = u'Copyright (c) 2005-2020 Link.it srl (https://link.it).'
 author = u'Link.it'
 
 # The short X.Y version

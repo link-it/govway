@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
- *
- * from the Link.it OpenSPCoop project codebase
+ * https://govway.org
  * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -34,11 +32,9 @@ public class GPLWriter {
  public static final String VERSION = "* GovWay - A customizable API Gateway";
  public static final String GPL = "/*\n"+
 				 " "+VERSION+" \n"+
-				 " * http://www.govway.org\n"+
+				 " * https://govway.org\n"+
 				 " *\n"+
-				 " * from the Link.it OpenSPCoop project codebase\n"+
-				 " * \n"+
-				 " * Copyright (c) 2005-2019 Link.it srl (http://link.it).\n"+ 
+				 " * Copyright (c) 2005-2020 Link.it srl (https://link.it).\n"+ 
 				 " * \n"+
 				 " * This program is free software: you can redistribute it and/or modify\n"+
 				 " * it under the terms of the GNU General Public License version 3, as published by\n"+

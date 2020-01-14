@@ -3,7 +3,7 @@
 
     <protocol name="trasparente" label="API Gateway"
     	descrizione="Gestisce le comunicazioni in entrata ed in uscita dal dominio, adattandosi alla modalità di trasmissione prevista dallo specifico servizio (SOAP o REST)"
-    	webSite="https://www.govway.org">
+    	webSite="https://govway.org">
     	<factory>org.openspcoop2.protocol.trasparente.TrasparenteFactory</factory>
     </protocol>
     

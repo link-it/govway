@@ -8,7 +8,7 @@
 # -- Project information -----------------------------------------------------
 
 project = 'GovWay'
-copyright = 'Copyright (c) 2005-2019 Link.it srl (http://link.it).'
+copyright = 'Copyright (c) 2005-2020 Link.it srl (https://link.it).'
 author = 'Link.it'
 numfig = True
 

@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
+ * https://govway.org
  * 
- * from the Link.it OpenSPCoop project codebase
- * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it).
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -136,13 +134,13 @@ public class Templates {
 
 		currencyType = new CurrencyType();
 
-		HyperLinkBuilder link = hyperLink("https://www.link.it");
+		HyperLinkBuilder link = hyperLink("https://link.it");
 		dynamicReportsComponent =
 				cmp.horizontalList(
 						//  	cmp.image(Templates.class.getResource("images/dynamicreports.png")).setFixedDimension(60, 60),
 						cmp.verticalList(
 								cmp.text(TITOLO_REPORT).setStyle(bold22CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
-								cmp.text("https://www.link.it").setStyle(italicStyle).setHyperLink(link))).setFixedWidth(300);
+								cmp.text("https://link.it").setStyle(italicStyle).setHyperLink(link))).setFixedWidth(300);
 
 		footerComponent = cmp.pageXofY()
 				.setStyle(
@@ -156,7 +154,7 @@ public class Templates {
 	 * Creates custom component which is possible to add to any report band component
 	 */
 	public static ComponentBuilder<?, ?> createTitleComponent(String titoloReport, String periodoOsservazione) {
-		HyperLinkBuilder link = hyperLink("https://www.link.it");
+		HyperLinkBuilder link = hyperLink("https://link.it");
 		return cmp.horizontalList()
 				.add(	
 //						cmp.horizontalList(
@@ -164,7 +162,7 @@ public class Templates {
 						cmp.verticalList(
 								cmp.text(titoloReport).setStyle(bold22CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.LEFT),
 								cmp.text(periodoOsservazione).setStyle(bold18CenteredStyle).setHorizontalTextAlignment(HorizontalTextAlignment.RIGHT),
-								cmp.text("https://www.link.it").setStyle(italicStyle).setHyperLink(link))
+								cmp.text("https://link.it").setStyle(italicStyle).setHyperLink(link))
 							)
 //				).setFixedWidth(300),
 //						)

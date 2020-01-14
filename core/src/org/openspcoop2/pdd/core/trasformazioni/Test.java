@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
- *
- * from the Link.it OpenSPCoop project codebase
+ * https://govway.org
  * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -452,25 +450,25 @@ public class Test {
 	
 	private static final String XSLT_PREFIX_REPLACE_ATTRIBUTE_ELEMENT = 
 	"  <xsl:template match=\"*\">\n"+
-	"    <xsl:element name=\""+PREFIX_TO+":{local-name()}\" namespace=\"https://govway.org\">\n"+
+	"    <xsl:element name=\""+PREFIX_TO+":{local-name()}\" namespace=\"https://example.govway.org\">\n"+
 	"      <xsl:apply-templates select=\"@* | node()\"/>\n"+
 	"    </xsl:element>\n"+
 	"  </xsl:template>\n"+
 	"\n"+
 	"  <xsl:template match=\"text()\">\n"+
-	"    <xsl:element name=\""+PREFIX_TO+":{local-name(../../*)}\" namespace=\"https://govway.org\">\n"+
+	"    <xsl:element name=\""+PREFIX_TO+":{local-name(../../*)}\" namespace=\"https://example.govway.org\">\n"+
 	"     <xsl:value-of select=\".\"/>\n"+
 	"   </xsl:element>\n"+
 	" </xsl:template>\n"+
 	"\n"+
 	" <xsl:template match=\"@*\">\n"+
-	"   <xsl:element name=\""+PREFIX_TO+":{local-name()}\" namespace=\"https://govway.org\">\n"+
+	"   <xsl:element name=\""+PREFIX_TO+":{local-name()}\" namespace=\"https://example.govway.org\">\n"+
 	"     <xsl:value-of select=\".\"/>\n"+
 	"   </xsl:element>\n"+
 	" </xsl:template>\n";
 	
 	private static final String XSLT_PREFIX_REPLACE_PREFIX_ONLY_NODE = 
-	"<xsl:template match=\""+PREFIX_ORIGINALE+":*\" xmlns:"+PREFIX_ORIGINALE+"=\"https://govway.org\">\n"+
+	"<xsl:template match=\""+PREFIX_ORIGINALE+":*\" xmlns:"+PREFIX_ORIGINALE+"=\"https://example.govway.org\">\n"+
 	"  <xsl:element name=\""+PREFIX_TO+":{local-name()}\" namespace=\"{namespace-uri(.)}\">\n"+
 	"    <xsl:apply-templates select=\"@*|node()\"/>\n"+
 	"  </xsl:element>\n"+
@@ -500,7 +498,7 @@ public class Test {
 	"</xsl:stylesheet>";
 	
 	private static final String XSLT_XML_INPUT = ""+
-	"<"+PREFIX_ORIGINALE+":Request xmlns:"+PREFIX_ORIGINALE+"=\"https://govway.org\">\n"+
+	"<"+PREFIX_ORIGINALE+":Request xmlns:"+PREFIX_ORIGINALE+"=\"https://example.govway.org\">\n"+
 	"   <"+PREFIX_ORIGINALE+":Body>\n"+
 	"      <"+PREFIX_ORIGINALE+":Fields>\n"+
 	"         <"+PREFIX_ORIGINALE+":Field1 attribute1=\"valore primo attributo\">valore primo field</"+PREFIX_ORIGINALE+":Field1>\n"+

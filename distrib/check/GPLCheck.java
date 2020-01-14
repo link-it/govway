@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
- *
- * from the Link.it OpenSPCoop project codebase
+ * https://govway.org
  * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -32,9 +30,8 @@ import java.io.*;
 public class GPLCheck {
 
 	public static final String[] GPL_CHECK = {"GovWay - A customizable API Gateway",
-	"http://www.govway.org",
-	"from the Link.it OpenSPCoop project codebase",
-	"Copyright (c) 2005-2019 Link.it srl (http://link.it).",
+	"https://govway.org",
+	"Copyright (c) 2005-2020 Link.it srl (https://link.it).",
 	"This program is free software: you can redistribute it and/or modify",
 	"it under the terms of the GNU General Public License version 3, as published by",
 	"the Free Software Foundation.",
@@ -138,7 +135,7 @@ public class GPLCheck {
 								dichiarazioneAssente.add(GPL_CHECK[i]);		
 								break;
 							}
-							if("http://www.govway.org".equals(GPL_CHECK[i])==false){
+							if("https://govway.org".equals(GPL_CHECK[i])==false){
                                                         	if(byteInputBuffer.toString().indexOf(GPL_CHECK[i],(indexFound+GPL_CHECK[i].length())) != -1){
 									if(f.getAbsolutePath().endsWith("tools/utils/src/org/openspcoop2/utils/Costanti.java")==false){
 										fileNonValidi.add(f.getAbsolutePath());

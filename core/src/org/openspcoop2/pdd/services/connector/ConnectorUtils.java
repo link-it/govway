@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
- *
- * from the Link.it OpenSPCoop project codebase
+ * https://govway.org
  * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -399,7 +397,7 @@ public class ConnectorUtils {
 				risposta.append("<i>Enabled services: in, out, out/xml2soap, check, IntegrationManager</i><br/><br/>\n");
 			
 				// web site
-				risposta.append("<i>Official website: http://www.govway.org</i><br/><br/>\n");
+				risposta.append("<i>Official website: https://govway.org</i><br/><br/>\n");
 			}
 			break;
 		}

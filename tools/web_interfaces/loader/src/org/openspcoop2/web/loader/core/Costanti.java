@@ -1,10 +1,8 @@
 /*
  * GovWay - A customizable API Gateway 
- * http://www.govway.org
- *
- * from the Link.it OpenSPCoop project codebase
+ * https://govway.org
  * 
- * Copyright (c) 2005-2019 Link.it srl (http://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -106,8 +104,8 @@ public class Costanti {
 	
 	/* LABEL GENERALI */
 	
-	public final static String LABEL_LINKIT_WEB = "https://www.link.it";
-	public final static String LABEL_OPENSPCOOP2_WEB = "https://www.govway.org";
+	public final static String LABEL_LINKIT_WEB = "https://link.it";
+	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
 	public final static String LABEL_CONFIGURAZIONI_XML = "Strumenti";
 	public final static String LABEL_TIPOLOGIA_XML = "Tipologia";
