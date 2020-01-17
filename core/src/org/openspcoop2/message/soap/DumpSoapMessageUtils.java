@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Properties;
 
+import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPPart;
 
@@ -37,6 +38,8 @@ import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.utils.DumpMessaggioConfig;
 import org.openspcoop2.message.utils.DumpMessaggioMultipartInfo;
+import org.openspcoop2.message.xml.XMLUtils;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -495,6 +498,7 @@ public class DumpSoapMessageUtils {
 			//java.io.InputStream inputDH = dh.getInputStream(); NON FUNZIONA CON JBOSS7 e JAVA7 e imbustamentoSOAP con GestioneManifest e rootElementMaggioreUno (tipo: application/octet-stream)
 			Object o = ap.getDataHandler().getContent();
 			String s = null;
+			boolean forceRebuildDataHandler = false;
 			if(o!=null){
 				if(o instanceof byte[]){
 					byte[] b = (byte[]) o;
@@ -523,16 +527,34 @@ public class DumpSoapMessageUtils {
 				}
 				else{
 					// Provo con codiceOriginale ma in jboss non funziona sempre
-					javax.activation.DataHandler dh= ap.getDataHandler();  
-			    	java.io.InputStream inputDH = dh.getInputStream();
-					bout = new java.io.ByteArrayOutputStream();
-			    	byte [] readB = new byte[8192];
-					int readByte = 0;
-					while((readByte = inputDH.read(readB))!= -1)
-						bout.write(readB,0,readByte);
-					inputDH.close();
-					bout.flush();
-					bout.close();		
+					try {
+						javax.activation.DataHandler dh= ap.getDataHandler();  
+				    	java.io.InputStream inputDH = dh.getInputStream();
+						bout = new java.io.ByteArrayOutputStream();
+				    	byte [] readB = new byte[8192];
+						int readByte = 0;
+						while((readByte = inputDH.read(readB))!= -1)
+							bout.write(readB,0,readByte);
+						inputDH.close();
+						bout.flush();
+						bout.close();		
+					}catch(Exception e) {
+						if(o instanceof javax.xml.transform.dom.DOMSource) {
+							try {
+								javax.xml.transform.dom.DOMSource domSource = (javax.xml.transform.dom.DOMSource) o;	
+								bout = new ByteArrayOutputStream();
+								bout.write(XMLUtils.getInstance(msg.getFactory()).toByteArray(domSource.getNode()));
+								bout.flush();
+								bout.close();
+								forceRebuildDataHandler = true;
+							}catch(Exception eInternal) {
+								throw new UtilsMultiException(e, eInternal);
+							}
+						}
+						else {
+							throw e;
+						}
+					}
 				}
 			}
 			else{
@@ -552,6 +574,10 @@ public class DumpSoapMessageUtils {
 			if(HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP.equals(ap.getContentType())){
 				 // reimposto handler
 				 DumpSoapMessageUtils.rebuildAttachmentAsByteArray(msg, ap);
+			}
+			else if(forceRebuildDataHandler){
+				 // reimposto handler
+				 DumpSoapMessageUtils.rebuildDataHandlerAttachment(msg, ap, bout);
 			}
 			else if(MailcapActivationReader.existsDataContentHandler(ap.getContentType())){
 				//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
@@ -597,6 +623,16 @@ public class DumpSoapMessageUtils {
 			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
 			// In axiom l'update del data handler non funziona
 			msg.updateAttachmentPart(ap, bout.toByteArray(),ap.getContentType());
+		}catch(Exception e){
+			throw new MessageException(e.getMessage(),e);
+		}
+	}
+	
+	private static void rebuildDataHandlerAttachment(OpenSPCoop2SoapMessage msg,AttachmentPart ap, ByteArrayOutputStream boutAlreadyRead) throws MessageException{
+		try{
+			//ap.setDataHandler(new javax.activation.DataHandler(bout.toByteArray(),ap.getContentType()));
+			// In axiom l'update del data handler non funziona
+			msg.updateAttachmentPart(ap, new DataHandler(boutAlreadyRead.toByteArray(),ap.getContentType()));
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
 		}

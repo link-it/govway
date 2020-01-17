@@ -266,11 +266,11 @@ public class ValidatoreMessaggiApplicativiRest {
 			format=ApiFormats.WADL;
 			break;
 		case SWAGGER_2:
-			interfaceType = "Interfaccia Swagger 2.0";
+			interfaceType = "Interfaccia Swagger 2";
 			format=ApiFormats.SWAGGER_2;
 			break;
 		case OPEN_API_3:
-			interfaceType = "Interfaccia OpenAPI 3.0";
+			interfaceType = "Interfaccia OpenAPI 3";
 			format=ApiFormats.OPEN_API_3;
 			break;
 		default:

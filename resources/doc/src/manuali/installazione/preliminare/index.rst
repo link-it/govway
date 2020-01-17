@@ -24,7 +24,7 @@ mancanti.
    - -Dfile.encoding=UTF-8
 
 #. *Application Server WildFly* (http://wildfly.org) (versione 10.x,
-   11.x, 12.x, 13.x, 14.x, 15.x, 16.x o 17.x). In alternativa è possibile effettuare
+   11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x o 18.x). In alternativa è possibile effettuare
    l'installazione su Apache Tomcat (http://tomcat.apache.org) (versione
    7.x, 8.x o 9.x).
 
@@ -52,4 +52,4 @@ sulla seguente piattaforma di riferimento:
 
 -  *PostgreSQL 9 (version: 9.5.10)*
 
--  *WildFly 17 (version: 17.0.1.Final) e Tomcat 8 (version: 8.5.37)*
+-  *WildFly 18 (version: 18.0.1.Final) e Tomcat 8 (version: 8.5.37)*

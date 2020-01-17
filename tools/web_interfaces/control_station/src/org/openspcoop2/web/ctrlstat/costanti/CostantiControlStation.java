@@ -243,8 +243,8 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE = "Formato Specifica";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WSDL_11 = "Wsdl 1.1";
 	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_WADL = "Wadl";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "Swagger 2.0";
-	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "Open API 3.0";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_SWAGGER_2 = "Swagger 2";
+	public final static String LABEL_PARAMETRO_INTERFACE_TYPE_OPEN_API_3 = "Open API 3";
 	public final static String LABEL_PARAMETRO_SCHEMI_XSD = "Schemi XSD";
 	public final static String LABEL_PARAMETRO_REGISTRO_OPENSPCOOP = "Registro API";
 	public static final String LABEL_PATTERN = "Pattern";

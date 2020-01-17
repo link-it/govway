@@ -129,7 +129,8 @@ Requisiti globali:
 
 Batterie di test che verificano la normale gestione del protocollo e-Gov
 - 'ProfiliDiCollaborazione' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
-  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+  (NOTA1: Provarlo anche con Dump disabilitato)
+  (NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'PortTypes' vengono provati i quattro profili di collaborazione oneway/sincrono/asincronoSimmetrico/asincronoAsimmetrico
               configurati tramite accordi con port types e operation
 - 'BusteEGovCampiDuplicati' vengono generate buste SPCoop che contengono campi duplicati, e viene controllato che la PdD gestisca l'errore
@@ -152,7 +153,8 @@ Le seguenti batterie di test, coinvolgono il profilo di gestione dettato dalle L
 
 Batterie di test che verificano il servizio IntegrationManager per quanto concerne le funzioni 'PD' e 'MessageBox'
 - 'IntegrationManager' viene testata l'interfaccia di IntegrationManager
-  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+  (NOTA1: Provarlo anche con Dump disabilitato)
+  (NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 
 ** Integrazione con i servizi applicativi **
@@ -188,8 +190,9 @@ Batterie di test che verificano funzionalita' di sicurezza della Porta.
 !! Pre-requisiti descritti sotto!!
 - 'AutorizzazioneContenuto' vengono verificate le funzionalita' di autorizzazione dei contenuti per i servizi PD e PA
 - 'WSSecurity' vengono provate le funzionalita' di WSSecurity con i vari profili di collaborazione e riscontri (libreria wss4j)
-   (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
-   (NOTA2: Su Tomcat se si installano due war differenti, govwar.war e govwaySec.ear con la signature degli attachments si ottiene un errore simile al seguente:
+   (NOTA1: Provarlo anche con Dump disabilitato)
+   (NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
+   (NOTA3: Su Tomcat se si installano due war differenti, govwar.war e govwaySec.ear con la signature degli attachments si ottiene un errore simile al seguente:
 	java.security.InvalidAlgorithmParameterException: Expected AttachmentTransformParameterSpec)
 - 'WSSecuritySoapBox' vengono provate alcune funzionalità di WSSecurity tramite libreria 'soapbox', in particolar modo firma e cifratura degli attachments
 !! Pre-requisiti!!
@@ -261,7 +264,8 @@ Il test richiede l'installazione del jar './protocolli/spcoop/testsuite/dist/ope
 
 I test presenti verificano il corretto funzionamento della Porta di Dominio rispetto a diversi formati di Messaggi SOAP:
 - 'SOAPWithAttachments' vengono provati i quattro profili di collaborazione con Messaggi SOAP With Attachments
-  (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+  (NOTA1: Provarlo anche con Dump disabilitato)
+  (NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'SOAPAction' viene verificato che la PdD gestisca correttamente le possibili SOAPAction ricevute nell'header di trasporto HTTP
 - 'SOAPBodyEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Body
 - 'SOAPHeaderEmpty' viene verificato che la PdD gestisca correttamente messaggi soap senza Header
@@ -271,7 +275,8 @@ I test presenti verificano il corretto funzionamento della Porta di Dominio risp
 
 Viene verificato che la PdD gestisca correttamente messaggi Soap scorretti (es. ContentType/Namespace diverso da quello atteso, headers non gestiti dalla PdD, strutture xml errate).
 Usare le seguenti batterie di test:
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+(NOTA1: Provarlo anche con Dump disabilitato)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - SOAPMessageScorretti.RICHIESTA_ALTRI_DATI
 - SOAPMessageScorretti.PD_XML_RICHIESTA
 - SOAPMessageScorretti.PA_XML_RICHIESTA
@@ -283,7 +288,8 @@ Usare le seguenti batterie di test:
 
 ** Validazione Contenuti Applicativi **
 
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+(NOTA1: Provarlo anche con Dump disabilitato)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 I test presenti nella batteria 'ValidazioneContenutiApplicativi' verificano la funzionalita' di validazione dei contenuti applicativi della Porta di Dominio. La validazione viene effettuata tramite gli schemi xsd di un servizio realizzato ad hoc per il test. Inoltre viene controllata la conformita' dei messaggi rispetto agli stili ed usi definiti nel wsdl del servizio.
 !!Pre-requisito!!
 a. server disponibile nella root di openspcoop in protocolli/spcoop/example/server/ValidazioneContenutiWS/dist/ValidazioneContenutiWS.war (configurazione del property 'validazione.properties' dove deve essere indicato il datasource del tracciamento)
@@ -300,8 +306,8 @@ I test verificano la funzionalita' di LocalForward
 
 Batterie di test che verificano funzionalita' base nella Porta di Dominio
 - 'TunnelSOAP' vengono testate le funzionalita' di sbustamento e imbustamento
-- 'TunnelSOAP' con dump disabilitato (NOTA: provare anche con questa configurazione, vi sono differenze)
-   (NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+  (NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+  (NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 - 'UrlPrefixRewriter' vengono verificate le funzionalita' di pd-url-prefix-rewriter e pa-url-prefix-rewriter
 - 'VersionamentoAccordiServizio' vengono verificate le funzionalità di versionamento degli accordi
 - 'XMLEncoding' vengono utilizzati messaggi che contengono caratteri non compresi nel set ASCII

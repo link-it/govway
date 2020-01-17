@@ -127,7 +127,8 @@ Requisiti globali:
 
 ** Porta Delegata (SOAP) **
 
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+(NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata
@@ -141,7 +142,8 @@ ault con codice di trasporto 500
 
 ** Porta Applicativa (SOAP) **
 
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+(NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la normale gestione del servizio Porta Delegata
 - 'PortaApplicativa':  vengono eseguiti tutti i test riguardanti la PortaApplicativa
@@ -160,7 +162,9 @@ Per farlo su wildfly aggiungere l'attributo disallowed-methods valorizzato vuoto
   <http-listener name="default" socket-binding="http" redirect-socket="https" disallowed-methods=""/>
 Per farlo su tomcat aggiungere l'attributo allowTrace="true" nel'elemento Connector:
   <Connector port="8080" protocol="HTTP/1.1" connectionTimeout="20000" redirectPort="8443" allowTrace="true" />
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+
+(NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la normale gestione del servizio REST:
 - 'REST.PD': vengono eseguiti tutti i test riguardanti la PortaDelegata
@@ -211,7 +215,8 @@ Prerequisito:
 copiare tutti gli xsd e wsdl presenti in ./protocolli/trasparente/example/server/MTOMExample/configurazionePdD/wsdl/ 
 nella directory /etc/govway/mtom/
 
-(NOTA: Provarlo anche con Connettore Binario della PD e PA abilitato)
+(NOTA1: Provarlo anche con Dump disabilitato: vi sono differenze!!)
+(NOTA2: Provarlo anche con Connettore Binario della PD e PA abilitato)
 
 Batterie di test che verificano la gestione di MTOM all'interno della PdD
 - 'MTOMPortaDelegata':  vengono eseguiti tutti i test riguardanti la PortaDelegata

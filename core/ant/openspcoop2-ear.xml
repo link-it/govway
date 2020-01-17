@@ -514,7 +514,26 @@
 		<mkdir dir="${build}/tmpNative2ASCII_dest" />
 		<copy file="${properties_dir}/govway.msgDiagnostici.properties" todir="${build}/tmpNative2ASCII_src" />
 		<native2ascii src="${build}/tmpNative2ASCII_src" dest="${build}/tmpNative2ASCII_dest" />
-					
+			
+		<!-- Creazione mailapi contenente il corretto mailcap per OpenSPCoopDataHandler -->
+		<var name="mailapi_jar" value="" />
+		<if>
+			<or>
+				<matches string="${as}" pattern="wildfly18"/>
+			</or>
+			<then>
+				<unzip src="${required_lib}/shared/mailapi-1.6.2.jar" dest="${build}/tmp/mailapi"/>
+				<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
+					<filelist dir="${data_content_handler_dir}"
+				           files="mailcap"/>
+				</concat>
+				<jar jarfile="${build}/tmp/mailapi-1.6.2.gw.jar" manifest="${build}/tmp/mailapi/META-INF/MANIFEST.MF">
+					<zipfileset dir="${build}/tmp/mailapi"/>
+				</jar>
+				<var name="mailapi_jar" value="mailapi-1.6.2.gw.jar" />
+			</then>
+		</if>
+		
 		<!-- application server (jars e jboss-app.xml) -->
 		<!-- commons_logging -->
 		<var name="commons_logging_jar" value="" />
@@ -844,6 +863,10 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/stub/cxf">
 				<include name="openspcoop2_registrySearchStub_cxf.jar"/>
+			</zipfileset>
+			<!-- Mail api esteso con activation data handler openspcoop -->
+			<zipfileset prefix="lib" dir="${build}/tmp">
+				<include name="${mailapi_jar}" />
 			</zipfileset>
 			<!-- Files di properties richieste dalle applicazioni OpenSPCoop -->
 			<zipfileset dir="${properties_dir}" prefix="properties">

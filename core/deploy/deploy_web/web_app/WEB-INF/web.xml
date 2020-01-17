@@ -191,6 +191,15 @@
 		<url-pattern>/api/IntegrationManager/PD</url-pattern>
 		<url-pattern>/api/IntegrationManager/MessageBox</url-pattern>
 		<url-pattern>/api/check</url-pattern>
+		<url-pattern>/modipa/IntegrationManager/PD</url-pattern>
+		<url-pattern>/modipa/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/modipa/check</url-pattern>
+		<url-pattern>/soap/IntegrationManager/PD</url-pattern>
+		<url-pattern>/soap/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/soap/check</url-pattern>
+		<url-pattern>/rest/IntegrationManager/PD</url-pattern>
+		<url-pattern>/rest/IntegrationManager/MessageBox</url-pattern>
+		<url-pattern>/rest/check</url-pattern>
 		<url-pattern>/spcoop/IntegrationManager/PD</url-pattern>
 		<url-pattern>/spcoop/IntegrationManager/MessageBox</url-pattern>
 		<url-pattern>/spcoop/check</url-pattern>

@@ -41,6 +41,7 @@ import javax.xml.soap.SOAPFactory;
 import javax.xml.soap.SOAPFault;
 import javax.xml.soap.SOAPHeader;
 import javax.xml.soap.SOAPHeaderElement;
+import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.Text;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -56,6 +57,7 @@ import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.transport.TransportRequestContext;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.xml.PrettyPrintXMLUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
@@ -89,6 +91,22 @@ public class SoapUtils {
 		return messageFactory.getSoapMessageFactory();
 	}
 		
+	
+	
+	// SOAP Content Type
+	
+	public static String getContentType(SOAPMessage msg) {
+	 	if(msg.getMimeHeaders()==null) {
+    		return null;
+    	}
+    	String[] values = msg.getMimeHeaders().getHeader(HttpConstants.CONTENT_TYPE);
+    	if (values == null || values.length<=0) {
+    		return null;
+    	}
+    	else {
+    		return values[0];
+    	}
+	}
 	
 	
 	

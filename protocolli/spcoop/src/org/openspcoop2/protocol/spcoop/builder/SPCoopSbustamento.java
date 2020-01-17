@@ -38,6 +38,7 @@ import javax.xml.soap.SOAPHeaderElement;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -48,6 +49,7 @@ import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
 import org.openspcoop2.protocol.spcoop.config.SPCoopProperties;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -172,14 +174,13 @@ public class SPCoopSbustamento {
 			msg.removeAttachments(mhs);
 			
 
-			
-			javax.activation.DataHandler dh= ap.getDataHandler();  
+			// Leggo body originale presente nell'attachment
+			java.io.InputStream inputDH = getInputStream(msg, ap);
 			
 			// Ripristino body Originale
 			msg.getSOAPBody().removeContents();
 			
 			// Check eventuale <?xml instruction
-			java.io.InputStream inputDH = dh.getInputStream();
 			byte[]bytePotenzialiXML = new byte[5]; // <?xml
 			int readByte = inputDH.read(bytePotenzialiXML);
 			boolean xmlContentPresente = false;
@@ -205,7 +206,8 @@ public class SPCoopSbustamento {
 			// Costruzione isBody
 			InputStream isBody = null;
 			if(xmlContentPresente == false){
-				isBody = dh.getInputStream();
+				//isBody = dh.getInputStream();
+				isBody = getInputStream(msg, ap);
 			}else{
 				isBody = inputDH;
 			}
@@ -248,6 +250,21 @@ public class SPCoopSbustamento {
 		}   
 	}
 	
+	private InputStream getInputStream(OpenSPCoop2SoapMessage msg, AttachmentPart ap) throws Exception {
+		java.io.InputStream inputDH = null;
+		try {
+			// Provo con codiceOriginale ma in jboss non funziona sempre
+			javax.activation.DataHandler dh = ap.getDataHandler();
+			inputDH = dh.getInputStream();
+		}catch(Exception e) {
+			try {
+				inputDH = new ByteArrayInputStream(DumpSoapMessageUtils.dumpAttachmentAsByteArray(msg, ap));
+			}catch(Exception eInternal) {
+				throw new UtilsMultiException(e, eInternal);
+			}
+		}
+		return inputDH;
+	}
 	
 	/**
 	 * Metodo che si occupa di eliminare dal SOAPHeader, passato col parametro <var>header</var>

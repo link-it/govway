@@ -21,7 +21,7 @@
 		<if>
 			<matches string="${as}" pattern="jboss.*"/>
 			<then>
-				<var name="versioniSupportate" value="OpenSPCoop2 supportate le seguenti versioni: 4.x (jboss4), 5.x (jboss5), 6.x (jboss6) e 7.x (jboss7)"/>
+				<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 4.x (jboss4), 5.x (jboss5), 6.x (jboss6) e 7.x (jboss7)"/>
 				<if>
 					<equals arg1="${as}" arg2="jboss"/>
 					<then>
@@ -45,7 +45,7 @@
 			<elseif>
 				<matches string="${as}" pattern="wildfly.*"/>
 				<then>
-					<var name="versioniSupportate" value="OpenSPCoop2 supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16) e 17.x (wildfly17)"/>
+					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 8.x (wildfly8), 9.x (wildfly9), 10.x (wildfly10), 11.x (wildfly11), 12.x (wildfly12), 13.x (wildfly13), 14.x (wildfly14), 15.x (wildfly15), 16.x (wildfly16), 17.x (wildfly17) e 18.x (wildfly18)"/>
 					<if>
 						<equals arg1="${as}" arg2="wildfly"/>
 						<then>
@@ -65,6 +65,7 @@
 								<equals arg1="${as}" arg2="wildfly15"/>
 								<equals arg1="${as}" arg2="wildfly16"/>
 								<equals arg1="${as}" arg2="wildfly17"/>
+								<equals arg1="${as}" arg2="wildfly18"/>
 							</or>
 						</not>
 						<then>
@@ -76,7 +77,7 @@
 			<elseif>
 				<matches string="${as}" pattern="tomcat.*"/>
 				<then>
-					<var name="versioniSupportate" value="OpenSPCoop2 supportate le seguenti versioni: 5.x (tomcat5), 6.x (tomcat6), 7.x (tomcat7), 8.x (tomcat8) e 9.x (tomcat9)"/>
+					<var name="versioniSupportate" value="GovWay supportate le seguenti versioni: 5.x (tomcat5), 6.x (tomcat6), 7.x (tomcat7), 8.x (tomcat8) e 9.x (tomcat9)"/>
 					<if>
 						<equals arg1="${as}" arg2="tomcat"/>
 						<then>
@@ -100,7 +101,7 @@
 				</then>	
 			</elseif>
 			<else>
-				<fail message="OpenSPCoop2 non supporta il server indicato [${as}], richiede uno dei seguenti server: tomcat, jboss, wildfly"/>
+				<fail message="GovWay non supporta il server indicato [${as}], richiede uno dei seguenti server: tomcat, jboss, wildfly"/>
 			</else>
 		</if>
 		<if>

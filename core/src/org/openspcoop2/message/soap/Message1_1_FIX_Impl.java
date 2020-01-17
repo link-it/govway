@@ -20,6 +20,7 @@
 
 package org.openspcoop2.message.soap;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -33,11 +34,13 @@ import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
 
 import org.apache.commons.io.input.CountingInputStream;
+import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 
 import com.sun.xml.messaging.saaj.SOAPExceptionImpl;
 import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 import com.sun.xml.messaging.saaj.packaging.mime.internet.MimeMultipart;
-import com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl;
 
 /**
  * Message1_1_FIX_Impl
@@ -47,7 +50,7 @@ import com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class Message1_1_FIX_Impl extends Message1_1Impl {
+public class Message1_1_FIX_Impl extends com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl {
 	
 	// La classe Message1_1Impl presenta un problema per il costruttore con SOAPMessage 
 	// Non funziona in presenza di messaggi con attachment. 
@@ -55,7 +58,7 @@ public class Message1_1_FIX_Impl extends Message1_1Impl {
 	// In particolare il parametro super.mimePart (protetto non accessibile).
 	// Per questo motivo essite la classe 1_1 FIX che utilizza direttamente il messaggio fornito 
 	
-	private Message1_1Impl msg; // messaggio fornito nel costruttore
+	private SOAPMessage msg; // messaggio fornito nel costruttore
 	private CountingInputStream cis;
 	
 	
@@ -71,7 +74,27 @@ public class Message1_1_FIX_Impl extends Message1_1Impl {
 
     // !!Costruttore che presenta il problema!!
     public Message1_1_FIX_Impl(SOAPMessage msg) {
-   		this.msg = (Message1_1Impl) msg;
+    	try {
+    		this.msg = (com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl) msg;
+    	}catch(Throwable t) {
+    		// Fix: java.lang.ClassCastException: com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl cannot be cast to com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl
+    		// Versioni differenti tra saaj-impl nel software e quello nell'application server
+    		if(t instanceof java.lang.ClassCastException) {
+    			try {
+	    			ByteArrayOutputStream bout = new ByteArrayOutputStream();
+	        		msg.writeTo(bout);
+	        		bout.flush();
+	        		bout.close();
+	        		this.msg = OpenSPCoop2MessageFactory.getDefaultMessageFactory().createMessage(MessageType.SOAP_11, MessageRole.NONE, 
+	        				SoapUtils.getContentType(msg), bout.toByteArray(), null, null).getMessage_throwParseThrowable().castAsSoap().getSOAPMessage();
+    			}catch(Throwable tNew) {
+    				throw new RuntimeException(new org.openspcoop2.utils.UtilsMultiException(tNew, t));
+    			}
+    		}
+    		else {
+    			throw new RuntimeException(t);
+    		}
+    	}
     }
 
     public Message1_1_FIX_Impl(MimeHeaders headers, CountingInputStream in)
@@ -108,8 +131,18 @@ public class Message1_1_FIX_Impl extends Message1_1Impl {
     
     @Override
     public String getContentType() {
-    	if (this.msg!= null) return this.msg.getContentType();	
+    	if (this.msg!= null) return _getContentType(this.msg);	
     	else return super.getContentType();
+    }
+    private String _getContentType(SOAPMessage soapMsg) {
+    	try {
+    		com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl msg = (com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl) soapMsg;
+    		return msg.getContentType();
+    	}catch(Throwable t) {
+    		// Fix: java.lang.ClassCastException: com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl cannot be cast to com.sun.xml.messaging.saaj.soap.ver1_1.Message1_1Impl
+    		// Versioni differenti tra saaj-impl nel software e quello nell'application server
+    		return SoapUtils.getContentType(this.msg);
+    	}
     }
     
     // Metodi SOAPMessage

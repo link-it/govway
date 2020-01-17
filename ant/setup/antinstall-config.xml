@@ -60,8 +60,10 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
+		<!-- Viene usato un unico valore 'wildfly18', poiche' la compilazione e' identica -->
+		<option value="wildfly18" text="WildFly 18.x"/>
 		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
 		<option value="wildfly10" text="WildFly 17.x"/>
 		<option value="wildfly10" text="WildFly 16.x"/>
@@ -129,8 +131,10 @@
         <comment displayText=""/>
         
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
-        <large-select defaultValue="wildfly10" property="antinstaller_as" displayText="Application Server">
+        <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
+		<!-- Viene usato un unico valore 'wildfly18', poiche' la compilazione e' identica -->
+		<option value="wildfly18" text="WildFly 18.x"/>
 		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
 		<option value="wildfly10" text="WildFly 17.x"/>
 		<option value="wildfly10" text="WildFly 16.x"/>

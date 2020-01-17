@@ -234,11 +234,11 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 							format=ApiFormats.WADL;
 							break;
 						case SWAGGER_2:
-							objectInEsame = "[Interfaccia Swagger 2.0] ";
+							objectInEsame = "[Interfaccia Swagger 2] ";
 							format=ApiFormats.SWAGGER_2;
 							break;
 						case OPEN_API_3:
-							objectInEsame = "[Interfaccia OpenAPI 3.0] ";
+							objectInEsame = "[Interfaccia OpenAPI 3] ";
 							format=ApiFormats.OPEN_API_3;
 							break;
 						default:

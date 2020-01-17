@@ -892,7 +892,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 				String type = null;
 				ApiReference apiRef = null;
-				if(schema.get$ref()!= null) {
+				if(schema!=null && schema.get$ref()!= null) {
 					String href = schema.get$ref().trim();
 					if(href.contains("#") && !href.startsWith("#")) {
 						type = href.substring(href.indexOf("#"), href.length());
