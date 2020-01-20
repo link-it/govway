@@ -14,6 +14,7 @@ Per creare una tag version:
 4. Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
 
 5. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
+5b. Verificare se server inserire in resources/properties_upgrade un aggiornamento
 
 6. Inserire la versione major e minor corretta in ant/commons/sql-build.xml
 

@@ -1,7 +1,7 @@
 Miglioramenti all'Installer
 ---------------------------
 
-Sono state apportati i seguenti miglioramenti all'installer binario:
+Sono stati apportati i seguenti miglioramenti all'installer binario:
 
 -  È stato aggiunto il supporto per la nuova versione dell'application server 'WildFly' 18.x
 

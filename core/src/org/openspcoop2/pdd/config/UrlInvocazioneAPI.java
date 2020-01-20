@@ -251,7 +251,17 @@ public class UrlInvocazioneAPI implements Serializable {
 		}
 		if(check.isRegexpr()) {
 			try {
-				return RegularExpressionEngine.isMatch(contesto, check.getRegola());
+				boolean isMatch = RegularExpressionEngine.isMatch(contesto, check.getRegola());
+				if(isMatch) {
+					return true;
+				}
+				if(contesto.startsWith("/") && contesto.length()>1) {
+					isMatch = RegularExpressionEngine.isMatch(contesto.substring(1), check.getRegola());
+					if(isMatch) {
+						return true;
+					}
+				}
+				return false;
 			}catch(RegExpNotFoundException notFound) {
 				return  false;
 			}catch(Exception e) {
@@ -279,32 +289,49 @@ public class UrlInvocazioneAPI implements Serializable {
 		}
 	}
 	
-	private static ConfigurazioneUrlInvocazioneRegola processMatchRegolaUrlInvocazione(ConfigurazioneUrlInvocazioneRegola regolaParam, String contesto) throws DriverConfigurazioneException {
+	private static ConfigurazioneUrlInvocazioneRegola processMatchRegolaUrlInvocazione(ConfigurazioneUrlInvocazioneRegola regolaParam, String contestoParam) throws DriverConfigurazioneException {
 		
 		ConfigurazioneUrlInvocazioneRegola regola = (ConfigurazioneUrlInvocazioneRegola) regolaParam.clone();
 		
 		if(regola.isRegexpr()) {
 			try {
-				List<String> list = RegularExpressionEngine.getAllStringMatchPattern(contesto, regola.getRegola());
+				String contestoDaUsarePerVerifica = contestoParam;
+				boolean isMatch = RegularExpressionEngine.isMatch(contestoDaUsarePerVerifica, regola.getRegola());
+				if(!isMatch) {
+					if(contestoDaUsarePerVerifica.startsWith("/") && contestoDaUsarePerVerifica.length()>1) {
+						contestoDaUsarePerVerifica = contestoDaUsarePerVerifica.substring(1);
+					}
+				}
+				
+				List<String> list = null;
+				try {
+					list = RegularExpressionEngine.getAllStringMatchPattern(contestoDaUsarePerVerifica, regola.getRegola());
+				}catch(RegExpNotFoundException notFound) {
+					if(!RegularExpressionEngine.isMatch(contestoDaUsarePerVerifica, regola.getRegola())) {
+						throw notFound; // altrimenti l'espressione regolare ha un match senza però  avere condizioni () per estrarre informazioni tramite gruppi.
+					}
+				}
 				String newContesto = regola.getContestoEsterno();
 				if(newContesto==null) {
 					newContesto = "";
 				}
 				String baseUrl = regola.getBaseUrl();
-				for (int i = 0; i < list.size(); i++) {
-					String found = list.get(i);
-					if(found==null) {
-						found = "";
-					}
-					
-					String key = "${"+i+"}";
-					while(newContesto.contains(key)) {
-						newContesto = newContesto.replace(key, found);
-					}
-					if(baseUrl!=null) {
-						while(baseUrl.contains(key)) {
-							baseUrl = baseUrl.replace(key, found);
-						}	
+				if(list!=null) {
+					for (int i = 0; i < list.size(); i++) {
+						String found = list.get(i);
+						if(found==null) {
+							found = "";
+						}
+						
+						String key = "${"+i+"}";
+						while(newContesto.contains(key)) {
+							newContesto = newContesto.replace(key, found);
+						}
+						if(baseUrl!=null) {
+							while(baseUrl.contains(key)) {
+								baseUrl = baseUrl.replace(key, found);
+							}	
+						}
 					}
 				}
 				regola.setContestoEsterno(newContesto);
@@ -440,6 +467,12 @@ public class UrlInvocazioneAPI implements Serializable {
 				contestoEsterno = contestoEsterno.replace("//", "/");
 			}
 						
+			if(contestoEsterno!=null) {
+				if(!contestoEsterno.startsWith("/")) {
+					contestoEsterno = "/"+contestoEsterno;
+				}
+			}
+			
 			return contestoEsterno;
 			
 		}catch(Exception e) {
