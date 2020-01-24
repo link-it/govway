@@ -1752,6 +1752,12 @@ public class OpenSPCoop2Properties {
 			
 			// Statistiche
 			if(this.isStatisticheGenerazioneEnabled()) {
+				if(this.isStatisticheUsePddRuntimeDatasource()==false &&
+						this.isStatisticheUseTransazioniDatasource()==false) {
+					this.getStatisticheDatasource();
+					this.getStatisticheDatasourceJndiContext();
+					this.isStatisticheDatasourceUseDBUtils();
+				}
 				if(this.isStatisticheGenerazioneCustomEnabled()) {
 					this.isStatisticheGenerazioneCustomSdkEnabled();
 				}
@@ -18999,6 +19005,104 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isStatisticheGenerazioneEnabled;
+	}
+	
+	
+	private static Boolean isStatisticheUsePddRuntimeDatasource = null;
+	public boolean isStatisticheUsePddRuntimeDatasource() {	
+		if(OpenSPCoop2Properties.isStatisticheUsePddRuntimeDatasource==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isStatisticheUsePddRuntimeDatasource = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime', viene utilizzato il default=false : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isStatisticheUsePddRuntimeDatasource = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isStatisticheUsePddRuntimeDatasource;
+	}
+	
+	private static Boolean isStatisticheUseTransazioniDatasource = null;
+	public boolean isStatisticheUseTransazioniDatasource() {	
+		if(OpenSPCoop2Properties.isStatisticheUseTransazioniDatasource==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.useTransazioni");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isStatisticheUseTransazioniDatasource = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.useTransazioni', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isStatisticheUseTransazioniDatasource = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isStatisticheUseTransazioniDatasource;
+	}
+	
+	private static String getStatisticheDatasource = null;
+	public String getStatisticheDatasource() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheDatasource==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource");
+				if(name==null){
+					throw new Exception("Proprieta' non impostata");
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.getStatisticheDatasource = name;
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheDatasource;
+	}
+	
+	private static Properties getStatisticheDatasourceJndiContext = null;
+	public Properties getStatisticheDatasourceJndiContext() throws Exception {	
+		if(OpenSPCoop2Properties.getStatisticheDatasourceJndiContext==null){
+			try{ 
+				OpenSPCoop2Properties.getStatisticheDatasourceJndiContext = this.reader.readProperties_convertEnvProperties("org.openspcoop2.pdd.statistiche.dataSource.property.");
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.dataSource.property.*': "+e.getMessage(),e);
+				throw e;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getStatisticheDatasourceJndiContext;
+	}
+	
+	private static Boolean isStatisticheDatasourceUseDBUtils = null;
+	public boolean isStatisticheDatasourceUseDBUtils() {	
+		if(OpenSPCoop2Properties.isStatisticheDatasourceUseDBUtils==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.statistiche.datasource.useDSUtils");
+				if(name==null){
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils' non impostata, viene utilizzato il default=true");
+					name="true";
+				}
+				name = name.trim();
+				OpenSPCoop2Properties.isStatisticheDatasourceUseDBUtils = Boolean.parseBoolean(name);
+			} catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.statistiche.datasource.useDSUtils', viene utilizzato il default=true : "+e.getMessage(),e);
+				OpenSPCoop2Properties.isStatisticheDatasourceUseDBUtils = true;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isStatisticheDatasourceUseDBUtils;
 	}
 	
 	

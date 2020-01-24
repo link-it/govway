@@ -138,6 +138,11 @@
 			<param name="token" value="db.tracce.tipoDatabase"/>
 			<param name="value" value="${antinstaller_tipo_database}"/>
 		</antcall>
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.statistiche.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
 		
 		<!-- DATASOURCE -->
 		<antcall target="set_property">
@@ -145,11 +150,50 @@
 			<param name="token" value="db.config.dataSource"/>
 			<param name="value" value="${datasource_console_name}"/>
 		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="db.tracce.dataSource"/>
-			<param name="value" value="${datasource_console_name}"/>
-		</antcall>
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.tracce.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.tracce.dataSource"/>
+					<param name="value" value="${datasource_console_name}"/>
+				</antcall>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.statistiche.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+			</then>
+			<elseif>
+				<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="db.statistiche.dataSource"/>
+						<param name="value" value="${datasource_pdd_name}.statistiche"/>
+					</antcall>
+				</then>
+			</elseif>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.statistiche.dataSource"/>
+					<param name="value" value="${datasource_console_name}"/>
+				</antcall>
+			</else>
+		</if>
 				
 	</target>
 	

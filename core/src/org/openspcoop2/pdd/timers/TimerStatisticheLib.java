@@ -25,10 +25,14 @@ import java.sql.Connection;
 
 import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
+import org.openspcoop2.core.config.driver.IDriverConfigurazioneGet;
+import org.openspcoop2.core.config.driver.db.DriverConfigurazioneDB;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsLibrary;
+import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.Resource;
@@ -301,27 +305,46 @@ public class TimerStatisticheLib {
 		long startControlloTimer = DateManager.getTimeMillis();
 			
 			
-		DBTransazioniManager dbManager = null;
-    	Resource r = null;
+		DBTransazioniManager dbTransazioniManager = null;
+		DBStatisticheManager dbStatisticheManager = null;
+    	Resource rTransazioni = null;
+    	Resource rStatistiche = null;
+    	Connection conConfig = null;
+    	DriverConfigurazioneDB driverConfigurazioneDB = null;
 		try{
 
-			dbManager = DBTransazioniManager.getInstance();
-			r = dbManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);
-			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+			dbTransazioniManager = DBTransazioniManager.getInstance();
+			rTransazioni = dbTransazioniManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);
+			if(rTransazioni==null){
+				throw new Exception("Risorsa al database delle transazioni non disponibile");
 			}
-			Connection con = (Connection) r.getResource();
-			if(con == null)
-				throw new Exception("Connessione non disponibile");	
+			Connection conTransazioni = (Connection) rTransazioni.getResource();
+			if(conTransazioni == null)
+				throw new Exception("Connessione al database delle transazioni non disponibile");	
 
+			Connection conStatistiche = null;
+			if(this.op2Properties.isStatisticheUseTransazioniDatasource()) {
+				conStatistiche = conTransazioni; // non prendo due connessioni per "atterrare" sul solito database
+			}
+			else {
+				dbStatisticheManager = DBStatisticheManager.getInstance();
+				rStatistiche = dbStatisticheManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);
+				if(rStatistiche==null){
+					throw new Exception("Risorsa al database delle statistiche non disponibile");
+				}
+				conStatistiche = (Connection) rStatistiche.getResource();
+				if(conStatistiche == null)
+					throw new Exception("Connessione al database delle statistiche non disponibile");	
+			}
+			
 			org.openspcoop2.core.statistiche.dao.IServiceManager statisticheSM = 
 					(org.openspcoop2.core.statistiche.dao.IServiceManager) 
-					this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(), con,
+					this.daoFactory.getServiceManager(org.openspcoop2.core.statistiche.utils.ProjectInfo.getInstance(), conStatistiche,
 						this.daoFactoryServiceManagerPropertiesStatistiche, this.daoFactoryLogger);
 				
 			org.openspcoop2.core.transazioni.dao.IServiceManager transazioniSM = 
 					(org.openspcoop2.core.transazioni.dao.IServiceManager) 
-						this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), con,
+						this.daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), conTransazioni,
 						this.daoFactoryServiceManagerPropertiesTransazioni, this.daoFactoryLogger);
 			
 			org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager pluginsStatisticheSM = null;
@@ -329,22 +352,32 @@ public class TimerStatisticheLib {
 			org.openspcoop2.core.commons.search.dao.IServiceManager utilsSM = null;
 			org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager pluginsTransazioniSM = null;
 			if(this.generazioneStatisticheCustom){
+				
+				IDriverConfigurazioneGet driverConfigurazione = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+				if(driverConfigurazione instanceof DriverConfigurazioneDB) {
+					driverConfigurazioneDB = (DriverConfigurazioneDB) driverConfigurazione;
+				}
+				else {
+					throw new Exception("La generazione delle statistiche custom richiede una configurazione di tipo 'db', trovato: "+driverConfigurazione.getClass().getName());
+				}
+				conConfig = driverConfigurazioneDB.getConnection(TimerStatisticheThread.ID_MODULO+".customStats");
+				
 				pluginsStatisticheSM = (org.openspcoop2.monitor.engine.config.statistiche.dao.IServiceManager) 
 						this.daoFactory.getServiceManager(
-								org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), con,
+								org.openspcoop2.monitor.engine.config.statistiche.utils.ProjectInfo.getInstance(), conConfig,
 								this.daoFactoryServiceManagerPropertiesPluginsStatistiche, this.daoFactoryLogger);
 				pluginsBaseSM = (org.openspcoop2.monitor.engine.config.base.dao.IServiceManager) 
 						this.daoFactory.getServiceManager(
-								org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(), con,
+								org.openspcoop2.monitor.engine.config.base.utils.ProjectInfo.getInstance(), conConfig,
 								this.daoFactoryServiceManagerPropertiesPluginsBase, this.daoFactoryLogger);
 				utilsSM = (org.openspcoop2.core.commons.search.dao.IServiceManager) 
 						this.daoFactory.getServiceManager(
-								org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), con,
+								org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance(), conConfig,
 								this.daoFactoryServiceManagerPropertiesUtils, this.daoFactoryLogger);
 				if(this.analisiTransazioniCustom){
 					pluginsTransazioniSM = (org.openspcoop2.monitor.engine.config.transazioni.dao.IServiceManager) 
 							this.daoFactory.getServiceManager(
-									org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(), con,
+									org.openspcoop2.monitor.engine.config.transazioni.utils.ProjectInfo.getInstance(), conConfig,
 									this.daoFactoryServiceManagerPropertiesPluginsTransazioni, this.daoFactoryLogger);
 				}
 			}
@@ -355,7 +388,7 @@ public class TimerStatisticheLib {
 			String causa = "Generazione Statistiche";
 			try {
 				GestoreMessaggi.acquireLock(
-						this.semaphore, con, this.timerLock,
+						this.semaphore, conStatistiche, this.timerLock,
 						this.msgDiag, causa, 
 						this.op2Properties.getMsgGiaInProcessamento_AttesaAttiva(), 
 						this.op2Properties.getMsgGiaInProcessamento_CheckInterval());
@@ -366,22 +399,22 @@ public class TimerStatisticheLib {
 				
 				switch (this.tipoStatistica) {
 				case STATISTICHE_ORARIE:
-					if(generaStatistica("orario", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_ORARIE) == false) {
+					if(generaStatistica("orario", conStatistiche, sLibrary, TipoIntervalloStatistico.STATISTICHE_ORARIE) == false) {
 						return; // problemi con il lock
 					}
 					break;
 				case STATISTICHE_GIORNALIERE:
-					if(generaStatistica("giornaliero", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_GIORNALIERE) == false) {
+					if(generaStatistica("giornaliero", conStatistiche, sLibrary, TipoIntervalloStatistico.STATISTICHE_GIORNALIERE) == false) {
 						return; // problemi con il lock
 					}
 					break;
 				case STATISTICHE_SETTIMANALI:
-					if(generaStatistica("settimanale", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_SETTIMANALI) == false) {
+					if(generaStatistica("settimanale", conStatistiche, sLibrary, TipoIntervalloStatistico.STATISTICHE_SETTIMANALI) == false) {
 						return; // problemi con il lock
 					}
 					break;
 				case STATISTICHE_MENSILI:
-					if(generaStatistica("mensile", con, sLibrary, TipoIntervalloStatistico.STATISTICHE_MENSILI) == false) {
+					if(generaStatistica("mensile", conStatistiche, sLibrary, TipoIntervalloStatistico.STATISTICHE_MENSILI) == false) {
 						return; // problemi con il lock
 					}
 					break;
@@ -392,7 +425,7 @@ public class TimerStatisticheLib {
 			}finally{
 				try{
 					GestoreMessaggi.releaseLock(
-							this.semaphore, con, this.timerLock,
+							this.semaphore, conStatistiche, this.timerLock,
 							this.msgDiag, causa);
 				}catch(Exception e){}
 			}
@@ -415,15 +448,23 @@ public class TimerStatisticheLib {
 			this.logTimer.error("Riscontrato errore durante la generazione delle statistiche ("+this.tipoStatistica.getValue()+"): "+ e.getMessage(),e);
 		}finally{
 			try{
-				if(r!=null)
-					dbManager.releaseResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, r);
-			}catch(Exception eClose){}
+				if(rTransazioni!=null)
+					dbTransazioniManager.releaseResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, rTransazioni);
+			}catch(Throwable eClose){}
+			try{
+				if(rStatistiche!=null)
+					dbStatisticheManager.releaseResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, rStatistiche);
+			}catch(Throwable eClose){}
+			try{
+				if(conConfig!=null)
+					driverConfigurazioneDB.releaseConnection(conConfig);
+			}catch(Throwable eClose){}
 		}
 			
 	}
 
 	
-	private boolean generaStatistica(String intervallo, Connection con, StatisticsLibrary sLibrary, TipoIntervalloStatistico tipoIntervalloStatistico) {
+	private boolean generaStatistica(String intervallo, Connection conStatistiche, StatisticsLibrary sLibrary, TipoIntervalloStatistico tipoIntervalloStatistico) {
 		
 		long startGenerazione = DateManager.getTimeMillis();
 		this.msgDiag.addKeyword(CostantiPdD.KEY_TIPO_STATISTICA, intervallo); // riferito a intervallo
@@ -432,7 +473,7 @@ public class TimerStatisticheLib {
 		
 		try{
 			GestoreMessaggi.updateLock(
-					this.semaphore, con, this.timerLock,
+					this.semaphore, conStatistiche, this.timerLock,
 					this.msgDiag, "Generazione statistiche intervallo '"+intervallo+"' ...");
 		}catch(Throwable e){
 			this.msgDiag.logErroreGenerico(e,"TimerStatistiche-UpdateLock");

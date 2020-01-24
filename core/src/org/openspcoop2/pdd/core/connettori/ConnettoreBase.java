@@ -22,6 +22,7 @@ package org.openspcoop2.pdd.core.connettori;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -35,6 +36,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -57,12 +59,14 @@ import org.openspcoop2.pdd.core.token.GestoreToken;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
+import org.openspcoop2.pdd.core.transazioni.TransactionNotExistsException;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
+import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
@@ -1076,4 +1080,51 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 
     }
     
+    
+    
+    private HashMap<String,String> headersImpostati = new HashMap<String,String>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
+    private Messaggio messaggioDumpUscita = null;
+    protected void setRequestHeader(String key,String value) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
+    protected void setRequestHeader(String key,String value, Properties propertiesTrasportoDebug) throws Exception {
+    	if(!this.headersImpostati.containsKey(key)) {
+    		this.headersImpostati.put(key,value);
+	    	this.setRequestHeader(key,value);
+	    	if(propertiesTrasportoDebug!=null) {
+	    		propertiesTrasportoDebug.put(key, value);
+	    	}
+    	}
+    	else {
+    		// Update eventuale dump in TransazioneContext
+    		if(this.messaggioDumpUscita==null) {
+				if(this.openspcoopProperties.isTransazioniSaveDumpInUniqueTransaction() && this.getPddContext()!=null && this.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE)) {
+					try {
+						Transaction tr = TransactionContext.getTransaction((String)this.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE));
+						if(tr!=null) {
+							for (Messaggio messaggio : tr.getMessaggi()) {
+								if(TipoMessaggio.RICHIESTA_USCITA.equals(messaggio.getTipoMessaggio())) {
+									this.messaggioDumpUscita = messaggio;
+									break;
+								}
+							}
+						}
+					}
+					catch(TransactionNotExistsException e) {
+						this.logger.debug("Adeguamento dump http header non riuscito (token ): "+e.getMessage());
+					}
+					catch(Throwable e){
+						this.logger.error("Adeguamento dump http header non riuscito: "+e.getMessage(),e);
+					}
+				}
+    		}
+    		if(this.messaggioDumpUscita!=null) {
+    			if(this.messaggioDumpUscita.getHeaders()==null) {
+    				this.messaggioDumpUscita.setHeaders(new HashMap<String, String>());
+    			}
+    			this.messaggioDumpUscita.getHeaders().remove(key);
+    			this.messaggioDumpUscita.getHeaders().remove(key.toLowerCase());
+    			this.messaggioDumpUscita.getHeaders().remove(key.toUpperCase());
+    			this.messaggioDumpUscita.getHeaders().put(key, this.headersImpostati.get(key));
+    		}
+    	}
+    }
 }

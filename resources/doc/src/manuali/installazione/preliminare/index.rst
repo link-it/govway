@@ -23,10 +23,8 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org) (versione 10.x,
-   11.x, 12.x, 13.x, 14.x, 15.x, 16.x, 17.x o 18.x). In alternativa è possibile effettuare
-   l'installazione su Apache Tomcat (http://tomcat.apache.org) (versione
-   7.x, 8.x o 9.x).
+#. *Application Server WildFly* (http://wildfly.org) dalla versione 10 alla versione 18. In alternativa è possibile effettuare
+   l'installazione su Apache Tomcat (http://tomcat.apache.org) dalla versione 7 alla versione 9.
 
    .. note::
       GovWay supporta anche altri application server j2ee diversi da

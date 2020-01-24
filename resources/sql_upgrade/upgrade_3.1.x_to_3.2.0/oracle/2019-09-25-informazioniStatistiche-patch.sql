@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/oracle/informazioniStatistiche/2019-09-25-patch.sql

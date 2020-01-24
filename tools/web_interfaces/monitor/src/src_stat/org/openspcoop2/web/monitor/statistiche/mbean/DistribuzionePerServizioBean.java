@@ -337,7 +337,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
@@ -433,7 +433,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();
@@ -529,7 +529,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 			response.setStatus(200);
 
 			String titoloReport = this.getCaption() + CostantiGrafici.WHITE_SPACE + this.getSubCaption();
-			String headerLabel = MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+			String headerLabel = MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 
 			TipoVisualizzazione tipoVisualizzazione = ((StatsSearchForm)this.search).getTipoVisualizzazione();
 			List<TipoBanda> tipiBanda = new ArrayList<TipoBanda>();

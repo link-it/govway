@@ -25,6 +25,7 @@ SDI_PROTOCOL=${ROOT}/protocolli/sdi
 SPCOOP_BACKWARD_COMPATIBILITY=${ROOT}/protocolli/spcoop/tools/backward_compatibility
 RS_CONFIG=${ROOT}/tools/rs/config/server
 RS_MONITOR=${ROOT}/tools/rs/monitor/server
+BATCH_STATISTICHE=${ROOT}/tools/batch/statistiche
 
 # Core
 if [ ! -f ${CORE}/local_env.xml  ]
@@ -121,6 +122,12 @@ fi
 if [ ! -f ${RS_MONITOR}/local_env.xml  ]
 then
         cp ${RS_MONITOR}/local_env.xml.template ${RS_MONITOR}/local_env.xml
+fi
+
+# Batch Statistiche
+if [ ! -f ${BATCH_STATISTICHE}/local_env.xml  ]
+then
+        cp ${BATCH_STATISTICHE}/local_env.xml.template ${BATCH_STATISTICHE}/local_env.xml
 fi
 
 

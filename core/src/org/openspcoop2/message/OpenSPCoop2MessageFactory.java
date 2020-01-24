@@ -24,6 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
 
 import javax.mail.internet.ContentType;
 import javax.xml.soap.MessageFactory;
@@ -142,25 +143,51 @@ public abstract class OpenSPCoop2MessageFactory {
 	
 	// ********** NODE Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
+	private static OpenSPCoop2Message _instanceForUtilities = null;
+	private static synchronized void initInstanceForUtilities(OpenSPCoop2MessageFactory messageFactory) {
+		if(_instanceForUtilities==null) {
+			_instanceForUtilities = messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE);
+		}
+	}
+	private static OpenSPCoop2Message getInstanceForUtilities(OpenSPCoop2MessageFactory messageFactory) {
+		if(_instanceForUtilities==null) {
+			initInstanceForUtilities(messageFactory);
+		}
+		return _instanceForUtilities;
+	}
 	public static String getAsString(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsString(ele,true);
+		return getInstanceForUtilities(messageFactory).getAsString(ele,true);
 	}
 	public static byte[] getAsByte(OpenSPCoop2MessageFactory messageFactory, Node ele, boolean consume){
 		// E' indipendente dal tipo SOAP11, il tipo viene utilizzato come uno qualsiasi
-		return messageFactory.createEmptyMessage(MessageType.SOAP_11,MessageRole.NONE).getAsByte(ele,true);
+		return getInstanceForUtilities(messageFactory).getAsByte(ele,true);
 	}
 	
 	
 	// ********** SOAP Utilities mediati dall'implementazione dell'OpenSPCoop2Message *************
 	
+	private static HashMap<String, OpenSPCoop2Message> _instanceForSOAPUtilities = new HashMap<>();
+	private static synchronized void initInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
+		if(!_instanceForSOAPUtilities.containsKey(messageType.name())) {
+			OpenSPCoop2Message msg = messageFactory.createEmptyMessage(messageType,MessageRole.NONE);
+			_instanceForSOAPUtilities.put(messageType.name(), msg);
+		}
+	}
+	private static OpenSPCoop2Message getInstanceForSOAPUtilities(OpenSPCoop2MessageFactory messageFactory, MessageType messageType) {
+		if(!_instanceForSOAPUtilities.containsKey(messageType.name())) {
+			initInstanceForSOAPUtilities(messageFactory, messageType);
+		}
+		return _instanceForSOAPUtilities.get(messageType.name());
+	}
+	
 	public static SOAPElement createSOAPElement(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,byte[] element) throws MessageException, MessageNotSupportedException{
-		OpenSPCoop2Message message = messageFactory.createEmptyMessage(messageType,MessageRole.NONE);
+		OpenSPCoop2Message message = getInstanceForSOAPUtilities(messageFactory, messageType);
 		OpenSPCoop2SoapMessage soapMsg = message.castAsSoap();
 		return soapMsg.createSOAPElement(element);
 	}
 	public static Element getFirstChildElement(OpenSPCoop2MessageFactory messageFactory, MessageType messageType,SOAPElement element) throws MessageException, MessageNotSupportedException{
-		return messageFactory.createEmptyMessage(messageType,MessageRole.NONE).castAsSoap().getFirstChildElement(element);
+		return getInstanceForSOAPUtilities(messageFactory, messageType).castAsSoap().getFirstChildElement(element);
 	}
 	
 

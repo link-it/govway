@@ -23,8 +23,10 @@ package org.openspcoop2.core.commons;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.util.Arrays;
+import java.util.Properties;
 
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -45,24 +47,45 @@ public class SQLScriptBuilder {
 		
 		String sqlDestDir = (String) args[1];
 		
-		String modalitaInstallazione = (String) args[2];
+		String sqlScriptName = (String) args[2];
+		
+		String modalitaInstallazione = (String) args[3];
 		
 		boolean splitDDL_DML = true;
 		
 		String versionePrecedente = null;
 		String versioneAttuale = null;
 		String tipoDatabase = null;
-		if(args.length>3){
-			versionePrecedente = (String) args[3];
-			versioneAttuale = (String) args[4];
-			tipoDatabase = (String) args[5];
+		String configurazioneUpgrade = null;
+		boolean configurazioneUpgrade_runtime = true;
+		boolean configurazioneUpgrade_config = true;
+		boolean configurazioneUpgrade_tracce = true;
+		boolean configurazioneUpgrade_statistiche = true;
+		if(args.length>4){
+			versionePrecedente = (String) args[4];
+			versioneAttuale = (String) args[5];
+			tipoDatabase = (String) args[6];
+			if("aggiornamento".equals(modalitaInstallazione) && args.length>7){
+				configurazioneUpgrade = (String) args[7];
+				File f = new File(configurazioneUpgrade);
+				if(f.exists()) {
+					try(FileInputStream fin = new FileInputStream(f)){
+						Properties p = new Properties();
+						p.load(fin);
+						configurazioneUpgrade_runtime = readBooleanProperty(p, "upgrade.runtime");
+						configurazioneUpgrade_config = readBooleanProperty(p, "upgrade.configurazione");
+						configurazioneUpgrade_tracce = readBooleanProperty(p, "upgrade.tracciamento");
+						configurazioneUpgrade_statistiche = readBooleanProperty(p, "upgrade.statistiche");
+					}
+				}
+			}
 		}
 		
 		// NOTA: Non far stampare niente, viene usato come meccanismo di check per vedere se l'esecuzione e' andata a buon fine
 		//System.out.println("Modalita ["+modalitaInstallazione+"]");
 		
 		if("nuova".equals(modalitaInstallazione)){
-			buildSql_NuovaInstallazione(new File(sqlSourceDir),new File(sqlDestDir),splitDDL_DML);
+			buildSql_NuovaInstallazione(new File(sqlSourceDir),new File(sqlDestDir),sqlScriptName,splitDDL_DML);
 		}
 		else if("aggiornamento".equals(modalitaInstallazione)){
 			
@@ -70,8 +93,12 @@ public class SQLScriptBuilder {
 			//System.out.println("versioneAttuale ["+versioneAttuale+"]");
 			//System.out.println("tipoDatabase ["+tipoDatabase+"]");
 			
-			buildSql_Aggiornamento(new File(sqlSourceDir),new File(sqlDestDir),versionePrecedente,
-					versioneAttuale, tipoDatabase);
+			buildSql_Aggiornamento(new File(sqlSourceDir),new File(sqlDestDir),sqlScriptName,versionePrecedente,
+					versioneAttuale, tipoDatabase,
+					configurazioneUpgrade_runtime,
+					configurazioneUpgrade_config,
+					configurazioneUpgrade_tracce,
+					configurazioneUpgrade_statistiche);
 		}
 		else{
 			throw new Exception("Modalità installazione ["+modalitaInstallazione+"] sconosciuta");
@@ -79,7 +106,20 @@ public class SQLScriptBuilder {
 		
 	}
 	
-	private static void buildSql_NuovaInstallazione(File sqlSourceDir, File sqlDestDir,
+	private static boolean readBooleanProperty(Properties p, String name) throws Exception {
+		String tmp = p.getProperty(name);
+		if(tmp==null) {
+			throw new Exception("Configurazione Upgrade non corretta, proprietà ["+name+"] non presente");
+		}
+		tmp = tmp.trim();
+		try {
+			return Boolean.valueOf(tmp);
+		}catch(Exception e) {
+			throw new Exception("Configurazione Upgrade non corretta, proprietà ["+name+"] non corretta: "+e.getMessage(),e);
+		}
+	}
+	
+	private static void buildSql_NuovaInstallazione(File sqlSourceDir, File sqlDestDir, String sqlScriptName,
 			boolean splitDDL_DML) throws Exception {
 		
 		if(sqlSourceDir.exists()==false){
@@ -104,12 +144,12 @@ public class SQLScriptBuilder {
 		for (int i = 0; i < f.length; i++) {
 			if(f[i].isFile()) {
 				_createSql(sqlSourceDir, f[i].getName(), 
-						sqlDestDir, "GovWay.sql", prefix, bout,
+						sqlDestDir, sqlScriptName, prefix, bout,
 						splitDDL_DML);
 			}
 		}
 		
-		File dest = new File(sqlDestDir, "GovWay.sql");
+		File dest = new File(sqlDestDir, sqlScriptName);
 		
 		bout.flush();
 		bout.close();
@@ -125,8 +165,12 @@ public class SQLScriptBuilder {
 	
 	}
 	
-	private static void buildSql_Aggiornamento(File sqlSourceDir, File sqlDestDir, 
-			String precedenteVersione, String versioneAttuale, String tipoDatabase) throws Exception {
+	private static void buildSql_Aggiornamento(File sqlSourceDir, File sqlDestDir, String sqlScriptName,
+			String precedenteVersione, String versioneAttuale, String tipoDatabase,
+			boolean configurazioneUpgrade_runtime,
+			boolean configurazioneUpgrade_config,
+			boolean configurazioneUpgrade_tracce,
+			boolean configurazioneUpgrade_statistiche) throws Exception {
 
 		
 		if(sqlSourceDir.exists()==false){
@@ -224,7 +268,11 @@ public class SQLScriptBuilder {
 					throw new Exception("Source version dir ["+version.getAbsolutePath()+"] cannot read");
 				}
 				
-				File tmp = _createSql_Aggiornamento(version, sqlDestDir, bout, nextVersion, tipoDatabase);
+				File tmp = _createSql_Aggiornamento(version, sqlDestDir, bout, nextVersion, tipoDatabase,
+						configurazioneUpgrade_runtime,
+						configurazioneUpgrade_config,
+						configurazioneUpgrade_tracce,
+						configurazioneUpgrade_statistiche);
 				if(tmp!=null) {
 					infoVersion = tmp;
 				}
@@ -242,7 +290,11 @@ public class SQLScriptBuilder {
 						throw new Exception("Source version dir ["+version.getAbsolutePath()+"] cannot read");
 					}
 					
-					File tmp = _createSql_Aggiornamento(version, sqlDestDir, bout, nextVersion, tipoDatabase);
+					File tmp = _createSql_Aggiornamento(version, sqlDestDir, bout, nextVersion, tipoDatabase,
+							configurazioneUpgrade_runtime,
+							configurazioneUpgrade_config,
+							configurazioneUpgrade_tracce,
+							configurazioneUpgrade_statistiche);
 					if(tmp!=null) {
 						infoVersion = tmp;
 					}
@@ -265,26 +317,64 @@ public class SQLScriptBuilder {
 		
 		bout.flush();
 		bout.close();
-		FileSystemUtilities.writeFile(new File(sqlDestDir, "GovWay_upgrade_"+versioneAttuale+".sql"), bout.toByteArray());
+		
+		String destFileScriptSql = sqlScriptName.replace(".sql", "_upgrade_"+versioneAttuale+".sql");
+		
+		FileSystemUtilities.writeFile(new File(sqlDestDir, destFileScriptSql), bout.toByteArray());
 		
 	}
 	
-	private static File _createSql_Aggiornamento(File sqlVersionSourceDir, File sqlDestDir, ByteArrayOutputStream bout , String nextVersion, String tipoDatabase) throws Exception {
+	private static File _createSql_Aggiornamento(File sqlVersionSourceDir, File sqlDestDir, ByteArrayOutputStream bout , String nextVersion, String tipoDatabase,
+			boolean configurazioneUpgrade_runtime,
+			boolean configurazioneUpgrade_config,
+			boolean configurazioneUpgrade_tracce,
+			boolean configurazioneUpgrade_statistiche) throws Exception {
 						
 		File sqlVersionSourceDirDatabase = new File(sqlVersionSourceDir, tipoDatabase);
 		
 		File[] files = sqlVersionSourceDirDatabase.listFiles();
 		if(files!=null && files.length>0) {
 			
-			if(bout!=null){
-				if(bout.size()>0){
-					bout.write("\n\n".getBytes());
-				}
-				bout.write(("-- Upgrade to "+nextVersion).getBytes());
-			}
-			
+			boolean writeUpgrade = false;
+						
 			Arrays.sort(files); // sono ordinati per data
 			for(File upgradeFile : files) {
+				
+				if(upgradeFile.getName().contains("-runtimePdD-")) {
+					// runtime
+					if(!configurazioneUpgrade_runtime) {
+						continue;
+					}
+				}
+				else if(upgradeFile.getName().contains("-archiviComunicazioni-")) {
+					// tracce
+					if(!configurazioneUpgrade_tracce) {
+						continue;
+					}
+				}
+				else if(upgradeFile.getName().contains("-informazioniStatistiche-")) {
+					// statistiche
+					if(!configurazioneUpgrade_statistiche) {
+						continue;
+					}
+				}
+				else {
+					// configurazione (configurazionePdD, registroServizi)
+					if(!configurazioneUpgrade_config) {
+						continue;
+					}
+				}
+				
+				if(writeUpgrade==false) {
+					if(bout!=null){
+						if(bout.size()>0){
+							bout.write("\n\n".getBytes());
+						}
+						bout.write(("-- Upgrade to "+nextVersion).getBytes());
+					}
+					writeUpgrade = true;
+				}
+				
 				_createSqlAggiornamento(upgradeFile, bout);	
 			}
 			

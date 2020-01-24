@@ -140,7 +140,7 @@ public class ExportUtils {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
-				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()));
 				
 				headerValueCategory = "parent_1";
@@ -274,7 +274,7 @@ public class ExportUtils {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
-				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setHorizontalTextAlignment(HorizontalTextAlignment.CENTER));
 				
 				headerValueCategory = "parent_1";
@@ -411,7 +411,7 @@ public class ExportUtils {
 			switch (tipoStatistica) {
 			case DISTRIBUZIONE_AZIONE:
 				headerValueCategory = "parent_0";
-				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+				headerValueLabel =  MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 				colonne.add(col.column(headerValueLabel, headerValueCategory, type.stringType()).setStretchWithOverflow(false)
 						.addProperty(JasperProperty.PRINT_KEEP_FULL_TEXT, "true"));
 				

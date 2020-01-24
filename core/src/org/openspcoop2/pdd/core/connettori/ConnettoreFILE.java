@@ -27,7 +27,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -77,6 +76,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 	private boolean inputFileDeleteAfterRead = false;
 	private Integer inputFileWaitTimeIfNotExists;
 	
+	private ByteArrayOutputStream boutFileOutputHeaders;
 	
 	
 	/* Costruttori */
@@ -243,7 +243,14 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Properties per serializzazione header file
-			ByteArrayOutputStream boutFileOutputHeaders = new ByteArrayOutputStream();
+			this.boutFileOutputHeaders = new ByteArrayOutputStream();
+			
+			
+			// Collezione header di trasporto per dump
+			Properties propertiesTrasportoDebug = null;
+			if(this.debug) {
+				propertiesTrasportoDebug = new Properties();
+			}
 			
 			
 			// Impostazione Content-Type
@@ -267,7 +274,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.info("Impostazione Content-Type ["+contentTypeRichiesta+"]",false);
 			if(contentTypeRichiesta!=null){
-				setRequestHeader(boutFileOutputHeaders, "Content-Type", contentTypeRichiesta, this.logger);
+				setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, this.logger, propertiesTrasportoDebug);
 			}
 						
 
@@ -281,7 +288,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				}
 				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
-					setRequestHeader(boutFileOutputHeaders, Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, this.logger);
+					setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, this.logger, propertiesTrasportoDebug);
 				}
 				if(this.debug)
 					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
@@ -296,7 +303,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				while( enumProperties.hasMoreElements() ) {
 					String key = (String) enumProperties.nextElement();
 					String value = (String) this.propertiesTrasporto.get(key);
-					setRequestHeader(boutFileOutputHeaders, key, value, this.logger);
+					setRequestHeader(key, value, this.logger, propertiesTrasportoDebug);
 				}
 			}
 			
@@ -320,7 +327,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+bout.toString(),false);
 				bout.close();
 				
-				this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, this.propertiesTrasporto);
+				this.dumpBinarioRichiestaUscita(bout.toByteArray(), this.location, propertiesTrasportoDebug);
 			}else{
 				if(this.isSoap && this.sbustamentoSoap){
 					if(this.debug)
@@ -337,21 +344,21 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Spedizione File Headers
-			boutFileOutputHeaders.flush();
-			boutFileOutputHeaders.close();
+			this.boutFileOutputHeaders.flush();
+			this.boutFileOutputHeaders.close();
 			if(this.outputFileHeaders!=null){
 				if(this.debug)
 					this.logger.debug("Serializzazione File Output Headers ["+this.outputFileHeaders.getAbsolutePath()+"]...");
 				out = new FileOutputStream(this.outputFileHeaders);
 				if(this.debug){
 					ByteArrayOutputStream bout = new ByteArrayOutputStream();
-					bout.write(boutFileOutputHeaders.toByteArray());
+					bout.write(this.boutFileOutputHeaders.toByteArray());
 					bout.flush();
 					bout.close();
 					out.write(bout.toByteArray());
 					this.logger.info("File Header Serializzato:\n"+bout.toString(),false);
 				}else{
-					out.write(boutFileOutputHeaders.toByteArray());
+					out.write(this.boutFileOutputHeaders.toByteArray());
 				}
 				out.flush();
 				out.close();
@@ -568,13 +575,19 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     }
 
 
-    private void setRequestHeader(ByteArrayOutputStream bout, String key, String value, ConnettoreLogger logger) throws IOException {
+    private void setRequestHeader(String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
     	
     	if(this.debug)
 			this.logger.info("Set proprietà trasporto ["+key+"]=["+value+"]",false);
-    	bout.write((key+"="+value+"\n").getBytes()); 
+    	setRequestHeader(key,value, propertiesTrasportoDebug);
     	
     }
+    
+    @Override
+   	protected void setRequestHeader(String key,String value) throws Exception{
+    	this.boutFileOutputHeaders.write((key+"="+value+"\n").getBytes()); 
+    }
+    
     
     private void checkOutputFile(File file, String tipo) throws Exception{
     	if(this.debug){

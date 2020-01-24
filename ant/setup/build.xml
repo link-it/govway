@@ -16,12 +16,14 @@
 	
 	<import file="./ant/pdd-build.xml" />
 	<import file="./ant/sql-build.xml" />
+	<import file="./ant/sqlInstallerProps-build.xml" />
 	<import file="./ant/ds-build.xml" />
 	<import file="./ant/govwayConsole-build.xml" />
 	<import file="./ant/govwayMonitor-build.xml" />
 	<import file="./ant/loader-build.xml" />
 	<import file="./ant/govwayAPIConfig-build.xml" />
 	<import file="./ant/govwayAPIMonitor-build.xml" />
+	<import file="./ant/batchStatistiche-build.xml" />
 	<import file="./ant/distrib-build.xml" />
 	<import file="./ant/patch-build.xml" />
 	<import file="./ant/jar-build.xml" />
@@ -34,6 +36,7 @@
 	<property name="deploy_jms" location="deploy/jms" />
 	<property name="deploy_patch" location="deploy/patch" />
 	<property name="tmp_archivi" location="${build}/archivi" />
+	<property name="tmp_batch" location="${build}/batch" />
 	<property name="tmp_sql" location="${build}/sql" />
 	<property name="tmp_ds" location="${build}/ds" />
 	<property name="tmp_cfg" location="${build}/cfg" />
@@ -51,6 +54,7 @@
 		<mkdir dir="${tmp_sql}" />
 		<mkdir dir="${tmp_ds}" />
 		<mkdir dir="${tmp_archivi}" />
+		<!-- <mkdir dir="${tmp_batch}" /> La creamo se serve, nello specifico task. -->
 		<mkdir dir="${tmp_cfg}" />
 		<mkdir dir="${dist}" />
 	</target>
@@ -59,11 +63,17 @@
 	<!-- 
 		Impostazione variabili prelevate da SETUP antinstaller, esempio:
 		
-		ModalitàInstallazione
-			antinstaller_modalita_installazione
-
-		Aggiornamento
+		intro
+			antinstaller_versione_attuale_con_p_level
 			antinstaller_versione_attuale
+			antinstaller_conf_avanzata_enabled=true/false
+			antinstaller_architettura_avanzata_enabled=true/false
+
+		ModalitàInstallazione
+			antinstaller_modalita_installazione=nuova/aggiornamento
+			antinstaller_tipo_installazione=standard/avanzata
+
+		Aggiornamento		
 			antinstaller_versione_precedente
 
 		Informazioni preliminari
@@ -72,7 +82,16 @@
 			antinstaller_tipo_database=postgresql
 			antinstaller_as=jboss5  -> Trasformata poi nel build reale subito sotto attraverso la variabile build_for_as
 			
-		Il Database
+		Informazioni Dispiegamento
+			antinstaller_config_db=runtime/config
+			antinstaller_log_db=runtime/log
+			antinstaller_index_transazioni=standard/full
+			antinstaller_stats_db=runtime/log/stats
+			antinstaller_index_statistiche=standard/full
+			antinstaller_console_env=runtime/manager
+			antinstaller_stats_env=runtime/batch
+
+		Informazioni DataSource
 			antinstaller_driver_jdbc=org.postgresql.Driver
 			antinstaller_dbname=openspcoop
 			antinstaller_dbhost=127.0.0.1
@@ -81,6 +100,30 @@
 			antinstaller_dbpassword=openspcoop
 			antinstaller_oracle_mode=SID/serviceName
 			
+		Informazioni DataSource dedicato alle Configurazioni
+			antinstaller_dbname_config=openspcoop
+			antinstaller_dbhost_config=127.0.0.1
+			antinstaller_dbport_config=5432
+			antinstaller_dbusername_config=openspcoop
+			antinstaller_dbpassword_config=openspcoop
+			antinstaller_oracle_mode_config=SID/serviceName
+
+		Informazioni DataSource dedicato alle Tracce
+			antinstaller_dbname_log=openspcoop
+			antinstaller_dbhost_log=127.0.0.1
+			antinstaller_dbport_log=5432
+			antinstaller_dbusername_log=openspcoop
+			antinstaller_dbpassword_log=openspcoop
+			antinstaller_oracle_mode_log=SID/serviceName
+
+		Informazioni DataSource dedicato alle Statistiche
+			antinstaller_dbname_stats=openspcoop
+			antinstaller_dbhost_stats=127.0.0.1
+			antinstaller_dbport_stats=5432
+			antinstaller_dbusername_stats=openspcoop
+			antinstaller_dbpassword_stats=openspcoop
+			antinstaller_oracle_mode_stats=SID/serviceName
+
 		Configurazione Utenze
 			antinstaller_pddconsole_username=amministratore
 			antinstaller_pddconsole_password=
@@ -88,8 +131,8 @@
 			antinstaller_pddmonitor_password=
 
 		Configurazione Servizi
-			antinstaller_rs_config=true
-			antinstaller_rs_monitor=true
+			antinstaller_rs_config=true/false
+			antinstaller_rs_monitor=true/false
 
 		Cooperazione Applicativa
 			antinstaller_protocollo_trasparente=true
@@ -108,7 +151,27 @@
 			antinstaller_stateful=false
 			antinstaller_sec_container=false
 
-		Compatibilità interfacce OpenSPCoop-v1
+		Configurazione Profilo eDelivery (1/3)
+			antinstaller_as4_as=wildfly12/tomcat
+			antinstaller_as4_tipo_database=mysql/oracle
+
+		Configurazione Profilo eDelivery (2/3)
+			antinstaller_as4_msh=
+			antinstaller_as4_backend=
+			antinstaller_as4_jms_url=
+			antinstaller_as4_jms_username=
+			antinstaller_as4_jms_password=
+
+		Configurazione Profilo eDelivery (3/3)
+			antinstaller_as4_driver_jdbc=com.mysql.jdbc.Driver
+			antinstaller_as4_dbname=domibus
+			antinstaller_as4_dbhost=127.0.0.1
+			antinstaller_as4_dbport=3306
+			antinstaller_as4_dbusername=domibus
+			antinstaller_as4_dbpassword=domibus
+			antinstaller_as4_oracle_mode=SID/serviceName
+
+		[DEPRECATO e commentato] Compatibilità interfacce OpenSPCoop-v1
 			antinstaller_backward_compatibility=true
 			
 	 -->
@@ -837,51 +900,41 @@
 		
 		<copy todir="${tmp_sql}">
 			<fileset dir="${deploy_sql}/${antinstaller_tipo_database}">
-		    		<include name="govway_*drop.sql"/>
-				<include name="govway_*delete.sql"/>
+		    		<include name="govway-*drop.sql"/>
+				<include name="govway-*delete.sql"/>
 			</fileset>
 		</copy>
-		
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
-			<then>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes">
-<![CDATA[-- Livello Isolamento
-ALTER DATABASE @DATABASE@ SET ALLOW_SNAPSHOT_ISOLATION ON
-ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
-				</concat>
-			</then>
-		</if>
-		<if>
-			<equals arg1="${antinstaller_tipo_database}" arg2="mysql"/>
-			<then>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes">
-<![CDATA[-- Per MySQL 5.6.x (NOTA: Versione non più certificata da GovWay)
--- SET @@SESSION.sql_mode='NO_ENGINE_SUBSTITUTION';
--- SET GLOBAL innodb_large_prefix=ON;
--- SET GLOBAL innodb_file_format=barracuda;
--- SET GLOBAL innodb_file_per_table=true;
 
--- Per MySQL < 5.7.4 
--- SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
 
--- Per MySQL >= 5.7.4 e < 5.7.8 
--- SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';
-
--- Per MySQL >= 5.7.8 
-SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION';]]>
-				</concat>
-			</then>
-		</if>
-		
-		<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
-	      <header filtering="no" trimleading="yes">
-
--- GovWay
-	      	
-	      </header>
+		<!-- *** Runtime *** -->
+		<var name="runtimeSqlScriptName" value="GovWay.sql"/>
+		<antcall target="_initSQL_${antinstaller_tipo_database}">
+			<param name="sqlFileOutput" value="${tmp_sql}/${runtimeSqlScriptName}"/>
+		</antcall>
+		<concat destfile="${tmp_sql}/${runtimeSqlScriptName}" append="yes" >
+	      		<header filtering="no" trimleading="yes">
+</header>
 		  <filelist dir="${deploy_sql}"
-                           files="${antinstaller_tipo_database}/GovWay.sql init.sql"/>
+                           files="${antinstaller_tipo_database}/GovWayRuntime.sql"/>
+		</concat>
+
+
+		<!-- *** Configurazione *** -->
+		<var name="configSqlScriptName" value="GovWay.sql"/>
+		<if>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			<then>
+				<var name="configSqlScriptName" value="GovWayConfigurazione.sql"/>
+				<antcall target="_initSQL_${antinstaller_tipo_database}">
+					<param name="sqlFileOutput" value="${tmp_sql}/${configSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+		<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
+	       		<header filtering="no" trimleading="yes">
+</header>
+		  <filelist dir="${deploy_sql}"
+                           files="${antinstaller_tipo_database}/GovWayConfig.sql init.sql"/>
 		</concat>
 		
 		<!-- trasparente -->
@@ -897,7 +950,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_trasparente}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol trasparente
@@ -923,7 +976,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_modipa}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol modipa
@@ -949,7 +1002,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<param name="sql_codiceipa" value="o=${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="eGov1.1-lineeGuida1.1"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol spcoop
@@ -975,7 +1028,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_as4}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol as4
@@ -984,7 +1037,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				  <filelist dir="${tmp_sql}"
 		                           files="init_soggetto_as4.sql"/>
 				</concat>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 <![CDATA[INSERT INTO config_url_regole (nome, posizione, stato, descrizione, regexpr, regola, contesto_esterno, base_url, protocollo, ruolo) VALUES ('Domibus',1,'abilitato','Servizio di ricezione dei messaggi AS4 dell''Access Point Domibus', 1, '^(.+)$', '', '${antinstaller_as4_msh}','as4','portaApplicativa');
 ]]>
 				</concat>
@@ -1005,7 +1058,7 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					<param name="sql_codiceipa" value="o=${antinstaller_tiposoggetto_sdi}${antinstaller_nomesoggetto},c=it"/>
 					<param name="sql_protocollo_versione" value="1.0"/>
 				</antcall>
-				<concat destfile="${tmp_sql}/GovWay.sql" append="yes" >
+				<concat destfile="${tmp_sql}/${configSqlScriptName}" append="yes" >
 				  <header filtering="no" trimleading="yes">
 
 -- Protocol sdi
@@ -1018,9 +1071,9 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 			</then>
 		</if>
 			
-		<!-- Imposto corretti valori nei threshold -->
+		<!-- Imposto corretti valori per i datasource -->
 		<antcall target="sql_settings">
-		    <param name="file" value="${tmp_sql}/GovWay.sql"/>
+		    <param name="file" value="${tmp_sql}/${configSqlScriptName}"/>
 		</antcall>
 		
 		<!-- password cifrata per l'utenza govwayConsole -->
@@ -1047,33 +1100,135 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 
 		<!-- Registro modifiche delle utenze sul file SQL -->
 		<antcall target="sql_settings_users">
-		    <param name="file" value="${tmp_sql}/GovWay.sql"/>
+		    <param name="file" value="${tmp_sql}/${configSqlScriptName}"/>
 		</antcall>
 
-		<!-- Effettuo split DDL e DML -->
-		<mkdir dir="${tmp_sql}/ORIG"/>
-		<move file="${tmp_sql}/GovWay.sql" todir="${tmp_sql}/ORIG"/>
-		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
-			<arg value="${tmp_sql}/ORIG" />
-			<arg value="${tmp_sql}" />
-			<arg value="${antinstaller_modalita_installazione}" />
-			<arg value="${antinstaller_versione_precedente}" />
-			<arg value="${antinstaller_versione_attuale}" />
-			<arg value="${antinstaller_tipo_database}" />
-			<classpath>
-				<path id="classpath_run">
-					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-					<fileset dir="${deploy_sw}" includes="**/openspcoop2_core_*.jar"/>
-			   	</path>				
-			</classpath>
-		</java>
-		<delete dir="${tmp_sql}/ORIG"/>
+
+
+		<!-- *** Tracce *** -->
+		<var name="tracceSqlScriptName" value="GovWay.sql"/>
 		<if>
-			<not>
-				<equals arg1="${_output_sql_ddl}" arg2=""/>
-			</not>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
 			<then>
-				<fail message="Generazione sql DDL fallita: ${_output_sql_ddl}"/>	
+				<var name="tracceSqlScriptName" value="GovWayTracciamento.sql"/>
+				<antcall target="_initSQL_${antinstaller_tipo_database}">
+					<param name="sqlFileOutput" value="${tmp_sql}/${tracceSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+		<concat destfile="${tmp_sql}/${tracceSqlScriptName}" append="yes" >
+	       		<header filtering="no" trimleading="yes">
+</header>
+		  <filelist dir="${deploy_sql}"
+                           files="${antinstaller_tipo_database}/GovWayTracce.sql"/>
+		</concat>
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<concat destfile="${tmp_sql}/${tracceSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWayTracceDBInfo.sql"/>
+				</concat>
+			</then>
+		</if>
+
+		<!-- Imposto Indici Full se abilitati -->
+		<antcall target="sql_settings_index_transazioni">
+		    <param name="file" value="${tmp_sql}/${tracceSqlScriptName}"/>
+		</antcall>
+
+
+
+		<!-- *** Statistiche *** -->
+		<var name="statsSqlScriptName" value="GovWay.sql"/>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<var name="statsSqlScriptName" value="GovWayStatistiche.sql"/>
+				<antcall target="_initSQL_${antinstaller_tipo_database}">
+					<param name="sqlFileOutput" value="${tmp_sql}/${statsSqlScriptName}"/>
+				</antcall>
+				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				</concat>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+			<then>
+				<var name="statsSqlScriptName" value="GovWayTracciamento.sql"/>
+				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWaySemaphore.sql"/>
+				</concat>
+			</then>
+		</if>
+		<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
+	       		<header filtering="no" trimleading="yes">
+</header>
+		  <filelist dir="${deploy_sql}"
+                           files="${antinstaller_tipo_database}/GovWayStatistiche.sql"/>
+		</concat>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
+	       				<header filtering="no" trimleading="yes">
+</header>
+				  <filelist dir="${deploy_sql}"
+				           files="${antinstaller_tipo_database}/GovWayStatisticheDBInfo.sql"/>
+				</concat>
+			</then>
+		</if>
+
+		<!-- Imposto Indici Full se abilitati -->
+		<antcall target="sql_settings_index_statistiche">
+		    <param name="file" value="${tmp_sql}/${statsSqlScriptName}"/>
+		</antcall>
+
+
+
+		<!-- *** Effettuo split DDL e DML *** -->
+
+		<!-- Runtime -->
+		<antcall target="sql_split_ddl_dml">
+		    <param name="nomeFileDaSplittare" value="${runtimeSqlScriptName}"/>
+		</antcall>
+
+		<!-- Configurazione -->
+		<if>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			<then>
+				<antcall target="sql_split_ddl_dml">
+				    <param name="nomeFileDaSplittare" value="${configSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!-- Tracce -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="sql_split_ddl_dml">
+				    <param name="nomeFileDaSplittare" value="${tracceSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!-- Statistiche -->
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<antcall target="sql_split_ddl_dml">
+				    <param name="nomeFileDaSplittare" value="${statsSqlScriptName}"/>
+				</antcall>
 			</then>
 		</if>
 		
@@ -1081,29 +1236,45 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 	
 	<target name="_setup_sql_aggiornamento">
 
-		<!-- SQL di Aggiornamento -->
-		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
-			<arg value="${deploy_sql}/sql_upgrade" />
-			<arg value="${tmp_sql}" />
-			<arg value="${antinstaller_modalita_installazione}" />
-			<arg value="${antinstaller_versione_precedente}" />
-			<arg value="${antinstaller_versione_attuale}" />
-			<arg value="${antinstaller_tipo_database}" />
-			<classpath>
-				<path id="classpath_run">
-					<fileset dir="${deploy_sw}" includes="**/openspcoop2_utils_*.jar"/>
-					<fileset dir="${deploy_sw}" includes="**/openspcoop2_core_*.jar"/>
-			   	</path>				
-			</classpath>
-		</java>
+		<!-- Runtime -->
+		<var name="runtimeSqlScriptName" value="GovWay.sql"/>
+		<antcall target="sql_upgrade_ddl">
+		    <param name="nomeSqlUpgrade" value="${runtimeSqlScriptName}"/>
+		</antcall>
+
+		<!-- Configurazione -->
 		<if>
-			<not>
-				<equals arg1="${_output_sql_ddl}" arg2=""/>
-			</not>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
 			<then>
-				<fail message="Generazione sql di aggiornamento: ${_output_sql_ddl}"/>	
+				<var name="configSqlScriptName" value="GovWayConfigurazione.sql"/>
+				<antcall target="sql_upgrade_ddl">
+				    <param name="nomeSqlUpgrade" value="${configSqlScriptName}"/>
+				</antcall>
 			</then>
 		</if>
+
+		<!-- Tracce -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<var name="tracceSqlScriptName" value="GovWayTracciamento.sql"/>
+				<antcall target="sql_upgrade_ddl">
+				    <param name="nomeSqlUpgrade" value="${tracceSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+
+		<!-- Statistiche -->
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<var name="statsSqlScriptName" value="GovWayStatistiche.sql"/>
+				<antcall target="sql_upgrade_ddl">
+				    <param name="nomeSqlUpgrade" value="${statsSqlScriptName}"/>
+				</antcall>
+			</then>
+		</if>
+
 
 		<!-- SQL Extra per aggiunta di un profilo -->
 
@@ -1247,15 +1418,52 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						<var name="jboss_datasource_dir_name" value="v7"/>
 					</else>
 				</if>		
+
+				<!-- Runtime -->
 				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govway-ds.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
-				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
-				</antcall>
 
+				<!-- Config -->
+				<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<antcall target="config_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
+						</antcall>
+					</else>
+				</if>
+
+				<!-- Tracce -->
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
+						<antcall target="log_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
+
+				<!-- Statistiche -->
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+					<then>
+						<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
+						<antcall target="stats_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
+
+				<!-- AS4 eDelivery -->
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
@@ -1271,15 +1479,52 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 		<if>
 			<matches string="${build_for_as}" pattern="wildfly.*"/>
 			<then>		
+
+				<!-- Runtime -->
 				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway-ds.xml" todir="${tmp_ds}"/>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govway-ds.xml"/>
 				</antcall>
-				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
-				<antcall target="ds_settings">
-				    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
-				</antcall>
 
+				<!-- Config -->
+				<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<antcall target="config_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_console-ds.xml"/>
+						</antcall>
+					</else>
+				</if>
+
+				<!-- Tracce -->
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
+						<antcall target="log_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
+
+				<!-- Statistiche -->
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+					<then>
+						<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
+						<antcall target="stats_ds_settings">
+						    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+						</antcall>
+					</then>
+				</if>
+
+				<!-- AS4 eDelivery -->
 				<if>
 					<istrue value="${antinstaller_protocollo_as4}" />
 					<then>
@@ -1309,10 +1554,42 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						<var name="tomcat_datasource_dir_name" value="v8_v9"/>
 					</else>
 				</if>		
+
+				<!-- govway.war -->
 				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govway.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="tomcat_log_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govway.xml"/>
+						    <param name="log_for_runtime" value="true"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<and>
+						<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+						<equals arg1="${antinstaller_stats_env}" arg2="runtime"/>
+					</and>
+					<then>
+						<antcall target="tomcat_stats_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govway.xml"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<antcall target="tomcat_config_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govway.xml"/>
+						</antcall>
+					</then>
+				</if>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govway.xml"/>
 				</antcall>
+
+
 				<!-- govwaySec -->
 				<if>
 					<istrue value="${build_openspcoop_sec_archive}" />
@@ -1320,6 +1597,9 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 						<copy file="${tmp_ds}/govway.xml" tofile="${tmp_ds}/govwaySec.xml"/>
 					</then>
 				</if>
+
+
+				<!-- govwayLoader -->
 				<if>
 					<and>
 						<!-- Sganciata la generazone del loader con questa proprieta' finta. 
@@ -1328,16 +1608,72 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 					</and>
 					<then>
 						<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayLoader.xml" todir="${tmp_ds}"/>
-						<antcall target="ds_settings">
-						    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
+						<if>
+							<equals arg1="${antinstaller_config_db}" arg2="config"/>
+							<then>
+								<antcall target="config_ds_settings">
+								    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
+								</antcall>
+							</then>
+							<else>
+								<antcall target="ds_settings">
+								    <param name="file" value="${tmp_ds}/govwayLoader.xml"/>
+								</antcall>
+							</else>
+						</if>
+					</then>
+				</if>
+				
+				<!-- govwayConsole -->
+				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayConsole.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="tomcat_log_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayConsole.xml"/>
+						    <param name="log_for_runtime" value="false"/>
 						</antcall>
 					</then>
 				</if>
-				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayConsole.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<antcall target="tomcat_config_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayConsole.xml"/>
+						</antcall>
+					</then>
+				</if>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govwayConsole.xml"/>
 				</antcall>
+
+				<!-- govwayMonitor -->
 				<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayMonitor.xml" todir="${tmp_ds}"/>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="tomcat_log_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
+						    <param name="log_for_runtime" value="false"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+					<then>
+						<antcall target="tomcat_stats_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<antcall target="tomcat_config_ds_settings">
+						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
+						</antcall>
+					</then>
+				</if>
 				<antcall target="ds_settings">
 				    <param name="file" value="${tmp_ds}/govwayMonitor.xml"/>
 				</antcall>
@@ -1346,7 +1682,18 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				<if>
 					<istrue value="${antinstaller_rs_config}" />
 					<then>
-						<copy file="${tmp_ds}/govwayMonitor.xml" tofile="${tmp_ds}/govwayAPIConfig.xml"/>
+						<copy file="${deploy_ds}/tomcat/${tomcat_datasource_dir_name}/${antinstaller_tipo_database}/govwayMonitor.xml" tofile="${tmp_ds}/govwayAPIConfig.xml"/> <!-- uso il datasource della govwayMonitor poiche' in esso non c'e' il runtime -->
+						<if>
+							<equals arg1="${antinstaller_config_db}" arg2="config"/>
+							<then>
+								<antcall target="tomcat_config_ds_settings">
+								    <param name="templateDataSourceFile" value="${tmp_ds}/govwayAPIConfig.xml"/>
+								</antcall>
+							</then>
+						</if>
+						<antcall target="ds_settings">
+						    <param name="file" value="${tmp_ds}/govwayAPIConfig.xml"/>
+						</antcall>
 						<replace file="${tmp_ds}/govwayAPIConfig.xml" token="grafica govwayMonitor" value="govwayAPIConfig.war"/>
 					</then>
 				</if>
@@ -1860,6 +2207,101 @@ SET @@SESSION.sql_mode='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,E
 				    <param name="archiveFile" value="${tmp_archivi}/govwayAPIMonitor.war"/>
 					<param name="as" value="${build_for_as}"/>
 					<param name="archiveType" value="WAR"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+
+
+	<target name="setup_batchStatistiche" depends="_setup_batchStatistiche"/>
+	<target name="_setup_batchStatistiche">
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<then>
+				<mkdir dir="${tmp_batch}" /> 
+				<copy todir="${tmp_batch}/generatoreStatistiche">
+					<fileset dir="${deploy_sw}/batch/generatoreStatistiche"/>
+				</copy>
+
+				<antcall target="batch_statistiche_properties_settings">
+				    <param name="file" value="${tmp_batch}/generatoreStatistiche/properties/batch-statistiche.properties"/>
+				</antcall>
+				<antcall target="batch_statistiche_dao_factory_properties_settings">
+				    <param name="file" value="${tmp_batch}/generatoreStatistiche/properties/daoFactory.properties"/>
+				</antcall>
+				<antcall target="batch_statistiche_log4j_properties_settings">
+				    <param name="file" value="${tmp_batch}/generatoreStatistiche/properties/batch-statistiche.log4j2.properties"/>
+				</antcall>
+				<antcall target="dos2unix">
+					<param name="dir" value="${tmp_batch}/generatoreStatistiche/properties"/>
+				    <param name="file" value="*.properties"/>
+				</antcall>
+				<!-- trasparente -->
+				<if>
+					<istrue value="${antinstaller_protocollo_trasparente}" />
+					<then>
+						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_trasparente-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- modipa -->
+				<if>
+					<istrue value="${antinstaller_protocollo_modipa}"/>
+					<then>
+						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_modipa-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- spcoop -->
+				<if>
+					<istrue value="${antinstaller_protocollo_spcoop}"/>
+					<then>
+						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_spcoop-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- as4 -->
+				<if>
+					<istrue value="${antinstaller_protocollo_as4}" />
+					<then>
+						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_as4-protocol_*.jar"/>
+								<exclude name="openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- sdi -->
+				<if>
+					<istrue value="${antinstaller_protocollo_sdi}"/>
+					<then>
+						<copy todir="${tmp_batch}/generatoreStatistiche/lib">
+							<fileset dir="${deploy_sw}">
+								<include name="openspcoop2_sdi-protocol_*.jar"/>
+							</fileset>
+							<globmapper from="*_RELEASE.jar" to="*-${antinstaller_versione_attuale_con_p_level}.jar"/>
+						</copy>
+					</then>
+				</if>
+				<!-- Ripristino jar -->
+				<antcall target="ripristina_jar">
+				    <param name="archiveFile" value="${tmp_batch}/generatoreStatistiche"/>
+					<param name="as" value="BATCH"/>
+					<param name="archiveType" value="BATCH"/>
 				</antcall>
 			</then>
 		</if>

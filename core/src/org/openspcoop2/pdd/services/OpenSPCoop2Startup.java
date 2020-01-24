@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.ConfigurazionePdDReader;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.GeneralInstanceProperties;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -804,6 +805,25 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 
+			// GestoreStatistiche
+			try {
+				if(propertiesReader.isStatisticheGenerazioneEnabled()){
+					if(propertiesReader.isStatisticheUsePddRuntimeDatasource()) {
+						DBStatisticheManager.init(DBManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else if(propertiesReader.isStatisticheUseTransazioniDatasource()) {
+						DBStatisticheManager.init(DBTransazioniManager.getInstance(), logCore, propertiesReader.getDatabaseType());
+					}
+					else {
+						DBStatisticheManager.init(propertiesReader.getStatisticheDatasource(), propertiesReader.getStatisticheDatasourceJndiContext(), 
+								logCore, propertiesReader.getDatabaseType(), 
+								propertiesReader.isStatisticheDatasourceUseDBUtils(), propertiesReader.isRisorseJMXAbilitate());
+					}
+				}
+			}catch(Exception e){
+				OpenSPCoop2Startup.log.error("Inizializzazione DBStatisticheManager", e);
+				return;
+			}
 
 
 			/*----------- Inizializzazione Generatore di ClusterID  --------------*/

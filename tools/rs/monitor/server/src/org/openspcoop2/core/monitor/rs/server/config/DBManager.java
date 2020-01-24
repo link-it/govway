@@ -87,6 +87,25 @@ public class DBManager {
 		return this.dataSourceTracceContext;
 	}
 	
+	/** DataSource dove attingere connessioni delle statistiche */
+	
+	private ServiceManagerProperties serviceManagerPropertiesStatistiche;
+	public ServiceManagerProperties getServiceManagerPropertiesStatistiche() {
+		return this.serviceManagerPropertiesStatistiche;
+	}
+	
+	private DataSource dataSourceStatistiche = null;
+
+	private String dataSourceStatisticheName = null;
+	private java.util.Properties dataSourceStatisticheContext = null;
+	public String getDataSourceStatisticheName() {
+		return this.dataSourceStatisticheName;
+	}
+
+	public java.util.Properties getDataSourceStatisticheContext() {
+		return this.dataSourceStatisticheContext;
+	}
+	
 	
 	
 	/**
@@ -99,6 +118,7 @@ public class DBManager {
 	 */
 	private DBManager(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
 			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 
+			String jndiNameStatistiche, java.util.Properties contextStatistiche, String tipoDBStatistiche, 
 			boolean debug) throws Exception {
 		try {
 			DBManager.log = LoggerProperties.getLoggerCore();
@@ -164,6 +184,37 @@ public class DBManager {
 			this.serviceManagerPropertiesTracce = new ServiceManagerProperties();
 			this.serviceManagerPropertiesTracce.setDatabaseType(tipoDBTracce);
 			this.serviceManagerPropertiesTracce.setShowSql(debug);
+			
+			
+			/** DataSource dove attingere connessioni per le statistiche */
+			
+			this.dataSourceStatisticheName = jndiNameStatistiche;
+			this.dataSourceStatisticheContext = contextStatistiche;
+			
+			if (this.dataSourceStatisticheContext != null) {
+				DBManager.log.info("Proprieta' di contesto:" + this.dataSourceStatisticheContext.size());
+				Enumeration<?> en = this.dataSourceStatisticheContext.keys();
+				while (en.hasMoreElements()) {
+					String key = (String) en.nextElement();
+					DBManager.log.info("\tNome[" + key + "] Valore[" + this.dataSourceStatisticheContext.getProperty(key) + "]");
+				}
+			} else {
+				DBManager.log.info("Proprieta' di contesto non fornite");
+			}
+
+			DBManager.log.info("Nome dataSource:" + this.dataSourceStatisticheName);
+
+			initC = null;
+			if (this.dataSourceStatisticheContext != null && this.dataSourceStatisticheContext.size() > 0)
+				initC = new InitialContext(this.dataSourceStatisticheContext);
+			else
+				initC = new InitialContext();
+			this.dataSourceStatistiche = (DataSource) initC.lookup(this.dataSourceStatisticheName);
+			initC.close();
+			
+			this.serviceManagerPropertiesStatistiche = new ServiceManagerProperties();
+			this.serviceManagerPropertiesStatistiche.setDatabaseType(tipoDBStatistiche);
+			this.serviceManagerPropertiesStatistiche.setShowSql(debug);
 
 		} catch (Exception e) {
 			DBManager.log.error("Lookup datasource non riuscita", e);
@@ -177,11 +228,13 @@ public class DBManager {
 	 */
 	public static boolean initialize(String jndiNameConfig, java.util.Properties contextConfig, String tipoDBConfig, 
 			String jndiNameTracce, java.util.Properties contextTracce, String tipoDBTracce, 
+			String jndiNameStatistiche, java.util.Properties contextStatistiche, String tipoDBStatistiche, 
 			boolean debug) throws Exception {
 		try {
 			if (DBManager.manager == null) {
 				DBManager.manager = new DBManager(jndiNameConfig, contextConfig, tipoDBConfig, 
 						jndiNameTracce, contextTracce, tipoDBTracce,
+						jndiNameStatistiche, contextStatistiche, tipoDBStatistiche,
 						debug);
 			}
 			DBManager.setInitialized(true);
@@ -274,6 +327,43 @@ public class DBManager {
 		}
 	}
 
+	/**
+	 * Viene chiamato in causa per ottenere una connessione al DB
+	 */
+	public java.sql.Connection getConnectionStatistiche() {
+		if (this.dataSourceStatistiche == null) {
+			return null;
+		}
+
+		Connection connectionDB = null;
+		try {
+			connectionDB = this.dataSourceStatistiche.getConnection();
+		} catch (Exception e) {
+			DBManager.log.error("getConnectionStatistiche from db", e);
+			return null;
+		}
+
+		return connectionDB;
+	}
+
+	/**
+	 * Viene chiamato in causa per rilasciare una connessione al DB, effettuando
+	 * precedentemente un commit
+	 * 
+	 * @param connectionDB
+	 *            Connessione da rilasciare.
+	 */
+	public void releaseConnectionStatistiche(java.sql.Connection connectionDB) {
+		try {
+			if (connectionDB != null) {
+				connectionDB.close();
+			}
+		} catch (SQLException e) {
+			DBManager.log.error("closeConnection statistiche db", e);
+		}
+	}
+
+	
 	public static boolean isInitialized() {
 		return DBManager.initialized;
 	}

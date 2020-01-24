@@ -27,6 +27,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
@@ -62,6 +63,7 @@ import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
+import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.resources.Charset;
@@ -90,6 +92,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	private HttpEntity httpEntityResponse = null;
 	private HttpClient httpClient = null;
 		
+	private HttpRequestBase httpRequest;
+	
 	private static PoolingHttpClientConnectionManager cm = null;
 	private static synchronized void initialize(){
 		if(ConnettoreHTTPCORE.cm==null){
@@ -164,10 +168,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			// Creazione URL
 			if(this.debug)
 				this.logger.debug("Creazione URL...");
-			this.location = this.properties.get(CostantiConnettori.CONNETTORE_LOCATION);
-			this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, ConnettoreHTTPCORE.ENDPOINT_TYPE, this.propertiesUrlBased, this.location,
-					this.getProtocolFactory(), this.idModulo);
-
+			this.buildLocation();		
 			if(this.debug)
 				this.logger.debug("Creazione URL ["+this.location+"]...");
 			URL url = new URL( this.location );	
@@ -176,6 +177,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			// Keep-alive
 			ConnectionKeepAliveStrategy keepAliveStrategy = new ConnectionKeepAliveStrategyCustom();
 			
+			
+			
+			// Collezione header di trasporto per dump
+			Properties propertiesTrasportoDebug = null;
+			if(this.debug) {
+				propertiesTrasportoDebug = new Properties();
+			}
+
 			
 			// Creazione Connessione
 			if(this.debug)
@@ -191,31 +200,31 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.httpMethod==null){
 				throw new Exception("HttpRequestMethod non definito");
 			}
-			HttpRequestBase httpRequest = null;
+			this.httpRequest = null;
 			switch (this.httpMethod) {
 				case GET:
-					httpRequest = new HttpGet(url.toString());
+					this.httpRequest = new HttpGet(url.toString());
 					break;
 				case DELETE:
-					httpRequest = new HttpDelete(url.toString());
+					this.httpRequest = new HttpDelete(url.toString());
 					break;
 				case HEAD:
-					httpRequest = new HttpHead(url.toString());
+					this.httpRequest = new HttpHead(url.toString());
 					break;
 				case POST:
-					httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(url.toString());
 					break;
 				case PUT:
-					httpRequest = new HttpPost(url.toString());
+					this.httpRequest = new HttpPost(url.toString());
 					break;
 				case OPTIONS:
-					httpRequest = new HttpOptions(url.toString());
+					this.httpRequest = new HttpOptions(url.toString());
 					break;
 				case TRACE:
-					httpRequest = new HttpTrace(url.toString());
+					this.httpRequest = new HttpTrace(url.toString());
 					break;
 				case PATCH:
-					httpRequest = new HttpPatch(url.toString());
+					this.httpRequest = new HttpPatch(url.toString());
 					break;	
 				default:
 					break;
@@ -264,7 +273,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.info("Impostazione http Content-Type ["+contentTypeRichiesta+"]",false);
 			if(contentTypeRichiesta!=null){
-				httpRequest.setHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta);
+				this.setRequestHeader(HttpConstants.CONTENT_TYPE, contentTypeRichiesta, propertiesTrasportoDebug);
 			}
 			
 			
@@ -347,7 +356,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				}
 				if(MessageType.SOAP_11.equals(this.requestMsg.getMessageType())){
 					// NOTA non quotare la soap action, per mantenere la trasparenza della PdD
-					httpRequest.setHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction);
+					this.setRequestHeader(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION,this.soapAction, propertiesTrasportoDebug);
 				}
 				if(this.debug)
 					this.logger.info("SOAP Action inviata ["+this.soapAction+"]",false);
@@ -371,10 +380,23 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(user!=null && password!=null){
 				String authentication = user + ":" + password;
 				authentication = HttpConstants.AUTHORIZATION_PREFIX_BASIC + Base64Utilities.encodeAsString(authentication.getBytes());
-				httpRequest.setHeader(HttpConstants.AUTHORIZATION,authentication);
+				this.setRequestHeader(HttpConstants.AUTHORIZATION,authentication, propertiesTrasportoDebug);
 				if(this.debug)
 					this.logger.info("Impostazione autenticazione (username:"+user+" password:"+password+") ["+authentication+"]",false);
 			}
+			
+			
+			
+			// Authentication Token
+			NameValue nv = this.getTokenHeader();
+	    	if(nv!=null) {
+	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+	    			this.requestMsg.getTransportRequestContext().removeParameterTrasporto(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+	    		}
+	    		this.setRequestHeader(nv.getName(),nv.getValue(), propertiesTrasportoDebug);
+	    		if(this.debug)
+					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
+	    	}
 
 			
 			
@@ -413,14 +435,14 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
 							if(this.debug)
 								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-							setRequestHeader(httpRequest,validazioneHeaderRFC2047, key, encoded, this.logger);
+							this.setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger, propertiesTrasportoDebug);
 						}
 						else{
-							setRequestHeader(httpRequest,validazioneHeaderRFC2047, key, value, this.logger);
+							this.setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 						}
 					}
 					else{
-						setRequestHeader(httpRequest,validazioneHeaderRFC2047, key, value, this.logger);
+						this.setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 					}
 				}
 			}
@@ -450,20 +472,20 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				if(this.debug){
 					this.logger.info("Messaggio inviato (ContentType:"+contentTypeRichiesta+") :\n"+out.toString(),false);
 					
-					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, this.propertiesTrasporto);
+					this.dumpBinarioRichiestaUscita(out.toByteArray(), this.location, propertiesTrasportoDebug);
 				}
 				HttpEntity httpEntity = new ByteArrayEntity(out.toByteArray());
-				if(httpRequest instanceof HttpEntityEnclosingRequestBase){
-					((HttpEntityEnclosingRequestBase)httpRequest).setEntity(httpEntity);
+				if(this.httpRequest instanceof HttpEntityEnclosingRequestBase){
+					((HttpEntityEnclosingRequestBase)this.httpRequest).setEntity(httpEntity);
 				}
 				else{
-					throw new Exception("Tipo ["+httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
+					throw new Exception("Tipo ["+this.httpRequest.getClass().getName()+"] non utilizzabile per una richiesta di tipo ["+this.httpMethod+"]");
 				}
 			}
 			
 			
 			// Imposto Configurazione
-			httpRequest.setConfig(requestConfigBuilder.build());
+			this.httpRequest.setConfig(requestConfigBuilder.build());
 			
 			
 			
@@ -471,7 +493,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			if(this.debug)
 				this.logger.debug("Spedizione byte...");
 			// Eseguo la richiesta e prendo la risposta
-			HttpResponse httpResponse = this.httpClient.execute(httpRequest);
+			HttpResponse httpResponse = this.httpClient.execute(this.httpRequest);
 			this.httpEntityResponse = httpResponse.getEntity();
 			
 			
@@ -670,21 +692,65 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
     		throw new ConnettoreException("Chiusura risorse non riuscita: "+e.getMessage(),e);
     	}
     }
+		
 	
-    private void setRequestHeader(HttpRequestBase httppost, boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger) {
-    	
+	
+    /**
+     * Ritorna l'informazione su dove il connettore sta spedendo il messaggio
+     * 
+     * @return location di inoltro del messaggio
+     */
+    @Override
+	public String getLocation(){
+    	if(this.location==null){
+    		// può darsi che per un errore non sia ancora stata inizializzata la location
+    		try{
+    			this.buildLocation();
+    		}catch(Throwable t){}
+    	}
+    	if(this.location!=null){
+	    	return this.location;
+    	}
+    	return null;
+    }
+    private void buildLocation() throws ConnettoreException {
+    	this.location = TransportUtils.getObjectAsString(this.properties,CostantiConnettori.CONNETTORE_LOCATION);	
+    	NameValue nv = this.getTokenQueryParameter();
+    	if(nv!=null) {
+    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+    			this.requestMsg.getTransportRequestContext().removeParameterFormBased(nv.getName()); // Fix: senno sovrascriveva il vecchio token
+    		}
+    		if(this.propertiesUrlBased==null) {
+    			this.propertiesUrlBased = new Properties();
+    		}
+    		this.propertiesUrlBased.put(nv.getName(), nv.getValue());
+    	}
+		this.location = ConnettoreUtils.buildLocationWithURLBasedParameter(this.requestMsg, 
+				ConnettoreHTTPCORE.ENDPOINT_TYPE, 
+				this.propertiesUrlBased, this.location,
+				this.getProtocolFactory(), this.idModulo);
+    }
+	
+	
+	
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, value);
-        		httppost.setHeader(key,value);
+        		setRequestHeader(key,value, propertiesTrasportoDebug);
         	}catch(UtilsException e){
         		logger.error(e.getMessage(),e);
         	}
     	}
     	else{
-    		httppost.setHeader(key,value);
+    		setRequestHeader(key,value, propertiesTrasportoDebug);
     	}
     	
+    }
+    
+    @Override
+	protected void setRequestHeader(String key,String value) throws Exception {
+    	this.httpRequest.setHeader(key,value);
     }
 }
 

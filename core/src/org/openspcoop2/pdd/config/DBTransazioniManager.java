@@ -228,7 +228,7 @@ public class DBTransazioniManager implements IMonitoraggioRisorsa {
 				stmtTest.execute("SELECT * from "+CostantiDB.DB_INFO);
 						
 			} catch (Exception e) {
-				throw new CoreException("Connessione al database GovWay - Transazioni non disponibile: "+e.getMessage(),e);
+				throw new CoreException("Connessione al database 'GovWay - Transazioni' non disponibile: "+e.getMessage(),e);
 	
 			}finally{
 				try{

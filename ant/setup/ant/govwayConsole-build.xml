@@ -251,16 +251,34 @@
 			<param name="token" value="singlePdD.monitor.dataSource"/>
 			<param name="value" value="${datasource_pdd_name}"/>
 		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="tracce.dataSource"/>
-			<param name="value" value="${datasource_pdd_name}"/>
-		</antcall>
-		<antcall target="set_property">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="msgDiagnostici.dataSource"/>
-			<param name="value" value="${datasource_pdd_name}"/>
-		</antcall>
+		<!-- TRACCE ENGINE -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="tracce.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="msgDiagnostici.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="tracce.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="msgDiagnostici.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}"/>
+				</antcall>
+			</else>
+		</if>	
 		
 	</target>
 	

@@ -137,6 +137,7 @@ public class Startup implements ServletContextListener {
 				DatasourceProperties dbProperties = DatasourceProperties.getInstance();
 				DBManager.initialize(dbProperties.getConfigDataSource(), dbProperties.getConfigDataSourceContext(), dbProperties.getConfigTipoDatabase(),
 						dbProperties.getTracceDataSource(), dbProperties.getTracceDataSourceContext(), dbProperties.getTracceTipoDatabase(),
+						dbProperties.getStatisticheDataSource(), dbProperties.getStatisticheDataSourceContext(), dbProperties.getStatisticheTipoDatabase(),
 						dbProperties.isShowSql());
 			}catch(Exception e){
 				throw new RuntimeException(e.getMessage(),e);

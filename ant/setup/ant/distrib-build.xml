@@ -110,6 +110,51 @@
 		      <include name="*.xml"/>
 		    </fileset>
 		</copy>
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<mkdir dir="${dist}/datasource/manager"/>
+				<mkdir dir="${dist}/datasource/runtime"/>
+				<copy todir="${dist}/datasource/manager">
+					<fileset dir="${dist}/datasource">
+						<exclude name="govway-ds.xml"/>
+						<exclude name="domibus-ds.xml"/>
+						<exclude name="govway.xml"/>
+						<exclude name="govwaySec.xml"/>
+						<exclude name="manager"/>
+						<exclude name="runtime"/>
+					</fileset>
+				</copy>
+				<if>
+					<matches string="${antinstaller_as}" pattern="tomcat.*"/>
+					<then>
+						<delete>
+							<fileset dir="${dist}/datasource">
+								<exclude name="govway.xml"/>
+								<exclude name="govwaySec.xml"/>
+								<exclude name="manager"/>
+								<exclude name="manager/**"/>
+								<exclude name="runtime"/>
+							</fileset>
+						</delete>
+					</then>
+				</if>
+				<move todir="${dist}/datasource/runtime">
+					<fileset dir="${dist}/datasource">
+						<exclude name="manager"/>
+						<exclude name="manager/**"/>
+						<exclude name="runtime"/>
+					</fileset>
+				</move>
+				<replace dir="${dist}/datasource/manager" 
+					token="&lt;min-pool-size>10&lt;/min-pool-size>" 
+					value="&lt;min-pool-size>5&lt;/min-pool-size>"/>
+				<replace dir="${dist}/datasource/manager" 
+					token="&lt;max-pool-size>50&lt;/max-pool-size>" 
+					value="&lt;max-pool-size>20&lt;/max-pool-size>"/>
+			</then>
+		</if>
+
 
 		<!-- Cfg -->
 		<mkdir dir="${dist}/cfg"/>
@@ -177,7 +222,83 @@
 
 			</then>
 		</if>
+
+		<var name="govway_local_properties_name" value="govway_local.properties"/>
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<var name="govway_local_properties_name" value="govway_local.properties.new"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<then>
+				<replaceregexp file="${dist}/cfg/${govway_local_properties_name}"
+					       match="([a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*)# Generazione Report[a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*org\.openspcoop2\.pdd\.statistiche\.generazione\.baseMensile\.gestioneUltimoMese=false([a-zA-Zèéàùìò0-9=&quot;\.:\/@;,?#'_&lt;>\s]*)"
+					       replace="\1COMMENTOSTATISTICHE\2"
+					       byline="false"/>
+				<replace file="${dist}/cfg/${govway_local_properties_name}">
+							<replacetoken>COMMENTOSTATISTICHE</replacetoken>
+							<replacevalue><![CDATA[# Generazione Report
+#
+# La generazione dei report statistici è disabilitata. Verrà gestita tramite l'applicazione batch.]]></replacevalue>
+				</replace>
+			</then>
+		</if>
 		
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<mkdir dir="${dist}/cfg/manager"/>
+				<mkdir dir="${dist}/cfg/runtime"/>
+				<move todir="${dist}/cfg/manager">
+					<fileset dir="${dist}/cfg">
+						<exclude name="govway_local*properties"/>
+						<exclude name="govway_local*properties.new"/>
+						<exclude name="trasparente*"/>
+						<exclude name="modipa*"/>
+						<exclude name="spcoop*"/>
+						<exclude name="as4*"/>
+						<exclude name="as4*/**"/>
+						<exclude name="sdi*"/>
+						<exclude name="manager"/>
+						<exclude name="runtime"/>
+						<exclude name="utilities/**/govway_local*"/>
+						<exclude name="utilities/**/trasparente*"/>
+						<exclude name="utilities/**/modipa*"/>
+						<exclude name="utilities/**/spcoop*"/>
+						<exclude name="utilities/**/as4*"/>
+						<exclude name="utilities/**/as4*/**"/>
+						<exclude name="utilities/**/sdi*"/>
+					</fileset>
+				</move>
+				<copy todir="${dist}/cfg/manager">
+					<fileset dir="${dist}/cfg">
+						<include name="trasparente*"/>
+						<include name="modipa*"/>
+						<include name="spcoop*"/>
+						<include name="as4*"/>
+						<include name="as4*/**"/>
+						<include name="sdi*"/>
+						<include name="sdi*"/>
+						<include name="utilities/**/trasparente*"/>
+						<include name="utilities/**/modipa*"/>
+						<include name="utilities/**/spcoop*"/>
+						<include name="utilities/**/as4*"/>
+						<include name="utilities/**/as4*/**"/>
+						<include name="utilities/**/sdi*"/>
+					</fileset>
+				</copy>
+				<move todir="${dist}/cfg/runtime">
+					<fileset dir="${dist}/cfg">
+						<exclude name="manager"/>
+						<exclude name="manager/**"/>
+						<exclude name="runtime"/>
+					</fileset>
+				</move>
+			</then>
+		</if>
+
 		<!-- SQL -->
 		<mkdir dir="${dist}/sql"/>
 		<copy todir="${dist}/sql">
@@ -188,14 +309,28 @@
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
 			<then>
-				<concat destfile="${dist}/sql/GovWay_init.sql" append="yes">
+				<var name="configInitSqlScriptName" value="GovWay_init.sql"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<var name="configInitSqlScriptName" value="GovWayConfigurazione_init.sql"/>
+					</then>
+				</if>				
+				<concat destfile="${dist}/sql/${configInitSqlScriptName}" append="yes">
 					<fileset dir="${tmp_sql}">
 					    	<include name="InstallerProperties.sql"/>
 					</fileset>
 				</concat>
 			</then>
 			<else>
-				<concat destfile="${dist}/sql/GovWay_upgrade_${antinstaller_versione_attuale}.sql" append="yes">
+				<var name="configUpgradeSqlScriptName" value="GovWay_upgrade_${antinstaller_versione_attuale}.sql"/>
+				<if>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					<then>
+						<var name="configUpgradeSqlScriptName" value="GovWayConfigurazione_upgrade_${antinstaller_versione_attuale}.sql"/>
+					</then>
+				</if>
+				<concat destfile="${dist}/sql/${configUpgradeSqlScriptName}" append="yes">
 					<fileset dir="${tmp_sql}">
 					    	<include name="InstallerProperties.sql"/>
 					</fileset>
@@ -209,8 +344,8 @@
 			<then>
 				<copy todir="${dist}/sql/utilities">
 					<fileset dir="${tmp_sql}">
-				    		<include name="govway_*drop.sql"/>
-						<include name="govway_*delete.sql"/>
+				    		<include name="govway-*drop.sql"/>
+						<include name="govway-*delete.sql"/>
 					</fileset>
 				</copy>
 			</then>
@@ -249,7 +384,46 @@
 				<antcall target="_prepareArchivioTomcat"/>
 			</else>		
 		</if>
-		
+		<if>
+			<equals arg1="${antinstaller_console_env}" arg2="manager"/>
+			<then>
+				<mkdir dir="${dist}/archivi/manager"/>
+				<mkdir dir="${dist}/archivi/runtime"/>
+				<move todir="${dist}/archivi/manager">
+					<fileset dir="${dist}/archivi">
+						<exclude name="govway.*ar"/>
+						<exclude name="manager"/>
+						<exclude name="runtime"/>
+					</fileset>
+				</move>
+				<move todir="${dist}/archivi/runtime">
+					<fileset dir="${dist}/archivi">
+						<include name="govway.*ar"/>
+						<exclude name="manager"/>
+						<exclude name="runtime"/>
+					</fileset>
+				</move>
+			</then>
+		</if>
+
+		<!-- Batch -->
+		<available file="${tmp_batch}" type="dir" property="batch.present"/>
+		<if>
+			<equals arg1="${batch.present}" arg2="true"/>
+			<then>
+				<mkdir dir="${dist}/batch"/>
+				<copy todir="${dist}/batch">
+					<fileset dir="${deploy_sw}/batch">
+				    		<include name="crond/**"/>
+					</fileset>
+				</copy>
+				<copy todir="${dist}/batch">
+					<fileset dir="${tmp_batch}">
+				    		<include name="**"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
 	</target>
 
 	<target name="_setup_properties_aggiornamento">

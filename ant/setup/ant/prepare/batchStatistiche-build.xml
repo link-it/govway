@@ -1,0 +1,49 @@
+
+<project name="prepare-setup-batchStatistiche" basedir=".">
+	
+	<description>
+        	PREPARE SETUP BATCH STATISTICHE
+	</description>
+
+	
+	<target name="prepare_batchStatistiche_setup">
+	
+		<mkdir dir="${deploy_sw}/batch"/>
+		<mkdir dir="${deploy_sw}/batch/tmp_dist"/>
+
+		<delete includeEmptyDirs="true" failonerror="false">
+		    <fileset dir="${deploy_sw}/batch/generatoreStatistiche" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/batch/generatoreStatistiche" failonerror="false"/>
+
+		<antcall target="distrib_batchStatistiche">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="openspcoop2" value="${rootDir}"/>
+			<param name="required_lib" value="${required_lib_batchStatistiche}"/>
+			<param name="required_lib_batchStatistiche" value="${required_lib_batchStatistiche}"/>
+			<param name="openspcoop2.lib" value="${required_lib_batchStatistiche}"/>
+			<param name="openspcoop2.dist" value="${deploy_sw_openspcoop2_jars}"/> <!-- usato per prendere i jar di openspcoop2 -->
+			<param name="src_batchStatistiche" value="${src_batchStatistiche}"/>
+			<param name="build_batchStatistiche" location="build/batchStatistiche" />
+			<param name="buildAPI" value="false" />
+			<param name="properties_batchStatistiche" value="${batchStatistiche}/properties"/>
+			<param name="script_batchStatistiche" value="${batchStatistiche}/script"/>
+			<param name="dist_batchStatistiche" value="${deploy_sw}/batch/tmp_dist"/>
+			<param name="distrib_batchStatistiche" value="${deploy_sw}/batch/generatoreStatistiche"/>
+		</antcall>
+		<delete includeEmptyDirs="true">
+		    <fileset dir="${deploy_sw}/batch/tmp_dist" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/batch/tmp_dist"/>
+		<delete dir="build" includeEmptyDirs="true"/>
+
+		<!-- Converto jar in txt -->
+		<antcall target="replace_jar_with_txt">
+			<param name="archiveFileJarLocation" value="${deploy_sw}/batch/generatoreStatistiche/lib"/>
+			<param name="deploy_sw" value="${deploy_sw}"/>		
+		</antcall>
+
+	</target>
+	
+	
+</project>

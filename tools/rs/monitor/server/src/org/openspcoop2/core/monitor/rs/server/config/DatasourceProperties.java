@@ -185,6 +185,19 @@ public class DatasourceProperties {
 		return this.readProperty(true, "db.tracce.tipoDatabase");
 	}
 	
+	
+	public String getStatisticheDataSource() throws UtilsException{
+		return this.readProperty(true, "db.statistiche.dataSource");
+	}
+	
+	public Properties getStatisticheDataSourceContext() throws UtilsException{
+		return this.reader.readProperties_convertEnvProperties("db.statistiche.dataSource.property.");
+	}
+	
+	public String getStatisticheTipoDatabase() throws UtilsException{
+		return this.readProperty(true, "db.statistiche.tipoDatabase");
+	}
+	
 
 
 }

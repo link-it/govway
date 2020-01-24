@@ -88,6 +88,7 @@ public class Costanti {
 	public static final String DATA_LABEL_KEY = "commons.data.label";
 	public static final String AZIONE_LABEL_KEY = "commons.azione.label";
 	public static final String SERVIZIO_APPLICATIVO_LABEL_KEY = "commons.applicativo.label";
+	public static final String API_LABEL_KEY = "commons.api.label";
 	public static final String SERVIZIO_LABEL_KEY = "commons.servizio.label";
 	public static final String SOGGETTO_LABEL_KEY = "commons.soggetto.label";
 	public static final String SOGGETTO_LOCALE_LABEL_KEY = "commons.soggettoLocale.label";

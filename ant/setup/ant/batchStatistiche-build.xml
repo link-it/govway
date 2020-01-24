@@ -1,0 +1,319 @@
+
+<project name="setup-batchStatistiche" basedir=".">
+	
+	<description>
+        	SETUP BATCH STATISTICHE
+	</description>
+
+	<import file="../../commons/utils.xml" />
+	
+	<!-- batch-statistiche.properties -->
+	<target name="batch_statistiche_properties_settings">
+
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.generazione.forceIndex.repository"/>
+			<param name="value" value="${work_dir}/generazioneStatistiche.forceIndex.properties"/>
+		</antcall>
+		
+		<!-- LOG (sul batch li lascio attivi) -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="statistiche.generazione.debug"/>
+			<param name="value" value="true"/>
+		</antcall>
+		
+	</target>
+	
+	<!-- daoFactory.properties -->
+	<target name="batch_statistiche_dao_factory_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+				
+		<!-- TIPO DATABASE -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.tipoDatabase"/>
+			<param name="value" value="${antinstaller_tipo_database}"/>
+		</antcall>
+
+		<!-- Driver JDBC -->
+		<antcall target="set_property">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="db.connection.driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc}"/>
+		</antcall>
+
+		<!-- Connection URL -->
+		<if>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			<then>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="db.connection.url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost_config}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport_config}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname_config}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_config}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.connection.user"/>
+					<param name="value" value="${antinstaller_dbusername_config}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.connection.password"/>
+					<param name="value" value="${antinstaller_dbpassword_config}"/>
+				</antcall>
+
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="runtime"/>
+					<then>
+						<antcall target="-set_connection_url_jdbc">
+						    <param name="file" value="${file}"/>
+							<param name="jdbc_token" value="factory.transazioni.db.connection.url"/>
+							<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+							<param name="jdbc_dbhost" value="${antinstaller_dbhost}"/>
+							<param name="jdbc_dbport" value="${antinstaller_dbport}"/>
+							<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
+							<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.transazioni.db.connection.user"/>
+							<param name="value" value="${antinstaller_dbusername}"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.transazioni.db.connection.password"/>
+							<param name="value" value="${antinstaller_dbpassword}"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+					<then>
+						<antcall target="-set_connection_url_jdbc">
+						    <param name="file" value="${file}"/>
+							<param name="jdbc_token" value="factory.statistiche.db.connection.url"/>
+							<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+							<param name="jdbc_dbhost" value="${antinstaller_dbhost}"/>
+							<param name="jdbc_dbport" value="${antinstaller_dbport}"/>
+							<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
+							<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.connection.user"/>
+							<param name="value" value="${antinstaller_dbusername}"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.connection.password"/>
+							<param name="value" value="${antinstaller_dbpassword}"/>
+						</antcall>
+					</then>
+				</if>
+			</then>
+			<else>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="db.connection.url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.connection.user"/>
+					<param name="value" value="${antinstaller_dbusername}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="db.connection.password"/>
+					<param name="value" value="${antinstaller_dbpassword}"/>
+				</antcall>
+			</else>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="factory.transazioni.db.connection.url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost_log}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport_log}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname_log}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_log}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.transazioni.db.connection.user"/>
+					<param name="value" value="${antinstaller_dbusername_log}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.transazioni.db.connection.password"/>
+					<param name="value" value="${antinstaller_dbpassword_log}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+			<then>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="factory.statistiche.db.connection.url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost_log}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport_log}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname_log}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_log}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.connection.user"/>
+					<param name="value" value="${antinstaller_dbusername_log}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.connection.password"/>
+					<param name="value" value="${antinstaller_dbpassword_log}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<antcall target="-set_connection_url_jdbc">
+				    <param name="file" value="${file}"/>
+					<param name="jdbc_token" value="factory.statistiche.db.connection.url"/>
+					<param name="jdbc_tipo_database" value="${antinstaller_tipo_database}"/>
+					<param name="jdbc_dbhost" value="${antinstaller_dbhost_stats}"/>
+					<param name="jdbc_dbport" value="${antinstaller_dbport_stats}"/>
+					<param name="jdbc_dbname" value="${antinstaller_dbname_stats}"/>
+					<param name="jdbc_oracle_mode" value="${antinstaller_oracle_mode_stats}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.connection.user"/>
+					<param name="value" value="${antinstaller_dbusername_stats}"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.connection.password"/>
+					<param name="value" value="${antinstaller_dbpassword_stats}"/>
+				</antcall>
+			</then>
+		</if>
+				
+	</target>
+
+	<target name="-set_connection_url_jdbc">
+		
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="db2"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:db2://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="hsql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:hsqldb:hsql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="mysql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:mysql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}?zeroDateTimeBehavior=convertToNull"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${jdbc_oracle_mode}" arg2="serviceName" />
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="${jdbc_token}"/>
+							<param name="value" value="jdbc:oracle:thin:@${jdbc_dbhost}:${jdbc_dbport}:${jdbc_dbname}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="postgresql"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:postgresql://${jdbc_dbhost}:${jdbc_dbport}/${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${jdbc_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="${jdbc_token}"/>
+					<param name="value" value="jdbc:sqlserver://${jdbc_dbhost}:${jdbc_dbport};databaseName=${jdbc_dbname}"/>
+				</antcall>
+			</then>
+		</if>
+	</target>
+	
+	
+	<!-- batch-statistiche.log4j2.properties -->
+	<target name="batch_statistiche_log4j_properties_settings">
+		
+		<concat destfile="${file}" append="yes" >
+
+# ----- Personalizzazione Setup GovWay -------------
+		</concat>
+		
+		<!-- WORKING DIR -->
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="/var/govway/log"/>
+			<param name="value" value="${log_dir}"/>
+		</antcall>
+	
+	</target>
+		
+</project>

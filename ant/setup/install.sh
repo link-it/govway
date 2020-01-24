@@ -71,9 +71,14 @@ else
 fi
 
 # Per utilizzare lo stateful
-if [ -e avanzata.dodeploy ]
+if [ -e cfg.dodeploy ]
 then
         echo "antinstaller_conf_avanzata_enabled=true" >> ant.install.properties
+fi
+# Per decidere l'architettura del database e software
+if [ -e arch.dodeploy ]
+then
+        echo "antinstaller_architettura_avanzata_enabled=true" >> ant.install.properties
 fi
 
 $COMMAND -classpath $CLASSPATH  org.tp23.antinstaller.runtime.ExecInstall $GUI ${ROOT_OPENSPCOOP}/ant/setup

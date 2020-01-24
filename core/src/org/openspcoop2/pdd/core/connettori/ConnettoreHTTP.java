@@ -1005,7 +1005,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     }
     
 
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
     	
     	if(validazioneHeaderRFC2047){
     		try{
@@ -1021,12 +1021,11 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     	
     }
     
-    private void setRequestHeader(String key,String value, Properties propertiesTrasportoDebug) {
+    @Override
+	protected void setRequestHeader(String key,String value) throws Exception {
     	this.httpConn.setRequestProperty(key,value);
-    	if(propertiesTrasportoDebug!=null) {
-    		propertiesTrasportoDebug.put(key, value);
-    	}
     }
+
 }
 
 

@@ -184,6 +184,51 @@
 			<param name="token" value="db.datasource.jndiName"/>
 			<param name="value" value="${datasource_console_name}"/>
 		</antcall>
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.transazioni.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.eventi.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.tracciamento.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.diagnostica.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>				
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+					<param name="value" value="${datasource_pdd_name}.statistiche"/>
+				</antcall>
+			</then>
+		</if>
 		
 	</target>
 	

@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.manifest.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
@@ -492,18 +493,47 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			try{
 				resource = dbManager.getResource(dominio, modulo, null);
 				Connection c = (Connection) resource.getResource();
-				String sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
-				pstmt = c.prepareStatement(sql);
-				rs = pstmt.executeQuery();
+				String sql = "select * from "+CostantiDB.DB_INFO_CONSOLE +" order by id DESC";
 				StringBuffer bf = new StringBuffer();
-				while (rs.next()) {
-					int major_version = rs.getInt("major_version");
-					int minor_version = rs.getInt("minor_version");
-					String details = rs.getString("notes");
-					if(bf.length()>0){
-						bf.append("\n");
+				pstmt = c.prepareStatement(sql);
+				try {
+					rs = pstmt.executeQuery();
+					while (rs.next()) {
+						int major_version = rs.getInt("major_version");
+						int minor_version = rs.getInt("minor_version");
+						String details = rs.getString("notes");
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						bf.append("["+major_version+"."+minor_version+"] "+details);
 					}
-					bf.append("["+major_version+"."+minor_version+"] "+details);
+				}catch(Throwable t) {
+					
+					try{
+						if(rs!=null)
+							rs.close();
+					}catch(Exception eClose){}
+					try{
+						if(pstmt!=null)
+							pstmt.close();
+					}catch(Exception eClose){}
+					
+					sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
+					pstmt = c.prepareStatement(sql);
+					rs = pstmt.executeQuery();
+					try {
+						while (rs.next()) {
+							int major_version = rs.getInt("major_version");
+							int minor_version = rs.getInt("minor_version");
+							String details = rs.getString("notes");
+							if(bf.length()>0){
+								bf.append("\n");
+							}
+							bf.append("["+major_version+"."+minor_version+"] "+details);
+						}
+					}catch(Throwable tInternal) {
+						throw new UtilsMultiException(t,tInternal);
+					}
 				}
 
 				if(bf.length()<=0){

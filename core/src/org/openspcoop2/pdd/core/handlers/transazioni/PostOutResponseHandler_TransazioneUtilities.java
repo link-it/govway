@@ -597,6 +597,14 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
 					this.logger.error("Errore durante la comprensione delle caratteristiche dell'API (Accesso servizio): "+e.getMessage(),e);
 				}
+				try {
+					if(transactionDTO.getUriAccordoServizio()==null){
+						transactionDTO.setUriAccordoServizio(IDAccordoFactory.getInstance().getUriFromIDAccordo(idAccordo));
+					}
+				}catch(Throwable e) {
+					// NOTA: questo metodo dovrebbe non lanciare praticamente mai eccezione
+					this.logger.error("Errore durante la comprensione dell'identificativo dell'API (Accesso servizio parte comune): "+e.getMessage(),e);
+				}
 			}
 
 

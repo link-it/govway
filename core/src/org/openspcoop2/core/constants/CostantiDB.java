@@ -262,6 +262,7 @@ public final class CostantiDB {
     
     /*DB INFO*/
     public static final String DB_INFO = "db_info";
+    public static final String DB_INFO_CONSOLE = "db_info_console";
     
     // VALORI DI COMODO
     

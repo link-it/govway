@@ -20,6 +20,9 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
+import java.util.HashMap;
+import java.util.Iterator;
+
 /**
  * InformazioniStatoPorta
  *
@@ -57,7 +60,7 @@ public class InformazioniStatoPorta {
 				infoCharset, infoInternazionalizzazione, infoTimeZone,
 				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
 				infoProtocolli,
-				null,null,
+				null,null,null,
 				null,null,
 				null,null,
 				informazioniInstallazione,
@@ -78,7 +81,7 @@ public class InformazioniStatoPorta {
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone, 
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
-			String statoConnessioniDB, String statoConnessioniJMS,
+			String statoConnessioniDB, HashMap<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoConnessioniPD, String statoConnessioniPA, 
 			String informazioniInstallazione,
@@ -239,13 +242,28 @@ public class InformazioniStatoPorta {
 		}
 		
 		if(statoConnessioniDB!=null){
-			bf.append("==============================\n");
-			bf.append("Connessioni Attive al Database\n");
-			bf.append("==============================\n");
+			bf.append("======================================\n");
+			bf.append("Connessioni Attive al Database Runtime\n");
+			bf.append("======================================\n");
 			bf.append("\n");
 			bf.append(statoConnessioniDB);
 			bf.append("\n");
 			bf.append("\n");
+		}
+		
+		if(statoConnessioniAltriDB!=null && statoConnessioniAltriDB.size()>0) {
+			Iterator<String> it = statoConnessioniAltriDB.keySet().iterator();
+			while (it.hasNext()) {
+				String idAltroDB = (String) it.next();
+				String statoConnessioniAltroDB = statoConnessioniAltriDB.get(idAltroDB);
+				bf.append("================================================\n");
+				bf.append("Connessioni Attive al Database "+idAltroDB+" \n");
+				bf.append("================================================\n");
+				bf.append("\n");
+				bf.append(statoConnessioniAltroDB);
+				bf.append("\n");
+				bf.append("\n");
+			}
 		}
 		
 		if(statoConnessioniJMS!=null){

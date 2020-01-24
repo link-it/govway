@@ -19,6 +19,8 @@
 	<import file="./ant/prepare/govwayMonitor-build.xml" />
 	<import file="./ant/prepare/govwayAPIConfig-build.xml" />
 	<import file="./ant/prepare/govwayAPIMonitor-build.xml" />
+	<import file="./ant/prepare/batchCrond-build.xml" />
+	<import file="./ant/prepare/batchStatistiche-build.xml" />
 	<import file="./ant/prepare/backwardCompatibility-build.xml" />
 
 	<property name="build" location="build" />
@@ -44,6 +46,8 @@
 		<antcall target="prepare_govwayMonitor_setup" />
 		<antcall target="prepare_govwayAPIConfig_setup" />
 		<antcall target="prepare_govwayAPIMonitor_setup" />
+		<antcall target="prepare_batchCrond_setup" />
+		<antcall target="prepare_batchStatistiche_setup" />
 		<antcall target="prepare_backwardCompatibility_setup" />
 		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->

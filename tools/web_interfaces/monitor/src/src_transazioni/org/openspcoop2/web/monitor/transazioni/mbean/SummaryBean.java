@@ -1550,7 +1550,7 @@ public class SummaryBean implements Serializable{
 	
 	public String getLabelServizio() {
 		return !this.isShowFiltroSoggettoLocale() ? 
-				MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY) :
+				MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY) :
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY);
 	}
 	
@@ -1567,7 +1567,7 @@ public class SummaryBean implements Serializable{
 			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SUMMARY_SOGGETTO_LOCALE_SERVIZIO_LABEL_KEY);
 		}
 		else if(foundServizi){
-			return MessageManager.getInstance().getMessage(Costanti.SERVIZIO_LABEL_KEY);
+			return MessageManager.getInstance().getMessage(Costanti.API_LABEL_KEY);
 		}
 		else{
 			return MessageManager.getInstance().getMessage(Costanti.SOGGETTO_LOCALE_LABEL_KEY);

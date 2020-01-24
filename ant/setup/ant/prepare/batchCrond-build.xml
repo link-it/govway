@@ -1,0 +1,28 @@
+
+<project name="prepare-setup-batchCrond" basedir=".">
+	
+	<description>
+        	PREPARE SETUP BATCH CROND
+	</description>
+
+	
+	<target name="prepare_batchCrond_setup">
+	
+		<mkdir dir="${deploy_sw}/batch"/>
+		
+		<delete includeEmptyDirs="true" failonerror="false">
+		    <fileset dir="${deploy_sw}/batch/crond" includes="*"/>
+		</delete>
+		<delete dir="${deploy_sw}/batch/crond" failonerror="false"/>
+
+		<mkdir dir="${deploy_sw}/batch/crond"/>
+		<copy todir="${deploy_sw}/batch/crond">
+			<fileset dir="${batchCrond}">
+		    		<include name="**"/>
+			</fileset>
+		</copy>
+
+	</target>
+	
+	
+</project>

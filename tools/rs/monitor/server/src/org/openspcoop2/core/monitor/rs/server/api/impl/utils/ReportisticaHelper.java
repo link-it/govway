@@ -72,6 +72,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaTipi;
+import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
@@ -416,6 +417,8 @@ public class ReportisticaHelper {
 
 		overrideOpzioniGenerazioneReportBase(body, wrap, env);
 
+		if (body.getTipoInformazione() == null)
+			body.setTipoInformazione(new TipoInformazioneReport());
 		if (body.getTipoInformazione().getTipo() == null)
 			body.getTipoInformazione().setTipo(TipoInformazioneReportEnum.NUMERO_TRANSAZIONI);
 
@@ -588,12 +591,12 @@ public class ReportisticaHelper {
 		StatisticheGiornaliereService statisticheService = null;
 		ServiceManagerProperties smp = null;
 		try {
-			connection = dbManager.getConnectionTracce();
+			connection = dbManager.getConnectionStatistiche();
 			smp = dbManager.getServiceManagerPropertiesTracce();
 			statisticheService = new StatisticheGiornaliereService(connection, true, smp,
 					LoggerProperties.getLoggerDAO());
 		} catch (Exception e) {
-			dbManager.releaseConnectionTracce(connection);
+			dbManager.releaseConnectionStatistiche(connection);
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 
@@ -602,7 +605,7 @@ public class ReportisticaHelper {
 		} catch (Exception e) {
 			throw FaultCode.NOT_FOUND.toException(e);
 		} finally {
-			dbManager.releaseConnectionTracce(connection);
+			dbManager.releaseConnectionStatistiche(connection);
 		}
 	}
 

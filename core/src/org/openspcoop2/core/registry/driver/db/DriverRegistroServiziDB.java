@@ -153,6 +153,7 @@ import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.Certificate;
@@ -20639,12 +20640,29 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(con == null)
 					throw new Exception("Connessione is null");
 				// test:
-				stmtTest = con.createStatement();
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable("db_info");
-				sqlQueryObject.addSelectField("*");
-				String sqlQuery = sqlQueryObject.createSQLQuery();
-				stmtTest.execute(sqlQuery);
+				try {
+					stmtTest = con.createStatement();
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.DB_INFO_CONSOLE);
+					sqlQueryObject.addSelectField("*");
+					String sqlQuery = sqlQueryObject.createSQLQuery();
+					stmtTest.execute(sqlQuery);
+				}catch(Throwable t) {
+					try{
+						if(stmtTest!=null)
+							stmtTest.close();
+					}catch(Exception e){}
+					try {
+						stmtTest = con.createStatement();
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.DB_INFO);
+						sqlQueryObject.addSelectField("*");
+						String sqlQuery = sqlQueryObject.createSQLQuery();
+						stmtTest.execute(sqlQuery);
+					}catch(Throwable tInternal) {
+						throw new UtilsMultiException(t,tInternal);
+					}
+				}
 			} catch (Exception e) {
 				throw new CoreException("Connessione al registro non disponibile: "+e.getMessage(),e);
 
@@ -20664,12 +20682,29 @@ IDriverWS ,IMonitoraggioRisorsa{
 				if(this.globalConnection == null)
 					throw new Exception("Connessione is null");
 				// test:
-				stmtTest = this.globalConnection.createStatement();
-				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
-				sqlQueryObject.addFromTable("db_info");
-				sqlQueryObject.addSelectField("*");
-				String sqlQuery = sqlQueryObject.createSQLQuery();
-				stmtTest.execute(sqlQuery);
+				try {
+					stmtTest = this.globalConnection.createStatement();
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+					sqlQueryObject.addFromTable(CostantiDB.DB_INFO_CONSOLE);
+					sqlQueryObject.addSelectField("*");
+					String sqlQuery = sqlQueryObject.createSQLQuery();
+					stmtTest.execute(sqlQuery);
+				}catch(Throwable t) {
+					try{
+						if(stmtTest!=null)
+							stmtTest.close();
+					}catch(Exception e){}
+					try {
+						stmtTest = this.globalConnection.createStatement();
+						ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.DB_INFO);
+						sqlQueryObject.addSelectField("*");
+						String sqlQuery = sqlQueryObject.createSQLQuery();
+						stmtTest.execute(sqlQuery);
+					}catch(Throwable tInternal) {
+						throw new UtilsMultiException(t,tInternal);
+					}
+				}
 			} catch (Exception e) {
 				throw new CoreException("Connessione al registro non disponibile: "+e.getMessage(),e);
 

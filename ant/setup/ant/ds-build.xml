@@ -59,6 +59,174 @@
 
 	</target>
 
+	<target name="config_ds_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_dbname_config}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_oracle_mode_config}" arg2="serviceName" />
+					<then>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value=":@INSTANCE@"/>
+							<param name="value" value="/${antinstaller_dbname_config}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value="@INSTANCE@"/>
+							<param name="value" value="${antinstaller_dbname_config}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@HOST@"/>
+			<param name="value" value="${antinstaller_dbhost_config}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PORT@"/>
+			<param name="value" value="${antinstaller_dbport_config}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@USERNAME@"/>
+			<param name="value" value="${antinstaller_dbusername_config}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PASSWORD@"/>
+			<param name="value" value="${antinstaller_dbpassword_config}"/>
+		</antcall>
+
+	</target>
+
+	<target name="log_ds_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_dbname_log}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_oracle_mode_log}" arg2="serviceName" />
+					<then>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value=":@INSTANCE@"/>
+							<param name="value" value="/${antinstaller_dbname_log}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value="@INSTANCE@"/>
+							<param name="value" value="${antinstaller_dbname_log}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@HOST@"/>
+			<param name="value" value="${antinstaller_dbhost_log}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PORT@"/>
+			<param name="value" value="${antinstaller_dbport_log}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@USERNAME@"/>
+			<param name="value" value="${antinstaller_dbusername_log}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PASSWORD@"/>
+			<param name="value" value="${antinstaller_dbpassword_log}"/>
+		</antcall>
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.govway.datasource"/>
+			<param name="value" value="org.govway.datasource.tracciamento"/>
+		</antcall>
+
+	</target>
+
+	<target name="stats_ds_settings">
+		
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@DATABASE@"/>
+			<param name="value" value="${antinstaller_dbname_stats}"/>
+		</antcall>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_oracle_mode_stats}" arg2="serviceName" />
+					<then>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value=":@INSTANCE@"/>
+							<param name="value" value="/${antinstaller_dbname_stats}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+				    			<param name="file" value="${file}"/>
+							<param name="token" value="@INSTANCE@"/>
+							<param name="value" value="${antinstaller_dbname_stats}"/>
+						</antcall>
+					</else>
+				</if>
+			</then>
+		</if>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@HOST@"/>
+			<param name="value" value="${antinstaller_dbhost_stats}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PORT@"/>
+			<param name="value" value="${antinstaller_dbport_stats}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@USERNAME@"/>
+			<param name="value" value="${antinstaller_dbusername_stats}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="@PASSWORD@"/>
+			<param name="value" value="${antinstaller_dbpassword_stats}"/>
+		</antcall>
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.govway.datasource.console"/>
+			<param name="value" value="org.govway.datasource.statistiche"/>
+		</antcall>
+
+	</target>
+
 	<target name="as4_ds_settings">
 		
 		<antcall target="replace_token">
@@ -108,11 +276,210 @@
 			<param name="token" value="@PASSWORD@"/>
 			<param name="value" value="${antinstaller_as4_dbpassword}"/>
 		</antcall>
-		<antcall target="replace_token">
-		    <param name="file" value="${file}"/>
-			<param name="token" value="org.govway.datasource"/>
-			<param name="value" value="org.govway.datasource.domibus"/>
+
+	</target>
+
+
+	<target name="tomcat_config_ds_settings">
+		<antcall target="_tomcat_ds_settings">
+			<param name="templateDataSourceFile" value="${templateDataSourceFile}"/>
+			<param name="templateDataSourceNameSrc" value="org\.govway\.datasource\.console"/>
+			<param name="dataSourceNameSrc" value="org.govway.datasource.console"/>
+			<param name="dataSourceNameDest" value="org.govway.datasource.console"/>
+			<param name="templateOracleName" value="${antinstaller_oracle_mode_config}"/>
+			<param name="templateDbName" value="${antinstaller_dbname_config}"/>
+			<param name="templateDbHost" value="${antinstaller_dbhost_config}"/>
+			<param name="templateDbPort" value="${antinstaller_dbport_config}"/>
+			<param name="templateDbUsername" value="${antinstaller_dbusername_config}"/>
+			<param name="templateDbPassword" value="${antinstaller_dbpassword_config}"/>
 		</antcall>
+	</target>
+
+	<target name="tomcat_log_ds_settings">
+
+		<var name="_tmpTemplateDsSrcName" value="org\.govway\.datasource\.console"/>
+		<var name="_tmpDsSrcName" value="org.govway.datasource.console"/>
+		<if>
+			<equals arg1="${log_for_runtime}" arg2="true"/>
+			<then>
+				<var name="_tmpTemplateDsSrcName" value="org\.govway\.datasource"/>
+				<var name="_tmpDsSrcName" value="org.govway.datasource"/>
+			</then>
+		</if>
+		<antcall target="_tomcat_ds_settings">
+			<param name="templateDataSourceFile" value="${templateDataSourceFile}"/>
+			<param name="templateDataSourceNameSrc" value="${_tmpTemplateDsSrcName}"/>
+			<param name="dataSourceNameSrc" value="${_tmpDsSrcName}"/>
+			<param name="dataSourceNameDest" value="org.govway.datasource.tracciamento"/>
+			<param name="templateOracleName" value="${antinstaller_oracle_mode_log}"/>
+			<param name="templateDbName" value="${antinstaller_dbname_log}"/>
+			<param name="templateDbHost" value="${antinstaller_dbhost_log}"/>
+			<param name="templateDbPort" value="${antinstaller_dbport_log}"/>
+			<param name="templateDbUsername" value="${antinstaller_dbusername_log}"/>
+			<param name="templateDbPassword" value="${antinstaller_dbpassword_log}"/>
+			<param name="headerDataSource" value="&lt;!-- Datasouce contenente le tracce di GovWay -->"/>
+		</antcall>
+	</target>
+
+	<target name="tomcat_stats_ds_settings">
+		<antcall target="_tomcat_ds_settings">
+			<param name="templateDataSourceFile" value="${templateDataSourceFile}"/>
+			<param name="templateDataSourceNameSrc" value="org\.govway\.datasource\.console"/>
+			<param name="dataSourceNameSrc" value="org.govway.datasource.console"/>
+			<param name="dataSourceNameDest" value="org.govway.datasource.statistiche"/>
+			<param name="templateOracleName" value="${antinstaller_oracle_mode_stats}"/>
+			<param name="templateDbName" value="${antinstaller_dbname_stats}"/>
+			<param name="templateDbHost" value="${antinstaller_dbhost_stats}"/>
+			<param name="templateDbPort" value="${antinstaller_dbport_stats}"/>
+			<param name="templateDbUsername" value="${antinstaller_dbusername_stats}"/>
+			<param name="templateDbPassword" value="${antinstaller_dbpassword_stats}"/>
+			<param name="headerDataSource" value="&lt;!-- Datasouce contenente le informazioni statistiche -->"/>
+		</antcall>
+	</target>
+
+	<target name="_tomcat_ds_settings">
+		<loadfile
+		    encoding="UTF-8"
+		    property="propTemplateDataSourceFile"
+		    srcFile="${templateDataSourceFile}" />
+		<!-- <echo message="DS FILE [${propTemplateDataSourceFile}]"/> -->
+
+		<propertyregex property="propTemplateDatasource" 
+			override="true"
+			input="${propTemplateDataSourceFile}"
+			regexp=".*(&lt;Resource name=&quot;${templateDataSourceNameSrc}&quot;[a-zA-Z0-9=&quot;\.:\/@;?_\s]*\/>)"
+			select="\1"/>
+		<!-- <echo message="DS PROP [${propTemplateDatasource}]"/> -->
+
+		<if>
+			<or>
+				<equals arg1="${antinstaller_tipo_database}" arg2="db2"/>
+				<equals arg1="${antinstaller_tipo_database}" arg2="hsql"/>
+				<equals arg1="${antinstaller_tipo_database}" arg2="mysql"/>
+				<equals arg1="${antinstaller_tipo_database}" arg2="postgresql"/>
+			</or>
+			<then>
+				<!-- <echo message="DB POSTGREQL/HSQL/MYSQL/DB2"/> -->
+				<propertyregex property="propTemplateDatasourceIstanziato" 
+					override="true"
+					input="${propTemplateDatasource}"
+					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)/@DATABASE@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+					select="\1/${templateDbName}\2"/>
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="sqlserver"/>
+			<then>
+				<!-- <echo message="DB SQLSERVER"/> -->
+				<propertyregex property="propTemplateDatasourceIstanziato" 
+					override="true"
+					input="${propTemplateDatasource}"
+					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)=@DATABASE@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+					select="\1=${templateDbName}\2"/> 
+			</then>
+		</if>
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<if>
+					<equals arg1="${templateOracleName}" arg2="serviceName" />
+					<then>
+						<!-- <echo message="ORACLE SERVICE"/> -->
+						<propertyregex property="propTemplateDatasourceIstanziato" 
+							override="true"
+							input="${propTemplateDatasource}"
+							regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*):@INSTANCE@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+							select="\1/${templateDbName}\2"/>
+					</then>
+					<else>
+						<!-- <echo message="ORACLE SID"/> -->
+						<propertyregex property="propTemplateDatasourceIstanziato" 
+							override="true"
+							input="${propTemplateDatasource}"
+							regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*):@INSTANCE@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+							select="\1:${templateDbName}\2"/>
+					</else>
+				</if>
+			</then>
+		</if>
+		<!-- <echo message="DOPO DATABASE [${propTemplateDatasourceIstanziato}]"/> -->
+
+		<if>
+			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
+			<then>
+				<propertyregex property="propTemplateDatasourceIstanziato" 
+					override="true"
+					input="${propTemplateDatasourceIstanziato}"
+					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*):@@HOST@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+					select="\1:@${templateDbHost}\2"/>
+			</then>
+			<else>
+				<propertyregex property="propTemplateDatasourceIstanziato" 
+					override="true"
+					input="${propTemplateDatasourceIstanziato}"
+					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)//@HOST@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+					select="\1//${templateDbHost}\2"/>
+			</else>
+		</if>
+
+
+		<propertyregex property="propTemplateDatasourceIstanziato" 
+			override="true"
+			input="${propTemplateDatasourceIstanziato}"
+			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*):@PORT@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+			select="\1:${templateDbPort}\2"/>
+
+		<propertyregex property="propTemplateDatasourceIstanziato" 
+			override="true"
+			input="${propTemplateDatasourceIstanziato}"
+			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)&quot;@USERNAME@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+			select="\1&quot;${templateDbUsername}\2"/>
+
+		<propertyregex property="propTemplateDatasourceIstanziato" 
+			override="true"
+			input="${propTemplateDatasourceIstanziato}"
+			regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)&quot;@PASSWORD@([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+			select="\1&quot;${templateDbPassword}\2"/>
+
+		<!-- <echo message="FINE PARAMETRI DATABASE [${propTemplateDatasourceIstanziato}]"/> -->
+
+		<if>
+			<equals arg1="${dataSourceNameSrc}" arg2="${dataSourceNameDest}"/>
+			<then>
+				<antcall target="replace_token">
+				    <param name="file" value="${templateDataSourceFile}"/>
+					<param name="token" value="${propTemplateDatasource}"/>
+					<param name="value" value="${propTemplateDatasourceIstanziato}"/>
+				</antcall>
+			</then>
+			<else>
+
+				<propertyregex property="propTemplateDatasourceIstanziato" 
+					override="true"
+					input="${propTemplateDatasourceIstanziato}"
+					regexp="([a-zA-Z0-9=&quot;\.:\/@;?_&lt;\s]*)${dataSourceNameSrc}([a-zA-Z0-9=&quot;\.:\/@;?_&gt;\s]*)"
+					select="\1${dataSourceNameDest}\2"/>
+
+				<antcall target="replace_token">
+				    <param name="file" value="${templateDataSourceFile}"/>
+					<param name="token" value="&lt;/Context>"/>
+					<param name="value" value="HEADERDATASOURCE${headerDataSource}HEADERDATASOURCE${propTemplateDatasourceIstanziato}ACAPOACAPOACAPO&lt;/Context>"/>
+				</antcall>
+				<replace file="${templateDataSourceFile}">
+					<replacetoken>HEADERDATASOURCE</replacetoken>
+					<replacevalue><![CDATA[
+
+	]]></replacevalue>
+				</replace>
+				<replace file="${templateDataSourceFile}">
+					<replacetoken>ACAPOACAPOACAPO&lt;/Context></replacetoken>
+					<replacevalue><![CDATA[
+
+
+</Context>]]></replacevalue>
+				</replace>
+			</else>
+		</if>
 
 	</target>
 		

@@ -42,6 +42,7 @@ import javax.management.ReflectionException;
 
 import org.slf4j.Logger;
 import org.openspcoop2.pdd.config.DBManager;
+import org.openspcoop2.pdd.config.DBStatisticheManager;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.QueueManager;
@@ -622,31 +623,56 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	
 	public String getUsedDBConnections(){
 		String[] risorse = null;
-		boolean useRuntimePdD = true;
 		String[] risorseTransaction = null;
+		String[] risorseStatistiche = null;
 		try{
 			risorse = DBManager.getStatoRisorse();
-			useRuntimePdD = DBTransazioniManager.getInstance().useRuntimePdD();
-			if(!useRuntimePdD) {
-				risorseTransaction = DBTransazioniManager.getStatoRisorse();
+			
+			OpenSPCoop2Properties prop = OpenSPCoop2Properties.getInstance();
+			
+			boolean useRuntimePdDTransazioni = DBTransazioniManager.getInstance().useRuntimePdD();
+			if(!useRuntimePdDTransazioni) {
+				if(!prop.isTransazioniDatasourceUseDBUtils()) {
+					// le aggiungo altrimenti non c'è altro modo per vederle
+					risorseTransaction = DBTransazioniManager.getStatoRisorse();
+				}
 			}
+			
+			if(prop.isStatisticheGenerazioneEnabled()) {
+				boolean useRuntimePdDStatistiche = DBStatisticheManager.getInstance().useRuntimePdD();
+				boolean useTransazioniStatistiche = DBStatisticheManager.getInstance().useTransazioni();
+				if(!useRuntimePdDStatistiche && !useTransazioniStatistiche) {
+					if(!prop.isStatisticheDatasourceUseDBUtils()) {
+						// le aggiungo altrimenti non c'è altro modo per vederle
+						risorseStatistiche = DBStatisticheManager.getStatoRisorse();
+					}
+				}
+			}
+			
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
-		if(risorse==null && risorseTransaction==null)
+		if(risorse==null && risorseTransaction==null && risorseStatistiche==null)
 			return "Nessuna connessione allocata";
 		
 		StringBuffer bf = new StringBuffer();
-		bf.append(risorse.length+" risorse allocate: \n");
-		for(int i=0; i<risorse.length; i++){
-			bf.append(risorse[i]+"\n");
+		if(risorse!=null && risorse.length>0) {
+			bf.append(risorse.length+" risorse allocate: \n");
+			for(int i=0; i<risorse.length; i++){
+				bf.append(risorse[i]+"\n");
+			}
 		}
-		
-		if(useRuntimePdD==false) {
+		if(risorseTransaction!=null && risorseTransaction.length>0) {
 			bf.append(risorseTransaction.length+" risorse allocate per la gestione delle transazioni: \n");
 			for(int i=0; i<risorseTransaction.length; i++){
 				bf.append(risorseTransaction[i]+"\n");
+			}
+		}
+		if(risorseStatistiche!=null && risorseStatistiche.length>0) {
+			bf.append(risorseStatistiche.length+" risorse allocate per la generazione delle statistiche: \n");
+			for(int i=0; i<risorseStatistiche.length; i++){
+				bf.append(risorseStatistiche[i]+"\n");
 			}
 		}
 		

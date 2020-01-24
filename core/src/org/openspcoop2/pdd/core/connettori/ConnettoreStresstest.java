@@ -317,10 +317,10 @@ public class ConnettoreStresstest extends ConnettoreBase {
 					"xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\"><eGov_IT:IntestazioneMessaggio>");
 			
 			// mittente
-			protocolHeader.append("<eGov_IT:Mittente><eGov_IT:IdentificativoParte tipo=\""+bustaRichiesta.getTipoDestinatario()+"\">"+bustaRichiesta.getDestinatario()+"</eGov_IT:IdentificativoParte></eGov_IT:Mittente>");
+			protocolHeader.append("<eGov_IT:Mittente><eGov_IT:IdentificativoParte tipo=\""+traduttore.toProtocolOrganizationType(bustaRichiesta.getTipoDestinatario())+"\">"+bustaRichiesta.getDestinatario()+"</eGov_IT:IdentificativoParte></eGov_IT:Mittente>");
 		
 			// destinatario
-			protocolHeader.append("<eGov_IT:Destinatario><eGov_IT:IdentificativoParte tipo=\""+bustaRichiesta.getTipoMittente()+"\">"+bustaRichiesta.getMittente()+"</eGov_IT:IdentificativoParte></eGov_IT:Destinatario>");
+			protocolHeader.append("<eGov_IT:Destinatario><eGov_IT:IdentificativoParte tipo=\""+traduttore.toProtocolOrganizationType(bustaRichiesta.getTipoMittente())+"\">"+bustaRichiesta.getMittente()+"</eGov_IT:IdentificativoParte></eGov_IT:Destinatario>");
 		
 			// ProfiloCollaborazione
 			if(bustaRichiesta.getProfiloDiCollaborazione()!=null){

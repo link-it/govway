@@ -89,7 +89,16 @@
 	<property name="required_lib_govwayMonitorApiRS" location="${required_lib}"/>
 	<property name="src_govwayMonitorApiRS" value="${govwayMonitorApiRS}/src" />
 	<import file="${govwayMonitorApiRS}/build.xml"/>
-		
+	
+	<!-- BatchCrond -->
+	<property name="batchCrond" value="${rootDir}/tools/batch/crond/" />	
+
+	<!-- BatchStatistiche -->
+	<property name="batchStatistiche" value="${rootDir}/tools/batch/statistiche/" />
+	<property name="required_lib_batchStatistiche" location="${required_lib}"/>
+	<property name="src_batchStatistiche" value="${batchStatistiche}/src" />
+	<import file="${batchStatistiche}/build.xml"/>
+
 	<!-- Trasparente -->
 	<property name="trasparente" value="${rootDir}/protocolli/trasparente"/>
 	<property name="src_trasparente" value="${trasparente}/src" />

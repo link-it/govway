@@ -22,11 +22,11 @@
 			<param name="value" value="${work_dir}"/>
 		</antcall>
 
-		<!-- STATISTICHE -->
+		<!-- DS UTILS -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
-			<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository"/>
-			<param name="value" value="${work_dir}/generazioneStatistiche.forceIndex.properties"/>
+			<param name="token" value="org.openspcoop2.pdd.datasource.useDSUtils"/>
+			<param name="value" value="true"/>
 		</antcall>
 
 		<!-- CONFIG -->
@@ -52,7 +52,111 @@
 			<param name="token" value="org.openspcoop2.pdd.dataSource"/>
 			<param name="value" value="${datasource_pdd_name}"/>
 		</antcall>
-		
+
+		<!-- TRACCE ENGINE -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime"/>
+					<param name="value" value="false"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.transazioni.dataSource"/>
+					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+				</antcall>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.transazioni.datasource.useDSUtils"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.transazioni.dataSource.usePddRuntime"/>
+					<param name="value" value="true"/>
+				</antcall>
+			</else>
+		</if>		
+
+		<!-- STATISTICHE ENGINE -->
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.enabled"/>
+					<param name="value" value="false"/>
+				</antcall>
+			</then>
+			<else>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="org.openspcoop2.pdd.statistiche.generazione.forceIndex.repository"/>
+					<param name="value" value="${work_dir}/generazioneStatistiche.forceIndex.properties"/>
+				</antcall>
+				
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime"/>
+							<param name="value" value="true"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.useTransazioni"/>
+							<param name="value" value="false"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="log"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime"/>
+							<param name="value" value="false"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.useTransazioni"/>
+							<param name="value" value="true"/>
+						</antcall>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.usePddRuntime"/>
+							<param name="value" value="false"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource.useTransazioni"/>
+							<param name="value" value="false"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.dataSource"/>
+							<param name="value" value="${datasource_pdd_name}.statistiche"/>
+						</antcall>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="org.openspcoop2.pdd.statistiche.datasource.useDSUtils"/>
+							<param name="value" value="true"/>
+						</antcall>
+					</then>
+				</if>
+			</else>
+		</if>	
+
 		<!-- REPOSITORY -->
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>

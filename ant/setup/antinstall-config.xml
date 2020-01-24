@@ -16,19 +16,47 @@
         <comment explanatoryText="       https://govway.org" bold="true"/>
         <comment explanatoryText="       https://link.it" bold="true"/>
 
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.2"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale" value="3.2.2"/>
+
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
         <hidden property="antinstaller_conf_avanzata_enabled" value=""/>
+	<hidden property="antinstaller_architettura_avanzata_enabled" value=""/>
     </page>
 
-    <page name="modalitaInstallazione" type="input" displayText="Modalità Installazione">
+    <page name="modalitaInstallazione" type="input" displayText="Modalità Installazione" ifProperty="${antinstaller_architettura_avanzata_enabled}!=true">
 	<large-select defaultValue="nuova" property="antinstaller_modalita_installazione" displayText="">
             <option value="nuova" text="Nuova Installazione"/>
             <option value="aggiornamento" text="Aggiornamento"/>
         </large-select>	
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.2"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
-	<hidden property="antinstaller_versione_attuale" value="3.2.2"/>	
+	<!-- Proprieta gestita in caso di antinstaller_architettura_avanzata_enabled=true -->
+	<hidden property="antinstaller_tipo_installazione" value="standard"/>
+
+	<hidden property="antinstaller_config_db" value="runtime"/>
+	<hidden property="antinstaller_log_db" value="runtime"/>
+	<hidden property="antinstaller_index_transazioni" value="standard"/>
+	<hidden property="antinstaller_stats_db" value="runtime"/>
+	<hidden property="antinstaller_index_statistiche" value="standard"/>
+
+	<hidden property="antinstaller_console_env" value="runtime"/>
+	<hidden property="antinstaller_stats_env" value="runtime"/>
+
+    </page>
+
+    <page name="modalitaInstallazioneAvanzata" type="input" displayText="Modalità Installazione" ifProperty="${antinstaller_architettura_avanzata_enabled}==true">
+	<large-select defaultValue="nuova" property="antinstaller_modalita_installazione" displayText="Modalità">
+            <option value="nuova" text="Nuova Installazione"/>
+            <option value="aggiornamento" text="Aggiornamento"/>
+        </large-select>	
+
+	<comment displayText=""/>
+        <large-select defaultValue="standard" property="antinstaller_tipo_installazione" displayText="Tipo">
+            <option value="standard" text="Standard"/>
+            <option value="avanzata" text="Avanzata"/>
+        </large-select>
+	
     </page>
 
     <page name="aggiornamentoSceltaVersione" type="input" displayText="Informazioni Prodotto"
@@ -62,40 +90,29 @@
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
-		<!-- Viene usato un unico valore 'wildfly18', poiche' la compilazione e' identica -->
-		<option value="wildfly18" text="WildFly 18.x"/>
-		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
-		<option value="wildfly10" text="WildFly 17.x"/>
-		<option value="wildfly10" text="WildFly 16.x"/>
-		<option value="wildfly10" text="WildFly 15.x"/>
-		<option value="wildfly10" text="WildFly 14.x"/>
-		<option value="wildfly10" text="WildFly 13.x"/>
-		<option value="wildfly10" text="WildFly 12.x"/> 
-		<option value="wildfly10" text="WildFly 11.x"/> 
-		<option value="wildfly10" text="WildFly 10.x"/>
+		<!-- Uniformare i valori quando la compilazione e' identica -->
+		<option value="wildfly18" text="WildFly 18"/>
+		<option value="wildfly10" text="WildFly 10-17"/>
 		<!--
 			Deprecati
-			<option value="wildfly9" text="WildFly 9.x"/>
-			<option value="wildfly8" text="WildFly 8.x"/>
+			<option value="wildfly9" text="WildFly 9"/>
+			<option value="wildfly8" text="WildFly 8"/>
 		-->
 		<!--
 			Deprecati 
-			<option value="jboss7" text="JBoss 7.x"/>
-			<option value="jboss6" text="JBoss 6.x"/>
-			<option value="jboss5" text="JBoss 5.x"/>
-	    		<option value="jboss4" text="JBoss 4.x"/>
+			<option value="jboss7" text="JBoss 7"/>
+			<option value="jboss6" text="JBoss 6"/>
+			<option value="jboss5" text="JBoss 5"/>
+	    		<option value="jboss4" text="JBoss 4"/>
 		-->
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<!-- il valore tomcat8 supporta 8.x e 9.x -->
-		<option value="tomcat8" text="Apache Tomcat 9.x"/>
-            	<option value="tomcat8" text="Apache Tomcat 8.x"/>
-		<!-- il valore tomcat7 supporta solamente il 7.x -->
-            	<option value="tomcat7" text="Apache Tomcat 7.x"/>
+            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
+		<option value="tomcat7" text="Apache Tomcat 7"/>
             	<!-- 
 			Deprecati
-			<option value="tomcat6" text="Apache Tomcat 6.x"/>
-			<option value="tomcat5" text="Apache Tomcat 5.x"/> 
+			<option value="tomcat6" text="Apache Tomcat 6"/>
+			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
         </large-select>
         
@@ -133,40 +150,29 @@
         <!-- <comment displayText="Application Server" bold="true"/>  sotto come display c'era tipo -->
         <large-select defaultValue="wildfly18" property="antinstaller_as" displayText="Application Server">
       
-		<!-- Viene usato un unico valore 'wildfly18', poiche' la compilazione e' identica -->
-		<option value="wildfly18" text="WildFly 18.x"/>
-		<!-- Viene usato un unico valore 'wildfly10', poiche' la compilazione e' identica -->
-		<option value="wildfly10" text="WildFly 17.x"/>
-		<option value="wildfly10" text="WildFly 16.x"/>
-		<option value="wildfly10" text="WildFly 15.x"/>
-		<option value="wildfly10" text="WildFly 14.x"/>
-		<option value="wildfly10" text="WildFly 13.x"/>
-		<option value="wildfly10" text="WildFly 12.x"/> 
-		<option value="wildfly10" text="WildFly 11.x"/> 
-		<option value="wildfly10" text="WildFly 10.x"/>
+		<!-- Uniformare i valori quando la compilazione e' identica -->
+		<option value="wildfly18" text="WildFly 18"/>
+		<option value="wildfly10" text="WildFly 10-17"/>
 		<!--
 			Deprecati
-			<option value="wildfly9" text="WildFly 9.x"/>
-			<option value="wildfly8" text="WildFly 8.x"/>
+			<option value="wildfly9" text="WildFly 9"/>
+			<option value="wildfly8" text="WildFly 8"/>
 		-->
 		<!--
 			Deprecati 
-			<option value="jboss7" text="JBoss 7.x"/>
-			<option value="jboss6" text="JBoss 6.x"/>
-			<option value="jboss5" text="JBoss 5.x"/>
-	    		<option value="jboss4" text="JBoss 4.x"/>
+			<option value="jboss7" text="JBoss 7"/>
+			<option value="jboss6" text="JBoss 6"/>
+			<option value="jboss5" text="JBoss 5"/>
+	    		<option value="jboss4" text="JBoss 4"/>
 		-->
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<!-- il valore tomcat8 supporta 8.x e 9.x -->
-		<option value="tomcat8" text="Apache Tomcat 9.x"/>
-            	<option value="tomcat8" text="Apache Tomcat 8.x"/>
-		<!-- il valore tomcat7 supporta solamente il 7.x -->
-            	<option value="tomcat7" text="Apache Tomcat 7.x"/>
+            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
+		<option value="tomcat7" text="Apache Tomcat 7"/>
             	<!-- 
 			Deprecati
-			<option value="tomcat6" text="Apache Tomcat 6.x"/>
-			<option value="tomcat5" text="Apache Tomcat 5.x"/> 
+			<option value="tomcat6" text="Apache Tomcat 6"/>
+			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
         </large-select>
 
@@ -189,7 +195,87 @@
                 
     </page> 
 
-    <page name="infoDB_oracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}==oracle">
+    <page name="informazioniPreliminari_nuovaInstallazione" type="input" displayText="Informazioni Dispiegamento"
+	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}==postgresql) OR (${antinstaller_tipo_database}==oracle)">
+
+	<comment displayText="DBMS" bold="true"/>
+	<!-- <large-select defaultValue="standard" property="antinstaller_runtime_db" displayText="Runtime">
+            <option value="runtime" text="Runtime"/>
+        </large-select> -->
+	<large-select defaultValue="runtime" property="antinstaller_config_db" displayText="Configurazione">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="config" text="Database dedicato alla Configurazione"/>
+        </large-select>
+	<large-select defaultValue="runtime" property="antinstaller_log_db" displayText="Tracce">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="log" text="Database dedicato alle Tracce"/>
+        </large-select>
+	<large-select defaultValue="full" property="antinstaller_index_transazioni" displayText="">
+            <option value="standard" text="Standard"/>
+	    <option value="full" text="Full Index"/>
+        </large-select>
+	<large-select defaultValue="runtime" property="antinstaller_stats_db" displayText="Statistiche">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="log" text="Utilizza stesso database delle Tracce"/>
+	    <option value="stats" text="Database dedicato alle Statistiche"/>
+        </large-select>
+	<large-select defaultValue="full" property="antinstaller_index_statistiche" displayText="">
+            <option value="standard" text="Standard"/>
+	    <option value="full" text="Full Index"/>
+        </large-select>
+
+	<comment displayText=""/>
+
+	<comment displayText="Componenti Applicative" bold="true"/>
+	<large-select defaultValue="runtime" property="antinstaller_console_env" displayText="Configurazione e Monitoraggio">
+            <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+	    <option value="manager" text="Ambiente dedicato"/>
+        </large-select>
+	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
+            <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
+        </large-select>
+
+    </page>
+
+    <page name="informazioniPreliminari_nuovaInstallazione_notPostgresNotOracle" type="input" displayText="Informazioni Dispiegamento"
+	ifProperty="(${antinstaller_tipo_installazione}==avanzata) AND (${antinstaller_tipo_database}!=postgresql) AND (${antinstaller_tipo_database}!=oracle)">
+
+	<comment displayText="DBMS" bold="true"/>
+	<!-- <large-select defaultValue="standard" property="antinstaller_runtime_db" displayText="Runtime">
+            <option value="runtime" text="Runtime"/>
+        </large-select> -->
+	<large-select defaultValue="runtime" property="antinstaller_config_db" displayText="Configurazione">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="config" text="Database dedicato alla Configurazione"/>
+        </large-select>
+	<large-select defaultValue="runtime" property="antinstaller_log_db" displayText="Tracce">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="log" text="Database dedicato alle Tracce"/>
+        </large-select>
+	<hidden property="antinstaller_index_transazioni" value="standard"/>
+	<large-select defaultValue="runtime" property="antinstaller_stats_db" displayText="Statistiche">
+            <option value="runtime" text="Utilizza stesso database del Runtime"/>
+	    <option value="log" text="Utilizza stesso database della Tracce"/>
+	    <option value="stats" text="Database dedicato alle Statistiche"/>
+        </large-select>
+	<hidden property="antinstaller_index_statistiche" value="standard"/>
+
+	<comment displayText=""/>
+
+	<comment displayText="Componenti Applicative" bold="true"/>
+	<large-select defaultValue="runtime" property="antinstaller_console_env" displayText="Configurazione e Monitoraggio">
+            <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+	    <option value="manager" text="Ambiente dedicato"/>
+        </large-select>
+	<large-select defaultValue="runtime" property="antinstaller_stats_env" displayText="Generazione delle Statistiche">
+            <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
+	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
+        </large-select>
+
+    </page>
+
+    <page name="infoDB_oracle" type="input" displayText="Informazioni DataSource" ifProperty="${antinstaller_tipo_database}==oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
         <hidden property="porta-db" value="1521"/>
@@ -209,12 +295,9 @@
             displayText="Username" regex=".+"/>
         <validated defaultValue="govway" property="antinstaller_dbpassword"
             displayText="Password" regex=".+"/>
-        <!--<password property="antinstaller_dbpassword" defaultValue="govway"
-                displayText="Password:" regex="^.+$" textMask="true"/>
-         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
     </page>
 
-    <page name="infoDB_notOracle" type="input" displayText="Configurazioni DBMS" ifProperty="${antinstaller_tipo_database}!=oracle">
+    <page name="infoDB_notOracle" type="input" displayText="Informazioni DataSource" ifProperty="${antinstaller_tipo_database}!=oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
@@ -252,9 +335,108 @@
             displayText="Username" regex=".+"/>
         <validated defaultValue="govway" property="antinstaller_dbpassword"
             displayText="Password" regex=".+"/>
-        <!--<password property="antinstaller_dbpassword" defaultValue="govway"
-                displayText="Password:" regex="^.+$" textMask="true"/>
-         <password-confirm origField="antinstaller_dbpassword" property="antinstaller_dbpasswordconfirm" displayText="Conferma password:" defaultValue="govway" regex="^.+$" textMask="true"/>-->
+    </page>
+
+    <page name="infoDB_config_oracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_config_db}==config)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_config" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_config"
+            displayText="Porta"/>
+
+ 	<large-select defaultValue="SID" property="antinstaller_oracle_mode_config" displayText="Tipo Accesso">
+            <option value="SID" text="SID"/>
+            <option value="serviceName" text="Service Name"/>
+        </large-select>
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_config"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_config"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_config"
+            displayText="Password" regex=".+"/>
+    </page>
+
+    <page name="infoDB_config_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Configurazioni" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_config_db}==config)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_config" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_config"
+            displayText="Porta"/>
+
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_config"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_config"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_config"
+            displayText="Password" regex=".+"/>
+    </page>
+
+    <page name="infoDB_log_oracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_log_db}==log)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_log" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_log"
+            displayText="Porta"/>
+
+ 	<large-select defaultValue="SID" property="antinstaller_oracle_mode_log" displayText="Tipo Accesso">
+            <option value="SID" text="SID"/>
+            <option value="serviceName" text="Service Name"/>
+        </large-select>
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_log"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_log"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_log"
+            displayText="Password" regex=".+"/>
+    </page>
+
+    <page name="infoDB_log_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Tracce" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_log_db}==log)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_log" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_log"
+            displayText="Porta"/>
+
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_log"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_log"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_log"
+            displayText="Password" regex=".+"/>
+    </page>
+
+    <page name="infoDB_stats_oracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_database}==oracle) AND (${antinstaller_stats_db}==stats)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_stats" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_stats"
+            displayText="Porta"/>
+
+ 	<large-select defaultValue="SID" property="antinstaller_oracle_mode_stats" displayText="Tipo Accesso">
+            <option value="SID" text="SID"/>
+            <option value="serviceName" text="Service Name"/>
+        </large-select>
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_stats"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_stats"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_stats"
+            displayText="Password" regex=".+"/>
+    </page>
+
+    <page name="infoDB_stats_notOracle" type="input" displayText="Informazioni DataSource dedicato alle Statistiche" ifProperty="(${antinstaller_tipo_database}!=oracle) AND (${antinstaller_stats_db}==stats)">
+        <validated defaultValue="127.0.0.1" property="antinstaller_dbhost_stats" displayText="Hostname"
+            regex=".+"/>
+        <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport_stats"
+            displayText="Porta"/>
+
+        <validated defaultValue="${TABLESPACE}" property="antinstaller_dbname_stats"
+            displayText="Nome Database" regex=".+"/>
+
+        <validated defaultValue="govway" property="antinstaller_dbusername_stats"
+            displayText="Username" regex=".+"/>
+        <validated defaultValue="govway" property="antinstaller_dbpassword_stats"
+            displayText="Password" regex=".+"/>
     </page>
 
     <page name="utenzeConsole" type="input" displayText="Configurazione Utenze"
@@ -379,8 +561,8 @@
       
 	<comment displayText=""/>
 	<large-select defaultValue="wildfly12" property="antinstaller_as4_as" displayText="Application Server">
-            <option value="tomcat" text="tomcat"/>
-            <option value="wildfly12" text="wildfly12"/>
+            <option value="tomcat" text="Apache Tomcat"/>
+            <option value="wildfly12" text="WildFly 12"/>
         </large-select>
 
 	<comment displayText=""/>
@@ -483,6 +665,6 @@
 -->
 
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_backward_compatibility,setup_finished"/>
 
 </installer>

@@ -251,6 +251,20 @@
 		</then>
 	</if>
 	<import file="${rs.monitor.dir}/build.xml" />
+
+	<!-- Tools - batch - statistiche -->
+	<property name="batch.statistiche.dir" location="${rootDir}/tools/batch/statistiche" />
+	<available file="${batch.statistiche.dir}/local_env.xml" property="batch_statistiche_localenv.present"/>
+	<if>
+		<not>
+			<equals arg1="${batch_statistiche_localenv.present}" arg2="true"/>
+		</not>
+		<then>
+			<copy file="${batch.statistiche.dir}/local_env.xml.template" tofile="${batch.statistiche.dir}/local_env.xml"/>
+			<replace file="${batch.statistiche.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
+		</then>
+	</if>
+	<import file="${batch.statistiche.dir}/build.xml" />
 	
 	
 	
@@ -461,6 +475,14 @@
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>
+		</antcall>
+
+		<antcall target="compile_batchStatistiche">
+			<param name="rootDir" value="${rootDir}"/>
+			<param name="src_batchStatistiche" value="${batch.statistiche.dir}/src"/>
+			<param name="debug" value="${debug}"/>
+			<param name="buildAsRelease" value="true"/>
+			<param name="buildAPI" value="false" />
 		</antcall>
 
 		<delete dir="${build}"/>		

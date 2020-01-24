@@ -36,9 +36,10 @@
 			<param name="sql_audit" value="${sql_audit}"/>
 			<param name="sql_users" value="${sql_users}"/>
 			<param name="dist_govwayConsole" value="${deploy_sql}/${TIPO_DB}/"/>
+			<param name="buildSQLSinglePdD_addArchivioComunicazioni" value="false"/>
 		</antcall>
 		
-		<!-- Pulizia file non utilizzati -->
+		<!-- *** Pulizia file non utilizzati *** -->
 		
 		<delete file="${deploy_sql}/${TIPO_DB}/RegistroServizi.sql" />
 		<delete file="${deploy_sql}/${TIPO_DB}/RegistroServizi_delete.sql" />
@@ -48,12 +49,21 @@
 		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD_delete.sql" />
 		<delete file="${deploy_sql}/${TIPO_DB}/ConfigurazionePdD_drop.sql" />
 		
+<!--
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici.sql" />
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_drop.sql" />
+
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche_drop.sql" />
+
+		<delete file="${deploy_sql}/${TIPO_DB}/Semaphore.sql" />
+		<delete file="${deploy_sql}/${TIPO_DB}/Semaphore_drop.sql" />
+-->
 		
 		
+		<!-- [DDL] -->
+
 		<!-- gestione db_info -->
-		
 		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql" token="CREATE TABLE db_info" 
 				                                 value="CREATE TABLE db_info_console"/>
 		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql" token="CONSTRAINT pk_db_info" 
@@ -63,24 +73,101 @@
 		
 		<antcall target="_correctSQL_${TIPO_DB}" />
 		
-		<!-- creo GovWay.sql -->
-		
-		<delete file="${deploy_sql}/${TIPO_DB}/GovWay.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWay.sql" append="yes" >
+		<!-- creo file GovWayRuntime.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayRuntime.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayRuntime.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Runtime
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="RepositoryGovWay.sql RepositoryGovWayConsole.sql RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
+                           files="RepositoryGovWay.sql"/>
 		</concat>
-		
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay.sql"/>
+		
+		<!-- creo file GovWayConfig.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayConfig.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayConfig.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Config
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryGovWayConsole.sql RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
+		</concat>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct.sql"/>
-		
-		<!-- creo govway_drop.sql -->
+
+		<!-- creo file GovWayTracce.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayTracce.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayTracce.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Tracce
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryTracceDiagnostici.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici.sql"/>
+
+		<!-- creo file GovWayTracceDBInfo.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayTracceDBInfo.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayTracceDBInfo.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Tracce DBInfo
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryTracceDiagnostici-DBInfo.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici-DBInfo.sql"/>
+
+		<!-- creo file GovWayStatistiche.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayStatistiche.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayStatistiche.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Statistiche
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryStatistiche.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche.sql"/>
+
+		<!-- creo file GovWayStatisticheDBInfo.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWayStatisticheDBInfo.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWayStatisticheDBInfo.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Statistiche DBInfo
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryStatistiche-DBInfo.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche-DBInfo.sql"/>
+
+		<!-- creo file GovWaySemaphore.sql -->
+		<delete file="${deploy_sql}/${TIPO_DB}/GovWaySemaphore.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/GovWaySemaphore.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Semaphore
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="Semaphore.sql"/>
+		</concat>
+		<delete file="${deploy_sql}/${TIPO_DB}/Semaphore.sql"/>
+
+
+
+		<!-- *** [DROP] creo govway_drop.sql *** -->
 				
 		<delete file="${deploy_sql}/${TIPO_DB}/govway_drop.sql"/>
 
@@ -91,60 +178,159 @@
 		<replace file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql" token="DROP SEQUENCE seq_db_info" 
 				                                 value="DROP SEQUENCE seq_db_info_console"/>
 		
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_drop.sql" append="yes" >
+		<!-- creo file GovWayRuntime_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-runtime_drop.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Runtime
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="Repositorygovway_drop.sql RepositoryGovWayConsole_drop.sql RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
+                           files="RepositoryGovWay_drop.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_drop.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay_drop.sql"/>
+
+		<!-- creo file GovWayConfig_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-config_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Configurazione
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryGovWayConsole_drop.sql RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
+		</concat>
+		
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_drop.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct_drop.sql"/>
-		
-		<!-- creo govway_delete.sql -->
-				
-		<delete file="${deploy_sql}/${TIPO_DB}/govway_runtime_delete.sql"/>		
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_runtime_delete.sql" append="yes" >
+
+		<!-- creo file GovWayTracce_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-tracce_drop.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Tracce
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
-                           files="Repositorygovway_delete.sql"/>
+                           files="RepositoryTracceDiagnostici_drop.sql"/>
 		</concat>
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/govway_tracceDiagnostici_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_tracceDiagnostici_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_drop.sql"/>
+
+		<!-- creo file GovWayTracce-DBInfo_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-tracce-dbinfo_drop.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Tracce DBInfo
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryTracceDiagnostici-DBInfo_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici-DBInfo_drop.sql"/>
+
+		<!-- creo file GovWayStatistiche_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-statistiche_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Statistiche
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryStatistiche_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche_drop.sql"/>
+
+		<!-- creo file GovWayStatistiche-DBInfo_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-statistiche-dbinfo_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Statistiche DBInfo
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryStatistiche-DBInfo_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche-DBInfo_drop.sql"/>
+
+		<!-- creo file GovWaySemaphore_drop.sql -->
+
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-semaphore_drop.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Semaphore
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="Semaphore_drop.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/Semaphore_drop.sql"/>
+		
+
+
+
+		<!-- *** [DELETE] creo govway_delete.sql *** -->
+				
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql"/>		
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-runtime_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Runtime
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryGovWay_delete.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-tracce_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-tracce_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Tracce
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
                            files="RepositoryTracceDiagnostici_delete.sql"/>
 		</concat>
-		
-		<delete file="${deploy_sql}/${TIPO_DB}/govway_registro_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_registro_delete.sql" append="yes" >
+
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-statistiche_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-statistiche_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Statistiche
+	      	
+	      </header>
+			<filelist dir="${deploy_sql}/${TIPO_DB}"
+                           files="RepositoryStatistiche_delete.sql"/>
+		</concat>
+		
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-registro_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-registro_delete.sql" append="yes" >
+	      <header filtering="no" trimleading="yes">
+
+-- GovWay Registro
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
                            files="RepositoryGovWayConsole_delete.sql"/>
 		</concat>		
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/govway_configPdD_delete.sql"/>
-		<concat destfile="${deploy_sql}/${TIPO_DB}/govway_configPdD_delete.sql" append="yes" >
+		<delete file="${deploy_sql}/${TIPO_DB}/govway-configPdD_delete.sql"/>
+		<concat destfile="${deploy_sql}/${TIPO_DB}/govway-configPdD_delete.sql" append="yes" >
 	      <header filtering="no" trimleading="yes">
 
--- GovWay
+-- GovWay Configurazione
 	      	
 	      </header>
 			<filelist dir="${deploy_sql}/${TIPO_DB}"
@@ -152,8 +338,9 @@
 		</concat>
 		
 		
-		<delete file="${deploy_sql}/${TIPO_DB}/Repositorygovway_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWay_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryTracceDiagnostici_delete.sql"/>
+		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryStatistiche_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole_config_delete.sql"/>
 		<delete file="${deploy_sql}/${TIPO_DB}/RepositoryGovWayConsole-SinglePdDAdjunct_delete.sql"/> <!-- ci sono le tracce e i diagnostici -->
