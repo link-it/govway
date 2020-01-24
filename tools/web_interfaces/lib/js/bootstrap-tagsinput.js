@@ -518,6 +518,13 @@
         if (self.$element.attr('disabled')) {
           return;
         }
+        var isTgtEL = $(event.target).attr('data-role');
+        if(isTgtEL === undefined)
+        	return;
+        
+        if(isTgtEL != 'remove')
+        	return;
+        
         self.remove($(event.target).closest('.tag').data('item'));
       }, self));
 
