@@ -37,6 +37,7 @@
 									<arg value="false"/> <!-- updateLibs -->
 									<arg value="${package.log.dir}"/>
 									<arg value="${package.doc.generate}"/>
+									<arg value="${package.git_info.generate}"/>
 								</exec>
 							</target>
 						</configuration>

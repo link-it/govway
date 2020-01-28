@@ -21,6 +21,7 @@ GIT_URL=https://github.com/link-it/govway.git
 UPDATE_DOC=true
 UPDATE_LIB=true
 REBUILD=true
+READ_GIT_INFO=true
 
 #####################################
 # Variabili per lo skip ############
@@ -78,6 +79,16 @@ if [ $# -eq 7 ] ; then
     LOG_DIR="$6"
     UPDATE_DOC="$7"
 fi
+if [ $# -eq 8 ] ; then
+    ramo="$1"
+    WORK_DIR="$2"
+    SKIP_CHECKS="$3"
+    SKIP_SRC_VERSION="$4"
+    UPDATE_LIB="$5"
+    LOG_DIR="$6"
+    UPDATE_DOC="$7"
+    READ_GIT_INFO="$8"
+fi
 
 #####################################
 # Variabili a Runtime ##############
@@ -98,6 +109,7 @@ infoPrintln "TIPO: ${ramo}"
 infoPrintln "BUILD-SETUP: ${REBUILD}"
 infoPrintln "BUILD-DOC: ${UPDATE_DOC}"
 infoPrintln "BUILD-LIB: ${UPDATE_LIB}"
+infoPrintln "READ_GIT_INFO: ${READ_GIT_INFO}"
 infoPrintln "---------------------------------------"
 
 #####################################
@@ -218,6 +230,14 @@ infoPrintln "Comincio produzione distribuzione binaria"
 cd ${WORKING_COPY}/ant/setup
 if [ ! -d deploy/sw/ -o "$REBUILD" == "true" ]
 then
+
+	if [ "${READ_GIT_INFO}" == "false" ]
+	then
+		debugPrintln "Disabilitazione jar per accesso informazioni git ..."
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename
+		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename
+	fi
+
 	infoPrintln "Generazione dei pacchetti software in corso (!!NOTA: questa operazione richiede parecchi minuti) ..."
 	debugPrintln "E' possibile seguire il processo di generazione dei pacchetti tramite il file di log ${LOG_FILE}"
 	#if [ $# -eq 0 ] ; then
@@ -239,6 +259,13 @@ then
 		exit 2
         fi
 	infoPrintln "Generazione dei pacchetti software terminata correttamente"
+
+	if [ "${READ_GIT_INFO}" == "false" ]
+	then
+		debugPrintln "Ripristino jar per accesso informazioni git ..."
+		mv ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar.rename ${WORKING_COPY}/lib/git/openspcoop2_git-task-1.0.jar
+		mv ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar.rename ${WORKING_COPY}/lib/git/org.eclipse.jgit-5.0.1.201806211838-r.jar
+	fi
 fi
 
 mkdir -p ${WORK_DIR}/${OPENSPCOOP_PDD_FILE}

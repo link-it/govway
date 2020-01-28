@@ -36,6 +36,7 @@
 		<package.skip.check>true</package.skip.check>
 		<package.skip.src>true</package.skip.src>
 		<package.doc.generate>false</package.doc.generate>
+		<package.git_info.generate>true</package.git_info.generate>
 
 		<!-- testsuite (test phase, use 'none' for disable) -->
 		<testsuite>test</testsuite>
