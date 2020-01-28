@@ -21,6 +21,7 @@
 
 package org.openspcoop2.pdd.core.handlers.statistics;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.InRequestContext;
 import org.openspcoop2.pdd.core.handlers.InRequestHandler;
@@ -37,6 +38,11 @@ public class StatisticsInRequestHandler implements InRequestHandler {
 
 	@Override
 	public void invoke(InRequestContext context) throws HandlerException{
+		
+		if(!OpenSPCoop2Properties.getInstance().isStatisticheViaJmx()) {
+			return;
+		}
+		
 		context.getPddContext().addObject(StatisticsConstants.DATA_INGRESSO_RICHIESTA, context.getDataElaborazioneMessaggio());
 	}
 	

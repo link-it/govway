@@ -81,6 +81,8 @@ UPDATE configurazione set response_cache_lifecache='-1';
 
 -- Configurazione Corrispondenza Profilo con Registro
 UPDATE configurazione set validazione_profilo='abilitato';
+-- Disabilito per default la validazione con schema xsd dei protocolli
+UPDATE configurazione set validazione_controllo='normale';
 
 -- Configurazione ControlloTraffico
 UPDATE ct_config set max_threads_tipo_errore='http429';

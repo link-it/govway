@@ -20,7 +20,9 @@
 
 package org.openspcoop2.protocol.modipa.utils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -42,9 +44,11 @@ import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.properties.ProtocolProperties;
 import org.openspcoop2.protocol.sdk.properties.ProtocolPropertiesUtils;
@@ -56,6 +60,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
 
@@ -423,5 +428,29 @@ public class ModIUtilities {
 			throw new Exception("Messaggio senza un contenuto nel Body");
 		}
 		return child.getPrefix();
+	}
+	
+	public static String getDynamicValue(String tipoRisorsa, String template, Map<String, Object> dynamicMap, Context context) throws Exception {
+		String valoreRisorsa = null;
+		try {
+			valoreRisorsa = DynamicUtils.convertDynamicPropertyValue(tipoRisorsa, template, dynamicMap, context, true);
+		}catch(Exception e) {
+			throw new Exception("Conversione valore della risorsa ("+tipoRisorsa+") '"+template+"' non riuscita: "+e.getMessage(),e);
+		}
+		return valoreRisorsa;
+	}
+	public static String getDynamicValue(String tipoRisorsa, List<String> templates, Map<String, Object> dynamicMap, Context context) throws Exception {
+		List<Throwable> exceptions = new ArrayList<Throwable>();
+		for (String template : templates) {
+			try {
+				String v = getDynamicValue(tipoRisorsa, template, dynamicMap, context);
+				if(v!=null && !"".equals(v)) {
+					return v;
+				}
+			}catch(Throwable t) {
+				exceptions.add(t);
+			}
+		}
+		throw new UtilsMultiException("Non è stato possibile recuperare un valore da associare alla risorsa '"+tipoRisorsa+"'", exceptions.toArray(new Throwable[1]));
 	}
 }

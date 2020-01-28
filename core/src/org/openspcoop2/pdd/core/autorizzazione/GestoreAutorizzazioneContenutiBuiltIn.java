@@ -20,21 +20,16 @@
 
 package org.openspcoop2.pdd.core.autorizzazione;
 
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
-import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 /**
  * GestoreAutorizzazioneContenutiBuiltIn
@@ -61,20 +56,7 @@ public class GestoreAutorizzazioneContenutiBuiltIn {
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		
 		/* Costruisco dynamic Map */
-		
-		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg);
-		Element element = dInfo.getXml();
-		String elementJson = dInfo.getJson();
-		Properties parametriTrasporto = dInfo.getTrasporto();
-		Properties parametriUrl = dInfo.getQueryParameters();
-		String urlInvocazione = dInfo.getUrl();
-		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-		ErrorHandler errorHandler = new ErrorHandler();
-		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
-				msg,
-				element, elementJson, 
-				null, parametriTrasporto, parametriUrl,
-				errorHandler);
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, pddContext, log);
 		
 		
 		/* Analisi regole di autorizzazione */

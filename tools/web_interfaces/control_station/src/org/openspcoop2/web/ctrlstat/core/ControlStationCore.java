@@ -985,6 +985,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
 	private Map<String, List<String>> jmxPdD_caches_prefill = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
@@ -1240,6 +1241,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -1835,6 +1839,7 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW = core.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
@@ -2213,6 +2218,7 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));

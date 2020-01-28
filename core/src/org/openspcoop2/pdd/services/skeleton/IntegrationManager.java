@@ -1009,7 +1009,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = this.propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(consegnaMessage, 
+					ProtocolMessage  protocolMessage = bustaBuilder.sbustamento(consegnaMessage, pddContext,
 							busta, ruoloMessaggio, proprietaManifest, fase, null, null); // TODO: salvare nel messaggio su I.M. il service binding associato ??? Oppure fare prima lo sbustamento ??
 					if(protocolMessage!=null) {
 						consegnaMessage = protocolMessage.getMessage(); // updated

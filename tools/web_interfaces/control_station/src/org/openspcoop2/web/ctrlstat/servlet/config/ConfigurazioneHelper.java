@@ -4812,6 +4812,153 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 		}
 		
+		HashMap<String, String> infoConnessioneAltriDB = null;
+		HashMap<String, String> statoConnessioniAltriDB = null;
+		try{
+			int numeroDatasource = 0;
+			try{
+				String stato = this.confCore.readJMXAttribute(gestoreRisorseJMX,alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
+						this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
+				if(stato!=null && !"".equals(stato)) {
+					if(this.isErroreHttp(stato, "stato delle connessioni verso altri database")){
+						// e' un errore
+						throw new Exception(stato);
+					}
+					numeroDatasource = Integer.valueOf(stato);
+				}
+			}catch(Exception e){
+				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
+			}
+			if(numeroDatasource>0) {
+				String nomiDatasource = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
+						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
+				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
+					if(this.isErroreHttp(nomiDatasource, "stato delle connessioni verso altri database")){
+						// e' un errore
+						throw new Exception(nomiDatasource);
+					}
+					/* Esempio:
+					 * 3 datasource allocati: 
+	(2020-01-23_15:40:22.391) idDatasource:88c4db87-07a5-4fa6-95a5-e6caf4c21a7f jndiName:org.govway.datasource.tracciamento ConnessioniAttive:0
+	(2020-01-23_15:40:22.396) idDatasource:bae6582a-659b-4b70-bc9c-aca3570b45af jndiName:org.govway.datasource.statistiche ConnessioniAttive:0
+	(2020-01-23_15:40:22.627) idDatasource:4ff843af-94d6-4506-8ecf-aac52bcb3525 jndiName:org.govway.datasource.console ConnessioniAttive:0
+					 **/
+					String [] lines = nomiDatasource.split("\n");
+					if(lines!=null && lines.length>0) {
+						for (String line : lines) {
+							if(line.startsWith("(")) {
+								String [] tmp = line.split(" ");
+								if(tmp!=null && tmp.length>3) {
+									String nomeDS = tmp[2]+" "+tmp[1];
+									try{
+										String idDS = tmp[1].split(":")[1];
+										
+										String statoInfo = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
+												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias),
+												idDS);
+										if(infoConnessioneAltriDB==null) {
+											infoConnessioneAltriDB = new HashMap<String, String>();
+										}
+										infoConnessioneAltriDB.put(nomeDS,statoInfo);
+										
+										String statoDB = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
+												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
+												idDS);
+										if(this.isErroreHttp(statoDB, "stato delle connessioni verso database "+nomeDS)){
+											// e' un errore
+											throw new Exception(statoDB);
+										}
+										if(statoConnessioniAltriDB==null) {
+											statoConnessioniAltriDB = new HashMap<String, String>();
+										}
+										statoConnessioniAltriDB.put(nomeDS,statoDB);
+										
+									}catch(Exception e){
+										ControlStationCore.logError("Errore durante la lettura delle informazioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
+										
+										if(infoConnessioneAltriDB==null) {
+											infoConnessioneAltriDB = new HashMap<String, String>();
+										}
+										infoConnessioneAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+										
+										if(statoConnessioniAltriDB==null) {
+											statoConnessioniAltriDB = new HashMap<String, String>();
+										}
+										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+									}		
+								}
+							}
+						}
+					}
+				}
+			}
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura delle informazioni verso gli altri database (jmxResourcePdD): "+e.getMessage(),e);
+			
+			if(infoConnessioneAltriDB==null) {
+				infoConnessioneAltriDB = new HashMap<String, String>();
+			}
+			infoConnessioneAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+			
+			if(statoConnessioniAltriDB==null) {
+				statoConnessioniAltriDB = new HashMap<String, String>();
+			}
+			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
+		}
+		
+		if(infoConnessioneAltriDB!=null && infoConnessioneAltriDB.size()>0) {
+			Iterator<String> it = infoConnessioneAltriDB.keySet().iterator();
+			int index = 0;
+			while (it.hasNext()) {
+				String idAltroDB = (String) it.next();
+				String infoConnessioneAltroDB = infoConnessioneAltriDB.get(idAltroDB);
+				
+				de = newDataElementStyleRuntime();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+" "+idAltroDB.split(" ")[0]);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				String [] infoConnessioneDatabase = infoConnessioneAltroDB.split("\n");
+				
+				if(infoConnessioneDatabase==null || infoConnessioneDatabase.length<=0){
+					addInformazioneNonDisponibile(dati, "");
+				}
+				else{
+					for (int i = 0; i < infoConnessioneDatabase.length; i++) {
+						
+						try{
+							String label = infoConnessioneDatabase[i];
+							String value = "";
+							if(infoConnessioneDatabase[i].contains(":")){
+								label = infoConnessioneDatabase[i].split(":")[0];
+								value = infoConnessioneDatabase[i].split(":")[1];
+							}
+							
+							de = newDataElementStyleRuntime();
+							de.setLabel(label);
+							if(value!=null){
+								value = StringEscapeUtils.escapeHtml(value);
+							}
+							de.setValue(value);
+							de.setType(DataElementType.TEXT);
+							de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_INFO_DATABASE+"_db"+index+"_"+i);
+							de.setSize(this.getSize());
+							dati.addElement(de);
+						}catch(Exception e){
+							this.log.error("Errore durante la lettura delle informazioni sul database (jmxResourcePdD): "+e.getMessage(),e);
+						}
+					}
+				}
+				
+				index++;
+			}
+		}
+		
+		
 		
 		
 		de = newDataElementStyleRuntime();
@@ -5419,79 +5566,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		dati.addElement(de);
 		
 		
-		HashMap<String, String> statoConnessioniAltriDB = null;
-		try{
-			int numeroDatasource = 0;
-			try{
-				stato = this.confCore.readJMXAttribute(gestoreRisorseJMX,alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						this.confCore.getJmxPdD_configurazioneSistema_nomeAttributo_numeroDatasourceGW(alias));
-				if(stato!=null && !"".equals(stato)) {
-					if(this.isErroreHttp(stato, "stato delle connessioni verso altri database")){
-						// e' un errore
-						throw new Exception(stato);
-					}
-					numeroDatasource = Integer.valueOf(stato);
-				}
-			}catch(Exception e){
-				ControlStationCore.logDebug("Numero di datasource attivi non ottenibili: "+e.getMessage());
-			}
-			if(numeroDatasource>0) {
-				String nomiDatasource = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-						this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-						this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getDatasourcesGW(alias));
-				if(nomiDatasource!=null && !"".equals(nomiDatasource)) {
-					if(this.isErroreHttp(nomiDatasource, "stato delle connessioni verso altri database")){
-						// e' un errore
-						throw new Exception(nomiDatasource);
-					}
-					/* Esempio:
-					 * 3 datasource allocati: 
-	(2020-01-23_15:40:22.391) idDatasource:88c4db87-07a5-4fa6-95a5-e6caf4c21a7f jndiName:org.govway.datasource.tracciamento ConnessioniAttive:0
-	(2020-01-23_15:40:22.396) idDatasource:bae6582a-659b-4b70-bc9c-aca3570b45af jndiName:org.govway.datasource.statistiche ConnessioniAttive:0
-	(2020-01-23_15:40:22.627) idDatasource:4ff843af-94d6-4506-8ecf-aac52bcb3525 jndiName:org.govway.datasource.console ConnessioniAttive:0
-					 **/
-					String [] lines = nomiDatasource.split("\n");
-					if(lines!=null && lines.length>0) {
-						for (String line : lines) {
-							if(line.startsWith("(")) {
-								String [] tmp = line.split(" ");
-								if(tmp!=null && tmp.length>3) {
-									String nomeDS = tmp[2]+" "+tmp[1];
-									try{
-										String idDS = tmp[1].split(":")[1];
-										String statoDB = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
-												this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaDatasourceGW(alias),
-												this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(alias),
-												idDS);
-										if(this.isErroreHttp(statoDB, "stato delle connessioni verso database "+nomeDS)){
-											// e' un errore
-											throw new Exception(statoDB);
-										}
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
-										}
-										statoConnessioniAltriDB.put(nomeDS,statoDB);
-									}catch(Exception e){
-										ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni verso il database "+nomeDS+" (jmxResourcePdD): "+e.getMessage(),e);
-										if(statoConnessioniAltriDB==null) {
-											statoConnessioniAltriDB = new HashMap<String, String>();
-										}
-										statoConnessioniAltriDB.put(nomeDS,ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-									}		
-								}
-							}
-						}
-					}
-				}
-			}
-		}catch(Exception e){
-			ControlStationCore.logError("Errore durante la lettura dello stato delle connessioni verso gli altri database (jmxResourcePdD): "+e.getMessage(),e);
-			if(statoConnessioniAltriDB==null) {
-				statoConnessioniAltriDB = new HashMap<String, String>();
-			}
-			statoConnessioniAltriDB.put("GovWayDatasources",ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE);
-		}
+		// statoConnessioniAltriDB, letto prima durante l'acquisizione delle informazion
 		if(statoConnessioniAltriDB!=null && statoConnessioniAltriDB.size()>0) {
 			Iterator<String> it = statoConnessioniAltriDB.keySet().iterator();
 			int index = 0;
@@ -5519,6 +5594,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				dati.addElement(de);
 			}
 		}
+		
 		
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_JMS);

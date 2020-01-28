@@ -40,6 +40,8 @@ import org.openspcoop2.message.soap.reference.Reference;
 import org.openspcoop2.message.soap.wsaddressing.Costanti;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
+import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
+import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -58,8 +60,11 @@ import org.openspcoop2.security.message.SubErrorCodeSecurity;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
+import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.slf4j.Logger;
 
 /**
@@ -164,7 +169,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 	}
 	
-	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, 
+	public SOAPEnvelope validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza,
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModISecurityConfig securityConfig) throws Exception {
 		
@@ -214,13 +219,27 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			wss4jSignature = new MessageSecurityReceiver_wss4j();
 			Hashtable<String,Object> secProperties = new Hashtable<>();
 			secProperties.put(SecurityConstants.SECURITY_ENGINE, SecurityConstants.SECURITY_ENGINE_WSS4J);
-			secProperties.put(SecurityConstants.ACTION, SecurityConstants.TIMESTAMP_ACTION+" "+SecurityConstants.SIGNATURE_ACTION);
 			if(this.modiProperties.getSoapSecurityTokenActor()!=null && !"".equals(this.modiProperties.getSoapSecurityTokenActor())) {
 				secProperties.put(SecurityConstants.ACTOR, this.modiProperties.getSoapSecurityTokenActor());
 			}
 			secProperties.put(SecurityConstants.MUST_UNDERSTAND, this.modiProperties.isSoapSecurityTokenMustUnderstand()+"");
-			secProperties.put(SecurityConstants.IS_BSP_COMPLIANT, SecurityConstants.TRUE);
 			
+			// cornice sicurezza
+			if(!request) {
+				corniceSicurezza = false; // permessa solo per i messaggi di richiesta
+			}
+			if(corniceSicurezza) {
+				addValidationCorniceSicurezza(secProperties);
+			}
+			
+			// action
+			StringBuffer bfAction = new StringBuffer();
+			bfAction.append(SecurityConstants.TIMESTAMP_ACTION).append(" ").append(SecurityConstants.SIGNATURE_ACTION);
+			if(corniceSicurezza) {
+				bfAction.append(" ").append(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED);
+			}
+			secProperties.put(SecurityConstants.ACTION, bfAction.toString());
+						
 			// parti attese come firmate
 			// La funzionalità solleva errori se trova anche altre parti firmate non attese.
 			// Implemento questo controllo tramite i WSDataRef
@@ -236,6 +255,10 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			if(integrita) {
 				bf.append(";");
 				bf.append("{Element}{").append(soapEnvelope.getNamespaceURI()).append("}Body");
+			}
+			if(addCorniceSicurezza) {
+				bf.append(";");
+				bf.append("{Element}{").append(Costanti.SAML_20_NAMESPACE).append("}Assertion");
 			}
 			secProperties.put(SecurityConstants.SIGNATURE_PARTS, bf.toString());
 			secProperties.put(SecurityConstants.SIGNATURE_PARTS_VERIFY, SecurityConstants.TRUE);
@@ -253,6 +276,10 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				secProperties.put(SecurityConstants.ENABLE_REVOCATION, SecurityConstants.TRUE);
 			}
 			secProperties.put(SecurityConstants.SIGNATURE_VERIFICATION_PROPERTY_REF_ID, pTruststore);
+			if(corniceSicurezza) {
+				secProperties.put(SecurityConstants.SIGNATURE_PROPERTY_REF_ID, pTruststore);
+			}
+			secProperties.put(SecurityConstants.IS_BSP_COMPLIANT, SecurityConstants.TRUE);
 			
 			// setProperties
 			messageSecurityContext.setIncomingProperties(secProperties, false);
@@ -469,6 +496,72 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		}
 	    
 		
+		/*
+		 * == cornice sicurezza ==
+		 */
+		if(corniceSicurezza) {
+			
+			DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(msg.getFactory()).getNamespaceContext(securityHeader);
+			XPathExpressionEngine engine = new XPathExpressionEngine(msg.getFactory());
+			
+			String xpathSaml2_CodiceEnte = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+					append("}NameID/text()").toString();
+			try {
+				String codiceEnte = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_CodiceEnte);
+				if(codiceEnte==null || "".equals(codiceEnte)) {
+					throw new XPathNotFoundException("non trovato");
+				}
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
+			}
+			catch(XPathNotFoundException notFound) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
+						"Cornice Sicurezza; elemento 'Subject/NameID'"));
+			}catch(Exception e) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
+						"Cornice Sicurezza; elemento 'Subject/NameID'"));
+			}
+			
+			String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
+			String xpathSaml2_User = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+					append("}Attribute[@Name='").append(attributeNameUser).append("']//{").
+					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();
+			try {
+				String user = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_User);
+				if(user==null || "".equals(user)) {
+					throw new XPathNotFoundException("non trovato");
+				}
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, user);
+			}
+			catch(XPathNotFoundException notFound) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
+						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameUser+"'"));
+			}catch(Exception e) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
+						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameUser+"'"));
+			}
+			
+			String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
+			String xpathSaml2_IpUser = new StringBuilder().append("//{").append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).
+					append("}Attribute[@Name='").append(attributeNameIpUser).append("']//{").
+					append(org.openspcoop2.message.constants.Costanti.SAML_20_NAMESPACE).append("}AttributeValue/text()").toString();
+			try {
+				String ipUser = engine.getStringMatchPattern(securityHeader, dnc, xpathSaml2_IpUser);
+				if(ipUser==null || "".equals(ipUser)) {
+					throw new XPathNotFoundException("non trovato");
+				}
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, ipUser);
+			}
+			catch(XPathNotFoundException notFound) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_PRESENTE, 
+						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameIpUser+"'"));
+			}catch(Exception e) {
+				erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.FORMATO_INTESTAZIONE_NON_CORRETTO, 
+						"Cornice Sicurezza; elemento 'Attribute/"+attributeNameIpUser+"'"));
+			}
+			
+		}
+		
+		
 		
 		/*
 		 * == sbustamento/traccia ==
@@ -491,5 +584,21 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 		
 		return soapSecurity.buildTraccia(msg.getMessageType());
 		
+	}
+	
+	private void addValidationCorniceSicurezza(Hashtable<String,Object> secProperties) {
+
+		secProperties.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20);
+		secProperties.put(SecurityConstants.SAML_ENVELOPED_SAML_SIGNATURE_XMLCONFIG_PREFIX_ID, SecurityConstants.TRUE);
+		
+		boolean senderVouche = true;
+		if(senderVouche) {
+			secProperties.put("validateSamlSubjectConfirmation", SecurityConstants.TRUE);
+			secProperties.put(SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID, SecurityConstants.SAML_SUBJECT_CONFIRMATION_VALIDATION_METHOD_XMLCONFIG_ID_SENDER_VOUCHES);
+		}
+		else {
+			secProperties.put("validateSamlSubjectConfirmation", SecurityConstants.FALSE);
+		}
+
 	}
 }

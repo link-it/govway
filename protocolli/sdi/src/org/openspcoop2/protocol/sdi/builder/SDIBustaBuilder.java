@@ -36,6 +36,7 @@ import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRiceviNotifica;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioRicezioneFatture;
 import org.openspcoop2.protocol.sdi.constants.SDICostantiServizioTrasmissioneFatture;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -69,7 +70,8 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -81,7 +83,8 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 			return protocolMessage;
 		}
 		
-		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, bustaRichiesta,
+		ProtocolMessage protocolMessage = super.imbustamento(msg, context,
+				busta, bustaRichiesta,
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 		
 		// Modifico il messaggio per aggiungere la struttura SDI in base all'azione invocata e al ruolo (Richiesta/Risposta) e al fatto che non vi sono errori.
@@ -196,7 +199,8 @@ public class SDIBustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 	
 	@Override
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException{
 		

@@ -25,6 +25,7 @@ package org.openspcoop2.protocol.engine.builder;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -95,32 +96,39 @@ public class Imbustamento  {
 
 	/* ----------------  Metodi per la costruzione di una busta  -------------------- */
 
-	public ProtocolMessage imbustamentoRichiesta(OpenSPCoop2Message msg,Busta busta,
+	public ProtocolMessage imbustamentoRichiesta(OpenSPCoop2Message msg,Context context, 
+			Busta busta,
 			Integrazione integrazione,boolean gestioneManifest,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento) throws ProtocolException{	
-		return this._imbustamento(msg, busta, null,
+		return this._imbustamento(msg, context,
+				busta, null,
 				integrazione, gestioneManifest, RuoloMessaggio.RICHIESTA, scartaBody, 
 				proprietaManifestAttachments, faseImbustamento);
 	}
-	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Context context, 
+			Busta busta, Busta bustaRichiesta,
 			Integrazione integrazione,boolean gestioneManifest,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento) throws ProtocolException{	
-		return this._imbustamento(msg, busta, bustaRichiesta,
+		return this._imbustamento(msg, context,
+				busta, bustaRichiesta,
 				integrazione, gestioneManifest, RuoloMessaggio.RISPOSTA, scartaBody, 
 				proprietaManifestAttachments, faseImbustamento);
 	}
-	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Busta busta,Busta bustaRichiesta,
+	public ProtocolMessage imbustamentoRisposta(OpenSPCoop2Message msg,Context context, 
+			Busta busta,Busta bustaRichiesta,
 			Integrazione integrazione,ProprietaManifestAttachments proprietaManifestAttachments, 
 			FaseImbustamento faseImbustamento) throws ProtocolException{	
-		return this._imbustamento(msg, busta, bustaRichiesta,
+		return this._imbustamento(msg, context,
+				busta, bustaRichiesta,
 				integrazione, false, RuoloMessaggio.RISPOSTA, false, 
 				proprietaManifestAttachments, 
 				faseImbustamento);
 	}
 
-	private ProtocolMessage _imbustamento(OpenSPCoop2Message msg,Busta busta,Busta bustaRichiesta,
+	private ProtocolMessage _imbustamento(OpenSPCoop2Message msg,Context context, 
+			Busta busta,Busta bustaRichiesta,
 			Integrazione integrazione,boolean gestioneManifest,RuoloMessaggio ruoloMessaggio,boolean scartaBody,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento) throws ProtocolException{	
@@ -129,7 +137,8 @@ public class Imbustamento  {
 		}
 		proprietaManifestAttachments.setGestioneManifest(gestioneManifest);
 		proprietaManifestAttachments.setScartaBody(scartaBody);
-		return this.protocolFactory.createBustaBuilder(this.state).imbustamento(msg, busta, bustaRichiesta,
+		return this.protocolFactory.createBustaBuilder(this.state).imbustamento(msg, context,
+				busta, bustaRichiesta,
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 	}
 

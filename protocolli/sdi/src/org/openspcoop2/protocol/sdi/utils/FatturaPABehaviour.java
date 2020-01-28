@@ -101,7 +101,8 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 					try{
 						SDIFactory sdiFactory = new SDIFactory();
 						sdiFactory.createBustaBuilder(state).
-							sbustamento(msg, busta, RuoloMessaggio.RICHIESTA, new ProprietaManifestAttachments(),
+							sbustamento(msg, gestoreMessaggioRichiesta.getPdDContext(),
+									busta, RuoloMessaggio.RICHIESTA, new ProprietaManifestAttachments(),
 								FaseSbustamento.PRE_CONSEGNA_RICHIESTA,requestInfo.getIntegrationServiceBinding(),requestInfo.getBindingConfig());
 						ByteArrayOutputStream bout = new ByteArrayOutputStream();
 						TunnelSoapUtils.sbustamentoMessaggio(msg,bout);

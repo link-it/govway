@@ -26,6 +26,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.w3c.dom.Element;
 
 /**
@@ -37,7 +38,7 @@ import org.w3c.dom.Element;
  */
 public class DynamicInfo {
 
-	private PdDContext pddContext;
+	private Context pddContext;
 	private Busta busta;
 	private Properties trasporto;
 	private Properties queryParameters;
@@ -73,10 +74,10 @@ public class DynamicInfo {
 	public void setBusta(Busta busta) {
 		this.busta = busta;
 	}
-	public PdDContext getPddContext() {
+	public Context getPddContext() {
 		return this.pddContext;
 	}
-	public void setPddContext(PdDContext pddContext) {
+	public void setPddContext(Context pddContext) {
 		this.pddContext = pddContext;
 	}
 	public Properties getTrasporto() {

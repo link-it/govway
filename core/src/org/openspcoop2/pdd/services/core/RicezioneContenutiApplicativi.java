@@ -3794,7 +3794,8 @@ public class RicezioneContenutiApplicativi {
 					// attachments non gestiti!
 					ProprietaManifestAttachments proprietaManifest = propertiesReader.getProprietaManifestAttachments("standard");
 					proprietaManifest.setGestioneManifest(false);
-					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(requestMessage, bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
+					ProtocolMessage protocolMessage = bustaBuilder.sbustamento(requestMessage, pddContext,
+							bustaRichiesta, RuoloMessaggio.RICHIESTA, proprietaManifest,
 							FaseSbustamento.PRE_INVIO_RICHIESTA_PER_RIFERIMENTO, requestInfo.getIntegrationServiceBinding(), requestInfo.getBindingConfig());
 					if(protocolMessage!=null) {
 						requestMessage = protocolMessage.getMessage(); // updated

@@ -1949,7 +1949,9 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}
 				// MBean StatistichePdD
 				try{
-					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanStatistichePdD();
+					if(propertiesReader.isStatisticheViaJmx()) {
+						OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanStatistichePdD();
+					}
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - statistiche");
 				}
@@ -2057,7 +2059,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 						configurazionePdDManager.tracciamentoBuste(), 
 						configurazionePdDManager.dumpBinarioPD(), configurazionePdDManager.dumpBinarioPA(),
 						OpenSPCoop2Logger.loggerTracciamentoAbilitato, OpenSPCoop2Logger.loggerDumpAbilitato,
-						infoConfigSistema.getInformazioniDatabase(),
+						infoConfigSistema.getInformazioniDatabase(), infoConfigSistema.getInformazioniAltriDatabase(),
 						infoConfigSistema.getInformazioniSSL(true,true),
 						infoConfigSistema.getInformazioniCryptographyKeyLength(),
 						infoConfigSistema.getInformazioniCharset(),

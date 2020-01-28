@@ -48,7 +48,8 @@ public class IDServizio implements java.io.Serializable {
     protected IDSoggetto soggettoErogatore;
     
     // Campi opzionali
-    protected String azione;
+    protected String portType;
+	protected String azione;
     protected String uriAccordoServizioParteComune;
     protected TipologiaServizio tipologia;
 	
@@ -86,6 +87,12 @@ public class IDServizio implements java.io.Serializable {
 	
 	
 	// Campi opzionali
+    public String getPortType() {
+		return this.portType;
+	}
+	public void setPortType(String portType) {
+		this.portType = portType;
+	}
 	public String getAzione() {
 		return this.azione;
 	}
@@ -207,6 +214,9 @@ public class IDServizio implements java.io.Serializable {
 		if(this.nome!=null)
 			s.setNome(new String(this.nome));
 		s.setVersione(this.versione);
+		
+		if(this.portType!=null)
+			s.setPortType(new String(this.portType));
 		
 		if(this.azione!=null)
 			s.setAzione(new String(this.azione));

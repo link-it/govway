@@ -42,6 +42,7 @@ import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneUtilities;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.DataElement;
+import org.openspcoop2.web.lib.mvc.DataElementInfo;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.Parameter;
 
@@ -236,7 +237,8 @@ public class ProtocolPropertiesUtilities {
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
-
+		addDataElementInfo(item, de);
+		
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
 		switch(consoleItemValueType){
@@ -372,6 +374,17 @@ public class ProtocolPropertiesUtilities {
 		return dati;
 	}
 
+	private static void addDataElementInfo(AbstractConsoleItem<?> item, DataElement de) {
+		if(item.getInfo()!=null) {
+			DataElementInfo dInfo = new DataElementInfo(item.getInfo().getHeaderFinestraModale());
+			dInfo.setHeaderBody(item.getInfo().getHeaderBody());
+			if(item.getInfo().getListBody()!=null && !item.getInfo().getListBody().isEmpty()) {
+				dInfo.setListBody(item.getInfo().getListBody());
+			}
+			de.setInfo(dInfo);
+		}
+	}
+	
 	private static Boolean getSelectedValue(BooleanConsoleItem booleanItem, Object defaultItemValue) {
 		Boolean selectedBooleanValue = null;
 		if(booleanItem.getDefaultValue() != null) {
@@ -424,6 +437,7 @@ public class ProtocolPropertiesUtilities {
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
+		addDataElementInfo(item, de);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
@@ -463,6 +477,7 @@ public class ProtocolPropertiesUtilities {
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
+		//addDataElementInfo(item, de);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
@@ -512,6 +527,7 @@ public class ProtocolPropertiesUtilities {
 		de.setPostBack(item.isReloadOnChange()); 
 		de.setNote(item.getNote());
 		de.setSize(size);
+		addDataElementInfo(item, de);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 
@@ -575,6 +591,7 @@ public class ProtocolPropertiesUtilities {
 		de.setPostBack(item.isReloadOnChange());
 		de.setNote(item.getNote());
 		de.setSize(size);
+		addDataElementInfo(item, de);
 
 		ConsoleItemValueType consoleItemValueType = ProtocolPropertiesUtils.getConsoleItemValueType(item);
 

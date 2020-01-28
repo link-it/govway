@@ -29,6 +29,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -86,7 +87,8 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @throws ProtocolException
 	 */
 	
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta, 
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta, Busta bustaRichiesta, 
 			RuoloMessaggio ruoloMessaggio, 
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento) throws ProtocolException;
@@ -113,7 +115,8 @@ public interface IBustaBuilder<BustaRawType> extends IComponentFactory {
 	 * @return Oggetto che contiene l'informazione raw del protocollo (es. header soap, header di trasporto o altra informazione dipendente dal protocollo) e l'eventuale messaggio modificato
 	 * @throws ProtocolException
 	 */
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, 
 			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException;

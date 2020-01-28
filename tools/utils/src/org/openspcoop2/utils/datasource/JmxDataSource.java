@@ -58,6 +58,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 	
 	/** Nomi metodi */
 	public final static String CONNESSIONI_ALLOCATE = "getUsedConnections";
+	public final static String INFORMAZIONI_DATABASE = "getInformazioniDatabase";
 	public final static String DATASOURCE_CREATI = "getDatasources";
 	
 	public final static String MSG_OPERAZIONE_NON_EFFETTUATA = "Operazione non riuscita: ";
@@ -159,6 +160,22 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			return this.getUsedDBConnections(param1);
 		}
 		
+		else if(actionName.equals(JmxDataSource.INFORMAZIONI_DATABASE)){
+			
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+JmxDataSource.INFORMAZIONI_DATABASE+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+				if(param1==null){
+					throw new MBeanException(new Exception("Identificativo del datasource non fornito"));
+				}
+			}
+			
+			return this.getInformazioniDatabase(param1);
+		}
+		
 		else if(actionName.equals(JmxDataSource.DATASOURCE_CREATI)){
 		
 			return this.getDatasource();
@@ -207,6 +224,15 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 						MBeanOperationInfo.ACTION);
 			
 			// MetaData per l'operazione 
+			MBeanOperationInfo getInformazioniDatabaseOP 
+				= new MBeanOperationInfo(JmxDataSource.INFORMAZIONI_DATABASE,"Informazioni leggibili da una connessione ottenuta dal datasource fornito come parametro",
+						new MBeanParameterInfo[]{
+								new MBeanParameterInfo("idDatasource",String.class.getName(),"Identificativo del datasource")
+							},
+						String.class.getName(),
+						MBeanOperationInfo.ACTION);
+			
+			// MetaData per l'operazione 
 			MBeanOperationInfo getDatasourceAllocatiOP
 				= new MBeanOperationInfo(JmxDataSource.DATASOURCE_CREATI,"Datasource allocati",
 						null,
@@ -223,7 +249,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			MBeanConstructorInfo[] constructors = new MBeanConstructorInfo[]{defaultConstructor};
 			
 			// Lista operazioni
-			MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getDatasourceAllocatiOP, getConnessioneAllocateOP};
+			MBeanOperationInfo[] operations = new MBeanOperationInfo[]{getDatasourceAllocatiOP, getConnessioneAllocateOP, getInformazioniDatabaseOP};
 			
 			return new MBeanInfo(className,description,attributes,constructors,operations,null);
 			
@@ -264,6 +290,16 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 			bf.append(risorse[i]+"\n");
 		}
 		return bf.toString();
+	}
+	
+	public String getInformazioniDatabase(String uuidDataSource){
+		try{
+			org.openspcoop2.utils.datasource.DataSource ds = DataSourceFactory.getInstance(uuidDataSource);
+			return ds.getInformazioniDatabase();
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
 	}
 	
 	public String getDatasource(){

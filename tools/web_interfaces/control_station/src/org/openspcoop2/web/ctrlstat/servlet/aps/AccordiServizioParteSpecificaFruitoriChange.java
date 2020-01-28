@@ -375,6 +375,7 @@ public final class AccordiServizioParteSpecificaFruitoriChange extends Action {
 
 			IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 			idServizioObject.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			idServizioObject.setPortType(asps.getPortType());
 			
 			// se ho impostato nome e tipo del fruitore li utilizzo per ricostruire l'id del fruitore
 			if(StringUtils.isNotBlank(myTipo) && StringUtils.isNotBlank(myNome)){

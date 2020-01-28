@@ -27,11 +27,13 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.pdd.core.token.parser.Claims;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
@@ -39,6 +41,7 @@ import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.security.keystore.FixTrustAnchorsNotEmpty;
@@ -263,8 +266,8 @@ public class ModIImbustamentoRest {
 		
 	}
 	
-	public String addToken(OpenSPCoop2Message msg, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, RuoloMessaggio ruoloMessaggio) throws Exception {
+	public String addToken(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
+			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio) throws Exception {
 		
 		/*
 		 * == realizzo token ==
@@ -305,15 +308,52 @@ public class ModIImbustamentoRest {
 			payloadToken.put(claimName, securityConfig.getClientId());
 			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_CLIENT_ID, securityConfig.getClientId());
 		}
+						
+		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+			corniceSicurezza = false; // permessa solo per i messaggi di richiesta
+		}
+		boolean addIss = true;
+		boolean addSub = true;
 		
-		if(securityConfig.getIssuer()!=null) {
-			payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, securityConfig.getIssuer());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, securityConfig.getIssuer());
+		if(corniceSicurezza) {
+			
+			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
+			
+			String claimNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
+			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER.equals(claimNameCodiceEnte)) {
+				addIss = false;
+			}
+			String codiceEnte = ModIUtilities.getDynamicValue("CorniceSicurezza-CodiceEnte", securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+			payloadToken.put(claimNameCodiceEnte, codiceEnte);
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
+			
+			String claimNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
+			if(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT.equals(claimNameUser)) {
+				addSub = false;
+			}
+			String utente = ModIUtilities.getDynamicValue("CorniceSicurezza-User", securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+			payloadToken.put(claimNameUser, utente);
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
+			
+			String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
+			String indirizzoIpPostazione = ModIUtilities.getDynamicValue("CorniceSicurezza-IPUser", securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+			payloadToken.put(claimNameIpUser, indirizzoIpPostazione);
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
+						
 		}
 		
-		if(securityConfig.getSubject()!=null) {
-			payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, securityConfig.getSubject());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, securityConfig.getSubject());
+		if(addIss) {
+			if(securityConfig.getIssuer()!=null) {
+				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_ISSUER, securityConfig.getIssuer());
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, securityConfig.getIssuer());
+			}
+		}
+		if(addSub) {
+			if(securityConfig.getSubject()!=null) {
+				payloadToken.put(Claims.INTROSPECTION_RESPONSE_RFC_7662_SUBJECT, securityConfig.getSubject());
+				busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, securityConfig.getSubject());
+			}
+
 		}
 		
 		if(ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_VALUE_IDAM0301.equals(securityMessageProfile) || 

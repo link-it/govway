@@ -31,6 +31,7 @@ import org.openspcoop2.message.config.ServiceBindingConfiguration;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -95,7 +96,8 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 	}
 	
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -135,7 +137,8 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 	}
 
 	@Override
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
 		

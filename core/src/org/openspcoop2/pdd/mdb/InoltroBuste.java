@@ -1412,7 +1412,8 @@ public class InoltroBuste extends GenericLib{
 					}
 				}else{
 					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento ["+requestMessageTrasformato.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,bustaRichiesta,
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,pddContext,
+							bustaRichiesta,
 							integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 							FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
@@ -1784,7 +1785,8 @@ public class InoltroBuste extends GenericLib{
 					}
 				}else{
 					msgDiag.highDebug("Tipo Messaggio Richiesta prima dell'imbustamento (after security) ["+requestMessageTrasformato.getClass().getName()+"]");
-					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,bustaRichiesta,
+					ProtocolMessage protocolMessage = imbustatore.imbustamentoRichiesta(requestMessageTrasformato,pddContext,
+							bustaRichiesta,
 							integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 							FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 					if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
@@ -3188,7 +3190,8 @@ public class InoltroBuste extends GenericLib{
 							}	
 							msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 									+"] ["+responseMessage.getClass().getName()+"]");
-							ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
+							ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,pddContext,
+									bustaRisposta,
 									RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
 									FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA, requestInfo);
 							if(protocolMessage!=null) {
@@ -3645,7 +3648,8 @@ public class InoltroBuste extends GenericLib{
 						// Questa invocazione andrebbe implementata su ricezionecontenutiApplicativi teoricamente
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dello sbustamento ["+FaseSbustamento.PRE_CONSEGNA_RISPOSTA
 								+"] ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,bustaRisposta,
+						ProtocolMessage protocolMessage = sbustatore.sbustamento(responseMessage,pddContext,
+								bustaRisposta,
 								RuoloMessaggio.RISPOSTA,sbustamentoManifestRisposta,proprietaManifestAttachments,
 								FaseSbustamento.PRE_CONSEGNA_RISPOSTA, requestInfo);
 						if(protocolMessage!=null ) {

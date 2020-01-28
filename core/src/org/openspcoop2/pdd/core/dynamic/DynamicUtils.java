@@ -27,6 +27,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +50,10 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.utils.DumpAttachment;
 import org.openspcoop2.message.utils.DumpMessaggio;
 import org.openspcoop2.message.xml.XMLUtils;
-import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.utils.DynamicStringReplace;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.ArchiveType;
@@ -84,7 +85,7 @@ public class DynamicUtils {
 	
 	// NOTA: uso volutamente le stesse costanti del connettore File
 	
-	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
+	public static void fillDynamicMapRequest(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
@@ -97,7 +98,7 @@ public class DynamicUtils {
 				busta, trasporto, url,
 				errorHandler);	
     }
-	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, PdDContext pddContext,
+	public static void fillDynamicMapResponse(Logger log, Map<String, Object> dynamicMap, Map<String, Object> dynamicMapRequest, Context pddContext,
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
@@ -145,7 +146,7 @@ public class DynamicUtils {
 			}
 		}
 	}
-	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, PdDContext pddContext, String urlInvocazione,
+	public static void _fillDynamicMap(Logger log, Map<String, Object> dynamicMap, Context pddContext, String urlInvocazione,
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
@@ -279,6 +280,37 @@ public class DynamicUtils {
 
 	
 	
+	// DYNAMIC MAP
+	// Mappa che non contiene 'response' field
+	
+	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Logger log) throws DynamicException {
+		return buildDynamicMap(msg, context, null, log);
+	}
+	public static Map<String, Object> buildDynamicMap(OpenSPCoop2Message msg, Context context, Busta busta, Logger log) throws DynamicException {
+		
+		/* Costruisco dynamic Map */
+		
+		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg);
+		Element element = dInfo.getXml();
+		String elementJson = dInfo.getJson();
+		Properties parametriTrasporto = dInfo.getTrasporto();
+		Properties parametriUrl = dInfo.getQueryParameters();
+		String urlInvocazione = dInfo.getUrl();
+		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+		ErrorHandler errorHandler = new ErrorHandler();
+		DynamicUtils.fillDynamicMapRequest(log, dynamicMap, context, urlInvocazione,
+				msg,
+				element, elementJson, 
+				busta, parametriTrasporto, parametriUrl,
+				errorHandler);
+		
+		return dynamicMap;
+	}
+	
+	
+	
+	
+	
 	
 	// READ DYNAMIC INFO
 	
@@ -342,7 +374,7 @@ public class DynamicUtils {
 	
 	// *** TEMPLATE GOVWAY ***
 
-	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,PdDContext pddContext, boolean forceStartWithDollaro) throws DynamicException{
+	public static String convertDynamicPropertyValue(String name,String tmpParam,Map<String,Object> dynamicMap,Context pddContext, boolean forceStartWithDollaro) throws DynamicException{
 		
 		String tmp = tmpParam;
 		if(!forceStartWithDollaro) {
@@ -746,7 +778,7 @@ public class DynamicUtils {
 	
 	// *** COMPRESS ***
 	
-	public static void convertCompressorTemplate(String name,byte[] template,Map<String,Object> dynamicMap,PdDContext pddContext, 
+	public static void convertCompressorTemplate(String name,byte[] template,Map<String,Object> dynamicMap,Context pddContext, 
 			ArchiveType archiveType, OutputStream out) throws DynamicException{
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(template)){

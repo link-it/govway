@@ -20,8 +20,8 @@
 
 package org.openspcoop2.pdd.core.jmx;
 
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * InformazioniStatoPorta
@@ -42,7 +42,8 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA,
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
+			String infoDatabase, Map<String, String> infoConnessioneAltriDB,
+			String infoSSL, String infoCryptographyKeyLength, 
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone,  
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
@@ -56,7 +57,8 @@ public class InformazioniStatoPorta {
 				log4j_diagnostica, log4j_openspcoop, log4j_integrationManager,
 				tracciamento, dumpPD, dumpPA,
 				log4j_tracciamento, log4j_dump,
-				infoDatabase, infoSSL, infoCryptographyKeyLength, 
+				infoDatabase, infoConnessioneAltriDB,
+				infoSSL, infoCryptographyKeyLength, 
 				infoCharset, infoInternazionalizzazione, infoTimeZone,
 				infoProprietaJavaNetworking, infoProprietaJavaAltro, infoProprietaSistema,
 				infoProtocolli,
@@ -77,11 +79,12 @@ public class InformazioniStatoPorta {
 			boolean log4j_diagnostica,  boolean log4j_openspcoop, boolean log4j_integrationManager, 
 			boolean tracciamento, boolean dumpPD, boolean dumpPA, 
 			boolean log4j_tracciamento, boolean log4j_dump,
-			String infoDatabase, String infoSSL, String infoCryptographyKeyLength, 
+			String infoDatabase, Map<String, String> infoConnessioneAltriDB, 
+			String infoSSL, String infoCryptographyKeyLength, 
 			String infoCharset, String infoInternazionalizzazione, String infoTimeZone, 
 			String infoProprietaJavaNetworking, String infoProprietaJavaAltro, String infoProprietaSistema,
 			String infoProtocolli,
-			String statoConnessioniDB, HashMap<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
+			String statoConnessioniDB, Map<String, String> statoConnessioniAltriDB, String statoConnessioniJMS,
 			String statoTransazioniId, String statoTransazioniIdProtocollo,
 			String statoConnessioniPD, String statoConnessioniPA, 
 			String informazioniInstallazione,
@@ -151,12 +154,27 @@ public class InformazioniStatoPorta {
 		format(bf, log4j_dump ? "abilitato" : "disabilitato", "Log4J openspcoop2_dump.log");
 		bf.append("\n");
 		
-		bf.append("===========================\n");
-		bf.append("Informazioni Database\n");
-		bf.append("===========================\n");
+		bf.append("=============================\n");
+		bf.append("Informazioni Database Runtime\n");
+		bf.append("=============================\n");
 		bf.append("\n");
 		bf.append(infoDatabase);
 		bf.append("\n");
+		
+		if(infoConnessioneAltriDB!=null && infoConnessioneAltriDB.size()>0) {
+			Iterator<String> it = infoConnessioneAltriDB.keySet().iterator();
+			while (it.hasNext()) {
+				String idAltroDB = (String) it.next();
+				String infoConnessioniAltroDB = infoConnessioneAltriDB.get(idAltroDB);
+				bf.append("================================================\n");
+				bf.append("Informazioni Database "+idAltroDB+" \n");
+				bf.append("================================================\n");
+				bf.append("\n");
+				bf.append(infoConnessioniAltroDB);
+				bf.append("\n");
+				bf.append("\n");
+			}
+		}
 		
 		bf.append("===========================\n");
 		bf.append("Informazioni SSL\n");

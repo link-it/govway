@@ -32,6 +32,7 @@ import org.openspcoop2.protocol.as4.config.AS4Properties;
 import org.openspcoop2.protocol.as4.constants.AS4Costanti;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -59,7 +60,8 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context, 
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -111,7 +113,8 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 	}
 	
 	@Override
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context, 
+			Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
 		
@@ -127,7 +130,8 @@ public class AS4BustaBuilder extends BustaBuilder<SOAPElement> {
 		
 		}
 		else {
-			return super.sbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments, 
+			return super.sbustamento(msg, context,
+					busta, ruoloMessaggio, proprietaManifestAttachments, 
 					faseSbustamento, integrationServiceBinding, serviceBindingConfiguration);
 		}
 	}

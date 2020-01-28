@@ -629,6 +629,9 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getUsedConnectionsDatasourcesGW(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getUsedConnectionsDatasourcesGW");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getInformazioniDatabaseDatasourcesGW");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
 	}

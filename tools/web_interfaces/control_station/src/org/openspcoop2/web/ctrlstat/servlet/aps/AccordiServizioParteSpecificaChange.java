@@ -657,6 +657,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			this.configRegistryReader = soggettiCore.getConfigIntegrationReader(this.protocolFactory);
 			IDServizio idAps = apsHelper.getIDServizioFromValues(oldtiposervizio, oldnomeservizio, oldtiposoggetto,oldnomesoggetto, oldversioneaccordo);
 			idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
+			idAps.setPortType((portType != null && !"".equals(portType) ? portType : asps.getPortType()));
 			this.consoleConfiguration = this.consoleDynamicConfiguration.getDynamicConfigAccordoServizioParteSpecifica(this.consoleOperationType, apsHelper, 
 					this.registryReader, this.configRegistryReader, idAps );
 			this.protocolProperties = apsHelper.estraiProtocolPropertiesDaRequest(this.consoleConfiguration, this.consoleOperationType);

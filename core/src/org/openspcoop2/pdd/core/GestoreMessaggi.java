@@ -188,9 +188,9 @@ public class GestoreMessaggi  {
 	private static String cluster_id = null;
 
 	private PdDContext pddContext = null;
-	public PdDContext getPddContext() {
-		return this.pddContext;
-	}
+//	public PdDContext getPddContext() { Non scommentare, c'è piu' in basso il metodo che legge dallo stato
+//		return this.pddContext;
+//	}
 	private IProtocolFactory<?> protocolFactory = null;
 	public IProtocolFactory<?> getProtocolFactory() {
 		return this.protocolFactory;
@@ -2961,6 +2961,10 @@ public class GestoreMessaggi  {
 
 	public PdDContext getPdDContext() throws GestoreMessaggiException{
 
+		if(this.openspcoopstate==null) {
+			return this.pddContext;
+		}
+		
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;

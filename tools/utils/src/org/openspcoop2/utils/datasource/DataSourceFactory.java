@@ -61,6 +61,32 @@ public class DataSourceFactory {
 		return mapUUIDtoDatasources.size();
 	}
 	
+	public static List<String> getJndiNameDatasources() {
+		if(mapJndiNametoUUID.isEmpty()) {
+			return null;
+		}
+		List<String> l = new ArrayList<>();
+		Enumeration<String> jndiNames = mapJndiNametoUUID.keys();
+		while (jndiNames.hasMoreElements()) {
+			String jndiName = (String) jndiNames.nextElement();
+			l.add(jndiName);
+		}
+		return l;
+	}
+	
+	public static List<String> getApplicativeIdDatasources() {
+		if(mapJndiNametoUUID.isEmpty()) {
+			return null;
+		}
+		List<String> l = new ArrayList<>();
+		Enumeration<String> jndiNames = mapJndiNametoUUID.keys();
+		while (jndiNames.hasMoreElements()) {
+			String jndiName = (String) jndiNames.nextElement();
+			l.add(jndiName);
+		}
+		return l;
+	}
+	
 	public static String[] getJmxStatus() throws UtilsException{	
 		if(mapUUIDtoDatasources==null || mapUUIDtoDatasources.size()<=0)
 			return null;

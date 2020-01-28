@@ -76,8 +76,12 @@ public class ModISecurityConfig {
 	private String subject;
 	private List<String> httpHeaders = new ArrayList<String>();
 	
+	private List<String> corniceSicurezzaCodiceEnteRule = null;
+	private List<String> corniceSicurezzaUserRule = null;
+	private List<String> corniceSicurezzaIpUserRule = null;
+	
 	public ModISecurityConfig(OpenSPCoop2Message msg, IDSoggetto soggettoFruitore, AccordoServizioParteSpecifica aspsParam, ServizioApplicativo sa, 
-			boolean rest, boolean fruizione,  boolean request,
+			boolean rest, boolean fruizione,  boolean request, boolean corniceSicurezza,
 			Busta busta, Busta bustaRichiesta) throws ProtocolException {
 		
 		// METODO USATO IN IMBUSTAMENTO
@@ -201,6 +205,37 @@ public class ModISecurityConfig {
 				}
 			}catch(Exception e) {
 				throw new ProtocolException(e.getMessage(),e);
+			}
+			
+			/* Cornice Sicurezza */
+			if(corniceSicurezza) {
+				try {
+					String codiceEnteMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE_MODE);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(codiceEnteMode)) {
+						this.corniceSicurezzaCodiceEnteRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CODICE_ENTE));
+					}
+					else {
+						this.corniceSicurezzaCodiceEnteRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_codice_ente();
+					}
+					
+					String userMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER_MODE);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(userMode)) {
+						this.corniceSicurezzaUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_USER));
+					}
+					else {
+						this.corniceSicurezzaUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_user();
+					}
+					
+					String ipUserMode = ProtocolPropertiesUtils.getOptionalStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER_MODE);
+					if(ModICostanti.MODIPA_PROFILO_RIDEFINISCI.equals(ipUserMode)) {
+						this.corniceSicurezzaIpUserRule = convertToList(ProtocolPropertiesUtils.getRequiredStringValuePropertyRegistry(listProtocolProperties, ModICostanti.MODIPA_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_IP_USER));
+					}
+					else {
+						this.corniceSicurezzaIpUserRule = modiProperties.getSicurezzaMessaggio_corniceSicurezza_dynamic_ipuser();
+					}
+				}catch(Exception e) {
+					throw new ProtocolException(e.getMessage(),e);
+				}
 			}
 		}
 		else if(!fruizione && !request) {
@@ -481,6 +516,41 @@ public class ModISecurityConfig {
 		
 	}
 	
+	public static List<String> convertToList(String value) throws Exception{
+		List<String> l = null;
+		if (value != null){
+			value = value.trim();
+			if("".equals(value)) {
+				throw new Exception("non definita");
+			}
+			l = new ArrayList<String>();
+			if(value.contains(",")) {
+				String [] tmp = value.split(",");
+				if(tmp==null || tmp.length<=0) {
+					throw new Exception("non definita");
+				}
+				for (String s : tmp) {
+					if(s!=null) {
+						s = s.trim();
+						if(!"".equals(s)) {
+							l.add(s);
+						}
+					}
+				}
+				if(l.isEmpty()) {
+					throw new Exception("non definita");
+				}
+			}
+			else {
+				l.add(value);
+			}
+		}
+		else {
+			throw new Exception("non definita");
+		}
+		return l;
+	}
+	
 
 	public String getAlgorithm() {
 		return this.algorithm;
@@ -543,5 +613,17 @@ public class ModISecurityConfig {
 	
 	public List<String> getHttpHeaders() {
 		return this.httpHeaders;
+	}
+	
+	public List<String> getCorniceSicurezzaUserRule() {
+		return this.corniceSicurezzaUserRule;
+	}
+
+	public List<String> getCorniceSicurezzaIpUserRule() {
+		return this.corniceSicurezzaIpUserRule;
+	}
+	
+	public List<String> getCorniceSicurezzaCodiceEnteRule() {
+		return this.corniceSicurezzaCodiceEnteRule;
 	}
 }

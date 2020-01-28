@@ -285,9 +285,11 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 							trustStoreSsl = new ModITruststoreConfig(fruizione, idSoggettoMittente, asps, true);
 						}
 						
+						boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
+						
 						if(rest) {
 							
-							String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, bustaRitornata, 
+							String token = validatoreSintatticoRest.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, trustStoreSsl, securityConfig);
 							
 							if(token!=null) {
@@ -302,7 +304,7 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 						}
 						else {
 							
-							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, bustaRitornata, 
+							SOAPEnvelope token = validatoreSintatticoSoap.validateSecurityProfile(msg, request, securityMessageProfile, corniceSicurezza, bustaRitornata, 
 									erroriValidazione, trustStoreCertificati, securityConfig);
 							
 							if(token!=null) {

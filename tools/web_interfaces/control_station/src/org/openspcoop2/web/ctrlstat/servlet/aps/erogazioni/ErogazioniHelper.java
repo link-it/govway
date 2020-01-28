@@ -1345,6 +1345,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 		// ProtocolProperties
 		
 		IDServizio idAps = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+		idAps.setPortType(asps.getPortType());
 		idAps.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(protocollo);
 		IConsoleDynamicConfiguration consoleDynamicConfiguration = protocolFactory.createDynamicConfigurationConsole();

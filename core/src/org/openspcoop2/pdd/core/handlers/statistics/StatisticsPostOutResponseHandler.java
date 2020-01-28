@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.core.handlers.statistics;
 import java.util.Date;
 
 import org.openspcoop2.core.constants.Costanti;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseHandler;
@@ -43,6 +44,9 @@ public class StatisticsPostOutResponseHandler implements PostOutResponseHandler 
 	@Override
 	public void invoke(PostOutResponseContext context) throws HandlerException{
 		
+		if(!OpenSPCoop2Properties.getInstance().isStatisticheViaJmx()) {
+			return;
+		}
 		
 		// Raccolgo date
 		Object dataIngressoRichiesta = context.getPddContext().getObject(StatisticsConstants.DATA_INGRESSO_RICHIESTA);

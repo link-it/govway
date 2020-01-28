@@ -783,9 +783,9 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante,null,
+			this.controlloAccessiAutenticazione(dati, tipoOp, servletChiamante,null,protocollo,
 					autenticazione, autenticazioneCustom, autenticazioneOpzionale, 
 					autenticazionePrincipal, autenticazioneParametroList,
 					confPers , isSupportatoAutenticazioneSoggetti,true,
@@ -797,7 +797,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			String urlAutorizzazioneRuoli = null;
 			String urlAutorizzazioneScope = null;
 			
-			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, servletChiamante,null,protocollo,
 					autenticazione, autorizzazione, autorizzazioneCustom, 
 					autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numSA, null, null,
 					autorizzazioneRuoli,  urlAutorizzazioneRuoli, numRuoli, null,

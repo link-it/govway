@@ -418,6 +418,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 
 			IDServizio idServizioObject = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
 			idServizioObject.setUriAccordoServizioParteComune(asps.getAccordoServizioParteComune());
+			idServizioObject.setPortType(asps.getPortType());
 			
 			IDFruizione idFruizione = new IDFruizione();
 			idFruizione.setIdServizio(idServizioObject);

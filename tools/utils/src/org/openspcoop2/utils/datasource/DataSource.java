@@ -39,6 +39,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
+import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
 /**
  * Datasource
@@ -104,6 +105,36 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		
 	}
 	
+	public String getInformazioniDatabase() throws Exception{
+		StringBuffer bf = new StringBuffer();
+
+		if(this.getTipoDatabase()!=null){
+			bf.append("TipoDatabase: "+this.getTipoDatabase().getNome());
+		}
+		else{
+			throw new Exception("Tipo di Database non disponibile");
+		}
+
+		Connection c = null; 
+		try{
+			c = (Connection) this.getConnection();
+
+			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sul database");
+			}else{
+				return bf.toString();
+			}
+
+		}finally{
+			try{
+				if(c!=null)
+					this.closeConnection(c);
+			}catch(Exception eClose){}
+		}
+	}
+	
 	protected DataSource(javax.sql.DataSource datasource, TipiDatabase tipoDatabase, boolean wrapOriginalMethods, String jndiName, String applicativeIdDatasource) throws SQLException{
 		try{
 			this.datasource = datasource;
@@ -148,6 +179,10 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 	public Date getDate() {
 		return this.date;
+	}
+	
+	public TipiDatabase getTipoDatabase() {
+		return this.tipoDatabase;
 	}
 	
 	// Metodi utilizzati dallo shutdown

@@ -41,6 +41,7 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	private String regexpr;
 	private TreeMap<String,T> mapLabelValues;
 	private String note;
+	private ConsoleItemInfo info;
 
 	protected AbstractConsoleItem(String id, String label, ConsoleItemType type) throws ProtocolException{
 		super(id, label, type);
@@ -106,6 +107,13 @@ public abstract class AbstractConsoleItem<T> extends BaseConsoleItem {
 	}
 	public void setNote(String note) {
 		this.note = note;
+	}
+	
+	public ConsoleItemInfo getInfo() {
+		return this.info;
+	}
+	public void setInfo(ConsoleItemInfo info) {
+		this.info = info;
 	}
 	
 }

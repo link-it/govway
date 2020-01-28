@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.modipa.utils.ModIPropertiesUtils;
 import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -70,7 +71,7 @@ public class ModIImbustamento {
 		this.modiProperties = ModIProperties.getInstance();
 	}
 	
-	public ProtocolMessage buildMessage(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage buildMessage(OpenSPCoop2Message msg, Context context, Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			IRegistryReader registryReader, IConfigIntegrationReader configIntegrationReader, 
@@ -253,9 +254,11 @@ public class ModIImbustamento {
 					
 					boolean fruizione = MessageRole.REQUEST.equals(messageRole);
 					
+					boolean corniceSicurezza = ModIPropertiesUtils.isPropertySecurityMessageConCorniceSicurezza(aspc, nomePortType, azione);
+					
 					ModIKeystoreConfig keystoreConfig = null;
 					ModISecurityConfig securityConfig = new ModISecurityConfig(msg, idSoggettoMittente, asps, sa, 
-							rest, fruizione, MessageRole.REQUEST.equals(messageRole),
+							rest, fruizione, MessageRole.REQUEST.equals(messageRole), corniceSicurezza,
 							busta, bustaRichiesta);
 					
 					if(MessageRole.REQUEST.equals(messageRole)) {
@@ -273,11 +276,11 @@ public class ModIImbustamento {
 					}
 					
 					if(rest) {
-						String token = imbustamentoRest.addToken(msg, keystoreConfig, securityConfig, busta, securityMessageProfile, ruoloMessaggio);
+						String token = imbustamentoRest.addToken(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(token));
 					}
 					else {
-						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, keystoreConfig, securityConfig, busta, securityMessageProfile, ruoloMessaggio);
+						SOAPEnvelope env = imbustamentoSoap.addSecurity(msg, context, keystoreConfig, securityConfig, busta, securityMessageProfile, corniceSicurezza, ruoloMessaggio);
 						protocolMessage.setBustaRawContent(new ModIBustaRawContent(env));
 					}
 					

@@ -22,7 +22,9 @@
 package org.openspcoop2.utils.jdbc;
 
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -180,5 +182,130 @@ public class JDBCUtilities {
 		else{ 
 			connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE); 
 		} 
+	}
+	
+	
+	
+	
+	
+	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuffer bf) throws SQLException{
+		
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			DatabaseMetaData dbMetaDati = c.getMetaData();
+			if(dbMetaDati!=null){
+
+				if(bf.length()>0){
+					bf.append("\n");
+				}
+
+				try {
+					String productName = dbMetaDati.getDatabaseProductName();
+					bf.append("DatabaseProductName: "+productName);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					String productVersion = dbMetaDati.getDatabaseProductVersion();
+					bf.append("DatabaseProductVersion: "+productVersion);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					int v = dbMetaDati.getDatabaseMajorVersion();
+					bf.append("DatabaseMajorVersion: "+v);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					int v = dbMetaDati.getDatabaseMinorVersion();
+					bf.append("DatabaseMinorVersion: "+v);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					String driverName = dbMetaDati.getDriverName();
+					bf.append("DriverName: "+driverName);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					String productVersion = dbMetaDati.getDriverVersion();
+					bf.append("DriverVersion: "+productVersion);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				int v = dbMetaDati.getDriverMajorVersion();
+				bf.append("DriverMajorVersion: "+v);
+				bf.append("\n");
+				
+				v = dbMetaDati.getDriverMinorVersion();
+				bf.append("DriverMinorVersion: "+v);
+				bf.append("\n");
+
+				try {
+					v = dbMetaDati.getJDBCMajorVersion();
+					bf.append("JDBCMajorVersion: "+v);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					v = dbMetaDati.getJDBCMinorVersion();
+					bf.append("JDBCMinorVersion: "+v);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					String username = dbMetaDati.getUserName();
+					bf.append("Username: "+username);
+					bf.append("\n");
+				} catch (SQLException e) {
+				}
+
+				try {
+					ResultSet catalogs = dbMetaDati.getCatalogs();
+					int size = 0;
+					while (catalogs.next()) {
+						size++;
+					}
+					
+					catalogs = dbMetaDati.getCatalogs();
+					int index = 0;
+					while (catalogs.next()) {
+						if(size==1){
+							bf.append("Catalog: " + catalogs.getString(1) );
+						}
+						else{
+							bf.append("Catalogs["+index+"]: " + catalogs.getString(1) );
+						}
+						bf.append("\n");
+						index++;
+					}
+					catalogs.close();
+				} catch (SQLException e) {
+				}
+
+			}
+
+		}finally{
+			try{
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose){}
+			try{
+				if(pstmt!=null)
+					pstmt.close();
+			}catch(Exception eClose){}
+		}
+
 	}
 }

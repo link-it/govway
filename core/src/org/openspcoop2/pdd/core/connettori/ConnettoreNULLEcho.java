@@ -214,7 +214,8 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				
 				// rimozione vecchia busta
 				Sbustamento sbustatore = new Sbustamento(protocolFactory,state);
-				ProtocolMessage protocolMessage = sbustatore.sbustamento(this.responseMsg,busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
+				ProtocolMessage protocolMessage = sbustatore.sbustamento(this.responseMsg,this.getPddContext(),
+						busta,RuoloMessaggio.RICHIESTA, gestioneManifest, 
 						this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
 						FaseSbustamento.PRE_CONSEGNA_RICHIESTA,this.requestInfo);
 				if(protocolMessage!=null) {
@@ -383,14 +384,16 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 					Integrazione integrazione = new Integrazione();
 					integrazione.setStateless(true);
 					
-					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,bustaRisposta,busta,integrazione,gestioneManifest,false,
+					ProtocolMessage protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,this.getPddContext(),
+							bustaRisposta,busta,integrazione,gestioneManifest,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
 							FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 					if(protocolMessageRisposta!=null && !protocolMessageRisposta.isPhaseUnsupported()) {
 						this.responseMsg = protocolMessageRisposta.getMessage(); // updated
 					}
 					
-					protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,bustaRisposta,busta,integrazione,gestioneManifest,false,
+					protocolMessageRisposta = imbustatore.imbustamentoRisposta(this.responseMsg,this.getPddContext(),
+							bustaRisposta,busta,integrazione,gestioneManifest,false,
 							this.openspcoopProperties.getProprietaManifestAttachments(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD),
 							FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 					if(protocolMessageRisposta!=null && !protocolMessageRisposta.isPhaseUnsupported()) {

@@ -39,6 +39,7 @@ import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -159,7 +160,8 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 
 	
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -254,7 +256,8 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 	}
 
 	@Override
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta,
 			RuoloMessaggio ruoloMessaggio, ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseSbustamento faseSbustamento, ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration) throws ProtocolException {
 		

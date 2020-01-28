@@ -234,7 +234,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 		
 		// Raccolta altri parametri
 		try{
-			this.requestMsg =  request.getRequestMessage(this.requestInfo);
+			this.requestMsg =  request.getRequestMessage(this.requestInfo, this.getPddContext());
 		}catch(Exception e){
 			this.eccezioneProcessamento = e;
 			this.logger.error("Errore durante la lettura del messaggio da consegnare: "+this.readExceptionMessageFromException(e),e);

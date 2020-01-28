@@ -636,12 +636,14 @@ public class InoltroRisposte extends GenericLib{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = null;
 						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
-							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,busta,
+							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,pddContext,
+									busta,
 									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 									FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 						}
 						else {
-							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,busta,null,
+							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
+									busta,null,
 									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 									FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 						}
@@ -842,12 +844,14 @@ public class InoltroRisposte extends GenericLib{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
 						ProtocolMessage protocolMessage = null;
 						if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio)) {
-							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,busta,
+							protocolMessage = imbustatore.imbustamentoRichiesta(responseMessage,pddContext,
+									busta,
 									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 									FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 						}
 						else {
-							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,busta,null,
+							protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
+									busta,null,
 									integrazione,gestioneManifest,scartaBody,proprietaManifestAttachments,
 									FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 						}
@@ -1347,7 +1351,8 @@ public class InoltroRisposte extends GenericLib{
 						gestioneManifestRispostaHttp = configurazionePdDManager.isGestioneManifestAttachments();
 					org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
 							new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
-					ProtocolMessage protocolMessage = sbustatore.sbustamento(responseHttpReply,busta,
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(responseHttpReply,pddContext,
+							busta,
 							RuoloMessaggio.RISPOSTA,gestioneManifestRispostaHttp,proprietaManifestAttachments,
 							FaseSbustamento.POST_CONSEGNA_RISPOSTA_NEW_CONNECTION, requestInfo);
 					if(protocolMessage!=null) {

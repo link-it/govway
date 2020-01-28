@@ -23,6 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
@@ -710,6 +712,42 @@ public class TransazioneBean extends Transazione{
 		else {
 			return "";
 		}
+	}
+	
+	public boolean isShowParteComune() {
+		String parteComune = this.getUriAccordoServizio();
+		if(parteComune!=null && !"".equals(parteComune)) {
+			try {
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
+				if(!idAccordo.getNome().equals(this.getNomeServizio())) {
+					return true;
+				}
+				if(idAccordo.getVersione().intValue() != this.getVersioneServizio()) {
+					return true;
+				}
+				IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(this.getProtocollo());
+				if(protocolFactory.createProtocolConfiguration().isSupportoSoggettoReferenteAccordiParteComune()) {
+					if(!idAccordo.getSoggettoReferente().getTipo().equals(this.getTipoSoggettoErogatore())) {
+						return true;
+					}
+					if(!idAccordo.getSoggettoReferente().getNome().equals(this.getNomeSoggettoErogatore())) {
+						return true;
+					}
+				}
+			}catch(Throwable t) {}
+		}
+		return false;
+	}
+	
+	public String getApi() throws Exception{
+		String parteComune = this.getUriAccordoServizio();
+		if(parteComune!=null && !"".equals(parteComune)) {
+			try {
+				IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(parteComune);
+				return NamingUtils.getLabelAccordoServizioParteComune(idAccordo);
+			}catch(Throwable t) {}
+		}
+		return "";
 	}
 	
 	public String getPddRuoloToolTip() {

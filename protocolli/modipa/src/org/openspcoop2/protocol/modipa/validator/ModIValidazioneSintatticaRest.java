@@ -279,7 +279,7 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 		}
 	}
 	
-	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, 
+	public String validateSecurityProfile(OpenSPCoop2Message msg, boolean request, String securityMessageProfile, boolean corniceSicurezza, 
 			Busta busta, List<Eccezione> erroriValidazione,
 			ModITruststoreConfig trustStoreCertificati, ModITruststoreConfig trustStoreSsl, ModISecurityConfig securityConfig) throws Exception {
 		
@@ -550,17 +550,61 @@ public class ModIValidazioneSintatticaRest extends AbstractModIValidazioneSintat
 							"Token senza claim '"+Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID+"'"));
 				}
 			}
+
+			if(!request) {
+				corniceSicurezza = false; // permessa solo per i messaggi di richiesta
+			}
 			
-			if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT)) {
-				Object sub = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
-				if(sub!=null) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, toString(sub));
+			boolean readIss = true;
+			boolean readSub = true;
+			
+			if(corniceSicurezza) {
+				
+				String claimNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_codice_ente();
+				if(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER.equals(claimNameCodiceEnte)) {
+					readIss = false;
+				}
+				if(objectNode.has(claimNameCodiceEnte)) {
+					Object codiceEnte = objectNode.get(claimNameCodiceEnte);
+					if(codiceEnte!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, toString(codiceEnte));
+					}
+				}
+				
+				String claimNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_user();
+				if(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT.equals(claimNameUser)) {
+					readSub = false;
+				}
+				if(objectNode.has(claimNameUser)) {
+					Object user = objectNode.get(claimNameUser);
+					if(user!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, toString(user));
+					}
+				}
+				
+				String claimNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_rest_ipuser();
+				if(objectNode.has(claimNameIpUser)) {
+					Object userIp = objectNode.get(claimNameIpUser);
+					if(userIp!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, toString(userIp));
+					}
 				}
 			}
-			if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER)) {
-				Object iss = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
-				if(iss!=null) {
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, toString(iss));
+			
+			if(readIss) {
+				if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER)) {
+					Object iss = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUER);
+					if(iss!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_ISSUER, toString(iss));
+					}
+				}
+			}
+			if(readSub) {
+				if(objectNode.has(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT)) {
+					Object sub = objectNode.get(Claims.JSON_WEB_TOKEN_RFC_7519_SUBJECT);
+					if(sub!=null) {
+						busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_REST_SUBJECT, toString(sub));
+					}
 				}
 			}
 			

@@ -57,8 +57,12 @@
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelErogatore" value="Erogatore" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
 							<h:outputText id="outErogatore" value="#{dettagliBean.dettaglio.soggettoErogatore}" rendered="#{not empty dettagliBean.dettaglio.nomeSoggettoErogatore}"/>
 							
-							<h:outputLabel styleClass="outputFieldLabel" id="outLabelServizio" value="#{msg['commons.servizio.label']} #{dettagliBean.dettaglio.tipoApiLabel}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
-							<h:outputText id="outServizio" value="#{dettagliBean.dettaglio.servizio}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelApi" value="#{msg['commons.api.label']} #{dettagliBean.dettaglio.tipoApiLabel}" rendered="#{dettagliBean.dettaglio.showParteComune and not empty dettagliBean.dettaglio.api}"/>
+							<h:outputText id="outApi" value="#{dettagliBean.dettaglio.api}" rendered="#{dettagliBean.dettaglio.showParteComune and not empty dettagliBean.dettaglio.api}"/>
+														
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelApiImplementation1" value="#{msg['commons.servizio.label']}" rendered="#{dettagliBean.dettaglio.showParteComune and not empty dettagliBean.dettaglio.nomeServizio}"/>
+							<h:outputLabel styleClass="outputFieldLabel" id="outLabelApiImplementation2" value="#{msg['commons.api.label']} #{dettagliBean.dettaglio.tipoApiLabel}" rendered="#{not dettagliBean.dettaglio.showParteComune and not empty dettagliBean.dettaglio.nomeServizio}"/>
+							<h:outputText id="outApiImplementation" value="#{dettagliBean.dettaglio.servizio}" rendered="#{not empty dettagliBean.dettaglio.nomeServizio}"/>
 							
 							<h:outputLabel styleClass="outputFieldLabel" id="outLabelAzione" value="Azione" rendered="#{not empty dettagliBean.dettaglio.azione}"/>
 							<h:outputText id="outAzione" value="#{dettagliBean.dettaglio.azione}" rendered="#{not empty dettagliBean.dettaglio.azione}"/>

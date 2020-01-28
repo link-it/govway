@@ -4592,7 +4592,8 @@ public class RicezioneBuste {
 			msgDiag.highDebug("Tipo Messaggio Richiesta prima dello sbustamento ["+FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RISPOSTA
 					+"] ["+requestMessage.getClass().getName()+"]");
 			org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = new org.openspcoop2.protocol.engine.builder.Sbustamento(protocolFactory,openspcoopstate.getStatoRichiesta());
-			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,bustaRichiesta,
+			ProtocolMessage protocolMessage = sbustatore.sbustamento(requestMessage,pddContext,
+					bustaRichiesta,
 					RuoloMessaggio.RICHIESTA,properties.isValidazioneManifestAttachments(),proprietaManifestAttachments,
 					FaseSbustamento.POST_VALIDAZIONE_SEMANTICA_RICHIESTA, requestInfo);
 			if(protocolMessage!=null) {
@@ -6019,7 +6020,8 @@ public class RicezioneBuste {
 													versioneProtocollo,ruoloBustaRicevuta,implementazionePdDMittente,protocolFactory,
 													identitaPdD,idTransazione,loader,oneWayVersione11,implementazionePdDMittente,
 													tracciamento,messageSecurityContext,
-													correlazioneApplicativa));
+													correlazioneApplicativa,
+													pddContext));
 										}
 										openspcoopstate.releaseResource();
 										return;
@@ -6999,7 +7001,8 @@ public class RicezioneBuste {
 						}
 					}else{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,bustaRisposta,bustaRichiesta,
+						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
+								bustaRisposta,bustaRichiesta,
 								infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
 								FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
@@ -7197,7 +7200,8 @@ public class RicezioneBuste {
 						// else gia' effettuato nella precedente fase pre-sicurezza
 					}else{
 						msgDiag.highDebug("Tipo Messaggio Risposta prima dell'imbustamento (after-security) ["+responseMessage.getClass().getName()+"]");
-						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,bustaRisposta,bustaRichiesta,
+						ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(responseMessage,pddContext,
+								bustaRisposta,bustaRichiesta,
 								infoIntegrazione,gestioneManifestRisposta,scartaBody,proprietaManifestAttachments,
 								FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 						if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
@@ -8536,7 +8540,8 @@ public class RicezioneBuste {
 			IDSoggetto identitaPdD,String idTransazione,Loader loader, boolean oneWayVersione11,
 			String implementazionePdDSoggettoMittente,
 			Tracciamento tracciamento,MessageSecurityContext messageSecurityContext,
-			String idCorrelazioneApplicativa) throws ProtocolException, TracciamentoException{
+			String idCorrelazioneApplicativa,
+			PdDContext pddContext) throws ProtocolException, TracciamentoException{
 
 		RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstate.getStatoRichiesta(), true,protocolFactory);
 		History historyBuste = new History(openspcoopstate.getStatoRichiesta(), log);
@@ -8729,14 +8734,16 @@ public class RicezioneBuste {
 			}
 			
 			
-			ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(msg,bustaHTTPReply,bustaRichiesta,
+			ProtocolMessage protocolMessage = imbustatore.imbustamentoRisposta(msg,pddContext,
+					bustaHTTPReply,bustaRichiesta,
 					integrazione,false,false,null,
 					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				msg = protocolMessage.getMessage(); // updated
 			}
 			
-			protocolMessage = imbustatore.imbustamentoRisposta(msg,bustaHTTPReply,bustaRichiesta,
+			protocolMessage = imbustatore.imbustamentoRisposta(msg,pddContext,
+					bustaHTTPReply,bustaRichiesta,
 					integrazione,false,false,null,
 					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {

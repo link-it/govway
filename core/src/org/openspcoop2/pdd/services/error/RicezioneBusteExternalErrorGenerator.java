@@ -204,7 +204,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
@@ -244,7 +244,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
@@ -284,7 +284,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Processamento(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreIntegrazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,
@@ -323,7 +323,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
 					busta, integrazione, idTransazione, errori,
 					messageSecurityPropertiesResponse, messageSecurityContext,
@@ -365,7 +365,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
-			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext.getContext(),
+			OpenSPCoop2Message msg = this.imbustamentoErrore.msgErroreProtocollo_Intestazione(this.identitaPdD,this.tipoPdD,pddContext,
 					this.idModulo, 
 					busta, integrazione, idTransazione, erroreCooperazione,
 					messageSecurityPropertiesResponse, messageSecurityContext,

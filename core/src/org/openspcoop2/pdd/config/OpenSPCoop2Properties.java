@@ -1618,6 +1618,9 @@ public class OpenSPCoop2Properties {
 			this.getGestioneTokenHeaderIntegrazioneTrasporto_scopeSeparator();
 			this.getGestioneTokenHeaderIntegrazioneTrasporto_roleSeparator();
 			
+			// Statistiche via jmx Console
+			this.isStatisticheViaJmx();
+			
 			// Trasporto REST / SOAP
 			
 			this.getSOAPServicesUrlParametersForwardConfig();
@@ -15698,6 +15701,34 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getCustomClaims_keyValue_gestioneTokenHeaderIntegrazioneJson_setPA.get(claimName);
+	}
+	
+	
+	
+	/* ------------- JMX Statistiche ---------------------*/
+	
+	private static Boolean isStatisticheViaJmx = null;
+	public boolean isStatisticheViaJmx(){
+
+		if(OpenSPCoop2Properties.isStatisticheViaJmx==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.jmx.statistiche"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isStatisticheViaJmx = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isStatisticheViaJmx = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.jmx.statistiche' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isStatisticheViaJmx = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isStatisticheViaJmx;
 	}
 	
 	

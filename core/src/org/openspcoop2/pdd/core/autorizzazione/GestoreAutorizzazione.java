@@ -23,7 +23,6 @@
 package org.openspcoop2.pdd.core.autorizzazione;
 
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -51,9 +50,7 @@ import org.openspcoop2.pdd.core.autorizzazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.EsitoAutorizzazionePortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazioneContenutoPortaDelegata;
 import org.openspcoop2.pdd.core.autorizzazione.pd.IAutorizzazionePortaDelegata;
-import org.openspcoop2.pdd.core.dynamic.DynamicInfo;
 import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
-import org.openspcoop2.pdd.core.dynamic.ErrorHandler;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -69,7 +66,6 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
-import org.w3c.dom.Element;
 
 /**
  * Classe utilizzata per la gestione del processo di autorizzazione Buste
@@ -757,20 +753,7 @@ public class GestoreAutorizzazione {
 	    		else {
 	    				    			
 	    			/* Costruisco dynamic Map */
-	    			
-	    			DynamicInfo dInfo = DynamicUtils.readDynamicInfo(message);
-	    			Element element = dInfo.getXml();
-	    			String elementJson = dInfo.getJson();
-	    			Properties parametriTrasporto = dInfo.getTrasporto();
-	    			Properties parametriUrl = dInfo.getQueryParameters();
-	    			String urlInvocazione = dInfo.getUrl();
-	    			Map<String, Object> dynamicMap = new Hashtable<String, Object>();
-	    			ErrorHandler errorHandler = new ErrorHandler();
-	    			DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
-	    					message,
-	    					element, elementJson, 
-	    					null, parametriTrasporto, parametriUrl,
-	    					errorHandler);
+	    			Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(message, pddContext, log);
 	    				    			
 	    			/* Analisi claims di autorizzazione */
 	    			

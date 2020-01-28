@@ -31,6 +31,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -289,7 +290,7 @@ public class ConnettoreMsg  {
 	public void setCheckPresenzaHeaderPrimaSbustamento(boolean checkPresenzaHeaderPrimaSbustamento) {
 		this.checkPresenzaHeaderPrimaSbustamento = checkPresenzaHeaderPrimaSbustamento;
 	}
-	public OpenSPCoop2Message getRequestMessage(RequestInfo requestInfo) throws ProtocolException {
+	public OpenSPCoop2Message getRequestMessage(RequestInfo requestInfo, PdDContext pddContext) throws ProtocolException {
 		if(!this.localForward && this.sbustamentoInformazioniProtocollo && !this.sbustamentoProtocolInfoEffettuato){
 			boolean protocolloPresente = true;
 			if(this.checkPresenzaHeaderPrimaSbustamento){
@@ -301,7 +302,8 @@ public class ConnettoreMsg  {
 			if(protocolloPresente){
 				org.openspcoop2.protocol.engine.builder.Sbustamento sbustatore = 
 						new org.openspcoop2.protocol.engine.builder.Sbustamento(this.protocolFactory,this.state);
-					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.request,this.busta,
+					ProtocolMessage protocolMessage = sbustatore.sbustamento(this.request,pddContext,
+							this.busta,
 							this.ruoloMessaggio,this.gestioneManifest,this.proprietaManifestAttachments,
 							FaseSbustamento.PRE_CONSEGNA_RICHIESTA, requestInfo);
 					if(protocolMessage!=null) {

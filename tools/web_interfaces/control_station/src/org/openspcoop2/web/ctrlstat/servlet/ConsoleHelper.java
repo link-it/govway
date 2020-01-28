@@ -3454,7 +3454,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						if(consoleItem instanceof StringConsoleItem){
 							StringProperty sp = (StringProperty) property;
 							if (consoleItem.isRequired() && StringUtils.isEmpty(sp.getValue())) {
-								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+								}
+								else {
+									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								}
 							}
 	
 							if(StringUtils.isNotEmpty(consoleItem.getRegexpr())){
@@ -3466,7 +3471,12 @@ public class ConsoleHelper implements IConsoleHelper {
 						else if(consoleItem instanceof NumberConsoleItem){
 							NumberProperty np = (NumberProperty) property;
 							if (consoleItem.isRequired() && np.getValue() == null) {
-								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+								}
+								else {
+									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								}
 							}
 							if(np.getValue()!=null) {
 								if(ConsoleItemType.NUMBER.equals(consoleItem.getType()) && (consoleItem instanceof NumberConsoleItem)) {
@@ -3484,14 +3494,24 @@ public class ConsoleHelper implements IConsoleHelper {
 						else if(consoleItem instanceof BinaryConsoleItem){
 							BinaryProperty bp = (BinaryProperty) property;
 							if (consoleOperationType.equals(ConsoleOperationType.ADD) && consoleItem.isRequired() && (bp.getValue() == null || bp.getValue().length == 0)) {
-								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+								}
+								else {
+									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								}
 							}
 						}
 						else if(consoleItem instanceof BooleanConsoleItem){
 							BooleanProperty bp = (BooleanProperty) property;
 							// le checkbox obbligatorie non dovrebbero esserci...
 							if (consoleItem.isRequired() && bp.getValue() == null) {
-								throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								if(consoleItem.getLabel()==null || "".equals(consoleItem.getLabel())) {
+									throw new ProtocolException(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI);
+								}
+								else {
+									throw new ProtocolException(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX, consoleItem.getLabel()));
+								}
 							}
 						}
 					}
@@ -3825,7 +3845,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 			
 	
-	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
+	public void controlloAccessiAutenticazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, String autenticazioneCustom, String autenticazioneOpzionale,
 			TipoAutenticazionePrincipal autenticazionePrincipal,  List<String> autenticazioneParametroList,
 			boolean confPers, boolean isSupportatoAutenticazioneSoggetti,boolean isPortaDelegata,
@@ -3844,8 +3864,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			allHidden = true;
 		}
 		
-		String protocollo = null;
-		if(oggetto!=null){
+		String protocollo = protocolloParam;
+		if((protocollo==null || "".equals(protocollo)) && oggetto!=null){
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {
@@ -4268,7 +4288,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public void controlloAccessiGestioneToken(Vector<DataElement> dati, TipoOperazione tipoOperazione, String gestioneToken, String[] gestioneTokenPolicyLabels, String[] gestioneTokenPolicyValues,
-			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto,boolean isPortaDelegata) throws Exception {
+			String gestioneTokenPolicy, String gestioneTokenOpzionale, String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,Object oggetto, String protocolloParam ,boolean isPortaDelegata) throws Exception {
 		
 		boolean mostraSezione = !tipoOperazione.equals(TipoOperazione.ADD) || 
 				(isPortaDelegata ? this.core.isEnabledToken_generazioneAutomaticaPorteDelegate() : this.core.isEnabledToken_generazioneAutomaticaPorteApplicative());
@@ -4389,7 +4409,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 	}
 	
-	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
+	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, 
 			String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, String autenticato,
@@ -4399,7 +4419,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			String gestioneToken, String gestioneTokenPolicy, String autorizzazione_token, String autorizzazione_tokenOptions,BinaryParameter allegatoXacmlPolicy,
 			String urlAutorizzazioneErogazioneApplicativiAutenticati, int numErogazioneApplicativiAutenticati,
 			String urlAutorizzazioneCustomPropertiesList, int numAutorizzazioneCustomPropertiesList) throws Exception{
-		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, 
+		this.controlloAccessiAutorizzazione(dati, tipoOperazione, servletChiamante, oggetto, protocolloParam,
 				autenticazione, autorizzazione, autorizzazioneCustom, 
 				autorizzazioneAutenticati, urlAutorizzazioneAutenticati, numAutenticati, autenticati, null, autenticato, 
 				autorizzazioneRuoli, urlAutorizzazioneRuoli, numRuoli, ruolo, autorizzazioneRuoliTipologia, autorizzazioneRuoliMatch, 
@@ -4410,7 +4430,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 	}
 	
-	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto,
+	public void controlloAccessiAutorizzazione(Vector<DataElement> dati, TipoOperazione tipoOperazione, String servletChiamante, Object oggetto, String protocolloParam,
 			String autenticazione, String autorizzazione, String autorizzazioneCustom, 
 			String autorizzazioneAutenticati, String urlAutorizzazioneAutenticati, int numAutenticati, List<String> autenticati, List<String> autenticatiLabel, String autenticato,
 			String autorizzazioneRuoli,  String urlAutorizzazioneRuoli, int numRuoli, String ruolo, String autorizzazioneRuoliTipologia, String autorizzazioneRuoliMatch,
@@ -4425,8 +4445,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			allHidden = true;
 		}
 		
-		String protocollo = null;
-		if(oggetto!=null){
+		String protocollo = protocolloParam;
+		if((protocollo==null || "".equals(protocollo)) && oggetto!=null){
 			if(isPortaDelegata){
 				PortaDelegata pd = (PortaDelegata) oggetto;
 				if(pd!=null && pd.getServizio()!=null && pd.getServizio().getTipo()!=null) {

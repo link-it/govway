@@ -26,6 +26,7 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.namespace.QName;
@@ -36,12 +37,14 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingHeader;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingUtilities;
 import org.openspcoop2.message.soap.wsaddressing.WSAddressingValue;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
 import org.openspcoop2.protocol.modipa.config.ModIProperties;
 import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.utils.ModIKeystoreConfig;
@@ -49,6 +52,7 @@ import org.openspcoop2.protocol.modipa.utils.ModISecurityConfig;
 import org.openspcoop2.protocol.modipa.utils.ModIUtilities;
 import org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.security.keystore.FixTrustAnchorsNotEmpty;
@@ -60,6 +64,7 @@ import org.openspcoop2.security.message.MessageSecurityContextParameters;
 import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
+import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
@@ -234,8 +239,8 @@ public class ModIImbustamentoSoap {
 		}
 	}
 	
-	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
-			Busta busta, String securityMessageProfile, RuoloMessaggio ruoloMessaggio) throws Exception {
+	public SOAPEnvelope addSecurity(OpenSPCoop2Message msg, Context context, ModIKeystoreConfig keystoreConfig, ModISecurityConfig securityConfig,
+			Busta busta, String securityMessageProfile, boolean corniceSicurezza, RuoloMessaggio ruoloMessaggio) throws Exception {
 	
 		ModIProperties modIProperties = ModIProperties.getInstance();
 	
@@ -311,13 +316,28 @@ public class ModIImbustamentoSoap {
 		MessageSecurityContext messageSecurityContext = new MessageSecurityContext_impl(messageSecurityContextParameters);
 		Hashtable<String,Object> secProperties = new Hashtable<>();
 		secProperties.put(SecurityConstants.SECURITY_ENGINE, SecurityConstants.SECURITY_ENGINE_WSS4J);
-		secProperties.put(SecurityConstants.ACTION, SecurityConstants.TIMESTAMP_ACTION+" "+SecurityConstants.SIGNATURE_ACTION);
 		if(modIProperties.getSoapSecurityTokenActor()!=null && !"".equals(modIProperties.getSoapSecurityTokenActor())) {
 			secProperties.put(SecurityConstants.ACTOR, modIProperties.getSoapSecurityTokenActor());
 		}
 		secProperties.put(SecurityConstants.MUST_UNDERSTAND, modIProperties.isSoapSecurityTokenMustUnderstand()+"");
 		secProperties.put(SecurityConstants.TIMESTAMP_TTL, securityConfig.getTtlSeconds()+"");
 		secProperties.put(SecurityConstants.IS_BSP_COMPLIANT, SecurityConstants.TRUE);
+		
+		// cornice sicurezza
+		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio)) {
+			corniceSicurezza = false; // permessa solo per i messaggi di richiesta
+		}
+		if(corniceSicurezza) {
+			addCorniceSicurezza(secProperties, msg, context, busta, securityConfig);
+		}
+		
+		// action
+		StringBuffer bfAction = new StringBuffer();
+		if(corniceSicurezza) {
+			bfAction.append(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED).append(" ");
+		}
+		bfAction.append(SecurityConstants.TIMESTAMP_ACTION).append(" ").append(SecurityConstants.SIGNATURE_ACTION);
+		secProperties.put(SecurityConstants.ACTION, bfAction.toString());
 		
 		// parti da firmare
 		StringBuffer bf = new StringBuffer();
@@ -369,6 +389,12 @@ public class ModIImbustamentoSoap {
 				bf.append(";");
 			}
 			bf.append("{Element}{").append(soapEnvelope.getNamespaceURI()).append("}Body");
+		}
+		if(corniceSicurezza) {
+			if(bf.length()>0) {
+				bf.append(";");
+			}
+			bf.append("{Element}{").append(Costanti.SAML_20_NAMESPACE).append("}Assertion");
 		}
 		secProperties.put(SecurityConstants.SIGNATURE_PARTS, bf.toString());
 		
@@ -510,4 +536,96 @@ public class ModIImbustamentoSoap {
 		return soapSecurity.buildTraccia(msg.getMessageType());
 	}
 	
+	private void addCorniceSicurezza(Hashtable<String,Object> secProperties, 
+			OpenSPCoop2Message msg, Context context, Busta busta,
+			ModISecurityConfig securityConfig) throws Exception {
+		
+		String nomeSoggettoMittente = busta.getMittente();
+		
+		Map<String, Object> dynamicMap = DynamicUtils.buildDynamicMap(msg, context, busta, this.log);
+		
+		String attributeNameCodiceEnte = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_codice_ente();
+		String codiceEnte = ModIUtilities.getDynamicValue("CorniceSicurezza-CodiceEnte", securityConfig.getCorniceSicurezzaCodiceEnteRule(), dynamicMap, context);
+			
+		String attributeNameUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_user();
+		String utente = ModIUtilities.getDynamicValue("CorniceSicurezza-User", securityConfig.getCorniceSicurezzaUserRule(), dynamicMap, context);
+		
+		String attributeNameIpUser = this.modiProperties.getSicurezzaMessaggio_corniceSicurezza_soap_ipuser();
+		String indirizzoIpPostazione = ModIUtilities.getDynamicValue("CorniceSicurezza-IPUser", securityConfig.getCorniceSicurezzaIpUserRule(), dynamicMap, context);
+		
+		Properties pSaml = new Properties();
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION, SecurityConstants.FALSE); // lo faccio globalmente!
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SIGN_ASSERTION_SEND_KEY_VALUE, SecurityConstants.FALSE); // lo faccio globalmente!
+		
+		//       410 | signatureDigestAlgorithm                                                       | http://www.w3.org/2001/04/xmlenc#sha256           | 360
+		//       410 | signatureC14nAlgorithmExclusive                                                | http://www.w3.org/2001/10/xml-exc-c14n#           | 371
+		//      410 | signatureAlgorithm                                                             | http://www.w3.org/2001/04/xmldsig-more#rsa-sha256 | 374
+
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_VERSION_20);
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ISSUER_VALUE, nomeSoggettoMittente);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ISSUER_FORMAT, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_FORMAT_VALUE_UNSPECIFIED);
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_VALUE, codiceEnte);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_FORMAT, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_NAMEID_FORMAT_VALUE_UNSPECIFIED);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_ENTE, codiceEnte);
+		
+		boolean senderVouche = true;
+		if(senderVouche) {
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_SENDER_VOUCHES);
+		}
+		else {
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_SUBJECT_CONFIRMATION_METHOD_VALUE_BEARER);
+		}
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_STATEMENT_ENABLED, SecurityConstants.TRUE);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN, SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_AUTHN_VALUE_UNSPECIFIED);
+
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONDITIONS_DATA_NOT_ON_OR_AFTER, "60");
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_CONDITIONS_DATA_NOT_BEFORE, "0");
+		
+		//pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+".enabled", SecurityConstants.TRUE);
+		
+		if(attributeNameCodiceEnte!=null && !"".equals(attributeNameCodiceEnte)) {
+			// se si desidera avere un attributo anche per il codice utente oltre al saml2:subject
+			
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameCodiceEnte);
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
+					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
+			pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_0"+
+					SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, codiceEnte);
+			
+		}
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameUser);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_1"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, utente);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER, utente);
+		
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_QUALIFIED_NAME, attributeNameIpUser);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME, 
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_FORMAT_NAME_VALUE_UNSPECIFIED);
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE_SEPARATOR, ",");
+		pSaml.put(SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_PREFIX+"ATTR_2"+
+				SAMLBuilderConfigConstants.SAML_CONFIG_BUILDER_ATTRIBUTE_SUFFIX_VALUE, indirizzoIpPostazione);
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_CORNICE_SICUREZZA_CORNICE_SICUREZZA_USER_IP, indirizzoIpPostazione);
+		
+		secProperties.put(SecurityConstants.SAML_PROF_REF_ID, pSaml);
+
+	}
 }

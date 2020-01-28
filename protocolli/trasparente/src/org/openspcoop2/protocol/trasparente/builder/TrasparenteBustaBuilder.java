@@ -27,6 +27,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.basic.BasicEmptyRawContent;
 import org.openspcoop2.protocol.basic.builder.BustaBuilder;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -53,7 +54,8 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context,
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -65,7 +67,8 @@ public class TrasparenteBustaBuilder extends BustaBuilder<BasicEmptyRawContent> 
 			return protocolMessage;
 		}
 		
-		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, bustaRichiesta,
+		ProtocolMessage protocolMessage = super.imbustamento(msg, context,
+				busta, bustaRichiesta,
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 				
 		if(RuoloMessaggio.RISPOSTA.equals(ruoloMessaggio) && busta.sizeListaEccezioni()>0 ){

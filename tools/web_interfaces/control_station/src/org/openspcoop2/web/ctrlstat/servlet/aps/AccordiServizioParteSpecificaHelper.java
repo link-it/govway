@@ -5995,15 +5995,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, false);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa, tipoProtocollo,
 					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					false, null, 0,
 					forceHttps, forceDisableOptional);
 						
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, pa, tipoProtocollo,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
@@ -6028,15 +6028,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale, 
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,tipoProtocollo, true);
 
-			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd, tipoProtocollo,
 					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					false, null, 0,
 					false, false);
 		
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,pd, tipoProtocollo,
 					fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 					fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 					fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
@@ -6892,6 +6892,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			}
 
 			boolean isSoggettoGestitoPorta = false;
+			String protocolloSoggettoGestitoPorta = null;
 			if(soggettiList!=null && soggettiList.length>0){
 				String soggettoId = idSoggettoFruitore;
 				if(soggettoId==null || "".equals(soggettoId)){
@@ -6900,6 +6901,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				Soggetto sogg = this.soggettiCore.getSoggettoRegistro(Long.parseLong(soggettoId));
 				if(!this.pddCore.isPddEsterna(sogg.getPortaDominio())){
 					isSoggettoGestitoPorta = true;	
+					protocolloSoggettoGestitoPorta = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(sogg.getTipo());
 				}
 			}
 
@@ -6912,15 +6914,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 				
 				this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 						gestioneTokenPolicy, gestioneTokenOpzionale,
-						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
+						gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocolloSoggettoGestitoPorta,true);
 
-				this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+				this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocolloSoggettoGestitoPorta,
 						fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 						gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 						false, null, 0,
 						false, false);
 				
-				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+				this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocolloSoggettoGestitoPorta,
 						fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 						fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 						fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,
@@ -7819,7 +7821,8 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			boolean forceAutenticato = false; 
 			boolean forceHttps = false;
 			boolean forceDisableOptional = false;
-			if(this.isProfiloModIPA(this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore()))) {
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+			if(this.isProfiloModIPA(protocollo)) {
 				forceAutenticato = true; // in modI ci vuole sempre autenticazione https sull'erogazione (cambia l'opzionalita' o meno)
 				forceHttps = forceAutenticato;
 				forceDisableOptional = this.forceHttpsClientProfiloModiPA(this.idAccordoFactory.getIDAccordoFromAccordo(as),asps.getPortType());
@@ -7829,15 +7832,15 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiGestioneToken(dati, tipoOperazione, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,false);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo, false);
 			
-			this.controlloAccessiAutenticazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
+			this.controlloAccessiAutenticazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,protocollo,
 					erogazioneAutenticazione, null, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList, false, erogazioneIsSupportatoAutenticazioneSoggetti,false,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					false, null, 0,
 					forceHttps, forceDisableOptional);
 			
-			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,
+			this.controlloAccessiAutorizzazione(dati, tipoOperazione, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD, null,protocollo,
 					erogazioneAutenticazione, erogazioneAutorizzazione, null, 
 					erogazioneAutorizzazioneAutenticati, null, 0, soggettiAutenticati, soggettiAutenticatiLabel, soggettoAutenticato,
 					erogazioneAutorizzazioneRuoli, null, 0, erogazioneRuolo,
@@ -8209,17 +8212,19 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			this.controlloAccessiAdd(dati, tipoOp, controlloAccessiStato, false);
 			
+			String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(asps.getTipoSoggettoErogatore());
+			
 			this.controlloAccessiGestioneToken(dati, tipoOp, gestioneToken, gestioneTokenPolicyLabels, gestioneTokenPolicyValues, 
 					gestioneTokenPolicy, gestioneTokenOpzionale,
-					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,true);
+					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward, null,protocollo,true);
 		
-			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+			this.controlloAccessiAutenticazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocollo,
 					fruizioneAutenticazione, null, fruizioneAutenticazioneOpzionale, fruizioneAutenticazionePrincipal, fruizioneAutenticazioneParametroList, false, true,true,
 					gestioneToken, gestioneTokenPolicy, autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					false, null, 0,
 					false, false);
 			
-			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,
+			this.controlloAccessiAutorizzazione(dati, tipoOp, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD,null,protocollo,
 				fruizioneAutenticazione, fruizioneAutorizzazione, null, 
 				fruizioneAutorizzazioneAutenticati, null, 0, saList, fruizioneServizioApplicativo,
 				fruizioneAutorizzazioneRuoli, null, 0, fruizioneRuolo,

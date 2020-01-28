@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.modipa.constants.ModICostanti;
 import org.openspcoop2.protocol.modipa.validator.ModIRESTSecurity;
 import org.openspcoop2.protocol.modipa.validator.ModISOAPSecurity;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.ProtocolMessage;
@@ -58,7 +59,8 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 	}
 
 	@Override
-	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Busta busta, Busta bustaRichiesta,
+	public ProtocolMessage imbustamento(OpenSPCoop2Message msg, Context context, 
+			Busta busta, Busta bustaRichiesta,
 			RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments,
 			FaseImbustamento faseImbustamento)
@@ -70,7 +72,8 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			return protocolMessage;
 		}
 		
-		ProtocolMessage protocolMessage = super.imbustamento(msg, busta, bustaRichiesta,
+		ProtocolMessage protocolMessage = super.imbustamento(msg, context,
+				busta, bustaRichiesta,
 				ruoloMessaggio, proprietaManifestAttachments, faseImbustamento);
 		
 		boolean imbusta = true;
@@ -90,7 +93,7 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 		
 		if(imbusta) {
 			ModIImbustamento imbustamento = new ModIImbustamento(this.getLog());
-			protocolMessage = imbustamento.buildMessage(msg, busta, bustaRichiesta,
+			protocolMessage = imbustamento.buildMessage(msg, context, busta, bustaRichiesta,
 					ruoloMessaggio, proprietaManifestAttachments, 
 					this.getProtocolFactory().getCachedRegistryReader(this.state), 
 					this.getProtocolFactory().getCachedConfigIntegrationReader(this.state),
@@ -127,7 +130,8 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 	}
 	
 	@Override
-	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Busta busta, RuoloMessaggio ruoloMessaggio,
+	public ProtocolMessage sbustamento(OpenSPCoop2Message msg, Context context, 
+			Busta busta, RuoloMessaggio ruoloMessaggio,
 			ProprietaManifestAttachments proprietaManifestAttachments, FaseSbustamento faseSbustamento,
 			ServiceBinding integrationServiceBinding, ServiceBindingConfiguration serviceBindingConfiguration)
 			throws ProtocolException {
@@ -171,7 +175,8 @@ public class ModIBustaBuilder extends BustaBuilder<AbstractModISecurityToken<?>>
 			
 		}
 		else {
-			protocolMessage = super.sbustamento(msg, busta, ruoloMessaggio, proprietaManifestAttachments, faseSbustamento,
+			protocolMessage = super.sbustamento(msg, context,
+					busta, ruoloMessaggio, proprietaManifestAttachments, faseSbustamento,
 				integrationServiceBinding, serviceBindingConfiguration);
 		}
 		

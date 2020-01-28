@@ -1,3 +1,9 @@
+2020-01-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-952
+	Aggiunta una prima versione di Cornice della Sicurezza (specifiche Sogei) integrata al Profilo ModIPA
+
 2020-01-24  Andrea Poli <apoli@link.it>
 
 	* [InstallerVersioneBinaria]

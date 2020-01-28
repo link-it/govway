@@ -23,7 +23,6 @@
 package org.openspcoop2.protocol.engine.builder;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import javax.xml.namespace.QName;
@@ -47,6 +46,7 @@ import org.openspcoop2.message.soap.SOAPFaultCode;
 import org.openspcoop2.message.utils.MessageUtilities;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -752,7 +752,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 *
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -761,7 +761,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
-		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, errori, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, httpStatus, 
@@ -772,7 +772,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	/**
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -781,7 +781,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){ 
-		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, erroreCooperazione, null, null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, httpStatus, 
@@ -789,7 +789,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 				tempiElaborazione);
 	}
 	
-	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	public OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -798,7 +798,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			Exception eProcessamento, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){ 
-		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, ctx, 
+		return msgErroreProtocollo_Processamento(identitaPdD, tipoPdD, context, 
 				modulo, busta, integrazione, idTransazione, null, null, erroreIntegrazione,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, profiloGestione, tipoTempo, generazioneListaTrasmissioni, 
 				eProcessamento, messageType, rfc7807, httpStatus, 
@@ -810,7 +810,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 *
 	 */
-	private OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	private OpenSPCoop2Message msgErroreProtocollo_Processamento(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione,
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, ErroreIntegrazione erroreIntegrazione,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -926,7 +926,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 
 			
 			// imbustamento
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, context,
+					busta, bustaRichiesta, integrazione, null, 
 					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated
@@ -937,8 +938,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
-						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx, 
+					if(messageSecurityContext.processOutgoing(responseMessage,context.getContext(), tempiElaborazione) == false){
+						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context, 
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
@@ -950,7 +951,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			// imbustamento
-			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, context,
+					busta, bustaRichiesta, integrazione, null, 
 					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated
@@ -969,7 +971,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 *
 	 */
-	public  OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	public  OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo,Busta busta,Integrazione integrazione, String idTransazione,		
 			List<Eccezione> errori,
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -978,7 +980,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
-		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx,
+		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, null, errori,
 				messageSecurityPropertiesResponse,messageSecurityContext,attesaAttiva,checkInterval,
 				profiloGestione,tipoTempo,generazioneListaTrasmissioni, messageType, rfc7807, httpStatus,
@@ -990,7 +992,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 *
 	 */
-	public OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	public OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, 
 			Busta busta,Integrazione integrazione, 
 			String idTransazione,
@@ -1004,7 +1006,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, 
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
 			TempiElaborazione tempiElaborazione){
-		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, ctx,
+		return msgErroreProtocollo_Intestazione(identitaPdD, tipoPdD, context,
 				modulo, busta, integrazione, idTransazione, erroreCooperazione,null,
 				messageSecurityPropertiesResponse, messageSecurityContext, attesaAttiva, checkInterval, 
 				profiloGestione, tipoTempo, generazioneListaTrasmissioni, messageType, rfc7807, httpStatus, 
@@ -1016,7 +1018,7 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	 * Costruisce un messaggio  contenente una risposta SOAPFault di errore. 
 	 *
 	 */
-	private OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Hashtable<String, Object> ctx,
+	private OpenSPCoop2Message msgErroreProtocollo_Intestazione(IDSoggetto identitaPdD, TipoPdD tipoPdD,Context context,
 			String modulo, Busta busta,Integrazione integrazione, String idTransazione, 
 			ErroreCooperazione erroreCooperazione, List<Eccezione> errori, 
 			java.util.Hashtable<String,Object> messageSecurityPropertiesResponse,
@@ -1113,7 +1115,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			// Imbustamento
-			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+			ProtocolMessage protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, context,
+					busta, bustaRichiesta, integrazione, null, 
 					FaseImbustamento.PRIMA_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated
@@ -1123,8 +1126,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			if(messageSecurityPropertiesResponse != null){
 				if(messageSecurityPropertiesResponse.size() > 0){
 					messageSecurityContext.setOutgoingProperties(messageSecurityPropertiesResponse);
-					if(messageSecurityContext.processOutgoing(responseMessage,ctx, tempiElaborazione) == false){
-						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,ctx,
+					if(messageSecurityContext.processOutgoing(responseMessage,context.getContext(), tempiElaborazione) == false){
+						responseMessage = this.msgErroreProtocollo_Intestazione(identitaPdD,tipoPdD,context,
 								modulo,	busta, integrazione, idTransazione,
 								ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(messageSecurityContext.getMsgErrore(), messageSecurityContext.getCodiceErrore()),
 								null,null,attesaAttiva,checkInterval,profiloGestione,tipoTempo,generazioneListaTrasmissioni, 
@@ -1136,7 +1139,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 
 			// Imbustamento
-			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, busta, bustaRichiesta, integrazione, null, 
+			protocolMessage = this.imbustamento.imbustamentoRisposta(responseMessage, context,
+					busta, bustaRichiesta, integrazione, null, 
 					FaseImbustamento.DOPO_SICUREZZA_MESSAGGIO);
 			if(protocolMessage!=null && !protocolMessage.isPhaseUnsupported()) {
 				responseMessage = protocolMessage.getMessage(); // updated

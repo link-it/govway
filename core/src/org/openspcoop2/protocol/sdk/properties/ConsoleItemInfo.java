@@ -17,33 +17,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
+package org.openspcoop2.protocol.sdk.properties;
 
-
-package org.openspcoop2.pdd.core.handlers.statistics;
-
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-import org.openspcoop2.pdd.core.handlers.HandlerException;
-import org.openspcoop2.pdd.core.handlers.InResponseContext;
-import org.openspcoop2.pdd.core.handlers.InResponseHandler;
-
+import java.util.List;
 
 /**
- * StatisticsInResponseHandler
- *
- * @author Poli Andrea (apoli@link.it)
+ * ConsoleItemInfo
+ * 
+ * @author Giuliano Pintori (pintori@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class StatisticsInResponseHandler implements InResponseHandler {
+public class ConsoleItemInfo {
+	
+	public ConsoleItemInfo(String headerFinestraModale) {
+		this.headerFinestraModale = headerFinestraModale;
+	}
+	private String headerFinestraModale;
+	
+	private String headerBody;
+	
+	private List<String> listBody;
+	
+	public String getHeaderFinestraModale() {
+		return this.headerFinestraModale;
+	}
 
-	@Override
-	public void invoke(InResponseContext context) throws HandlerException{
-		
-		if(!OpenSPCoop2Properties.getInstance().isStatisticheViaJmx()) {
-			return;
-		}
-		
-		context.getPddContext().addObject(StatisticsConstants.DATA_INGRESSO_RISPOSTA, context.getDataElaborazioneMessaggio());
+	public String getHeaderBody() {
+		return this.headerBody;
+	}
+
+	public void setHeaderBody(String headerBody) {
+		this.headerBody = headerBody;
+	}
+
+	public List<String> getListBody() {
+		return this.listBody;
 	}
 	
+	public void setListBody(List<String> listBody) {
+		this.listBody = listBody;
+	}
+
 }

@@ -45,6 +45,24 @@ public class EsitiConfigUtils {
 		return EsitiProperties.getInstance(log, EsitiProperties.NO_PROTOCOL_CONFIG);
 	}
 	
+	// esiti indipendenti dal protocollo. Li inizializzo una volta sola per questione di performance.
+	
+	private static int esitoMaxThreads = -1;
+	private static int esitoCorsGateway = -1;
+	private static int esitoCorsTrasparente = -1;
+	private static void checkInitEsiti(EsitiProperties esiti) throws ProtocolException {
+		if(esitoMaxThreads<0) {
+			initEsiti(esiti);
+		}
+	}
+	private static synchronized void initEsiti(EsitiProperties esiti) throws ProtocolException {
+		if(esitoMaxThreads<0) {
+			esitoMaxThreads = esiti.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS.name());
+			esitoCorsGateway = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY.name());
+			esitoCorsTrasparente = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE.name());
+		}
+	}
+	
 	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf) throws Exception{
 		return getRegistrazioneEsiti(esitiConfig, log, bf, getEsitiPropertiesForConfiguration(log));
 	}
@@ -57,9 +75,7 @@ public class EsitiConfigUtils {
 			if(esitiCodes!=null && esitiCodes.size()>0){
 				List<String> esitiDaRegistrare = new ArrayList<String>();
 				for (Integer esito : esitiCodes) {
-					int esitoMaxThreads = esiti.convertNameToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS.name());
-					int esitoCorsGateway = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_VIA_GATEWAY.name());
-					int esitoCorsTrasparente = esiti.convertNameToCode(EsitoTransazioneName.CORS_PREFLIGHT_REQUEST_TRASPARENTE.name());
+					checkInitEsiti(esiti);
 					if(esito!=esitoMaxThreads && esito!=esitoCorsGateway && esito!=esitoCorsTrasparente){
 						if(bf.length()>0){
 							bf.append(",");

@@ -204,6 +204,7 @@ public class IDServizioFactory {
 			idServizio.setTipologia(org.openspcoop2.core.constants.TipologiaServizio.NORMALE);
 		}
 		idServizio.setUriAccordoServizioParteComune(accordo.getAccordoServizioParteComune());
+		idServizio.setPortType(accordo.getPortType());
 		return idServizio;
 	}
 	

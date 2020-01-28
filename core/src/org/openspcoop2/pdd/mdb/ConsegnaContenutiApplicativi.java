@@ -1852,7 +1852,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------------- Dump -----------------------*/
 				
 			// Invoco il metodo getMessage del ConnettoreMsg per provocare l'eventuale sbustamento delle informazioni di protocollo
-			connettoreMsg.getRequestMessage(requestInfo);
+			connettoreMsg.getRequestMessage(requestInfo, pddContext);
 			
 			String idMessaggioDumpRichiesta = idMessaggioConsegna;
 			if(idMessaggioPreBehaviour!=null){
@@ -2450,7 +2450,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				
 				String messaggioErroreConsegnaConnettore = "Consegna ["+tipoConnector+"] con errore: "+motivoErroreConsegna;
 				if(existsModuloInAttesaRispostaApplicativa) {
-					OpenSPCoop2Message connettoreMsgRequest = connettoreMsg.getRequestMessage(requestInfo);
+					OpenSPCoop2Message connettoreMsgRequest = connettoreMsg.getRequestMessage(requestInfo, pddContext);
 					if(connettoreMsgRequest.getParseException() != null){
 						
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);

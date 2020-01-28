@@ -1137,6 +1137,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if(as!=null) {
 				idAps.setUriAccordoServizioParteComune(idAccordoFactory.getUriFromAccordo(as));
 			}
+			idAps.setPortType(this.portType);
 			IDFruizione idFruizione = null;
 			if(idSoggettoFruitoreSelected!=null) {
 				idFruizione = new IDFruizione();
