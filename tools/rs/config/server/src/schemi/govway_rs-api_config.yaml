@@ -2445,7 +2445,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativi'
+                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativi'
         '400':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
         '401':

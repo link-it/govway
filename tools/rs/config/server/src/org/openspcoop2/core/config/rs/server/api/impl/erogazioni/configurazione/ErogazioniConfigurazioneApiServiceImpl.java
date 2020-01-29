@@ -73,7 +73,6 @@ import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuoli;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuolo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneScope;
@@ -81,6 +80,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativi;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
@@ -1440,7 +1440,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public ControlloAccessiAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public ControlloAccessiErogazioneAutorizzazioneApplicativi getErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -1450,14 +1450,21 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			final ErogazioniConfEnv env = new ErogazioniConfEnv(context.getServletRequest(), profilo, soggetto, context, nome, versione, gruppo, tipoServizio );
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
-			ControlloAccessiAutorizzazioneApplicativi ret = new ControlloAccessiAutorizzazioneApplicativi();
+			ControlloAccessiErogazioneAutorizzazioneApplicativi ret = new ControlloAccessiErogazioneAutorizzazioneApplicativi();
 			
 			int idLista = Liste.PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO;
 			Search ricerca = Helper.setupRicercaPaginata("", -1, 0, idLista);
 			List<PortaApplicativaAutorizzazioneServizioApplicativo> lista = env.paCore.porteAppServiziApplicativiAutorizzatiList(pa.getId(), ricerca);
 			
-			ret.setApplicativi(lista.stream().map( saPA -> saPA.getNome()).collect(Collectors.toList()));
-		
+			if(lista!=null && !lista.isEmpty()) {
+				for (PortaApplicativaAutorizzazioneServizioApplicativo portaApplicativaAutorizzazioneServizioApplicativo : lista) {
+					ControlloAccessiErogazioneAutorizzazioneApplicativo applicativiItem = new ControlloAccessiErogazioneAutorizzazioneApplicativo();
+					applicativiItem.setApplicativo(portaApplicativaAutorizzazioneServizioApplicativo.getNome());
+					applicativiItem.setSoggetto(portaApplicativaAutorizzazioneServizioApplicativo.getNomeSoggettoProprietario());
+					ret.addApplicativiItem(applicativiItem);
+				}
+			}
+			
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
      

@@ -1116,6 +1116,15 @@ components:
           items:
             $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: ['Applicativo1', 'Applicativo2', 'Applicativo3']
+    ControlloAccessiErogazioneAutorizzazioneApplicativi:
+      type: object
+      required:
+        - applicativi
+      properties:
+        applicativi:
+          type: array
+          items:
+            $ref: '#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo'
     ControlloAccessiAutorizzazioneApplicativo:
       type: object
       required:
