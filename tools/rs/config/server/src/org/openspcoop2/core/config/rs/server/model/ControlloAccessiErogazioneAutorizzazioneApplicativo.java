@@ -19,33 +19,33 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativo;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class ControlloAccessiAutorizzazioneApplicativo  {
+public class ControlloAccessiErogazioneAutorizzazioneApplicativo extends ControlloAccessiAutorizzazioneApplicativo {
   
-  @Schema(required = true, description = "")
-  private String applicativo = null;
+  @Schema(description = "")
+  private String soggetto = null;
  /**
-   * Get applicativo
-   * @return applicativo
+   * Get soggetto
+   * @return soggetto
   **/
-  @JsonProperty("applicativo")
-  @NotNull
+  @JsonProperty("soggetto")
   @Valid
- @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getApplicativo() {
-    return this.applicativo;
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggetto() {
+    return this.soggetto;
   }
 
-  public void setApplicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public void setSoggetto(String soggetto) {
+    this.soggetto = soggetto;
   }
 
-  public ControlloAccessiAutorizzazioneApplicativo applicativo(String applicativo) {
-    this.applicativo = applicativo;
+  public ControlloAccessiErogazioneAutorizzazioneApplicativo soggetto(String soggetto) {
+    this.soggetto = soggetto;
     return this;
   }
 
@@ -53,9 +53,9 @@ public class ControlloAccessiAutorizzazioneApplicativo  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class ControlloAccessiAutorizzazioneApplicativo {\n");
-    
-    sb.append("    applicativo: ").append(ControlloAccessiAutorizzazioneApplicativo.toIndentedString(this.applicativo)).append("\n");
+    sb.append("class ControlloAccessiErogazioneAutorizzazioneApplicativo {\n");
+    sb.append("    ").append(ControlloAccessiErogazioneAutorizzazioneApplicativo.toIndentedString(super.toString())).append("\n");
+    sb.append("    soggetto: ").append(ControlloAccessiErogazioneAutorizzazioneApplicativo.toIndentedString(this.soggetto)).append("\n");
     sb.append("}");
     return sb.toString();
   }

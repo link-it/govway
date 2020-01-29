@@ -46,6 +46,15 @@ components:
       schema:
         type: string
         maxLength: 255
+    
+    # Dati Identificativi nella query
+    id_soggetto_applicativo:
+      name: soggetto_applicativo
+      in: query
+      description: Nome del soggetto proprietario dell'applicativo
+      required: false
+      schema:
+        $ref: 'govway_core.yaml#/components/schemas/SimpleName'
               
     # Ricerche
     tipo_api:
@@ -1113,7 +1122,15 @@ components:
         - applicativo
       properties:
         applicativo:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'     
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+    ControlloAccessiErogazioneAutorizzazioneApplicativo:
+      type: object
+      allOf:
+          - $ref: '#/components/schemas/ControlloAccessiAutorizzazioneApplicativo'
+          - type: object
+            properties:
+              soggetto:
+                $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     ControlloAccessiAutorizzazioneRuoli:
       type: object
       required:

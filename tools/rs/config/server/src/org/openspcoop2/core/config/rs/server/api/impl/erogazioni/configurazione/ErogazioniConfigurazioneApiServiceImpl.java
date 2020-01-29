@@ -74,7 +74,6 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativi;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuoli;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuolo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneScope;
@@ -82,6 +81,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
@@ -113,6 +113,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.IdSoggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.RuoloContesto;
@@ -161,10 +162,10 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(ControlloAccessiAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(ControlloAccessiErogazioneAutorizzazioneApplicativo body, String nome, Integer versione, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
-			context.getLogger().info("Invocazione in corso ...");     
+			context.getLogger().info("Invocazione in corso ...");
 
 			AuthorizationManager.authorize(context, getAuthorizationConfig());
 			context.getLogger().debug("Autorizzazione completata con successo");
@@ -178,9 +179,17 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'autorizzazione per richiedente non è abilitata");
 			}
 			
+			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
+			if(org.apache.commons.lang.StringUtils.isNotEmpty(body.getSoggetto())) {
+				idSoggettoProprietarioSA.setNome(body.getSoggetto());
+				try {
+					idSoggettoProprietarioSA.setId(env.soggettiCore.getIdSoggetto(body.getSoggetto(),env.tipo_soggetto));
+				} catch (Exception e) {}
+			}
+			
 			final IDServizioApplicativo idSA = new IDServizioApplicativo();
-				idSA.setIdSoggettoProprietario(env.idSoggetto.toIDSoggetto());
-				idSA.setNome(body.getApplicativo());
+			idSA.setIdSoggettoProprietario(idSoggettoProprietarioSA.toIDSoggetto());
+			idSA.setNome(body.getApplicativo());
 			
 			final ServizioApplicativo sa = BaseHelper.supplyOrNonValida( 
 					() -> env.saCore.getServizioApplicativo(idSA),
@@ -189,7 +198,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 					
 			
 			final org.openspcoop2.core.config.constants.CredenzialeTipo tipoAutenticazione = org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(pa.getAutenticazione());	
-			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(env.idSoggetto.toIDSoggetto(),env.userLogin,tipoAutenticazione);
+			List<ServizioApplicativo> saCompatibili = env.saCore.soggettiServizioApplicativoList(idSoggettoProprietarioSA.toIDSoggetto(),env.userLogin,tipoAutenticazione);
 			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneApplicativiErogazioni()) {
 				if (!BaseHelper.findFirst(saCompatibili, s -> s.getId().equals(sa.getId())).isPresent()) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali dell'Applicativo non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
@@ -208,7 +217,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			}
 			
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, pa.getId().toString());
-			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, env.idSoggetto.getId().toString());
+			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SOGGETTO, idSoggettoProprietarioSA.getId().toString());
 			env.requestWrapper.overrideParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_SERVIZIO_APPLICATIVO_AUTORIZZATO, sa.getId().toString());
 			if (!env.paHelper.porteAppServizioApplicativoAutorizzatiCheckData(TipoOperazione.ADD)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(  env.pd.getMessage() ));
@@ -216,8 +225,8 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			PortaApplicativaAutorizzazioneServizioApplicativo paSaAutorizzato = new PortaApplicativaAutorizzazioneServizioApplicativo();
 			paSaAutorizzato.setNome(sa.getNome());
-			paSaAutorizzato.setTipoSoggettoProprietario(env.idSoggetto.getTipo());
-			paSaAutorizzato.setNomeSoggettoProprietario(env.idSoggetto.getNome());
+			paSaAutorizzato.setTipoSoggettoProprietario(idSoggettoProprietarioSA.getTipo());
+			paSaAutorizzato.setNomeSoggettoProprietario(idSoggettoProprietarioSA.getNome());
 
 			pa.getServiziApplicativiAutorizzati().addServizioApplicativo(paSaAutorizzato);			
 			env.paCore.performUpdateOperation(env.userLogin, false, pa);
@@ -691,7 +700,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
      *
      */
 	@Override
-    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String gruppo, String tipoServizio) {
+    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(String nome, Integer versione, String applicativoAutorizzato, ProfiloEnum profilo, String soggetto, String soggettoApplicativo, String gruppo, String tipoServizio) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -704,10 +713,18 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if (pa.getServiziApplicativiAutorizzati() == null)	pa.setServiziApplicativiAutorizzati(new PortaApplicativaAutorizzazioneServiziApplicativi());
 			
-			PortaApplicativaAutorizzazioneServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(), sa -> sa.getNome().equals(applicativoAutorizzato));
+			IdSoggetto idSoggettoProprietarioSA = (IdSoggetto) env.idSoggetto.clone();
+			if(org.apache.commons.lang.StringUtils.isNotEmpty(soggettoApplicativo)) {
+				idSoggettoProprietarioSA.setNome(soggettoApplicativo);
+			}
+			
+			PortaApplicativaAutorizzazioneServizioApplicativo to_remove = BaseHelper.findAndRemoveFirst(pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(), sa -> 
+				(sa.getNome().equals(applicativoAutorizzato) && 
+				idSoggettoProprietarioSA.getNome().equals(sa.getNomeSoggettoProprietario()) && 
+				idSoggettoProprietarioSA.getTipo().equals(sa.getTipoSoggettoProprietario())));
 			
 			if (env.delete_404 && to_remove == null) {
-				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " è associato al gruppo scelto"); 
+				throw FaultCode.NOT_FOUND.toException("Nessun Applicativo " + applicativoAutorizzato + " (soggetto: "+idSoggettoProprietarioSA.getNome()+") è associato al gruppo scelto");
 			} else if (to_remove != null) {
 				env.paCore.performUpdateOperation(env.userLogin, false, pa);
 			}

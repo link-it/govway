@@ -2519,7 +2519,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativo"
+              $ref: "#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo"
         required: true
       responses:
         201:
@@ -2576,6 +2576,7 @@ paths:
     - $ref: "#/components/parameters/id_ncname"
     - $ref: "#/components/parameters/id_versione"
     - $ref: "#/components/parameters/id_applicativo_autorizzato"
+    - $ref: "#/components/parameters/id_soggetto_applicativo"
     - $ref: "#/components/parameters/gruppo"
     - $ref: "#/components/parameters/tipo_servizio"
   /erogazioni/{nome}/{versione}/configurazioni/controllo-accessi/autorizzazione/ruoli:
@@ -6943,12 +6944,13 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
+      - "ModIPA"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -6980,6 +6982,13 @@ components:
       - "client_id"
       - "username"
       - "email"
+    FiltroRicercaRuoloTransazioneEnum:
+      type: "string"
+      example: "fruizione"
+      enum:
+      - "fruizione"
+      - "erogazione"
+      - "qualsiasi"
     StatoApiDescrizione:
       type: "string"
       example: "Nessuna risorsa definita nella API"
@@ -7963,6 +7972,14 @@ components:
       properties:
         applicativo:
           $ref: "#/components/schemas/NCName"
+    ControlloAccessiErogazioneAutorizzazioneApplicativo:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativo"
+      - type: "object"
+        properties:
+          soggetto:
+            $ref: "#/components/schemas/SimpleName"
     ControlloAccessiAutorizzazioneRuoli:
       required:
       - "ruoli"
@@ -8427,16 +8444,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
+      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
-      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
+      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
-      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8465,35 +8482,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
-      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
-      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
-      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
-      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8521,13 +8538,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
+      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
-      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8605,10 +8622,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
+      default: "all"
       enum:
       - "all"
       - "any"
-      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8848,7 +8865,7 @@ components:
       name: "profilo"
       in: "query"
       description: "Indica la modalità operativa del Gateway, a scelta tra:\n  * APIGateway;\n\
-        \  * SPCoop;\n  * FatturaPA;\n  * eDelivery."
+        \  * ModIPA;\n  * SPCoop;\n  * FatturaPA;\n  * eDelivery."
       required: false
       schema:
         $ref: "#/components/schemas/ProfiloEnum"
@@ -9050,6 +9067,13 @@ components:
       schema:
         maxLength: 255
         type: "string"
+    id_soggetto_applicativo:
+      name: "soggetto_applicativo"
+      in: "query"
+      description: "Nome del soggetto proprietario dell'applicativo"
+      required: false
+      schema:
+        $ref: "#/components/schemas/SimpleName"
     tipo_api:
       name: "tipo_api"
       in: "query"

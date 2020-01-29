@@ -1,7 +1,7 @@
 /*
  * GovWay - A customizable API Gateway 
  * https://govway.org
- * 
+ *
  * Copyright (c) 2005-2020 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
@@ -24,7 +24,6 @@ import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativi;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuoli;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneRuolo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneScope;
@@ -32,6 +31,7 @@ import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazion
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetti;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
+import org.openspcoop2.core.config.rs.server.model.ControlloAccessiErogazioneAutorizzazioneApplicativo;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
@@ -87,7 +87,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(@Valid ControlloAccessiAutorizzazioneApplicativo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio);
+    public void addErogazioneControlloAccessiAutorizzazioneApplicativi(@Valid ControlloAccessiErogazioneAutorizzazioneApplicativo body, @PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio);
 
     /**
      * Aggiunta di ruoli all'elenco dei ruoli autorizzati
@@ -240,7 +240,7 @@ public interface ErogazioniConfigurazioneApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("applicativo_autorizzato") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio);
+    public void deleteErogazioneControlloAccessiAutorizzazioneApplicativi(@PathParam("nome") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String nome, @PathParam("versione") @Min(1) Integer versione, @PathParam("applicativo_autorizzato") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String applicativoAutorizzato, @QueryParam("profilo") ProfiloEnum profilo, @QueryParam("soggetto") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggetto, @QueryParam("soggetto_applicativo") @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255) String soggettoApplicativo, @QueryParam("gruppo") @Size(max=255) String gruppo, @QueryParam("tipo_servizio") @Size(max=20) String tipoServizio);
 
     /**
      * Elimina ruoli dall'elenco dei ruoli autorizzati

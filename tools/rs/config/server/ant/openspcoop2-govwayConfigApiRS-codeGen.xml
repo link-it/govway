@@ -86,7 +86,8 @@
 				<include name="BaseSoggettoItem.java"/>
 				<!-- <include name="HttpMethodEnum.java"/> Modificato: aggiunto Qualsiasi come valore -->
 				<include name="ProfiloCollaborazioneEnum.java"/>	
-				<include name="ProfiloEnum.java"/>			
+				<include name="ProfiloEnum.java"/>
+				<include name="FiltroRicercaRuoloTransazioneEnum.java"/>		
 
 				<!-- config -->
 				<include name="StatoApiDescrizione.java"/>

@@ -2472,7 +2472,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiAutorizzazioneApplicativo'
+              $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo'
       responses:
         '201':
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/201Created'
@@ -2496,7 +2496,8 @@ paths:
       - $ref: "govway_core.yaml#/components/parameters/soggetto"
       - $ref: "govway_core.yaml#/components/parameters/id_ncname"
       - $ref: "govway_core.yaml#/components/parameters/id_versione"  
-      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"  
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_applicativo_autorizzato"
+      - $ref: "govway_rs-api_config-commons.yaml#/components/parameters/id_soggetto_applicativo"  
       - $ref: "govway_core.yaml#/components/parameters/gruppo"
       - $ref: "govway_core.yaml#/components/parameters/tipo_servizio"
     delete:
