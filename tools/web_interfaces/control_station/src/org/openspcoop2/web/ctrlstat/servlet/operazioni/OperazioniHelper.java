@@ -28,7 +28,7 @@ import java.util.Vector;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
@@ -55,7 +55,7 @@ import org.openspcoop2.web.lib.users.dao.User;
  */
 public class OperazioniHelper extends ConsoleHelper{
 
-	private SimpleDateFormat formatter = Utilities.getSimpleDateFormatSecond();
+	private SimpleDateFormat formatter = DateUtils.getSimpleDateFormatSecond();
 
 	public OperazioniHelper(HttpServletRequest request, PageData pd, 
 			HttpSession session) throws Exception {

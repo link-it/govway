@@ -21,8 +21,8 @@
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.isEmpty;
-import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserialize;
+import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserializeDefault;
 import static org.openspcoop2.utils.service.beans.utils.BaseHelper.evalnull;
 
 import java.sql.Connection;
@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
@@ -51,7 +52,6 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneToken
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdAutenticato;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
@@ -78,7 +78,7 @@ import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
@@ -140,7 +140,7 @@ public class ReportisticaHelper {
 		if (body.getUnitaTempo() == null)
 			body.setUnitaTempo(UnitaTempoReportEnum.GIORNALIERO);
 		// Intervallo Temporale
-		SimpleDateFormat sdf = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat sdf = DateUtils.getSimpleDateFormatMs();
 		wrap.overrideParameter(CostantiExporter.DATA_INIZIO,
 				sdf.format(body.getIntervalloTemporale().getDataInizio().toDate()));
 		wrap.overrideParameter(CostantiExporter.DATA_FINE,

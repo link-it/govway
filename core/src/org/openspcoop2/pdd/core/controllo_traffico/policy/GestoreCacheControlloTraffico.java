@@ -22,12 +22,7 @@ package org.openspcoop2.pdd.core.controllo_traffico.policy;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.constants.TipoPdD;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.UtilsException;
-import org.openspcoop2.utils.cache.Cache;
-import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.core.controllo_traffico.beans.DatiTransazione;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStatistico;
@@ -40,6 +35,11 @@ import org.openspcoop2.core.controllo_traffico.constants.TipoRisorsa;
 import org.openspcoop2.pdd.core.controllo_traffico.ConfigurazioneControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.INotify;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
+import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.cache.Cache;
+import org.openspcoop2.utils.cache.CacheAlgorithm;
+import org.openspcoop2.utils.date.DateUtils;
+import org.slf4j.Logger;
 
 /**     
  * GestoreCacheControlloTraffico
@@ -285,7 +285,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 						
 		// BuildKey
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
@@ -391,7 +391,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 		
 		// BuildKey
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
@@ -499,7 +499,7 @@ public class GestoreCacheControlloTraffico {
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
 		
 		// BuildKey
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		

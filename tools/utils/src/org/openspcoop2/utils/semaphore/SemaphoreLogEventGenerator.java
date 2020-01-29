@@ -23,7 +23,7 @@ package org.openspcoop2.utils.semaphore;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
 /**
@@ -43,7 +43,7 @@ public class SemaphoreLogEventGenerator implements ISemaphoreEventGenerator {
 	
 	@Override
 	public void emitEvent(Connection con, SemaphoreEvent event) {
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		String msg = 
 				"["+event.getSeverity()+"] ["+event.getOperationType()+"] Date["+dateformat.format(event.getDate())+"] IdNode["+event.getIdNode()+"] [Lock:"+event.isLock()+"]: "+event.getDetails();
 		switch (event.getSeverity()) {

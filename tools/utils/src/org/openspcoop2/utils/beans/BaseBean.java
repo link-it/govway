@@ -30,8 +30,8 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.serialization.ISerializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
 import org.openspcoop2.utils.serialization.SerializationConfig;
@@ -50,7 +50,7 @@ import org.openspcoop2.utils.xml.JaxbUtils;
 public abstract class BaseBean {
 
 	
-	private static final java.text.SimpleDateFormat DATE_FORMAT = Utilities.getSimpleDateFormatMs();
+	private static final java.text.SimpleDateFormat DATE_FORMAT = DateUtils.getSimpleDateFormatMs();
 	
 	
 	

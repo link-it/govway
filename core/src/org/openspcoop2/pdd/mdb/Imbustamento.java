@@ -74,6 +74,7 @@ import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 
 /**
@@ -1150,7 +1151,7 @@ public class Imbustamento extends GenericLib{
 			if(  generazioneMsgOK ) {
 				
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
+						DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				msgDiag.mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");
 				if(protocolManager.isHttpEmptyResponseOneWay())

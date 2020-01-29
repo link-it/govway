@@ -86,8 +86,8 @@ import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.sdk.constants.RuoloBusta;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -2194,7 +2194,7 @@ public class Sbustamento extends GenericLib{
 			if(  generazioneMsgOK || behaviourResponseTo ) {
 				try{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-							Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
+							DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
 					
 					if(behaviourResponseTo){
 					
@@ -2247,7 +2247,7 @@ public class Sbustamento extends GenericLib{
 			}else if( ricevutaAsincrona !=null ){
 				try{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-							Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
+							DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
 					
 					//	Invio sblocco
 					// Se non e' abilitato la risposta su di una nuova connessione, e l'indirizzo telematico 

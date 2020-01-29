@@ -33,10 +33,10 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.validation.Schema;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**
 * XSDSchemaCollection
@@ -338,7 +338,7 @@ public class XSDSchemaCollection {
 	
 	private static long counter = 0;
 	private static synchronized String getIdForDebug(){
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		XSDSchemaCollection.counter++;
 		return "ID_"+XSDSchemaCollection.counter+"_"+dateformat.format(DateManager.getDate());
 	}

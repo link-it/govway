@@ -25,9 +25,9 @@ import java.util.Date;
 import java.util.Hashtable;
 
 import org.openspcoop2.security.SecurityException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * AbstractKeystoreCache
@@ -203,7 +203,7 @@ class KeystoreCacheEntry<T extends Serializable> implements Serializable {
 	@Override
 	public String toString() {
 		StringBuffer bf = new StringBuffer();
-		bf.append("Data ").append(Utilities.getSimpleDateFormatMs().format(this.date)).append("\n");
+		bf.append("Data ").append(DateUtils.getSimpleDateFormatMs().format(this.date)).append("\n");
 		bf.append(this.keystore.toString());
 		return bf.toString();
 	}

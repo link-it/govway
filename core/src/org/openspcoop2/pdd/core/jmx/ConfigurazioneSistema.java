@@ -71,6 +71,7 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsMultiException;
 import org.openspcoop2.utils.datasource.DataSourceFactory;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 import org.openspcoop2.utils.resources.CharsetUtilities;
 import org.openspcoop2.utils.resources.MapReader;
@@ -903,6 +904,11 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 					}
 				}
 			}
+			
+			if(bf.length()>0){
+				bf.append("\n");
+			}
+			bf.append("DateTimeFormatter: "+DateUtils.getDEFAULT_DATA_ENGINE_TYPE());
 			
 			if(bf.length()<=0){
 				throw new Exception("Non sono disponibili informazioni sulla internazionalizzazione");

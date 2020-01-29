@@ -81,6 +81,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.Node;
@@ -706,7 +707,7 @@ public class LocalForwardEngine {
 			if(behaviourResponseTo){
 			
 				this.localForwardParameter.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
+						DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi (Behaviour)...");	
 				
@@ -728,7 +729,7 @@ public class LocalForwardEngine {
 			}else if(this.localForwardParameter.isStateless()==false || this.localForwardParameter.isOneWayVersione11() || this.ejbUtils.isGestioneSolamenteConIntegrationManager()){
 				
 				this.localForwardParameter.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.DATA_PRESA_IN_CARICO, 
-						Utilities.getSimpleDateFormatMs().format(DateManager.getDate()));
+						DateUtils.getSimpleDateFormatMs().format(DateManager.getDate()));
 				
 				this.localForwardParameter.getMsgDiag().mediumDebug("Invio messaggio 'OK' al modulo di RicezioneContenutiApplicativi...");	
 				

@@ -28,8 +28,8 @@ import java.util.List;
 
 import org.apache.logging.log4j.Level;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.logger.AbstractBasicLogger;
 import org.openspcoop2.utils.logger.IContext;
 import org.openspcoop2.utils.logger.beans.Attachment;
@@ -169,7 +169,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		}
 		
 		if(event.getDate()!=null){
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			out.append("Date:"+dateformat.format(event.getDate()));
 			out.append(" \n");
 		}
@@ -255,7 +255,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		}
 		showMsg.append(diagnostic.getFunction());
 		showMsg.append(" <");
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		showMsg.append(dateformat.format(diagnostic.getDate()));
 		showMsg.append("> ");
 		showMsg.append("(");

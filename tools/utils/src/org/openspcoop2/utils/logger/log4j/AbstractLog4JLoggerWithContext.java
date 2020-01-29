@@ -22,8 +22,8 @@ package org.openspcoop2.utils.logger.log4j;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.logger.IContext;
 import org.openspcoop2.utils.logger.beans.Property;
 import org.openspcoop2.utils.logger.beans.context.core.AbstractContext;
@@ -95,7 +95,7 @@ public abstract class AbstractLog4JLoggerWithContext extends AbstractLog4JLogger
 	@Override
 	protected void logContext(IContext contextParam, StringBuffer showContext){
 		
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		AbstractContext context = (AbstractContext) contextParam;
 		

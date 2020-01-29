@@ -36,7 +36,7 @@ import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnostici;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.utils.StringWrapper;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -223,7 +223,7 @@ public class DiagnosticDriverUtilities {
 	private static int setValuesSearch(FiltroRicercaDiagnostici filter,Object object,int startIndex, DiagnosticSearchType tipoRicerca) throws SQLQueryObjectException, SQLException{
 		
 		
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		PreparedStatement pstmt = null;
 		StringWrapper query = null;

@@ -32,11 +32,7 @@ import java.io.OutputStream;
 import java.io.SequenceInputStream;
 import java.net.URL;
 import java.text.MessageFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -56,135 +52,6 @@ import org.slf4j.Logger;
 
 public class Utilities {
 
-	/** FORMAT Simple Date Format */
-	
-	public static final String SIMPLE_DATE_FORMAT_MS = "yyyy-MM-dd_HH:mm:ss.SSS";
-	public static SimpleDateFormat getSimpleDateFormatMs() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_MS); // SimpleDateFormat non e' thread-safe
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ = "yyyy-MM-dd_HH:mm:ss.SSSX";
-	public static SimpleDateFormat getSimpleDateFormatMs_ISO_8601_TZ() {
-		SimpleDateFormat sdf = new SimpleDateFormat (SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
-		sdf.setCalendar(Calendar.getInstance());
-		return sdf;
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_SECOND = "yyyy-MM-dd_HH:mm:ss";
-	public static SimpleDateFormat getSimpleDateFormatSecond() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_SECOND); // SimpleDateFormat non e' thread-safe
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ = "yyyy-MM-dd_HH:mm:ssX";
-	public static SimpleDateFormat getSimpleDateFormatSecond_ISO_8601_TZ() {
-		SimpleDateFormat sdf =  new SimpleDateFormat (SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
-		sdf.setCalendar(Calendar.getInstance());
-		return sdf;
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_MINUTE = "yyyy-MM-dd_HH:mm";
-	public static SimpleDateFormat getSimpleDateFormatMinute() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_MINUTE); // SimpleDateFormat non e' thread-safe
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ = "yyyy-MM-dd_HH:mmX";
-	public static SimpleDateFormat getSimpleDateFormatMinute_ISO_8601_TZ() {
-		SimpleDateFormat sdf =  new SimpleDateFormat (SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
-		sdf.setCalendar(Calendar.getInstance());
-		return sdf;
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_HOUR = "yyyy-MM-dd_HH";
-	public static SimpleDateFormat getSimpleDateFormatHour() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_HOUR); // SimpleDateFormat non e' thread-safe
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ = "yyyy-MM-dd_HHX";
-	public static SimpleDateFormat getSimpleDateFormatHour_ISO_8601_TZ() {
-		SimpleDateFormat sdf =  new SimpleDateFormat (SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
-		sdf.setCalendar(Calendar.getInstance());
-		return sdf;
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_DAY = "yyyy-MM-dd";
-	public static SimpleDateFormat getSimpleDateFormatDay() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_DAY); // SimpleDateFormat non e' thread-safe
-	}
-	
-	public static final String SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ = "yyyy-MM-ddX";
-	public static SimpleDateFormat getSimpleDateFormatDay_ISO_8601_TZ() {
-		SimpleDateFormat sdf =  new SimpleDateFormat (SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
-		sdf.setCalendar(Calendar.getInstance());
-		return sdf;
-	}
-
-	
-	/** Simple Date Format che supporta tutti i formati rfc3339 */
-	
-	public static Date parseDateRFC3339_sec5_6(String dateParam) throws ParseException {
-		String date = dateParam;
-		
-		// https://tools.ietf.org/html/rfc3339
-		boolean withTimeZone = false;
-		if(date.length()>SIMPLE_DATE_FORMAT_SECOND.length()) {
-			// prendo la parte dopo l'ora, almeno non confondo il '-' del giorno con il '-' dell'offset
-			String check = date.substring(SIMPLE_DATE_FORMAT_SECOND.length());
-			withTimeZone = check.endsWith("Z") || check.contains("+") || check.contains("-");
-		}
-						
-		if(date.contains("T")) {
-			date = date.replace("T", "_");
-			
-			if(date.contains(".")) {
-				if(withTimeZone) {
-					return getSimpleDateFormatMs_ISO_8601_TZ().parse(date);
-				}
-				else {
-					return getSimpleDateFormatMs().parse(date);
-				}
-			}
-			else {
-				if(date.contains(":")) {
-					String [] split = date.split(":");
-					if(split.length>1) {
-						if(withTimeZone) {
-							return getSimpleDateFormatSecond_ISO_8601_TZ().parse(date);
-						}
-						else {
-							return getSimpleDateFormatSecond().parse(date);
-						}
-					}
-					else {
-						if(withTimeZone) {
-							return getSimpleDateFormatMinute_ISO_8601_TZ().parse(date);
-						}
-						else {
-							return getSimpleDateFormatMinute().parse(date);
-						}
-					}
-				}
-				else {
-					if(withTimeZone) {
-						return getSimpleDateFormatHour_ISO_8601_TZ().parse(date);
-					}
-					else {
-						return getSimpleDateFormatHour().parse(date);
-					}
-				}
-			}
-		}
-		else {
-			if(withTimeZone) {
-				return getSimpleDateFormatDay_ISO_8601_TZ().parse(date);
-			}
-			else {
-				return getSimpleDateFormatDay().parse(date);
-			}
-		}
-	}
-	
-	
-	
 	
 	
 	// ** Thread Sleep **

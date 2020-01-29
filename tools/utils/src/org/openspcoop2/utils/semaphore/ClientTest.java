@@ -40,6 +40,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
@@ -835,7 +836,7 @@ class EventGeneratorLog implements ISemaphoreEventGenerator{
 	
 	@Override
 	public void emitEvent(Connection con, SemaphoreEvent event) {
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		this.log.info("["+event.getSeverity()+"] ["+event.getOperationType()+"] Date["+dateformat.format(event.getDate())+"] IdNode["+event.getIdNode()+"] [Lock:"+event.isLock()+"]: "+event.getDetails()+"\n");
 		if(event.isLock()) {
 			if(SemaphoreOperationType.NEW.equals(event.getOperationType())) {

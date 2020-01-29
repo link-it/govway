@@ -126,6 +126,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.VersionUtilities;
+import org.openspcoop2.utils.date.DateEngineType;
 import org.openspcoop2.utils.date.IDate;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.id.IUniqueIdentifierGenerator;
@@ -1172,6 +1173,9 @@ public class OpenSPCoop2Properties {
 			// DateManager
 			if(this.getTipoDateManager()==null)
 				return false;
+			if(getTipoDateTimeFormat()==null) {
+				return false;
+			}
 			String tipoDateManger = className.getDateManager(this.getTipoDateManager());
 			if(tipoDateManger == null){
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.date.tipo'. \n Il DateManager indicato non esiste ["+this.getTipoDateManager()+"] nelle classi registrate in OpenSPCoop");
@@ -11611,6 +11615,26 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.tipoDateManager;
+	}
+	
+	private static DateEngineType tipoDateTimeFormat = null;
+	public DateEngineType getTipoDateTimeFormat() {	
+		if(OpenSPCoop2Properties.tipoDateTimeFormat==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.dateTimeFormat");
+				if(name!=null)
+					name = name.trim();
+				else
+					throw new Exception("non definita");
+				OpenSPCoop2Properties.tipoDateTimeFormat = DateEngineType.valueOf(name);
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.dateTimeFormat': "+e.getMessage(),e);
+				OpenSPCoop2Properties.tipoDateTimeFormat = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.tipoDateTimeFormat;
 	}
 
 	/**

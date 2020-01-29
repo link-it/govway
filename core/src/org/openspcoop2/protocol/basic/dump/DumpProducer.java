@@ -54,6 +54,7 @@ import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
 import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.protocol.sdk.tracciamento.TracciamentoException;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 
@@ -144,7 +145,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			
 			SimpleDateFormat dateformat = null;
 			if(this.debug) {
-				dateformat = Utilities.getSimpleDateFormatMs();
+				dateformat = DateUtils.getSimpleDateFormatMs();
 			}
 						
 			// MESSAGGIO BASE

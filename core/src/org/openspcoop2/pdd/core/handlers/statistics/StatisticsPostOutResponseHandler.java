@@ -28,8 +28,8 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseContext;
 import org.openspcoop2.pdd.core.handlers.PostOutResponseHandler;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 /**
@@ -64,7 +64,7 @@ public class StatisticsPostOutResponseHandler implements PostOutResponseHandler 
 			Object dataPresaInCarico = context.getPddContext().getObject(Costanti.DATA_PRESA_IN_CARICO);
 			if(dataPresaInCarico!=null){
 				try{
-					dataUscitaRichiesta = Utilities.getSimpleDateFormatMs().parse((String)dataPresaInCarico);
+					dataUscitaRichiesta = DateUtils.getSimpleDateFormatMs().parse((String)dataPresaInCarico);
 					timeMillisUscitaRichiesta = ((Date) dataUscitaRichiesta).getTime();
 				}catch(Exception e){
 					throw new HandlerException(e.getMessage(),e);
@@ -81,7 +81,7 @@ public class StatisticsPostOutResponseHandler implements PostOutResponseHandler 
 			Object dataPresaInCarico = context.getPddContext().getObject(Costanti.DATA_PRESA_IN_CARICO);
 			if(dataPresaInCarico!=null){
 				try{
-					dataIngressoRisposta = Utilities.getSimpleDateFormatMs().parse((String)dataPresaInCarico);
+					dataIngressoRisposta = DateUtils.getSimpleDateFormatMs().parse((String)dataPresaInCarico);
 					timeMillisIngressoRisposta = ((Date) dataIngressoRisposta).getTime();
 				}catch(Exception e){
 					throw new HandlerException(e.getMessage(),e);

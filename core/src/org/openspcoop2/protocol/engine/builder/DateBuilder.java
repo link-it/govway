@@ -23,8 +23,8 @@ package org.openspcoop2.protocol.engine.builder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * DateBuilder
@@ -49,7 +49,7 @@ public class DateBuilder {
 	public static String getDate_Format(Date date) {
 		if(date == null) 
 			date = DateManager.getDate();
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		return dateformat.format(date).replace('_','T');
 	}
 	
@@ -60,7 +60,7 @@ public class DateBuilder {
 	public String getDate_ProtocolFormat(Date date) {
 		if(date == null) 
 			date = DateManager.getDate();
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		return dateformat.format(date).replace('_','T');
 	}
 

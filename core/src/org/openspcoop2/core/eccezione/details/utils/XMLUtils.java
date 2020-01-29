@@ -48,8 +48,8 @@ import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.ValidatoreXSD;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.date.DateUtils;
 import org.slf4j.Logger;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -504,7 +504,7 @@ public class XMLUtils  {
 		if(de!=null){
 			
 			if(de.getTimestamp()!=null){
-				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 				bf.append("("+dateformat.format(de.getTimestamp())+")");
 			}
 			

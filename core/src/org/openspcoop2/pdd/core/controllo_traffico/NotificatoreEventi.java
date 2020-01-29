@@ -36,14 +36,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.activation.FileDataSource;
 
-import org.openspcoop2.protocol.basic.Costanti;
-import org.openspcoop2.utils.Utilities;
-import org.openspcoop2.utils.beans.WriteToSerializerType;
-import org.openspcoop2.utils.date.DateManager;
-import org.openspcoop2.utils.io.ZipUtilities;
-import org.openspcoop2.utils.resources.FileSystemUtilities;
-import org.slf4j.Logger;
-
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.constants.CodiceEventoControlloTraffico;
 import org.openspcoop2.core.eventi.constants.TipoEvento;
@@ -52,6 +44,14 @@ import org.openspcoop2.core.eventi.dao.IEventoService;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.eventi.GestoreEventi;
+import org.openspcoop2.protocol.basic.Costanti;
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.beans.WriteToSerializerType;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
+import org.openspcoop2.utils.io.ZipUtilities;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
+import org.slf4j.Logger;
 
 /**     
  * NotificatoreEventi
@@ -333,7 +333,7 @@ public class NotificatoreEventi {
 	
 	public Date process(Logger log, IEventoService eventoService, int secondi, Date lastInterval, Connection connection, boolean debug, boolean forceCheckPrimoAvvioConfig) throws Exception{
 		
-		SimpleDateFormat df = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat df = DateUtils.getSimpleDateFormatMs();
 		
 		logInfo(log,debug,"=================================================================================");
 		

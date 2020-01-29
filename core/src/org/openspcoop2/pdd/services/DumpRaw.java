@@ -41,9 +41,9 @@ import org.openspcoop2.pdd.services.core.AbstractContext;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.dump.DumpException;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.transport.Credential;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -132,13 +132,13 @@ public class DumpRaw {
 		
 		try{
 			if(dataAccettazioneRichiesta!=null){
-				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 				this.bfContext.append("Date (Accept Request): ");
 				this.bfContext.append(dateformat.format(dataAccettazioneRichiesta));
 				this.bfContext.append("\n");
 			}
 			if(dataIngressoRichiesta!=null){
-				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 				this.bfContext.append("Date (Received Request): ");
 				this.bfContext.append(dateformat.format(dataIngressoRichiesta));
 				this.bfContext.append("\n");

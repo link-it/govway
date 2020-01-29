@@ -58,7 +58,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazio
 import org.openspcoop2.protocol.sdk.tracciamento.InformazioniProtocollo;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.StringWrapper;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.openspcoop2.utils.sql.SQLQueryObjectException;
@@ -318,7 +318,7 @@ public class TracciaDriverUtilities {
 	
 	public static int setValuesSearch(Object object,FiltroRicercaTracce filtro,int startIndex) throws SQLException{
 		
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
 		PreparedStatement pstmt = null;
 		StringWrapper query = null;

@@ -33,6 +33,7 @@ import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.jdbc.JDBCParameterUtilities;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -190,7 +191,7 @@ public class SemaphoreEngine {
 				
 				Timestamp now = DateManager.getTimestamp();
 				
-				SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 				StringBuffer statoLock = new StringBuffer("Lock per tabella ["+table+"]");
 				if(this.mapping.sizeUniqueConditionValues()>0) {
 					for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {

@@ -38,6 +38,7 @@ import org.openspcoop2.message.exception.MessageException;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 
 /**     
@@ -122,7 +123,7 @@ public class ResponseCached implements Serializable {
 		StringBuffer bf = new StringBuffer();
 		bf.append("UUID: ").append(this.uuid).append("\n\n");
 		bf.append("Digest: ").append(this.digest).append("\n\n");
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		String creazione = dateformat.format(this.creazione).replace('_','T');
 		bf.append("Creazione: ").append(creazione).append("\n\n");
 		String scadenza = dateformat.format(this.scadenza).replace('_','T');

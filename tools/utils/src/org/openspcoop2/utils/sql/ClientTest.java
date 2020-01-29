@@ -36,6 +36,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.slf4j.Logger;
 
@@ -757,7 +758,7 @@ public class ClientTest {
 			
 			sqlQueryObject = (SQLQueryObjectCore) createSQLQueryObjectCore(tipo,selectForUpdate);
 			
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			
 			sqlQueryObject.addFromTable(table);
 			sqlQueryObject.addSelectField("descrizione");

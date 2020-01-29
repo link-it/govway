@@ -46,8 +46,8 @@ import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneUtils;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 
@@ -117,7 +117,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				String exp = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP);
 				if(exp!=null) {
-					Date dateExp = Utilities.getSimpleDateFormatMs().parse(exp);
+					Date dateExp = DateUtils.getSimpleDateFormatMs().parse(exp);
 					/*
 					 *   The "exp" (expiration time) claim identifies the expiration time on
 	   				 *   or after which the JWT MUST NOT be accepted for processing.  The
@@ -132,7 +132,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				String nbf = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF);
 				if(nbf!=null) {
-					Date dateNbf = Utilities.getSimpleDateFormatMs().parse(nbf);
+					Date dateNbf = DateUtils.getSimpleDateFormatMs().parse(nbf);
 					/*
 					 *   The "nbf" (not before) claim identifies the time before which the JWT
 					 *   MUST NOT be accepted for processing.  The processing of the "nbf"
@@ -147,7 +147,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 				
 				String iat = busta.getProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT);
 				if(iat!=null) {
-					Date dateIat = Utilities.getSimpleDateFormatMs().parse(iat);
+					Date dateIat = DateUtils.getSimpleDateFormatMs().parse(iat);
 					/*
 					 *   The "iat" (issued at) claim identifies the time at which the JWT was
 	   				 *   issued.  This claim can be used to determine the age of the JWT.

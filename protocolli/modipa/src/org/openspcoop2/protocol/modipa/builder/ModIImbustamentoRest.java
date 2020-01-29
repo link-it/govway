@@ -53,8 +53,8 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.jose.MessageSecuritySender_jose;
 import org.openspcoop2.security.message.utils.SignatureBean;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -283,15 +283,15 @@ public class ModIImbustamentoRest {
 		Date nowDateUsatoPerProprietaTraccia = new Date((nowSeconds*1000)); // e' inutile che traccio i millisecondi, tanto poi nel token non viaggiano
 		
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_ISSUED_AT, nowSeconds);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, Utilities.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
 		
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_NOT_TO_BE_USED_BEFORE, nowSeconds);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, Utilities.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_NBF, DateUtils.getSimpleDateFormatMs().format(nowDateUsatoPerProprietaTraccia));
 		
 		long expired = nowSeconds+securityConfig.getTtlSeconds();
 		Date expiredDateUsatoPerProprietaTraccia = new Date(expired*1000);
 		payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_EXPIRED, expired);
-		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, Utilities.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia));
+		busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(expiredDateUsatoPerProprietaTraccia));
 		
 		if(busta.getID()!=null) {
 			payloadToken.put(Claims.JSON_WEB_TOKEN_RFC_7519_JWT_ID, busta.getID());

@@ -66,7 +66,7 @@ import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecuritySender_wss4j;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.slf4j.Logger;
@@ -485,7 +485,7 @@ public class ModIImbustamentoSoap {
 		if(created!=null) {
 			java.time.Instant iCreated = java.time.Instant.parse(created);
 			Date dCreated = new Date(iCreated.toEpochMilli());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, Utilities.getSimpleDateFormatMs().format(dCreated));
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(dCreated));
 		}
 		
 		String patternExpires = "//{"+wsuNamespace+"}Timestamp/{"+wsuNamespace+"}Expires/text()";
@@ -496,7 +496,7 @@ public class ModIImbustamentoSoap {
 		if(expires!=null) {
 			java.time.Instant iExpires = java.time.Instant.parse(expires);
 			Date dExpires = new Date(iExpires.toEpochMilli());
-			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, Utilities.getSimpleDateFormatMs().format(dExpires));
+			busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(dExpires));
 		}
 		
 		//WSAddressingHeader wsAddressingHeader = wsaddressingUtilities.read(soapMessage, this.modiProperties.getSoapWSAddressingActor(), true);

@@ -35,6 +35,7 @@ import javax.naming.RefAddr;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsAlreadyExistsException;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jmx.RisorseJMXException;
 import org.openspcoop2.utils.resources.GestoreJNDI;
 
@@ -97,7 +98,7 @@ public class DataSourceFactory {
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
 			StringBuffer bf = new StringBuffer();
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(datasource.getDate())).append(") ");
 			bf.append("idDatasource:");
 			bf.append(datasource.getUuidDatasource());

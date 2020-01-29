@@ -42,7 +42,7 @@ import org.openspcoop2.protocol.sdk.constants.FaseSbustamento;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.spcoop.SPCoopBustaRawContent;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * Classe che implementa, in base al protocollo SPCoop, l'interfaccia {@link org.openspcoop2.protocol.sdk.builder.IBustaBuilder} 
@@ -85,7 +85,7 @@ public class SPCoopBustaBuilder extends BasicStateComponentFactory implements or
 				return null;
 			}
 			
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
 			String tmp = split[3]+"_"+split[4];
 			Date d = dateformat.parse(tmp);
 			return d;

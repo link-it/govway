@@ -25,7 +25,7 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * RisultatoStatistico 
@@ -80,7 +80,7 @@ public class RisultatoStatistico implements Serializable {
 		
 		bf.append("\n");
 		
-		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		
 		bf.append("DataInizio: ");
 		if(this.dataInizio!=null)

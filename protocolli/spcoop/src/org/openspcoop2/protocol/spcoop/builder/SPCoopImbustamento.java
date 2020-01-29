@@ -68,6 +68,7 @@ import org.openspcoop2.protocol.spcoop.validator.SPCoopValidazioneSintattica;
 import org.openspcoop2.protocol.utils.IDSerialGenerator;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.InputStreamDataSource;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.serial.IDSerialGeneratorParameter;
@@ -247,7 +248,7 @@ public class SPCoopImbustamento {
 	
 			// Date nel formato aaaa-mm-gg_hh:mm
 			Date now=DateManager.getDate();
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMinute();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
 			bf.append(dateformat.format(now));
 	
 			return bf.toString();

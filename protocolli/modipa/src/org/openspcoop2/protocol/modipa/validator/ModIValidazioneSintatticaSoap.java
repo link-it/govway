@@ -62,7 +62,7 @@ import org.openspcoop2.security.message.constants.SignatureDigestAlgorithm;
 import org.openspcoop2.security.message.engine.MessageSecurityContext_impl;
 import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 import org.openspcoop2.security.message.wss4j.MessageSecurityReceiver_wss4j;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.xml.DynamicNamespaceContext;
 import org.openspcoop2.utils.xml.XPathNotFoundException;
 import org.slf4j.Logger;
@@ -386,7 +386,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				if(timestamp.getCreated()!=null) {
 					long ms = timestamp.getCreated().toEpochMilli();
 					Date d = new Date(ms); // la conversione serve a risolvere il timezone
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, Utilities.getSimpleDateFormatMs().format(d));
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_IAT, DateUtils.getSimpleDateFormatMs().format(d));
 				}
 				else {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.ORA_REGISTRAZIONE_NON_PRESENTE, 
@@ -395,7 +395,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 				if(timestamp.getExpires()!=null) {
 					long ms = timestamp.getExpires().toEpochMilli();
 					Date d = new Date(ms); // la conversione serve a risolvere il timezone
-					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, Utilities.getSimpleDateFormatMs().format(d));
+					busta.addProperty(ModICostanti.MODIPA_BUSTA_EXT_PROFILO_SICUREZZA_MESSAGGIO_EXP, DateUtils.getSimpleDateFormatMs().format(d));
 				}
 				else {
 					erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SCADENZA_NON_PRESENTE, 

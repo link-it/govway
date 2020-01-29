@@ -26,7 +26,7 @@ import java.util.Date;
 
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * UniqueIdentifierUtilities 
@@ -42,7 +42,7 @@ public class UniqueIdentifierUtilities {
 	public static String getUniqueId(AttivazionePolicy attivazionePolicy){
 		String idActivePolicy = attivazionePolicy.getIdActivePolicy();
 		
-		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		String time = dateFormat.format(attivazionePolicy.getUpdateTime());
 		
 		return idActivePolicy + separator + time;
@@ -50,7 +50,7 @@ public class UniqueIdentifierUtilities {
 	
 	public static String getUniqueId(IdActivePolicy idActivePolicy){
 		
-		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		return idActivePolicy.getNome()+separator+dateFormat.format(idActivePolicy.getUpdateTime());
 		
 	}
@@ -60,7 +60,7 @@ public class UniqueIdentifierUtilities {
 	}
 	
 	public static Date extractUpdateTimeActivePolicy(String id) throws ParseException{
-		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		return dateFormat.parse(id.split(separator)[1]);
 	}
 }

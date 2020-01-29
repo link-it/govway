@@ -27,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.logger.constants.LowSeverity;
 import org.openspcoop2.utils.logger.constants.Severity;
 
@@ -454,7 +454,7 @@ public class DiagnosticManager {
 			String finalValue = null;
 			if(ret!=null){
 				if(ret instanceof Date){
-					SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 					finalValue = dateformat.format((Date)ret);
 				}
 				else if(ret instanceof byte[]){

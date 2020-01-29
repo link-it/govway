@@ -28,7 +28,7 @@ import org.openspcoop2.core.controllo_traffico.beans.ActivePolicy;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.RisultatoStato;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * PolicyUtilities 
@@ -64,7 +64,7 @@ public class PolicyUtilities {
 	
 	public static String toString(RisultatoStato statoAllarme){
 		
-		SimpleDateFormat dateFormat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		
 		StringBuffer bf = new StringBuffer(toString(statoAllarme.getStato()));
 		

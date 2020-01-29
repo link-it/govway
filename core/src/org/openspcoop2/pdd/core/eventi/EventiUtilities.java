@@ -19,11 +19,11 @@
  */
 package org.openspcoop2.pdd.core.eventi;
 
+import java.text.SimpleDateFormat;
+
 import org.openspcoop2.core.eventi.Evento;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
-import org.openspcoop2.utils.Utilities;
-
-import java.text.SimpleDateFormat;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**     
  * EventiUtilities
@@ -37,7 +37,7 @@ public class EventiUtilities {
 	public static String toString(Evento evento){
 		StringBuffer bf = new StringBuffer();
 
-		SimpleDateFormat sdf = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat sdf = DateUtils.getSimpleDateFormatMs();
 		if(evento.getOraRegistrazione()!=null){
 			bf.append("<").append(sdf.format(evento.getOraRegistrazione())).append(">");
 		}

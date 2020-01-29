@@ -24,7 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * Utilities per il protocollo SPCoop
@@ -49,12 +49,12 @@ public class SPCoopUtils {
 	}
 		
 	public static String getDate_eGovFormat(Date date) {
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		return dateformat.format(date).replace('_','T');
 	}
 	
 	public static Date getDate_eGovFormat(String date) throws ParseException {
-		SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		return dateformat.parse(date.replace('T','_'));
 	}
 }

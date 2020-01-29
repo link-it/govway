@@ -151,6 +151,7 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.beans.WriteToSerializerType;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.dch.MailcapActivationReader;
 import org.openspcoop2.utils.id.UniqueIdentifierManager;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
@@ -713,6 +714,10 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			try{
 				String tipoClass = classNameReader.getDateManager(propertiesReader.getTipoDateManager());
 				DateManager.initializeDataManager(tipoClass, propertiesReader.getDateManagerProperties(),logCore);
+				OpenSPCoop2Startup.log.info("Inizializzazione DateManager: "+propertiesReader.getTipoDateManager());
+				
+				DateUtils.setDEFAULT_DATA_ENGINE_TYPE(propertiesReader.getTipoDateTimeFormat());
+				OpenSPCoop2Startup.log.info("Inizializzazione DateTimeFormat: "+propertiesReader.getTipoDateTimeFormat());
 			}catch(Exception e){
 				this.logError("Riscontrato errore durante l'inizializzazione del DataManager: "+e.getMessage(),e);
 				return;

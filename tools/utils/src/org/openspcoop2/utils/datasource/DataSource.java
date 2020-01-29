@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.openspcoop2.utils.TipiDatabase;
-import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 import org.openspcoop2.utils.jdbc.JDBCUtilities;
 
@@ -78,7 +78,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) it.next();
 			StringBuffer bf = new StringBuffer();
-			SimpleDateFormat dateformat = Utilities.getSimpleDateFormatMs();
+			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(connection.getDate())).append(") ");
 			if(connection.getIdTransazione()!=null){
 				if(bf.length() > 0){
