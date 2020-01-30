@@ -60,6 +60,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoOraRegistrazione;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.UniversallyUniqueIdentifierGenerator;
 
 /**	
@@ -119,7 +120,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 			//		 Se non la si vuole nel protocollo trasparente reimplementare questo metodo nel protocollo trasparente eliminando la data
 			//		 Anche il metodo extractDate dovra' a quel punto essere reimplementato ritornando null
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateFormat = DateUtils.getDefaultDateTimeFormatter(dateformatPattern);
 			
 			if(RuoloMessaggio.RICHIESTA.equals(ruoloMessaggio))
 	//			return id+ "-request";
@@ -144,7 +145,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 			}
 			String [] split = id.split("-");
 			
-			SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateFormat = DateUtils.getDefaultDateTimeFormatter(dateformatPattern);
 			
 			try{
 				return dateFormat.parse(split[0].trim());

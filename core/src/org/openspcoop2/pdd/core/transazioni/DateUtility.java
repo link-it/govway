@@ -23,8 +23,9 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.utils.date.DateUtils;
+import org.slf4j.Logger;
 
 /**     
  * DateUtility
@@ -51,7 +52,7 @@ public class DateUtility {
 			return null;
 		}
 		
-		SimpleDateFormat dateFormat = new SimpleDateFormat(dateformatPattern); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateFormat = DateUtils.getDefaultDateTimeFormatter(dateformatPattern);
 		
 		// Le date presenti in un identificativo di protocollo, possono contenere
 		// informazioni fino al millisecondo.

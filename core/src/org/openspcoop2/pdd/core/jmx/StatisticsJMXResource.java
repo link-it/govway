@@ -43,6 +43,7 @@ import javax.management.ReflectionException;
 import org.openspcoop2.pdd.core.handlers.statistics.StatisticsCollection;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 /**
@@ -594,7 +595,7 @@ public class StatisticsJMXResource extends NotificationBroadcasterSupport implem
 			Date rightBound = DateManager.getDate();
 			Date leftBound = new Date(stat.getDataUltimoRefresh());
 		
-			SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss");
 			this.intervallo_statistico = "["+ dateformat.format(leftBound) 
 				+ "] - ["+dateformat.format(rightBound)+"]";
 		}else{

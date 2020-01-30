@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.IBustaBuilder;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 
@@ -405,7 +406,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			if(this.debug){
 				SimpleDateFormat dateformat = null;
 				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
-					dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm"); // SimpleDateFormat non e' thread-safe
+					dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 				}
 				if(idBustaRichiesta!=null){
 					if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
@@ -549,7 +550,7 @@ public class FiltroDuplicati implements IFiltroDuplicati {
 			
 			if(this.debug){
 				if(this.openspcoop2Properties.isTransazioniFiltroDuplicatiSaveDateEnabled(protocolFactory)){
-					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm"); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 					sql = sql.replaceFirst("\\?", "'"+dateformat.format(timestampId)+"'");
 				}
 				if(idBusta!=null){

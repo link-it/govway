@@ -69,6 +69,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.security.JOSESerialization;
@@ -1308,7 +1309,7 @@ public class GestoreToken {
 				}
 				String pattern = properties.getGestioneTokenFormatDate();
 				if(pattern!=null && !"".equals(pattern)) {
-					sdf = new SimpleDateFormat(pattern);
+					sdf = DateUtils.getDefaultDateTimeFormatter(pattern);
 				}
 			}
 			else {
@@ -1856,7 +1857,7 @@ public class GestoreToken {
 				if(!esitoGestioneToken.getInformazioniToken().getNbf().before(now)){
 					esitoGestioneToken.setValido(false);
 					esitoGestioneToken.setDateValide(false);
-					SimpleDateFormat sdf = new SimpleDateFormat(format);
+					SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 					esitoGestioneToken.setDetails("Token not usable before "+sdf.format(esitoGestioneToken.getInformazioniToken().getNbf()));
 					if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
 						esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 
@@ -1886,7 +1887,7 @@ public class GestoreToken {
 					if(esitoGestioneToken.getInformazioniToken().getIat().before(oldMax)) {
 						esitoGestioneToken.setValido(false);
 						esitoGestioneToken.setDateValide(false);
-						SimpleDateFormat sdf = new SimpleDateFormat(format);
+						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 						esitoGestioneToken.setDetails("Token expired; iat time '"+sdf.format(esitoGestioneToken.getInformazioniToken().getIat())+"' too old");
 						if(policyGestioneToken.isMessageErrorGenerateEmptyMessage()) {
 							esitoGestioneToken.setErrorMessage(WWWAuthenticateGenerator.buildErrorMessage(WWWAuthenticateErrorCode.invalid_token, policyGestioneToken.getRealm(), 

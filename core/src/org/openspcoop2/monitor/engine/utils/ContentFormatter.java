@@ -30,6 +30,7 @@ import java.util.List;
 
 import org.openspcoop2.monitor.engine.exceptions.EngineException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * ContentFormatter
@@ -168,17 +169,17 @@ public class ContentFormatter {
 	
 
 	public static String toString(Date date){
-		SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // not thread safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(DATE_FORMAT);
 		return dateformat.format(date);
 	}
 	
 	public static String toString(Calendar calendar){
-		SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // not thread safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(DATE_FORMAT);
 		return dateformat.format(calendar.getTime());
 	}
 	
 	public static String toString(Timestamp t){
-		SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // not thread safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(DATE_FORMAT);
 		return dateformat.format(t);
 	}
 	
@@ -296,7 +297,7 @@ public class ContentFormatter {
 		try{
 			Date d = null;
 			if(v!=null){
-				SimpleDateFormat dateformat = new SimpleDateFormat (DATE_FORMAT); // not thread safe
+				SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(DATE_FORMAT);
 				d = dateformat.parse(v);
 			}
 			return d;

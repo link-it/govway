@@ -26,6 +26,7 @@ import java.util.Date;
 
 import org.openspcoop2.monitor.engine.constants.Costanti;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 
@@ -115,7 +116,7 @@ public class FileSystemSerializer {
 			this.mkdir(dir);
 		}
 		
-		SimpleDateFormat dateformat = new SimpleDateFormat (formatNew); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew); // SimpleDateFormat non e' thread-safe
 		
 		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber()+".xml";
 		File f = new File(dir, nomeFile);

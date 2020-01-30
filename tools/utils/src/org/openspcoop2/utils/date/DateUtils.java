@@ -512,10 +512,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_DAY);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterDay(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_DAY, false);
+		return new DateTimeFormatterWrapper(type.toDateType(false), SIMPLE_DATE_FORMAT_DAY, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterDay() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_DAY, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), SIMPLE_DATE_FORMAT_DAY, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ = "yyyy-MM-ddX";
@@ -523,7 +523,9 @@ public class DateUtils {
 		return getDefaultDateTimeFormatterDay_ISO_8601_TZ();
 	}
 	public static SimpleDateFormat getOldSimpleDateFormatDay_ISO_8601_TZ() {
-		return new SimpleDateFormat (SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat sdf = new SimpleDateFormat (SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ); // SimpleDateFormat non e' thread-safe
+		sdf.setCalendar(Calendar.getInstance());
+		return sdf;
 	}
 	public static DateTimeFormatter getDateTimeFormatterDay_ISO_8601_TZ() {
 		return DateUtils.getDateTimeFormatter(SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ);
@@ -532,12 +534,53 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterDay_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateType(false), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterDay_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
 	}
 
+	public static SimpleDateFormat getSimpleDateFormat(String format) {
+		return getDefaultDateTimeFormatter(format);
+	}
+	public static SimpleDateFormat getOldSimpleDateFormat(String format) {
+		return new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+	}
+	public static DateTimeFormatterWrapper getDateTimeFormatter(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toDateType(true), format, false);
+	}
+	public static DateTimeFormatterWrapper getDefaultDateTimeFormatter(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), format, false);
+	}
+	public static DateTimeFormatterWrapper getDateFormatter(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toDateType(false), format, false);
+	}
+	public static DateTimeFormatterWrapper getDefaultDateFormatter(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), format, false);
+	}
+	
+	public static SimpleDateFormat getSimpleDateFormat_ISO_8601_TZ(String format) {
+		return getDefaultDateTimeFormatter_ISO_8601_TZ(format);
+	}
+	public static SimpleDateFormat getOldSimpleDateFormat_ISO_8601_TZ(String format) {
+		SimpleDateFormat sdf = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		sdf.setCalendar(Calendar.getInstance());
+		return sdf;
+	}
+	public static DateTimeFormatterWrapper getDateTimeFormatter_ISO_8601_TZ(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toDateType(true), format, true);
+	}
+	public static DateTimeFormatterWrapper getDefaultDateTimeFormatter_ISO_8601_TZ(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), format, true);
+	}
+	public static DateTimeFormatterWrapper getDateFormatter_ISO_8601_TZ(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toDateType(false), format, true);
+	}
+	public static DateTimeFormatterWrapper getDefaultDateFormatter_ISO_8601_TZ(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), format, true);
+	}
+	
+	
 	
 	
 	

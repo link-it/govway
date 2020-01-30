@@ -337,7 +337,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 						bustaRichiesta.getRiferimentoMessaggio()==null){
 					
 						// devo generare ricevuta
-						protocolHeader.append("<eGov_IT:ProfiloCollaborazione tipo=\""+bustaRichiesta.getTipoServizio()+"\" servizioCorrelato=\""+
+						protocolHeader.append("<eGov_IT:ProfiloCollaborazione tipo=\""+traduttore.toProtocolServiceType(bustaRichiesta.getTipoServizio())+"\" servizioCorrelato=\""+
 								(bustaRichiesta.getServizio()+"Correlato")+"\" >"+traduttore.toString(bustaRichiesta.getProfiloDiCollaborazione())+"</eGov_IT:ProfiloCollaborazione>");
 				} else if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.ASINCRONO_SIMMETRICO.equals(bustaRichiesta.getProfiloDiCollaborazione()) &&
 						bustaRichiesta.getRiferimentoMessaggio()==null){
@@ -400,7 +400,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			
 			// servizio
 			if(bustaRichiesta.getTipoServizio()!=null && bustaRichiesta.getServizio()!=null)
-				protocolHeader.append("<eGov_IT:Servizio tipo=\""+bustaRichiesta.getTipoServizio()+"\">"+bustaRichiesta.getServizio()+"</eGov_IT:Servizio>");
+				protocolHeader.append("<eGov_IT:Servizio tipo=\""+traduttore.toProtocolServiceType(bustaRichiesta.getTipoServizio())+"\">"+bustaRichiesta.getServizio()+"</eGov_IT:Servizio>");
 			
 			// azione
 			if(bustaRichiesta.getAzione()!=null)

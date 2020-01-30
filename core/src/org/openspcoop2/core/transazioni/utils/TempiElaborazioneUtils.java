@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 /**     
@@ -55,7 +56,7 @@ public class TempiElaborazioneUtils implements Serializable {
 	 **/
 	
 	private static String _convertToDBValue(TempiElaborazioneFunzionalita tempiElaborazioneFunzionalita) {
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(format);
 		StringBuffer bf = new StringBuffer("");
 		if(tempiElaborazioneFunzionalita!=null && tempiElaborazioneFunzionalita.dataIngresso!=null) {
 			bf.append(dateformat.format(tempiElaborazioneFunzionalita.dataIngresso));
@@ -116,7 +117,7 @@ public class TempiElaborazioneUtils implements Serializable {
 		if(dbValue==null || "".equals(dbValue)) {
 			return null;
 		}
-		SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(format);
 		String [] date = dbValue.split(FUNZIONALITA_SEPARATOR);
 		if(date==null || date.length!=2) {
 			return null;

@@ -70,6 +70,7 @@ import org.openspcoop2.protocol.sdk.dump.Messaggio;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
 import org.openspcoop2.utils.transport.http.HttpConstants;
@@ -471,7 +472,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					this.logger.debug("Negoziazione token '"+this.policyNegoziazioneToken.getName()+"' terminata");
 				}
 				
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter(format);
 								
 				if(esitoNegoziazione==null) {
 					throw new Exception("Esito Negoziazione non ritornato ?");
