@@ -1238,8 +1238,21 @@ public class PorteApplicativeHelper extends ConnettoriHelper {
 		String[] tipoModeAzione = null;
 		String[] tipoModeAzioneLabel = null;
 		
-		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && !usataInConfigurazioni))
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && !usataInConfigurazioni)) {
 			azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT);
+		}
+		else if(datiInvocazione && ServiceBinding.SOAP.equals(serviceBinding)) {
+			if(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT.equals(modeaz)) {
+				azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT); // era stata impostata precedentemente
+			}
+			else {
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+				if(azioni==null || azioni.size()<=1) {
+					azTmp.add(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT);
+				}
+			}
+		}
+		
 		
 		if(allImplementationIdentificationResourceModes != null && allImplementationIdentificationResourceModes.size() >0) {
 			

@@ -2245,6 +2245,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setSearch("");
 			
 			List<MappingErogazionePortaApplicativa> listaSenzaFiltro = this.impostaFiltroAzioneMappingErogazione(null, listaParam,ricerca, idLista);
+			
+			boolean showBottoneAggiungiNuovaConfigurazione = 
+					(azioni!=null && azioni.size()>1) 
+					||
+					(listaSenzaFiltro.size()>1);
+			if(showBottoneAggiungiNuovaConfigurazione) {
+				// verifico modalita identificazione
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : listaParam) {
+					if(mappingErogazionePortaApplicativa.isDefault()) {
+						PortaApplicativa paDefaullt = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+						if(paDefaullt.getAzione()!=null && 
+								org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione.STATIC.equals(paDefaullt.getAzione().getIdentificazione())) {
+							showBottoneAggiungiNuovaConfigurazione = false;
+						}
+						break;
+					}
+				}
+			}
+			
 			List<MappingErogazionePortaApplicativa> lista = null;
 			boolean chooseTabWithFilter = !this.isModalitaCompleta();
 			if(chooseTabWithFilter) {
@@ -3188,7 +3207,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			if(visualizzazioneTabs) {
 				this.pd.setSelect(true);
-				this.pd.setAddButton(true);
+		        if(showBottoneAggiungiNuovaConfigurazione) {
+		        	this.pd.setAddButton(true);
+		        }
+		        else {
+		        	this.pd.setAddButton(false);
+		        }
 				if(lista.size() > 1)
 					this.pd.setRemoveButton(true);
 				else 
@@ -3759,7 +3783,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			
 			Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, apc, false, true, new ArrayList<String>());
 			String filtroAzione = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_AZIONE);
-				
+			
 			this.pd.setIndex(offset);
 			this.pd.setPageSize(limit);
 			this.pd.setSearch("");
@@ -3768,6 +3792,25 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			ServletUtils.setObjectIntoSession(this.session, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT_CONFIGURAZIONE, PorteDelegateCostanti.ATTRIBUTO_PORTE_DELEGATE_PARENT);
 			
 			List<MappingFruizionePortaDelegata> listaSenzaFiltro = this.impostaFiltroAzioneMappingFruizione(null, listaParam,ricerca, idLista);
+			
+			boolean showBottoneAggiungiNuovaConfigurazione = 
+					(azioni!=null && azioni.size()>1) 
+					||
+					(listaSenzaFiltro.size()>1);
+			if(showBottoneAggiungiNuovaConfigurazione) {
+				// verifico modalita identificazione
+				for (MappingFruizionePortaDelegata mappingFruizionePortaDelegata : listaParam) {
+					if(mappingFruizionePortaDelegata.isDefault()) {
+						PortaDelegata pdDefaullt = this.porteDelegateCore.getPortaDelegata(mappingFruizionePortaDelegata.getIdPortaDelegata());
+						if(pdDefaullt.getAzione()!=null && 
+								org.openspcoop2.core.config.constants.PortaDelegataAzioneIdentificazione.STATIC.equals(pdDefaullt.getAzione().getIdentificazione())) {
+							showBottoneAggiungiNuovaConfigurazione = false;
+						}
+						break;
+					}
+				}
+			}
+						
 			List<MappingFruizionePortaDelegata> lista = null;
 			boolean chooseTabWithFilter = !this.isModalitaCompleta();
 			if(chooseTabWithFilter) {
@@ -4753,7 +4796,12 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 			this.pd.setDati(dati);
 			if(visualizzazioneTabs) {
 		        this.pd.setSelect(true);
-		        this.pd.setAddButton(true);
+		        if(showBottoneAggiungiNuovaConfigurazione) {
+		        	this.pd.setAddButton(true);
+		        }
+		        else {
+		        	this.pd.setAddButton(false);
+		        }
 		        if(lista.size() > 1)
 		                this.pd.setRemoveButton(true);
 		        else 

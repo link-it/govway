@@ -408,8 +408,21 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		String[] tipoModeAzione = null;
 		String[] tipoModeAzioneLabel = null;
 		
-		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && !usataInConfigurazioni))
+		if(tipoOp.equals(TipoOperazione.ADD) || (tipoOp.equals(TipoOperazione.CHANGE) && !usataInConfigurazioni)) {
 			azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT);
+		}
+		else if(datiInvocazione && ServiceBinding.SOAP.equals(serviceBinding)) {
+			if(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT.equals(modeaz)) {
+				azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT); // era stata impostata precedentemente
+			}
+			else {
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
+				if(azioni==null || azioni.size()<=1) {
+					azTmp.add(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_REGISTER_INPUT);
+				}
+			}
+		}
+		
 		
 		if(allSubscriptionIdentificationResourceModes != null && allSubscriptionIdentificationResourceModes.size() >0) {
 			

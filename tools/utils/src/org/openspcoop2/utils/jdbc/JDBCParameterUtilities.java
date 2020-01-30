@@ -653,7 +653,7 @@ public class JDBCParameterUtilities {
             	return null;
             }
             try {
-            	return Utilities.getAsByteArray(binaryStream);
+            	return Utilities.getAsByteArray(binaryStream, false); // non lancio eccezione se l'input stream ritornato e' vuoto (succede in caso si salva una stringa vuota su alcuni database)
             } finally {
             	if(binaryStream != null) {
             		try {binaryStream.close();} catch(Exception e) {}

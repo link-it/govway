@@ -1268,13 +1268,13 @@ public final class PorteApplicativeChange extends Action {
 			if(modeaz!=null && modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_DELEGATED_BY)) {
 				// non modifico paAzione
 			}
-			else if (((!azione.equals("") || 
+			else if ((( (azione!=null && !azione.equals("")) || 
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INPUT_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_SOAP_ACTION_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_PROTOCOL_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_HEADER_BASED) ||
 							modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_INTERFACE_BASED))) ||
-							!azid.equals("")) {
+							(azid!=null && !azid.equals("")) ) {
 				PortaApplicativaAzione paa = new PortaApplicativaAzione();
 
 				if (modeaz.equals(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_MODE_REGISTER_INPUT)) {

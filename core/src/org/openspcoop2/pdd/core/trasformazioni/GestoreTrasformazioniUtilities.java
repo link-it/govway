@@ -488,15 +488,34 @@ public class GestoreTrasformazioniUtilities {
 							soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
 						}
 						else {
-							SOAPElement newElement = soapMessage.createSOAPElement(risultato.getContenuto());
-							if(element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
-								// il nuovo elemento è una busta soap
-								soapMessage.getSOAPPart().getEnvelope().detachNode();
-								soapMessage.getSOAPPart().setContent(new DOMSource(newElement));
+							boolean rebuildWithAttachments = false;
+							if(contentTypeInput!=null) {
+								rebuildWithAttachments = ContentTypeUtilities.isMultipart(contentTypeInput);
+							}
+							if(rebuildWithAttachments) {
+								OpenSPCoop2MessageParseResult pr = null;
+								if(transportRequestContext!=null) {
+									pr = messageFactory.createMessage(message.getMessageType(), transportRequestContext, risultato.getContenuto());
+								}
+								else {
+									pr = messageFactory.createMessage(message.getMessageType(), transportResponseContext, risultato.getContenuto());
+								}
+								OpenSPCoop2Message newMsg = pr.getMessage_throwParseThrowable();
+								message.copyResourcesTo(newMsg, skipTransportInfo);
+								addTransportInfo(forceAddTrasporto, forceAddUrl, forceResponseStatus, message);
+								return newMsg;
 							}
 							else {
-								soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
-								soapMessage.getSOAPPart().getEnvelope().getBody().addChildElement(newElement);
+								SOAPElement newElement = soapMessage.createSOAPElement(risultato.getContenuto());
+								if(element.getLocalName().equals(newElement.getLocalName()) && element.getNamespaceURI().equals(newElement.getNamespaceURI())) {
+									// il nuovo elemento è una busta soap
+									soapMessage.getSOAPPart().getEnvelope().detachNode();
+									soapMessage.getSOAPPart().setContent(new DOMSource(newElement));
+								}
+								else {
+									soapMessage.getSOAPPart().getEnvelope().getBody().removeContents();
+									soapMessage.getSOAPPart().getEnvelope().getBody().addChildElement(newElement);
+								}
 							}
 						}
 						

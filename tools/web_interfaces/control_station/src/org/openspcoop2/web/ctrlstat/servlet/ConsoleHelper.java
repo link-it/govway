@@ -50,6 +50,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
@@ -13310,7 +13311,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				de.setLabel(CostantiControlStation.LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 				de.setName(CostantiControlStation.PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_REQ_CONTENT_TYPE);
 				de.setType(DataElementType.TEXT_EDIT);
-				de.setValue(trasformazioneRichiestaContentType);
+				de.setValue(StringEscapeUtils.escapeHtml(trasformazioneRichiestaContentType));
 			
 				switch (serviceBindingMessage) {
 				case REST:
