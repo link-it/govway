@@ -2998,7 +2998,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if(portaDelegata) {
 				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(this.porteDelegateCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
@@ -3078,7 +3078,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			// Controllo che non esistano altre correlazioni applicative con gli
 			// stessi dati
 			boolean giaRegistrato = false;
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if(portaDelegata) {
 				giaRegistrato = ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(this.porteDelegateCore, idInt, elemxml, idcorrInt, existsMessage);
 			}
@@ -5291,7 +5291,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				boolean forwardB = !forward.equals(StatoFunzionalita.DISABILITATO.getValue());
 				
 				if(!validazioneInputB && !introspectionB && !userInfoB && !forwardB) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_VALIDAZIONE_INPUT).append(", ");
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_INTROSPECTION).append(", ");
 					sb.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_GESTIONE_TOKEN_USERINFO).append(" o ");
@@ -6424,8 +6424,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			CheckboxStatusType statusGestioneToken = null;
 			
-			StringBuffer bf = new StringBuffer();
-			StringBuffer bfToolTip = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
+			StringBuilder bfToolTip = new StringBuilder();
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
 			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_GESTIONE_TOKEN);
 			if(ServletUtils.isCheckBoxEnabled(gestioneTokenOpzionale)) {
@@ -6438,7 +6438,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			bfToolTip.append(": ").append(gestioneTokenPolicy);
 			
 			if(gestioneTokenConfig!=null && gestioneTokenConfig.getAutenticazione()!=null) {
-				StringBuffer bfTokenAuth = new StringBuffer();
+				StringBuilder bfTokenAuth = new StringBuilder();
 				if(StatoFunzionalita.ABILITATO.equals(gestioneTokenConfig.getAutenticazione().getIssuer())) {
 					if(bfTokenAuth.length()>0) {
 						bfTokenAuth.append(", ");
@@ -6481,8 +6481,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// autenticazione
 		if(autenticazione != null && !TipoAutenticazione.DISABILITATO.equals(autenticazione)) {
-			StringBuffer bf = new StringBuffer();
-			StringBuffer bfToolTip = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
+			StringBuilder bfToolTip = new StringBuilder();
 			boolean opzionale = false;
 			String authTrasporto = autenticazione;
 			if(CostantiControlStation.DEFAULT_VALUE_PARAMETRO_PORTE_AUTENTICAZIONE_CUSTOM.equals(autenticazione)) {
@@ -6525,9 +6525,9 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// autorizzazione
 		if(!AutorizzazioneUtilities.STATO_DISABILITATO.equals(autorizzazione)) {
-			StringBuffer bf = new StringBuffer();
-			StringBuffer bfToolTip = new StringBuffer();
-			StringBuffer bfToolTipNotValid = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
+			StringBuilder bfToolTip = new StringBuilder();
+			StringBuilder bfToolTipNotValid = new StringBuilder();
 			int rowsToolTip = 0;
 			
 			Boolean validPuntuale = null;
@@ -6745,8 +6745,8 @@ public class ConsoleHelper implements IConsoleHelper {
 			// autorizzazione sicurezza messaggio
 		
 			if(sizeApplicativi>0) {
-				StringBuffer bf = new StringBuffer();
-				StringBuffer bfToolTip = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
+				StringBuilder bfToolTip = new StringBuilder();
 				//bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE+" "+this.getProfiloModIPASectionTitle());
 				//bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE+" "+this.getProfiloModIPASectionSicurezzaMessaggioSubTitle());
 				bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_MESSAGGIO);
@@ -6760,8 +6760,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		// autorizzazione contenuti
 		if(StringUtils.isNotEmpty(autorizzazioneContenuti)) {
-			StringBuffer bf = new StringBuffer();
-			StringBuffer bfToolTip = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
+			StringBuilder bfToolTip = new StringBuilder();
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			bfToolTip.append(CostantiControlStation.LABEL_PARAMETRO_PORTE_CONTROLLO_ACCESSI_AUTORIZZAZIONE_CONTENUTI);
 			if(!CostantiAutorizzazione.AUTORIZZAZIONE_CONTENUTO_BUILT_IN.equals(autorizzazioneContenuti)) {
@@ -6826,7 +6826,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			if(mapActive.size()>0 || mapWarningOnly.size()>0) {
 				
 				if(mapActive.size()>0) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					Enumeration<String> enKeys = mapActive.keys();
 					while (enKeys.hasMoreElements()) {
 						String risorsa = (String) enKeys.nextElement();
@@ -6850,7 +6850,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				} 
 				
 				if(mapWarningOnly.size()>0) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					Enumeration<String> enKeys = mapWarningOnly.keys();
 					while (enKeys.hasMoreElements()) {
 						String risorsa = (String) enKeys.nextElement();
@@ -6995,8 +6995,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setType(DataElementType.CHECKBOX);
 		
 		Hashtable<String, String> props = PropertiesSerializator.convertoFromDBColumnValue(options);
-		StringBuffer bf = new StringBuffer();
-		StringBuffer bfTooltip = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
+		StringBuilder bfTooltip = new StringBuilder();
 		if(props!=null && props.size()>0) {
 			Enumeration<String> en = props.keys();
 			while (en.hasMoreElements()) {
@@ -7218,7 +7218,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setStatusValue(this.getUpperFirstChar(CostantiControlStation.DEFAULT_VALUE_DISABILITATO));		
 		}
 		else {
-			StringBuffer bfToolTip = new StringBuffer();
+			StringBuilder bfToolTip = new StringBuilder();
 			CheckboxStatusType type = null;
 			
 			int regoleAbilitate = 0;
@@ -7393,15 +7393,15 @@ public class ConsoleHelper implements IConsoleHelper {
 			dumpConfigurazione = (configurazioneGenerale!=null && configurazioneGenerale.getDump()!=null) ? configurazioneGenerale.getDump().getConfigurazione() : null;
 		}
 
-		StringBuffer bfRichiesta = new StringBuffer();
-		StringBuffer bfRichiestaOptions = new StringBuffer();
-		StringBuffer bfRisposta = new StringBuffer();
-		StringBuffer bfRispostaOptions = new StringBuffer();
+		StringBuilder bfRichiesta = new StringBuilder();
+		StringBuilder bfRichiestaOptions = new StringBuilder();
+		StringBuilder bfRisposta = new StringBuilder();
+		StringBuilder bfRispostaOptions = new StringBuilder();
 		
 		if(dumpConfigurazione!=null) {
 					
 			if(dumpConfigurazione.getRichiestaIngresso()!=null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(StatoFunzionalita.ABILITATO.equals(dumpConfigurazione.getRichiestaIngresso().getHeaders())) {
 					if(bf.length()>0) {
 						bf.append(", ");
@@ -7434,7 +7434,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if(dumpConfigurazione.getRichiestaUscita()!=null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(StatoFunzionalita.ABILITATO.equals(dumpConfigurazione.getRichiestaUscita().getHeaders())) {
 					if(bf.length()>0) {
 						bf.append(", ");
@@ -7467,7 +7467,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if(dumpConfigurazione.getRispostaIngresso()!=null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(StatoFunzionalita.ABILITATO.equals(dumpConfigurazione.getRispostaIngresso().getHeaders())) {
 					if(bf.length()>0) {
 						bf.append(", ");
@@ -7500,7 +7500,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			
 			if(dumpConfigurazione.getRispostaUscita()!=null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(StatoFunzionalita.ABILITATO.equals(dumpConfigurazione.getRispostaUscita().getHeaders())) {
 					if(bf.length()>0) {
 						bf.append(", ");
@@ -7584,8 +7584,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		
 		de.setType(DataElementType.CHECKBOX);
 		
-		StringBuffer bf = new StringBuffer();
-		StringBuffer bfTooltips = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
+		StringBuilder bfTooltips = new StringBuilder();
 		if(allegaBody!=null && StatoFunzionalita.ABILITATO.equals(allegaBody)) {
 			if(bf.length()>0) {
 				bf.append(", ");
@@ -9248,7 +9248,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	protected String getGestioneCorsLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(usePrefixDefault) {
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT);
 			bf.append(" (");
@@ -9285,7 +9285,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	protected String getResponseCachingLabelDefault(boolean usePrefixDefault) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(usePrefixDefault) {
 			bf.append(CostantiControlStation.LABEL_PARAMETRO_DUMP_STATO_DEFAULT);
 			bf.append(" (");
@@ -9940,7 +9940,7 @@ public class ConsoleHelper implements IConsoleHelper {
 	public String readConfigurazioneRegistrazioneEsitiFromHttpParameters(String configurazioneEsiti, boolean first) throws Exception {
 		
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 		List<Integer> esitiCodes = esiti.getEsitiCode();
 		if(esitiCodes!=null){
@@ -9978,7 +9978,7 @@ public class ConsoleHelper implements IConsoleHelper {
 		return configurazioneEsiti;
 	}
 	
-	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuffer bf) throws Exception{
+	public List<String> getRegistrazioneEsiti(String configurazioneEsiti, StringBuilder bf) throws Exception{
 		
 		EsitiProperties esiti = EsitiConfigUtils.getEsitiPropertiesForConfiguration(ControlStationCore.getLog());
 		return EsitiConfigUtils.getRegistrazioneEsiti(configurazioneEsiti, ControlStationCore.getLog(), bf, esiti);

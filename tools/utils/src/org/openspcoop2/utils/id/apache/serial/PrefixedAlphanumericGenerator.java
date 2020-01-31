@@ -133,7 +133,7 @@ public class PrefixedAlphanumericGenerator extends AlphanumericGenerator {
 
     @Override
 	public String nextStringIdentifier() throws MaxReachedException {
-        StringBuffer sb = new StringBuffer(this.prefix);
+        StringBuilder sb = new StringBuilder(this.prefix);
         sb.append(super.nextStringIdentifier());
         return sb.toString();
     }

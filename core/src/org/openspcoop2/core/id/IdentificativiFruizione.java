@@ -53,7 +53,7 @@ public class IdentificativiFruizione implements java.io.Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.soggettoFruitore!=null)
 			bf.append("SoggettoFruitore:"+this.soggettoFruitore);
 		else

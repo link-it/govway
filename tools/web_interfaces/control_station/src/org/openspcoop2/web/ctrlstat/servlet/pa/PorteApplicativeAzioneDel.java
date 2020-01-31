@@ -111,7 +111,7 @@ public final class PorteApplicativeAzioneDel extends Action {
 				
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());
 			

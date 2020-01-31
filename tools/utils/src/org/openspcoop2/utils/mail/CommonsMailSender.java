@@ -72,7 +72,7 @@ public class CommonsMailSender extends Sender {
 			}
 			if(mail.getSslConfig()!=null){
 				email.setSSLOnConnect(true);
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				SSLUtilities.setSSLContextIntoJavaProperties(mail.getSslConfig(), bf);
 				if(debug)
 					this.log.debug(bf.toString());

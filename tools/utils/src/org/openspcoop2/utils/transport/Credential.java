@@ -127,7 +127,7 @@ public class Credential implements Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		if(this.principal!=null){
 			

@@ -80,7 +80,7 @@ public final class RuoliDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			RuoliCore ruoliCore = new RuoliCore();
 
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

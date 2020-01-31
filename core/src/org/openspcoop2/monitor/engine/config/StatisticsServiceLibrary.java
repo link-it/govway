@@ -90,7 +90,7 @@ public class StatisticsServiceLibrary implements Serializable {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		if(this.basicServiceLibrary==null){
 			bf.append("BasicServiceLibrary: notDefined");

@@ -49,7 +49,7 @@ public class EsitoNegoziazioneToken extends AbstractEsitoValidazioneToken implem
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(super.toString());
 		

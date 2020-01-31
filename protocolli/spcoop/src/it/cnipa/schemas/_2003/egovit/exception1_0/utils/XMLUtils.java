@@ -62,7 +62,7 @@ import it.cnipa.schemas._2003.egovit.exception1_0.utils.serializer.JsonJacksonDe
 public class XMLUtils  {
 
 
-	public static boolean validate(MessaggioDiErroreApplicativo erroreApplicativo,StringBuffer motivoErroreValidazione){
+	public static boolean validate(MessaggioDiErroreApplicativo erroreApplicativo,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -88,7 +88,7 @@ public class XMLUtils  {
 
 	}
 
-	private static void validate(Eccezione eccezione,StringBuffer motivoErroreValidazione){
+	private static void validate(Eccezione eccezione,StringBuilder motivoErroreValidazione){
 		if(eccezione==null){
 			motivoErroreValidazione.append("Eccezione non definita\n");
 		}
@@ -110,7 +110,7 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static void validate(EccezioneBusta eccezione,StringBuffer motivoErroreValidazione){
+	private static void validate(EccezioneBusta eccezione,StringBuilder motivoErroreValidazione){
 		if(eccezione==null){
 			motivoErroreValidazione.append("EccezioneBusta non definita\n");
 		}
@@ -124,7 +124,7 @@ public class XMLUtils  {
 		}
 	}
 	
-	private static void validate(EccezioneProcessamento eccezione,StringBuffer motivoErroreValidazione){
+	private static void validate(EccezioneProcessamento eccezione,StringBuilder motivoErroreValidazione){
 		if(eccezione==null){
 			motivoErroreValidazione.append("EccezioneProcessamento non definita\n");
 		}
@@ -246,7 +246,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateErroreApplicativo(MessaggioDiErroreApplicativo eccezione,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -258,7 +258,7 @@ public class XMLUtils  {
 	
 	public static void generateErroreApplicativo(MessaggioDiErroreApplicativo eccezione,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -270,7 +270,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateErroreApplicativo(MessaggioDiErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -282,7 +282,7 @@ public class XMLUtils  {
 	
 	public static String generateErroreApplicativoAsJson(MessaggioDiErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -294,7 +294,7 @@ public class XMLUtils  {
 
 	public static void generateErroreApplicativo(MessaggioDiErroreApplicativo eccezione,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

@@ -886,7 +886,7 @@ public class GestoreTrasformazioniUtilities {
 	public static final String TIPO_TRASFORMAZIONE_NESSUNA = "nessuna";
 	
 	public static String getLabelTipoTrasformazioneRichiesta(TrasformazioneRegolaRichiesta richiesta, OpenSPCoop2Message message) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(richiesta.getConversione()) {
 			if(richiesta.getTrasformazioneSoap()!=null) {
 				bf.append(TIPO_TRASFORMAZIONE_CONVERSIONE_SOAP).append(TIPO_TRASFORMAZIONE_SEPARATOR);	
@@ -946,7 +946,7 @@ public class GestoreTrasformazioniUtilities {
 	}
 	
 	public static String getLabelTipoTrasformazioneRisposta(TrasformazioneRegolaRichiesta richiesta,TrasformazioneRegolaRisposta trasformazioneRisposta) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(trasformazioneRisposta.getConversione()) {
 			// !inverto!
 			if(richiesta.getTrasformazioneRest()!=null) {

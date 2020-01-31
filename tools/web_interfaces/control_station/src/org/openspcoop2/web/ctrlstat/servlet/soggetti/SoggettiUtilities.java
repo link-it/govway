@@ -95,7 +95,7 @@ public class SoggettiUtilities {
 	}
 	
 	public static boolean deleteSoggetto(Soggetto soggettoRegistro, org.openspcoop2.core.config.Soggetto soggettoConfig, String userLogin, 
-			SoggettiCore soggettiCore, SoggettiHelper soggettiHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+			SoggettiCore soggettiCore, SoggettiHelper soggettiHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		PddCore pddCore = new PddCore(soggettiCore);
 		UtentiCore utentiCore = new UtentiCore(soggettiCore);
@@ -167,7 +167,7 @@ public class SoggettiUtilities {
 					if (soggettiCore.isSoggettoInUsoInPackageFinali(soggettoOld, whereIsInUso)) {
 						Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 						String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append("Tipo o Nome del soggetto ");
 						bf.append(tipoNome);
 						bf.append(" non modificabile poiche' :"+newLine);
@@ -207,7 +207,7 @@ public class SoggettiUtilities {
 				if (soggettiCore.isSoggettoInUsoInPackagePubblici(soggettoOld, whereIsInUso)) {
 					Set<ErrorsHandlerCostant> keys = whereIsInUso.keySet();
 					String tipoNome = soggettoOld.getTipo() + "/" + soggettoOld.getNome();
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					bf.append("Visibilita' del soggetto ");
 					bf.append(tipoNome);
 					bf.append(" non impostabile a privata poichè :"+newLine);

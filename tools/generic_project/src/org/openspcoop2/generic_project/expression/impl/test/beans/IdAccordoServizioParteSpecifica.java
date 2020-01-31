@@ -242,7 +242,7 @@ public class IdAccordoServizioParteSpecifica implements Serializable , Cloneable
   }
   public String toString(boolean reportHTML,boolean notIncludeID){
 	try{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
 		for(int i=0; i<fields.length;i++){
 			
@@ -355,11 +355,11 @@ public class IdAccordoServizioParteSpecifica implements Serializable , Cloneable
 	}
   }
 
-  public String diff(Object object,StringBuffer bf,boolean reportHTML){
+  public String diff(Object object,StringBuilder bf,boolean reportHTML){
 		return this.diff(object,bf,reportHTML,true);
   }
   @SuppressWarnings("unchecked")
-  public String diff(Object object,StringBuffer bf,boolean reportHTML,boolean checkID){
+  public String diff(Object object,StringBuilder bf,boolean reportHTML,boolean checkID){
     try{
     	if(object==null){
     		bf.append(this.getClass().getName());

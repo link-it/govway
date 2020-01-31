@@ -188,7 +188,7 @@ public class SavedMessage implements java.io.Serializable {
 	 */
 	private String hash(String key) throws UtilsException{
 		try{
-			StringBuffer returnKey = new StringBuffer();
+			StringBuilder returnKey = new StringBuilder();
 			for(int i=0; i<key.length();i++){
 				if( (key.charAt(i) != '_') && (key.charAt(i) != '-') &&
 						(key.charAt(i) != '.') && (key.charAt(i) != ':') )
@@ -296,7 +296,7 @@ public class SavedMessage implements java.io.Serializable {
 			PreparedStatement pstmt = null;
 			try{
 				// Save proprieta' msg
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("INSERT INTO  ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 				if(this.saveOnFS)
@@ -452,7 +452,7 @@ public class SavedMessage implements java.io.Serializable {
 			try{
 
 				// Leggo proprieta' messaggio
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				if(this.saveOnFS)
 					query.append("select CONTENT_TYPE ");
 				else
@@ -628,7 +628,7 @@ public class SavedMessage implements java.io.Serializable {
 				}
 
 				//	Eliminazione from DB.
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("DELETE from ");
 				query.append(GestoreMessaggi.DEFINIZIONE_MESSAGGI);
 				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");	    

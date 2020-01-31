@@ -357,7 +357,7 @@ public class SDIImbustamento {
 							this.sdiUtils,protocolFactory,
 							busta,msg,false,false,forceDisableValidazioneXsd);
 					if(erroriValidazione!=null && erroriValidazione.size()>0){
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for(int k=0; k<erroriValidazione.size();k++){
 							Eccezione error = erroriValidazione.get(k);
 							try{

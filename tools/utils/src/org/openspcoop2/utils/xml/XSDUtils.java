@@ -593,11 +593,11 @@ public class XSDUtils {
 		// ---------  Creo XSD di root da utilizzare per la validazione --------- 
 		byte[] schemaPerValidazione = null;
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("<xsd:schema targetNamespace=\"http://openspcoop2.org/validazione_engine\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n");
 
-			StringBuffer bfContenitori = new StringBuffer();
-			StringBuffer bfImportNormali = new StringBuffer();
+			StringBuilder bfContenitori = new StringBuilder();
+			StringBuilder bfImportNormali = new StringBuilder();
 
 			Enumeration<String> targetNamespaces = mappingNamespaceLocations.keys();
 			int indexSystemId = 1;
@@ -730,7 +730,7 @@ public class XSDUtils {
 					bfContenitori.append("\t<xsd:import namespace=\""+targetNamespace+"\" schemaLocation=\""+systemIdNewSchema+"\" />\n");
 
 					// Creo schema che contiene tutti gli schemi con stesso target namespace e registro la nuova risorsa 
-					StringBuffer bfStessoNamespace = new StringBuffer();
+					StringBuilder bfStessoNamespace = new StringBuilder();
 					bfStessoNamespace.append("<xsd:schema targetNamespace=\""+targetNamespace+"\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">\n");
 					for(int i=0;i<splitLocations.length;i++){
 

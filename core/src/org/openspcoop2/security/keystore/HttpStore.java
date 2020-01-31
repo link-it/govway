@@ -50,7 +50,7 @@ public class HttpStore implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("HttpStore (").append(this.endpoint).append(") ");
 		if(this.trustStoreSsl!=null) {
 			bf.append(this.trustStoreSsl.toString());

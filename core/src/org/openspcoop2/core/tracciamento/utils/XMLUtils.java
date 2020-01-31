@@ -77,7 +77,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(Traccia traccia,StringBuffer motivoErroreValidazione){
+	public static boolean validate(Traccia traccia,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -126,7 +126,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(Dominio dominio,StringBuilder motivoErroreValidazione){
 		if(dominio.getIdentificativoPorta()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
@@ -145,7 +145,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Busta busta,StringBuffer motivoErroreValidazione){
+	private static void validate(Busta busta,StringBuilder motivoErroreValidazione){
 		if(busta.getMittente()!=null){
 			validate(busta.getMittente(), motivoErroreValidazione, "mittente");
 		}
@@ -183,7 +183,7 @@ public class XMLUtils  {
 			validate(busta.getProtocollo(), motivoErroreValidazione);
 		}
 	}
-	private static void validate(Soggetto soggetto,StringBuffer motivoErroreValidazione,String tipo){
+	private static void validate(Soggetto soggetto,StringBuilder motivoErroreValidazione,String tipo){
 		if(soggetto.getIdentificativo()==null){
 			motivoErroreValidazione.append("Busta."+tipo+".identificativo non definita\n");
 		}
@@ -196,7 +196,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(ProfiloCollaborazione profilo,StringBuffer motivoErroreValidazione){
+	private static void validate(ProfiloCollaborazione profilo,StringBuilder motivoErroreValidazione){
 		if(profilo.getTipo()==null){
 			motivoErroreValidazione.append("Busta.profiloCollaborazione.identificativo.tipo non definita\n");
 		}
@@ -204,12 +204,12 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("Busta.profiloCollaborazione.identificativo.base non definita\n");
 		}
 	}
-	private static void validate(Servizio servizio,StringBuffer motivoErroreValidazione,String tipo){
+	private static void validate(Servizio servizio,StringBuilder motivoErroreValidazione,String tipo){
 		if(servizio.getBase()==null){
 			motivoErroreValidazione.append("Busta."+tipo+".base non definita\n");
 		}
 	}
-	private static void validate(Data data,StringBuffer motivoErroreValidazione,String tipo){
+	private static void validate(Data data,StringBuilder motivoErroreValidazione,String tipo){
 		if(data.getSorgente()!=null){
 			if(data.getSorgente().getBase()==null){
 				motivoErroreValidazione.append("Busta."+tipo+".sorgente.base non definita\n");
@@ -219,7 +219,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(ProfiloTrasmissione profiloTrasmissione,StringBuffer motivoErroreValidazione){
+	private static void validate(ProfiloTrasmissione profiloTrasmissione,StringBuilder motivoErroreValidazione){
 		if(profiloTrasmissione.getInoltro()!=null){
 			if(profiloTrasmissione.getInoltro().getBase()==null){
 				motivoErroreValidazione.append("Busta.profiloTrasmissione.base non definita\n");
@@ -229,7 +229,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Trasmissioni trasmissioni,StringBuffer motivoErroreValidazione){
+	private static void validate(Trasmissioni trasmissioni,StringBuilder motivoErroreValidazione){
 		for (int i = 0; i < trasmissioni.sizeTrasmissioneList(); i++) {
 			Trasmissione tr = trasmissioni.getTrasmissione(i);
 			if(tr==null){
@@ -248,7 +248,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Riscontri riscontri,StringBuffer motivoErroreValidazione){
+	private static void validate(Riscontri riscontri,StringBuilder motivoErroreValidazione){
 		for (int i = 0; i < riscontri.sizeRiscontroList(); i++) {
 			Riscontro r = riscontri.getRiscontro(i);
 			if(r==null){
@@ -261,7 +261,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Eccezioni eccezioni,StringBuffer motivoErroreValidazione){
+	private static void validate(Eccezioni eccezioni,StringBuilder motivoErroreValidazione){
 		for (int i = 0; i < eccezioni.sizeEccezioneList(); i++) {
 			Eccezione e = eccezioni.getEccezione(i);
 			if(e==null){
@@ -295,7 +295,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Allegati allegati,StringBuffer motivoErroreValidazione){
+	private static void validate(Allegati allegati,StringBuilder motivoErroreValidazione){
 		for (int i = 0; i < allegati.sizeAllegatoList(); i++) {
 			Allegato a = allegati.getAllegato(i);
 			if(a==null){
@@ -303,7 +303,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Protocollo protocollo,StringBuffer motivoErroreValidazione){
+	private static void validate(Protocollo protocollo,StringBuilder motivoErroreValidazione){
 		if(protocollo.getIdentificativo()==null){
 			motivoErroreValidazione.append("Busta.protocollo.identificativo non definito\n");
 		}
@@ -430,7 +430,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateTraccia(Traccia traccia,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -442,7 +442,7 @@ public class XMLUtils  {
 	
 	public static void generateTraccia(Traccia traccia,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -454,7 +454,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateTraccia(Traccia traccia) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -466,7 +466,7 @@ public class XMLUtils  {
 
 	public static void generateTraccia(Traccia traccia,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -480,7 +480,7 @@ public class XMLUtils  {
 	
 	public static String generateTracciaAsJson(Traccia traccia) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(traccia, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

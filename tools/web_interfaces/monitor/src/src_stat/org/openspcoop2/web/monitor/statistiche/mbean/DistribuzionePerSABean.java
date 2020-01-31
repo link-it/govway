@@ -252,7 +252,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
-		StringBuffer caption = new StringBuffer(
+		StringBuilder caption = new StringBuilder(
 				captionText);
 		//		if (StringUtils.isNotBlank(this.search.getServizioApplicativo())) {
 		//			caption.append("per l'Applicativo"

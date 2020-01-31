@@ -103,7 +103,7 @@ public class FiltroRicercaBase implements Serializable{
 		return this.toString(true);
 	}
 	public String toString(boolean checkEmpty){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro:");
 		if(this.minDate!=null)
 			bf.append(" [intervallo-inferiore-data:"+this.minDate+"]");

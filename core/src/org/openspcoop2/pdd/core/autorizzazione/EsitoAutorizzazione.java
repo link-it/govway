@@ -133,7 +133,7 @@ public abstract class EsitoAutorizzazione implements java.io.Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer(this.getHeader());
+		StringBuilder bf = new StringBuilder(this.getHeader());
 		
 		if(this.details!=null){
 			bf.append(" ");

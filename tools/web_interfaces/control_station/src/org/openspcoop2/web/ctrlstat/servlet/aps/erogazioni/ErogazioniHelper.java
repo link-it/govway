@@ -1942,7 +1942,7 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 //						} else
 //							ServletUtils.setDataElementVisualizzaLabel(de);
 //						if(listaAzioni.size() > 0) {
-//							StringBuffer sb = new StringBuffer();
+//							StringBuilder sb = new StringBuilder();
 //							for (String string : listaAzioni) {
 //								if(sb.length() >0)
 //									sb.append(", ");

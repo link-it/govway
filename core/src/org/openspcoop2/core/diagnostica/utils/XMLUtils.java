@@ -62,7 +62,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(MessaggioDiagnostico messaggioDiagnostico,StringBuffer motivoErroreValidazione){
+	public static boolean validate(MessaggioDiagnostico messaggioDiagnostico,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -99,7 +99,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(DominioDiagnostico dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(DominioDiagnostico dominio,StringBuilder motivoErroreValidazione){
 		if(dominio.getIdentificativoPorta()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
@@ -118,7 +118,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(Protocollo protocollo,StringBuffer motivoErroreValidazione){
+	private static void validate(Protocollo protocollo,StringBuilder motivoErroreValidazione){
 		if(protocollo.getIdentificativo()==null){
 			motivoErroreValidazione.append("Protocollo.identificativo non definito\n");
 		}
@@ -231,7 +231,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -243,7 +243,7 @@ public class XMLUtils  {
 	
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -255,7 +255,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -267,7 +267,7 @@ public class XMLUtils  {
 
 	public static void generateMessaggioDiagnostico(MessaggioDiagnostico messaggioDiagnostico,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -281,7 +281,7 @@ public class XMLUtils  {
 	
 	public static String generateMessaggioDiagnosticoAsJson(MessaggioDiagnostico messaggioDiagnostico) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(messaggioDiagnostico, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

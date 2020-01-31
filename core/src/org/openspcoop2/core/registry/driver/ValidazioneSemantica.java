@@ -103,7 +103,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoConnettori = new ArrayList<String>();
 	/** Lista dei tipi di connettori ammessi */
 	private String getTipoConnettori(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoConnettori.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -116,7 +116,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoSoggetti = new ArrayList<String>();
 	/** Lista dei tipi di soggetti ammessi */
 	private String getTipoSoggetti(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoSoggetti.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -129,7 +129,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoServiziSoap = new ArrayList<String>();
 	/** Lista dei tipi di servizi SOAP ammessi */
 	private String getTipoServiziSoap(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoServiziSoap.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -142,7 +142,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoServiziRest = new ArrayList<String>();
 	/** Lista dei tipi di servizi REST ammessi */
 	private String getTipoServiziRest(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoServiziRest.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -299,7 +299,7 @@ public class ValidazioneSemantica {
 
 		// Se è stata trovata almeno un'anomalia, lancio un'eccezione
 		if (!this.errori.isEmpty()) {
-			StringBuffer stringB = new StringBuffer().append("\n");
+			StringBuilder stringB = new StringBuilder().append("\n");
 			Iterator<String> itE = this.errori.iterator();
 			while (itE.hasNext())
 				stringB.append(itE.next()).append("\n");
@@ -1869,7 +1869,7 @@ public class ValidazioneSemantica {
 		}else if(RuoliDocumento.specificaSemiformale.toString().equals(ruolo.toString())){
 			if(TipiDocumentoSemiformale.toEnumConstant(doc.getTipo())==null){
 				String [] tipi = TipiDocumentoSemiformale.toStringArray();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for(int i=0; i<tipi.length; i++){
 					if(i>0)
 						bf.append(",");
@@ -1880,7 +1880,7 @@ public class ValidazioneSemantica {
 		}else if(RuoliDocumento.specificaCoordinamento.toString().equals(ruolo.toString())){
 			if(TipiDocumentoCoordinamento.toEnumConstant(doc.getTipo())==null){
 				String [] tipi = TipiDocumentoCoordinamento.toStringArray();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for(int i=0; i<tipi.length; i++){
 					if(i>0)
 						bf.append(",");
@@ -1891,7 +1891,7 @@ public class ValidazioneSemantica {
 		}else if(RuoliDocumento.specificaLivelloServizio.toString().equals(ruolo.toString())){
 			if(TipiDocumentoLivelloServizio.toEnumConstant(doc.getTipo())==null){
 				String [] tipi = TipiDocumentoLivelloServizio.toStringArray();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for(int i=0; i<tipi.length; i++){
 					if(i>0)
 						bf.append(",");
@@ -1902,7 +1902,7 @@ public class ValidazioneSemantica {
 		}else if(RuoliDocumento.specificaSicurezza.toString().equals(ruolo.toString())){
 			if(TipiDocumentoSicurezza.toEnumConstant(doc.getTipo())==null){
 				String [] tipi = TipiDocumentoSicurezza.toStringArray();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for(int i=0; i<tipi.length; i++){
 					if(i>0)
 						bf.append(",");

@@ -606,7 +606,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 		}
 	}
 	public String abilitazioneCompletaServizi(){
-		StringBuffer bf = new StringBuffer();	
+		StringBuilder bf = new StringBuilder();	
 		bf.append(this.abilitaServizioPortaDelegata());	
 		bf.append("; ");
 		bf.append(this.abilitaServizioPortaApplicativa());	
@@ -658,7 +658,7 @@ public class StatoServiziJMXResource extends NotificationBroadcasterSupport impl
 		}
 	}
 	public String disabilitazioneCompletaServizi(){
-		StringBuffer bf = new StringBuffer();	
+		StringBuilder bf = new StringBuilder();	
 		bf.append(this.disabilitaServizioPortaDelegata());	
 		bf.append("; ");
 		bf.append(this.disabilitaServizioPortaApplicativa());	

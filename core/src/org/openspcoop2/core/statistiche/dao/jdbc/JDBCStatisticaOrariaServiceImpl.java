@@ -481,7 +481,7 @@ public class JDBCStatisticaOrariaServiceImpl extends JDBCStatisticaOrariaService
 		sqlQueryObjectUpdate_statisticaOrariaContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaOrariaContenuti_delete.add(new JDBCObject(statisticaOraria.getId(), Long.class));
 
-		StringBuffer marks_statisticaOrariaContenuti = new StringBuffer();
+		StringBuilder marks_statisticaOrariaContenuti = new StringBuilder();
 		if(ids_statisticaOrariaContenuti_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_statisticaOrariaContenuti_da_non_eliminare) {
 				if(marks_statisticaOrariaContenuti.length() > 0) {

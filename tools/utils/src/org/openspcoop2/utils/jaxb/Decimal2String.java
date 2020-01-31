@@ -40,7 +40,7 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 		if(v==null){
 			return null;
 		}
-		StringBuffer pattern = new StringBuffer();
+		StringBuilder pattern = new StringBuilder();
 		for (int i = 0; i < v.getMaxInteger(); i++) {
 			pattern.append("0");
 		}
@@ -82,7 +82,7 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 	}
 	
 	private String getLeftMinString(String value,int min){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = (value.length()-1); i >= 0; i--) {
 			if(value.charAt(i) != '0' || !this.onlyLeftZero(value, i)){
 				bf.append(value.charAt(i));
@@ -99,7 +99,7 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 		return bf.reverse().toString();
 	}
 	private String getRightMinString(String value,int min){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = 0; i <value.length(); i++) {
 			if(value.charAt(i) != '0' || !this.onlyRightZero(value, i)){
 				bf.append(value.charAt(i));
@@ -139,7 +139,7 @@ public class Decimal2String extends XmlAdapter<String, DecimalWrapper>
 			return null;
 		}
 		String s = sParam.trim();
-		StringBuffer pattern = new StringBuffer();
+		StringBuilder pattern = new StringBuilder();
 		DecimalWrapper dw = new DecimalWrapper();
 		if(s.contains(".")){
 			String [] split = s.split("\\.");

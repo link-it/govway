@@ -106,7 +106,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeDel extends Acti
 
 			String superUser   = ServletUtils.getUserLoginFromSession(session);
 
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

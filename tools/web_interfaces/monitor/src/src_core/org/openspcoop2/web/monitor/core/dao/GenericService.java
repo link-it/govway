@@ -149,7 +149,7 @@ public class GenericService implements IGenericService {
 
 			return c != null;
 
-			// StringBuffer sb = new StringBuffer(
+			// StringBuilder sb = new StringBuilder(
 			// "SELECT a FROM ServizioAzioneConfig a JOIN a.configurazioneServizio s WHERE s.servizio=:nome_servizio AND s.accordo=:nome_accordo AND a.azione=:nome_azione");
 			//
 			// if (idAccordo.getSoggettoReferente() != null) {
@@ -230,7 +230,7 @@ public class GenericService implements IGenericService {
 		}
 
 		// // recupero la lista di pt non utilizzati
-		// StringBuffer sb = new StringBuffer(
+		// StringBuilder sb = new StringBuilder(
 		// "SELECT sc FROM ServizioConfig sc WHERE sc.accordo=:nome_accordo ");
 		//
 		// String tipoReferente = null;
@@ -282,8 +282,8 @@ public class GenericService implements IGenericService {
 	// return new ArrayList<ServizioAzioneConfig>();
 	// }
 	//
-	// // StringBuffer sb = new
-	// StringBuffer("SELECT a FROM ServizioAzioneConfig a JOIN a.configurazioneServizio s WHERE s.servizio=:nome_servizio AND s.accordo=:nome_accordo ");
+	// // StringBuilder sb = new
+	// StringBuilder("SELECT a FROM ServizioAzioneConfig a JOIN a.configurazioneServizio s WHERE s.servizio=:nome_servizio AND s.accordo=:nome_accordo ");
 	// //
 	// // if(idAccordoSelezionato.getSoggettoReferente()!=null){
 	// // if(idAccordoSelezionato.getSoggettoReferente().getTipo()!=null)
@@ -296,8 +296,8 @@ public class GenericService implements IGenericService {
 	// // sb.append(" AND s.versione=:versione");
 	//
 	// //recupero le azioni (port_type_azioni)
-	// StringBuffer sb = new
-	// StringBuffer("SELECT a FROM Azione a JOIN a.portType s WHERE s.nome=:nome_servizio AND s.accordo.nome=:nome_accordo ");
+	// StringBuilder sb = new
+	// StringBuilder("SELECT a FROM Azione a JOIN a.portType s WHERE s.nome=:nome_servizio AND s.accordo.nome=:nome_accordo ");
 	//
 	// if(idAccordoSelezionato.getSoggettoReferente()!=null){
 	// if(idAccordoSelezionato.getSoggettoReferente().getTipo()!=null)
@@ -441,7 +441,7 @@ public class GenericService implements IGenericService {
 
 			}
 
-			// StringBuffer sb = new StringBuffer(
+			// StringBuilder sb = new StringBuilder(
 			// "SELECT st FROM StatoConfig st JOIN st.transazione t JOIN t.azioneConfig a JOIN a.configurazioneServizio s WHERE s.servizio=:nome_servizio AND s.accordo=:nome_accordo ");
 			//
 			// if (idAccordoSelezionato.getSoggettoReferente() != null) {
@@ -609,7 +609,7 @@ public class GenericService implements IGenericService {
 
 			}
 
-			// StringBuffer sb = new StringBuffer(
+			// StringBuilder sb = new StringBuilder(
 			// "SELECT r FROM RisorsaContenutoConfig r ");
 			//
 			// // if(StringUtils.isNotEmpty(nomeStato) &&

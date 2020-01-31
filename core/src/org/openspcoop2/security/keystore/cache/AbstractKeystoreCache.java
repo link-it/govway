@@ -202,7 +202,7 @@ class KeystoreCacheEntry<T extends Serializable> implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Data ").append(DateUtils.getSimpleDateFormatMs().format(this.date)).append("\n");
 		bf.append(this.keystore.toString());
 		return bf.toString();

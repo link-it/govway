@@ -75,7 +75,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(ErroreApplicativo erroreApplicativo,StringBuffer motivoErroreValidazione){
+	public static boolean validate(ErroreApplicativo erroreApplicativo,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -102,7 +102,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(Dominio dominio,StringBuilder motivoErroreValidazione){
 		if(dominio.getId()==null){
 			motivoErroreValidazione.append("Dominio.id non definito\n");
 		}
@@ -124,7 +124,7 @@ public class XMLUtils  {
 			}
 		}
 	}
-	private static void validate(DatiCooperazione datiCooperazione,StringBuffer motivoErroreValidazione){
+	private static void validate(DatiCooperazione datiCooperazione,StringBuilder motivoErroreValidazione){
 		if(datiCooperazione.getSender()!=null){
 			validate(datiCooperazione.getSender(), motivoErroreValidazione, "mittente");
 		}
@@ -135,7 +135,7 @@ public class XMLUtils  {
 			validate(datiCooperazione.getService(), motivoErroreValidazione);
 		}
 	}
-	private static void validate(Soggetto soggetto,StringBuffer motivoErroreValidazione,String tipo){
+	private static void validate(Soggetto soggetto,StringBuilder motivoErroreValidazione,String tipo){
 		if(soggetto.getId()==null){
 			motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativo non definita\n");
 		}
@@ -151,7 +151,7 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("DatiCooperazione."+tipo+".identificativoPorta non definita\n");
 		}
 	}
-	private static void validate(Servizio servizio,StringBuffer motivoErroreValidazione){
+	private static void validate(Servizio servizio,StringBuilder motivoErroreValidazione){
 		if(servizio.getBase()==null){
 			motivoErroreValidazione.append("DatiCooperazione.servizio.base non definita\n");
 		}
@@ -159,7 +159,7 @@ public class XMLUtils  {
 			motivoErroreValidazione.append("DatiCooperazione.servizio.tipo non definita\n");
 		}
 	}
-	private static void validate(Eccezione eccezione,StringBuffer motivoErroreValidazione){
+	private static void validate(Eccezione eccezione,StringBuilder motivoErroreValidazione){
 		if(eccezione==null){
 			motivoErroreValidazione.append("Eccezione non definita\n");
 		}
@@ -291,7 +291,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateErroreApplicativo(ErroreApplicativo eccezione,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -303,7 +303,7 @@ public class XMLUtils  {
 	
 	public static void generateErroreApplicativo(ErroreApplicativo eccezione,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -315,7 +315,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateErroreApplicativo(ErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -327,7 +327,7 @@ public class XMLUtils  {
 	
 	public static String generateErroreApplicativoAsJson(ErroreApplicativo eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -339,7 +339,7 @@ public class XMLUtils  {
 
 	public static void generateErroreApplicativo(ErroreApplicativo eccezione,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

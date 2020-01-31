@@ -61,7 +61,7 @@ public class SecurityConstants {
 					actions = actions.trim();
 					if(actions.contains(" ")){
 						String [] tmp = actions.split(" ");
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append(engine);
 						bf.append(TIPO_SECURITY_ENGINE_SEPARATOR);
 						for (int i = 0; i < tmp.length; i++) {

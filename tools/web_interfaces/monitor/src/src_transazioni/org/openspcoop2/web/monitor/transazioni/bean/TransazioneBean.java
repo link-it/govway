@@ -243,8 +243,8 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultCooperazione();
 		String toRet = null;
 		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, true);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, true);
 			if(errore!= null)
 				return "";
 
@@ -287,8 +287,8 @@ public class TransazioneBean extends Transazione{
 		if(f == null)
 			return false;
 
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, false);
+		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, false);
 		if(errore!= null)
 			return false;
 
@@ -351,8 +351,8 @@ public class TransazioneBean extends Transazione{
 	public String getErroreVisualizzaFaultCooperazione(){
 		String f = super.getFaultCooperazione();
 		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
 			return errore;
 		}
 
@@ -363,8 +363,8 @@ public class TransazioneBean extends Transazione{
 		String f = super.getFaultIntegrazione();
 		String toRet = null;
 		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,true);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,true);
 			if(errore!= null)
 				return "";
 
@@ -407,8 +407,8 @@ public class TransazioneBean extends Transazione{
 		if(f == null)
 			return false;
 
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
+		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
 		if(errore!= null)
 			return false;
 
@@ -471,8 +471,8 @@ public class TransazioneBean extends Transazione{
 	public String getErroreVisualizzaFaultIntegrazione(){
 		String f = super.getFaultIntegrazione();
 		if(f!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer,false);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
 			return errore;
 		}
 
@@ -607,7 +607,7 @@ public class TransazioneBean extends Transazione{
 			if(tmp.contains(",")){
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (int i = 0; i < split.length; i++) {
 						if(bf.length()>0){
 							bf.append("<BR/>");
@@ -653,7 +653,7 @@ public class TransazioneBean extends Transazione{
 			if(tmp.contains(",")){
 				String [] split = tmp.split(",");
 				if(split!=null && split.length>0){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (int i = 0; i < split.length; i++) {
 						if(bf.length()>0){
 							bf.append("<BR/>");

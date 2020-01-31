@@ -853,7 +853,7 @@ public class StatsUtils {
 
 	public static String getXmlAndamentoTemporaleStatPersonalizzate(SimpleDateFormat sdf,
 			SimpleDateFormat sdf_last_hour, StatisticType tempo, Map<String, List<Res>> results, StatsSearchForm search, String caption, String subCaption) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		String xName = "Data";
 		String xNameDirective = "xAxisName='"+xName+"'";
@@ -936,7 +936,7 @@ public class StatsUtils {
 	}
 
 	public static String getXmlPieChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, int slice, String caption, String subCaption) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("<chart caption='");
 		sb.append(caption);
 		sb.append("' labelSepChar=':' subcaption='");
@@ -995,7 +995,7 @@ public class StatsUtils {
 	}
 
 	public static String getXmlBarChartStatistichePersonalizzate( List<ResDistribuzione> list,  StatsSearchForm search, int slice, String caption, String subCaption) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		// calcolo series
 		boolean occupazioneBanda = false;

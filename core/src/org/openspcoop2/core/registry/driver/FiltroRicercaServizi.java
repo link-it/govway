@@ -154,7 +154,7 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro Servizi:");
 		this.addDetails(bf);
 		if(bf.length()=="Filtro Servizi:".length())
@@ -162,7 +162,7 @@ public class FiltroRicercaServizi extends FiltroRicerca implements Serializable{
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.idAccordoServizioParteComune!=null)
 			bf.append(" [accordo-servizio-parte-comune:"+this.idAccordoServizioParteComune+"]");
 		if(this.tipoSoggettoErogatore!=null)

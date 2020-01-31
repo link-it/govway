@@ -506,7 +506,7 @@ public class GestoreAutenticazione {
     }
     
     private static String buildCacheKey(boolean messageBox, boolean portaDelegata, String tipoAutenticazione, String keyCache, String suffixKeyCache) throws AutenticazioneException{
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
     	
     	if(portaDelegata){
     		if(messageBox){
@@ -575,7 +575,7 @@ public class GestoreAutenticazione {
     	return _getActions(gestioneTokenAutenticazione);
     }
     private static String _getActions(GestioneTokenAutenticazione gestioneTokenAutenticazione) {
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
     	if(StatoFunzionalita.ABILITATO.equals(gestioneTokenAutenticazione.getIssuer())) {
     		if(bf.length()>0) {
     			bf.append(",");
@@ -902,7 +902,7 @@ public class GestoreAutenticazione {
     }
     
     private static String buildCacheKey(AbstractSearchCredenziale searchCredential, String credential) throws AutenticazioneException{
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
 
     	bf.append(searchCredential.getTipo()).append(" ");
     	

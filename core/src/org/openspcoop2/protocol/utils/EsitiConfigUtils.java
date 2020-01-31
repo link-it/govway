@@ -63,10 +63,10 @@ public class EsitiConfigUtils {
 		}
 	}
 	
-	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf) throws Exception{
+	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuilder bf) throws Exception{
 		return getRegistrazioneEsiti(esitiConfig, log, bf, getEsitiPropertiesForConfiguration(log));
 	}
-	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuffer bf, EsitiProperties esiti) throws Exception{
+	public static List<String> getRegistrazioneEsiti(String esitiConfig, Logger log, StringBuilder bf, EsitiProperties esiti) throws Exception{
 		if(esitiConfig==null || "".equals(esitiConfig.trim())){
 			
 			// creo un default composto da tutti ad eccezione dell'esito (MaxThreads) e delle richieste CORS OPTIONS

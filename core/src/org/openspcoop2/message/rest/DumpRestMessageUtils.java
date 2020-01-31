@@ -225,7 +225,7 @@ public class DumpRestMessageUtils {
 	public static String dumpMessageAsString(DumpMessaggio msg,
 			DumpMessaggioConfig config, boolean dumpAllAttachments) throws MessageException{
 		try{
-			StringBuffer out = new StringBuffer(msg.toString(config,dumpAllAttachments));
+			StringBuilder out = new StringBuilder(msg.toString(config,dumpAllAttachments));
 			return out.toString();
 		}catch(Exception e){
 			throw new MessageException(e.getMessage(),e);
@@ -240,7 +240,7 @@ public class DumpRestMessageUtils {
 			DumpMessaggioConfig config,
 			boolean dumpAllBodyParts) throws MessageException{
 		try{
-			StringBuffer out = new StringBuffer();
+			StringBuilder out = new StringBuilder();
 			
 			Properties pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {

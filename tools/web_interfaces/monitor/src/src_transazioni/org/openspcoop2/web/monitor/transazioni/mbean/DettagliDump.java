@@ -99,8 +99,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			if(this.dumpMessaggio.getBody() == null)
 				return false;
 
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer, false);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, false);
 			if(errore!= null)
 				return false;
 
@@ -137,8 +137,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	public String getPrettyEnvelop(){
 		String toRet = null;
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer, true);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder, true);
 			if(errore!= null)
 				return "";
 
@@ -271,8 +271,8 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 	
 	public String getErroreVisualizzaMessaggio(){
 		if(this.dumpMessaggio!=null && this.dumpMessaggio.getBody()!=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuffer,false);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(this.dumpMessaggio.getBody(),contenutoDocumentoStringBuilder,false);
 			return errore;
 		}
 

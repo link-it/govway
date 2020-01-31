@@ -143,7 +143,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			boolean validazioneDocumenti = ServerProperties.getInstance().isValidazioneDocumenti();
 
-			StringBuffer bfTags = new StringBuffer();
+			StringBuilder bfTags = new StringBuilder();
 			if(body!=null && body.getTags()!=null && !body.getTags().isEmpty()) {
 				for (String tag : body.getTags()) {
 					if(bfTags.length()>0) {
@@ -531,7 +531,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			AccordoServizioParteComune as = ApiApiHelper.getAccordoFull(nome, versione, env);
 
 			if (as != null) {
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComune(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n");
 				if (inUsoMessage.length() > 0)
@@ -639,7 +639,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				} catch (DriverRegistroServiziNotFound dNotF) {
 				}
 
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n", pt, idServiziWithPortType, Arrays.asList(nomeAzione));
@@ -691,7 +691,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				List<IDServizio> idServiziWithAccordo = BaseHelper.evalnull(
 						() -> apsCore.getIdServiziWithAccordo(IDAccordoFactory.getInstance().getIDAccordoFromAccordo(as), true));
 
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n", idServiziWithAccordo, Arrays.asList(nomeRisorsa));
 
@@ -738,7 +738,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 				final IDPortType idPT = new IDPortType();
 				idPT.setIdAccordo(env.idAccordoFactory.getIDAccordoFromAccordo(as));
 
-				final StringBuffer inUsoMessage = new StringBuffer();
+				final StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, env.userLogin, env.apcCore,
 						env.apcHelper, inUsoMessage, "\n", idPT, Arrays.asList(nomeServizio));
 
@@ -1786,7 +1786,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
 			 */
 
-			StringBuffer bfTags = new StringBuffer();
+			StringBuilder bfTags = new StringBuilder();
 			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
 				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
 					if(bfTags.length()>0) {
@@ -1890,7 +1890,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
 			 */
 
-			StringBuffer bfTags = new StringBuffer();
+			StringBuilder bfTags = new StringBuilder();
 			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
 				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
 					if(bfTags.length()>0) {
@@ -2196,7 +2196,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			 * visibilitaAccordoCooperazione=ac.getPrivato()!=null && ac.getPrivato(); }
 			 */
 
-			StringBuffer bfTags = new StringBuffer();
+			StringBuilder bfTags = new StringBuilder();
 			if(as.getGruppi()!=null && as.getGruppi().getGruppoList()!=null && !as.getGruppi().getGruppoList().isEmpty()) {
 				for (GruppoAccordo tag : as.getGruppi().getGruppoList()) {
 					if(bfTags.length()>0) {

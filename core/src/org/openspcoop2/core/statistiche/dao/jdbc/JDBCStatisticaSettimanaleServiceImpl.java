@@ -481,7 +481,7 @@ public class JDBCStatisticaSettimanaleServiceImpl extends JDBCStatisticaSettiman
 		sqlQueryObjectUpdate_statisticaSettimanaleContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaSettimanaleContenuti_delete.add(new JDBCObject(statisticaSettimanale.getId(), Long.class));
 
-		StringBuffer marks_statisticaSettimanaleContenuti = new StringBuffer();
+		StringBuilder marks_statisticaSettimanaleContenuti = new StringBuilder();
 		if(ids_statisticaSettimanaleContenuti_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_statisticaSettimanaleContenuti_da_non_eliminare) {
 				if(marks_statisticaSettimanaleContenuti.length() > 0) {

@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.IntegrationContext;
 import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * Libreria per handler testsuite
@@ -152,7 +153,7 @@ public class Utilities {
 		}
 		if(dataTest!=null){
 			
-			SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd_HH:mm:ss.SSS");
 			String dataElaborata = dateformat.format(dataElaborazioneMsg);
 			Date d = null;
 			try{

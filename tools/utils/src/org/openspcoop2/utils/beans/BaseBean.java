@@ -60,7 +60,7 @@ public abstract class BaseBean {
 	private Object getFieldValue(String fieldName,Object object) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 		Class<?> c = getClass();
 		
-		StringBuffer methodName = new StringBuffer("get");
+		StringBuilder methodName = new StringBuilder("get");
 		String firstChar = fieldName.charAt(0)+"";
 		methodName.append(firstChar.toUpperCase());
 		if(fieldName.length()>1){
@@ -89,7 +89,7 @@ public abstract class BaseBean {
 	private Object setFieldValue(String fieldName,Object object,Class<?> parameterType,Object parameterValue) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException{
 		Class<?> c = getClass();
 		
-		StringBuffer methodName = new StringBuffer("set");
+		StringBuilder methodName = new StringBuilder("set");
 		String firstChar = fieldName.charAt(0)+"";
 		methodName.append(firstChar.toUpperCase());
 		if(fieldName.length()>1){
@@ -436,7 +436,7 @@ public abstract class BaseBean {
 	}
 	private String _toStringEngine(boolean reportHTML,List<String> fieldsNotIncluded){	
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			java.lang.reflect.Field[] fields = getClass().getDeclaredFields();
 			for(int i=0; i<fields.length;i++){
 			
@@ -559,27 +559,27 @@ public abstract class BaseBean {
 	
 	/* ********** DIFF ********* */
 	
-	public String diff(Object object,StringBuffer bf){
+	public String diff(Object object,StringBuilder bf){
 		return _diffEngine(object,bf,false, null);
 	}
-	public String diff(Object object,StringBuffer bf,boolean reportHTML){
+	public String diff(Object object,StringBuilder bf,boolean reportHTML){
 		return _diffEngine(object,bf,reportHTML,null);
 	}
-	public String diff(Object object,StringBuffer bf,List<String> fieldsNotIncluded){
+	public String diff(Object object,StringBuilder bf,List<String> fieldsNotIncluded){
 		return _diffEngine(object,bf,false,fieldsNotIncluded);
 	}
-	public String diff(Object object,StringBuffer bf,boolean reportHTML,boolean includeLongId){
+	public String diff(Object object,StringBuilder bf,boolean reportHTML,boolean includeLongId){
 		List<String> fieldsNotIncluded = new ArrayList<String>();
 		if(includeLongId==false){
 			fieldsNotIncluded.add("id");
 		}
 		return _diffEngine(object,bf,reportHTML,fieldsNotIncluded);
 	}
-	public String diff(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){
+	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
 		return _diffEngine(object,bf,reportHTML,fieldsNotIncluded);
 	}
 	@SuppressWarnings("unchecked")
-	private String _diffEngine(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){	
+	private String _diffEngine(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){	
 	
 		try{
 			if(object==null){

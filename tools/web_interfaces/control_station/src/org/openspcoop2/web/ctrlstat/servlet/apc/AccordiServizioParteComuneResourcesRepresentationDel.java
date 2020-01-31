@@ -139,7 +139,7 @@ public final class AccordiServizioParteComuneResourcesRepresentationDel extends 
 			
 			String mediaType = "";
 			boolean modificaAS_effettuata = false;
-			StringBuffer errori = new StringBuffer();
+			StringBuilder errori = new StringBuilder();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				mediaType = resourcesToRemove.get(i);
 				

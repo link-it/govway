@@ -109,7 +109,7 @@ public class StatisticheMensili extends AbstractStatistiche {
 		//System.out.println("INTERVALLO MENSILE PER ["+date.toString()+"]");
 		
 		Calendar cTmp = truncDate(date);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		switch (cTmp.get(Calendar.MONTH)) {
 		case Calendar.JANUARY:
 			bf.append("Gennaio");	

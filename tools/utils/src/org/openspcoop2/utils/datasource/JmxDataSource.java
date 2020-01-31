@@ -284,7 +284,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 		if(risorse==null || risorse.length<=0)
 			return "Nessuna connessione allocata";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(risorse.length+" connessioni allocate: \n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
@@ -313,7 +313,7 @@ public class JmxDataSource extends NotificationBroadcasterSupport implements Dyn
 		if(risorse==null || risorse.length<=0)
 			return "Nessun datasource allocato";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(risorse.length+" datasource allocati: \n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");

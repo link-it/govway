@@ -135,7 +135,7 @@ public class FiltroRicerca implements Serializable{
 		return this.toString(true);
 	}
 	public String toString(boolean checkEmpty){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro:");
 		this.addDetails(bf);
 		if(checkEmpty){
@@ -145,7 +145,7 @@ public class FiltroRicerca implements Serializable{
 		}
 		return bf.toString();
 	}
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.minDate!=null)
 			bf.append(" [intervallo-inferiore-data:"+this.minDate+"]");
 		if(this.maxDate!=null)

@@ -80,7 +80,7 @@ public final class ScopeDel extends Action {
 			ScopeCore scopeCore = new ScopeCore();
 
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

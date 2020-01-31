@@ -132,7 +132,7 @@ public class Utils {
 		return res;
 	} 
 	
-	 public static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer, boolean logError) {
+	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer, boolean logError) {
 		 try{
 			 // 1024 = 1K
 			 // Visualizzo al massimo 250K

@@ -870,7 +870,7 @@ public class Tracciamento {
 					SOAPBody body = msg.castAsSoap().getSOAPBody();
 					if(body!=null && body.hasFault()){
 						found = true;
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						if(esito.getDettaglio()!=null){
 							bf.append(esito.getDettaglio());
 							bf.append("\n");
@@ -886,7 +886,7 @@ public class Tracciamento {
 						msg.writeTo(bout, false);
 						bout.flush();
 						bout.close();
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						if(esito.getDettaglio()!=null){
 							bf.append(esito.getDettaglio());
 							bf.append("\n");
@@ -901,7 +901,7 @@ public class Tracciamento {
 					msg.writeTo(bout, false);
 					bout.flush();
 					bout.close();
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					if(esito.getDettaglio()!=null){
 						bf.append(esito.getDettaglio());
 						bf.append("\n");

@@ -59,7 +59,7 @@ public class IDResource implements Serializable {
 	
 	@Override 
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.nome);
 		if(this.idAccordo!=null)
 			bf.append("["+this.idAccordo+"]");

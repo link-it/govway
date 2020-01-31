@@ -999,7 +999,7 @@ public class ErogazioniApiHelper {
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
         
         
-        StringBuffer inUsoMessage = new StringBuffer();
+        StringBuilder inUsoMessage = new StringBuilder();
 		
 		if ( AccordiServizioParteSpecificaUtilities.alreadyExists(
 				env.apsCore, 
@@ -2865,7 +2865,7 @@ public class ErogazioniApiHelper {
 		if(headers==null || headers.isEmpty()) {
 			return null;
 		}
-		StringBuffer  bf = new StringBuffer();
+		StringBuilder  bf = new StringBuilder();
 		for (String hdr : headers) {
 			if(bf.length()>0) {
 				bf.append(",");

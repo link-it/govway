@@ -465,7 +465,7 @@ public class PoolFactory extends BasePooledObjectFactory<org.openspcoop2.pools.p
 	public void destroyObject(PooledObject<org.openspcoop2.pools.pdd.jms.connectionsession.Connection> param) throws Exception{
 		this.logger.debug("DESTROY OBJECT pool ["+this.jndiName+"]");
 		try{
-			StringBuffer eccezioni = new StringBuffer();
+			StringBuilder eccezioni = new StringBuilder();
 			
 			// Controllo dell'oggetto ricevuto
 			if(param == null){

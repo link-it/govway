@@ -1214,7 +1214,7 @@ public class GestoreToken {
 				// MyVariableOne=ValueOne&MyVariableTwo=ValueTwo
 				String contenutoAsString = new String(contenuto);
 				String [] split = contenutoAsString.split("&");
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < split.length; i++) {
 					String nameValue = split[i];
 					if(nameValue.contains("=")) {
@@ -1357,7 +1357,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getAud()!=null) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_AUDIENCE)) {
 					ArrayNode array = null;
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					if(!op2headers) {
 						array =  jsonUtils.newArrayNode();
 					}
@@ -1444,7 +1444,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getRoles()!=null && informazioniTokenNormalizzate.getRoles().size()>0) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_ROLES)) {
 					ArrayNode array = null;
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					if(!op2headers) {
 						array =  jsonUtils.newArrayNode();
 					}
@@ -1470,7 +1470,7 @@ public class GestoreToken {
 			if(informazioniTokenNormalizzate.getScopes()!=null && informazioniTokenNormalizzate.getScopes().size()>0) {
 				if(set.get(CostantiPdD.HEADER_INTEGRAZIONE_TOKEN_SCOPES)) {
 					ArrayNode array = null;
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					if(!op2headers) {
 						array =  jsonUtils.newArrayNode();
 					}
@@ -1916,7 +1916,7 @@ public class GestoreToken {
 	}
 	
 	private static String buildCacheKey(String funzione, boolean portaDelegata, String token) {
-    	StringBuffer bf = new StringBuffer(funzione);
+    	StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
     	if(portaDelegata){
     		bf.append("PD");
@@ -2379,7 +2379,7 @@ public class GestoreToken {
 	// ********* [NEGOZIAZIONE-TOKEN]  UTILITIES INTERNE ****************** */
 	
 	private static String buildCacheKeyNegoziazione(String funzione, String nomePolicy) {
-    	StringBuffer bf = new StringBuffer(funzione);
+    	StringBuilder bf = new StringBuilder(funzione);
     	bf.append("_");
     	bf.append(nomePolicy);
     	return bf.toString();
@@ -2522,7 +2522,7 @@ public class GestoreToken {
 		}
 		List<String> scopes = policyNegoziazioneToken.getScopes();
 		if(scopes!=null && !scopes.isEmpty()) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String scope : scopes) {
 				if(bf.length()>0) {
 					bf.append(" ");

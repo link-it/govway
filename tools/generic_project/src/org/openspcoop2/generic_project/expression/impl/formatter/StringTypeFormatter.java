@@ -80,7 +80,7 @@ public class StringTypeFormatter implements ITypeFormatter<String> {
         // convert ' in ''
         int index = value.indexOf('\'');
         if(index>=0){
-                StringBuffer str =  new StringBuffer();
+                StringBuilder str =  new StringBuilder();
                 char[] v = value.toCharArray();
                 for(int i=0; i<v.length; i++){
                         if(v[i]=='\''){

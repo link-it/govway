@@ -21,8 +21,6 @@
 package org.openspcoop2.utils.date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -45,6 +43,15 @@ public class DateFormatTest {
 
 	public static void main(String[] args) throws ParseException {
 
+//		Date nowDateT = DateManager.getDate();
+//		System.out.println("AAAAAAAAA2: "+DateUtils.getDateTimeFormatter(DateEngineType.JODA,"yyyyMMdd_HHmmssSSS").format(nowDateT));
+////		
+//		String test = "20200131_105154584";
+//		System.out.println("AAAAAAAAA1: "+DateUtils.getDateTimeFormatter(DateEngineType.JAVA_UTIL,"yyyyMMdd_HHmmssSSS").parse(test));
+//		System.out.println("AAAAAAAAA1: "+DateUtils.getDateTimeFormatter(DateEngineType.JODA,"yyyyMMdd_HHmmssSSS").parse(test));
+//		System.out.println("AAAAAAAAA2: "+DateUtils.getDefaultDateTimeFormatter("yyyyMMdd_HHmmssSSS").parse(test));
+//		
+
 		// inizializzo per costi
 		@SuppressWarnings("unused")
 		Date nowDate = DateManager.getDate();
@@ -55,45 +62,71 @@ public class DateFormatTest {
 		
 		boolean threads = false;
 		
+		boolean DATE_TIME = true;
+		boolean TIME = true;
+		boolean DATE = true;
+		
 		int N = 777777;
 		//int N = 20;
 
-		String formato = DateUtils.SIMPLE_DATE_FORMAT_MS;
-		test(formato, N, threads);
+		String formato = null;
+		
+//		// altri formati
+		formato =  "yyyy MM dd HH mm s";
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
+		formato =  "dd-MM-yyyy HH:mm:ss.SSS";
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
+		
+		// formati speciali accorpati
+		formato =  "yyyyMMddHHmmssSSS";
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
+		formato =  "yyyyMMdd_HHmmssSSS";
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
+		formato =  "yyyyMMddHHmm";
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
+
+		// formati speciali accorpati (data)
+		formato =  "yyyyMMdd";
+		test(formato, N, !DATE_TIME, DATE, !TIME, threads);
+		
+		formato = DateUtils.SIMPLE_DATE_FORMAT_MS;
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 //		formato = "yyyy-MM-dd_HH:mm:ss.SSSXXX";
 //		test(formato, N, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_SECOND;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_MINUTE;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_HOUR;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ;
-		test(formato, N, threads);
+		test(formato, N, DATE_TIME, !DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_DAY;
-		test(formato, N, threads);
+		test(formato, N, !DATE_TIME, DATE, !TIME, threads);
 		
 		formato = DateUtils.SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ;
-		test(formato, N, threads);
+		test(formato, N, !DATE_TIME, DATE, !TIME, threads);
 				
+		formato =  "HH:mm:ss.SSS";
+		test(formato, N, !DATE_TIME, !DATE, TIME, threads);
 	}
 	
-	private static void test(String formato, int N, boolean threadsEnabled) throws ParseException {
+	private static void test(String formato, int N, boolean dateTime, boolean date, boolean time, boolean threadsEnabled) throws ParseException {
 		
 		System.out.println("==============================================");
 		System.out.println("Formato: "+formato);
@@ -115,19 +148,25 @@ public class DateFormatTest {
 		
 		String sTime = dateTimeFormatter.format(nowDateTime);
 		System.out.println("DateTimeFormatter normale  :             "+sTime);
-		if(sTime.contains("_")) {
-			ds = DateUtils.convertToDateViaInstant( LocalDateTime.parse(sTime, dateTimeFormatter) );
+		if(dateTime) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(formato, sTime) );
+		}
+		else if(time) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(formato, sTime) );
 		}
 		else {
-			ds = DateUtils.convertToDateViaInstant( LocalDate.parse(sTime, dateTimeFormatter) );
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(formato, sTime) );
 		}
 		System.out.println("DateTimeFormatter reversed :             "+dateTimeFormatter.format(DateUtils.convertToZonedDateTimeViaInstant(ds)));
 		
-		if(sJava.contains("_")) {
-			ds = DateUtils.convertToDateViaInstant( LocalDateTime.parse(sJava, dateTimeFormatter) );
+		if(dateTime) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(formato, sJava) );
+		}
+		else if(time) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(formato, sJava) );
 		}
 		else {
-			ds = DateUtils.convertToDateViaInstant( LocalDate.parse(sJava, dateTimeFormatter) );
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(formato, sJava) );
 		}
 		System.out.println("DateTimeFormatter reverseJ :             "+dateTimeFormatter.format(DateUtils.convertToZonedDateTimeViaInstant(ds)));
 		
@@ -136,25 +175,28 @@ public class DateFormatTest {
 		String sJoda = jodaDateTime.toString(jodaDateTimeFormatter);
 		System.out.println("JodaDateTimeFormatter normale  :         "+sJoda);
 		
-		ds = DateUtils.convertToDate(jodaDateTimeFormatter.parseDateTime(sJoda));
+		ds = DateUtils.convertToDate(DateUtils.parseToJodaDateTime(formato, sJoda));
 		//System.out.println("JodaDateTimeFormatter reversed :         "+new org.joda.time.LocalDateTime(ds,DateTimeZone.getDefault()).toString(jodaDateTimeFormatter));
 		System.out.println("JodaDateTimeFormatter reversed :         "+DateUtils.convertToJodaDateTime(ds).toString(jodaDateTimeFormatter));
 		
-		ds = DateUtils.convertToDate(jodaDateTimeFormatter.parseDateTime(sJava));
+		ds = DateUtils.convertToDate(DateUtils.parseToJodaDateTime(formato, sJava));
 		//System.out.println("JodaDateTimeFormatter reversed :         "+new org.joda.time.LocalDateTime(ds,DateTimeZone.getDefault()).toString(jodaDateTimeFormatter));
 		System.out.println("JodaDateTimeFormatter reverseJ :         "+DateUtils.convertToJodaDateTime(ds).toString(jodaDateTimeFormatter));
 		
-		ds = DateUtils.convertToDate(jodaDateTimeFormatter.parseDateTime(sTime));
+		ds = DateUtils.convertToDate(DateUtils.parseToJodaDateTime(formato, sTime));
 		//System.out.println("JodaDateTimeFormatter reversed :         "+new org.joda.time.LocalDateTime(ds,DateTimeZone.getDefault()).toString(jodaDateTimeFormatter));
 		System.out.println("JodaDateTimeFormatter reverseT :         "+DateUtils.convertToJodaDateTime(ds).toString(jodaDateTimeFormatter));
 				
 		System.out.println("JodaDateTime (converted):                "+new DateTime(nowDate).toString(jodaDateTimeFormatter));
 		
-		if(sJoda.contains("_")) {
-			ds = DateUtils.convertToDateViaInstant( LocalDateTime.parse(sJoda, dateTimeFormatter) );
+		if(dateTime) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(formato, sJoda) );
+		}
+		else if(time) {
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(formato, sJoda) );
 		}
 		else {
-			ds = DateUtils.convertToDateViaInstant( LocalDate.parse(sJoda, dateTimeFormatter) );
+			ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(formato, sJoda) );
 		}
 		System.out.println("DateTimeFormatter reversJO :             "+dateTimeFormatter.format(DateUtils.convertToZonedDateTimeViaInstant(ds)));
 		
@@ -175,11 +217,14 @@ public class DateFormatTest {
 		now = System.currentTimeMillis();
 		for (int i = 0; i < N; i++) {
 			sTime = dateTimeFormatter.format(nowDateTime);
-			if(sTime.contains("_")) {
-				ds = DateUtils.convertToDateViaInstant( LocalDateTime.parse(sTime, dateTimeFormatter) );
+			if(dateTime) {
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(formato, sTime) );
+			}
+			else if(time) {
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(formato, sTime) );
 			}
 			else {
-				ds = DateUtils.convertToDateViaInstant( LocalDate.parse(sTime, dateTimeFormatter) );
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(formato, sTime) );
 			}
 		}
 		end = System.currentTimeMillis();
@@ -189,11 +234,14 @@ public class DateFormatTest {
 		now = System.currentTimeMillis();
 		for (int i = 0; i < N; i++) {
 			sTime = dateTimeFormatter.format(DateUtils.convertToZonedDateTimeViaInstant(nowDate));
-			if(sTime.contains("_")) {
-				ds = DateUtils.convertToDateViaInstant( LocalDateTime.parse(sTime, dateTimeFormatter) );
+			if(dateTime) {
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(formato, sTime) );
+			}
+			else if(time) {
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(formato, sTime) );
 			}
 			else {
-				ds = DateUtils.convertToDateViaInstant( LocalDate.parse(sTime, dateTimeFormatter) );
+				ds = DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(formato, sTime) );
 			}
 		}
 		end = System.currentTimeMillis();
@@ -203,7 +251,7 @@ public class DateFormatTest {
 		now = System.currentTimeMillis();
 		for (int i = 0; i < N; i++) {
 			 sJoda = jodaDateTime.toString(jodaDateTimeFormatter);
-			 ds = DateUtils.convertToDate(jodaDateTimeFormatter.parseDateTime(sJoda));
+			 ds = DateUtils.convertToDate(DateUtils.parseToJodaDateTime(formato, sJoda));
 		}
 		end = System.currentTimeMillis();
 		System.out.println("JODA DateTimeFormatter: "+(end-now));
@@ -212,7 +260,7 @@ public class DateFormatTest {
 		now = System.currentTimeMillis();
 		for (int i = 0; i < N; i++) {
 			 sJoda = DateUtils.convertToJodaDateTime(nowDate).toString(jodaDateTimeFormatter);
-			 ds = DateUtils.convertToDate(jodaDateTimeFormatter.parseDateTime(sJoda));
+			 ds = DateUtils.convertToDate(DateUtils.parseToJodaDateTime(formato, sJoda));
 		}
 		end = System.currentTimeMillis();
 		System.out.println("JODA DateTimeFormatter (origDate converted): "+(end-now));

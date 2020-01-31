@@ -116,7 +116,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 		try{
 			this.dataSource = (DataSource) oSearch;
 		}catch(Throwable t){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if(oSearch instanceof javax.naming.Reference){
 				javax.naming.Reference r = (javax.naming.Reference) oSearch;
 				bf.append(" (Factory=");

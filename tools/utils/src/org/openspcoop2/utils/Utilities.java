@@ -109,10 +109,10 @@ public class Utilities {
 			throw new UtilsException("Utilities.getAsString error "+e.getMessage(),e);
 		}
 	}
-	public static StringBuffer getAsInputStreamReader(InputStream isParam,String charsetName) throws UtilsException{
+	public static StringBuilder getAsInputStreamReader(InputStream isParam,String charsetName) throws UtilsException{
 		return getAsInputStreamReader(isParam, charsetName, true);
 	}
-	public static StringBuffer getAsInputStreamReader(InputStream isParam,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
+	public static StringBuilder getAsInputStreamReader(InputStream isParam,String charsetName,boolean throwExceptionInputStreamEmpty) throws UtilsException{
 		InputStreamReader isr = null;
 		BufferedReader bufferedReader = null;
 		try{
@@ -140,7 +140,7 @@ public class Utilities {
 			}
 			
 			isr = new InputStreamReader(is, charsetName);
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			bufferedReader = new BufferedReader(isr);
 	        char[] buf = new char[Utilities.DIMENSIONE_BUFFER];
 	        int numRead=0;
@@ -442,7 +442,7 @@ public class Utilities {
 		//System.out.println("Minuti... (diff%3600) / 60 ["+minuti+"]");
 		long secondi = (diff%3600) % 60;
 		//System.out.println("Secondi... (diff%3600) % 60 ["+secondi+"]");
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		long giorni = ore/24;
 		long oreRimaste = ore%24;
@@ -647,7 +647,7 @@ public class Utilities {
 	
 	public static String convertNameToSistemaOperativoCompatible(String nome,boolean convertCharNotPermitted,Character charJollyCharNotPermitted,
 			List<Character> permit, boolean addUniqueSuffixIfFoundCharNotPermitted){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		boolean charNotPermittedFound = false;
 		for (int i = 0; i < nome.length(); i++) {
 			if(Character.isLetterOrDigit(nome.charAt(i))){
@@ -721,7 +721,7 @@ public class Utilities {
 		
 		//System.out.println("SUBJECT SPLIT ["+separator+"]");
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		List<String> splitResults = new ArrayList<String>();
 		if(value==null || value.length()<=0){
 			throw new UtilsException("Valore non fornito");
@@ -1015,14 +1015,14 @@ public class Utilities {
 		int indexOfValueWrong = tmp.indexOf(keyword);
 		while(indexOfValueWrong>0){
 
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			int index = indexOfValueWrong-1;
 			while(tmp.charAt(index) != ' '){
 				bf.append(tmp.charAt(index));
 				index--;
 			}
 
-			StringBuffer replaceString = new StringBuffer();
+			StringBuilder replaceString = new StringBuilder();
 			for (int i = (bf.toString().length()-1); i >=0; i--) {
 				replaceString.append(bf.toString().charAt(i));
 			}
@@ -1116,11 +1116,11 @@ public class Utilities {
 		return toString(locale,"\n");
 	}
 	public static String toString(java.util.Locale locale, String separator){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		toString(locale,bf,separator);
 		return bf.toString();
 	}
-	public static void toString(java.util.Locale locale, StringBuffer bf, String separator){
+	public static void toString(java.util.Locale locale, StringBuilder bf, String separator){
 		
 		bf.append(locale.getDisplayName());
 		bf.append(separator);
@@ -1226,11 +1226,11 @@ public class Utilities {
 		return toString(timeZone,false);
 	}
 	public static String toString(java.util.TimeZone timeZone, boolean allInfo){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		toString(timeZone,bf,allInfo);
 		return bf.toString();
 	}
-	public static void toString(java.util.TimeZone timeZone, StringBuffer bf, boolean allInfo){
+	public static void toString(java.util.TimeZone timeZone, StringBuilder bf, boolean allInfo){
 		bf.append(timeZone.getID());
 		bf.append(" (");
 		bf.append(timeZone.getDisplayName());

@@ -536,7 +536,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 	
 	public void refreshDatiMonitoraggioPdD(){
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if( TimerMonitoraggioRisorseThread.risorseDisponibili == false){
 			bf.append("Risorse di sistema non disponibili: "+TimerMonitoraggioRisorseThread.risorsaNonDisponibile.getMessage());
 		}
@@ -656,7 +656,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if(risorse==null && risorseTransaction==null && risorseStatistiche==null)
 			return "Nessuna connessione allocata";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(risorse!=null && risorse.length>0) {
 			bf.append(risorse.length+" risorse allocate: \n");
 			for(int i=0; i<risorse.length; i++){
@@ -690,7 +690,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if(risorse==null)
 			return "Nessuna connessione allocata";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(risorse.length+" risorse allocate: \n");
 		for(int i=0; i<risorse.length; i++){
 			bf.append(risorse[i]+"\n");
@@ -709,7 +709,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if(risorse==null || risorse.size()<=0)
 			return "Nessuna transazione attiva";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(risorse.size()+" transazioni attive: \n");
 		for(int i=0; i<risorse.size(); i++){
 			bf.append(risorse.get(i)+"\n");
@@ -728,7 +728,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if(risorse==null || risorse.size()<=0)
 			return "Nessuna transazione attiva";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(risorse.size()+" id di protocollo attivi: \n");
 		for(int i=0; i<risorse.size(); i++){
 			bf.append(risorse.get(i)+"\n");
@@ -749,7 +749,7 @@ public class MonitoraggioRisorse extends NotificationBroadcasterSupport implemen
 		if(connettori==null || connettori.size()==0)
 			return "Nessuna connessione allocata";
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(connettori.size()+" connessioni allocate: \n");
 		
 		Enumeration<String> cs = connettori.keys();

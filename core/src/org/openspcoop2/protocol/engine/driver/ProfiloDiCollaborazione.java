@@ -194,7 +194,7 @@ public class ProfiloDiCollaborazione {
 			PreparedStatement pstmtUpdate = null;
 			try{	
 
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -241,7 +241,7 @@ public class ProfiloDiCollaborazione {
 			PreparedStatement pstmtUpdate = null;
 			try{	
 
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -537,7 +537,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraInvio = DateManager.getTimestamp();
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
@@ -590,7 +590,7 @@ public class ProfiloDiCollaborazione {
 				this.registraBustaInviata(id);
 				
 				// salvo busta per profilo
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -701,7 +701,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraRicezione = DateManager.getTimestamp();
 
-			StringBuffer querySearch = new StringBuffer();
+			StringBuilder querySearch = new StringBuilder();
 			querySearch.append("SELECT ID_MESSAGGIO FROM ");
 			querySearch.append(Costanti.PROFILO_ASINCRONO);
 			querySearch.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -713,7 +713,7 @@ public class ProfiloDiCollaborazione {
 			rs.close();
 			pstmt.close();
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			if(exists){
 				query.append("UPDATE ");
 				query.append(Costanti.PROFILO_ASINCRONO);
@@ -794,7 +794,7 @@ public class ProfiloDiCollaborazione {
 				
 				
 				// salvo busta per profilo
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -877,7 +877,7 @@ public class ProfiloDiCollaborazione {
 		String oldIDRisposta = null;
 		String oldTipoRisposta = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_MESSAGGIO,TIPO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE BACKUP_ID_RICHIESTA=?");
@@ -919,7 +919,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraInvioRisposta = DateManager.getTimestamp();
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" SET IS_RICHIESTA=0, RICEVUTA_ASINCRONA=0, ORA_REGISTRAZIONE=?, ID_MESSAGGIO=?, TIPO=?, BACKUP_ID_RICHIESTA=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -960,7 +960,7 @@ public class ProfiloDiCollaborazione {
 			String nomeSC = null;
 			Integer versioneSC = null;
 			try{
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
@@ -1035,7 +1035,7 @@ public class ProfiloDiCollaborazione {
 				this.registraBustaInviata(idRisposta);
 				
 				// salvo busta per profilo
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -1136,7 +1136,7 @@ public class ProfiloDiCollaborazione {
 					PreparedStatement pstmtServizioCorrelato = null;
 					ResultSet rsServizioCorrelato = null;
 					try{
-						StringBuffer query = new StringBuffer();
+						StringBuilder query = new StringBuilder();
 						query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 						query.append(Costanti.PROFILO_ASINCRONO);
 						query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");
@@ -1276,7 +1276,7 @@ public class ProfiloDiCollaborazione {
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try{
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -1418,7 +1418,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_MESSAGGIO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -1495,7 +1495,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_COLLABORAZIONE FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -1575,7 +1575,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraInvio = DateManager.getTimestamp();
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" (ID_MESSAGGIO,TIPO,ORA_REGISTRAZIONE,RICEVUTA_ASINCRONA,TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO");
@@ -1623,7 +1623,7 @@ public class ProfiloDiCollaborazione {
 				this.registraBustaInviata(id);
 				
 				// salvo busta per profilo
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -1673,7 +1673,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmtPooling = null;
 		try{	
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" SET RICEVUTA_APPLICATIVA=1 WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1778,7 +1778,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraRicezione = DateManager.getTimestamp();
 
-			StringBuffer querySearch = new StringBuffer();
+			StringBuilder querySearch = new StringBuilder();
 			querySearch.append("SELECT ID_MESSAGGIO FROM ");
 			querySearch.append(Costanti.PROFILO_ASINCRONO);
 			querySearch.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -1791,7 +1791,7 @@ public class ProfiloDiCollaborazione {
 			pstmt.close();
 
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			if(exists){
 				query.append("UPDATE ");
 				query.append(Costanti.PROFILO_ASINCRONO);
@@ -1868,7 +1868,7 @@ public class ProfiloDiCollaborazione {
 				this.registraBustaInviata(id);
 				
 				// salvo busta per profilo
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -1944,7 +1944,7 @@ public class ProfiloDiCollaborazione {
 		String oldIDRisposta = null;
 		String oldTipoRisposta = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_MESSAGGIO,TIPO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE BACKUP_ID_RICHIESTA=?");
@@ -1987,7 +1987,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmtRead = null;
 		ResultSet rsRead = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -2042,7 +2042,7 @@ public class ProfiloDiCollaborazione {
 
 			java.sql.Timestamp oraInvioRisposta = DateManager.getTimestamp();
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" SET IS_RICHIESTA=0, RICEVUTA_ASINCRONA=0, ORA_REGISTRAZIONE=?, ID_MESSAGGIO=?, TIPO=?, BACKUP_ID_RICHIESTA=?, RICEVUTA_APPLICATIVA=1 WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -2103,7 +2103,7 @@ public class ProfiloDiCollaborazione {
 			// salvo busta per profilo
 			PreparedStatement pstmtUpdate = null;
 			try{
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -2162,7 +2162,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmtRead = null;
 		ResultSet rsRead = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -2370,7 +2370,7 @@ public class ProfiloDiCollaborazione {
 			PreparedStatement pstmt = null;
 			ResultSet rs = null;
 			try{
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT TIPO_SERVIZIO_CORRELATO,SERVIZIO_CORRELATO,VERSIONE_SERVIZIO_CORRELATO FROM ");
 				query.append(Costanti.PROFILO_ASINCRONO);
 				query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -2569,7 +2569,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_MESSAGGIO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -2653,7 +2653,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_COLLABORAZIONE FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -2780,7 +2780,7 @@ public class ProfiloDiCollaborazione {
 					long nowTime = DateManager.getTimeMillis() - (timeout * 60 * 1000);
 					java.sql.Timestamp scadenzaRingraziamento = new java.sql.Timestamp(nowTime);
 
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ID_MESSAGGIO FROM ");
 					query.append(Costanti.PROFILO_ASINCRONO);
 					query.append(" WHERE ORA_REGISTRAZIONE < ? AND TIPO=? AND RICEVUTA_ASINCRONA=0 AND RICEVUTA_APPLICATIVA=0 FOR UPDATE");
@@ -2886,7 +2886,7 @@ public class ProfiloDiCollaborazione {
 				IGestoreRepository gestoreRepositoryBuste = Configurazione.getGestoreRepositoryBuste();
 				
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ID_MESSAGGIO FROM ");
 					query.append(Costanti.PROFILO_ASINCRONO);
 					query.append(" WHERE ORA_REGISTRAZIONE < ? AND TIPO=? AND RICEVUTA_ASINCRONA=0 AND RICEVUTA_APPLICATIVA=0");
@@ -3011,7 +3011,7 @@ public class ProfiloDiCollaborazione {
 				try{
 					
 					if(Configurazione.getSqlQueryObjectType()==null){
-						StringBuffer query = new StringBuffer();
+						StringBuilder query = new StringBuilder();
 						query.append("SELECT PROFILO_DI_COLLABORAZIONE FROM ");
 						query.append(Costanti.REPOSITORY);
 						query.append(" WHERE ID_MESSAGGIO=? AND TIPO=? ");
@@ -3096,7 +3096,7 @@ public class ProfiloDiCollaborazione {
 		ResultSet rs = null;
 		try{	
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT ID_ASINCRONO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=? AND RICEVUTA_ASINCRONA=0");
@@ -3203,7 +3203,7 @@ public class ProfiloDiCollaborazione {
 				try{
 
 					// Check flusso asincrono: richiesta/ricevuta  o  risposta(richiestaStato)/ricevuta(Risposta)
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT IS_RICHIESTA,RICEVUTA_ASINCRONA,ID_ASINCRONO FROM ");
 					query.append(Costanti.PROFILO_ASINCRONO);
 					query.append(" WHERE ID_MESSAGGIO=? AND TIPO=? FOR UPDATE");
@@ -3359,7 +3359,7 @@ public class ProfiloDiCollaborazione {
 		try{
 
 			// Check flusso asincrono: richiesta/ricevuta  o  risposta(richiestaStato)/ricevuta(Risposta)
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT IS_RICHIESTA,RICEVUTA_ASINCRONA,ID_ASINCRONO FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -3512,7 +3512,7 @@ public class ProfiloDiCollaborazione {
 			if(busta.getRiferimentoMessaggio()==null && busta.getCollaborazione()==null)
 				return false;
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT * FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ");
@@ -3599,7 +3599,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT * FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -3658,7 +3658,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT IS_RICHIESTA,RICEVUTA_ASINCRONA FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -3721,7 +3721,7 @@ public class ProfiloDiCollaborazione {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try{
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("SELECT IS_RICHIESTA,RICEVUTA_ASINCRONA FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO=? AND TIPO=?");
@@ -3782,7 +3782,7 @@ public class ProfiloDiCollaborazione {
 		Connection connectionDB = state.getConnectionDB();
 		PreparedStatement pstmt = null;
 		try{	
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("DELETE FROM ");
 			query.append(Costanti.PROFILO_ASINCRONO);
 			query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=?");

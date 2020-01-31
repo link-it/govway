@@ -508,7 +508,7 @@ public class GestoreTransazioniStateful {
 		}
 		
 		if(object.getServiziApplicativiErogatore()!=null && object.getServiziApplicativiErogatore().size()>0){
-			StringBuffer sa_erogatori = new StringBuffer();
+			StringBuilder sa_erogatori = new StringBuilder();
 			for (int i=0; i<object.getServiziApplicativiErogatore().size(); i++) {
 				if (i>0){
 					sa_erogatori.append(",");
@@ -521,7 +521,7 @@ public class GestoreTransazioniStateful {
 		
 		if(object.getEventiGestione()!=null && object.getEventiGestione().size()>0){
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String s : object.getEventiGestione()) {
 				if(bf.length()>0){
 					bf.append(",");
@@ -610,7 +610,7 @@ public class GestoreTransazioniStateful {
 		
 		if(object.getEventiGestione()!=null && object.getEventiGestione().size()>0){
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String s : object.getEventiGestione()) {
 				if(bf.length()>0){
 					bf.append(",");

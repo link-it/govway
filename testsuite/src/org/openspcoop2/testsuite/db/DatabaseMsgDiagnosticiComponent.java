@@ -524,7 +524,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where ");
 			for(int i=0; i<valoriContenutiMsg.length;i++){
 				if(i>0)
@@ -557,7 +557,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		ResultSet res = null;
 		PreparedStatement prep = null;
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			String idMsgColumn = richiesta ? CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO : CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA;
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where " + idMsgColumn+" = ? AND ");
 			for(int i=0; i<valoriContenutiMsg.length;i++){
@@ -704,7 +704,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO +" LIKE '%@%@%'");
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 			res = prep.executeQuery();
@@ -793,7 +793,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_MESSAGGIO +" LIKE '%NullPointer%'");
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 			res = prep.executeQuery();
@@ -829,7 +829,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" is null OR "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +"=''");
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 			res = prep.executeQuery();
@@ -865,7 +865,7 @@ public class DatabaseMsgDiagnosticiComponent {
 		PreparedStatement prep = null;
 		Vector<String> resultsVector = new Vector<String>();
 		try {
-			StringBuffer sql = new StringBuffer();
+			StringBuilder sql = new StringBuilder();
 			sql.append("select * from "+CostantiDB.MSG_DIAGNOSTICI+" where "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" is not null AND "+CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE +" LIKE '009%'");
 			prep = this.connectionMsgDiagnostici.prepareStatement(sql.toString());
 			res = prep.executeQuery();

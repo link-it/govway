@@ -223,7 +223,7 @@ public class XMLLib{
 		try{
 
 			File f = new File(indexServizi);
-			StringBuffer contenuto = new StringBuffer();
+			StringBuilder contenuto = new StringBuilder();
 			if(f.exists()){
 				if(f.isFile()==false){
 					throw new Exception("Non e' un file regolare");
@@ -304,7 +304,7 @@ public class XMLLib{
 	private void setContenutoIndexServizi(String directoryServiziSoggetto,IDServizio[]index)throws DriverRegistroServiziException {
 
 		// genero stringa
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<index.length; i++){
 			bf.append(this.generaIndexServiziLine(index[i]));
 		}
@@ -542,7 +542,7 @@ public class XMLLib{
 		try{
 
 			File f = new File(indexServizi);
-			StringBuffer contenuto = new StringBuffer();
+			StringBuilder contenuto = new StringBuilder();
 			if(f.exists()){
 				if(f.isFile()==false){
 					throw new Exception("Non e' un file regolare");

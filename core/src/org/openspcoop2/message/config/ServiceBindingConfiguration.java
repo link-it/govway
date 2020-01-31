@@ -248,7 +248,7 @@ public class ServiceBindingConfiguration implements Serializable {
 	}
 	public String getContentTypesSupportedAsString(ServiceBinding serviceBinding, MessageRole messageType, 
 			String protocol, String function, String functionParameters) throws MessageException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (String ct : this.getContentTypesSupported(serviceBinding, messageType, 
 				protocol,function,functionParameters)) {
 			if(bf.length()>0){

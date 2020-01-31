@@ -152,7 +152,7 @@ public class IDSerialGenerator_alphanumeric {
 				}
 				sqlGet.setSelectForUpdate(true);
 				
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 //				query.append("SELECT "+columnPrg+" FROM ");
 //				query.append(table);
 //				query.append(" WHERE "+columnProtocollo+"=?");
@@ -209,7 +209,7 @@ public class IDSerialGenerator_alphanumeric {
 					generator.initialize(generatorConfig);
 					progressivoTmp = generator.newID().getAsString();
 					// CREO PRIMO COUNT!
-					StringBuffer queryInsert = new StringBuffer();
+					StringBuilder queryInsert = new StringBuilder();
 					ISQLQueryObject sqlInsert = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 					sqlInsert.addInsertTable(table);
 					sqlInsert.addInsertField(columnPrg, "?");
@@ -235,7 +235,7 @@ public class IDSerialGenerator_alphanumeric {
 					
 				}else{
 					// Incremento!
-					StringBuffer queryUpdate = new StringBuffer();
+					StringBuilder queryUpdate = new StringBuilder();
 					ISQLQueryObject sqlUpdate = SQLObjectFactory.createSQLQueryObject(tipoDatabase);
 					sqlUpdate.addUpdateTable(table);
 					sqlUpdate.addUpdateField(columnPrg, "?");

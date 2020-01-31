@@ -108,7 +108,7 @@ public class ParametriAutenticazione implements java.io.Serializable {
 		if(this.map.isEmpty()) {
 			return null;
 		}
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		Iterator<String> it = this.map.keySet().iterator();
 		while (it.hasNext()) {
 			if(bf.length()>0) {
@@ -126,7 +126,7 @@ public class ParametriAutenticazione implements java.io.Serializable {
 		if(this.map.isEmpty()) {
 			return "";
 		}
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		Iterator<String> it = this.map.keySet().iterator();
 		while (it.hasNext()) {
 			if(bf.length()>0) {

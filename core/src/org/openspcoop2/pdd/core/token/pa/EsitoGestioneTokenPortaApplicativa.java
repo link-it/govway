@@ -70,7 +70,7 @@ public class EsitoGestioneTokenPortaApplicativa extends EsitoGestioneToken imple
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer(super.toString());
+		StringBuilder bf = new StringBuilder(super.toString());
 		if(this.erroreCooperazione!=null){
 			bf.append(" ErroreCooperazione(");
 			bf.append(this.erroreCooperazione.getCodiceErrore().name());

@@ -221,7 +221,7 @@ public class JwtHeaders {
 					headers.add(ch);
 				}
 			}
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String ch : headers) {
 				if(bf.length()>0) {
 					bf.append(",");

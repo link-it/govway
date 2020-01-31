@@ -212,7 +212,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Errore durante la ricerca dei soggetti: "+e.getMessage(),e);
 		}
 		if(idSoggettiList!=null && idSoggettiList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
+			StringBuilder bfExc = new StringBuilder();
 			for (IDSoggetto idSoggetto : idSoggettiList) {
 				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idSoggetto)==false) {
 					if(bfExc.length()>0) {
@@ -397,7 +397,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Errore durante la ricerca di accordi di servizio: "+e.getMessage(),e);
 		}
 		if(idAccordiList!=null && idAccordiList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
+			StringBuilder bfExc = new StringBuilder();
 			for (IDAccordo idAccordo : idAccordiList) {
 				if(ConsoleOperationType.ADD.equals(consoleOperationType) || (id.equals(idAccordo)==false)) {
 					if(bfExc.length()>0) {
@@ -537,7 +537,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
 		}
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
+			StringBuilder bfExc = new StringBuilder();
 			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
 				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
@@ -565,7 +565,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 //			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
 //		}
 //		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-//			StringBuffer bfExc = new StringBuffer();
+//			StringBuilder bfExc = new StringBuilder();
 //			for (IDAccordoAzione idAccordoAzione : idAccordiAzioniList) {
 //				if(id.equals(idAccordoAzione)==false) {
 //					if(bfExc.length()>0) {
@@ -612,7 +612,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
 		}
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
+			StringBuilder bfExc = new StringBuilder();
 			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
 				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
@@ -641,7 +641,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 //			throw new ProtocolException("Errore durante la ricerca di azioni di un accordo di servizio: "+e.getMessage(),e);
 //		}
 //		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-//			StringBuffer bfExc = new StringBuffer();
+//			StringBuilder bfExc = new StringBuilder();
 //			for (IDPortTypeAzione idAccordoAzione : idAccordiAzioniList) {
 //				if(id.equals(idAccordoAzione)==false) {
 //					if(bfExc.length()>0) {
@@ -689,7 +689,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
 		}
 		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-			StringBuffer bfExc = new StringBuffer();
+			StringBuilder bfExc = new StringBuilder();
 			for (IDResource idAccordoAzione : idAccordiAzioniList) {
 				if(ConsoleOperationType.ADD.equals(consoleOperationType) || id.equals(idAccordoAzione)==false) {
 					if(bfExc.length()>0) {
@@ -717,7 +717,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 //			throw new ProtocolException("Errore durante la ricerca di risorse di un accordo di servizio: "+e.getMessage(),e);
 //		}
 //		if(idAccordiAzioniList!=null && idAccordiAzioniList.size()>0) {
-//			StringBuffer bfExc = new StringBuffer();
+//			StringBuilder bfExc = new StringBuilder();
 //			for (IDResource idAccordoAzione : idAccordiAzioniList) {
 //				if(id.equals(idAccordoAzione)==false) {
 //					if(bfExc.length()>0) {
@@ -906,7 +906,7 @@ public class AS4DynamicConfiguration extends BasicDynamicConfiguration implement
 		//      durante la ricezione del messaggio, lui controlla semplicemente che sia registrata una azione con quel nome, indifferentemente dal servizi.
 		// Nota: Lascio comunque il controllo nel singolo tipo per dare un msg piu' preciso nel caso sia ridefinita una azione uguale all'interno della solita API
 
-		StringBuffer bfExc = new StringBuffer();
+		StringBuilder bfExc = new StringBuilder();
 		
 		List<IDAccordoAzione> idAccordiAzioniList = null;
 		FiltroRicercaAccordoAzioni filtroAccordi = new FiltroRicercaAccordoAzioni();

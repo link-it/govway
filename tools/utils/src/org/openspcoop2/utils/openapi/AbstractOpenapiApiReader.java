@@ -103,7 +103,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		if(pr==null) {
 			throw new ProcessingException("Parse result undefined");
 		}
-		StringBuffer bfMessage = new StringBuffer();
+		StringBuilder bfMessage = new StringBuilder();
 		if(pr.getMessages()!=null && pr.getMessages().size()>0) {
 			for (String msg : pr.getMessages()) {
 				if(bfMessage.length()>0) {

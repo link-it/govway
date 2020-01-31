@@ -148,7 +148,7 @@ public final class Filtri
 		if(listSrc==null || listSrc.size()<=0) {
 			return null;
 		}
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (String src : listSrc) {
 			if(bf.length()>0) {
 				bf.append(",");

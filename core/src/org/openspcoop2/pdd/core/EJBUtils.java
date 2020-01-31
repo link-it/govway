@@ -2283,7 +2283,7 @@ public class EJBUtils {
 			Eccezione eccezioneDaInviare = Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), this.protocolFactory);
 			if(eccezioni.size()>1){
 				ITraduttore traduttore = this.protocolFactory.createTraduttore();
-				StringBuffer bfDescrizione = new StringBuffer();
+				StringBuilder bfDescrizione = new StringBuilder();
 				for(int k=0; k<eccezioni.size();k++){
 					Eccezione error = eccezioni.get(k);
 					if(error.getDescrizione(this.protocolFactory)!=null) {
@@ -2352,7 +2352,7 @@ public class EJBUtils {
 			Eccezione eccezioneDaInviare = Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), this.protocolFactory);
 			if(eccezioni.size()>1){
 				ITraduttore traduttore = this.protocolFactory.createTraduttore();
-				StringBuffer bfDescrizione = new StringBuffer();
+				StringBuilder bfDescrizione = new StringBuilder();
 				for(int k=0; k<eccezioni.size();k++){
 					Eccezione error = eccezioni.get(k);
 					if(error.getDescrizione(this.protocolFactory)!=null) {

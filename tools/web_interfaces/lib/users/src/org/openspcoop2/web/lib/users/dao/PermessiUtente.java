@@ -61,7 +61,7 @@ public class PermessiUtente implements Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.servizi)
 			bf.append(Permessi.SERVIZI.toString());
 		if(this.diagnostica)
@@ -94,7 +94,7 @@ public class PermessiUtente implements Serializable {
 		return this.toString(separatore, p);
 	}
 	public String toString(String separatore,PermessiUtente maschera){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(maschera.servizi){
 			if(this.servizi){
 				if(bf.length()>0)

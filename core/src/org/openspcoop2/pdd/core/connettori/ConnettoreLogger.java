@@ -66,7 +66,7 @@ public class ConnettoreLogger {
 	}
 	
 	public String buildMsg(String msg){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.idTransazione!=null){
 			bf.append("id:").append(this.idTransazione);
 		}

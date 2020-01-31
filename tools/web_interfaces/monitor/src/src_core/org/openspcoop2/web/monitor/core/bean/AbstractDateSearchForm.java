@@ -99,7 +99,7 @@ public abstract class AbstractDateSearchForm extends AbstractCoreSearchForm{
 	
 	public static String printPeriodo(Date inizio,Date fine){
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss.SSS", Locale.ITALIAN);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("[ ");
 		if(inizio!=null){
 			bf.append(sdf.format(inizio));

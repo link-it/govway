@@ -32,7 +32,7 @@ import java.util.List;
 public class Utilities {
 
 	public static String normalizedProjectName(String projectName){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		boolean precedenteMaiuscolo = false;
 		for (int i = 0; i < projectName.length(); i++) {
 			char c = projectName.charAt(i);

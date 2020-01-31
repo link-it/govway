@@ -181,13 +181,13 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	@Override
 	public ISQLQueryObject addFromTable(ISQLQueryObject subSelect)
 			throws SQLQueryObjectException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(" ( ");
 		bf.append(subSelect.createSQLQuery());
 		bf.append(" ) ");
 		// Devo forzare l'utilizzo di un alias su una sottoselct dentro il FROM	
 		// Genero Tre caratteri alafabetici casuali per dare un alias del tipo "tabellaXXX"
-		StringBuffer subselectalias = new StringBuffer();
+		StringBuilder subselectalias = new StringBuilder();
 		subselectalias.append("tabella");
 		Random rand = new Random();
 		int rnd; 
@@ -236,12 +236,12 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 		this.precheckBuildQuery();
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
-//		StringBuffer cursorName = null;
+//		StringBuilder cursorName = null;
 //		if(this.selectForUpdate){
 //			
-//			cursorName = new StringBuffer();
+//			cursorName = new StringBuilder();
 //			cursorName.append("cursorName");
 //			Random rand = new Random();
 //			int rnd; 
@@ -330,7 +330,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	@Override
 	public String _createSQLDelete() throws SQLQueryObjectException {
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		bf.append("DELETE ");
 
@@ -343,7 +343,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 
 
 	private String getSQL(boolean delete,boolean update,boolean conditions,boolean union) throws SQLQueryObjectException {	
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		if(this.selectForUpdate){
 			this.checkSelectForUpdate(update, delete, union);
@@ -822,7 +822,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			this.checkSelectForUpdate(false, false, true);
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		// Non ha senso, la union fa gia la distinct, a meno di usare la unionAll ma in quel caso non si vuole la distinct
 		// if(this.isSelectDistinct())
@@ -1102,7 +1102,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 			throw new SQLQueryObjectException("Alias per il count non definito");
 		}
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		bf.append("SELECT count(*) "+this.getDefaultAliasFieldKeyword()+" ");
 		bf.append(aliasCount);
@@ -1118,7 +1118,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	@Override
 	public String _createSQLUpdate() throws SQLQueryObjectException {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
 		bf.append(this.updateTable);
 		bf.append(" SET ");
@@ -1145,7 +1145,7 @@ public class SQLServerQueryObject extends SQLQueryObjectCore {
 	@Override
 	public String _createSQLConditions() throws SQLQueryObjectException {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));
 		return bf.toString();
 	}

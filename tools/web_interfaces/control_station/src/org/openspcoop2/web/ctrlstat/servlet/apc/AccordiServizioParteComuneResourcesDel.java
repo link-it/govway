@@ -113,7 +113,7 @@ public final class AccordiServizioParteComuneResourcesDel extends Action {
 				idServiziWithAccordo = apsCore.getIdServiziWithAccordo(idAccordoFactory.getIDAccordoFromAccordo(as),true);
 			}catch(DriverRegistroServiziNotFound dNotF){}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneRisorse(as, userLogin, apcCore, apcHelper, 
 					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, idServiziWithAccordo, resourcesToRemove);

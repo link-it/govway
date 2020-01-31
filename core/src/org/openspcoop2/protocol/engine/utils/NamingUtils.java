@@ -89,7 +89,7 @@ public class NamingUtils {
 		return getLabelSoggetto(protocollo, idSoggetto.getTipo(), idSoggetto.getNome());
 	}
 	public static String getLabelSoggetto(String protocollo, String tipoSoggetto, String nomeSoggetto) throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		if(protocolFactoryManager.getOrganizationTypes().get(protocollo).size()>1) {
 			IProtocolFactory<?> protocolFactory = protocolFactoryManager.getProtocolFactoryByName(protocollo);
@@ -149,7 +149,7 @@ public class NamingUtils {
 		return getLabelAccordoServizioParteComune(protocollo, idAccordo, true);
 	}
 	public static String getLabelAccordoServizioParteComune(String protocollo, IDAccordo idAccordo, boolean addSoggettoReferente) throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(idAccordo.getNome());
 		bf.append(" v");
 		bf.append(idAccordo.getVersione());
@@ -213,7 +213,7 @@ public class NamingUtils {
 		return getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione());
 	}
 	public static String getLabelAccordoServizioParteSpecifica(String protocollo, IDServizio idServizio) throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(getLabelAccordoServizioParteSpecificaSenzaErogatore(protocollo, idServizio.getTipo(), idServizio.getNome(), idServizio.getVersione()));
 		bf.append(" (");
 		bf.append(getLabelSoggetto(protocollo, idServizio.getSoggettoErogatore().getTipo(), idServizio.getSoggettoErogatore().getNome()));
@@ -239,7 +239,7 @@ public class NamingUtils {
 		return getLabelAccordoCooperazione(protocollo, idAccordo);
 	}
 	public static String getLabelAccordoCooperazione(String protocollo, IDAccordoCooperazione idAccordo) throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(idAccordo.getNome());
 		bf.append(" v");
 		bf.append(idAccordo.getVersione());

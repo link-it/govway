@@ -176,7 +176,7 @@ public class ApplicativiApiServiceImpl extends BaseImpl implements ApplicativiAp
 			}
 			
 			if (sa != null) { 
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				ServiziApplicativiUtilities.deleteServizioApplicativo(sa, context.getAuthentication().getName(), env.saCore, env.saHelper, inUsoMessage, "\n");
 				
 				if (inUsoMessage.length() > 0) {

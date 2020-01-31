@@ -110,7 +110,7 @@ public class ReportExporter extends HttpServlet{
 
 	private void processRequest(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
 		
-		StringBuffer bfSource = new StringBuffer("");
+		StringBuilder bfSource = new StringBuilder("");
 		try{
 
 			if(this.serviceEnabled==false){

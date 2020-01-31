@@ -195,7 +195,7 @@ public abstract class AbstractStatistiche {
 	}
 
 	public void printCalendar(Calendar c){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("DATA ["+c.getTime().toString()+"]");
 		bf.append(" DATA in millisecondi: "+c.getTime().getTime());
 		bf.append(" YEAR:"+c.get(Calendar.YEAR));

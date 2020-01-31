@@ -111,7 +111,7 @@ public class StatisticheSettimanali extends AbstractStatistiche {
 		//System.out.println("INTERVALLO SETTIMANALE PER ["+date.toString()+"]");
 		
 		Calendar cTmp = truncDate(date);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Settimana N.");
 		bf.append(cTmp.get(Calendar.WEEK_OF_YEAR));
 		

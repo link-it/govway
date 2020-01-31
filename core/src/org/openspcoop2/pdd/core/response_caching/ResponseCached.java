@@ -120,7 +120,7 @@ public class ResponseCached implements Serializable {
 	}
 	
 	public String print() throws UtilsException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("UUID: ").append(this.uuid).append("\n\n");
 		bf.append("Digest: ").append(this.digest).append("\n\n");
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();

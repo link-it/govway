@@ -56,7 +56,7 @@ import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
  */
 public class ServiziApplicativiUtilities {
 
-	public static void deleteServizioApplicativo(ServizioApplicativo sa, String userLogin, ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+	public static void deleteServizioApplicativo(ServizioApplicativo sa, String userLogin, ServiziApplicativiCore saCore, ServiziApplicativiHelper saHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
 		idServizioApplicativo.setNome(sa.getNome());
@@ -234,7 +234,7 @@ public class ServiziApplicativiUtilities {
 		return saGeneralInfo;
 	}
 	
-	public static void checkStatoConnettore(ServiziApplicativiCore saCore, ServizioApplicativo sa, Connettore connis, StringBuffer inUsoMessage, String newLine) throws DriverConfigurazioneException {
+	public static void checkStatoConnettore(ServiziApplicativiCore saCore, ServizioApplicativo sa, Connettore connis, StringBuilder inUsoMessage, String newLine) throws DriverConfigurazioneException {
 		InvocazioneServizio invServizio = sa.getInvocazioneServizio();
 		StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
 		if (TipiConnettore.DISABILITATO.getNome().equals(connis.getTipo()) && CostantiConfigurazione.DISABILITATO.equals(getMessage)) {

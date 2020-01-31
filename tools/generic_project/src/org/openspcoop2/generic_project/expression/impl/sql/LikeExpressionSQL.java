@@ -50,7 +50,7 @@ public class LikeExpressionSQL extends LikeExpressionImpl implements ISQLExpress
 	}
 
 	public String toSql_engine(SQLMode mode,ISQLQueryObject sqlQueryObject,List<?> oggettiPreparedStatement,Hashtable<String, ?> oggettiJPA)throws ExpressionException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
 		}

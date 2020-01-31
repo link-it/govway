@@ -67,7 +67,7 @@ public class ConjunctionExpressionImpl extends AbstractBaseExpressionImpl {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
 		}

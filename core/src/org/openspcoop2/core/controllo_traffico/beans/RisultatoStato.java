@@ -58,7 +58,7 @@ public class RisultatoStato implements Serializable {
 	@Override
 	public String toString(){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("Stato: ");
 		if(this.stato!=null)

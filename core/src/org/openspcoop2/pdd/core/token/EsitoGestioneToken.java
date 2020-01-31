@@ -50,7 +50,7 @@ public abstract class EsitoGestioneToken extends AbstractEsitoValidazioneToken i
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(super.toString());
 		

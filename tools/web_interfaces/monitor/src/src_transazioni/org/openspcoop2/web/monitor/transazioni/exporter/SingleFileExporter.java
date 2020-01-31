@@ -679,7 +679,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			
 			// message info
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("ContentType=").append(dump.getContentType()).append("\n");
 			if(dumpBinario==false) {
 				bf.append("MessageType=").append(dump.getFormatoMessaggio()).append("\n");

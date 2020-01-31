@@ -275,7 +275,7 @@ public final class UtentiDel extends Action {
 							if(nomiUtentiDaRimuovere.size()==1){
 								msgServizi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Servizi' appartenenti all'utente '"+nomiUtentiDaRimuovere.get(0)+"'<br>";
 							}else{
-								StringBuffer bf = new StringBuffer();
+								StringBuilder bf = new StringBuilder();
 								for(int j=0; j<nomiUtentiDaRimuovere.size(); j++){
 									if(j>0)
 										bf.append("','");
@@ -313,7 +313,7 @@ public final class UtentiDel extends Action {
 							if(nomiUtentiDaRimuovere.size()==1){
 								msgAccordi = "Scegliere un utente a cui verranno assegnati tutti gli oggetti con permessi 'Accordi Cooperazione' appartenenti all'utente '"+nomiUtentiDaRimuovere.get(0)+"'<br>";
 							}else{
-								StringBuffer bf = new StringBuffer();
+								StringBuilder bf = new StringBuilder();
 								for(int j=0; j<nomiUtentiDaRimuovere.size(); j++){
 									if(j>0)
 										bf.append("','");

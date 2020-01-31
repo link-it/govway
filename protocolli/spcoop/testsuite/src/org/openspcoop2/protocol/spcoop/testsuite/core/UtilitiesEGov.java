@@ -29,6 +29,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.config.ITraduttore;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
 import org.openspcoop2.protocol.spcoop.utils.SPCoopUtils;
+import org.openspcoop2.utils.date.DateUtils;
 
 
 /**
@@ -73,7 +74,7 @@ public class UtilitiesEGov {
 	public static String getBustaEGov(String tipoMittente,String mittente,String tipoDestinatario,String destinatario,
 			String profiloCollaborazione,String tipoServizio,String servizio,String idEGov,boolean confermaRicezione,String inoltro,boolean scadenza,String azione,
 			String collaborazione,String tipo_tempo,Date oraRegistrazione,String contenutoBody) throws ProtocolException{
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append(buildBustaEGov(tipoMittente, mittente, tipoDestinatario, destinatario, 
@@ -95,7 +96,7 @@ public class UtilitiesEGov {
 		IProtocolFactory<?> factory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(CostantiTestSuite.PROTOCOL_NAME);
 		ITraduttore traduttore = factory.createTraduttore();
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
 		busta.append("<eGov_IT:IntestazioneMessaggio>\n");
 		String tipoMittenteProtocollo = tipoMittente;
@@ -146,7 +147,7 @@ public class UtilitiesEGov {
 		return getIDEGov(mittente,pddMittente,new Date());
 	}
 	public static synchronized String getIDEGov(String mittente,String pddMittente,Date date){
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		buff.append(mittente);
 		buff.append('_');
 		buff.append(pddMittente);
@@ -160,7 +161,7 @@ public class UtilitiesEGov {
 			buff.append('0');
 		buff.append(c);
 		buff.append('_');
-		SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm"); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd_HH:mm");
 		buff.append(dateformat.format(date));
 		return buff.toString();
 	}

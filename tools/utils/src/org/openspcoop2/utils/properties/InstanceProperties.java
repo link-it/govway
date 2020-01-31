@@ -256,7 +256,7 @@ public abstract class InstanceProperties {
 			
 			// 5. Se sono state fornite proprieta' con il + le gestisco.
 			// In caso di valori uguali utilizzo quelli dell'object, poi quelli del file e infine quelli dell'originale
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			List<String> valoriAggiunti = new ArrayList<String>();
 			if(addObject!=null){
 				for (int i = 0; i < addObject.length; i++) {

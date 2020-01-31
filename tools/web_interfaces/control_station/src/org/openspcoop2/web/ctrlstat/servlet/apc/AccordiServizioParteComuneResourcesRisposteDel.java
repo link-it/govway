@@ -97,7 +97,7 @@ public final class AccordiServizioParteComuneResourcesRisposteDel extends Action
 			
 			String responseStatus = "";
 			boolean modificaAS_effettuata = false;
-			StringBuffer errori = new StringBuffer();
+			StringBuilder errori = new StringBuilder();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				responseStatus = resourcesToRemove.get(i);
 

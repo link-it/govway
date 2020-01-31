@@ -182,7 +182,7 @@ public class GruppiHelper extends ConsoleHelper{
 					boolean normalizeObjectIds = !this.isModalitaCompleta();
 					boolean gruppoInUso = this.gruppiCore.isGruppoInUso(gruppo.getNome(),whereIsInUso,normalizeObjectIds);
 					String newLine = org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE;
-					StringBuffer inUsoMessage = new StringBuffer();
+					StringBuilder inUsoMessage = new StringBuilder();
 					
 					if (gruppoInUso) {
 						inUsoMessage.append(DBOggettiInUsoUtils.toString(new IDGruppo(gruppo.getNome()), whereIsInUso, true, newLine, " non modificabile perch&egrave; :"));

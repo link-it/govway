@@ -74,13 +74,13 @@ public class WrappedLogSSLSocket extends SSLSocket {
 		private static final String CHARSET = Charset.UTF_8.getValue();
         private Logger log;
         private String prefixLog;
-        private StringBuffer sb;
+        private StringBuilder sb;
 
         public WrappedLogOutputStream(OutputStream out, Logger log, String prefixLog) {
             super(out);
             this.log = log;
             this.prefixLog = prefixLog;
-            this.sb = new StringBuffer(this.prefixLog);
+            this.sb = new StringBuilder(this.prefixLog);
         }
 
         @Override
@@ -116,7 +116,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
   
    	@Override
    	public void startHandshake() throws IOException {
-   		StringBuffer sb = new StringBuffer(this.prefixLog);
+   		StringBuilder sb = new StringBuilder(this.prefixLog);
    		sb.append("startHandshake");
    		this.log.info(sb.toString());
    		this.delegate.startHandshake();
@@ -139,16 +139,16 @@ public class WrappedLogSSLSocket extends SSLSocket {
     	private WrappedLogSSLSocket sslSocket;
         private Logger log;
         private String prefixLog;
-        private StringBuffer sb;
-        private StringBuffer sbError;
+        private StringBuilder sb;
+        private StringBuilder sbError;
             	
 		public WrappedLogHandshakeCompletedListener(WrappedLogSSLSocket sslSocket, HandshakeCompletedListener delegate) {
     		this.delegate = delegate;
     		this.sslSocket = sslSocket;
     		this.log = sslSocket.log;
     		this.prefixLog = sslSocket.prefixLog;
-    		this.sb = new StringBuffer(this.prefixLog);
-    		this.sbError = new StringBuffer(); // prefisso aggiunto dopo
+    		this.sb = new StringBuilder(this.prefixLog);
+    		this.sbError = new StringBuilder(); // prefisso aggiunto dopo
     	}
     	
 		@Override
@@ -243,7 +243,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	@Override
    	public boolean getEnableSessionCreation() {
    		boolean returnValue = this.delegate.getEnableSessionCreation(); 
-   		StringBuffer sb = new StringBuffer(this.prefixLog);
+   		StringBuilder sb = new StringBuilder(this.prefixLog);
    		sb.append("getEnableSessionCreation=").append(returnValue);
    		this.log.info(sb.toString());
    		return returnValue;
@@ -253,7 +253,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	public String[] getEnabledCipherSuites() {
    		String[] cipherSuites = this.delegate.getEnabledCipherSuites();
    		if(cipherSuites!=null && cipherSuites.length>0) {
-   			StringBuffer sb = new StringBuffer(this.prefixLog);
+   			StringBuilder sb = new StringBuilder(this.prefixLog);
    			sb.append("EnabledCipherSuites: ");
    			for (String cs : cipherSuites) {
    				if(sb.length()>0) {
@@ -270,7 +270,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	public String[] getSupportedCipherSuites() {
    		String[] cipherSuites = this.delegate.getSupportedCipherSuites();
    		if(cipherSuites!=null && cipherSuites.length>0) {
-   			StringBuffer sb = new StringBuffer(this.prefixLog);
+   			StringBuilder sb = new StringBuilder(this.prefixLog);
    			sb.append("SupportedCipherSuites: ");
    			for (String cs : cipherSuites) {
    				if(sb.length()>0) {
@@ -287,7 +287,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	public String[] getEnabledProtocols() {
    		String[] enabledProtocols = this.delegate.getEnabledProtocols();
    		if(enabledProtocols!=null && enabledProtocols.length>0) {
-   			StringBuffer sb = new StringBuffer(this.prefixLog);		
+   			StringBuilder sb = new StringBuilder(this.prefixLog);		
    			sb.append("EnabledProtocols: ");
    			for (String ep : enabledProtocols) {
    				if(sb.length()>0) {
@@ -304,7 +304,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	public String[] getSupportedProtocols() {
    		String[] supportedProtocols = this.delegate.getSupportedProtocols();
    		if(supportedProtocols!=null && supportedProtocols.length>0) {
-   			StringBuffer sb = new StringBuffer(this.prefixLog);		
+   			StringBuilder sb = new StringBuilder(this.prefixLog);		
    			sb.append("SupportedProtocols: ");
    			for (String ep : supportedProtocols) {
    				if(sb.length()>0) {
@@ -320,7 +320,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	@Override
    	public boolean getNeedClientAuth() {
    		boolean returnValue = this.delegate.getNeedClientAuth(); 
-   		StringBuffer sb = new StringBuffer(this.prefixLog);
+   		StringBuilder sb = new StringBuilder(this.prefixLog);
    		sb.append("getNeedClientAuth=").append(returnValue);
    		this.log.info(sb.toString());
    		return returnValue;
@@ -329,7 +329,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	@Override
    	public boolean getUseClientMode() {
    		boolean returnValue = this.delegate.getUseClientMode(); 
-   		StringBuffer sb = new StringBuffer(this.prefixLog);
+   		StringBuilder sb = new StringBuilder(this.prefixLog);
    		sb.append("getUseClientMode=").append(returnValue);
    		this.log.info(sb.toString());
    		return returnValue;
@@ -338,7 +338,7 @@ public class WrappedLogSSLSocket extends SSLSocket {
    	@Override
    	public boolean getWantClientAuth() {
    		boolean returnValue = this.delegate.getWantClientAuth(); 
-   		StringBuffer sb = new StringBuffer(this.prefixLog);
+   		StringBuilder sb = new StringBuilder(this.prefixLog);
    		sb.append("getWantClientAuth=").append(returnValue);
    		this.log.info(sb.toString());
    		return returnValue;

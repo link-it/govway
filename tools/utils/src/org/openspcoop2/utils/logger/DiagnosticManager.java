@@ -197,8 +197,8 @@ public class DiagnosticManager {
 			}
 		}
 		
-		StringBuffer bf = new StringBuffer();
-		StringBuffer keyword = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
+		StringBuilder keyword = new StringBuilder();
 		boolean separator = false;
 		for(int i=0; i<msg.length(); i++){
 			char ch = msg.charAt(i);

@@ -3276,7 +3276,7 @@ public class RicezioneContenutiApplicativi {
 				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
 			}
 			if(riferimentoRichiesta==null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < tipiIntegrazionePD.length; i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4182,7 +4182,7 @@ public class RicezioneContenutiApplicativi {
 								throw new DriverConfigurazioneNotFound("NotFound");
 							}
 							if(list.size()>1){
-								StringBuffer bf = new StringBuffer();
+								StringBuilder bf = new StringBuilder();
 								for (PortaApplicativa portaApplicativa : list) {
 									if(bf.length()>0) {
 										bf.append(",");

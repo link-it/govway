@@ -396,7 +396,7 @@ public class AccordoServizioWrapperUtilities {
 			SOAPBody soapBody = (SOAPBody) elem;
 			message.setUse(BindingUse.toEnumConstant(soapBody.getUse()));
 			message.setSoapNamespace(soapBody.getNamespaceURI());
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			List<?> listParts = soapBody.getParts();
 			if(listParts!=null){
 				for (Object part : listParts) {
@@ -474,7 +474,7 @@ public class AccordoServizioWrapperUtilities {
 			javax.wsdl.extensions.soap12.SOAP12Body soapBody = (javax.wsdl.extensions.soap12.SOAP12Body) elem;
 			message.setUse(BindingUse.toEnumConstant(soapBody.getUse()));
 			message.setSoapNamespace(soapBody.getNamespaceURI());
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			List<?> listParts = soapBody.getParts();
 			if(listParts!=null){
 				for (Object part : listParts) {

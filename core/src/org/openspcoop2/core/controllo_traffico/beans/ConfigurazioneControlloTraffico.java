@@ -53,7 +53,7 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.utils.beans
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 				
 		bf.append("debug="+this.debug);
 		

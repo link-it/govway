@@ -97,7 +97,7 @@ public final class SoggettiDel extends Action {
 	
 			SoggettiCore soggettiCore = new SoggettiCore();
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 
 			boolean deleteOperativo = false;
 			

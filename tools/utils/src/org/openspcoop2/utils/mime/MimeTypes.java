@@ -66,7 +66,7 @@ public class MimeTypes {
 						//System.out.println("TYPE["+tmp[0]+"] without exts");
 						this.mapMimeToExt.put(tmp[0].trim(), org.apache.commons.lang.ObjectUtils.NULL);
 					}else{
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 1; i < tmp.length; i++) {
 							bf.append(" EXT-"+i+"=["+tmp[i].trim()+"]");
 							this.mapExtToMime.put(tmp[i].trim(),tmp[0].trim());

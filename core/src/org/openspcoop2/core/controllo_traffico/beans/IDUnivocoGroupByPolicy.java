@@ -124,7 +124,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	}
 	public String toString(boolean filterGroupByNotSet){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(!QUALSIASI.equals(this.ruoloPorta) || !filterGroupByNotSet){
 			if(filterGroupByNotSet){
@@ -706,7 +706,7 @@ public class IDUnivocoGroupByPolicy implements IDUnivocoGroupBy<IDUnivocoGroupBy
 	// **** UTILITIES ****
 	
 	public static String serialize(IDUnivocoGroupByPolicy id){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(id.ruoloPorta);
 		bf.append("\n");

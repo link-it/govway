@@ -76,7 +76,7 @@ public class MappingInfo {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.modalitaIdentificazione.toString());
 		
 		if(this.value!=null){

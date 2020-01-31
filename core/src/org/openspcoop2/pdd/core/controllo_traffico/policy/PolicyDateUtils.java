@@ -36,7 +36,7 @@ import org.openspcoop2.utils.date.DateUtils;
 public class PolicyDateUtils {
 
 	public static String toStringIntervalloTemporale(TipoFinestra tipoFinestra, Date leftDate,Date rightDate,Date checkDate, boolean statistic) throws NotFoundException{
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		
 		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		

@@ -90,7 +90,7 @@ public class TranslatorPropertiesDefault {
 		try {
 			if(deleteValue) {
 				List<Property> list  = this.getListPropertyDefault();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(list!=null && list.size()>0) {
 					for (Property property : list) {
 						bf.append("\t\t\t<property name=\"");
@@ -134,7 +134,7 @@ public class TranslatorPropertiesDefault {
 			BufferedReader br = new BufferedReader(new StringReader(this.getPropertyDefault(false)));
 			List<Property> list = new ArrayList<Property>();
 			String line;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
 				if(bf.length()>0) {
 					bf.append("\n");
@@ -155,7 +155,7 @@ public class TranslatorPropertiesDefault {
 						//System.out.println("Test ["+p.getName()+"] ValueNotNull["+p.getValue()!=null+"]");
 						list.add(p);
 					}
-					bf = new StringBuffer();
+					bf = new StringBuilder();
 				}
 			}
 			return list;
@@ -191,7 +191,7 @@ public class TranslatorPropertiesDefault {
 			BufferedReader br = new BufferedReader(new StringReader(this.getPropertySetDefault()));
 			List<PropertySet> list = new ArrayList<PropertySet>();
 			String line;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
 				if(bf.length()>0) {
 					bf.append("\n");
@@ -212,7 +212,7 @@ public class TranslatorPropertiesDefault {
 						//System.out.println("Test ["+p.getName()+"] size["+p.getPropertyRefList().size()+"]");
 						list.add(p);
 					}
-					bf = new StringBuffer();
+					bf = new StringBuilder();
 				}
 			}
 			return list;
@@ -225,7 +225,7 @@ public class TranslatorPropertiesDefault {
 	// PAYLOAD PROFILES DEFAULT COMPLETE
 	
 	public String getAsStringPropertiesDefaultAsCompleteXml(boolean deleteValue) throws ProtocolException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("\t<properties>\n\n");
 		

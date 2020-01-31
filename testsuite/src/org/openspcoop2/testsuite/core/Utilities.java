@@ -326,7 +326,7 @@ public class Utilities {
 		MimeHeaders headers = message.getMimeHeaders();
 
 		java.util.Iterator<?> it = headers.getAllHeaders();
-		StringBuffer mimes = new StringBuffer();
+		StringBuilder mimes = new StringBuilder();
 		while(it.hasNext()){
 			javax.xml.soap.MimeHeader header = (javax.xml.soap.MimeHeader) it.next();
 			mimes.append("["+header.getName()+"="+header.getValue()+"]");

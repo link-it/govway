@@ -47,7 +47,7 @@ public class ArchivePortaDelegata implements IArchiveObject {
 			throw new ProtocolException("nomePorta non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("PortaDelegata_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

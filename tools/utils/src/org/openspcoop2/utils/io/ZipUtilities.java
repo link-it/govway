@@ -249,7 +249,7 @@ public class ZipUtilities {
 		char separatorCharLinux = '/';
 		boolean isWindows =  (File.separatorChar == separatorCharWindows);
 		
-		StringBuffer fixed = new StringBuffer(entryName);
+		StringBuilder fixed = new StringBuilder(entryName);
 		for( int i = 0; i<fixed.length(); i++){
 			
 			if(isWindows){

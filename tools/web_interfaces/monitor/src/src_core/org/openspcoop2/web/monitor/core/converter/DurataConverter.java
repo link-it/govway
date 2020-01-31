@@ -83,7 +83,7 @@ public class DurataConverter implements Converter {
 		long oreRimaste = ore%24;
 
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		/*if(ore==1)
 			bf.append(ore+" ora ");
 		else if(ore>0)

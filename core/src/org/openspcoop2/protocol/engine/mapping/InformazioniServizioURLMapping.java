@@ -189,7 +189,7 @@ public class InformazioniServizioURLMapping {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("MappingId(");
 		bf.append(this.idMapping);

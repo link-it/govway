@@ -592,7 +592,7 @@ public class GestoreAutorizzazione {
     }
     
     private static String buildCacheKey(boolean portaDelegata, String tipoAutorizzazione, String keyCache, String suffixKeyCache) throws AutorizzazioneException{
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
     	
     	if(portaDelegata)
     		bf.append("PD ");
@@ -1101,7 +1101,7 @@ public class GestoreAutorizzazione {
     }
     
     private static String buildCacheKeyContenuto(boolean portaDelegata, String tipoAutorizzazione, String keyCache, String suffixKeyCache) throws AutorizzazioneException{
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
     	
     	if(portaDelegata)
     		bf.append("PD ");

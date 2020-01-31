@@ -184,7 +184,7 @@ public class ProtocolFactoryManager {
 	@SuppressWarnings("unused")
 	private MapReader<String, URL> manifestURLs = null;
 	private MapReader<String, IProtocolFactory<?>> factories = null;
-	private StringBuffer protocolLoaded = new StringBuffer();
+	private StringBuilder protocolLoaded = new StringBuilder();
 	private String protocolDefault = null;
 	private MapReader<String, List<String>> tipiSoggettiValidi = null;
 	private MapReader<String, String> tipiSoggettiDefault = null;
@@ -282,7 +282,7 @@ public class ProtocolFactoryManager {
 				InformazioniServizioURLMapping.initMappingProperties(p);
 				
 				// Info di debug
-				StringBuffer context = new StringBuffer();
+				StringBuilder context = new StringBuilder();
 				if(manifestOpenspcoop2.getWeb().getEmptyContext()!=null && manifestOpenspcoop2.getWeb().getEmptyContext().getEnabled()){
 					context.append("@EMPTY-CONTEXT@");
 				}

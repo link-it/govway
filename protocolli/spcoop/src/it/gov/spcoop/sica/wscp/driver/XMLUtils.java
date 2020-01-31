@@ -79,7 +79,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(ProfiloCollaborazioneEGOV egov,StringBuffer motivoErroreValidazione){
+	public static boolean validate(ProfiloCollaborazioneEGOV egov,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -305,7 +305,7 @@ public class XMLUtils  {
 	
 	private static byte[] generateDichiarazioneEGov_engine(ProfiloCollaborazioneEGOV manifest,boolean buildChildUnqualified) throws Exception{
 		
-		StringBuffer risultatoValidazione = new StringBuffer();
+		StringBuilder risultatoValidazione = new StringBuilder();
 		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 			throw new Exception(risultatoValidazione.toString());
 		}

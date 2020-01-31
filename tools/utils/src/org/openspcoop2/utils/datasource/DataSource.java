@@ -77,7 +77,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		List<String> listResource = new ArrayList<String>();
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) it.next();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(connection.getDate())).append(") ");
 			if(connection.getIdTransazione()!=null){
@@ -106,7 +106,7 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	}
 	
 	public String getInformazioniDatabase() throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		if(this.getTipoDatabase()!=null){
 			bf.append("TipoDatabase: "+this.getTipoDatabase().getNome());

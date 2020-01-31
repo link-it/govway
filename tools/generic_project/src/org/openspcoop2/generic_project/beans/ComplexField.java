@@ -99,12 +99,12 @@ public class ComplexField implements IField {
 	@Override
 	public String toString(int indent){
 		
-		StringBuffer indentBuffer = new StringBuffer();
+		StringBuilder indentBuffer = new StringBuilder();
 		for (int i = 0; i < indent; i++) {
 			indentBuffer.append("	");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(indentBuffer.toString());
 		bf.append("- field name: "+this.fieldName);

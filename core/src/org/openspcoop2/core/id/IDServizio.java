@@ -119,7 +119,7 @@ public class IDServizio implements java.io.Serializable {
 		return this.toString(true);
 	}
 	public String toString(boolean printAzione){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.soggettoErogatore!=null){
 			bf.append(this.soggettoErogatore.getTipo());
 			bf.append("/");

@@ -254,7 +254,7 @@ public class SSLUtilities {
 		}
 	}
 	
-	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuffer bfLog) throws UtilsException{
+	public static SSLContext generateSSLContext(SSLConfig sslConfig, StringBuilder bfLog) throws UtilsException{
 
 		// Gestione https
 		SSLContext sslContext = null;
@@ -514,7 +514,7 @@ public class SSLUtilities {
 	}
 
 	
-	public static HostnameVerifier generateHostnameVerifier(SSLConfig sslConfig, StringBuffer bfLog, Logger log, Loader loader) throws UtilsException{
+	public static HostnameVerifier generateHostnameVerifier(SSLConfig sslConfig, StringBuilder bfLog, Logger log, Loader loader) throws UtilsException{
 		try{
 			if(sslConfig.isHostnameVerifier()){
 				if(sslConfig.getClassNameHostnameVerifier()!=null){
@@ -537,7 +537,7 @@ public class SSLUtilities {
 	}
 	
 	
-	public static void setSSLContextIntoJavaProperties(SSLConfig sslConfig, StringBuffer bfLog) throws UtilsException{
+	public static void setSSLContextIntoJavaProperties(SSLConfig sslConfig, StringBuilder bfLog) throws UtilsException{
 
 		bfLog.append("Creo contesto SSL...\n");
 

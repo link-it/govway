@@ -79,7 +79,7 @@ public final class GruppiDel extends Action {
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 			GruppiCore gruppiCore = new GruppiCore();
 
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

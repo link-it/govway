@@ -37,7 +37,7 @@ public class ArchiveScope implements IArchiveObject {
 			throw new ProtocolException("nomeScope non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Scope_");
 		bf.append(nomeScope);
 		return bf.toString();

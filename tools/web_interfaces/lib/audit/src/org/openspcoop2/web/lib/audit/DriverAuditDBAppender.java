@@ -34,6 +34,7 @@ import java.util.List;
 
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.jdbc.CustomKeyGeneratorObject;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKey;
 import org.openspcoop2.utils.jdbc.InsertAndGeneratedKeyJDBCType;
@@ -636,7 +637,7 @@ public class DriverAuditDBAppender {
 
 		try {
 			// Conversione Data
-			SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat simpleDateFormat = DateUtils.getDefaultDateFormatter("yyyy-MM-dd");
 			Date dataInizioData = datainizio != null && !"".equals(datainizio) ?
 					simpleDateFormat.parse(datainizio) : null;
 			Date dataFineData = datafine != null && !"".equals(datafine) ?

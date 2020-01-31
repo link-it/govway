@@ -444,7 +444,7 @@ public class AS4Imbustamento {
 				}
 				
 				String value = null;
-				StringBuffer bfErrore = new StringBuffer();
+				StringBuilder bfErrore = new StringBuilder();
 				if(hdr!=null) {
 					value = transport.getParameterTrasporto(hdr.getName());
 					if(value==null) {

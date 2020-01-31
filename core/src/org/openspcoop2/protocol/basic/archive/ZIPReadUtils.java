@@ -908,7 +908,7 @@ public class ZIPReadUtils  {
 	}
 	
 	private String getKeyAccordo(String tipoSoggetto, String nomeSoggetto, String nomeVersioneAccordo, String nomeFile){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(tipoSoggetto==null?"":tipoSoggetto);
 		bf.append("_");
 		bf.append(nomeSoggetto==null?"":nomeSoggetto);
@@ -931,7 +931,7 @@ public class ZIPReadUtils  {
 	}
 	
 	private String getKeyDocumento(String tipoSoggetto, String nomeSoggetto, String nomeAccordo, String versioneAccordo, String nomeFile, String nomeDocumento){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.getKeyAccordo(tipoSoggetto, nomeSoggetto, 
 				(nomeAccordo==null?"":nomeAccordo) + (versioneAccordo==null?"":versioneAccordo), 
 				nomeFile));
@@ -960,7 +960,7 @@ public class ZIPReadUtils  {
 			String tipoSoggettoFruitore, String nomeSoggettoFruitore,
 			ProprietarioProprietaProtocollo proprietario,
 			String nomeDocumento){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(proprietario.name());
 		bf.append("_");
 		if(ProprietarioProprietaProtocollo.ACCORDO_COOPERAZIONE.equals(proprietario) ||

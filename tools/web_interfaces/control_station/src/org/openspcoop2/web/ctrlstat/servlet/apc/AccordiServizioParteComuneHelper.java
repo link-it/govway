@@ -573,7 +573,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 	public Vector<Object> addAccordiAllegatiToDati(Vector<Object> dati,TipoOperazione tipoOperazione,String idAccordo,
 			String ruolo,String [] ruoli,String []tipiAmmessi,String []tipiAmmessiLabel,String tipoAccordo,
-			String idAllegato, Documento doc, AccordoServizioParteComune as, String errore,StringBuffer contenutoAllegato) throws Exception {
+			String idAllegato, Documento doc, AccordoServizioParteComune as, String errore,StringBuilder contenutoAllegato) throws Exception {
 		try{
 
 

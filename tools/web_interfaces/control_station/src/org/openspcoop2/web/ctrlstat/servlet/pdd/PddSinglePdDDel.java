@@ -85,7 +85,7 @@ public final class PddSinglePdDDel extends Action {
 			pddHelper.makeMenu();
 
 			PortaDominio pdd = null;
-			StringBuffer pddOperative = new StringBuffer();
+			StringBuilder pddOperative = new StringBuilder();
 			
 			boolean isInUso = false;
 			String msg = "";

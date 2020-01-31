@@ -332,7 +332,7 @@ public class ModIImbustamentoSoap {
 		}
 		
 		// action
-		StringBuffer bfAction = new StringBuffer();
+		StringBuilder bfAction = new StringBuilder();
 		if(corniceSicurezza) {
 			bfAction.append(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED).append(" ");
 		}
@@ -340,7 +340,7 @@ public class ModIImbustamentoSoap {
 		secProperties.put(SecurityConstants.ACTION, bfAction.toString());
 		
 		// parti da firmare
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp");
 		if(wsAddressingHeaders.getTo()!=null) {
 			if(bf.length()>0) {

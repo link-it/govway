@@ -2446,7 +2446,7 @@ public class InoltroBuste extends GenericLib{
 					pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TRASFORMAZIONE_RISPOSTA, "true");
 					
 					// prima emetto diagnostico di fine connettore
-					StringBuffer bfMsgErroreSituazioneAnomale = new StringBuffer();
+					StringBuilder bfMsgErroreSituazioneAnomale = new StringBuilder();
 					EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
 							responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 							functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
@@ -2739,7 +2739,7 @@ public class InoltroBuste extends GenericLib{
 			/* ------------  Tracciamento Richiesta e Messaggio Diagnostico ------------- */
 			if(invokerNonSupportato==false){// && errorConsegna==false){
 
-				StringBuffer bfMsgErroreSituazioneAnomale = new StringBuffer();
+				StringBuilder bfMsgErroreSituazioneAnomale = new StringBuilder();
 				EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
 						responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 						functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
@@ -3099,7 +3099,7 @@ public class InoltroBuste extends GenericLib{
 						
 							msgDiag.logPersonalizzato("messageSecurity.processamentoRispostaInCorso");
 							
-							StringBuffer bfErroreSecurity = new StringBuffer();
+							StringBuilder bfErroreSecurity = new StringBuilder();
 							presenzaRispostaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
 									transactionNullable!=null ? transactionNullable.getTempiElaborazione() : null);
 							
@@ -3788,7 +3788,7 @@ public class InoltroBuste extends GenericLib{
 
 				// se ci sono errori di processamento gestisco errore.
 				if(erroriProcessamento.size()>0){
-					StringBuffer errore = new StringBuffer();
+					StringBuilder errore = new StringBuilder();
 					Eccezione ecc = null;
 					if( erroriProcessamento.size()>1 ){
 						ecc = Eccezione.getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreCooperazione(), protocolFactory);
@@ -4296,7 +4296,7 @@ public class InoltroBuste extends GenericLib{
 					if(sendRispostaApplicativa==false && errorConsegna && gestioneBusteNonRiscontrateAttive==false){
 
 						// Comunicazione Asincrona (OneWay e Asincroni senza ricevuta applicativa)
-						StringBuffer bfDettagliEccezione = new StringBuffer();
+						StringBuilder bfDettagliEccezione = new StringBuilder();
 						if(bustaRisposta.sizeListaEccezioni()>0)
 							msgDiag.addKeyword(CostantiPdD.KEY_ECCEZIONI, bustaRisposta.toStringListaEccezioni(protocolFactory));
 						else if(dettaglioEccezione!=null && dettaglioEccezione.getExceptions()!=null){
@@ -4903,7 +4903,7 @@ public class InoltroBuste extends GenericLib{
 			MsgDiagnostico msgDiag, String motivoErroreConsegna, OpenSPCoop2Message responseMessage,
 			boolean isBlockedTransaction_responseMessageWithTransportCodeError,
 			boolean functionAsRouter, boolean sendRispostaApplicativa,
-			StringBuffer bfMsgErroreSituazioneAnomale) throws Exception {
+			StringBuilder bfMsgErroreSituazioneAnomale) throws Exception {
 		
 		String msgErroreSituazioneAnomale = null;
 

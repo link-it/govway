@@ -418,7 +418,7 @@ public class Validatore  {
 		return true;	
 	}
 	
-	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuffer errore, TempiElaborazione tempiElaborazione) {
+	public boolean validazioneSemantica_messageSecurity_process(MessageSecurityContext messageSecurityContext, StringBuilder errore, TempiElaborazione tempiElaborazione) {
 		try{
 			this.rilevatiErroriDuranteValidazioneSemantica = true; // in fondo se arrivo corretto lo re-imposto a false
 				
@@ -457,7 +457,7 @@ public class Validatore  {
 							return true; // riscontrati errori durante la validazione Message Security
 						}
 						else{
-							StringBuffer bf = new StringBuffer();
+							StringBuilder bf = new StringBuilder();
 							for (Iterator<?> iterator = eccezioniSicurezza.iterator(); iterator.hasNext();) {
 								Eccezione ecc = (Eccezione) iterator.next();
 								if(bf.length()>0){

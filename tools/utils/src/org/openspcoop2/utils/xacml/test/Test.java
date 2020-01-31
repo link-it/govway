@@ -63,7 +63,7 @@ public class Test {
 		try{
 			is = Test.class.getResourceAsStream(resource);
 			int b = is.read();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			while(b != -1) {
 				sb.append((char)b);
 				b = is.read();

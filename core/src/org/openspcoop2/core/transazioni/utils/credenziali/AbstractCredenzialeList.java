@@ -45,7 +45,7 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 	
 	@Override
 	public String getCredenziale() throws UtilsException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(PREFIX);
 		for (String value : this.values) {
 			bf.append(value);
@@ -83,7 +83,7 @@ public abstract class AbstractCredenzialeList extends AbstractCredenziale {
 	public static String normalize(String dbValue) {
 		List<String> l = normalizeToList(dbValue);
 		if(l!=null && !l.isEmpty()) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String v : l) {
 				if(bf.length()>0) {
 					bf.append(",");

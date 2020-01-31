@@ -235,7 +235,7 @@ public class Client {
 					System.out.println(name + "."+properties[i]+" = " + (Boolean)val);
 				else if(val instanceof String[]){
 					String[] s =  (String []) val;
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					bf.append(name + "."+properties[i]+" = \n");
 					for(int j=0; j<s.length; j++){
 						if(j>0)

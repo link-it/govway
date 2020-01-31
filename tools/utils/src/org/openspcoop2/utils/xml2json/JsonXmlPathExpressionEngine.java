@@ -83,7 +83,7 @@ public class JsonXmlPathExpressionEngine {
 				}
 				pattern = pattern.trim();
 				String namespaces = null;
-				StringBuffer sbNamespaceDeclarations = new StringBuffer("");
+				StringBuilder sbNamespaceDeclarations = new StringBuilder("");
 				if(pattern.toLowerCase().startsWith(NAMESPACE_PREFIX)) {
 					pattern = pattern.substring(NAMESPACE_PREFIX.length());
 					if(!pattern.contains(NAMESPACE_END)) {

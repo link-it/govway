@@ -53,7 +53,7 @@ public class ArchiveAccordoCooperazione implements IArchiveObject {
 			throw new ProtocolException("versione non fornita");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("AccordoCooperazione_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

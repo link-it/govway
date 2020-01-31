@@ -57,7 +57,7 @@ public class EsitoGestioneTokenPortaDelegata extends EsitoGestioneToken implemen
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer(super.toString());
+		StringBuilder bf = new StringBuilder(super.toString());
 		if(this.erroreIntegrazione!=null){
 			bf.append(" ErroreIntegrazione(");
 			bf.append(this.erroreIntegrazione.getCodiceErrore().name());

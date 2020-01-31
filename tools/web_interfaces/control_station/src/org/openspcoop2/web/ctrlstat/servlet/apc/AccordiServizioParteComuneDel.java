@@ -88,7 +88,7 @@ public final class AccordiServizioParteComuneDel extends Action {
 
 			String userLogin = (String) ServletUtils.getUserLoginFromSession(session);
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

@@ -58,7 +58,7 @@ public class CRLCertstore implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("CRLCertstore (");
 		boolean first = true;
 		if(this.crlPaths!=null) {

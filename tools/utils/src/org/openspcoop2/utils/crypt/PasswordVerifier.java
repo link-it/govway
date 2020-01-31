@@ -293,10 +293,10 @@ public class PasswordVerifier {
 	}
 	
 	public boolean validate(String login, String password){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		return this.validate(login,password,bf);
 	}
-	public boolean validate(String login, String password,StringBuffer bfMotivazioneErrore){
+	public boolean validate(String login, String password,StringBuilder bfMotivazioneErrore){
 		password = password.trim();
 		if(this.regulaExpressions.size()>0){
 			for (String regExp : this.regulaExpressions) {
@@ -426,7 +426,7 @@ public class PasswordVerifier {
 		return this.help(separator, "- ", true);
 	}
 	public String help(String separator, String elenco, boolean premessa){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(premessa){
 			bf.append("La password deve rispettare i seguenti vincoli: ");
 		}

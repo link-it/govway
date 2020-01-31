@@ -138,7 +138,7 @@ public class RuoliApiServiceImpl extends BaseImpl implements RuoliApi {
 			final org.openspcoop2.core.registry.Ruolo regRuolo = BaseHelper.evalnull( () -> rEnv.ruoliCore.getRuolo(nome) );
 			
 			if ( regRuolo != null ) {
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				RuoliUtilities.deleteRuolo(regRuolo, userLogin, rEnv.ruoliCore, rEnv.ruoliHelper, inUsoMessage, System.lineSeparator());
 				
 				if (inUsoMessage.length() > 0) {

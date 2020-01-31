@@ -39,7 +39,7 @@ public class ArchiveTokenPolicy implements IArchiveObject {
 			throw new ProtocolException("nomePolicy non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("TokenPolicy_");
 		bf.append(tipologiaPolicy);
 		bf.append("_");

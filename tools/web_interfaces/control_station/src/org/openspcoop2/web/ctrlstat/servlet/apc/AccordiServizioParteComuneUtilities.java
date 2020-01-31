@@ -88,7 +88,7 @@ public class AccordiServizioParteComuneUtilities {
 		
 	}
 	
-	public static void deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+	public static void deleteAccordoServizioParteComune(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		
@@ -105,7 +105,7 @@ public class AccordiServizioParteComuneUtilities {
 	}
 	
 	public static void deleteAccordoServizioParteComuneRisorse(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuffer inUsoMessage, String newLine, List<IDServizio> idServiziWithAccordo, List<String> risorse) throws Exception {
+			StringBuilder inUsoMessage, String newLine, List<IDServizio> idServiziWithAccordo, List<String> risorse) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);
@@ -224,7 +224,7 @@ public class AccordiServizioParteComuneUtilities {
 	}
 	
 	public static void deleteAccordoServizioParteComunePortTypes(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuffer inUsoMessage, String newLine, IDPortType idPT, List<String> ptsToRemove) throws Exception {
+			StringBuilder inUsoMessage, String newLine, IDPortType idPT, List<String> ptsToRemove) throws Exception {
 		
 		AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(apcCore);
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
@@ -325,7 +325,7 @@ public class AccordiServizioParteComuneUtilities {
 	}
 	
 	public static void deleteAccordoServizioParteComuneOperations(AccordoServizioParteComune as, String userLogin, AccordiServizioParteComuneCore apcCore, AccordiServizioParteComuneHelper apcHelper, 
-			StringBuffer inUsoMessage, String newLine, PortType pt, List<IDServizio> idServiziWithPortType, List<String> optsToRemove) throws Exception {
+			StringBuilder inUsoMessage, String newLine, PortType pt, List<IDServizio> idServiziWithPortType, List<String> optsToRemove) throws Exception {
 	
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apcCore);
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apcCore);

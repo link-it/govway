@@ -86,7 +86,7 @@ public class ResBase {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("=== Risultato ====");
 		bf.append("\n");
 		if(this.somme!=null){

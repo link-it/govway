@@ -62,7 +62,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(ConceptualBehavior conceptual,StringBuffer motivoErroreValidazione){
+	public static boolean validate(ConceptualBehavior conceptual,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -74,7 +74,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	public static boolean validate(MessageBehavior conceptual,StringBuffer motivoErroreValidazione){
+	public static boolean validate(MessageBehavior conceptual,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -230,7 +230,7 @@ public class XMLUtils  {
 	}
 
 	private static byte[] escapeXMLConceptualBehaviorForClientSICA(ConceptualBehavior manifest) throws Exception{
-		StringBuffer risultatoValidazione = new StringBuffer();
+		StringBuilder risultatoValidazione = new StringBuilder();
 		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 			throw new Exception(risultatoValidazione.toString());
 		}
@@ -482,7 +482,7 @@ public class XMLUtils  {
 	}
 	
 	private static byte[] escapeXMLMessageBehaviorForClientSICA(MessageBehavior manifest) throws Exception{
-		StringBuffer risultatoValidazione = new StringBuffer();
+		StringBuilder risultatoValidazione = new StringBuilder();
 		if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 			throw new Exception(risultatoValidazione.toString());
 		}

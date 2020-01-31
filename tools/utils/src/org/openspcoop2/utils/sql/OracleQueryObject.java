@@ -207,7 +207,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 */
 	@Override
 	public ISQLQueryObject addFromTable(ISQLQueryObject subSelect) throws SQLQueryObjectException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(" ( ");
 		bf.append(subSelect.createSQLQuery());
 		bf.append(" ) ");
@@ -284,7 +284,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 		
 		this.precheckBuildQuery();
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("SELECT ");
 		
@@ -340,7 +340,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public String _createSQLDelete() throws SQLQueryObjectException{
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 				
 		bf.append("DELETE ");
 		
@@ -354,7 +354,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * @throws SQLQueryObjectException
 	 */
 	private String getSQL(boolean delete,boolean update,boolean conditions,boolean union) throws SQLQueryObjectException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(this.selectForUpdate){
 			this.checkSelectForUpdate(update, delete, union);
@@ -927,7 +927,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			this.checkSelectForUpdate(false, false, true);
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("SELECT ");
 		
@@ -1239,7 +1239,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 			throw new SQLQueryObjectException("Alias per il count non definito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("SELECT count(*) "+this.getDefaultAliasFieldKeyword()+" ");
 		bf.append(aliasCount);
@@ -1263,7 +1263,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public String _createSQLUpdate() throws SQLQueryObjectException{
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("UPDATE ");
 		bf.append(this.updateTable);
 		bf.append(" SET ");
@@ -1294,7 +1294,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	@Override
 	public String _createSQLConditions() throws SQLQueryObjectException{
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(getSQL(false,false,true,false));
 		return bf.toString();
 	}

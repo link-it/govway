@@ -699,7 +699,7 @@ public class StatisticsUtils {
 	}
 	
 	public static String buildKey(StatisticaContenuti statisticaContenuti){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(statisticaContenuti.getRisorsaNome());
 		bf.append("=");

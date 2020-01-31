@@ -874,8 +874,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		if(f == null)
 			return false;
 		
-		StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, false);
+		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, false);
 		if(errore!= null)
 			return false;
 
@@ -886,8 +886,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		String f = this.dettaglio.getTokenInfo();
 		String toRet = null;
 		if(f !=null) {
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuffer, true);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, true);
 			if(errore!= null)
 				return "";
 		 

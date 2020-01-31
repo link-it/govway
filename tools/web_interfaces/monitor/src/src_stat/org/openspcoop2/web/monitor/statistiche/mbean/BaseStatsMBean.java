@@ -455,7 +455,7 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 //		int second = c.get(Calendar.SECOND);
 //		int millisecond = c.get(Calendar.MILLISECOND);
 //				
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 //		if(millisecond>0){
 //			bf.append(" HH:mm:ss.SSS");
 //		}

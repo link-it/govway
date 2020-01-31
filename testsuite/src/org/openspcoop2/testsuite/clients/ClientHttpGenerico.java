@@ -501,7 +501,7 @@ public class ClientHttpGenerico extends ClientCore{
 			while(itHttpResponse.hasNext()){
 				String keyHttpResponse = itHttpResponse.next();
 				List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-				StringBuffer bfHttpResponse = new StringBuffer();
+				StringBuilder bfHttpResponse = new StringBuilder();
 				for(int i=0;i<valueHttpResponse.size();i++){
 					if(i>0){
 						bfHttpResponse.append(",");

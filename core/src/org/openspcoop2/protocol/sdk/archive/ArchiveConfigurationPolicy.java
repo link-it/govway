@@ -36,7 +36,7 @@ public class ArchiveConfigurationPolicy implements IArchiveObject {
 			throw new ProtocolException("idPolicy non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("ControlloTraffico_ConfigurationPolicy_");
 		bf.append(idPolicy);
 		return bf.toString();

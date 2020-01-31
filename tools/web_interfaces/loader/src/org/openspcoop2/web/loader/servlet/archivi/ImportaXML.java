@@ -112,7 +112,7 @@ public final class ImportaXML extends Action {
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, Costanti.OBJECT_NAME_ARCHIVI_IMPORTA_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_IMPORTA_XML);
 			}
 
-			StringBuffer errorBuffer = new StringBuffer();
+			StringBuilder errorBuffer = new StringBuilder();
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			FormFile ff = fileUpload.getTheFile();
 

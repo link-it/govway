@@ -71,7 +71,7 @@ public class FiltroRicercaGruppi extends FiltroRicerca implements Serializable{
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		super.toString(false);
 		if(this.serviceBinding!=null)
 			bf.append(" [serviceBinding:"+this.serviceBinding.getValue()+"]");

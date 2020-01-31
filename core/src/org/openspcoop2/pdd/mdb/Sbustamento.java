@@ -477,7 +477,7 @@ public class Sbustamento extends GenericLib{
 						// della busta e' "Warning Only" o "active"
 
 						// Registrazione eccezioni riscontrate dalla validazione della busta
-						StringBuffer eccBuffer = new StringBuffer();
+						StringBuilder eccBuffer = new StringBuilder();
 						for(int k = 0; k < errors.size() ; k++){
 							Eccezione er = errors.get(k);
 							if(k>0)
@@ -524,7 +524,7 @@ public class Sbustamento extends GenericLib{
 				ErroreIntegrazione erroreIntegrazioneDaInviareServizioApplicativo = null;
 				if(msgErroreProtocolloValido){
 					if(bustaRichiesta.sizeListaEccezioni()>1){
-						StringBuffer bfDescrizione = new StringBuffer();
+						StringBuilder bfDescrizione = new StringBuilder();
 						for(int k=0; k<bustaRichiesta.sizeListaEccezioni();k++){
 							Eccezione eccLista = bustaRichiesta.getEccezione(k);
 							if(eccLista.getDescrizione(protocolFactory)!=null)
@@ -559,7 +559,7 @@ public class Sbustamento extends GenericLib{
 				}
 				else{
 					if(errors.size()>1){
-						StringBuffer bfDescrizione = new StringBuffer();
+						StringBuilder bfDescrizione = new StringBuilder();
 						for(int k=0; k<errors.size();k++){
 							Eccezione error = errors.get(k);
 							if(error.getDescrizione(protocolFactory)!=null)
@@ -615,7 +615,7 @@ public class Sbustamento extends GenericLib{
 
 						// Registrazione eccezioni riscontrate dalla validazione della busta
 						boolean mittenteRegistrato = true;
-						StringBuffer eccBuffer = new StringBuffer();
+						StringBuilder eccBuffer = new StringBuilder();
 						java.util.List<Eccezione> errorsClone =  new java.util.ArrayList<Eccezione>();
 						for(int k = 0; k < errors.size() ; k++){
 							Eccezione er = errors.get(k);
@@ -663,7 +663,7 @@ public class Sbustamento extends GenericLib{
 							if(errors.size()>1){
 								eccezioneDaInviareServizioApplicativo =
 										Eccezione.getEccezioneValidazione(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), protocolFactory);
-								StringBuffer bfDescrizione = new StringBuffer();
+								StringBuilder bfDescrizione = new StringBuilder();
 								for(int k=0; k<errors.size();k++){
 									Eccezione error = errors.get(k);
 									if(error.getDescrizione(protocolFactory)!=null)

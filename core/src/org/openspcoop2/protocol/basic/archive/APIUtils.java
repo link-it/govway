@@ -67,7 +67,7 @@ public class APIUtils {
 		}
 		// elimino eventuali caratteri speciali se presenti piu' di una volta consecutivamente
 		int count = 0;
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = 0; i < nome.length(); i++) {
 			char c = nome.charAt(i);
 			if(c == cJolly.charValue()) {

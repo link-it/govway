@@ -40,7 +40,7 @@ public class ArchiveSoggetto implements IArchiveObject {
 			throw new ProtocolException("nomeSoggetto non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Soggetto_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

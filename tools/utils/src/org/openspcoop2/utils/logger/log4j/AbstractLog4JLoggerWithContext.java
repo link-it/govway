@@ -93,7 +93,7 @@ public abstract class AbstractLog4JLoggerWithContext extends AbstractLog4JLogger
 	}
 	
 	@Override
-	protected void logContext(IContext contextParam, StringBuffer showContext){
+	protected void logContext(IContext contextParam, StringBuilder showContext){
 		
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
@@ -327,7 +327,7 @@ public abstract class AbstractLog4JLoggerWithContext extends AbstractLog4JLogger
 		
 	}
 		
-	private void _log(boolean request, ConnectionMessage message ,StringBuffer showContext,SimpleDateFormat dateformat) {
+	private void _log(boolean request, ConnectionMessage message ,StringBuilder showContext,SimpleDateFormat dateformat) {
 		if( message!=null){
 			String prefix = request ? "Request-" : "Response-";
 			if( message.getIdMessage()!=null){

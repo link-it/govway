@@ -49,7 +49,7 @@ public class ConfigurazioneControlloTraffico extends org.openspcoop2.core.contro
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("tipoDatabaseConfig="+this.tipoDatabaseConfig);
 				

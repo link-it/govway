@@ -131,7 +131,7 @@ public class ErroreIntegrazione implements Serializable  {
 		}
 	}
 	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(this.descrizione!=null){
 			bf.append(" descrizione errore: ");

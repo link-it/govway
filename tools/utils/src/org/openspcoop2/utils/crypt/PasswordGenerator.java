@@ -210,7 +210,7 @@ public class PasswordGenerator extends PasswordVerifier {
 		
 		Collections.shuffle(password);
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (String s : password) {
 			bf.append(s);
 		}

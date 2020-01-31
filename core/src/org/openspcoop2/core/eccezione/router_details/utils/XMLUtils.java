@@ -66,7 +66,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(DettaglioRouting dettaglioRouting,StringBuffer motivoErroreValidazione){
+	public static boolean validate(DettaglioRouting dettaglioRouting,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -99,7 +99,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(Dominio dominio,StringBuilder motivoErroreValidazione){
 		if(dominio.getId()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
@@ -218,7 +218,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateDettaglioRouting(DettaglioRouting eccezione,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -230,7 +230,7 @@ public class XMLUtils  {
 	
 	public static void generateDettaglioRouting(DettaglioRouting eccezione,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -242,7 +242,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateDettaglioRouting(DettaglioRouting eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -254,7 +254,7 @@ public class XMLUtils  {
 
 	public static void generateDettaglioRouting(DettaglioRouting eccezione,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

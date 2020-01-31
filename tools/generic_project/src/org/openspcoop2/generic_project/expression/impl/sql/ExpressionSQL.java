@@ -174,7 +174,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	protected static String sqlForceIndex(ISQLFieldConverter fieldConverter,List<Index> forceIndexes) throws ExpressionException{
 		try{
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			if(forceIndexes.size()>0){
 				for (Iterator<Index> iterator =forceIndexes.iterator(); iterator.hasNext();) {
@@ -228,7 +228,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	protected static String sqlOrder(ISQLFieldConverter fieldConverter,SortOrder sortOrder,List<OrderedField> orderedFields) throws ExpressionException{
 		try{
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if(!SortOrder.UNSORTED.equals(sortOrder)){
 					
 				bf.append(" ORDER BY ");
@@ -393,7 +393,7 @@ public class ExpressionSQL extends ExpressionImpl {
 	protected static String sqlGroupBy(ISQLFieldConverter fieldConverter,List<IField> groupByFields) throws ExpressionException{
 		try{
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 					
 			if(groupByFields.size()>0){
 				bf.append(" GROUP BY ");
@@ -657,7 +657,7 @@ public class ExpressionSQL extends ExpressionImpl {
 							throw new ExpressionException("Multiple fields with operator and \"time\" type ("+ff.getFieldType().getName()+
 									") not supported. For Timestamp Interval use FunctionField(new UnixTimestampIntervalField(...), Function.TIPE, columnName)");
 						}
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < fields.size(); i++) {
 							if(i>0){
 								bf.append(" ").append(operator).append(" ");
@@ -987,12 +987,12 @@ public class ExpressionSQL extends ExpressionImpl {
 			}
 		}
 		
-		StringBuffer bf = null;
+		StringBuilder bf = null;
 		if(this.expressionEngine==null){
-			bf = new StringBuffer("");
+			bf = new StringBuilder("");
 		}
 		else if(this.expressionEngine instanceof ISQLExpression){
-			bf = new StringBuffer(((ISQLExpression)this.expressionEngine).toSql());
+			bf = new StringBuilder(((ISQLExpression)this.expressionEngine).toSql());
 		}else{
 			throw new ExpressionException("ExpressioneEngine (type:"+this.expressionEngine.getClass().getName()+") is not as cast with "+ISQLExpression.class.getName());
 		}
@@ -1010,12 +1010,12 @@ public class ExpressionSQL extends ExpressionImpl {
 			}
 		}
 		
-		StringBuffer bf = null;
+		StringBuilder bf = null;
 		if(this.expressionEngine==null){
-			bf = new StringBuffer("");
+			bf = new StringBuilder("");
 		}
 		else if(this.expressionEngine instanceof ISQLExpression){
-			bf = new StringBuffer(((ISQLExpression)this.expressionEngine).toSqlPreparedStatement(oggetti));
+			bf = new StringBuilder(((ISQLExpression)this.expressionEngine).toSqlPreparedStatement(oggetti));
 		}else{
 			throw new ExpressionException("ExpressioneEngine (type:"+this.expressionEngine.getClass().getName()+") is not as cast with "+ISQLExpression.class.getName());
 		}
@@ -1034,11 +1034,11 @@ public class ExpressionSQL extends ExpressionImpl {
 			}
 		}
 		
-		StringBuffer bf = null;
+		StringBuilder bf = null;
 		if(this.expressionEngine==null){
-			bf = new StringBuffer("");
+			bf = new StringBuilder("");
 		}else if(this.expressionEngine instanceof ISQLExpression){
-			bf = new StringBuffer(((ISQLExpression)this.expressionEngine).toSqlJPA(oggetti));
+			bf = new StringBuilder(((ISQLExpression)this.expressionEngine).toSqlJPA(oggetti));
 		}else{
 			throw new ExpressionException("ExpressioneEngine (type:"+this.expressionEngine.getClass().getName()+") is not as cast with "+ISQLExpression.class.getName());
 		}

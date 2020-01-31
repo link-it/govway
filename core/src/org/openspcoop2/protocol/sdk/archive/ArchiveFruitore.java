@@ -62,7 +62,7 @@ public class ArchiveFruitore implements IArchiveObject {
 			throw new ProtocolException("versioneServizio non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Fruitore_");
 		bf.append(tipoSoggettoFruitore);
 		bf.append("/");

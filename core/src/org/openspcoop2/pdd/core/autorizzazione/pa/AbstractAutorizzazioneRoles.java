@@ -72,7 +72,7 @@ abstract class AbstractAutorizzazioneRoles extends AbstractAutorizzazioneBase {
     			sa = configurazionePdDManager.getServizioApplicativo(idSA);
     		}
     		
-    		StringBuffer detailsBuffer = new StringBuffer();
+    		StringBuilder detailsBuffer = new StringBuilder();
     		if(configurazionePdDManager.
     				autorizzazioneRoles(datiInvocazione.getPa(), datiInvocazione.getSoggettoFruitore(), sa,
     						datiInvocazione.getInfoConnettoreIngresso(), 

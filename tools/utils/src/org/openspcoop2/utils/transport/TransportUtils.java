@@ -206,7 +206,7 @@ public class TransportUtils {
 		}
 		else if(value instanceof List<?>) {
 			List<?> l = (List<?>) value;
-			StringBuffer bfHttpResponse = new StringBuffer();
+			StringBuilder bfHttpResponse = new StringBuilder();
 			for(int i=0;i<l.size();i++){
 				if(i>0){
 					bfHttpResponse.append(",");
@@ -357,7 +357,7 @@ public class TransportUtils {
 		}
 		
 		if(propertiesURLBased != null && propertiesURLBased.size()>0){
-			StringBuffer urlBuilder = new StringBuffer(locationEncoded);
+			StringBuilder urlBuilder = new StringBuilder(locationEncoded);
 			Enumeration<?> enumForm = propertiesURLBased.keys();
 			while( enumForm.hasMoreElements() ) {
 				if(urlBuilder.toString().contains("?")==false)

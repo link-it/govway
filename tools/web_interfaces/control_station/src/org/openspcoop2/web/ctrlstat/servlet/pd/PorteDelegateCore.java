@@ -1010,7 +1010,7 @@ public class PorteDelegateCore extends ControlStationCore {
 		}
 		else {
 			if(showGroup) {
-				StringBuffer sb = new StringBuffer(mapping.getDescrizione());
+				StringBuilder sb = new StringBuilder(mapping.getDescrizione());
 				if(sb.length()>sizeSubstring)
 					return prefix+getLabelGroup(sb.toString().substring(0, (sizeSubstring-3))+"...");
 				else 
@@ -1020,7 +1020,7 @@ public class PorteDelegateCore extends ControlStationCore {
 				//return mapping.getNome();
 				List<String> listaAzioni = pd.getAzione()!= null ?  pd.getAzione().getAzioneDelegataList() : new ArrayList<String>();
 				if(listaAzioni.size() > 0) {
-					StringBuffer sb = new StringBuffer();
+					StringBuilder sb = new StringBuilder();
 					for (String string : listaAzioni) {
 						if(sb.length() >0)
 							sb.append(", ");

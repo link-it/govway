@@ -67,7 +67,7 @@ public class DatiTransazione extends org.openspcoop2.utils.beans.BaseBean implem
 
 	
 	public String getServiziApplicativiErogatoreAsString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.listServiziApplicativiErogatori==null || this.listServiziApplicativiErogatori.size()<=0){
 			return null;
 		}

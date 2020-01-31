@@ -824,7 +824,7 @@ public class OpenSPCoop2Logger {
 		String idBusta = msgDiag.getIdBusta();
 		String codiceDiagnostico = msgDiag.getCodice();
 		
-		StringBuffer showMsg = new StringBuffer();
+		StringBuilder showMsg = new StringBuilder();
 		
 		if(protocol!=null) {
 			String labelP = protocol;

@@ -48,7 +48,7 @@ public class ArchivePortaApplicativa implements IArchiveObject {
 			throw new ProtocolException("nomePorta non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("PortaApplicativa_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

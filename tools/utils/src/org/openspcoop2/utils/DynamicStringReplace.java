@@ -69,7 +69,7 @@ public class DynamicStringReplace {
 			}
 		}
 		
-		StringBuffer keyword = new StringBuffer();
+		StringBuilder keyword = new StringBuilder();
 		boolean separator = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
@@ -148,8 +148,8 @@ public class DynamicStringReplace {
 			}
 		}
 		
-		StringBuffer bf = new StringBuffer();
-		StringBuffer keyword = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
+		StringBuilder keyword = new StringBuilder();
 		boolean separator = false;
 		for(int i=0; i<messaggioWithPlaceHolder.length(); i++){
 			char ch = messaggioWithPlaceHolder.charAt(i);
@@ -299,7 +299,7 @@ public class DynamicStringReplace {
 				String finalValue = null;
 				if(oInternal!=null){
 					if(oInternal instanceof Date){
-						SimpleDateFormat dateformat = new SimpleDateFormat ("yyyyMMdd_HHmmssSSS"); // SimpleDateFormat non e' thread-safe
+						SimpleDateFormat dateformat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 						finalValue = dateformat.format((Date)oInternal);
 					}
 					else if(oInternal instanceof byte[]){
@@ -414,7 +414,7 @@ public class DynamicStringReplace {
 			String finalValue = null;
 			if(ret!=null){
 				if(ret instanceof Date){
-					SimpleDateFormat dateformat = new SimpleDateFormat ("yyyyMMdd_HHmmssSSS"); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = new SimpleDateFormat("yyyyMMdd_HHmmssSSS");
 					finalValue = dateformat.format((Date)ret);
 				}
 				else if(ret instanceof byte[]){

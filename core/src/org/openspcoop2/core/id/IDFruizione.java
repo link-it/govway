@@ -64,7 +64,7 @@ public class IDFruizione implements Serializable {
 	
 	@Override 
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.idServizio!=null)
 			bf.append(" idServizio["+this.idServizio+"]");
 		if(this.idFruitore!=null)

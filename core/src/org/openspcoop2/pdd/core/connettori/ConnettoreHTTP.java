@@ -369,7 +369,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 					}
 				}
 				
-				StringBuffer bfSSLConfig = new StringBuffer();
+				StringBuilder bfSSLConfig = new StringBuilder();
 				sslContext = SSLUtilities.generateSSLContext(this.sslContextProperties, bfSSLConfig);
 				
 				if(this.debug)
@@ -435,7 +435,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				}		
 				httpsConn.setSSLSocketFactory(sslSocketFactory);
 				
-				StringBuffer bfLog = new StringBuffer();
+				StringBuilder bfLog = new StringBuilder();
 				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(this.sslContextProperties, bfLog, 
 						this.logger.getLogger(), this.loader);
 				if(this.debug)
@@ -740,7 +740,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 				while(itHttpResponse.hasNext()){
 					String keyHttpResponse = itHttpResponse.next();
 					List<String> valueHttpResponse = mapHeaderHttpResponse.get(keyHttpResponse);
-					StringBuffer bfHttpResponse = new StringBuffer();
+					StringBuilder bfHttpResponse = new StringBuilder();
 					for(int i=0;i<valueHttpResponse.size();i++){
 						if(i>0){
 							bfHttpResponse.append(",");

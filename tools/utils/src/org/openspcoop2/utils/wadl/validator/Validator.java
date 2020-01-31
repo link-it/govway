@@ -298,7 +298,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						nomeElemento = node.getLocalName();
 						validatore.valida(node,true);
 					}catch(Exception e){
-						StringBuffer errorMsgValidazioneXSD = new StringBuffer();
+						StringBuilder errorMsgValidazioneXSD = new StringBuilder();
 						errorMsgValidazioneXSD.append("validazione fallita");
 						errorMsgValidazioneXSD.append(" (elemento "+nomeElemento+"): "+e.getMessage());
 						String elementNonValidato = null;

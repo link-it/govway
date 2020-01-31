@@ -70,7 +70,7 @@ public class TestSuiteException extends RuntimeException {
 		return _getMessage(this.position,this.message, this.exception);
 	}
 	private static String _getMessage(String position,String message,Exception exception){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(position!=null){
 			bf.append(position);

@@ -53,6 +53,7 @@ import org.openspcoop2.pdd.monitor.constants.StatoMessaggio;
 import org.openspcoop2.pdd.monitor.driver.DriverMonitoraggio;
 import org.openspcoop2.pdd.monitor.driver.FilterSearch;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.ctrlstat.config.ConsoleProperties;
 import org.openspcoop2.web.ctrlstat.config.DatasourceProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -1608,7 +1609,7 @@ public final class Monitor extends Action {
 				dati.add(de);
 			}
 
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
 			// ora registrazione
 			de = new DataElement();
 			de.setLabel(MonitorCostanti.LABEL_PARAMETRO_MONITOR_ORA_REGISTRAZIONE);
@@ -1823,7 +1824,7 @@ public final class Monitor extends Action {
 				// aggiungo i messaggi
 				DataElement de = null;
 				// Dichiaro il formatter per la data
-				SimpleDateFormat formatter = new SimpleDateFormat("yy.MM.dd hh:mm aaa"); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat formatter = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm");
 
 				for (int i = 0; i < listaMessaggi.size(); i++) {
 

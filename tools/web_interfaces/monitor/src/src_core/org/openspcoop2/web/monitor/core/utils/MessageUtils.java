@@ -68,7 +68,7 @@ public class MessageUtils {
 	
 	public static String toString(InUse inUse){
 		if(inUse!=null && inUse.isInUse()){
-	 		StringBuffer bf = new StringBuffer();
+	 		StringBuilder bf = new StringBuilder();
 	 		for (int i = 0; i < inUse.sizeInUseConditionList(); i++) {
 	 			if(bf.length()>0){
 	 				bf.append("; ");

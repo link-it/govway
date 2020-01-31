@@ -56,7 +56,7 @@ public class FSRecoveryFileUtils {
 			if(split.length < 0) {
 				throw new Exception("Impossibile ricavare il nuovo nome file dal nome file ["+fileName+"]");
 			}
-			StringBuffer sb  = new StringBuffer();
+			StringBuilder sb  = new StringBuilder();
 			for(int i =0; i < split.length -1; i++) {
 				sb.append(split[i]).append("_");
 			}

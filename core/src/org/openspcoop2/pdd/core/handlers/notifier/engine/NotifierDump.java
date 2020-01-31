@@ -230,7 +230,7 @@ public class NotifierDump {
 	}
 	
 	private String toString(Properties headerTrasporto){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(headerTrasporto!=null && headerTrasporto.size()>0){
 			Enumeration<?> enumTrasporto = headerTrasporto.keys();
 			while (enumTrasporto.hasMoreElements()) {

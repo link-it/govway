@@ -304,7 +304,7 @@ public class CertificateInfo implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		CertificateUtils.printCertificate(bf, this.certificate, this.name);
 		return bf.toString();
 	}

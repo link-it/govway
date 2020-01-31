@@ -60,7 +60,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(Openspcoop2 openspcoop2,StringBuffer motivoErroreValidazione){
+	public static boolean validate(Openspcoop2 openspcoop2,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -230,7 +230,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -242,7 +242,7 @@ public class XMLUtils  {
 	
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -254,7 +254,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateOpenspcoop2Manifest(Openspcoop2 manifest) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -266,7 +266,7 @@ public class XMLUtils  {
 
 	public static void generateOpenspcoop2Manifest(Openspcoop2 manifest,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -337,7 +337,7 @@ public class XMLUtils  {
 	
 	
 	public static String toString(Openspcoop2 manifest){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(" Protocollo "+manifest.getProtocol().getName()+" \n");
 		

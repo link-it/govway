@@ -56,7 +56,7 @@ public class MD5Crypt {
 	 *            value to be converted
 	 */
 	static private final String to64(long v, int size) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		while (--size >= 0) {
 			result.append(MD5Crypt.itoa64.charAt((int) (v & 0x3f)));
@@ -88,7 +88,7 @@ public class MD5Crypt {
 	 *            Password to be encrypted
 	 */
 	static public final String crypt(String password) {
-		StringBuffer salt = new StringBuffer();
+		StringBuilder salt = new StringBuilder();
 		java.util.Random rnd = new java.util.Random();
 
 		// build a random 8 chars salt
@@ -238,7 +238,7 @@ public class MD5Crypt {
 
 		/* Now make the output string */
 
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 
 		result.append(magic);
 		result.append(salt);

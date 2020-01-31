@@ -78,7 +78,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(EgovDecllElement egov,StringBuffer motivoErroreValidazione){
+	public static boolean validate(EgovDecllElement egov,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -267,7 +267,7 @@ public class XMLUtils  {
 	/* ----- Marshall Manifest dell'accordo di servizio ----- */
 	public static void generateDichiarazioneEGov(EgovDecllElement manifest,File out,boolean namespaceCnipa) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -279,7 +279,7 @@ public class XMLUtils  {
 	
 	public static void generateDichiarazioneEGov(EgovDecllElement manifest,String fileName,boolean namespaceCnipa) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -291,7 +291,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateDichiarazioneEGov(EgovDecllElement manifest,boolean namespaceCnipa) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -303,7 +303,7 @@ public class XMLUtils  {
 
 	public static void generateDichiarazioneEGov(EgovDecllElement manifest,OutputStream out,boolean namespaceCnipa) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(manifest, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

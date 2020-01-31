@@ -512,7 +512,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 
 				operationManager.setOperazioniPrecedentiByFilterSearch(operation, filtroOrdine.toArray(new FilterParameter[0]), false, tipoOggettoDaSmistare.name());
 				if (operation.sizeOperazioniPrecedentiAncoraDaGestireList() > 0) {
-					StringBuffer operazioniPrecedenti = new StringBuffer();
+					StringBuilder operazioniPrecedenti = new StringBuilder();
 					for (int i = 0; i < operation.sizeOperazioniPrecedentiAncoraDaGestireList(); i++) {
 						operazioniPrecedenti.append("\n" + operation.getOperazionePrecedenteAncoraDaGestire(i).toString());
 					}
@@ -539,7 +539,7 @@ public class GestoreRegistroThread extends GestoreGeneral {
 						List<Operation> listFilteredOperations = filterOperations(idOperazione, operationManager, operation, this.qs, this.queue, this.log);
 
 						if (listFilteredOperations.size() > 0) {
-							StringBuffer bf = new StringBuffer();
+							StringBuilder bf = new StringBuilder();
 							for (Operation operationFiltered : listFilteredOperations) {
 								if(bf.length()>0){
 									bf.append(",");

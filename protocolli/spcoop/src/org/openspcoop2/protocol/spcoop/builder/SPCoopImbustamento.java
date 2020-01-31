@@ -212,7 +212,7 @@ public class SPCoopImbustamento {
 		
 			long counter = -1;
 		
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append(codAmm);
 			bf.append('_');
 			bf.append(idPD);
@@ -246,7 +246,7 @@ public class SPCoopImbustamento {
 		
 			bf.append('_');
 	
-			// Date nel formato aaaa-mm-gg_hh:mm
+			// Date nel formato yyyy-MM-dd_hh:mm
 			Date now=DateManager.getDate();
 			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMinute();
 			bf.append(dateformat.format(now));
@@ -601,7 +601,7 @@ public class SPCoopImbustamento {
 			// Sequenza
 			if(eGov.getSequenza() != -1){
 				SOAPElement eGovSequenza = eGovIntestazioneMsg.addChildElement("Sequenza",SPCoopCostanti.PREFIX_EGOV,SPCoopCostanti.NAMESPACE_EGOV);
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				String sequenza = Long.toString(eGov.getSequenza());
 				int padding= 7 - sequenza.length();
 				int i=0;
@@ -842,7 +842,7 @@ public class SPCoopImbustamento {
 
 
 	private String normalizeIdRefManifest(String contentId) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.spcoopProperties.isGenerateManifestAttachmentsIdWithBrackets()) {
 			if(contentId.startsWith("<")==false) {
 				bf.append("<");

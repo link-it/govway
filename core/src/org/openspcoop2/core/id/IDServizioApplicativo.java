@@ -60,7 +60,7 @@ public class IDServizioApplicativo implements Serializable {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.nome!=null)
 			bf.append("Nome:"+this.nome);
 		else

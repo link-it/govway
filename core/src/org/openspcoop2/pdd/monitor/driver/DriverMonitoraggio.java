@@ -1247,7 +1247,7 @@ public class DriverMonitoraggio implements IDriverMonitoraggio{
 		if(search.getSoggettoList()!=null && search.getSoggettoList().size()>0){
 
 			List<BustaSoggetto> filtroSoggetti = search.getSoggettoList();
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			for(int k=0; k<filtroSoggetti.size(); k++){
 				if(k>0)
 					query.append(" OR ");

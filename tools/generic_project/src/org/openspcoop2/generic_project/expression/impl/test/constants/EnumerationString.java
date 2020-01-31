@@ -84,10 +84,10 @@ public enum EnumerationString implements IEnumeration {
   	public String toString(boolean reportHTML,boolean notIncludeID){
   		return toString();
   	}
-  	public String diff(Object object,StringBuffer bf,boolean reportHTML){
+  	public String diff(Object object,StringBuilder bf,boolean reportHTML){
 		return bf.toString();
 	}
-	public String diff(Object object,StringBuffer bf,boolean reportHTML,boolean checkID){
+	public String diff(Object object,StringBuilder bf,boolean reportHTML,boolean checkID){
 		return bf.toString();
 	}
 	

@@ -33,27 +33,40 @@ public enum DateEngineType {
 	JAVA_TIME,
 	JODA;
 	
-	public DateType toDateType(boolean time) {
-		if(time) {
-			switch (this) {
+	public DateType toDateTimeType() {
+		switch (this) {
 			case JAVA_UTIL:
 				return DateType.JAVA_UTIL_DATE_TIME;
 			case JAVA_TIME:
 				return DateType.JAVA_TIME_DATE_TIME;
 			case JODA:
 				return DateType.JODA_DATE_TIME;
-			}
 		}
-		else {
-			switch (this) {
+		return null;
+	}
+	
+	public DateType toDateType() {
+		switch (this) {
 			case JAVA_UTIL:
 				return DateType.JAVA_UTIL_DATE;
 			case JAVA_TIME:
 				return DateType.JAVA_TIME_DATE;
 			case JODA:
 				return DateType.JODA_DATE;
-			}
 		}
 		return null;
 	}
+	
+	public DateType toTimeType() {
+		switch (this) {
+			case JAVA_UTIL:
+				return DateType.JAVA_UTIL_TIME;
+			case JAVA_TIME:
+				return DateType.JAVA_TIME_TIME;
+			case JODA:
+				return DateType.JODA_TIME;
+		}
+		return null;
+	}
+	
 }

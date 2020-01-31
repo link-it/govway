@@ -233,7 +233,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			}
 			
 			// action
-			StringBuffer bfAction = new StringBuffer();
+			StringBuilder bfAction = new StringBuilder();
 			bfAction.append(SecurityConstants.TIMESTAMP_ACTION).append(" ").append(SecurityConstants.SIGNATURE_ACTION);
 			if(corniceSicurezza) {
 				bfAction.append(" ").append(SecurityConstants.ACTION_SAML_TOKEN_UNSIGNED);
@@ -244,7 +244,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			// La funzionalità solleva errori se trova anche altre parti firmate non attese.
 			// Implemento questo controllo tramite i WSDataRef
 			/*
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp");
 			bf.append(";");
 			bf.append("{Element}{").append(Costanti.WSA_NAMESPACE).append("}").append(Costanti.WSA_SOAP_HEADER_TO);
@@ -293,7 +293,7 @@ public class ModIValidazioneSintatticaSoap extends AbstractModIValidazioneSintat
 			List<SubErrorCodeSecurity> listaErroriRiscontrati = new ArrayList<SubErrorCodeSecurity>();
 			wss4jSignature.checkEncryptSignatureParts(messageSecurityContext,elementsToClean, soapMessage,listaErroriRiscontrati);
 			if(listaErroriRiscontrati.size()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (Iterator<?> iterator = listaErroriRiscontrati.iterator(); iterator.hasNext();) {
 					SubErrorCodeSecurity subCodiceErroreSicurezza = (SubErrorCodeSecurity) iterator.next();
 					if(bf.length()>0){

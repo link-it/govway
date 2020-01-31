@@ -263,7 +263,7 @@ public abstract class AbstractXMLDiff {
 		
 		
 		if(diff.identical()==false){
-			StringBuffer bfDifferences = new StringBuffer();
+			StringBuilder bfDifferences = new StringBuilder();
 			List<?> allDifferences = diff.getAllDifferences();
 			bfDifferences.append("allDifferences: "+ allDifferences.size());
 			bfDifferences.append("\n");

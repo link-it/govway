@@ -4401,7 +4401,7 @@ public class RicezioneBuste {
 						
 						msgDiag.logPersonalizzato("messageSecurity.processamentoRichiestaInCorso");
 						
-						StringBuffer bfErroreSecurity = new StringBuffer();
+						StringBuilder bfErroreSecurity = new StringBuilder();
 						presenzaRichiestaProtocollo = validatore.validazioneSemantica_messageSecurity_process(messageSecurityContext, bfErroreSecurity,
 								transaction!=null ? transaction.getTempiElaborazione() : null);
 						
@@ -4539,7 +4539,7 @@ public class RicezioneBuste {
 				riferimentoRichiesta = headerIntegrazioneRichiesta.getBusta().getRiferimentoMessaggio();
 			}
 			if(riferimentoRichiesta==null) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < tipiIntegrazionePA.length; i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4861,7 +4861,7 @@ public class RicezioneBuste {
 		// altrimenti: se sono presenti errore di processamento, ritorno subito l'errore.
 		msgDiag.mediumDebug("Gestione errori...");
 		if( (erroriProcessamento.size()>0) || (functionAsRouter && (erroriValidazione.size()>0)) ){
-			StringBuffer errore = new StringBuffer();
+			StringBuilder errore = new StringBuilder();
 			for(int k=0; k<erroriProcessamento.size();k++){
 				Eccezione erroreProcessamento = erroriProcessamento.get(k);
 				try{
@@ -4942,7 +4942,7 @@ public class RicezioneBuste {
 				boolean foundErroriGravi = false;
 				
 				String dettaglioErrore = null;
-				StringBuffer eccBuffer = new StringBuffer();
+				StringBuilder eccBuffer = new StringBuilder();
 				for(int k = 0; k < erroriProcessamento.size() ; k++){
 					Eccezione er = erroriProcessamento.get(k);
 					if(k>0)
@@ -5038,7 +5038,7 @@ public class RicezioneBuste {
 					}
 				}
 
-				StringBuffer eccBuffer = new StringBuffer();
+				StringBuilder eccBuffer = new StringBuilder();
 				for(int j = 0; j < erroriValidazione.size() ; j++){
 					if(j>0)
 						eccBuffer.append("\n");

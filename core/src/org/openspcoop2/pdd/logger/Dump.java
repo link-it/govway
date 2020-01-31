@@ -705,7 +705,7 @@ public class Dump {
 		if(OpenSPCoop2Logger.loggerDumpAbilitato && !dumpBinario){
 			// Su file di log, il log binario viene registrato in altra maniera sul file openspcoop2_connettori.log
 			try{
-				StringBuffer out = new StringBuffer();
+				StringBuilder out = new StringBuilder();
 				out.append(this.signature);
 				out.append("TipoMessaggio:"+tipoMessaggio.getValue());
 				

@@ -743,7 +743,7 @@ public class ConfigurazionePdDReader {
 				throw new DriverConfigurazioneException("getForwardRoute[RoutingTable Non Abilitata], connettore per la busta non trovato.");
 		}
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Ricerca connettore del servizio...");
 		this.log.debug("getForwardRoute: routing table abilitata");
 
@@ -2370,7 +2370,7 @@ public class ConfigurazionePdDReader {
 			PortaApplicativa pa, org.openspcoop2.core.registry.Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
-			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 
 		if( (pa == null) || pa.getRuoli()==null || pa.getRuoli().sizeRuoloList()<=0 ){
 			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta applicativa");
@@ -2662,7 +2662,7 @@ public class ConfigurazionePdDReader {
 			PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
-			StringBuffer details) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
+			StringBuilder details) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{ 
 
 		if( (pd == null) || pd.getRuoli()==null || pd.getRuoli().sizeRuoloList()<=0 ){
 			throw new DriverConfigurazioneNotFound("Non sono stati definiti i ruoli necessari a fruire della porta delegata");

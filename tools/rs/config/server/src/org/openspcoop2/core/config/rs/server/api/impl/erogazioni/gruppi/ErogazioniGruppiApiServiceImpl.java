@@ -366,7 +366,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 
 			else if ( idPortaApplicativa != null) {
 		
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaPorteApplicative(idPortaApplicativa, idAsps, env.userLogin, env.apsCore, env.apsHelper, inUsoMessage);
 				
 				if (inUsoMessage.length() > 0) {
@@ -409,7 +409,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(idPa);
 			
 			if ( BaseHelper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				
 				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
 				

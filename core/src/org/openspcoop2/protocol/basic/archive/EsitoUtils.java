@@ -102,7 +102,7 @@ public class EsitoUtils {
 			}
 		}
 		
-		StringBuffer bfEsito = new StringBuffer();
+		StringBuilder bfEsito = new StringBuilder();
 		
 		ArchiveEsitoImport defaultArchiveEsitoImport = null;
 		ArchiveIdCorrelazione defaultArchiveIdCorrelazione = null;
@@ -138,7 +138,7 @@ public class EsitoUtils {
 		return bfEsito.toString();
 		
 	}
-	private void append(StringBuffer bfEsito, ArchiveIdCorrelazione archiveIdCorrelazione, ArchiveEsitoImport archiveCorrelazione, boolean importOperation){
+	private void append(StringBuilder bfEsito, ArchiveIdCorrelazione archiveIdCorrelazione, ArchiveEsitoImport archiveCorrelazione, boolean importOperation){
 		
 		String descrizione = archiveIdCorrelazione.getDescrizione();
 		if(descrizione==null){
@@ -163,7 +163,7 @@ public class EsitoUtils {
 			
 	private String _toString(ArchiveEsitoImport archive, boolean importOperation){
 		
-		StringBuffer bfEsito = new StringBuffer();
+		StringBuilder bfEsito = new StringBuilder();
 		
 		// Pdd
 		if(archive.getPdd().size()>0){
@@ -566,7 +566,7 @@ public class EsitoUtils {
 		
 		return bfEsito.toString();
 	}
-	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuffer bfEsito, boolean importOperation){
+	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuilder bfEsito, boolean importOperation){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();
@@ -598,7 +598,7 @@ public class EsitoUtils {
 			break;
 		}
 	}
-	public void serializeStato(ArchiveEsitoImportDetailConfigurazione<?> detail,StringBuffer bfEsito){
+	public void serializeStato(ArchiveEsitoImportDetailConfigurazione<?> detail,StringBuilder bfEsito){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();

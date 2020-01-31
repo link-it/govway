@@ -99,7 +99,7 @@ public class ConfigurazionePolicyGestioneTokenDel extends Action {
 				boolean usedInPA = listaPA != null && listaPA.size() > 0;
 				boolean usedInPD = listaPD != null && listaPD.size() > 0;
 				
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(usedInPA || usedInPD || usedInConnettore) {
 					
 					delete = false;

@@ -175,7 +175,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 	
 				// rollback AccessoHistory
 				if(rollbackAccessoHistory){
-					StringBuffer queryUpdateHistory = new StringBuffer();
+					StringBuilder queryUpdateHistory = new StringBuilder();
 					queryUpdateHistory.append("UPDATE ");
 					queryUpdateHistory.append(Costanti.REPOSITORY);
 					queryUpdateHistory.append(" SET ");
@@ -189,7 +189,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 				}
 	
 				// rollback profilo
-				StringBuffer queryUpdateProfilo= new StringBuffer();
+				StringBuilder queryUpdateProfilo= new StringBuilder();
 				queryUpdateProfilo.append("UPDATE ");
 				queryUpdateProfilo.append(Costanti.REPOSITORY);
 				queryUpdateProfilo.append(" SET ");
@@ -202,7 +202,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 				stateMSG.getPreparedStatement().put("RollbackGeneralePROFILO_"+tipoBusta+"_"+this.idBusta,pstmtUpdateProfilo);
 	
 				// rollback pdd
-				StringBuffer queryUpdatePdd = new StringBuffer();
+				StringBuilder queryUpdatePdd = new StringBuilder();
 				queryUpdatePdd.append("UPDATE ");
 				queryUpdatePdd.append(Costanti.REPOSITORY);
 				queryUpdatePdd.append(" SET ");
@@ -284,7 +284,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 	
 				// rollback AccessoHistory
 				if(history){
-					StringBuffer queryUpdateHistory = new StringBuffer();
+					StringBuilder queryUpdateHistory = new StringBuilder();
 					queryUpdateHistory.append("UPDATE ");
 					queryUpdateHistory.append(Costanti.REPOSITORY);
 					queryUpdateHistory.append(" SET ");
@@ -299,7 +299,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 	
 				// rollback profilo
 				if(profilo){
-					StringBuffer queryUpdateProfilo= new StringBuffer();
+					StringBuilder queryUpdateProfilo= new StringBuilder();
 					queryUpdateProfilo.append("UPDATE ");
 					queryUpdateProfilo.append(Costanti.REPOSITORY);
 					queryUpdateProfilo.append(" SET ");
@@ -314,7 +314,7 @@ public class RollbackRepositoryBuste implements java.io.Serializable {
 	
 				// rollback pdd
 				if(pdd){
-					StringBuffer queryUpdatePdd = new StringBuffer();
+					StringBuilder queryUpdatePdd = new StringBuilder();
 					queryUpdatePdd.append("UPDATE ");
 					queryUpdatePdd.append(Costanti.REPOSITORY);
 					queryUpdatePdd.append(" SET ");

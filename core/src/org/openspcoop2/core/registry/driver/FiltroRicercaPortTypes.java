@@ -72,7 +72,7 @@ public class FiltroRicercaPortTypes extends FiltroRicercaAccordi implements Seri
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro PortType: ");
 		this.addDetails(bf);
 		if(bf.length()=="Filtro PortType: ".length())
@@ -80,7 +80,7 @@ public class FiltroRicercaPortTypes extends FiltroRicercaAccordi implements Seri
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.nomePortType!=null)
 			bf.append(" [nome-port-type:"+this.nomePortType+"]");
 		if(this.protocolPropertiesPortType!=null && this.protocolPropertiesPortType.size()>0){

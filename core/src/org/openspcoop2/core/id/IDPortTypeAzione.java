@@ -60,7 +60,7 @@ public class IDPortTypeAzione implements Serializable {
 	
 	@Override 
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.nome);
 		if(this.idPortType!=null)
 			bf.append("["+this.idPortType+"]");

@@ -333,7 +333,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 		}
 		
-		StringBuffer errori = new StringBuffer();
+		StringBuilder errori = new StringBuilder();
 		for(int i=0; i<tipoAutenticazione.length; i++){
 			
 			org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata datiInvocazione = new org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata();

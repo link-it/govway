@@ -199,7 +199,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 				notResolved = receiverInterface.checkEncryptSignatureParts(this.messageSecurityContext,elementsToClean, message.castAsSoap(),listaErroriRiscontrati);
 			}
 			if(listaErroriRiscontrati.size()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (Iterator<?> iterator = listaErroriRiscontrati.iterator(); iterator.hasNext();) {
 					SubErrorCodeSecurity subCodiceErroreSicurezza = (SubErrorCodeSecurity) iterator.next();
 					if(bf.length()>0){
@@ -230,7 +230,7 @@ public class MessageSecurityReceiver_impl extends MessageSecurityReceiver{
 				receiverInterface.checkEncryptionPartElements(notResolved, message.castAsSoap(), listaErroriInElementi);
 			}
 			if(listaErroriInElementi.size()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (Iterator<?> iterator = listaErroriInElementi.iterator(); iterator.hasNext();) {
 					SubErrorCodeSecurity subCodiceErroreSicurezza = (SubErrorCodeSecurity) iterator.next();
 					if(bf.length()>0){

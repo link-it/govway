@@ -50,7 +50,7 @@ public class SymmetricKeystore implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("SymmetricKeystore (").append(this.alias).append(") ");
 		return bf.toString();
 	}

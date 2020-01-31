@@ -79,7 +79,7 @@ public class MessageSecurityUtilities {
 		String action = (String) messageSecurityProperties.remove(SecurityConstants.ACTION);
 		
 		String [] splitActions = action.split(" ");
-		StringBuffer bfNewActions = new StringBuffer();
+		StringBuilder bfNewActions = new StringBuilder();
 		for (int i = 0; i < splitActions.length; i++) {
 			
 			String a = splitActions[i].trim();

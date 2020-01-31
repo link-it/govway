@@ -1124,7 +1124,7 @@ public class AccordiCooperazioneHelper  extends ConsoleHelper {
 	}
 
 	public Vector<DataElement>  addAllegatiToDati(TipoOperazione tipoOp, String idAllegato, String idAccordo,
-			Documento doc, StringBuffer contenutoAllegato, String errore,
+			Documento doc, StringBuilder contenutoAllegato, String errore,
 			Vector<DataElement> dati, String statoPackage, boolean editMode) {
 		DataElement de = new DataElement();
 

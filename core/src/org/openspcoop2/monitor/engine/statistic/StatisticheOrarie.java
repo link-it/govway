@@ -109,7 +109,7 @@ public class StatisticheOrarie extends AbstractStatistiche {
 		//System.out.println("INTERVALLO ORARIOE PER ["+date.toString()+"]");
 		
 		Calendar cTmp = truncDate(date);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(cTmp.get(Calendar.DAY_OF_MONTH));
 		bf.append("/");
 		bf.append((cTmp.get(Calendar.MONTH)+1));

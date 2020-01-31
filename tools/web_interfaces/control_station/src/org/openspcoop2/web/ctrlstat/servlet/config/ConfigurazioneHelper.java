@@ -7538,7 +7538,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(filtro.isEnabled()){
 
 			if(configurazione) {
@@ -7702,7 +7702,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(groupBy.isEnabled()){
 
 			if(configurazione) {
@@ -8420,7 +8420,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	public String getNomeSuggerito(ConfigurazionePolicy policy){
 		
-		StringBuffer bfSuggerimentoNome = new StringBuffer();
+		StringBuilder bfSuggerimentoNome = new StringBuilder();
 		bfSuggerimentoNome.append(policy.getRisorsa());
 		if(policy.isSimultanee()){
 			bfSuggerimentoNome.append("-").append("RichiesteSimultanee");
@@ -8438,7 +8438,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}	
 		}
 		if(TipoApplicabilita.CONDIZIONALE.equals(policy.getTipoApplicabilita())){
-			StringBuffer bfInterno = new StringBuffer();
+			StringBuilder bfInterno = new StringBuilder();
 			bfInterno.append("-Condizionale");
 			if(policy.isApplicabilitaConCongestione()){
 				bfInterno.append("-CongestioneTraffico");
@@ -8467,11 +8467,11 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 	
 	public String getDescrizioneSuggerita(ConfigurazionePolicy policy) {
 		
-		StringBuffer bfSuggerimentoDescrizione = new StringBuffer();
+		StringBuilder bfSuggerimentoDescrizione = new StringBuilder();
 		
 		TipoRisorsa risorsa = TipoRisorsa.toEnumConstant(policy.getRisorsa());
 		
-		StringBuffer bfIntervallo = new StringBuffer();
+		StringBuilder bfIntervallo = new StringBuilder();
 		if(!policy.isSimultanee()){
 			bfIntervallo.append(" durante l'intervallo di tempo specificato in ");
 			if(policy.getIntervalloOsservazione()!=null)
@@ -8589,7 +8589,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		
 		if(policy.isApplicabilitaConCongestione() || policy.isApplicabilitaDegradoPrestazionale() || policy.isApplicabilitaStatoAllarme()){
 			bfSuggerimentoDescrizione.append("\nLa policy viene applicata solamente se ");
-			StringBuffer bfApplicabilita = new StringBuffer();
+			StringBuilder bfApplicabilita = new StringBuilder();
 			if(policy.isApplicabilitaConCongestione()){
 				bfApplicabilita.append("il Gateway risulta Congestionato dalle richieste");
 			}
@@ -10500,7 +10500,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			// azione
 			String [] azione = this.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_AZIONE);
 			if(azione!=null && azione.length>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (String az : azione) {
 					if(bf.length()>0) {
 						bf.append(",");
@@ -10689,7 +10689,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				if(ServletUtils.isCheckBoxEnabled(token)) {
 					String [] tokenSelezionati = this.getParameterValues(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_TOKEN_CLAIMS);
 					if(tokenSelezionati!=null && tokenSelezionati.length>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < tokenSelezionati.length; i++) {
 							TipoCredenzialeMittente tipo = TipoCredenzialeMittente.valueOf(tokenSelezionati[i]);
 							if(TipoCredenzialeMittente.token_issuer.equals(tipo)) {
@@ -13861,7 +13861,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			return false;
 		}
 		
-		StringBuffer existsMessage = new StringBuffer();
+		StringBuilder existsMessage = new StringBuilder();
 		
 		boolean alreadyExists = ConfigurazioneUtilities.alreadyExists(tipoOperazione, this.confCore, this, 
 				policy, infoPolicy, ruoloPorta, nomePorta, serviceBinding, 
@@ -14098,7 +14098,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		configurazione = !delegata && !applicativa;
 		
-		StringBuffer bf = new StringBuffer("Filtro");
+		StringBuilder bf = new StringBuilder("Filtro");
 		if(filtro.isEnabled()){
 
 			bf.append(" abilitato con le seguenti impostazioni:");

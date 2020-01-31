@@ -52,7 +52,7 @@ public class IdentificativiErogazione implements java.io.Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.soggettoVirtuale!=null){
 			bf.append("SoggettoVirtuale:"+this.soggettoVirtuale);
 			bf.append(" ");

@@ -4721,7 +4721,7 @@ public class ControlStationCore {
 		else if(oggetto instanceof MappingFruizionePortaDelegata){
 			MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("FR[");
 			bf.append(mapping.getIdFruitore().getTipo()+"/"+mapping.getIdFruitore().getNome());
 			bf.append("] SERV[");
@@ -4733,7 +4733,7 @@ public class ControlStationCore {
 		else if(oggetto instanceof MappingErogazionePortaApplicativa){
 			MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("SERV[");
 			bf.append(mapping.getIdServizio().toString());
 			bf.append("] PA["+mapping.getIdPortaApplicativa().getNome());
@@ -4984,7 +4984,7 @@ public class ControlStationCore {
 		else if(oggetto instanceof AttivazionePolicy) {
 			AttivazionePolicy policy = (AttivazionePolicy) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("IDActivePolicy[").append(policy.getIdActivePolicy()).append("] IDPolicy[").append(policy.getIdPolicy()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}
@@ -4992,7 +4992,7 @@ public class ControlStationCore {
 		else if(oggetto instanceof GenericProperties) {
 			GenericProperties genericProperties = (GenericProperties) oggetto;
 			msg+=":"+oggetto.getClass().getSimpleName();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("Nome[").append(genericProperties.getNome()).append("] Tipologia[").append(genericProperties.getTipologia()).append("]");
 			msg+=":<"+bf.toString()+">";
 		}

@@ -97,7 +97,7 @@ public class ConfigurazioneControlloTrafficoAttivazionePolicyDel extends Action 
 			ArrayList<String> idsToRemove = Utilities.parseIdsToRemove(objToRemove);
 
 			List<AttivazionePolicy> policyDaEliminare = new ArrayList<AttivazionePolicy>();
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

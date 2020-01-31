@@ -641,7 +641,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_LIST_AZIONI_READ_ONLY);
 					de.setLabel(this.getLabelAzioni(serviceBinding));
 					Map<String,String> azioni = this.porteDelegateCore.getAzioniConLabel(asps, aspc, false, true, new ArrayList<String>());
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (String az : azioni.keySet()) {
 						if(bf.length()>0) {
 							bf.append("\n");
@@ -4190,7 +4190,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					String nomiAzioni = "";
 					if((listaAzioni != null && listaAzioni.size() > 0) && azioni.size()>0) {
 						
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						Iterator<String> itAz = azioni.keySet().iterator();
 						while (itAz.hasNext()) {
 							String idAzione = (String) itAz.next();
@@ -4225,7 +4225,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					String ct = "";
 					List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
 					if(contentTypeList != null && contentTypeList.size() > 0) {
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						for (String string : contentTypeList) {
 							if(sb.length() >0)
 								sb.append(", ");
@@ -4484,7 +4484,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					String ct = "";
 					List<String> contentTypeList = applicabilita != null ? applicabilita.getContentTypeList() : null;
 					if(contentTypeList != null && contentTypeList.size() > 0) {
-						StringBuffer sb = new StringBuffer();
+						StringBuilder sb = new StringBuilder();
 						for (String string : contentTypeList) {
 							if(sb.length() >0)
 								sb.append(", ");

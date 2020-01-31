@@ -822,7 +822,7 @@ public class RepositoryBuste  {
 			/* Busta */
 
 			// Registrazione Busta
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" (ID_MESSAGGIO,TIPO,MITTENTE,IDPORTA_MITTENTE,TIPO_MITTENTE,IND_TELEMATICO_MITT,DESTINATARIO,IDPORTA_DESTINATARIO,TIPO_DESTINATARIO,IND_TELEMATICO_DEST");
@@ -967,7 +967,7 @@ public class RepositoryBuste  {
 			/* Busta */
 
 			// Registrazione Busta
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" (ID_MESSAGGIO,TIPO,MITTENTE,IDPORTA_MITTENTE,TIPO_MITTENTE,IND_TELEMATICO_MITT,DESTINATARIO,IDPORTA_DESTINATARIO,TIPO_DESTINATARIO,IND_TELEMATICO_DEST");
@@ -1251,7 +1251,7 @@ public class RepositoryBuste  {
 		try{
 
 			//	elimino lista ext-info
-			StringBuffer queryDelete = new StringBuffer();
+			StringBuilder queryDelete = new StringBuilder();
 			queryDelete.delete(0,queryDelete.length());
 			queryDelete.append("DELETE FROM ");
 			queryDelete.append(Costanti.LISTA_EXT_INFO);
@@ -1271,7 +1271,7 @@ public class RepositoryBuste  {
 					String name = (String) keys.nextElement();
 					String value = properties.get(name);
 						
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.delete(0,query.length());
 					query.append("INSERT INTO  ");
 					query.append(Costanti.LISTA_EXT_INFO);
@@ -1352,7 +1352,7 @@ public class RepositoryBuste  {
 			/* Busta */
 
 			// Registrazione Busta
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE  ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" SET ");
@@ -1427,7 +1427,7 @@ public class RepositoryBuste  {
 
 				// cancella liste
 				//	elimino lista trasmiossioni
-				StringBuffer queryDelete = new StringBuffer();
+				StringBuilder queryDelete = new StringBuilder();
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_TRASMISSIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
@@ -1692,7 +1692,7 @@ public class RepositoryBuste  {
 		try{
 
 			// Costruzione Query
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" SET DUPLICATI=(DUPLICATI+1) WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1750,7 +1750,7 @@ public class RepositoryBuste  {
 			try{
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET LOCATION_PD=? , SERVIZIO_APPLICATIVO=? , MODULO_IN_ATTESA=? , SCENARIO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1797,7 +1797,7 @@ public class RepositoryBuste  {
 			try{
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET SERVIZIO_APPLICATIVO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1843,7 +1843,7 @@ public class RepositoryBuste  {
 			try{
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET SCENARIO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1886,7 +1886,7 @@ public class RepositoryBuste  {
 			PreparedStatement pstmtBusta = null;
 			try{
 				// Registrazione Sequenza
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE  ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET ");
@@ -1936,7 +1936,7 @@ public class RepositoryBuste  {
 			PreparedStatement pstmtBusta = null;
 			try{
 				// Registrazione Sequenza
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE  ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" SET ");
@@ -1986,7 +1986,7 @@ public class RepositoryBuste  {
 		ResultSet rs = null;
 		try {	// busta
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("select ID_MESSAGGIO from ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
@@ -2058,7 +2058,7 @@ public class RepositoryBuste  {
 
 				// busta
 
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("select * from ");
 				query.append(Costanti.REPOSITORY);
 				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
@@ -2305,7 +2305,7 @@ public class RepositoryBuste  {
 			try{
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("select * from ");
 				query.append(Costanti.LISTA_ECCEZIONI);
 				query.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ? AND VALIDAZIONE=1");
@@ -2386,7 +2386,7 @@ public class RepositoryBuste  {
 			Busta busta = new Busta(protocollo);
 			try{
 				// Costruzione Query
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("SELECT ");
 				bf.append("PROTOCOLLO");
 				boolean first = false;
@@ -2912,7 +2912,7 @@ public class RepositoryBuste  {
 			PreparedStatement pstmtUpdate = null;
 			try{
 
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -2959,7 +2959,7 @@ public class RepositoryBuste  {
 		PreparedStatement pstmtUpdate = null;
 		try{
 
-			StringBuffer queryUpdate = new StringBuffer();
+			StringBuilder queryUpdate = new StringBuilder();
 			queryUpdate.append("UPDATE ");
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" SET ");
@@ -3034,7 +3034,7 @@ public class RepositoryBuste  {
 			if(this.state instanceof StatefulMessage) {
 			
 				// elimino lista trasmissioni
-				StringBuffer queryDelete = new StringBuffer();
+				StringBuilder queryDelete = new StringBuilder();
 				queryDelete.append("DELETE FROM ");
 				queryDelete.append(Costanti.LISTA_TRASMISSIONI);
 				queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
@@ -3079,7 +3079,7 @@ public class RepositoryBuste  {
 			}
 
 			// Elimino busta
-			StringBuffer queryDelete = new StringBuffer();
+			StringBuilder queryDelete = new StringBuilder();
 			queryDelete.append("DELETE FROM ");
 			queryDelete.append(Costanti.REPOSITORY);
 			queryDelete.append(" WHERE ID_MESSAGGIO = ? AND TIPO = ?");
@@ -3175,7 +3175,7 @@ public class RepositoryBuste  {
 				// del database che comporta un esaurimento di risorse
 				if(filtraBustaScadetureRispettoOraRegistrazione){
 					if(Configurazione.getSqlQueryObjectType()==null){
-						StringBuffer query = new StringBuffer();
+						StringBuilder query = new StringBuilder();
 						query.append("SELECT ");
 						if(forceIndex){
 							query.append("/*+ index("+Costanti.REPOSITORY+" "+Costanti.REPOSITORY_INDEX_SCADENZA_SEARCH+") */");
@@ -3247,7 +3247,7 @@ public class RepositoryBuste  {
 
 				queryString = null;
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ");
 					if(forceIndex){
 						query.append("/*+ index("+Costanti.REPOSITORY+" "+Costanti.REPOSITORY_INDEX_TIPO_SEARCH+") */");
@@ -3355,7 +3355,7 @@ public class RepositoryBuste  {
 		PreparedStatement pstmtUpdate = null;
 		try{
 
-			StringBuffer queryUpdate = new StringBuffer();
+			StringBuilder queryUpdate = new StringBuilder();
 			queryUpdate.append("UPDATE ");
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" SET ");
@@ -3393,7 +3393,7 @@ public class RepositoryBuste  {
 		ResultSet rs = null;
 		try{
 
-			StringBuffer queryUpdate = new StringBuffer();
+			StringBuilder queryUpdate = new StringBuilder();
 			queryUpdate.append("SELECT ID_MESSAGGIO FROM ");
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" WHERE  ID_MESSAGGIO = ? AND TIPO=? AND (");

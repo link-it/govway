@@ -91,7 +91,7 @@ public class WebApplicationExceptionMapper implements ExceptionMapper<javax.ws.r
             		((ProblemValidation) problem).addInvalidParam("body", jsonParseException.getMessage(), null);
             	}
             	if(jsonParseException.getLocation()!=null) {
-            		StringBuffer bf = new StringBuffer();
+            		StringBuilder bf = new StringBuilder();
             		bf.append("line: ").append(jsonParseException.getLocation().getLineNr()).append(", column: ").append(jsonParseException.getLocation().getColumnNr());
             		((ProblemValidation) problem).addInvalidParam("position", bf.toString(), null);
             	}

@@ -133,7 +133,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	
 	public String getLabelAzioniGestioneToken() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.isValidazioneJWT() || this.isIntrospection() || this.isUserInfo()) {
 			bf.append("Validazione ");
 			boolean first = true;
@@ -163,7 +163,7 @@ public class PolicyGestioneToken extends AbstractPolicyToken implements Serializ
 	}
 	
 	public String getAzioniGestioneToken() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.isValidazioneJWT() || this.isIntrospection() || this.isUserInfo()) {
 			boolean first = true;
 			if(this.isValidazioneJWT()) {

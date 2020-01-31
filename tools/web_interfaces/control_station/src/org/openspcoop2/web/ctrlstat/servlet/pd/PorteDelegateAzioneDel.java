@@ -114,7 +114,7 @@ public final class PorteDelegateAzioneDel extends Action {
 				
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(porteDelegateHelper.getSession());
 			

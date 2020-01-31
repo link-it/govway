@@ -410,7 +410,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			return true;
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = 0; i < wizard.getRequisiti().sizeProtocolloList(); i++) {
 			String protocollo = wizard.getRequisiti().getProtocollo(i).getNome();
 			try{

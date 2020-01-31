@@ -241,7 +241,7 @@ public class FruizioniApiServiceImpl extends BaseImpl implements FruizioniApi {
 
 			if (asps != null) {
 				final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-				final StringBuffer inUsoMessage = new StringBuffer();
+				final StringBuilder inUsoMessage = new StringBuilder();
 
 				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(asps, true, // gestioneFruitori,
 						false, // gestioneErogatori,

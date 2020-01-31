@@ -389,7 +389,7 @@ public class GestoreMessaggi  {
 	 * @throws UtilsException */
 	public static String cacheToString() throws UtilsException{
 		if(GestoreMessaggi.cacheMappingGestoreMessaggi!=null){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("Cache GestoreMessaggi: "+GestoreMessaggi.cacheMappingGestoreMessaggi.printStats(" "));
 			return bf.toString();
 		}else
@@ -1033,8 +1033,8 @@ public class GestoreMessaggi  {
 			try {
 
 				// PdDContext
-				StringBuffer fieldNamesPdDContext = new StringBuffer();
-				StringBuffer fieldValuesPdDContext = new StringBuffer();
+				StringBuilder fieldNamesPdDContext = new StringBuilder();
+				StringBuilder fieldValuesPdDContext = new StringBuilder();
 				Hashtable<String, String> contextSerializerParameters = null;
 				List<Object> objectSerializer = new ArrayList<Object>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
@@ -1063,7 +1063,7 @@ public class GestoreMessaggi  {
 				}
 
 
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("INSERT INTO ");
 
 				query.append(GestoreMessaggi.MESSAGGI);
@@ -1158,8 +1158,8 @@ public class GestoreMessaggi  {
 		try {
 
 			// PdDContext
-			StringBuffer fieldNamesPdDContext = new StringBuffer();
-			StringBuffer fieldValuesPdDContext = new StringBuffer();
+			StringBuilder fieldNamesPdDContext = new StringBuilder();
+			StringBuilder fieldValuesPdDContext = new StringBuilder();
 			Hashtable<String, String> contextSerializerParameters = null;
 			List<Object> objectSerializer = new ArrayList<Object>();
 			if(GestoreMessaggi.pddContextSerializer!=null){
@@ -1188,7 +1188,7 @@ public class GestoreMessaggi  {
 			}
 
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO ");
 
 			query.append(GestoreMessaggi.MESSAGGI);
@@ -1297,7 +1297,7 @@ public class GestoreMessaggi  {
 			try{	
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("INSERT INTO ");
 				query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA) VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)");
@@ -1406,7 +1406,7 @@ public class GestoreMessaggi  {
 			try{	
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				query.append(GestoreMessaggi.MESSAGGI);
 				query.append(" SET PROPRIETARIO=? WHERE ");
@@ -1478,7 +1478,7 @@ public class GestoreMessaggi  {
 			try{	
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				query.append(GestoreMessaggi.MESSAGGI);
 				query.append(" SET RIFERIMENTO_MSG=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -1551,7 +1551,7 @@ public class GestoreMessaggi  {
 				try{	
 
 					// Costruzione Query
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("UPDATE ");
 					if(servizioApplicativo==null)
 						query.append(GestoreMessaggi.MESSAGGI);
@@ -1601,7 +1601,7 @@ public class GestoreMessaggi  {
 		try{	
 
 			// Costruzione Query
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("UPDATE ");
 			query.append(GestoreMessaggi.MESSAGGI);
 			query.append(" SET msg_bytes=? WHERE id_messaggio= ? and tipo= ?");
@@ -1694,7 +1694,7 @@ public class GestoreMessaggi  {
 						if(indexNumber == -1)
 							throw new GestoreMessaggiException("Errore processamento corrotto (] non presente)");
 						try{
-							StringBuffer bf = new StringBuffer();
+							StringBuilder bf = new StringBuilder();
 							int j = indexNumber - 1;
 							while( motivoErroreGiaRegistrato.charAt(j)!='.' ){
 								bf.append(motivoErroreGiaRegistrato.charAt(j));
@@ -1735,7 +1735,7 @@ public class GestoreMessaggi  {
 
 
 				// Costruzione Query
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("UPDATE ");
 				if(servizioApplicativo!=null)
 					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
@@ -2719,7 +2719,7 @@ public class GestoreMessaggi  {
 			ResultSet rs = null;
 			try{	
 				// Costruzione Query
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("SELECT RISPEDIZIONE FROM ");
 				if(servizioApplicativo!=null)
 					bf.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
@@ -2976,7 +2976,7 @@ public class GestoreMessaggi  {
 			try{	
 
 				// PdDContext
-				StringBuffer fieldNamesPdDContext_db = new StringBuffer();
+				StringBuilder fieldNamesPdDContext_db = new StringBuilder();
 				Hashtable<String, String> mapping = new Hashtable<String, String>();
 				if(GestoreMessaggi.pddContextSerializer!=null){
 					Hashtable<String, String> contextSerializerParameters = GestoreMessaggi.pddContextSerializer.getGestoreMessaggiKeywords();
@@ -3410,7 +3410,7 @@ public class GestoreMessaggi  {
 			ResultSet rs = null; 
 			try{	
 				// Costruzione Query
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("SELECT ID_MESSAGGIO FROM ");
 				bf.append(GestoreMessaggi.MESSAGGI);
 				bf.append(" WHERE ");
@@ -3660,7 +3660,7 @@ public class GestoreMessaggi  {
 						throw new GestoreMessaggiException("La funzione di ricerca tramite offset e limit non e' utilizzabile se nella configurazione della PdD non viene specificato il tipo di database");
 					}
 
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ");
 
 					// Select
@@ -4022,7 +4022,7 @@ public class GestoreMessaggi  {
 
 						// Imposto lo stato del messaggio ad 'eliminabile'
 						// Costruzione Query
-						StringBuffer queryUpdate = new StringBuffer();
+						StringBuilder queryUpdate = new StringBuilder();
 						queryUpdate.append("UPDATE ");
 						queryUpdate.append(GestoreMessaggi.MESSAGGI);
 						queryUpdate.append(" SET PROPRIETARIO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -4192,7 +4192,7 @@ public class GestoreMessaggi  {
 
 					// Imposto lo stato del messaggio ad 'eliminabile'
 					// Costruzione Querya
-					StringBuffer queryUpdate = new StringBuffer();
+					StringBuilder queryUpdate = new StringBuilder();
 					queryUpdate.append("UPDATE ");
 					queryUpdate.append(GestoreMessaggi.MESSAGGI);
 					queryUpdate.append(" SET PROPRIETARIO=? WHERE  ID_MESSAGGIO = ? AND TIPO=?");
@@ -4288,7 +4288,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT "+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO as idmess, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO as sa, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_SOAP as sbSoap, ");
@@ -4483,7 +4483,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ID_MESSAGGIO FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
 					query.append(" WHERE TIPO=? AND PROPRIETARIO=? ");
@@ -4619,7 +4619,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ID_MESSAGGIO FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
 					query.append(" WHERE ? > ORA_REGISTRAZIONE AND TIPO=?");
@@ -4708,7 +4708,7 @@ public class GestoreMessaggi  {
 			ResultSet rs = null;
 			String queryString = null;
 			try{	
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT SERVIZIO_APPLICATIVO FROM ");
 				query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 				query.append(" WHERE ID_MESSAGGIO=?");
@@ -4773,7 +4773,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT "+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO as identificativoBusta,"+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
 					query.append(",");
@@ -4895,7 +4895,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati 
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ID_MESSAGGIO FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
 					query.append(" WHERE ? > ORA_REGISTRAZIONE AND "+
@@ -5071,7 +5071,7 @@ public class GestoreMessaggi  {
 				// NOTA: non serve fare il rollback dell'history tanto se rimane solo quello, quando la busta e' scaduta viene eliminata.
 
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ");
 					if(forceIndex){
 						query.append("/*+ index("+Costanti.REPOSITORY+" "+Costanti.REPOSITORY_INDEX_TIPO_SEARCH+") */");
@@ -5237,7 +5237,7 @@ public class GestoreMessaggi  {
 				// NOTA: non serve fare il rollback dell'history tanto se rimane solo quello, quando la busta e' scaduta viene eliminata.
 
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT ");
 					if(forceIndex){
 						query.append("/*+ index("+Costanti.REPOSITORY+" "+Costanti.REPOSITORY_INDEX_TIPO_SEARCH+") */");
@@ -5953,7 +5953,7 @@ public class GestoreMessaggi  {
 		return config;
 	}
 	
-	private static StringBuffer LOCK = new StringBuffer();
+	private static StringBuilder LOCK = new StringBuilder();
 	private static String LOCK_MODULO = null;
 
 	// I Metodi sotto riportati commentati funzionavano bene, ma non garantivano il fair dei lock, 

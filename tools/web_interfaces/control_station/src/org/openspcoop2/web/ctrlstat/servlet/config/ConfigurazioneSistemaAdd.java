@@ -108,7 +108,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 						String messagePerOperazioneEffettuata = "";
 						int index = 0;
 						for (String aliasForResetCache : aliases) {
-							StringBuffer bfExternal = new StringBuffer();
+							StringBuilder bfExternal = new StringBuilder();
 							String descrizione = confCore.getJmxPdD_descrizione(aliasForResetCache);
 							if(index>0) {
 								bfExternal.append("<BR/>");
@@ -117,7 +117,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 							List<String> caches = confCore.getJmxPdD_caches(aliasForResetCache);
 							if(caches!=null && caches.size()>0){
 								
-								StringBuffer bfCaches = new StringBuffer();
+								StringBuilder bfCaches = new StringBuilder();
 								for (String cache : caches) {
 																		
 									String stato = null;
@@ -231,7 +231,7 @@ public final class ConfigurazioneSistemaAdd extends Action {
 				}
 				
 				if(resetMultiplo){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					List<String> caches = confCore.getJmxPdD_caches(alias);
 					if(caches!=null && caches.size()>0){
 						

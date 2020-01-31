@@ -106,7 +106,7 @@ public final class AccordiServizioParteComunePortTypesDel extends Action {
 			IDPortType idPT = new IDPortType();
 			idPT.setIdAccordo(idAccordoFactory.getIDAccordoFromAccordo(as));
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComunePortTypes(as, userLogin, apcCore, apcHelper, 
 					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, idPT, ptsToRemove);

@@ -124,7 +124,7 @@ public class UtilitiesGestioneMessaggiSoap {
 	public void readHttpHeaders(InputStream is) throws IOException {
 
 		boolean exit = false;
-		StringBuffer string = new StringBuffer();
+		StringBuilder string = new StringBuilder();
 		do {
 			/**
 			 * **********prelievo del content
@@ -142,7 +142,7 @@ public class UtilitiesGestioneMessaggiSoap {
 					if (string.toString().equals(""))
 						exit = true; // la fine degli header
 					else { // vado in una nuova linea
-						string = new StringBuffer();
+						string = new StringBuilder();
 					}
 				} else {
 					string.append((char) read);
@@ -238,7 +238,7 @@ public class UtilitiesGestioneMessaggiSoap {
 				}
 
 				// Leggo lunghezza del chunk
-				StringBuffer chunkLengthEsadecimale = new StringBuffer();
+				StringBuilder chunkLengthEsadecimale = new StringBuilder();
 				//System.out.println("LENGTH CHUNK: ["+ch+"]");
 				while(RegularExpressionEngine.isMatch(ch+"","[0-9A-Za-z]")){
 					//System.out.println("LENGTH CHUNK TROVATO: ["+ch+"]");

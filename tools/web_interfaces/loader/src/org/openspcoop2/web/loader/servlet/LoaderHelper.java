@@ -248,7 +248,7 @@ public class LoaderHelper {
 		dati.addElement(de);
 	}
 	
-	public boolean validateFileXml(Logger log,FormFile ff,StringBuffer errorBuffer,String tipologiaXML){
+	public boolean validateFileXml(Logger log,FormFile ff,StringBuilder errorBuffer,String tipologiaXML){
 
 		String schemaValidazione = null;
 		try{

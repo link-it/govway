@@ -140,7 +140,7 @@ public final class AccordiServizioParteComuneResourcesParametersDel extends Acti
 			
 			String tipoNomeParameter = "";
 			boolean modificaAS_effettuata = false;
-			StringBuffer errori = new StringBuffer();
+			StringBuilder errori = new StringBuilder();
 			for (int i = 0; i < resourcesToRemove.size(); i++) {
 				tipoNomeParameter = resourcesToRemove.get(i);
 				String[] split = tipoNomeParameter.split("/");

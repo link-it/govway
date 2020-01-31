@@ -105,7 +105,7 @@ public final class ServiziApplicativiDel extends Action {
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

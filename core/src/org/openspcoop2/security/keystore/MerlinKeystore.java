@@ -56,7 +56,7 @@ public class MerlinKeystore implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("KeyStore (").append(this.tipoStore).append(") ").append(this.pathStore);
 		return bf.toString();
 	}

@@ -84,7 +84,7 @@ public abstract class XMLRootElement implements Serializable{
 			throw new ProtocolException("Namespace not defined");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("<");
 		if(!start){
 			bf.append("/");

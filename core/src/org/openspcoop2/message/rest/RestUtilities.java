@@ -70,7 +70,7 @@ public class RestUtilities {
 			}
 		}
 		
-		StringBuffer newUrl = new StringBuffer();
+		StringBuilder newUrl = new StringBuilder();
 		newUrl.append(baseUrl);
 		
 		if(requestContext!=null){
@@ -192,7 +192,7 @@ public class RestUtilities {
 			
 			// Viene costruita una nuova url contenente la richiesta iniziale e il nuovo suffisso,
 			// in modo che la url ritornata tramite la redirect possa contenere una nuova url che viene veicolata nuovamente sulla PdD
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if(redirectLocationUrl.startsWith(r)) {
 				// absolute
 				if(prefixGatewayUrl!=null) {

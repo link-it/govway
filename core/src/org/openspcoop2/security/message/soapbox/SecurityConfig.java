@@ -164,7 +164,7 @@ public class SecurityConfig extends org.adroitlogic.soapbox.SecurityConfig {
         if (validity == null) {
             synchronized (this) {
             	
-            	StringBuffer bf = new StringBuffer();
+            	StringBuilder bf = new StringBuilder();
             	if(certs!=null){
 	            	for (int i = 0; i < certs.length; i++) {
 	            		if(i>0){

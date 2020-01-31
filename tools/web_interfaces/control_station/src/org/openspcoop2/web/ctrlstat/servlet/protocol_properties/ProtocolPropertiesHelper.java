@@ -309,7 +309,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 
 	public Vector<DataElement> addProtocolPropertyChangeToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String protocollo, String id, String nome,
 			String idProprietario, ProprietariProtocolProperty tipoProprietario, String tipoAccordo, String nomeProprietario,String nomeParentProprietario, String urlChange, String label,
-			BinaryParameter contenutoDocumento, StringBuffer contenutoDocumentoStringBuffer, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem,
+			BinaryParameter contenutoDocumento, StringBuilder contenutoDocumentoStringBuilder, String errore, String tipologiaDocumentoScaricare, AbstractConsoleItem<?> binaryConsoleItem,
 			boolean readOnly) throws Exception { 
 
 		/* ID */
@@ -428,7 +428,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-						de.setValue(contenutoDocumentoStringBuffer.toString());
+						de.setValue(contenutoDocumentoStringBuilder.toString());
 						de.setRows(30);
 						de.setCols(100);
 						dati.addElement(de);
@@ -490,7 +490,7 @@ public class ProtocolPropertiesHelper extends ConsoleHelper {
 						de = new DataElement();
 						de.setLabel(ProtocolPropertiesCostanti.LABEL_DOCUMENTO_ATTUALE);
 						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-						de.setValue(contenutoDocumentoStringBuffer.toString());
+						de.setValue(contenutoDocumentoStringBuilder.toString());
 						de.setRows(30);
 						de.setCols(100);
 						dati.addElement(de);

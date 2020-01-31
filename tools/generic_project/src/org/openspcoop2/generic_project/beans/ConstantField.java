@@ -80,12 +80,12 @@ public class ConstantField extends Field {
 	@Override
 	public String toString(int indent){
 		
-		StringBuffer indentBuffer = new StringBuffer();
+		StringBuilder indentBuffer = new StringBuilder();
 		for (int i = 0; i < indent; i++) {
 			indentBuffer.append("	");
 		}
 		
-		StringBuffer bf = new StringBuffer(super.toString(indent));
+		StringBuilder bf = new StringBuilder(super.toString(indent));
 		
 		bf.append(indentBuffer.toString());
 		bf.append("- fieldValue: "+this.fieldValue);

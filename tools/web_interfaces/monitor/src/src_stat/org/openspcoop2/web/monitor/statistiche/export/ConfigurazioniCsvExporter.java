@@ -508,7 +508,7 @@ public class ConfigurazioniCsvExporter {
 				oneLine.add(CostantiConfigurazioni.LABEL_UTILIZZO_DEL_SERVIZIO_SENZA_AZIONE);
 			}
 			else{
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				// Azioni: XXXs
 				if(azioni != null && azioni.size() > 0){
 					for (String azione : azioni) {
@@ -694,7 +694,7 @@ public class ConfigurazioniCsvExporter {
 			List<String> fruitori = dettaglioPA.getFruitori();
 
 			if(fruitori != null && fruitori.size() > 0){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				for (String fruitore : fruitori) {
 					if(sb.length()>0) sb.append("\n");
 					sb.append(fruitore);
@@ -720,7 +720,7 @@ public class ConfigurazioniCsvExporter {
 			String match = dettaglioPA.getMatchRuoli();
 			oneLine.add(match);
 			if(paOp2.getRuoli()!=null){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 
 				for (String ruolo : ruoli) {
 					if(sb.length()>0) sb.append("\n");
@@ -747,7 +747,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(scope.getMatch().getValue());
 			
 			if(scope.getScopeList()!=null){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 
 				for (Scope scopeS : scope.getScopeList()) {
 					if(sb.length()>0) sb.append("\n");
@@ -1018,7 +1018,7 @@ public class ConfigurazioniCsvExporter {
 			}
 			else{
 				// Azioni: XXXs
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				// Azioni: XXXs
 				if(azioni != null && azioni.size() > 0){
 					for (String azione : azioni) {
@@ -1200,7 +1200,7 @@ public class ConfigurazioniCsvExporter {
 		if(autorizzazione.toLowerCase().contains(TipoAutorizzazione.AUTHENTICATED.getValue().toLowerCase())){
 			oneLine.add(StatoFunzionalita.ABILITATO.getValue());
 			List<String> sa = dettaglioPD.getSa();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			for (String servApp : sa) {
 				if(sb.length()>0) sb.append("\n");
 				sb.append(servApp);
@@ -1221,7 +1221,7 @@ public class ConfigurazioniCsvExporter {
 			List<String> ruoli = dettaglioPD.getRuoli();
 			String match = dettaglioPD.getMatchRuoli();
 			if(pdOp2.getRuoli()!=null){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 
 				for (String ruolo : ruoli) {
 					if(sb.length()>0) sb.append("\n");
@@ -1248,7 +1248,7 @@ public class ConfigurazioniCsvExporter {
 			oneLine.add(scope.getMatch().getValue());
 			
 			if(scope.getScopeList()!=null){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 
 				for (Scope scopeS : scope.getScopeList()) {
 					if(sb.length()>0) sb.append("\n");
@@ -1490,7 +1490,7 @@ public class ConfigurazioniCsvExporter {
 		else if(TipiConnettore.JMS.getNome().equals(connettore.getTipo())){
 			mapProperties.put(2, ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_LOCATION, connettore.getPropertyList()));
 
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(CostantiConfigurazioni.LABEL_TIPO_CODA_JMS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_TIPO, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_CONNECTION_FACTORY).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_CONNECTION_FACTORY, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_SEND_AS).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_JMS_SEND_AS, connettore.getPropertyList()));
@@ -1507,7 +1507,7 @@ public class ConfigurazioniCsvExporter {
 			}
 		}
 		else if(TipiConnettore.FILE.getNome().equals(connettore.getTipo())){
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append(CostantiConfigurazioni.LABEL_OUTPUT_FILE).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE, connettore.getPropertyList())).append("\n");
 			sb.append(CostantiConfigurazioni.LABEL_OUTPUT_FILE_HEADER).append(": ").append(ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_FILE_REQUEST_OUTPUT_FILE_HEADERS, connettore.getPropertyList())).append("\n");
 			String risposta = ConfigurazioniUtils.getProperty(CostantiConnettori.CONNETTORE_FILE_RESPONSE_INPUT_MODE, connettore.getPropertyList());
@@ -1528,7 +1528,7 @@ public class ConfigurazioniCsvExporter {
 
 			List<Property> list = connettore.getPropertyList();
 			if(list!=null && list.size()>0){
-				StringBuffer sb = new StringBuffer();
+				StringBuilder sb = new StringBuilder();
 				for (Property property : list) {
 					if(sb.length() > 0)
 						sb.append("\n");

@@ -399,7 +399,7 @@ public class FiltroRicercaTracce implements java.io.Serializable {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro Ricerca traccia:");
 		if(this.idTransazione!=null)
 			bf.append(" [id-transazione:"+this.idTransazione+"]");

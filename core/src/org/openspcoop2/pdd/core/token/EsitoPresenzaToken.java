@@ -85,7 +85,7 @@ public abstract class EsitoPresenzaToken extends EsitoToken implements java.io.S
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("token presente: ");
 		bf.append(this.presente);

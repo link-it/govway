@@ -78,7 +78,7 @@ public class Certificate implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.certificate.toString());
 		if(this.certificateChain!=null) {
 			bf.append("\n\n certificate chains:\n");

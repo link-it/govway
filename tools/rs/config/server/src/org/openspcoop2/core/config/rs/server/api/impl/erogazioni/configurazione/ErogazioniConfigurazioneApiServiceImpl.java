@@ -540,7 +540,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			policy.getFiltro().setRuoloPorta(ruoloPorta);
 			policy.getFiltro().setNomePorta(nomePorta);
 		
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConfigurazioneUtilities.alreadyExists(
 					TipoOperazione.ADD,
 					env.confCore,
@@ -603,7 +603,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final PortaApplicativa pa = env.paCore.getPortaApplicativa(env.idPa);
 			final Long idPorta = pa.getId();
 			
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
@@ -662,7 +662,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final Long idPorta = pa.getId();
 			
 			
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.paCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
@@ -893,7 +893,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> (PolicyUtilities.getNomeActivePolicy(p.getAlias(),p.getIdActivePolicy())).equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
 				
 				ConfigurazioneUtilities.deleteAttivazionePolicy(

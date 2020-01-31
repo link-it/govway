@@ -68,7 +68,7 @@ public class GruppiUtilities {
 	}
 
 
-	public static void deleteGruppo(Gruppo gruppo, String userLogin, GruppiCore gruppiCore, GruppiHelper gruppiHelper, StringBuffer inUsoMessage, String newLine) throws Exception {
+	public static void deleteGruppo(Gruppo gruppo, String userLogin, GruppiCore gruppiCore, GruppiHelper gruppiHelper, StringBuilder inUsoMessage, String newLine) throws Exception {
 		HashMap<ErrorsHandlerCostant, List<String>> whereIsInUso = new HashMap<ErrorsHandlerCostant, List<String>>();
 		boolean normalizeObjectIds = !gruppiHelper.isModalitaCompleta();
 		boolean gruppoInUso = gruppiCore.isGruppoInUso(gruppo.getNome(),whereIsInUso,normalizeObjectIds);

@@ -444,7 +444,7 @@ public class Eccezione implements java.io.Serializable{
 	}
 	
 	public String toString(IProtocolFactory<?> protocolFactory) throws ProtocolException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Eccezione");
 		
 		if(this.getRilevanza()!=null){

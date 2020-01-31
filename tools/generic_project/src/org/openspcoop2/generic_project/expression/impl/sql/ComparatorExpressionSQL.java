@@ -48,7 +48,7 @@ public class ComparatorExpressionSQL extends ComparatorExpressionImpl implements
 	}
 	
 	public String toSql_engine(SQLMode mode,List<Object> oggettiPreparedStatement,Hashtable<String, Object> oggettiJPA)throws ExpressionException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(isNot()){
 			bf.append("( NOT ");
 		}

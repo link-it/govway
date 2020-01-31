@@ -287,7 +287,7 @@ public class SPCoopSbustamento {
 				int indexOfEGov = headerSTR.indexOf(SPCoopCostanti.ACTOR_EGOV,start);
 				if(indexOfEGov == -1)
 					break;
-				StringBuffer rovesciata = new StringBuffer();
+				StringBuilder rovesciata = new StringBuilder();
 				for(int i = indexOfEGov-1; i>0 ; i-- ){
 					rovesciata.append(((char)header[i]));
 					if( ((char)header[i]) == '<' ){
@@ -295,7 +295,7 @@ public class SPCoopSbustamento {
 						break;
 					}
 				}
-				StringBuffer rigaCompleta = new StringBuffer();
+				StringBuilder rigaCompleta = new StringBuilder();
 				rovesciata.reverse();
 				rigaCompleta.append(rovesciata.toString());
 				rigaCompleta.append(SPCoopCostanti.ACTOR_EGOV);

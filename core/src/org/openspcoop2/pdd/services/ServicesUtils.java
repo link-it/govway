@@ -222,7 +222,7 @@ public class ServicesUtils {
 	private static String checkMustUnderstandHeaderElement(MessageType messageType, SOAPHeader header,List<NameValue> filtri) throws UtilsException{
 		
 		try{
-			StringBuffer bfError = new StringBuffer();
+			StringBuilder bfError = new StringBuilder();
 			if(SoapUtils.checkMustUnderstandHeaderElement(messageType, header, filtri, bfError)==false){
 				return bfError.toString();
 			}

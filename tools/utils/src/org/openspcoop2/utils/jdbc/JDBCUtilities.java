@@ -188,7 +188,7 @@ public class JDBCUtilities {
 	
 	
 	
-	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuffer bf) throws SQLException{
+	public static void addInformazioniDatabaseFromMetaData(Connection c, StringBuilder bf) throws SQLException{
 		
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;

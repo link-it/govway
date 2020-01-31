@@ -47,7 +47,7 @@ public class PropertiesSerializator {
 	public String convertToDBColumnValue() throws Exception{
 		
 		Enumeration<String> keys = this.properties.keys();
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		while (keys.hasMoreElements()) {
 			if(bf.length()>0){
 				bf.append("\n");

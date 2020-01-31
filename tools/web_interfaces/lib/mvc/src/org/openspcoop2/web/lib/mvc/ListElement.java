@@ -93,7 +93,7 @@ public class ListElement {
 	// per essere inseriti come parametri di una url. Ad esempio:
 	// nome1=valore1&nome2=valore2&.....
 	public String formatParametersURL() {
-		StringBuffer formatParBuf = new StringBuffer();
+		StringBuilder formatParBuf = new StringBuilder();
 		if (this.parameters != null) {
 			Set<?> keySet = this.parameters.keySet();
 			Iterator<?> it = keySet.iterator();

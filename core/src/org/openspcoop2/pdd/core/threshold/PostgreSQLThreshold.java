@@ -87,7 +87,7 @@ public class PostgreSQLThreshold implements IThreshold {
 		}
 		
 		String Soglia=valoreSoglia.toLowerCase();
-		StringBuffer valore=new StringBuffer();
+		StringBuilder valore=new StringBuilder();
 		char ch=Soglia.charAt(0);
 		int i=1;
 		while (Character.isDigit(ch))

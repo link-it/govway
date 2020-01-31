@@ -1565,7 +1565,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
 			}
 			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -1575,7 +1575,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_origins = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -1585,7 +1585,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_headers = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -1595,7 +1595,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_methods = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -1635,7 +1635,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_query = getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
 				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
 					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -1649,7 +1649,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -4531,7 +4531,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
 			}
 			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4541,7 +4541,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_origins = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4551,7 +4551,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_headers = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4561,7 +4561,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_methods = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -4601,7 +4601,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_query = getValue(responseCachingConfigurazone.getHashGenerator().getQueryParameters());
 				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getHashGenerator().getQueryParameters())) {
 					if(responseCachingConfigurazone.getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeQueryParameterList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -4615,7 +4615,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getHashGenerator().sizeHeaderList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getHashGenerator().sizeHeaderList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -8167,7 +8167,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_max_age_seconds = corsConfigurazione.getAccessControlMaxAge();	
 			}
 			if(corsConfigurazione.getAccessControlAllowOrigins()!=null && corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowOrigins().sizeOriginList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -8177,7 +8177,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_origins = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowHeaders()!=null && corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -8187,7 +8187,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_headers = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlAllowMethods()!=null && corsConfigurazione.getAccessControlAllowMethods().sizeMethodList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlAllowMethods().sizeMethodList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -8197,7 +8197,7 @@ public class DriverConfigurazioneDB_LIB {
 				cors_allow_methods = bf.toString();
 			}
 			if(corsConfigurazione.getAccessControlExposeHeaders()!=null && corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList()>0) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < corsConfigurazione.getAccessControlExposeHeaders().sizeHeaderList(); i++) {
 					if(i>0) {
 						bf.append(",");
@@ -8238,7 +8238,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_query = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters());
 				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters())) {
 					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -8252,7 +8252,7 @@ public class DriverConfigurazioneDB_LIB {
 				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
 				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders())) {
 					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -10141,7 +10141,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 					String applicabilita_azioni = null;
 					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeAzioneList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < regola.getApplicabilita().sizeAzioneList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -10155,7 +10155,7 @@ public class DriverConfigurazioneDB_LIB {
 					
 					String applicabilita_ct = null;
 					if(regola.getApplicabilita()!=null && regola.getApplicabilita().sizeContentTypeList()>0) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (int i = 0; i < regola.getApplicabilita().sizeContentTypeList(); i++) {
 							if(i>0) {
 								bf.append(",");
@@ -10377,7 +10377,7 @@ public class DriverConfigurazioneDB_LIB {
 							
 							String applicabilita_ct_response = null;
 							if(regolaRisposta.getApplicabilita()!=null && regolaRisposta.getApplicabilita().sizeContentTypeList()>0) {
-								StringBuffer bf = new StringBuffer();
+								StringBuilder bf = new StringBuilder();
 								for (int i = 0; i < regolaRisposta.getApplicabilita().sizeContentTypeList(); i++) {
 									if(i>0) {
 										bf.append(",");

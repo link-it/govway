@@ -64,7 +64,7 @@ public enum TransferLengthModes {
 	}
 	
 	public static String stringValues(){
-		StringBuffer res = new StringBuffer();
+		StringBuilder res = new StringBuilder();
 		int i=0;
 		for (TransferLengthModes tmp : TransferLengthModes.values()) {
 			if(i>0)

@@ -130,7 +130,7 @@ public class ConsegnaInOrdine  {
 			long sequenza = -1;
 			try{	
 
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT ID_COLLABORAZIONE,PROSSIMA_SEQUENZA FROM ");
 				query.append(Costanti.SEQUENZA_DA_INVIARE);
 				query.append(" WHERE MITTENTE=? AND TIPO_MITTENTE=? AND DESTINATARIO=? AND TIPO_DESTINATARIO=? AND SERVIZIO=? AND TIPO_SERVIZIO=? AND AZIONE=?");
@@ -168,7 +168,7 @@ public class ConsegnaInOrdine  {
 					pstmt.close();
 
 					// aggiornamento sequenza
-					StringBuffer queryInsert = new StringBuffer();
+					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("UPDATE ");
 					queryInsert.append(Costanti.SEQUENZA_DA_INVIARE);
 					queryInsert.append(" SET PROSSIMA_SEQUENZA = ? WHERE MITTENTE=? AND TIPO_MITTENTE=? AND DESTINATARIO=? AND TIPO_DESTINATARIO=? AND SERVIZIO=? AND TIPO_SERVIZIO=? AND AZIONE=?");
@@ -198,7 +198,7 @@ public class ConsegnaInOrdine  {
 					rs.close();
 					pstmt.close();				
 
-					StringBuffer queryInsert = new StringBuffer();
+					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("INSERT INTO  ");
 					queryInsert.append(Costanti.SEQUENZA_DA_INVIARE);
 					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )");
@@ -296,7 +296,7 @@ public class ConsegnaInOrdine  {
 					}
 					else{
 						// busta non capostipite
-						StringBuffer query = new StringBuffer();
+						StringBuilder query = new StringBuilder();
 						query.append("SELECT * FROM ");
 						query.append(Costanti.SEQUENZA_DA_RICEVERE);
 						query.append(" WHERE ID_COLLABORAZIONE=?");
@@ -455,7 +455,7 @@ public class ConsegnaInOrdine  {
 					}else{
 						// busta da controllare
 
-						StringBuffer query = new StringBuffer();
+						StringBuilder query = new StringBuilder();
 						if(Configurazione.getSqlQueryObjectType()!=null){
 							ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
 							sqlQueryObject.addSelectField("SEQUENZA_ATTESA");
@@ -577,7 +577,7 @@ public class ConsegnaInOrdine  {
 				if(busta.getID().equals(busta.getCollaborazione())){
 					// busta Capostipite
 
-					StringBuffer queryInsert = new StringBuffer();
+					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("INSERT INTO  ");
 					queryInsert.append(Costanti.SEQUENZA_DA_RICEVERE);
 					queryInsert.append(" VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? )");
@@ -594,7 +594,7 @@ public class ConsegnaInOrdine  {
 
 				}else{
 					// aggiorno prossima sequenza attesa
-					StringBuffer queryInsert = new StringBuffer();
+					StringBuilder queryInsert = new StringBuilder();
 					queryInsert.append("UPDATE ");
 					queryInsert.append(Costanti.SEQUENZA_DA_RICEVERE);
 					queryInsert.append(" SET SEQUENZA_ATTESA = ? WHERE ID_COLLABORAZIONE=? ");

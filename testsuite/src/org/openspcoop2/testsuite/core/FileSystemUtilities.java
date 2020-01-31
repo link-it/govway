@@ -32,6 +32,7 @@ import org.openspcoop2.core.diagnostica.utils.XMLUtils;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.xml.ValidatoreXSD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.date.DateUtils;
 import org.testng.Assert;
 import org.testng.Reporter;
 
@@ -58,7 +59,7 @@ public class FileSystemUtilities {
 			File [] logs = logDir.listFiles();
 			Assert.assertTrue(logs!=null);
 			Assert.assertTrue(logs.length>0);
-			StringBuffer erroriLogs = new StringBuffer();
+			StringBuilder erroriLogs = new StringBuilder();
 			for(int i=0; i<logs.length; i++){
 				File log = logs[i];
 				File tmp = null;
@@ -88,7 +89,7 @@ public class FileSystemUtilities {
 									line = line.substring(1);
 									if(line.startsWith("<")){
 										String data = line.substring(1,line.indexOf(">"));
-										SimpleDateFormat dateformat = new SimpleDateFormat ("dd-MM-yyyy HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+										SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("dd-MM-yyyy HH:mm:ss.SSS");
 										Date dataLog = dateformat.parse(data);
 										if(dataLog.after(dataAvvioGruppoTest)){
 
@@ -202,12 +203,12 @@ public class FileSystemUtilities {
 
 				ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(log));
 				BufferedReader bf = new BufferedReader(new InputStreamReader(bin));
-				StringBuffer msgDiagnostico = null;
+				StringBuilder msgDiagnostico = null;
 				String line = bf.readLine();
 				int count = 0;
 				while( line != null ){
 
-					msgDiagnostico = new StringBuffer();
+					msgDiagnostico = new StringBuilder();
 
 					line = line.trim();
 
@@ -323,12 +324,12 @@ public class FileSystemUtilities {
 
 				ByteArrayInputStream bin = new ByteArrayInputStream(org.openspcoop2.utils.resources.FileSystemUtilities.readBytesFromFile(log));
 				BufferedReader bf = new BufferedReader(new InputStreamReader(bin));
-				StringBuffer tracciamento = null;
+				StringBuilder tracciamento = null;
 				String line = bf.readLine();
 				int count = 0;
 				while( line != null ){
 
-					tracciamento = new StringBuffer();
+					tracciamento = new StringBuilder();
 
 					line = line.trim();
 

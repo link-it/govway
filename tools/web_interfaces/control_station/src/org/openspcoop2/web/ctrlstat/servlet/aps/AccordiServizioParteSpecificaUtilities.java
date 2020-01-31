@@ -928,7 +928,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			IDSoggetto idSoggettoFruitore, IDServizio idServizio,
 			IExtendedListServlet extendedServlet,
 			String superUser, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, 
-			StringBuffer inUsoMessage, String newLine) throws Exception {
+			StringBuilder inUsoMessage, String newLine) throws Exception {
 		
 		SoggettiCore soggettiCore = new SoggettiCore(apsCore);
 		PddCore pddCore = new PddCore(apsCore);
@@ -1213,7 +1213,7 @@ public class AccordiServizioParteSpecificaUtilities {
 
 	public static void deleteAccordoServizioParteSpecificaPorteApplicative(IDPortaApplicativa idPortaApplicativa, IDServizio idServizio,
 			String superUser, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
-			StringBuffer inUsoMessage) throws Exception {
+			StringBuilder inUsoMessage) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
@@ -1264,7 +1264,7 @@ public class AccordiServizioParteSpecificaUtilities {
 	public static void deleteAccordoServizioParteSpecificaFruitoriPorteDelegate(List<IDPortaDelegata> listPortaDelegataDaELiminare,
 			AccordoServizioParteSpecifica asps, IDSoggetto idSoggettoFruitore,
 			String superUser, AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper,
-			StringBuffer inUsoMessage) throws Exception {
+			StringBuilder inUsoMessage) throws Exception {
 		
 		PorteDelegateCore porteDelegateCore = new PorteDelegateCore(apsCore);
 		ConfigurazioneCore confCore = new ConfigurazioneCore(apsCore);
@@ -2151,7 +2151,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String tipoFruitore, String nomeFruitore,
 			String protocollo, String profilo, String portType,
 			boolean gestioneFruitori, boolean gestioneErogatori,
-			StringBuffer inUsoMessage) throws Exception {
+			StringBuilder inUsoMessage) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		

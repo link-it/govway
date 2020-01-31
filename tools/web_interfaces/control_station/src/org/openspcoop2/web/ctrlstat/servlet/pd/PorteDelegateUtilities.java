@@ -43,7 +43,7 @@ public class PorteDelegateUtilities {
 
 	public static void deletePortaDelegataAzioni(PortaDelegata portaDelegata, AccordoServizioParteSpecifica asps,
 			PorteDelegateCore porteDelegateCore, PorteDelegateHelper porteDelegateHelper, 
-			StringBuffer inUsoMessage, List<String> azioni, 
+			StringBuilder inUsoMessage, List<String> azioni, 
 			String userLogin) throws Exception {
 		
 		String azioneGiaEsistente = portaDelegata.getAzione().getAzioneDelegata(0); // prendo la prima
@@ -69,8 +69,8 @@ public class PorteDelegateUtilities {
 		}
 		
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteDelegateCore);
-		StringBuffer bfTrasformazioni = new StringBuffer();
-		StringBuffer bfCT = new StringBuffer();
+		StringBuilder bfTrasformazioni = new StringBuilder();
+		StringBuilder bfCT = new StringBuilder();
 		
 		for (int i = 0; i < azioni.size(); i++) {
 

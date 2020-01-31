@@ -67,7 +67,7 @@ public class User implements Serializable {
 			return null;
 		}
 		else {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (String p : this.protocolliSupportati) {
 				if(bf.length()>0) {
 					bf.append(",");

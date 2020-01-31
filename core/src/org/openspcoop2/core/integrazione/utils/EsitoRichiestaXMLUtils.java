@@ -63,7 +63,7 @@ public class EsitoRichiestaXMLUtils  {
 		return EsitoRichiestaXMLUtils.validatoreXSD;
 	}
 	
-	public static boolean validate(EsitoRichiesta esito,StringBuffer motivoErroreValidazione){
+	public static boolean validate(EsitoRichiesta esito,StringBuilder motivoErroreValidazione){
 		int size = motivoErroreValidazione.length();
 		
 		if(esito.getMessageId()==null){
@@ -178,7 +178,7 @@ public class EsitoRichiestaXMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateEsitoRichiesta(EsitoRichiesta esitoRichiesta,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -190,7 +190,7 @@ public class EsitoRichiestaXMLUtils  {
 	
 	public static void generateEsitoRichiesta(EsitoRichiesta esitoRichiesta,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -202,7 +202,7 @@ public class EsitoRichiestaXMLUtils  {
 	
 	public static byte[] generateEsitoRichiesta(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -214,7 +214,7 @@ public class EsitoRichiestaXMLUtils  {
 
 	public static void generateEsitoRichiesta(EsitoRichiesta esitoRichiesta,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -228,7 +228,7 @@ public class EsitoRichiestaXMLUtils  {
 	
 	public static String generateEsitoRichiestaAsJson(EsitoRichiesta esitoRichiesta) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(EsitoRichiestaXMLUtils.validate(esitoRichiesta, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

@@ -359,7 +359,7 @@ public abstract class AbstractXPathExpressionEngine {
 				// La concatenazione openspcoop, invece ritornera' errore.
 				String param = pattern.substring("concat_openspcoop(".length(),pattern.length()-1);
 				String [] params =param.split(",");
-				StringBuffer bfResult = new StringBuffer();
+				StringBuilder bfResult = new StringBuilder();
 				for(int i=0; i<params.length;i++){
 					
 					// Check se abbiamo una costante od una espressione da valutare
@@ -450,7 +450,7 @@ public abstract class AbstractXPathExpressionEngine {
 				}
 				
 				if(bfResult.length()<=0){
-					StringBuffer bfDNC = new StringBuffer();
+					StringBuilder bfDNC = new StringBuilder();
 					Enumeration<?> en = dnc.getPrefixes();
 					while (en.hasMoreElements()) {
 						String prefix = (String) en.nextElement();
@@ -548,7 +548,7 @@ public abstract class AbstractXPathExpressionEngine {
 				
 				if(notFound){
 					//log.info("ContentBased, nessun match trovato");
-					StringBuffer bfDNC = new StringBuffer();
+					StringBuilder bfDNC = new StringBuilder();
 					Enumeration<?> en = dnc.getPrefixes();
 					while (en.hasMoreElements()) {
 						String prefix = (String) en.nextElement();
@@ -687,7 +687,7 @@ public abstract class AbstractXPathExpressionEngine {
 	 */
 	public String toString(NodeList rootNode){
 		
-		StringBuffer resultBuffer = new StringBuffer();
+		StringBuilder resultBuffer = new StringBuilder();
 		this.toString(rootNode,resultBuffer,1);
 		return resultBuffer.toString();
 		
@@ -740,7 +740,7 @@ public abstract class AbstractXPathExpressionEngine {
 		return path;
 	}
 	
-	private void toString(NodeList rootNode,StringBuffer resultBuffer, int livello){
+	private void toString(NodeList rootNode,StringBuilder resultBuffer, int livello){
 		
 		if (rootNode.getLength()==1 && rootNode.item(0).getNodeType()==Node.TEXT_NODE && resultBuffer.length()==0){
 			//System.out.println("TEXT ["+rootNode.item(0).getNodeType()+"] confronto con ["+Node.TEXT_NODE+"]");
@@ -815,7 +815,7 @@ public abstract class AbstractXPathExpressionEngine {
 				
 				if (childNodes.getLength() > 0){
 					
-					StringBuffer resultBuffer = new StringBuffer();
+					StringBuilder resultBuffer = new StringBuilder();
 					
 					boolean hasChildNodes = false;
 					for(int i=0;i<childNodes.getLength();i++){
@@ -857,7 +857,7 @@ public abstract class AbstractXPathExpressionEngine {
 		return l;
 	}
 	
-	private void printAttributes(Node aNode,StringBuffer resultBuffer){
+	private void printAttributes(Node aNode,StringBuilder resultBuffer){
 		NamedNodeMap attr = aNode.getAttributes();
 		for (int i=0;i<attr.getLength();i++){
 			Node item = attr.item(i);

@@ -694,7 +694,7 @@ public class JsonPathExpressionEngine {
 						risultato = l.get(0);
 					}
 					else {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						for (String s : l) {
 							if(bf.length()>0) {
 								bf.append(" ");	

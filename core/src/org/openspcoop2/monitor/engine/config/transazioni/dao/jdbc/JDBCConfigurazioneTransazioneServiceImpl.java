@@ -385,7 +385,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectUpdate_configurazioneTransazionePlugin_deleteList.addWhereCondition("id_configurazione_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazionePlugin_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
-		StringBuffer marks_configurazioneTransazione_configurazioneTransazionePlugin = new StringBuffer();
+		StringBuilder marks_configurazioneTransazione_configurazioneTransazionePlugin = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazionePlugin_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_configurazioneTransazione_configurazioneTransazionePlugin_da_non_eliminare) {
 				if(marks_configurazioneTransazione_configurazioneTransazionePlugin.length() > 0) {
@@ -477,7 +477,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectUpdate_configurazioneTransazioneStato_deleteList.addWhereCondition("id_configurazione_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazioneStato_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
-		StringBuffer marks_configurazioneTransazione_configurazioneTransazioneStato = new StringBuffer();
+		StringBuilder marks_configurazioneTransazione_configurazioneTransazioneStato = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazioneStato_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_configurazioneTransazione_configurazioneTransazioneStato_da_non_eliminare) {
 				if(marks_configurazioneTransazione_configurazioneTransazioneStato.length() > 0) {
@@ -644,7 +644,7 @@ public class JDBCConfigurazioneTransazioneServiceImpl extends JDBCConfigurazione
 		sqlQueryObjectUpdate_configurazioneTransazioneRisorsaContenuto_deleteList.addWhereCondition("id_conf_transazione=?");
 		jdbcObjects_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_delete.add(new JDBCObject(configurazioneTransazione.getId(), Long.class));
 
-		StringBuffer marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = new StringBuffer();
+		StringBuilder marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto = new StringBuilder();
 		if(ids_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto_da_non_eliminare) {
 				if(marks_configurazioneTransazione_configurazioneTransazioneRisorsaContenuto.length() > 0) {

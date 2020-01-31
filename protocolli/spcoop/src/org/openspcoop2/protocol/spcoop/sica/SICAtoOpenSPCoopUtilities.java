@@ -180,7 +180,7 @@ public class SICAtoOpenSPCoopUtilities {
 	public static String buildIDSoggettoSica(String soggetto,boolean createURI) throws SICAToOpenSPCoopUtilitiesException{
 		if(soggetto==null || "".equals(soggetto))
 			throw new SICAToOpenSPCoopUtilitiesException("Identificativo soggetto non fornito");
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(createURI){
 			bf.append("uri:dn:");
 		}
@@ -287,7 +287,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(versione==null || "".equals(versione))
 			throw new SICAToOpenSPCoopUtilitiesException("Versione non fornita");
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("urn:");
 		bf.append(Costanti.TIPO_ACCORDO_COOPERAZIONE);
 		bf.append(":");
@@ -397,7 +397,7 @@ public class SICAtoOpenSPCoopUtilities {
 		if(versione==null || "".equals(versione))
 			throw new SICAToOpenSPCoopUtilitiesException("Versione non fornita");
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("urn:");
 		bf.append(tipo_accordo);
 		bf.append(":");

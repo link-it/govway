@@ -198,7 +198,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 							risorsa = confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConfigurazionePdD(aliasForVerificaConnettore);
 						}
 						
-						StringBuffer bfExternal = new StringBuffer();
+						StringBuilder bfExternal = new StringBuilder();
 						String descrizione = confCore.getJmxPdD_descrizione(aliasForVerificaConnettore);
 						if(aliases.size()>1) {
 							if(index>0) {

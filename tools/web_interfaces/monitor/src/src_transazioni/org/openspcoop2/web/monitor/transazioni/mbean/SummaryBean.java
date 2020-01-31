@@ -875,10 +875,10 @@ public class SummaryBean implements Serializable{
 		sb.append(url);
 		sb.append("' caption='Esito Transazioni' animation='0' rotateLabels='1' slantLabels='1' xAxisName='Tempo' yAxisName='Totale Transazioni' showValues='0' numberPrefix='#' paletteColors='"+color+"' >");
 
-		StringBuffer categories = new StringBuffer();
-		StringBuffer ok = new StringBuffer();
-		StringBuffer fault = new StringBuffer();
-		StringBuffer ko = new StringBuffer();
+		StringBuilder categories = new StringBuilder();
+		StringBuilder ok = new StringBuilder();
+		StringBuilder fault = new StringBuilder();
+		StringBuilder ko = new StringBuilder();
 
 		for (ResLive res : this.dataLive) {
 			categories.append("<category label='"+formatter.format(res.getRisultato())+"' />");

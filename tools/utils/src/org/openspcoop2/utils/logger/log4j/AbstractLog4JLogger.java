@@ -139,7 +139,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	@Override
 	public void log(IContext contextParam) throws UtilsException {
 				
-		StringBuffer showContext = new StringBuffer();
+		StringBuilder showContext = new StringBuilder();
 		showContext.append("<").append(this.getContext().getIdTransaction()).append(">\n");
 		
 		this.logContext(contextParam, showContext);
@@ -148,13 +148,13 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 		
 		
 	}
-	protected abstract void logContext(IContext contextParam, StringBuffer showContext);
+	protected abstract void logContext(IContext contextParam, StringBuilder showContext);
 		
 
 	@Override
 	public void log(Event event) throws UtilsException {
 
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 
 		if(event.getSeverity()==null){
 			throw new UtilsException("Severity undefined");
@@ -237,7 +237,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 			return;
 		}
 		
-		StringBuffer showMsg = new StringBuffer();
+		StringBuilder showMsg = new StringBuilder();
 		
 		if(diagnostic.getIdTransaction()!=null)
 			showMsg.append("<").append(diagnostic.getIdTransaction()).append(">");
@@ -340,7 +340,7 @@ public abstract class AbstractLog4JLogger extends AbstractBasicLogger  {
 	@Override
 	public void log(Message message) throws UtilsException {
 		
-		StringBuffer out = new StringBuffer();
+		StringBuilder out = new StringBuilder();
 		
 		if(message.getIdTransaction()!=null){
 			out.append("<").append(message.getIdTransaction()).append(">");

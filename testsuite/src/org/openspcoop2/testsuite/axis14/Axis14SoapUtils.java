@@ -314,7 +314,7 @@ public class Axis14SoapUtils {
 				return print;		
 			}
 			else{
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(fault!=null){
 					bf.append("SOAPFault");
 					if(fault.getFaultCode()!=null && !"".equals(fault.getFaultCode())){
@@ -1196,7 +1196,7 @@ public class Axis14SoapUtils {
 			//System.out.println("MSG ["+xml+"]");
 			
 			if(!xml.startsWith("<?xml")){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("<?xml version=\"1.0\" encoding=\"");
 				bf.append(((org.apache.axis.SOAPPart)msg.getSOAPPart()).getEncoding());
 				bf.append("\"?>");

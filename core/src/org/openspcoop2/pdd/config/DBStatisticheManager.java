@@ -143,7 +143,7 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 		}
 		else {
 			try {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(idPDD!=null) {
 					bf.append(idPDD.toString());
 					if(modulo!=null) {

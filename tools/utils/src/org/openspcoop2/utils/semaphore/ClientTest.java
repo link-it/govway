@@ -523,7 +523,7 @@ public class ClientTest {
 					sqlQuery.addWhereIsNullCondition(mapping.getUniqueConditionColumnName(0));
 				}
 				pstmt = con.prepareStatement(sqlQuery.createSQLQuery());
-				StringBuffer bf = new StringBuffer(sqlQuery.createSQLQuery());
+				StringBuilder bf = new StringBuilder(sqlQuery.createSQLQuery());
 				if(applicativeId!=null) {
 					pstmt.setString(1, applicativeId);
 					String s = bf.toString();
@@ -639,7 +639,7 @@ public class ClientTest {
 			throw new Exception("Error occurs in threads");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(lockAcquisiti!=THREADS) {
 			String msg = "Riscontrata una differenza tra i lock acquisiti ("+lockAcquisiti+") ed i threads ("+THREADS+")";
 			log.error(msg);

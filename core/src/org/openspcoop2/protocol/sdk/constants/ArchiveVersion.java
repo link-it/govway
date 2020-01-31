@@ -74,7 +74,7 @@ public enum ArchiveVersion {
 		BufferedReader br = new BufferedReader(sr);
 		try{
 			String v = br.readLine();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while((v=br.readLine())!=null){
 				if(bf.length()>0){
 					bf.append("\n");

@@ -86,7 +86,7 @@ public class FiltroRicercaFruizioniServizio extends FiltroRicercaServizi impleme
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro Fruizione: ");
 		this.addDetails(bf);
 		if(bf.length()=="Filtro Fruizione: ".length())
@@ -94,7 +94,7 @@ public class FiltroRicercaFruizioniServizio extends FiltroRicercaServizi impleme
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.tipoSoggettoFruitore!=null)
 			bf.append(" [tipo-soggetto-fruitore:"+this.tipoSoggettoFruitore+"]");
 		if(this.nomeSoggettoFruitore!=null)

@@ -109,7 +109,7 @@ public class TranslatorPayloadProfilesDefault {
 			BufferedReader br = new BufferedReader(new StringReader(this.getPayloadDefault()));
 			List<Payload> list = new ArrayList<Payload>();
 			String line;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
 				if(bf.length()>0) {
 					bf.append("\n");
@@ -130,7 +130,7 @@ public class TranslatorPayloadProfilesDefault {
 						//System.out.println("Test ["+p.getName()+"]");
 						list.add(p);
 					}
-					bf = new StringBuffer();
+					bf = new StringBuilder();
 				}
 			}
 			return list;
@@ -166,7 +166,7 @@ public class TranslatorPayloadProfilesDefault {
 			BufferedReader br = new BufferedReader(new StringReader(this.getPayloadProfileDefault()));
 			List<PayloadProfile> list = new ArrayList<PayloadProfile>();
 			String line;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while ((line = br.readLine()) != null) {
 				if(bf.length()>0) {
 					bf.append("\n");
@@ -187,7 +187,7 @@ public class TranslatorPayloadProfilesDefault {
 						//System.out.println("DESERIALIZZATO ["+p.getName()+"] ["+p.getAttachmentList().size()+"]");
 						list.add(p);
 					}
-					bf = new StringBuffer();
+					bf = new StringBuilder();
 				}
 			}
 			return list;
@@ -201,7 +201,7 @@ public class TranslatorPayloadProfilesDefault {
 	
 	public String getAsStringPayloadProfilesDefaultAsCompleteXml() throws ProtocolException {
 		try {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			bf.append("\t<payloadProfiles>\n\n");
 			

@@ -190,7 +190,7 @@ public class AuthorizationManager {
 		this.authorizedRequired = this.basic || this.ssl || this.principal;
 	}
 
-	private void logError(Logger log,String message,StringBuffer bf){
+	private void logError(Logger log,String message,StringBuilder bf){
 		if(bf.length()>0){
 			bf.append("\n");
 		}
@@ -205,7 +205,7 @@ public class AuthorizationManager {
 		}
 		
 		HttpServletCredential identity = new HttpServletCredential(httpServletRequest,log,true);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		boolean basicOk = false;
 		if(this.basic){

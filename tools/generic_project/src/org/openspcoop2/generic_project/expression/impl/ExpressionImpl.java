@@ -1002,7 +1002,7 @@ public class ExpressionImpl implements IExpression {
 				throw new RuntimeException("Expression is not initialized");
 			}
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if(this.expressionEngine==null){
 				bf.append("");
 			}else{
@@ -1080,7 +1080,7 @@ public class ExpressionImpl implements IExpression {
 			return bf.toString();
 		}
 	}
-	protected void printForceIndex(StringBuffer bf){
+	protected void printForceIndex(StringBuilder bf){
 		if(this.forceIndexes.size()>0){
 			for (Iterator<Index> iterator =this.forceIndexes.iterator(); iterator.hasNext();) {
 				Index forceIndex = iterator.next();			

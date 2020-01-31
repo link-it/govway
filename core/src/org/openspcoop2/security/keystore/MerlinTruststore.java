@@ -54,7 +54,7 @@ public class MerlinTruststore implements Serializable {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("TrustStore (").append(this.tipoStore).append(") ").append(this.pathStore);
 		return bf.toString();
 	}

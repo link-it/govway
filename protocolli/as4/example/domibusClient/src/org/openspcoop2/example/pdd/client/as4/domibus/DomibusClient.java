@@ -44,6 +44,7 @@ import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.RetrieveMessageRequ
 import org.openspcoop2.protocol.as4.stub.backend_ecodex.v1_1.RetrieveMessageResponse;
 import org.openspcoop2.protocol.as4.utils.AS4StubUtils;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
@@ -230,7 +231,7 @@ public class DomibusClient {
 				}
 				else{
 					String format = "yyyy-MM-dd_HH:mm:ss.SSS";
-					SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+					SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(format);
 					int index = 1;
 					for (ErrorResultImpl error : errors.getItem()) {
 						String data = null;

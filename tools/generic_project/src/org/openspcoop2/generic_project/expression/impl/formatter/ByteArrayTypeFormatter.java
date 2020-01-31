@@ -40,7 +40,7 @@ public class ByteArrayTypeFormatter implements ITypeFormatter<byte[]> {
 		// 1024 = 1K
 		// Visualizzo al massimo 5K
 		int max = 5 * 1024;
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try{
 			sb.append('\'').append(Utilities.convertToPrintableText((byte[])o, max)).append('\'');
 		}catch(Exception e){

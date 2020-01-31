@@ -64,7 +64,7 @@ public class MtomXomReference {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("NodeName[").append(this.nodeName).append("]");
 		bf.append(" ContentId[").append(this.contentId).append("]");
 		return bf.toString();

@@ -39,11 +39,11 @@ import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 public class PorteApplicativeUtilities {
 
 	public static void deletePortaApplicativaAzioni(PortaApplicativa pa, PorteApplicativeCore porteApplicativeCore, PorteApplicativeHelper porteApplicativeHelper, 
-			StringBuffer inUsoMessage, List<String> azioni, String userLogin) throws Exception {
+			StringBuilder inUsoMessage, List<String> azioni, String userLogin) throws Exception {
 	
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
-		StringBuffer bfTrasformazioni = new StringBuffer();
-		StringBuffer bfCT = new StringBuffer();
+		StringBuilder bfTrasformazioni = new StringBuilder();
+		StringBuilder bfCT = new StringBuilder();
 		
 		for (int i = 0; i < azioni.size(); i++) {
 

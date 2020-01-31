@@ -163,7 +163,7 @@ public class DataElement {
 		return this.getLabel(true);
 	}
 	public String getLabel(boolean elementsRequiredEnabled) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.bold){
 			bf.append("<B>");
 		}
@@ -504,7 +504,7 @@ public class DataElement {
 			return "";
 		}
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < this.selezionati.length; i++) {
 			if(sb.length() > 0)
 				sb.append(", ");
@@ -682,7 +682,7 @@ public class DataElement {
 	}
 	
 	public String getDataAttributes() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		if(!this.dataAttributes.isEmpty()) {
 			for (String key : this.dataAttributes.keySet()) {

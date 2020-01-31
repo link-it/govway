@@ -52,7 +52,7 @@ public class ConfigurazioneUtilities {
 
 	public static boolean alreadyExists(TipoOperazione tipoOperazione, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper, 
 			AttivazionePolicy policy, InfoPolicy infoPolicy, RuoloPolicy ruoloPorta, String nomePorta, ServiceBinding serviceBinding,
-			StringBuffer existsMessage, String newLine, String modalita) throws Exception {
+			StringBuilder existsMessage, String newLine, String modalita) throws Exception {
 		if(infoPolicy!=null){
 			
 			String perApi = "globale";
@@ -108,9 +108,9 @@ public class ConfigurazioneUtilities {
 	}
 
 	public static void deleteAttivazionePolicy(List<AttivazionePolicy> policies , ConfigurazioneHelper confHelper, ConfigurazioneCore confCore, String userLogin,
-			StringBuffer inUsoMessage, String newLine, List<AttivazionePolicy> policiesRimosse) throws DriverControlStationException, DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverRegistroServiziException, ControlStationCoreException, Exception {
+			StringBuilder inUsoMessage, String newLine, List<AttivazionePolicy> policiesRimosse) throws DriverControlStationException, DriverConfigurazioneNotFound, DriverConfigurazioneException, DriverRegistroServiziNotFound, DriverRegistroServiziException, ControlStationCoreException, Exception {
 		
-		StringBuffer deleteMessage = new StringBuffer();
+		StringBuilder deleteMessage = new StringBuilder();
 		
 		for (AttivazionePolicy attivazionePolicy : policies) {
 			
@@ -124,7 +124,7 @@ public class ConfigurazioneUtilities {
 				allarmiUtilizzanoPolicy.add("Allarme1");
 				
 				if(allarmiUtilizzanoPolicy!=null && allarmiUtilizzanoPolicy.size()>0){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					bf.append("La policy '"+attivazionePolicy.getIdActivePolicy()+"' risulta utilizzata da ");
 					bf.append(allarmiUtilizzanoPolicy.size());
 					if(allarmiUtilizzanoPolicy.size()<2){

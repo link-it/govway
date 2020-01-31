@@ -783,7 +783,7 @@ public class ServletTestService extends HttpServlet {
 			}
 			
 			String contentTypeRichiesta = req.getContentType();
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			sb.append("--------  Messaggio ricevuto il : "+(new Date()).toString()+" [ct:"+contentTypeRichiesta+"] -------------\n\n");
 			if(logMessage){
 				sb.append(new String(contenuto));

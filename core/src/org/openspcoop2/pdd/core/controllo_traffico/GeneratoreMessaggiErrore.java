@@ -212,7 +212,7 @@ public class GeneratoreMessaggiErrore {
 		
 		HandlerException he =  null;
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(erroreGenerico==false){
 			bf.append("Rilevate "+policyViolate.size()+" policy violate:\n");
 		}
@@ -251,7 +251,7 @@ public class GeneratoreMessaggiErrore {
 		
 		he.setCustomizedResponse(true);
 		he.setCustomizedResponseAs4xxCode(true);
-		StringBuffer bfCode = new StringBuffer();
+		StringBuilder bfCode = new StringBuilder();
 		for (int i = 0; i < policyViolate.size(); i++) {
 			RisultatoVerificaPolicy risultato = policyViolate.get(i);
 			if(i>0){
@@ -266,7 +266,7 @@ public class GeneratoreMessaggiErrore {
 	} 
 
 	private static String toCode(RisultatoVerificaPolicy risultato) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(risultato.isErroreGenerico()){
 			bf.append(ERRORE_GENERICO_DURANTE_VERIFICA);
 		}

@@ -113,7 +113,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 	}
 
 	public String getXml() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		try {
 			SimpleDateFormat sdf;
 			SimpleDateFormat sdf_last_hour = new SimpleDateFormat(CostantiGrafici.PATTERN_HH,
@@ -274,7 +274,7 @@ public class StatsPersonalizzateBean extends BaseStatsMBean<ConfigurazioneStatis
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
-		StringBuffer caption = new StringBuffer(
+		StringBuilder caption = new StringBuilder(
 				captionText);
 //		StatisticType tempo = this.getTempo();
 //

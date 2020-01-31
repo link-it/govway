@@ -1372,7 +1372,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max,	String periodo, String esitoContesto,String protocollo, TipologiaRicerca tipologiaRicerca) {
 
-		// StringBuffer pezzoIdPorta = new StringBuffer();
+		// StringBuilder pezzoIdPorta = new StringBuilder();
 		StatisticheGiornaliereService.log.debug("Get Esiti [id porta: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
 		try {
 			StatisticaModel model = null;
@@ -6890,7 +6890,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(risultato));
 						
 						String credenziale = credenzialeMittente.getCredenziale();
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						if(CredenzialeClientAddress.isSocketAddressDBValue(credenziale)) {
 							bf.append(CredenzialeClientAddress.convertSocketDBValueToOriginal(credenziale));
 							if(CredenzialeClientAddress.isTransportAddressDBValue(credenziale)) {

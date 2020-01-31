@@ -80,7 +80,7 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro:");
 		this.addDetails(bf);
 		if(this.idRuolo!=null)
@@ -104,7 +104,7 @@ public class FiltroRicercaSoggetti extends FiltroRicerca implements Serializable
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.nomePdd!=null)
 			bf.append(" [nomePdd:"+this.nomePdd+"]");
 		super.addDetails(bf);

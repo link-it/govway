@@ -111,7 +111,7 @@ public final class EliminazioneXML extends Action {
 				return ServletUtils.getStrutsForwardEditModeInProgress(mapping, Costanti.OBJECT_NAME_ARCHIVI_ELIMINAZIONE_XML, Costanti.TIPO_OPERAZIONE_ARCHIVI_ELIMINAZIONE_XML);
 			}
 
-			StringBuffer errorBuffer = new StringBuffer();
+			StringBuilder errorBuffer = new StringBuilder();
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			FormFile ff = fileUpload.getTheFile();
 

@@ -1112,7 +1112,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 			// ListaErrori
 			if(xmlObject.getListaErrori()!=null && xmlObject.getListaErrori().sizeErroreList()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append(xmlObject.getListaErrori().sizeErroreList()+" errori rilevati: ");
 				for (int i = 0; i < xmlObject.getListaErrori().sizeErroreList(); i++) {
 					it.gov.agenziaentrate.ivaservizi.docs.xsd.fattura.messaggi.v1_0.ErroreType errore = xmlObject.getListaErrori().getErrore(i);
@@ -1187,7 +1187,7 @@ public class SDIValidatoreServizioTrasmissioneFatture {
 	
 			// ListaErrori
 			if(xmlObject.getListaErrori()!=null && xmlObject.getListaErrori().sizeErroreList()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append(xmlObject.getListaErrori().sizeErroreList()+" errori rilevati: ");
 				for (int i = 0; i < xmlObject.getListaErrori().sizeErroreList(); i++) {
 					ErroreType errore = xmlObject.getListaErrori().getErrore(i);

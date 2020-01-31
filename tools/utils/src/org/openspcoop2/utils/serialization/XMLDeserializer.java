@@ -169,7 +169,7 @@ public class XMLDeserializer implements IDeserializer{
 		try{
 			char [] reads = new char[Utilities.DIMENSIONE_BUFFER];
 			int letti = 0;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while( (letti=reader.read(reads)) != -1 ){
 				bf.append(reads, 0, letti);
 			}

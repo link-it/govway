@@ -129,7 +129,7 @@ public class ScopeApiServiceImpl extends BaseImpl implements ScopeApi {
 			final org.openspcoop2.core.registry.Scope scope = BaseHelper.evalnull( () -> sEnv.scopeCore.getScope(nome) );
 			
 			if ( scope != null ) {
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				ScopeUtilities.deleteScope(scope, sEnv.userLogin, sEnv.scopeCore, sEnv.scopeHelper, inUsoMessage, "\n");
 				
 				if (inUsoMessage.length() > 0) {

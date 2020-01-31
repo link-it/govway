@@ -40,7 +40,7 @@ public class DateBuilder {
 	 * Metodo che si occupa di costruire una stringa formata da una data
 	 * conforme alla specifica.
 	 * La Data deve essere formato da :
-	 * aaaa-mm-ggThh:mm:ss    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
+	 * yyyy-MM-ddThh:mm:ss    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
 	 * 
 	 * @return un oggetto String contenente la data secondo specifica.
 	 * 

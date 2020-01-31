@@ -127,7 +127,7 @@ public final class AccordiServizioParteSpecificaAllegatiView extends Action {
 
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 
-			StringBuffer contenutoAllegato = new StringBuffer();
+			StringBuilder contenutoAllegato = new StringBuilder();
 			String errore = Utilities.getTestoVisualizzabile(doc.getByteContenuto(),contenutoAllegato);
 
 			// setto la barra del titolo

@@ -67,7 +67,7 @@ public class SystemPropertiesManager {
 		if(sps!=null && sps.sizeSystemPropertyList()>0){
 						
 			// set new propertis
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (int i = 0; i < sps.sizeSystemPropertyList(); i++) {
 				Property sp = sps.getSystemProperty(i);
 				String nome = sp.getNome();
@@ -104,7 +104,7 @@ public class SystemPropertiesManager {
 		Properties p = System.getProperties();
 		if(p!=null){
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			Enumeration<Object> keys = p.keys();
 			java.util.ArrayList<String> listKeys = new ArrayList<String>();
@@ -159,7 +159,7 @@ public class SystemPropertiesManager {
 		}
 		System.clearProperty(key);
 		String oldProperties = System.getProperty(SYSTEM_PROPERTIES);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(oldProperties!=null && oldProperties.length()>0){
 			String [] names = oldProperties.split(",");
 			for (int j = 0; j < names.length; j++) {

@@ -27,6 +27,7 @@ import java.util.List;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneFunzionalita;
 import org.openspcoop2.utils.beans.BlackListElement;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 
 /**     
@@ -57,8 +58,8 @@ public class TempiElaborazioneBean extends TempiElaborazione {
 	private String _getInfoTempiElaborazione(TempiElaborazioneFunzionalita funzionalita) {
 		
 		if(funzionalita!=null) {
-			StringBuffer bf = new StringBuffer();
-			SimpleDateFormat dateformat = new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
+			StringBuilder bf = new StringBuilder();
+			SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(format);
 			
 			if(funzionalita.getLatenza()>=0) {
 				bf.append("Latenza: ").append(funzionalita.getLatenza()).append("ms");

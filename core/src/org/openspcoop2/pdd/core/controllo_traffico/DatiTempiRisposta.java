@@ -36,7 +36,7 @@ public class DatiTempiRisposta {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("connectionTimeout[").append(this.connectionTimeout).append("]");
 		bf.append(" readConnectionTimeout[").append(this.readConnectionTimeout).append("]");
 		bf.append(" avgResponseTime[").append(this.avgResponseTime).append("]");

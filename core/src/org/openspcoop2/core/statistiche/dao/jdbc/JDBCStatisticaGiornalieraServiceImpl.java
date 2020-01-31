@@ -481,7 +481,7 @@ public class JDBCStatisticaGiornalieraServiceImpl extends JDBCStatisticaGiornali
 		sqlQueryObjectUpdate_statisticaGiornalieraContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaGiornalieraContenuti_delete.add(new JDBCObject(statisticaGiornaliera.getId(), Long.class));
 
-		StringBuffer marks_statisticaGiornalieraContenuti = new StringBuffer();
+		StringBuilder marks_statisticaGiornalieraContenuti = new StringBuilder();
 		if(ids_statisticaGiornalieraContenuti_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_statisticaGiornalieraContenuti_da_non_eliminare) {
 				if(marks_statisticaGiornalieraContenuti.length() > 0) {

@@ -148,7 +148,7 @@ public class StatoServiziPdD {
 			return "";
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
@@ -178,7 +178,7 @@ public class StatoServiziPdD {
 			return "";
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
@@ -339,7 +339,7 @@ public class StatoServiziPdD {
 			return "";
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
@@ -369,7 +369,7 @@ public class StatoServiziPdD {
 			return "";
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (TipoFiltroAbilitazioneServizi tipo : list) {
 				bf.append(StatoServiziPdD.toString(tipo));
 			}
@@ -551,7 +551,7 @@ public class StatoServiziPdD {
 	/* **************** UTILITIES ***************** */
 	
 	private static String toString(TipoFiltroAbilitazioneServizi tipo){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("(");
 		
 		if(tipo.getTipoSoggettoFruitore()!=null){

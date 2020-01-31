@@ -453,7 +453,7 @@ public class FunctionField {
 	@Override
 	public String toString(){
 				
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("- Alias: "+this.alias);
 		bf.append("\n");

@@ -907,7 +907,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 			// disabilitato
 			// bisogna controllare che il servizio applicativo non sia in uso in
 			// porte applicative
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			ServiziApplicativiUtilities.checkStatoConnettore(saCore, sa, connis, inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE);
 			if(inUsoMessage.length()>0) {
 				pd.setMessage(inUsoMessage.toString());

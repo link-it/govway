@@ -203,7 +203,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	
 	public String printInfos(Logger log, String separatorGroups) throws UtilsException{
 		synchronized (this.semaphore) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			Enumeration<IDUnivocoGroupByPolicy> ids =this.mapActiveThreads.keys();
 			while (ids.hasMoreElements()) {
 				IDUnivocoGroupByPolicy datiGroupBy = 

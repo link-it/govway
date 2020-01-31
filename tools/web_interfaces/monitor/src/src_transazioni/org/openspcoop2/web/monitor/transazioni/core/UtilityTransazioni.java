@@ -124,7 +124,7 @@ public class UtilityTransazioni {
 	 * --------------------------
 	 */
 	public static String getHeaderTransazione(TransazioneBean t) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		if (StringUtils.isNotEmpty(t.getPddRuolo().toString())) {
 			sb.append("Tipologia: ");
@@ -1041,7 +1041,7 @@ public class UtilityTransazioni {
 				}
 			}
 			if(counters.size()>0){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				Iterator<String> tipi = counters.keySet().iterator();
 				while (tipi.hasNext()) {
 					String tipo = tipi.next();
@@ -1382,7 +1382,7 @@ public class UtilityTransazioni {
 			throws Exception {
 
 		if(asProperties) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if (headers != null) {
 				for (DumpHeaderTrasporto dumpHeaderTrasporto : headers) {
 					if(bf.length()>0) {
@@ -1426,7 +1426,7 @@ public class UtilityTransazioni {
 			throws Exception {
 
 		if(asProperties) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if (headers != null) {
 				for (DumpMultipartHeader dumpHeaderTrasporto : headers) {
 					if(bf.length()>0) {
@@ -1470,7 +1470,7 @@ public class UtilityTransazioni {
 			throws Exception {
 
 		if(asProperties) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if (headers != null) {
 				for (DumpHeaderAllegato dumpHeaderTrasporto : headers) {
 					if(bf.length()>0) {
@@ -1513,7 +1513,7 @@ public class UtilityTransazioni {
 			OutputStream out, boolean asProperties) throws Exception {
 		
 		if(asProperties) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if (contenuti != null) {
 				for (DumpContenuto dumpContenuto : contenuti) {
 					if(bf.length()>0) {

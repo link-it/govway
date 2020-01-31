@@ -336,7 +336,7 @@ public class RegistroServiziReader {
 			}
 		}else{
 			boolean registroRaggiungibile = false;
-			StringBuffer eccezioni = new StringBuffer();
+			StringBuilder eccezioni = new StringBuilder();
 			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
 				String nomeRegInLista= (String) en.nextElement();
 				try{
@@ -392,7 +392,7 @@ public class RegistroServiziReader {
 			}
 		}else{
 			boolean registroRaggiungibile = false;
-			StringBuffer eccezioni = new StringBuffer();
+			StringBuilder eccezioni = new StringBuilder();
 			for (Enumeration<?> en = this.registroServizi.getDriverRegistroServizi().keys() ; en.hasMoreElements() ;) {
 				String nomeRegInLista= (String) en.nextElement();
 				try{

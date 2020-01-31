@@ -110,7 +110,7 @@ public class CredenzialiInvocazione {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer("(");
+		StringBuilder bf = new StringBuilder("(");
 		bf.append(this.autenticazione);
 		if(this.username!=null) {
 			bf.append(" username:").append(this.username);

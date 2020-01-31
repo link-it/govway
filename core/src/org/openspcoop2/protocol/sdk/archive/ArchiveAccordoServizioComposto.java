@@ -55,7 +55,7 @@ public class ArchiveAccordoServizioComposto extends ArchiveAccordoServizioParteC
 			throw new ProtocolException("versione non fornita");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("AccordoServizioComposto_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

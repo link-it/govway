@@ -135,7 +135,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoConnettori = new ArrayList<String>();
 	/** Lista dei tipi di connettori ammessi */
 	private String getTipoConnettori(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoConnettori.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -148,7 +148,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoSoggetti = new ArrayList<String>();
 	/** Lista dei tipi di soggetti ammessi */
 	private String getTipoSoggetti(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoSoggetti.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -161,7 +161,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoServiziSoap = new ArrayList<String>();
 	/** Lista dei tipi di servizi ammessi */
 	private String getTipoServiziSoap(){  
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoServiziSoap.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -174,7 +174,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoServiziRest = new ArrayList<String>();
 	/** Lista dei tipi di servizi ammessi */
 	private String getTipoServiziRest(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoServiziRest.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -184,7 +184,7 @@ public class ValidazioneSemantica {
 	}
 	
 	private String getTipoServizi(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		String soap = getTipoServiziSoap();
 		if(soap!=null && !"".equals(soap)){
@@ -205,7 +205,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoMsgDiagnosticiAppender = new ArrayList<String>();
 	/** Lista dei tipi di msg diagnostici appender ammessi */
 	private String getTipoMsgDiagnosticiAppender(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoMsgDiagnosticiAppender.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -218,7 +218,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoTracciamentoAppender = new ArrayList<String>();
 	/** Lista dei tipi di tracciamento appender ammessi */
 	private String getTipoTracciamentoAppender(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoTracciamentoAppender.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -231,7 +231,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoDumpAppender = new ArrayList<String>();
 	/** Lista dei tipi di dump appender ammessi */
 	private String getTipoDumpAppender(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoDumpAppender.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -244,7 +244,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutenticazionePortaDelegata = new ArrayList<String>();
 	/** Lista dei tipi di autenticazione porta delegata ammessi */
 	private String getTipoAutenticazionePortaDelegata(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutenticazionePortaDelegata.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -257,7 +257,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutenticazionePortaApplicativa = new ArrayList<String>();
 	/** Lista dei tipi di autenticazione porta applicativa ammessi */
 	private String getTipoAutenticazionePortaApplicativa(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutenticazionePortaApplicativa.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -270,7 +270,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutorizzazionePortaDelegata = new ArrayList<String>();
 	/** Lista dei tipi di autorizzazione porta delegata ammessi */
 	private String getTipoAutorizzazionePortaDelegata(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutorizzazionePortaDelegata.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -283,7 +283,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutorizzazionePortaApplicativa = new ArrayList<String>();
 	/** Lista dei tipi di autorizzazione porta applicativa ammessi */
 	private String getTipoAutorizzazionePortaApplicativa(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutorizzazionePortaApplicativa.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -296,7 +296,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutorizzazioneContenutoPortaDelegata = new ArrayList<String>();
 	/** Lista dei tipi di autorizzazione per contenuto porta delegata  ammessi */
 	private String getTipoAutorizzazioneContenutoPortaDelegata(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutorizzazioneContenutoPortaDelegata.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -309,7 +309,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoAutorizzazioneContenutoPortaApplicativa = new ArrayList<String>();
 	/** Lista dei tipi di autorizzazione per contenuto porta applicativa  ammessi */
 	private String getTipoAutorizzazioneContenutoPortaApplicativa(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoAutorizzazioneContenutoPortaApplicativa.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -322,7 +322,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoIntegrazionePD = new ArrayList<String>();
 	/** Lista dei tipi di integrazionePD ammessi */
 	private String getTipoIntegrazionePD(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoIntegrazionePD.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -335,7 +335,7 @@ public class ValidazioneSemantica {
 	private List<String> tipoIntegrazionePA = new ArrayList<String>();
 	/** Lista dei tipi di integrazionePA ammessi */
 	private String getTipoIntegrazionePA(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for(int i=0; i<this.tipoIntegrazionePA.size(); i++){
 			if(i>0)
 				bf.append(",");
@@ -521,7 +521,7 @@ public class ValidazioneSemantica {
 
 		// Se è stata trovata almeno un'anomalia, lancio un'eccezione
 		if (!this.errori.isEmpty()) {
-			StringBuffer stringB = new StringBuffer().append("\n");
+			StringBuilder stringB = new StringBuilder().append("\n");
 			Iterator<String> itE = this.errori.iterator();
 			while (itE.hasNext())
 				stringB.append(itE.next()).append("\n");

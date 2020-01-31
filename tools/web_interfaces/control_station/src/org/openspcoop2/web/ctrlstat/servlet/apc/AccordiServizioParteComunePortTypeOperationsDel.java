@@ -126,7 +126,7 @@ public final class AccordiServizioParteComunePortTypeOperationsDel extends Actio
 				idServiziWithPortType = apsCore.getIdServiziWithPortType(idPT);
 			}catch(DriverRegistroServiziNotFound dNotF){}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteComuneUtilities.deleteAccordoServizioParteComuneOperations(as, userLogin, apcCore, apcHelper, 
 					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, pt, idServiziWithPortType, optsToRemove);

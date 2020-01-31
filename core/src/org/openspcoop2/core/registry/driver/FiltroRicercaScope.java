@@ -79,7 +79,7 @@ public class FiltroRicercaScope extends FiltroRicerca implements Serializable{
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		super.toString(false);
 		if(this.contesto!=null)
 			bf.append(" [contesto:"+this.contesto.getValue()+"]");

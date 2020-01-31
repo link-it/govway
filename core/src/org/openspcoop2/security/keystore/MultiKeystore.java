@@ -64,7 +64,7 @@ public class MultiKeystore implements Serializable  {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("MultiKeystore ").append(this.aliases);
 		return bf.toString();
 	}

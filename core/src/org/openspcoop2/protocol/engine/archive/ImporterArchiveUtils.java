@@ -1250,7 +1250,7 @@ public class ImporterArchiveUtils {
 						
 			
 			// --- workflowStatoDocumenti ---
-			StringBuffer warningInfoStatoFinale = new StringBuffer("");
+			StringBuilder warningInfoStatoFinale = new StringBuilder("");
 			if(archiveAccordoCooperazione.getAccordoCooperazione().getStatoPackage()==null){
 				if(this.gestioneWorkflowStatiAccordi){
 					try{
@@ -1378,7 +1378,7 @@ public class ImporterArchiveUtils {
 					
 			
 			// --- workflowStatoDocumenti ---
-			StringBuffer warningInfoStatoFinale = new StringBuffer("");
+			StringBuilder warningInfoStatoFinale = new StringBuilder("");
 			if(archiveAccordoServizioParteComune.getAccordoServizioParteComune().getStatoPackage()==null){
 				if(this.gestioneWorkflowStatiAccordi){
 					try{
@@ -1404,7 +1404,7 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- Aderenza WSDL ---
-			StringBuffer warningAderenzaWSDL = new StringBuffer("");
+			StringBuilder warningAderenzaWSDL = new StringBuilder("");
 			this.informazioniServizioAderentiWSDL(archiveAccordoServizioParteComune.getAccordoServizioParteComune(), warningAderenzaWSDL);
 			
 			
@@ -1585,7 +1585,7 @@ public class ImporterArchiveUtils {
 				AccordoServizioParteSpecifica asps = serviziComponenti.get(idServizioComponente.toString());
 				if(asps==null){
 					Enumeration<String> idServizi = serviziComponenti.keys();
-					StringBuffer bfException = new StringBuffer();
+					StringBuilder bfException = new StringBuilder();
 					while (idServizi.hasMoreElements()) {
 						String idS = (String) idServizi.nextElement();
 						if(bfException.length()>0){
@@ -1601,7 +1601,7 @@ public class ImporterArchiveUtils {
 				
 			
 			// --- workflowStatoDocumenti ---
-			StringBuffer warningInfoStatoFinale = new StringBuffer("");
+			StringBuilder warningInfoStatoFinale = new StringBuilder("");
 			if(archiveAccordoServizioComposto.getAccordoServizioParteComune().getStatoPackage()==null){
 				if(this.gestioneWorkflowStatiAccordi){
 					try{
@@ -1627,7 +1627,7 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- Aderenza WSDL ---
-			StringBuffer warningAderenzaWSDL = new StringBuffer("");
+			StringBuilder warningAderenzaWSDL = new StringBuilder("");
 			this.informazioniServizioAderentiWSDL(archiveAccordoServizioComposto.getAccordoServizioParteComune(), warningAderenzaWSDL);
 			
 			
@@ -1675,14 +1675,14 @@ public class ImporterArchiveUtils {
 	}
 	
 	
-	private void informazioniServizioAderentiWSDL(AccordoServizioParteComune accordoServizioParteComune,StringBuffer anomalieRiscontrate) throws Exception{
+	private void informazioniServizioAderentiWSDL(AccordoServizioParteComune accordoServizioParteComune,StringBuilder anomalieRiscontrate) throws Exception{
 		
 		try{
 		
 			String indent = "\t\t";
 			
 			// lettura WSDL Concettuale
-			StringBuffer strutturaWSDL = new StringBuffer("Struttura WSDL:\n");
+			StringBuilder strutturaWSDL = new StringBuilder("Struttura WSDL:\n");
 			//strutturaWSDL.append(indent+"=========================================\n");
 			byte[]wsdl = accordoServizioParteComune.getByteWsdlConcettuale();
 			if(wsdl==null){
@@ -1726,7 +1726,7 @@ public class ImporterArchiveUtils {
 			}
 			
 			// Accordo di Servizio registrato
-			StringBuffer strutturaAccordoOpenSPCoop = new StringBuffer("Servizi/Azioni associati all'accordo:\n");
+			StringBuilder strutturaAccordoOpenSPCoop = new StringBuilder("Servizi/Azioni associati all'accordo:\n");
 			//strutturaAccordoOpenSPCoop.append(indent+"=========================================\n");
 			java.util.ArrayList<String> listPortTypesName = new ArrayList<String>();
 			Hashtable<String, PortType> mapPtNameToObject = new Hashtable<String, PortType>();
@@ -1941,7 +1941,7 @@ public class ImporterArchiveUtils {
 					
 			
 			// --- workflowStatoDocumenti ---
-			StringBuffer warningInfoStatoFinale = new StringBuffer("");
+			StringBuilder warningInfoStatoFinale = new StringBuilder("");
 			if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getStatoPackage()==null){
 				if(this.gestioneWorkflowStatiAccordi){
 					boolean gestioneWsdlImplementativo = false;
@@ -2147,7 +2147,7 @@ public class ImporterArchiveUtils {
 					
 			
 			// --- workflowStatoDocumenti ---
-			StringBuffer warningInfoStatoFinale = new StringBuffer("");
+			StringBuilder warningInfoStatoFinale = new StringBuilder("");
 			if(archiveFruitore.getFruitore()==null){
 				if(this.gestioneWorkflowStatiAccordi){
 					try{

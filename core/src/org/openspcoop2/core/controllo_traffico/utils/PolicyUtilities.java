@@ -41,7 +41,7 @@ public class PolicyUtilities {
 
 	public static String toString(Integer statoAllarme){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(statoAllarme==null){
 			bf.append("N.C.");
@@ -66,7 +66,7 @@ public class PolicyUtilities {
 		
 		SimpleDateFormat dateFormat = DateUtils.getSimpleDateFormatMs();
 		
-		StringBuffer bf = new StringBuffer(toString(statoAllarme.getStato()));
+		StringBuilder bf = new StringBuilder(toString(statoAllarme.getStato()));
 		
 		bf.append(", ultimo aggiornamento:").
 		append(dateFormat.format(statoAllarme.getDateCheck())).
@@ -78,7 +78,7 @@ public class PolicyUtilities {
 
 
 	public static String toStringFilter(AttivazionePolicyFiltro filtro) {
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(filtro.isEnabled()){
 
 			if( (filtro.getRuoloPorta()!=null && !RuoloPolicy.ENTRAMBI.equals(filtro.getRuoloPorta())) ){
@@ -184,7 +184,7 @@ public class PolicyUtilities {
 		if(printDati) {
 			return _toStringGroupBy(groupBy, datiGroupBy);
 		}
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(groupBy.isEnabled()){
 
 			if(groupBy.isRuoloPorta()){
@@ -267,7 +267,7 @@ public class PolicyUtilities {
 	
 	
 	private static String _toStringGroupBy(AttivazionePolicyRaggruppamento groupBy,IDUnivocoGroupByPolicy datiGroupBy) {
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(groupBy.isEnabled()){
 
 			if(groupBy.isRuoloPorta()){

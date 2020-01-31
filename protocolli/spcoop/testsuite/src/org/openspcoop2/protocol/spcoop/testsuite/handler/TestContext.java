@@ -32,6 +32,7 @@ import org.openspcoop2.pdd.core.ProtocolContext;
 import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * Libreria per handler testsuite
@@ -92,7 +93,7 @@ public class TestContext implements Serializable {
 		Object oDataTest = getProperty(p,Costanti.TEST_CONTEXT_DATA_INIZIO_TEST);
 		if( (oDataTest!=null) && (oDataTest instanceof String) ){
 			try{
-				SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+				SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd_HH:mm:ss.SSS");
 				this.dataInizioTest = dateformat.parse((String)oDataTest);
 			}catch(Exception e){
 				throw new HandlerException("Data fornita nell'header ["+(String)oDataTest+"] non corretta rispetto allo standard [yyyy-MM-dd_HH:mm:ss.SSS]");
@@ -243,7 +244,7 @@ public class TestContext implements Serializable {
 	
 	public void writeTo(Properties p) throws HandlerException{
 		if(this.dataInizioTest!=null){
-			SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd_HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+			SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd_HH:mm:ss.SSS");
 			p.setProperty(Costanti.TEST_CONTEXT_DATA_INIZIO_TEST, dateformat.format(this.dataInizioTest));
 		}
 		// sempre serializzata

@@ -331,7 +331,7 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 		boolean exitTransactionAfterRateLimitingRemoveThread = false;
 		try{
 			Tracciamento configTracciamento = this.configPdDManager.getOpenSPCoopAppender_Tracciamento();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			String esitiConfig = configTracciamento!=null ? configTracciamento.getEsiti() : null;
 			try {
 				if(transaction!=null && transaction.getRequestInfo()!=null && 

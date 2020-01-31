@@ -437,7 +437,7 @@ public class GestoreCorrelazioneApplicativa {
 							List<String> l = RegularExpressionEngine.getAllStringMatchPattern(urlProtocolContext.getUrlInvocazione_formBased(), 
 									elemento.getPattern());
 							if(l!=null && l.size()>0) {
-								StringBuffer bf = new StringBuffer();
+								StringBuilder bf = new StringBuilder();
 								for (String id : l) {
 									if(bf.length()>0) {
 										bf.append(" ");
@@ -566,7 +566,7 @@ public class GestoreCorrelazioneApplicativa {
 					valoreAzione = "AZIONE=?";
 				}
 				
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT * FROM "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA+" WHERE ID_APPLICATIVO=? AND SERVIZIO_APPLICATIVO=? AND"+
 						" TIPO_MITTENTE=? AND MITTENTE=? AND TIPO_DESTINATARIO=? AND DESTINATARIO=? AND TIPO_SERVIZIO=? AND SERVIZIO=? AND VERSIONE_SERVIZIO=? AND "+valoreAzione);
 				pstmt = connectionDB.prepareStatement(query.toString());
@@ -1034,7 +1034,7 @@ public class GestoreCorrelazioneApplicativa {
 			Connection connectionDB = stateMSG.getConnectionDB();
 
 			// nuova correlazione
-			StringBuffer queryInsert = new StringBuffer();
+			StringBuilder queryInsert = new StringBuilder();
 			queryInsert.append("INSERT INTO "+GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
 			queryInsert.append(" (ID_MESSAGGIO,ID_APPLICATIVO,SERVIZIO_APPLICATIVO,TIPO_MITTENTE,MITTENTE,TIPO_DESTINATARIO,DESTINATARIO,TIPO_SERVIZIO,SERVIZIO,VERSIONE_SERVIZIO,AZIONE ");
 			if(scadenzaCorrelazioneT!=null){
@@ -1106,7 +1106,7 @@ public class GestoreCorrelazioneApplicativa {
 
 
 			if(Configurazione.getSqlQueryObjectType()==null){
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT id FROM ");
 				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
 				query.append(" WHERE SCADENZA is not null AND SCADENZA < ?");
@@ -1199,7 +1199,7 @@ public class GestoreCorrelazioneApplicativa {
 			java.sql.Timestamp scandenzaT = new java.sql.Timestamp(scadenza);
 
 			if(Configurazione.getSqlQueryObjectType()==null){
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT id FROM ");
 				query.append(GestoreCorrelazioneApplicativa.CORRELAZIONE_APPLICATIVA);
 				query.append(" WHERE ORA_REGISTRAZIONE < ?");

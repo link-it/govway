@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -344,10 +345,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_MS);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterMs(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_MS, false);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_MS, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterMs() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_MS, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MS, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ = "yyyy-MM-dd_HH:mm:ss.SSSX";
@@ -366,10 +367,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterMs_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterMs_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MS_ISO_8601_TZ, true);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_SECOND = "yyyy-MM-dd_HH:mm:ss";
@@ -386,10 +387,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_SECOND);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterSecond(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_SECOND, false);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_SECOND, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterSecond() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_SECOND, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_SECOND, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ = "yyyy-MM-dd_HH:mm:ssX";
@@ -408,10 +409,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterSecond_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterSecond_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_SECOND_ISO_8601_TZ, true);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_MINUTE = "yyyy-MM-dd_HH:mm";
@@ -428,10 +429,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_MINUTE);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterMinute(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_MINUTE, false);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_MINUTE, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterMinute() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_MINUTE, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MINUTE, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ = "yyyy-MM-dd_HH:mmX";
@@ -450,10 +451,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterMinute_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterMinute_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_MINUTE_ISO_8601_TZ, true);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_HOUR = "yyyy-MM-dd_HH";
@@ -470,10 +471,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_HOUR);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterHour(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_HOUR, false);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_HOUR, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterHour() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_HOUR, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_HOUR, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ = "yyyy-MM-dd_HHX";
@@ -492,10 +493,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterHour_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterHour_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), SIMPLE_DATE_FORMAT_HOUR_ISO_8601_TZ, true);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_DAY = "yyyy-MM-dd";
@@ -512,10 +513,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_DAY);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterDay(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(false), SIMPLE_DATE_FORMAT_DAY, false);
+		return new DateTimeFormatterWrapper(type.toDateType(), SIMPLE_DATE_FORMAT_DAY, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterDay() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), SIMPLE_DATE_FORMAT_DAY, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(), SIMPLE_DATE_FORMAT_DAY, false);
 	}
 	
 	public static final String SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ = "yyyy-MM-ddX";
@@ -534,10 +535,10 @@ public class DateUtils {
 		return DateUtils.getJodaDateTimeFormatter(SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ);
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatterDay_ISO_8601_TZ(DateEngineType type) {
-		return new DateTimeFormatterWrapper(type.toDateType(false), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(type.toDateType(), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatterDay_ISO_8601_TZ() {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(), SIMPLE_DATE_FORMAT_DAY_ISO_8601_TZ, true);
 	}
 
 	public static SimpleDateFormat getSimpleDateFormat(String format) {
@@ -547,16 +548,22 @@ public class DateUtils {
 		return new SimpleDateFormat (format); // SimpleDateFormat non e' thread-safe
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatter(DateEngineType type, String format) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), format, false);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), format, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatter(String format) {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), format, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), format, false);
 	}
 	public static DateTimeFormatterWrapper getDateFormatter(DateEngineType type, String format) {
-		return new DateTimeFormatterWrapper(type.toDateType(false), format, false);
+		return new DateTimeFormatterWrapper(type.toDateType(), format, false);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateFormatter(String format) {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), format, false);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(), format, false);
+	}
+	public static DateTimeFormatterWrapper getTimeFormatter(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toTimeType(), format, false);
+	}
+	public static DateTimeFormatterWrapper getDefaultTimeFormatter(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toTimeType(), format, false);
 	}
 	
 	public static SimpleDateFormat getSimpleDateFormat_ISO_8601_TZ(String format) {
@@ -568,16 +575,22 @@ public class DateUtils {
 		return sdf;
 	}
 	public static DateTimeFormatterWrapper getDateTimeFormatter_ISO_8601_TZ(DateEngineType type, String format) {
-		return new DateTimeFormatterWrapper(type.toDateType(true), format, true);
+		return new DateTimeFormatterWrapper(type.toDateTimeType(), format, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateTimeFormatter_ISO_8601_TZ(String format) {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(true), format, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateTimeType(), format, true);
 	}
 	public static DateTimeFormatterWrapper getDateFormatter_ISO_8601_TZ(DateEngineType type, String format) {
-		return new DateTimeFormatterWrapper(type.toDateType(false), format, true);
+		return new DateTimeFormatterWrapper(type.toDateType(), format, true);
 	}
 	public static DateTimeFormatterWrapper getDefaultDateFormatter_ISO_8601_TZ(String format) {
-		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(false), format, true);
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toDateType(), format, true);
+	}
+	public static DateTimeFormatterWrapper getTimeFormatter_ISO_8601_TZ(DateEngineType type, String format) {
+		return new DateTimeFormatterWrapper(type.toTimeType(), format, true);
+	}
+	public static DateTimeFormatterWrapper getDefaultTimeFormatter_ISO_8601_TZ(String format) {
+		return new DateTimeFormatterWrapper(DEFAULT_DATA_ENGINE_TYPE.toTimeType(), format, true);
 	}
 	
 	
@@ -653,6 +666,29 @@ public class DateUtils {
 	
 	
 	
+	/** java.time Parse */
+	
+	public static LocalDateTime parseToLocalDateTime(String format, String source) {
+		// bug fix: Text '20200131105154584' could not be parsed at index 0
+		if("yyyyMMddHHmmssSSS".equals(format)) {
+			String sCorrect = source;
+			if(sCorrect.length()>4) {
+				sCorrect = source.substring(0, 4) + " " + source.substring(4, source.length());
+				return LocalDateTime.parse(sCorrect, DateUtils.getDateTimeFormatter("yyyy MMddHHmmssSSS"));
+			}
+		}
+		return LocalDateTime.parse(source, DateUtils.getDateTimeFormatter(format));
+	}
+	
+	public static LocalDate parseToLocalDate(String format, String source) {
+		return LocalDate.parse(source, DateUtils.getDateTimeFormatter(format));
+	}
+	
+	public static LocalTime parseToLocalTime(String format, String source) {
+		return LocalTime.parse(source, DateUtils.getDateTimeFormatter(format));
+	}
+	
+	
 	/** java.time DateTimeFormatter */
 	
 	private static Map<String, DateTimeFormatter> mapFormatToDateTimeFormatter = new HashMap<String, DateTimeFormatter>();
@@ -705,6 +741,37 @@ public class DateUtils {
 	      .atZone(zoneIdParam)
 	      .toInstant());
 	}
+	
+	
+	/** java.time Converter (LocalTime) */
+	
+	public static LocalTime convertToLocalTimeViaInstant(Date dateToConvert) {
+		return convertToLocalTimeViaInstant(dateToConvert, DateUtils.zoneId);
+	}
+	public static LocalTime convertToLocalTimeViaInstant(Date dateToConvert, ZoneId zoneIdParam) {
+	    return dateToConvert.toInstant()
+	      .atZone(zoneIdParam)
+	      .toLocalTime();
+	}
+	
+	public static LocalTime convertToLocalTimeViaMilisecond(Date dateToConvert) {
+		return convertToLocalTimeViaMilisecond(dateToConvert, DateUtils.zoneId);
+	}
+	public static LocalTime convertToLocalTimeViaMilisecond(Date dateToConvert, ZoneId zoneIdParam) {
+	    return Instant.ofEpochMilli(dateToConvert.getTime())
+	      .atZone(zoneIdParam)
+	      .toLocalTime();
+	}
+	
+	public static Date convertToDateViaInstant(LocalTime dateToConvert) {
+		return convertToDateViaInstant(dateToConvert, DateUtils.zoneId); 
+	}
+	public static Date convertToDateViaInstant(LocalTime dateToConvert, ZoneId zoneIdParam) {
+	    return java.util.Date.from(dateToConvert.atDate(LocalDate.now())
+	      .atZone(zoneIdParam)
+	      .toInstant());
+	}
+	
 	
 	/** java.time Converter (LocalDateTime) */
 	
@@ -768,6 +835,26 @@ public class DateUtils {
 	
 	
 	
+	
+	/** joda.time Parse */
+	
+	public static org.joda.time.DateTime parseToJodaDateTime(String format, String source) {
+		return DateUtils.getJodaDateTimeFormatter(format).parseDateTime(source);
+	}
+	
+	public static org.joda.time.LocalDateTime parseToJodaLocalDateTime(String format, String source) {
+		return parseToJodaDateTime(format, source).toLocalDateTime();
+	}
+	
+	public static org.joda.time.LocalDate parseToJodaLocalDate(String format, String source) {
+		return parseToJodaDateTime(format, source).toLocalDate();
+	}
+	
+	public static org.joda.time.LocalTime parseToJodaLocalTime(String format, String source) {
+		return parseToJodaDateTime(format, source).toLocalTime();
+	}
+	
+	
 	/** joda.time DateTimeFormatter */
 	
 	private static Map<String, org.joda.time.format.DateTimeFormatter> mapFormatToJodaDateTimeFormatter = new HashMap<String, org.joda.time.format.DateTimeFormatter>();
@@ -799,6 +886,13 @@ public class DateUtils {
 		return new org.joda.time.LocalDate(dateToConvert.getTime(), dtzParam);
 	}
 	
+	public static org.joda.time.LocalTime convertToJodaLocalTime(Date dateToConvert) {
+		return convertToJodaLocalTime(dateToConvert, DateUtils.dtz);
+	}
+	public static org.joda.time.LocalTime convertToJodaLocalTime(Date dateToConvert, DateTimeZone dtzParam) {
+		return new org.joda.time.LocalTime(dateToConvert.getTime(), dtzParam);
+	}
+	
 	public static org.joda.time.LocalDateTime convertToJodaLocalDateTime(Date dateToConvert) {
 		return convertToJodaLocalDateTime(dateToConvert, DateUtils.dtz);
 	}
@@ -815,6 +909,9 @@ public class DateUtils {
 	
 	public static Date convertToDate(org.joda.time.LocalDate dateToConvert) {
 		return dateToConvert.toDate();
+	}
+	public static Date convertToDate(org.joda.time.LocalTime dateToConvert) {
+		return dateToConvert.toDateTimeToday().toDate();
 	}
 	public static Date convertToDate(org.joda.time.LocalDateTime dateToConvert) {
 		return dateToConvert.toDate();

@@ -192,7 +192,7 @@ public class SemaphoreEngine {
 				Timestamp now = DateManager.getTimestamp();
 				
 				SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
-				StringBuffer statoLock = new StringBuffer("Lock per tabella ["+table+"]");
+				StringBuilder statoLock = new StringBuilder("Lock per tabella ["+table+"]");
 				if(this.mapping.sizeUniqueConditionValues()>0) {
 					for (int i = 0; i < this.mapping.sizeUniqueConditionValues(); i++) {
 						statoLock.append(" ["+this.mapping.getUniqueConditionColumnName(i)+"="+this.mapping.getUniqueConditionValue(i)+"]");

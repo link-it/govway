@@ -205,10 +205,10 @@ public class SoapUtils {
 		}
 	}
 	
-	public static boolean checkMustUnderstandHeaderElement(MessageType messageType, SOAPHeader header,List<NameValue> filtri, StringBuffer bfErrorParam) throws MessageException {
+	public static boolean checkMustUnderstandHeaderElement(MessageType messageType, SOAPHeader header,List<NameValue> filtri, StringBuilder bfErrorParam) throws MessageException {
 		
 		
-		StringBuffer bfError = new StringBuffer();
+		StringBuilder bfError = new StringBuilder();
 		try{
 			java.util.Iterator<?> headers = header.getChildElements();
 			while (headers.hasNext()) {
@@ -451,7 +451,7 @@ public class SoapUtils {
 		if(!vet.containsAll(vet2)){
 			//System.out.println("ATTR 3");
 			
-			StringBuffer bfNode1 = new StringBuffer();
+			StringBuilder bfNode1 = new StringBuilder();
 			for (int i = 0; i < vet.size(); i++) {
 				if(i>0){
 					bfNode1.append(",");
@@ -459,7 +459,7 @@ public class SoapUtils {
 				bfNode1.append(vet.get(i));
 			}
 			
-			StringBuffer bfNode2 = new StringBuffer();
+			StringBuilder bfNode2 = new StringBuilder();
 			for (int i = 0; i < vet2.size(); i++) {
 				if(i>0){
 					bfNode2.append(",");
@@ -551,7 +551,7 @@ public class SoapUtils {
         if(!(nameSpVet1.size() == nameSpVet2.size())){
         	//System.out.println("SIZE NAMESPACE");
         	
-			StringBuffer bfNode1 = new StringBuffer();
+			StringBuilder bfNode1 = new StringBuilder();
 			for (int i = 0; i < nameSpVet1.size(); i++) {
 				if(i>0){
 					bfNode1.append(",");
@@ -559,7 +559,7 @@ public class SoapUtils {
 				bfNode1.append(nameSpVet1.get(i));
 			}
 			
-			StringBuffer bfNode2 = new StringBuffer();
+			StringBuilder bfNode2 = new StringBuilder();
 			for (int i = 0; i < nameSpVet2.size(); i++) {
 				if(i>0){
 					bfNode2.append(",");
@@ -678,7 +678,7 @@ public class SoapUtils {
 				}	
 			}
 			else{
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(fault!=null){
 					bf.append("SOAPFault");
 					if(fault.getFaultCode()!=null && !"".equals(fault.getFaultCode())){

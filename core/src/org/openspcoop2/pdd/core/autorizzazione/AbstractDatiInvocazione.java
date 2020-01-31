@@ -80,7 +80,7 @@ public abstract class AbstractDatiInvocazione {
 		return this._toString(false);
 	}
 	public String _toString(boolean keyCache){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(this.idServizio!=null){
 			bf.append("IDServizio(");

@@ -57,7 +57,7 @@ public class TempiElaborazioneUtils implements Serializable {
 	
 	private static String _convertToDBValue(TempiElaborazioneFunzionalita tempiElaborazioneFunzionalita) {
 		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(format);
-		StringBuffer bf = new StringBuffer("");
+		StringBuilder bf = new StringBuilder("");
 		if(tempiElaborazioneFunzionalita!=null && tempiElaborazioneFunzionalita.dataIngresso!=null) {
 			bf.append(dateformat.format(tempiElaborazioneFunzionalita.dataIngresso));
 		}
@@ -76,7 +76,7 @@ public class TempiElaborazioneUtils implements Serializable {
 	
 	public static String convertToDBValue(TempiElaborazione tempiElaborazione) {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(_convertToDBValue(tempiElaborazione.token)).append(TEMPI_SEPARATOR);
 		bf.append(_convertToDBValue(tempiElaborazione.autenticazione)).append(TEMPI_SEPARATOR);

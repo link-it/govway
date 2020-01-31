@@ -579,7 +579,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 					)
 				){
 				
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				
 				boolean alreadyExists = AccordiServizioParteSpecificaUtilities.alreadyExists(this.apsCore, this, 
 						idSoggettoErogatore, idAccordoServizioParteSpecifica, uriAccordoServizioParteComune,
@@ -2627,7 +2627,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						if(listaAzioni.size() > 0 && azioni.size()>0) {
 							
-							StringBuffer sb = new StringBuffer();
+							StringBuilder sb = new StringBuilder();
 							Iterator<String> itAz = azioni.keySet().iterator();
 							while (itAz.hasNext()) {
 								String idAzione = (String) itAz.next();
@@ -2675,7 +2675,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(actionNonRidefinite!=null && !actionNonRidefinite.isEmpty() && azioni.size()>0) {
 								
 								long countAzioniRidefinite = 0;
-								StringBuffer sb = new StringBuffer();
+								StringBuilder sb = new StringBuilder();
 								Iterator<String> itAz = azioni.keySet().iterator();
 								while (itAz.hasNext()) {
 									String idAzione = (String) itAz.next();
@@ -4230,7 +4230,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 						
 						if(listaAzioni.size() > 0 && azioni.size()>0) {
 							
-							StringBuffer sb = new StringBuffer();
+							StringBuilder sb = new StringBuilder();
 							Iterator<String> itAz = azioni.keySet().iterator();
 							while (itAz.hasNext()) {
 								String idAzione = (String) itAz.next();
@@ -4277,7 +4277,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 							if(actionNonRidefinite!=null && !actionNonRidefinite.isEmpty() && azioni.size()>0) {
 								
 								long countAzioniRidefinite = 0;
-								StringBuffer sb = new StringBuffer();
+								StringBuilder sb = new StringBuilder();
 								Iterator<String> itAz = azioni.keySet().iterator();
 								while (itAz.hasNext()) {
 									String idAzione = (String) itAz.next();
@@ -7676,7 +7676,7 @@ public class AccordiServizioParteSpecificaHelper extends ConnettoriHelper {
 
 
 	public Vector<DataElement> addViewAllegatiToDati(TipoOperazione tipoOp, String idAllegato, String idServizio,
-			Documento doc, StringBuffer contenutoAllegato, String errore,
+			Documento doc, StringBuilder contenutoAllegato, String errore,
 			Vector<DataElement> dati, String modificaAPI) {
 		DataElement de = new DataElement();
 

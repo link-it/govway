@@ -772,7 +772,7 @@ public class AuditHelper {
 					}
 				}
 				if (!dataInOk) {
-					String msg = "Inizio intervallo espresso in una forma sbagliata. Esprimerlo come aaaa-mm-gg";
+					String msg = "Inizio intervallo espresso in una forma sbagliata. Esprimerlo come yyyy-MM-dd";
 					return msg;
 				}
 			}
@@ -826,7 +826,7 @@ public class AuditHelper {
 					}
 				}
 				if (!dataFineOk) {
-					String msg = "Fine intervallo espresso in una forma sbagliata. Esprimerlo come aaaa-mm-gg";
+					String msg = "Fine intervallo espresso in una forma sbagliata. Esprimerlo come yyyy-MM-dd";
 					return msg;
 				}
 			}

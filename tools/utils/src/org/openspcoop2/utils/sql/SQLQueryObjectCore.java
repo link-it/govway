@@ -1188,7 +1188,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	public ISQLQueryObject addWhereCondition(boolean andLogicOperator,boolean not,String... conditions) throws SQLQueryObjectException{
 		if(conditions==null || conditions.length<=0)
 			throw new SQLQueryObjectException("Where Conditions non esistenti");
-		StringBuffer buildCondition = new StringBuffer();
+		StringBuilder buildCondition = new StringBuilder();
 
 		if(not){
 			buildCondition.append("( NOT ");
@@ -1297,7 +1297,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(valore==null || valore.length<1){
 			throw new SQLQueryObjectException("Deve essere fornito almeno un valore");
 		}
-		StringBuffer bf = new StringBuffer(field);
+		StringBuilder bf = new StringBuilder(field);
 		bf.append(" IN ( ");
 		for (int i = 0; i < valore.length; i++) {
 			if(i>0){
@@ -1337,7 +1337,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		if(rightValue==null){
 			throw new SQLQueryObjectException("Deve essere fornito un valore per l'intervallo destro");
 		}
-		StringBuffer bf = new StringBuffer(field);
+		StringBuilder bf = new StringBuilder(field);
 		bf.append(" BETWEEN ");
 		if(stringValueType){
 			bf.append("'");
@@ -1520,7 +1520,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			}
 		}
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(notExists)
 			bf.append("NOT ");
 		bf.append("EXISTS (");
@@ -1616,7 +1616,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 			}
 		}
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(notExists)
 			bf.append("NOT ");
 		bf.append(field);
@@ -1677,7 +1677,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 		// converte ' in ''
 		int index = value.indexOf('\'');
 		if(index>=0){
-			StringBuffer str =  new StringBuffer();
+			StringBuilder str =  new StringBuilder();
 			char[] v = value.toCharArray();
 			for(int i=0; i<v.length; i++){
 				if(v[i]=='\''){
@@ -1710,7 +1710,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 		EscapeSQLConfiguration escapeConfig = this.getEscapeSQLConfiguration();
 
-		StringBuffer str =  new StringBuffer();
+		StringBuilder str =  new StringBuilder();
 		char[] v = pattern.toCharArray();
 		for(int i=0; i<v.length; i++){
 			
@@ -2159,7 +2159,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 
 	}
 	private String _createSQLInsert() throws SQLQueryObjectException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("INSERT INTO ");
 		bf.append(this.insertTable);
 		bf.append(" (");

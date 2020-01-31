@@ -97,7 +97,7 @@ public class DataSourceFactory {
 		List<String> listResource = new ArrayList<String>();
 		while (it.hasNext()) {
 			org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(datasource.getDate())).append(") ");
 			bf.append("idDatasource:");
@@ -152,7 +152,7 @@ public class DataSourceFactory {
 		try{
 			datasource = (javax.sql.DataSource) oSearch;
 		}catch(Throwable t){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			if(oSearch instanceof javax.naming.Reference){
 				javax.naming.Reference r = (javax.naming.Reference) oSearch;
 				bf.append(" (Factory=");
@@ -274,7 +274,7 @@ public class DataSourceFactory {
 			list = mapUUIDtoDatasources.values();
 			it = list.iterator();
 			boolean closeAll = true;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			boolean debugClose = true;
 			while (it.hasNext()) {
 				org.openspcoop2.utils.datasource.DataSource datasource = (org.openspcoop2.utils.datasource.DataSource) it.next();

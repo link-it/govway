@@ -175,7 +175,7 @@ public class History  {
 		ResultSet rs = null;
 		try{	
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("select ID_MESSAGGIO from ");
 			query.append(Costanti.REPOSITORY);
 			query.append(" WHERE ID_MESSAGGIO = ? AND TIPO=? AND ");
@@ -245,7 +245,7 @@ public class History  {
 		PreparedStatement pstmtUpdate = null;
 		try{	
 
-			StringBuffer queryUpdate = new StringBuffer();
+			StringBuilder queryUpdate = new StringBuilder();
 			queryUpdate.append("UPDATE ");
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" SET ");
@@ -291,7 +291,7 @@ public class History  {
 			PreparedStatement pstmtUpdate = null;
 			try{	
 
-				StringBuffer queryUpdate = new StringBuffer();
+				StringBuilder queryUpdate = new StringBuilder();
 				queryUpdate.append("UPDATE ");
 				queryUpdate.append(Costanti.REPOSITORY);
 				queryUpdate.append(" SET ");
@@ -337,7 +337,7 @@ public class History  {
 		PreparedStatement pstmtUpdate = null;
 		try{	
 
-			StringBuffer queryUpdate = new StringBuffer();
+			StringBuilder queryUpdate = new StringBuilder();
 			queryUpdate.append("UPDATE ");
 			queryUpdate.append(Costanti.REPOSITORY);
 			queryUpdate.append(" SET ");

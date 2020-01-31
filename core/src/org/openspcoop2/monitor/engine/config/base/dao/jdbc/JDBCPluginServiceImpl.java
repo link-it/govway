@@ -342,7 +342,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 				sqlQueryObjectUpdate_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_deleteList.addWhereCondition("id_plugin_servizio_comp=?");
 				jdbcObjects_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_delete.add(new JDBCObject(plugin_pluginServizioCompatibilita.getId(), Long.class));
 
-				StringBuffer marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = new StringBuffer();
+				StringBuilder marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita = new StringBuilder();
 				if(ids_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_da_non_eliminare.size() > 0) {
 					for(Long ids : ids_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita_da_non_eliminare) {
 						if(marks_plugin_pluginServizioCompatibilita_pluginServizioAzioneCompatibilita.length() > 0) {
@@ -370,7 +370,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		sqlQueryObjectUpdate_pluginServizioCompatibilita_deleteList.addWhereCondition("id_plugin=?");
 		jdbcObjects_plugin_pluginServizioCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
 
-		StringBuffer marks_plugin_pluginServizioCompatibilita = new StringBuffer();
+		StringBuilder marks_plugin_pluginServizioCompatibilita = new StringBuilder();
 		if(ids_plugin_pluginServizioCompatibilita_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_plugin_pluginServizioCompatibilita_da_non_eliminare) {
 				if(marks_plugin_pluginServizioCompatibilita.length() > 0) {
@@ -478,7 +478,7 @@ public class JDBCPluginServiceImpl extends JDBCPluginServiceSearchImpl
 		sqlQueryObjectUpdate_pluginFiltroCompatibilita_deleteList.addWhereCondition("id_plugin=?");
 		jdbcObjects_plugin_pluginFiltroCompatibilita_delete.add(new JDBCObject(plugin.getId(), Long.class));
 
-		StringBuffer marks_plugin_pluginFiltroCompatibilita = new StringBuffer();
+		StringBuilder marks_plugin_pluginFiltroCompatibilita = new StringBuilder();
 		if(ids_plugin_pluginFiltroCompatibilita_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_plugin_pluginFiltroCompatibilita_da_non_eliminare) {
 				if(marks_plugin_pluginFiltroCompatibilita.length() > 0) {

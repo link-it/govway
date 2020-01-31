@@ -338,7 +338,7 @@ public class URLProtocolContext extends HttpServletTransportRequestContext imple
 						}
 					}
 					
-					StringBuffer bfSizePrefix = new StringBuffer(req.getContextPath());
+					StringBuilder bfSizePrefix = new StringBuilder(req.getContextPath());
 					if(!Costanti.CONTEXT_EMPTY.equals(protocollo)) {
 						bfSizePrefix.append("/").append(protocollo);
 					}

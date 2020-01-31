@@ -28,6 +28,7 @@ import java.util.Date;
 
 import org.openspcoop2.generic_project.beans.IEnumeration;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * JDBCSqlLogger
@@ -39,7 +40,7 @@ import org.openspcoop2.utils.Utilities;
 public class JDBCSqlLogger {
 
 	private org.slf4j.Logger log = null;
-	private SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+	private SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
 
 	/**
 	 * Costruttore della classe di utilita' per gestire i log sia di debug che di errore delle query effettuate su database
@@ -171,7 +172,7 @@ public class JDBCSqlLogger {
 			return ret;
 		}
 
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < params.length; i++) {
 			if (params[i] != null) {
@@ -193,7 +194,7 @@ public class JDBCSqlLogger {
 
 	}
 
-	private void logParam(Object object,Class<?> type,StringBuffer sb){
+	private void logParam(Object object,Class<?> type,StringBuilder sb){
 		
 		if (object == null){
 			sb.append("null");

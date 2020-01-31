@@ -45,10 +45,10 @@ import org.springframework.web.util.UriUtils;
  */
 public class CertificateUtils {
 
-	public static void printCertificate(StringBuffer bf,List<java.security.cert.X509Certificate> certs){
+	public static void printCertificate(StringBuilder bf,List<java.security.cert.X509Certificate> certs){
 		printCertificate(bf, certs, false);
 	}
-	public static void printCertificate(StringBuffer bf,List<java.security.cert.X509Certificate> certs, boolean addPrefix){
+	public static void printCertificate(StringBuilder bf,List<java.security.cert.X509Certificate> certs, boolean addPrefix){
 		if(certs.size()>0) {
 			java.security.cert.X509Certificate[] certsArray = certs.toArray(new java.security.cert.X509Certificate[1]);
 			printCertificate(bf, certsArray, addPrefix);
@@ -58,10 +58,10 @@ public class CertificateUtils {
 		}
 	}
 	
-	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate[] certs){
+	public static void printCertificate(StringBuilder bf,java.security.cert.X509Certificate[] certs){
 		printCertificate(bf, certs, false);
 	}
-	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate[] certs, boolean addPrefix){
+	public static void printCertificate(StringBuilder bf,java.security.cert.X509Certificate[] certs, boolean addPrefix){
 		bf.append("X509Certificates: "+certs.length+"\n");
 		for (int i = 0; i < certs.length; i++) {
 			java.security.cert.X509Certificate cert = certs[i];
@@ -69,10 +69,10 @@ public class CertificateUtils {
 		}
 	}
 	
-	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate cert, String name){
+	public static void printCertificate(StringBuilder bf,java.security.cert.X509Certificate cert, String name){
 		printCertificate(bf, cert, name, false);
 	}
-	public static void printCertificate(StringBuffer bf,java.security.cert.X509Certificate cert, String name, boolean addPrefix){
+	public static void printCertificate(StringBuilder bf,java.security.cert.X509Certificate cert, String name, boolean addPrefix){
 		String prefix = "";
 		if(addPrefix) {
 			prefix = "Cert["+name+"].";
@@ -151,10 +151,10 @@ public class CertificateUtils {
 	
 	
 	
-	public static void printCertificate_javax(StringBuffer bf,List<javax.security.cert.X509Certificate> certs){
+	public static void printCertificate_javax(StringBuilder bf,List<javax.security.cert.X509Certificate> certs){
 		printCertificate_javax(bf, certs, false);
 	}
-	public static void printCertificate_javax(StringBuffer bf,List<javax.security.cert.X509Certificate> certs, boolean addPrefix){
+	public static void printCertificate_javax(StringBuilder bf,List<javax.security.cert.X509Certificate> certs, boolean addPrefix){
 		if(certs.size()>0) {
 			javax.security.cert.X509Certificate[] certsArray = certs.toArray(new javax.security.cert.X509Certificate[1]);
 			printCertificate_javax(bf, certsArray, addPrefix);
@@ -164,10 +164,10 @@ public class CertificateUtils {
 		}
 	}
 	
-	public static void printCertificate_javax(StringBuffer bf,javax.security.cert.X509Certificate[] certs){
+	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate[] certs){
 		printCertificate_javax(bf, certs, false);
 	}
-	public static void printCertificate_javax(StringBuffer bf,javax.security.cert.X509Certificate[] certs, boolean addPrefix){
+	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate[] certs, boolean addPrefix){
 		bf.append("X509Certificates: "+certs.length+"\n");
 		for (int i = 0; i < certs.length; i++) {
 			javax.security.cert.X509Certificate cert = certs[i];
@@ -175,10 +175,10 @@ public class CertificateUtils {
 		}
 	}
 	
-	public static void printCertificate_javax(StringBuffer bf,javax.security.cert.X509Certificate cert, String name){
+	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate cert, String name){
 		printCertificate_javax(bf, cert, name, false);
 	}
-	public static void printCertificate_javax(StringBuffer bf,javax.security.cert.X509Certificate cert, String name, boolean addPrefix){
+	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate cert, String name, boolean addPrefix){
 		String prefix = "";
 		if(addPrefix) {
 			prefix = "Cert["+name+"].";
@@ -308,7 +308,7 @@ public class CertificateUtils {
 		
 		// Autenticazione SSL deve essere LIKE
 		Hashtable<String, List<String>> hashPrincipal = CertificateUtils.getPrincipalIntoHashtable(principal, type);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("/");
 		Enumeration<String> keys = hashPrincipal.keys();
 		while(keys.hasMoreElements()){
@@ -509,7 +509,7 @@ public class CertificateUtils {
 				// Bug Fix OP-670 certificato formato come:
 				// C=IT/ST= /O=Esempio di Agenzia/OU=Servizi Informatici/CN=Ministero dell'Interno/prova/23234234554/DEMO
 				List<String> normalize = new ArrayList<>();
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (String tmp : tmp_valori) {
 					if(tmp.contains("=")) {
 						if(bf.length()>0) {
@@ -573,7 +573,7 @@ public class CertificateUtils {
 	}
 	public static String formatValuePrincipal(String valuePrincipal){
 		// siccome uso il carattere '/' come separatore, un eventuale '/' deve essere escaped.
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = 0; i < valuePrincipal.length(); i++) {
 			if(valuePrincipal.charAt(i)=='/'){
 				// escape

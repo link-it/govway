@@ -40,7 +40,7 @@ public interface IExtendedCoreServlet {
 	public void performDelete(Connection connection, Object originalObject, IExtendedBean extendedBean) throws ExtendedException;
 	
 	public IExtendedBean getExtendedBean(Connection connection, String id) throws ExtendedException;
-	public boolean inUse(Connection connection, String id, StringBuffer descriptionInUse) throws ExtendedException;
+	public boolean inUse(Connection connection, String id, StringBuilder descriptionInUse) throws ExtendedException;
 	
 	IExtendedBean readHttpParameters(Object originalObject, TipoOperazione tipoOperazione, IExtendedBean extendedBean, HttpServletRequest request) throws ExtendedException;
 	public String getId(HttpServletRequest request) throws ExtendedException; 

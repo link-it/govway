@@ -202,7 +202,7 @@ public class ContentTypeUtilities {
 				}
 				String [] ctVerifica = checkContentType.split("/");
 				if(ctVerifica!=null && ctVerifica.length==2) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					String part1 = ctVerifica[0].trim();
 					if("*".equals(part1)) {
 						bf.append("(.+)");
@@ -299,7 +299,7 @@ public class ContentTypeUtilities {
 			if(boundary==null){
 				throw new UtilsException("Errore avvenuto durante la lettura del boundary associato al multipart message.");
 			}
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append(HttpConstants.CONTENT_TYPE_MULTIPART);
 			if(type!=null){
 				bf.append("; ").append(HttpConstants.CONTENT_TYPE_MULTIPART_PARAMETER_TYPE).append("=\"").append(type).append("\"");

@@ -112,7 +112,7 @@ public abstract class BaseBean<T,K, ServiceType extends IService> implements Ser
 		}
 				
 		for (T elem : this.toRemove) {
-//			StringBuffer bf = new StringBuffer();
+//			StringBuilder bf = new StringBuilder();
 			try{
 				this.service.delete(elem);
 			}catch (Exception e) {

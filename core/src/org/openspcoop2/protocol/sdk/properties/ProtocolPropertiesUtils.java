@@ -90,7 +90,7 @@ public class ProtocolPropertiesUtils {
 		return getValueMultiSelect(Arrays.asList(list));
 	}
 	public static String getValueMultiSelect(List<String> list) {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (String s : list) {
 			if(bf.length()>0) {
 				bf.append(",");

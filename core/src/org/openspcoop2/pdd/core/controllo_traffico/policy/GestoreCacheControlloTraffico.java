@@ -289,7 +289,7 @@ public class GestoreCacheControlloTraffico {
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
-		StringBuffer bfKey = new StringBuffer(tipoRisorsa.getValue()+" ");
+		StringBuilder bfKey = new StringBuilder(tipoRisorsa.getValue()+" ");
 		bfKey.append(tipoFinestra.getValue());
 		bfKey.append(" ").append(tipoPeriodo.getValue());
 		bfKey.append(" ").append(tipoPdDTransazioneInCorso.getTipo());
@@ -395,7 +395,7 @@ public class GestoreCacheControlloTraffico {
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
-		StringBuffer bfKey = new StringBuffer(tipoRisorsa.getValue()+" ");
+		StringBuilder bfKey = new StringBuilder(tipoRisorsa.getValue()+" ");
 		bfKey.append(tipoFinestra.getValue());
 		bfKey.append(" ").append(tipoPeriodo.getValue());
 		bfKey.append(" ").append(tipoBanda.getValue());
@@ -503,8 +503,8 @@ public class GestoreCacheControlloTraffico {
 		
 		TipoPdD tipoPdDTransazioneInCorso = datiTransazione.getTipoPdD();
 		
-		StringBuffer bfKey = null;
-		bfKey = new StringBuffer(tipoRisorsa.getValue()+" ");
+		StringBuilder bfKey = null;
+		bfKey = new StringBuilder(tipoRisorsa.getValue()+" ");
 		bfKey.append(tipoFinestra.getValue());
 		bfKey.append(" ").append(tipoPeriodo.getValue());
 		bfKey.append(" ").append(tipoLatenza.getValue());
@@ -611,7 +611,7 @@ public class GestoreCacheControlloTraffico {
 	public RisultatoStato getStato(DatiTransazione datiTransazione, String idStato) throws Exception{
 		
 		// BuildKey
-		StringBuffer bfKey = new StringBuffer("Stato ");
+		StringBuilder bfKey = new StringBuilder("Stato ");
 		bfKey.append(idStato);
 		String key = bfKey.toString();
 		

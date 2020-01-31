@@ -67,7 +67,7 @@ public class WWWAuthenticateGenerator {
 	
 	public static String buildHeaderValue(WWWAuthenticateErrorCode errorCode, String realm, boolean genericError, String error, String ... scope) {
 		
-		StringBuffer bf = new StringBuffer(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
+		StringBuilder bf = new StringBuilder(HttpConstants.AUTHORIZATION_PREFIX_BEARER);
 		bf.append("realm=\"");
 		bf.append(realm);
 		bf.append("\", error=\"");
@@ -110,7 +110,7 @@ public class WWWAuthenticateGenerator {
 	
 	public static String buildBasicHeaderValue(String realm) {
 		
-		StringBuffer bf = new StringBuffer(HttpConstants.AUTHORIZATION_PREFIX_BASIC);
+		StringBuilder bf = new StringBuilder(HttpConstants.AUTHORIZATION_PREFIX_BASIC);
 		bf.append("realm=\"");
 		bf.append(realm);
 		bf.append("\"");

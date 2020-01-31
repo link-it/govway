@@ -3509,7 +3509,7 @@ class ParametriCooperazioneConErrori {
 	}
 	public String getMotivoErroreProcessamento_toString(){
 		if(this.motivoErroreProcessamento!=null && this.motivoErroreProcessamento.length>0){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for(int i=0; i< this.motivoErroreProcessamento.length;i++){
 				bf.append((i+1)+". "+this.motivoErroreProcessamento[i]+"\n");
 			}
@@ -3548,7 +3548,7 @@ class ParametriCooperazioneConErrori {
 	}
 	public String getMotivoErroreProcessamento_alternativoConfigurazioneDB_toString(){
 		if(this.motivoErroreProcessamento_alternativoConfigurazioneDB!=null && this.motivoErroreProcessamento_alternativoConfigurazioneDB.length>0){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for(int i=0; i< this.motivoErroreProcessamento_alternativoConfigurazioneDB.length;i++){
 				bf.append((i+1)+". "+this.motivoErroreProcessamento_alternativoConfigurazioneDB[i]+"\n");
 			}

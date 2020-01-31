@@ -79,7 +79,7 @@ public class DatiInvocazionePortaDelegata extends AbstractDatiInvocazione {
 	}
 	@Override
 	public String _toString(boolean keyCache){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append(super._toString(keyCache));
 		

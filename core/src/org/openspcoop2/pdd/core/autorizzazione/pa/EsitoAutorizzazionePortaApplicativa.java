@@ -67,7 +67,7 @@ public class EsitoAutorizzazionePortaApplicativa extends EsitoAutorizzazione {
 
 	@Override
 	public String getHeader(){
-		StringBuffer bf = new StringBuffer(super.getHeader());
+		StringBuilder bf = new StringBuilder(super.getHeader());
 		if(this.erroreCooperazione!=null){
 			bf.append(" ErroreCooperazione(");
 			bf.append(this.erroreCooperazione.getCodiceErrore().name());

@@ -90,7 +90,7 @@ public class InformazioniStatoPorta {
 			String informazioniInstallazione,
 			InformazioniStatoPortaCache ... cache){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		// informazioni generali
 		
@@ -345,7 +345,7 @@ public class InformazioniStatoPorta {
 		return bf.toString();
 	}
 	
-	private void format(StringBuffer bf,String v,String label){
+	private void format(StringBuilder bf,String v,String label){
 		if(v==null || "".equals(v)){
 			bf.append(label+": informazione non disponibile\n");
 		}

@@ -2257,7 +2257,7 @@ public class ConfigurazionePdD  {
 	} 
 	
 	private String toStringFiltriProprieta(Map<String, String> filtroProprietaPorteApplicative){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(filtroProprietaPorteApplicative==null || filtroProprietaPorteApplicative.size()<=0){
 			bf.append("Non presenti");
 		}else{

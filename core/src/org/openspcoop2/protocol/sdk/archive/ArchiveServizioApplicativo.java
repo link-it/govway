@@ -45,7 +45,7 @@ public class ArchiveServizioApplicativo implements IArchiveObject {
 			throw new ProtocolException("nomeSA non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("ServizioApplicativo_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

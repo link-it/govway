@@ -836,7 +836,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			// cerco la busta per l'actor
 			java.util.Iterator<?> it = header.examineAllHeaderElements();
 			SOAPHeaderElement headerElementEGov = null;
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			while( it.hasNext()  ){
 
 				// Test Header Element
@@ -4242,7 +4242,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * Metodo che si occupa di validare la data <var>aDate</var>
 	 * secondo la specifica eGov.
 	 * La Data deve essere formato da :
-	 * aaaa-mm-ggThh:mm:ss[.SSS]    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
+	 * yyyy-MM-ddThh:mm:ss[.SSS]    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
 	 * In caso la validazione abbia successo, viene ritornato un oggetto Date inizializzato alla data <var>aDate</var>.
 	 *
 	 * @param aDate data eGov da validare
@@ -4259,7 +4259,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 			if(split.length != 2)
 				return null;
 
-			// Check data aaaa-mm-gg
+			// Check data yyyy-MM-dd
 			String [] date = split[0].split("-");
 			if(date == null)
 				return null;
@@ -4368,7 +4368,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 * Metodo che si occupa di verificare che la data <var>scadenza</var> descritta con un formato
 	 * conforme alla specifica eGov, non sia scaduta.
 	 * La Data deve essere formato da :
-	 * aaaa-mm-ggThh:mm:ss    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
+	 * yyyy-MM-ddThh:mm:ss    (es. il 23/03/2005 alle 13:56:01 viene registrato come 2005-03-23T13:56:01)
 	 *
 	 * @param scadenza data eGov da controllare se e' scaduta o meno.
 	 * @return un boolean true se la data non e' scaduta. Altrimenti false.
@@ -4376,7 +4376,7 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	 */
 	private boolean dataScaduta(String scadenza){
 		Date now=DateManager.getDate();
-		SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy MM dd HH mm ss"); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy MM dd HH mm ss");
 		String nowFormat = dateformat.format(now);
 		String scadenzaFormat = ((scadenza.replace('-',' ')).replace(':',' ')).replace('T',' ');
 		String [] splitNow = nowFormat.split(" ");

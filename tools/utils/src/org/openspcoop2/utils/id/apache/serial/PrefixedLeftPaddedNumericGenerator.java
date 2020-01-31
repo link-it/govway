@@ -178,7 +178,7 @@ public class PrefixedLeftPaddedNumericGenerator extends AbstractStringIdentifier
             }
         }
 
-        StringBuffer sb = new StringBuffer(this.prefix);
+        StringBuilder sb = new StringBuilder(this.prefix);
         sb.append(this.count);
         return sb.toString();
     }

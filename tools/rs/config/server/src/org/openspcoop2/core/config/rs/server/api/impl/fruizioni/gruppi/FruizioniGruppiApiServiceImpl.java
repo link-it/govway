@@ -370,7 +370,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			if ( idPortaDelegata != null ) {
 			
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaFruitoriPorteDelegate(
 						new ArrayList<IDPortaDelegata>(Arrays.asList(idPortaDelegata)), 
 						asps, env.idSoggetto.toIDSoggetto(), 
@@ -424,7 +424,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			
 			if ( BaseHelper.findFirst( pd.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() ) {
                         
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				
 				PorteDelegateUtilities.deletePortaDelegataAzioni(pd, asps, env.pdCore, env.pdHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
 				

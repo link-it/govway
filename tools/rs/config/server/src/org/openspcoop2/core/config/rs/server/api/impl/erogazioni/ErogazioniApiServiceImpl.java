@@ -220,7 +220,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 			if (asps != null) {
 
 				final IDServizio idServizio = env.idServizioFactory.getIDServizioFromAccordo(asps);
-				final StringBuffer inUsoMessage = new StringBuffer();
+				final StringBuilder inUsoMessage = new StringBuilder();
 
 				AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecifica(asps, false, // gestioneFruitori,
 						true, // gestioneErogatori,
@@ -820,7 +820,7 @@ public class ErogazioniApiServiceImpl extends BaseImpl implements ErogazioniApi 
 				sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());
 			}
 
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			ServiziApplicativiUtilities.checkStatoConnettore(env.saCore, sa, connis, inUsoMessage, System.lineSeparator());
 
 			if (inUsoMessage.length() > 0)

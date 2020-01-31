@@ -1416,7 +1416,7 @@ public class TransazioniService implements ITransazioniService {
 			expr.notEquals(Transazione.model().ID_TRANSAZIONE, idTransazione);
 			
 
-			//			StringBuffer sb = new StringBuffer(
+			//			StringBuilder sb = new StringBuilder(
 			//					"SELECT t FROM Transazione t where t.id<>:id_transazione AND ( t.idEgovRichiesta=:id_egov OR t.idEgovRisposta=:id_egov )");
 
 			if (!isRisposta) {
@@ -1583,7 +1583,7 @@ public class TransazioniService implements ITransazioniService {
 
 	@Override
 	public ResLive getEsiti(PermessiUtenteOperatore permessiUtente, Date min, Date max, String esitoContesto, String protocollo, TipologiaRicerca tipologiaRicerca) {
-		// StringBuffer pezzoIdPorta = new StringBuffer();
+		// StringBuilder pezzoIdPorta = new StringBuilder();
 
 		this.log.debug("Get Esiti [permessiUtenti: " + permessiUtente + "],[ Date Min: " + min + "], [Date Max: " + max + "]");
 		try {
@@ -1925,7 +1925,7 @@ public class TransazioniService implements ITransazioniService {
 
 			}
 
-			// StringBuffer sb = new StringBuffer(
+			// StringBuilder sb = new StringBuilder(
 			// "SELECT st FROM StatoConfig st JOIN st.transazione t JOIN t.azioneConfig a JOIN a.configurazioneServizio s WHERE s.servizio=:nome_servizio AND s.accordo=:nome_accordo ");
 			//
 			// if (idAccordo.getSoggettoReferente() != null) {
@@ -2092,7 +2092,7 @@ public class TransazioniService implements ITransazioniService {
 
 			}
 
-			// StringBuffer sb = new StringBuffer(
+			// StringBuilder sb = new StringBuilder(
 			// "SELECT r FROM RisorsaContenutoConfig r ");
 			//
 			// if (nomeStato != null && !"*".equals(nomeStato))

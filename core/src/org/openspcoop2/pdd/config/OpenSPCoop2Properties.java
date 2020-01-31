@@ -13933,7 +13933,7 @@ public class OpenSPCoop2Properties {
 						
 						String inizioIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.inizioIntervallo");
 						String fineIntervallo = this.reader.getValue_convertEnvProperties("org.openspcoop2.generazioneDateCasuali.fineIntervallo");
-						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm"); // SimpleDateFormat non e' thread-safe
+						SimpleDateFormat sdf = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd hh:mm");
 						if(inizioIntervallo==null){
 							throw new Exception("Non e' stato definito l'intervallo di inizio per la modalita' di generazione casuale delle date");
 						}

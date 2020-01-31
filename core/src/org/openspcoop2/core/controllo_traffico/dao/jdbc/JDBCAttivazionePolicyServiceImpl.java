@@ -205,7 +205,7 @@ public class JDBCAttivazionePolicyServiceImpl extends JDBCAttivazionePolicyServi
 			return;
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			attivazioneLettoDaDB.diff(attivazionePolicy, bf);
 			log.debug("Esistono differenze: "+bf.toString());
 			attivazionePolicy.setUpdateTime(DateManager.getDate());

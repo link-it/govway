@@ -757,7 +757,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 				transactionDTO.setServizioApplicativoFruitore(context.getIntegrazione().getServizioApplicativoFruitore());
 				// in caso di porta applicativa si salva l'elenco dei servizi applicativi erogatori
 				if(context.getIntegrazione().sizeServiziApplicativiErogatori()>0){
-					StringBuffer sa_erogatori = new StringBuffer();
+					StringBuilder sa_erogatori = new StringBuilder();
 					for (int i=0; i<context.getIntegrazione().sizeServiziApplicativiErogatori(); i++) {
 						if (i>0){
 							sa_erogatori.append(",");
@@ -767,7 +767,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 					transactionDTO.setServizioApplicativoErogatore(sa_erogatori.toString());
 				}
 				else if(transaction.getServiziApplicativiErogatore()!=null && transaction.getServiziApplicativiErogatore().size()>0){
-					StringBuffer sa_erogatori = new StringBuffer();
+					StringBuilder sa_erogatori = new StringBuilder();
 					for (int i=0; i<transaction.getServiziApplicativiErogatore().size(); i++) {
 						if (i>0){
 							sa_erogatori.append(",");

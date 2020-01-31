@@ -269,7 +269,7 @@ public class SPCoopArchive extends BasicArchive {
 	
 	private String toString(ArchiveEsitoImport archive, boolean importOperation){
 		
-		StringBuffer bfEsito = new StringBuffer();
+		StringBuilder bfEsito = new StringBuilder();
 		
 		// Nel CNIPA ci sono sempre e solo un oggetto.
 		

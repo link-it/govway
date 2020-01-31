@@ -733,7 +733,7 @@ public abstract class AbstractXMLUtils {
 
 					// String
 					if(i+eraserString.length() < xml.length){ 
-						StringBuffer test = new StringBuffer();
+						StringBuilder test = new StringBuilder();
 						for(int k=0 ; k < eraserString.length(); k++){
 							test.append((char)xml[i+k]);
 						}

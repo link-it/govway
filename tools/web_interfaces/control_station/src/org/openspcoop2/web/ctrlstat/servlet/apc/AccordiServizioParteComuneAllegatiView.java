@@ -97,7 +97,7 @@ public final class AccordiServizioParteComuneAllegatiView extends Action {
 			
 			Documento doc = archiviCore.getDocumento(idAllegatoInt,true);
 
-			StringBuffer contenutoAllegato = new StringBuffer();
+			StringBuilder contenutoAllegato = new StringBuilder();
 			String errore = Utilities.getTestoVisualizzabile(doc.getByteContenuto(),contenutoAllegato);
 			
 			IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();

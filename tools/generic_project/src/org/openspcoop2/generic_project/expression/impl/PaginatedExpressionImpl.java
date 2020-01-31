@@ -96,7 +96,7 @@ public class PaginatedExpressionImpl extends ExpressionImpl implements IPaginate
 			return s;
 		}
 		else{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append(s);
 			
 			if(this.limit!=null && this.limit>=0){

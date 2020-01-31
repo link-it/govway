@@ -57,7 +57,7 @@ public class FilterSearch extends Filtro {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.getBusta()!=null){
 			if(this.getBusta().getMittente()!=null){
 				if(this.getBusta().getMittente().getTipo()!=null && !"".equals(this.getBusta().getMittente().getTipo()) &&

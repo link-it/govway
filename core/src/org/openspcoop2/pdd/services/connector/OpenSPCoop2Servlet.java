@@ -333,7 +333,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			
 		} catch (Exception e) {
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("RemoteAddr["+req.getRemoteAddr()+"] ");
 			bf.append("RemoteHost["+req.getRemoteHost()+"] ");
 			bf.append("RemotePort["+req.getRemotePort()+"] ");
@@ -354,7 +354,7 @@ public class OpenSPCoop2Servlet extends HttpServlet {
 			}
 			
 			// log su file core
-			StringBuffer bfLogError = new StringBuffer();
+			StringBuilder bfLogError = new StringBuilder();
 			ConnectorUtils.generateErrorMessage(IDService.OPENSPCOOP2_SERVLET,method,req,bfLogError, e.getMessage(), true, false);
 			if(logCore!=null){
 				logCore.error(bfLogError.toString());

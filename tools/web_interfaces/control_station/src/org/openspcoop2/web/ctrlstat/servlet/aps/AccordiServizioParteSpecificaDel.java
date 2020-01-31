@@ -139,7 +139,7 @@ public final class AccordiServizioParteSpecificaDel extends Action {
 
 			IExtendedListServlet extendedServlet = porteApplicativeCore.getExtendedServletPortaApplicativa();
 
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			for (int i = 0; i < idsToRemove.size(); i++) {
 

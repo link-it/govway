@@ -101,7 +101,7 @@ public abstract class EsitoToken implements java.io.Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(this.details!=null){
 			bf.append(" ");

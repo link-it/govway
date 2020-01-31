@@ -75,7 +75,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validate(DettaglioEccezione eccezione,StringBuffer motivoErroreValidazione){
+	public static boolean validate(DettaglioEccezione eccezione,StringBuilder motivoErroreValidazione){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -136,7 +136,7 @@ public class XMLUtils  {
 			return true;
 
 	}
-	private static void validate(Dominio dominio,StringBuffer motivoErroreValidazione){
+	private static void validate(Dominio dominio,StringBuilder motivoErroreValidazione){
 		if(dominio.getId()==null){
 			motivoErroreValidazione.append("Dominio.identificativoPorta non definito\n");
 		}
@@ -266,7 +266,7 @@ public class XMLUtils  {
 	/* ----- Marshall ----- */
 	public static void generateDettaglioEccezione(DettaglioEccezione eccezione,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -278,7 +278,7 @@ public class XMLUtils  {
 	
 	public static void generateDettaglioEccezione(DettaglioEccezione eccezione,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -290,7 +290,7 @@ public class XMLUtils  {
 	
 	public static byte[] generateDettaglioEccezione(DettaglioEccezione eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -302,7 +302,7 @@ public class XMLUtils  {
 
 	public static void generateDettaglioEccezione(DettaglioEccezione eccezione,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -316,7 +316,7 @@ public class XMLUtils  {
 	
 	public static String generateDettaglioEccezioneAsJson(DettaglioEccezione eccezione) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validate(eccezione, risultatoValidazione)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -500,7 +500,7 @@ public class XMLUtils  {
 	
 	
 	public static String toString(DettaglioEccezione de){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(de!=null){
 			
 			if(de.getTimestamp()!=null){

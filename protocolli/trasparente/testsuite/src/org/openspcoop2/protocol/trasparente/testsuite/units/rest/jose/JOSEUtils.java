@@ -100,7 +100,7 @@ public class JOSEUtils {
 		request.setContent(JSON_MESSAGE.getBytes());
 		request.setContentType(HttpConstants.CONTENT_TYPE_JSON);
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.delegata)
 			bf.append(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
 		else

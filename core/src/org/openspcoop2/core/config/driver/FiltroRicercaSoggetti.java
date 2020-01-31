@@ -58,7 +58,7 @@ public class FiltroRicercaSoggetti extends FiltroRicercaBase implements Serializ
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(super.toString(false));
 		if(this.tipo!=null)
 			bf.append(" [tipo:"+this.tipo+"]");

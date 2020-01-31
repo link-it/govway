@@ -166,7 +166,7 @@ public class PaginatedExpressionSQL extends PaginatedExpressionImpl {
 			s = "";
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(s);
 
 		bf.append(ExpressionSQL.sqlGroupBy(this.sqlFieldConverter, this.getGroupByFields()));

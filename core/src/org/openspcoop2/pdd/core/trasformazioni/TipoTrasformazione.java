@@ -178,10 +178,10 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
   		return toString();
   	}
-  	public String diff(Object object,StringBuffer bf,boolean reportHTML){
+  	public String diff(Object object,StringBuilder bf,boolean reportHTML){
 		return bf.toString();
 	}
-	public String diff(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){
+	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
 		return bf.toString();
 	}
 	

@@ -93,7 +93,7 @@ public class FiltroRicercaPorteApplicative extends FiltroRicercaBase implements 
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(super.toString(false));
 		if(this.tipoSoggetto!=null)
 			bf.append(" [tipoSoggetto:"+this.tipoSoggetto+"]");

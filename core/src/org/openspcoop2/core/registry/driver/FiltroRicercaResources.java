@@ -72,7 +72,7 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro Resources: ");
 		this.addDetails(bf);
 		if(bf.length()=="Filtro Resources: ".length())
@@ -80,7 +80,7 @@ public class FiltroRicercaResources extends FiltroRicercaAccordi implements Seri
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.resourceName!=null)
 			bf.append(" [nome-risorsa:"+this.resourceName+"]");
 		if(this.protocolPropertiesResources!=null && this.protocolPropertiesResources.size()>0){

@@ -201,7 +201,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
 
-		StringBuffer caption = new StringBuffer(captionText);
+		StringBuilder caption = new StringBuilder(captionText);
 
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if (StatisticType.ORARIA.equals(this.getTempo()) || this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {

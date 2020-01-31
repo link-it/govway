@@ -476,7 +476,7 @@ public enum ErroriIntegrazione {
 		if(!this.equals(ERRORE_401_PORTA_INESISTENTE)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_401_PORTA_INESISTENTE.name());
 		}
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		if(location!=null){
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,location));
@@ -720,7 +720,7 @@ public enum ErroriIntegrazione {
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_CONTENT_TYPE_TROVATO,contentTypeTrovato));
 		if(contentTypesSupportati!=null && contentTypesSupportati.size()>0){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (int i = 0; i < contentTypesSupportati.size(); i++) {
 				if(bf.length()>0){
 					bf.append(", ");
@@ -776,7 +776,7 @@ public enum ErroriIntegrazione {
 		}
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		if(contentTypesSupportati!=null && contentTypesSupportati.size()>0){
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			for (int i = 0; i < contentTypesSupportati.size(); i++) {
 				if(bf.length()>0){
 					bf.append(", ");
@@ -881,7 +881,7 @@ public enum ErroriIntegrazione {
 		if(!this.equals(ERRORE_441_PORTA_NON_INVOCABILE_DIRETTAMENTE)){
 			throw new RuntimeException("Il seguente metodo può solo essere utilizzato con il messaggio "+ERRORE_401_PORTA_INESISTENTE.name());
 		}
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		List<KeyValueObject> lista = new ArrayList<KeyValueObject>();
 		if(location!=null){
 			lista.add(new KeyValueObject(CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_PORTA_LOCATION,location));

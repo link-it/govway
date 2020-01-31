@@ -102,7 +102,7 @@ public class StatoViolazioniPolicy {
 	
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.violazioni.size()>0) {
 			if(this.violazioni.size()==1) {
 				bf.append("Rilevata violazione della policy: ");

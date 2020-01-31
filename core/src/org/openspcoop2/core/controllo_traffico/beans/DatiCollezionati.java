@@ -375,7 +375,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 		
 		SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("Dati Generali");
 		
@@ -1665,7 +1665,7 @@ public class DatiCollezionati extends org.openspcoop2.utils.beans.BaseBean imple
 	// **** UTILITIES ****
 		
 	public static String serialize(DatiCollezionati dati){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		// data di lettura delle informazioni
 		if(dati.cloneDate!=null)

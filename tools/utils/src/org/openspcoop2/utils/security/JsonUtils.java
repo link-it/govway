@@ -89,7 +89,7 @@ public class JsonUtils {
 	public static boolean RECEIVER = false;
 	public static UtilsException convert(JOSESerialization serialization, boolean signature, boolean roleSender, Throwable t) {
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(serialization!=null) {
 			bf.append("[").append(serialization.name()).append("] ");
 		}

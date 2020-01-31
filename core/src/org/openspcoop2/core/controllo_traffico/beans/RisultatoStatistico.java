@@ -73,7 +73,7 @@ public class RisultatoStatistico implements Serializable {
 	@Override
 	public String toString(){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("Risultato: ");
 		bf.append(this.risultato);

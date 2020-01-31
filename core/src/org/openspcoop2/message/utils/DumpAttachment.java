@@ -46,7 +46,7 @@ public class DumpAttachment implements Serializable{
 	
 	private String errorContentNotSerializable;
 	private ByteArrayOutputStream content;
-	private StringBuffer printableContent;
+	private StringBuilder printableContent;
 	
 	public String getContentId() {
 		return this.contentId;
@@ -84,7 +84,7 @@ public class DumpAttachment implements Serializable{
 		}
 		return null;
 	}
-	private static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer) {
+	private static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer) {
 		 try{
 			 // 1024 = 1K
 			 // Visualizzo al massimo 50K (per i log)
@@ -103,10 +103,10 @@ public class DumpAttachment implements Serializable{
 					return this.printableContent.toString();
 				}
 				else {
-					this.printableContent = new StringBuffer();
+					this.printableContent = new StringBuilder();
 					String errore = getTestoVisualizzabile(this.content.toByteArray(),this.printableContent);
 					if(errore!=null) {
-						this.printableContent = new StringBuffer();
+						this.printableContent = new StringBuilder();
 						this.printableContent.append(errore);
 					}
 					return this.printableContent.toString();

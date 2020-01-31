@@ -468,7 +468,7 @@ public class ValidazioneDocumenti extends BasicComponentFactory implements IVali
 	private void checkPortTypeInBinding(DefinitionWrapper wsdlParteSpecifica) throws Exception{
 		Hashtable<QName,QName> mapBindingToPortTypeImplemented = wsdlParteSpecifica.getMapPortTypesImplementedBinding();
 		List<String> portTypes = new ArrayList<String>();
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		Enumeration<QName> bindings = mapBindingToPortTypeImplemented.keys();
 		while (bindings.hasMoreElements()) {
 			QName binding = (QName) bindings.nextElement();

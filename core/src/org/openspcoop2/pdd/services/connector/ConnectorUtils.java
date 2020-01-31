@@ -110,7 +110,7 @@ public class ConnectorUtils {
 		return ConnectorCostanti.MESSAGE_SERVICE_BINDING_NOT_SUPPORTED.replace(ConnectorCostanti.KEYWORD_SERVICE_BINDING, serviceBinding.name());
 	}
 	
-	private static StringBuffer getPrefixCode(IDService idService) {
+	private static StringBuilder getPrefixCode(IDService idService) {
 		
 		Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		if(log==null){
@@ -120,48 +120,48 @@ public class ConnectorUtils {
 			log = LoggerWrapperFactory.getLogger(ConnectorUtils.class);
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		try{
 			bf.append(idService.getCode()).append(ConnectorCostanti.SEPARATOR_CODE);
 		}catch(Exception e){
 			log.error(e.getMessage(),e);
-			bf = new StringBuffer();
+			bf = new StringBuilder();
 			bf.append(ConnectorCostanti.ID_ERRORE_GENERICO);
 		}
 		return bf;
 	}
 	
 	public static String getFullCodeProtocolUnsupported(IDService idService) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_PROTOCOL_NOT_SUPPORTED);
 		return bf.toString();
 	}
 	
 	public static String getFullCodeWsdlUnsupported(IDService idService) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_WSDL_UNSUPPORTED);
 		return bf.toString();
 	}
 	public static String getFullCodeWsdlNotDefined(IDService idService) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_WSDL_NOT_DEFINED);
 		return bf.toString();
 	}
 	
 	public static String getFullCodeEngineFilter(IDService idService) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_ENGINE_FILTER);
 		return bf.toString();
 	}
 	
 	public static String getFullCodeFunctionUnsupported(IDService idService) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		bf.append(ConnectorCostanti.CODE_FUNCTION_UNSUPPORTED);
 		return bf.toString();
 	}
 	
 	public static String getFullCodeHttpMethodNotSupported(IDService idService, HttpRequestMethod method) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		switch (method) {
 		case GET:
 			bf.append(ConnectorCostanti.CODE_HTTP_METHOD_GET_UNSUPPORTED);
@@ -198,7 +198,7 @@ public class ConnectorUtils {
 	}
 	
 	public static String getFullCodeServiceBindingNotSupported(IDService idService, ServiceBinding serviceBinding) {
-		StringBuffer bf = getPrefixCode(idService);
+		StringBuilder bf = getPrefixCode(idService);
 		switch (serviceBinding) {
 		case SOAP:
 			bf.append(ConnectorCostanti.CODE_SERVICE_BINDING_SOAP_UNSUPPORTED);
@@ -220,11 +220,11 @@ public class ConnectorUtils {
 		generateErrorMessage(idService, httpMethod, req, res, msgErrore, erroreGenerale, htmlMessage, null);
 	}
 	public static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
-			HttpServletRequest req, StringBuffer log, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
+			HttpServletRequest req, StringBuilder log, String msgErrore, boolean erroreGenerale, boolean htmlMessage) throws IOException{
 		generateErrorMessage(idService, httpMethod, req, null, msgErrore, erroreGenerale, htmlMessage, log);
 	}
 	private static void generateErrorMessage(IDService idService, HttpRequestMethod httpMethod,
-			HttpServletRequest req, HttpServletResponse response, String msgErrore, boolean erroreGenerale, boolean htmlMessage, StringBuffer log) throws IOException{
+			HttpServletRequest req, HttpServletResponse response, String msgErrore, boolean erroreGenerale, boolean htmlMessage, StringBuilder log) throws IOException{
 		
 		Logger logCore = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
@@ -262,7 +262,7 @@ public class ConnectorUtils {
 			return;
 		}
 		
-		StringBuffer risposta = new StringBuffer();
+		StringBuilder risposta = new StringBuilder();
 		risposta.append("<html>\n");
 		risposta.append("<head>\n");
 		risposta.append("<title>"+versione+"</title>\n");
@@ -357,7 +357,7 @@ public class ConnectorUtils {
 					risposta.append("<i>ERROR: No protocol installed</i><br/>\n");
 				}
 				else{
-					StringBuffer bfProtocols = new StringBuffer();
+					StringBuilder bfProtocols = new StringBuilder();
 					Enumeration<String> keys = prots.keys();
 					while (keys.hasMoreElements()) {
 						String key = (String) keys.nextElement();

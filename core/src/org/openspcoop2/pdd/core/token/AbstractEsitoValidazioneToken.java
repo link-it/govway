@@ -66,7 +66,7 @@ public abstract class AbstractEsitoValidazioneToken extends EsitoToken implement
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("token valido: ");
 		bf.append(this.valido);

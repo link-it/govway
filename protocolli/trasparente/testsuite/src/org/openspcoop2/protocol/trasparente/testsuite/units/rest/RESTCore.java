@@ -446,7 +446,7 @@ public class RESTCore {
 			
 			// String url
 			// 3. Costruzione url
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append(this.servizioRichiesto);
 			bf.append(this.portaApplicativaDelegata);
 			if(!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest)) {

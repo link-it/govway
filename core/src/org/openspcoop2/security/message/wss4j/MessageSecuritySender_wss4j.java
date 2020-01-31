@@ -255,7 +255,7 @@ public class MessageSecuritySender_wss4j implements IMessageSecuritySender{
     }
     
     private String normalizeWss4jParts(String parts,OpenSPCoop2Message message){
-    	StringBuffer bf = new StringBuffer();
+    	StringBuilder bf = new StringBuilder();
     	String[]split = ((String)parts).split(";");
 		for (int i = 0; i < split.length; i++) {
 			if(i>0){

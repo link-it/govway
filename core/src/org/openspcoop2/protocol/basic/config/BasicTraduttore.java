@@ -204,7 +204,7 @@ public class BasicTraduttore extends BasicComponentFactory implements org.opensp
 	public String getIdentificativoCodiceIPADefault(IDSoggetto soggetto,boolean createURI) throws ProtocolException{
 		if(soggetto==null || "".equals(soggetto))
 			throw new ProtocolException("Identificativo soggetto non fornito");
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(createURI){
 			bf.append("uri:dn:");
 		}

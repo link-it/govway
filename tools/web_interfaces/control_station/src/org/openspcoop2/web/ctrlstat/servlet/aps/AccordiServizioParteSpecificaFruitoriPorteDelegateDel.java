@@ -138,7 +138,7 @@ public final class AccordiServizioParteSpecificaFruitoriPorteDelegateDel extends
 				listPortaDelegataDaELiminare.add(idPortaDelegata);
 			}
 			
-			StringBuffer inUsoMessage = new StringBuffer();
+			StringBuilder inUsoMessage = new StringBuilder();
 			
 			AccordiServizioParteSpecificaUtilities.deleteAccordoServizioParteSpecificaFruitoriPorteDelegate(listPortaDelegataDaELiminare, asps, idSoggettoFruitore, 
 					superUser, apsCore, apsHelper, inUsoMessage);

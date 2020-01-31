@@ -57,7 +57,7 @@ public class ArchiveAccordoServizioParteSpecifica implements IArchiveObject {
 			throw new ProtocolException("versioneServizio non fornita");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("AccordoServizioParteSpecifica_");
 		bf.append(tipoSoggetto);
 		bf.append("/");

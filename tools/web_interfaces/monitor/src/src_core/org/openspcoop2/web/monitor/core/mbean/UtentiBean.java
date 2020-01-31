@@ -186,7 +186,7 @@ public class UtentiBean extends PdDBaseBean<UtentiBean, String, IService<User, S
 			}
 
 			if(this.passwordVerifier!=null){
-				StringBuffer motivazioneErrore = new StringBuffer();
+				StringBuilder motivazioneErrore = new StringBuilder();
 				if(this.passwordVerifier.validate(this.user.getLogin(), this.user.getPassword(), motivazioneErrore)==false){
 					// errore
 					MessageUtils.addErrorMsg(motivazioneErrore.toString());

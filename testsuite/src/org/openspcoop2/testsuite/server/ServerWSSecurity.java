@@ -101,7 +101,7 @@ public class ServerWSSecurity extends ServerCore{
 			
 			
 			String wssFunction = request.getParameter("wssecurityFunction");
-			StringBuffer functionsRichieste = new StringBuffer(); 
+			StringBuilder functionsRichieste = new StringBuilder(); 
 			boolean signature = false;
 			boolean encrypt = false;
 			if(wssFunction==null){

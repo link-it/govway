@@ -506,7 +506,7 @@ public class ClassQueue {
 			sqlQueryObject.addWhereCondition(false, CostantiDB.OPERATIONS_TABLE+".timereq < ?", CostantiDB.OPERATIONS_TABLE+".timereq = ? AND "+CostantiDB.OPERATIONS_TABLE+".id < ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.PARAMETERS_TABLE+".name = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.PARAMETERS_TABLE+".value = ?");
-			StringBuffer substring = new StringBuffer();
+			StringBuilder substring = new StringBuilder();
 			substring.append(" ( ");
 			for(int i=0; i<filter.length; i++){
 				if(i>0)

@@ -75,7 +75,7 @@ public class NotifierCallback implements INotifierCallback {
 		Logger log = NotifierUtilities.getLogger(notifierType, context);
 		String idTransazione = NotifierUtilities.getIdTransazione(notifierType, context);
 		TipoPdD tipoPorta = NotifierUtilities.getTipoPorta(notifierType, context);
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("[NotifierCallback] [").append(idTransazione).append("]-[")
 			.append(tipoPorta.name()).append("] (")
 			.append(notifierType.name()).append(") @")
@@ -90,7 +90,7 @@ public class NotifierCallback implements INotifierCallback {
 	}
 	
 	private void emitLog(NotifierType notifierType,Object context,String methodName){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		String idTransazione = NotifierUtilities.getIdTransazione(notifierType, context);
 		bf.append("[NotifierCallback] \n");
 		bf.append("[NotifierCallback] [").append(idTransazione).append("] --------------------------- @"+methodName+"@ (start) ------------------------------\n");			
@@ -111,7 +111,7 @@ public class NotifierCallback implements INotifierCallback {
 		this.getLoggerUtility().debug(bf.toString());
 	}
 	private void emitLogEnd(NotifierType notifierType,Object context,String methodName){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		String idTransazione = NotifierUtilities.getIdTransazione(notifierType, context);
 		bf.append("[NotifierCallback] [").append(idTransazione).append("] --------------------------- @"+methodName+"@ (end) ------------------------------\n");		
 		this.getLoggerUtility().debug(bf.toString());

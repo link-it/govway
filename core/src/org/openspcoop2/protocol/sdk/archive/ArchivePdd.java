@@ -36,7 +36,7 @@ public class ArchivePdd implements IArchiveObject {
 			throw new ProtocolException("nomePdd non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("PortaDominio_");
 		bf.append(nomePdd);
 		return bf.toString();

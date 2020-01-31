@@ -561,7 +561,7 @@ public class OpenSPCoop2DBConfigurationUtility {
 					IDAccordo idAccordoParteComune = IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune());
 					filtroAltriServizi.setIdAccordoServizioParteComune(idAccordoParteComune);
 					boolean existsAltriServizi = false;
-					StringBuffer bfAltriServizi = new StringBuffer();
+					StringBuilder bfAltriServizi = new StringBuilder();
 					try{
 						List<IDServizio> others = driverRegistroServizi.getAllIdServizi(filtroAltriServizi);
 						if(others!=null && others.size()>0){

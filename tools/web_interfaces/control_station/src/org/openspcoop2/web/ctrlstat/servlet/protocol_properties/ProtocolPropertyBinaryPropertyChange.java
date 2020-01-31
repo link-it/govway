@@ -208,7 +208,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				oldContenutoDocumento.setName(this.nome); 
 			}
 
-			StringBuffer contenutoDocumentoStringBuffer = new StringBuffer();
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
 			byte[] oldValue =  oldContenutoDocumento.getValue() ;
 			if(readOnly && oldValue==null) {
 				// il valore deve essere preso da default value
@@ -220,7 +220,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 			}
 			String errore = null;
 			if(showContent) {
-				errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuffer);
+				errore = Utilities.getTestoVisualizzabile(oldValue,contenutoDocumentoStringBuilder);
 			}
 			
 			// Parametri Barra titolo TIPO PROPRIETARIO / LABEL OGGETTO / GESTIONE DOCUMENTO
@@ -238,7 +238,7 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						oldContenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+						oldContenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 
 				pd.setDati(dati);
 
@@ -290,14 +290,14 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 				
-				contenutoDocumentoStringBuffer = new StringBuffer();
+				contenutoDocumentoStringBuilder = new StringBuilder();
 				errore = null;
 				if(showContent) {
-					errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+					errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
 				}
 
 				dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-						this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+						this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 				
 				pd.setDati(dati);
 				
@@ -355,14 +355,14 @@ public class ProtocolPropertyBinaryPropertyChange extends Action {
 					this.id = ""+ protocolProperty.getId();
 			}
 			
-			contenutoDocumentoStringBuffer = new StringBuffer();
+			contenutoDocumentoStringBuilder = new StringBuilder();
 			errore = null;
 			if(showContent) {
-				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuffer);
+				errore = Utilities.getTestoVisualizzabile(this.contenutoDocumento.getValue(),contenutoDocumentoStringBuilder);
 			}
 
 			dati = ppHelper.addProtocolPropertyChangeToDati(tipoOp, dati, this.protocollo, this.id, this.nome, this.idProprietario,this.tipoProprietario,this.tipoAccordo,this.nomeProprietario,this.nomeParentProprietario,this.urlChange, label,
-					this.contenutoDocumento,contenutoDocumentoStringBuffer,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
+					this.contenutoDocumento,contenutoDocumentoStringBuilder,errore,tipologiaDocumentoScaricare,binaryConsoleItem, readOnly);
 
 			pd.setDati(dati);
 			

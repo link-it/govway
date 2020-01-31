@@ -110,7 +110,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace1.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -226,7 +226,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace2.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<EGOV_PERSONALIZZATO:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:EGOV_PERSONALIZZATO=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -350,7 +350,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace3.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -461,7 +461,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace4.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:RIDEFINITO_ENVELOPE=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -584,7 +584,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace5.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:RIDEFINITO_ENVELOPE=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -702,7 +702,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespace6.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:RIDEFINITO_ENVELOPE=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\" xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header xmlns=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
 		busta.append("<Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" >\n");
@@ -820,7 +820,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryNamespaceErrato1.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -941,7 +941,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositorySoapActorMustUnderstand1.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1058,7 +1058,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositorySoapActorMustUnderstand2.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione soapenv:actor=\"http://www.cnipa.it/eGov_it/portadominio\" soapenv:mustUnderstand=\"1\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1179,7 +1179,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositorySoapActorMustUnderstand3.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione actor=\"http://www.cnipa.it/eGov_it/portadominio\" mustUnderstand=\"1\" xmlns=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1361,7 +1361,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositorySoapActorMustUnderstand4.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione PREFIX_PERSONALIZZATO:actor=\"http://www.cnipa.it/eGov_it/portadominio\" PREFIX_PERSONALIZZATO:mustUnderstand=\"1\" xmlns:PREFIX_PERSONALIZZATO=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1480,7 +1480,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositorySoapActorMustUnderstand5.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" soapenv:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1600,7 +1600,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryManifest1.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1733,7 +1733,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryManifest2.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1865,7 +1865,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryManifest3.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -1994,7 +1994,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryManifest4.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -2127,7 +2127,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryManifest5.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -2266,7 +2266,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryErroreManifest1.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");
@@ -2409,7 +2409,7 @@ public class BusteEGovNamespace {
 				CostantiTestSuite.SPCOOP_NOME_SOGGETTO_FRUITORE+CostantiTestSuite.SPCOOP_PORTA_DOMINIO);
 		this.repositoryErroreManifest2.add(idegov);
 		
-		StringBuffer busta = new StringBuffer();
+		StringBuilder busta = new StringBuilder();
 		busta.append("<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">\n");
 		busta.append("<soapenv:Header>\n");
 		busta.append("<eGov_IT:Intestazione SOAP_ENV:actor=\"http://www.cnipa.it/eGov_it/portadominio\" SOAP_ENV:mustUnderstand=\"1\" xmlns:SOAP_ENV=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:eGov_IT=\"http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/\">\n");

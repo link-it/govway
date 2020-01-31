@@ -37,7 +37,7 @@ public class ArchiveGruppo implements IArchiveObject {
 			throw new ProtocolException("nomeGruppo non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Gruppo_");
 		bf.append(nomeGruppo);
 		return bf.toString();

@@ -60,7 +60,7 @@ public class ResDistribuzione extends ResBase implements Serializable{
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer(super.toString());
+		StringBuilder bf = new StringBuilder(super.toString());
 		bf.append("\n");
 		if(this.risultato!=null){
 			bf.append("\tRisultato: ["+this.risultato+"]");

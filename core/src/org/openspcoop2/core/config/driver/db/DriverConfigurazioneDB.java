@@ -3727,7 +3727,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 					sqlQueryObject.addWhereCondition(nomeTabellaSoggetti+".id_trasformazione="+nomeTabella+".id");
 					List<String> conditions = new ArrayList<>();
 					for (@SuppressWarnings("unused") TrasformazioneRegolaApplicabilitaSoggetto trasformazioneRegolaApplicabilitaSoggetto : soggetti) {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append("( ");
 						bf.append(nomeTabellaSoggetti).append(".tipo_soggetto=?");
 						bf.append(" AND ");
@@ -3754,7 +3754,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				sqlQueryObject.addWhereCondition(nomeTabellaSA+".id_trasformazione="+nomeTabella+".id");
 				List<String> conditions = new ArrayList<>();
 				for (@SuppressWarnings("unused") TrasformazioneRegolaApplicabilitaServizioApplicativo trasformazioneRegolaApplicabilitaSA : applicativi) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					bf.append("( ");
 					bf.append(nomeTabellaSA).append(".id_servizio_applicativo=?");
 					bf.append(") ");

@@ -481,7 +481,7 @@ public class JDBCStatisticaMensileServiceImpl extends JDBCStatisticaMensileServi
 		sqlQueryObjectUpdate_statisticaMensileContenuti_deleteList.addWhereCondition("id_stat=?");
 		jdbcObjects_statisticaMensileContenuti_delete.add(new JDBCObject(statisticaMensile.getId(), Long.class));
 
-		StringBuffer marks_statisticaMensileContenuti = new StringBuffer();
+		StringBuilder marks_statisticaMensileContenuti = new StringBuilder();
 		if(ids_statisticaMensileContenuti_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_statisticaMensileContenuti_da_non_eliminare) {
 				if(marks_statisticaMensileContenuti.length() > 0) {

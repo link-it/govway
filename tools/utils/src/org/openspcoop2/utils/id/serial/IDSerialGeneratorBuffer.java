@@ -49,7 +49,7 @@ public class IDSerialGeneratorBuffer {
 	}
 	
 	private static String getKey(Class<?> cIdSerialGenerator,String relativeInfo){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(getPrefix(cIdSerialGenerator));
 		if(relativeInfo!=null){
 			bf.append(relativeInfo);

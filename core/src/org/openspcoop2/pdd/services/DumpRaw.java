@@ -58,9 +58,9 @@ import org.slf4j.Logger;
  */
 public class DumpRaw {
 
-	private StringBuffer bfContext = new StringBuffer();
-	private StringBuffer bfRequest = new StringBuffer();
-	private StringBuffer bfResponse = new StringBuffer();
+	private StringBuilder bfContext = new StringBuilder();
+	private StringBuilder bfRequest = new StringBuilder();
+	private StringBuilder bfResponse = new StringBuilder();
 	private Logger log;
 	private boolean pd;
 	private String idTransaction;

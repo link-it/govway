@@ -342,7 +342,7 @@ public class ConnettoreCheck {
 		SSLContext sslContext = null;
 		if(sslContextProperties!=null){
 			
-			StringBuffer bfSSLConfig = new StringBuffer();
+			StringBuilder bfSSLConfig = new StringBuilder();
 			sslContext = SSLUtilities.generateSSLContext(sslContextProperties, bfSSLConfig);
 			
 		}
@@ -385,7 +385,7 @@ public class ConnettoreCheck {
 				HttpsURLConnection httpsConn = (HttpsURLConnection) httpConn;
 				httpsConn.setSSLSocketFactory(sslContext.getSocketFactory());
 				
-				StringBuffer bfLog = new StringBuffer();
+				StringBuilder bfLog = new StringBuilder();
 				HostnameVerifier hostnameVerifier = SSLUtilities.generateHostnameVerifier(sslContextProperties, bfLog, 
 						LoggerWrapperFactory.getLogger(ConnettoreCheck.class), new Loader());
 				if(hostnameVerifier!=null){

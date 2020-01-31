@@ -123,7 +123,7 @@ public class Riscontri  {
 
 			java.sql.Timestamp oraInvio = new java.sql.Timestamp(timestamp.getTime());
 
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.append("INSERT INTO  ");
 			query.append(Costanti.RISCONTRI_DA_RICEVERE);
 			query.append(" VALUES ( ? , ? )");
@@ -181,7 +181,7 @@ public class Riscontri  {
 
 
 			if(Configurazione.getSqlQueryObjectType()==null){
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.append("SELECT ID_MESSAGGIO FROM ");
 				query.append(Costanti.RISCONTRI_DA_RICEVERE);
 				query.append(" WHERE DATA_INVIO < ? ");
@@ -332,7 +332,7 @@ public class Riscontri  {
 			try{
 
 				// Eliminazione dalla tabella Riscontri
-				StringBuffer query = new StringBuffer();
+				StringBuilder query = new StringBuilder();
 				query.delete(0,query.capacity());
 				query.append("DELETE FROM ");
 				query.append(Costanti.RISCONTRI_DA_RICEVERE);
@@ -400,7 +400,7 @@ public class Riscontri  {
 		try{
 
 			// Eliminazione dalla tabella Riscontri
-			StringBuffer query = new StringBuffer();
+			StringBuilder query = new StringBuilder();
 			query.delete(0,query.capacity());
 			query.append("DELETE FROM ");
 			query.append(Costanti.RISCONTRI_DA_RICEVERE);

@@ -147,7 +147,7 @@ public class DumpMessaggio implements Serializable{
 	
 	public String toString(DumpMessaggioConfig config, boolean dumpAllAttachments) throws MessageException{
 		try{
-			StringBuffer out = new StringBuffer();
+			StringBuilder out = new StringBuilder();
 						
 			if(config.isDumpHeaders()) {
 				out.append("------ Header di trasporto ------\n");

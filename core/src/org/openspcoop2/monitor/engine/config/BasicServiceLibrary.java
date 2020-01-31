@@ -108,7 +108,7 @@ public class BasicServiceLibrary implements Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		bf.append("IdAccordo: ");
 		if(this.getIdAccordoServizioParteComune()!=null){

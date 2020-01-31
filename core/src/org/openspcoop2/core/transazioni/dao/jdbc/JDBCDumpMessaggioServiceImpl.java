@@ -420,7 +420,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectUpdate_multipartHeader_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_multipartHeader_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
-		StringBuffer marks_dumpMessaggio_multipartHeader = new StringBuffer();
+		StringBuilder marks_dumpMessaggio_multipartHeader = new StringBuilder();
 		if(ids_dumpMessaggio_multipartHeader_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_dumpMessaggio_multipartHeader_da_non_eliminare) {
 				if(marks_dumpMessaggio_multipartHeader.length() > 0) {
@@ -509,7 +509,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectUpdate_headerTrasporto_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_headerTrasporto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
-		StringBuffer marks_dumpMessaggio_headerTrasporto = new StringBuffer();
+		StringBuilder marks_dumpMessaggio_headerTrasporto = new StringBuilder();
 		if(ids_dumpMessaggio_headerTrasporto_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_dumpMessaggio_headerTrasporto_da_non_eliminare) {
 				if(marks_dumpMessaggio_headerTrasporto.length() > 0) {
@@ -683,7 +683,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 				sqlQueryObjectUpdate_dumpMessaggio_allegato_header_deleteList.addWhereCondition("id_allegato=?");
 				jdbcObjects_dumpMessaggio_allegato_header_delete.add(new JDBCObject(dumpMessaggio_allegato.getId(), Long.class));
 
-				StringBuffer marks_dumpMessaggio_allegato_header = new StringBuffer();
+				StringBuilder marks_dumpMessaggio_allegato_header = new StringBuilder();
 				if(ids_dumpMessaggio_allegato_header_da_non_eliminare.size() > 0) {
 					for(Long ids : ids_dumpMessaggio_allegato_header_da_non_eliminare) {
 						if(marks_dumpMessaggio_allegato_header.length() > 0) {
@@ -711,7 +711,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectUpdate_allegato_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_allegato_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
-		StringBuffer marks_dumpMessaggio_allegato = new StringBuffer();
+		StringBuilder marks_dumpMessaggio_allegato = new StringBuilder();
 		if(ids_dumpMessaggio_allegato_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_dumpMessaggio_allegato_da_non_eliminare) {
 				if(marks_dumpMessaggio_allegato.length() > 0) {
@@ -795,7 +795,7 @@ public class JDBCDumpMessaggioServiceImpl extends JDBCDumpMessaggioServiceSearch
 		sqlQueryObjectUpdate_contenuto_deleteList.addWhereCondition("id_messaggio=?");
 		jdbcObjects_dumpMessaggio_contenuto_delete.add(new JDBCObject(dumpMessaggio.getId(), Long.class));
 
-		StringBuffer marks_dumpMessaggio_contenuto = new StringBuffer();
+		StringBuilder marks_dumpMessaggio_contenuto = new StringBuilder();
 		if(ids_dumpMessaggio_contenuto_da_non_eliminare.size() > 0) {
 			for(Long ids : ids_dumpMessaggio_contenuto_da_non_eliminare) {
 				if(marks_dumpMessaggio_contenuto.length() > 0) {

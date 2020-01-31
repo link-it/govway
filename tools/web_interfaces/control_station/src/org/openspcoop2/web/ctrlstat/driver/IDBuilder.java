@@ -122,7 +122,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof MappingFruizionePortaDelegata){
 				MappingFruizionePortaDelegata mapping = (MappingFruizionePortaDelegata) o;
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("FR[");
 				bf.append(mapping.getIdFruitore().getTipo()+"/"+mapping.getIdFruitore().getNome());
 				bf.append("] SERV[");
@@ -137,7 +137,7 @@ public class IDBuilder implements org.openspcoop2.utils.serialization.IDBuilder 
 			}
 			else if(o instanceof MappingErogazionePortaApplicativa){
 				MappingErogazionePortaApplicativa mapping = (MappingErogazionePortaApplicativa) o;
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append("SERV[");
 				bf.append(mapping.getIdServizio().toString());
 				bf.append("] PA["+mapping.getIdPortaApplicativa().getNome());

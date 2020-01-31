@@ -143,7 +143,7 @@ public class ObjectFormatter implements IObjectFormatter {
 	}
 	
 	private void throwTypeUnsupported(Object o) throws ExpressionException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (Iterator<ITypeFormatter<?>> iterator = this.typesFormatter.iterator(); iterator.hasNext();) {
 			ITypeFormatter<?> type = iterator.next();
 			if(bf.length()>0){

@@ -127,7 +127,7 @@ public class MisurazioniTransazione implements Serializable , Cloneable {
 	// **** UTILITIES ****
 	
 	public static String serialize(MisurazioniTransazione misurazione){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		
 		if(misurazione.tipoPdD!=null){

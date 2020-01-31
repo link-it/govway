@@ -112,7 +112,7 @@ public class PermessiUtenteOperatore {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(this.listIDSoggetti.size()>0){
 			for (IDSoggetto idSoggetto : this.listIDSoggetti) {
 				if(bf.length()>0){

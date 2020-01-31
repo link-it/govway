@@ -302,7 +302,7 @@ public class BustaBuilder<BustaRawType> extends BasicStateComponentFactory imple
 			}
 			else{
 				ecc = Eccezione.getEccezioneProcessamento(ErroriCooperazione.ERRORE_GENERICO_PROTOCOLLO_NON_CORRETTO.getErroreCooperazione(), this.protocolFactory);
-				StringBuffer bfDescrizione = new StringBuffer();
+				StringBuilder bfDescrizione = new StringBuilder();
 				for(int k=0; k<busta.sizeListaEccezioni();k++){
 					Eccezione eccLista = busta.getEccezione(k);
 					if(eccLista.getRilevanza()==null || LivelloRilevanza.isEccezioneLivelloGrave(eccLista.getRilevanza())){

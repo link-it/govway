@@ -51,7 +51,7 @@ public class JWKSetStore implements Serializable {
 
 	@Override
 	public String toString() {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("JWKSetStore (").append(this.jwkSetPath).append(") ");
 		return bf.toString();
 	}

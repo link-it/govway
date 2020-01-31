@@ -94,7 +94,7 @@ public class HttpServletCredential extends Credential implements Serializable {
 		if(certs!=null) {
 			if(debug && log!=null){
 				try{
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					CertificateUtils.printCertificate(bf, certs);
 					log.info(bf.toString());
 				}catch(Throwable e){

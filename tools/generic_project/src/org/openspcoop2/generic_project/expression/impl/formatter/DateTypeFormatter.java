@@ -24,6 +24,7 @@ import java.util.Date;
 
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.date.DateUtils;
 
 /**
  * DateTypeFormatter
@@ -34,7 +35,7 @@ import org.openspcoop2.utils.TipiDatabase;
  */
 public class DateTypeFormatter implements ITypeFormatter<Date> {
 
-	private SimpleDateFormat dateformat = new SimpleDateFormat ("yyyy-MM-dd HH:mm:ss.SSS"); // SimpleDateFormat non e' thread-safe
+	private SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter("yyyy-MM-dd HH:mm:ss.SSS");
 	
 	@Override
 	public String toString(Date o) throws ExpressionException {

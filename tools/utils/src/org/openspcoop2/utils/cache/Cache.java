@@ -445,7 +445,7 @@ public class Cache {
 		
 		try{
 		
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			CompositeCache<Object, Serializable> cache = JCSAdminBean.getCompositeCacheManager().getCache(cacheName);
 						
@@ -622,7 +622,7 @@ public class Cache {
 		//
 		// Dove in org.apache.commons.jcs.engine.CacheConstants
 		// 		public final static String NAME_COMPONENT_DELIMITER = ":";
-		StringBuffer bf = new StringBuffer(key);
+		StringBuilder bf = new StringBuilder(key);
 		if(bf.toString().endsWith(org.apache.commons.jcs.engine.CacheConstants.NAME_COMPONENT_DELIMITER)){
 			bf.append("_");
 		}
@@ -635,7 +635,7 @@ public class Cache {
 	@Override
 	public String toString(){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		try {
 			bf.append("CACHE SIZE["+this.getCacheSize()
@@ -648,7 +648,7 @@ public class Cache {
 		}
 	}
 	public String printKeys(String separator) throws UtilsException{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		java.util.List<String> keys = this.keys();
 		for (int i = 0; i < keys.size(); i++) {
 			String key = (String) keys.get(i);

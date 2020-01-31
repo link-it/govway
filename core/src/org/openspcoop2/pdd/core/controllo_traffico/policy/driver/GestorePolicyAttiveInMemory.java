@@ -157,7 +157,7 @@ public class GestorePolicyAttiveInMemory implements IGestorePolicyAttive {
 				throw new PolicyShutdownException("Policy Manager shutdown");
 			}
 			
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			Enumeration<String> keys = this.mapActiveThreadsPolicy.keys();
 			int i = 0;
 			while (keys.hasMoreElements()) {

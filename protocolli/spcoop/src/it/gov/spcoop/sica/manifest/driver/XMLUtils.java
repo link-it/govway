@@ -67,7 +67,7 @@ public class XMLUtils  {
 		}
 		return XMLUtils.validatoreXSD;
 	}
-	public static boolean validateManifestoAS(AccordoServizio manifestoAS,StringBuffer motivoErroreValidazione,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
+	public static boolean validateManifestoAS(AccordoServizio manifestoAS,StringBuilder motivoErroreValidazione,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
 		
 		int size = motivoErroreValidazione.length();
 		
@@ -271,7 +271,7 @@ public class XMLUtils  {
 			return true;
 		
 	}
-	public static boolean validateManifestoAC(AccordoCooperazione manifestoAC,StringBuffer motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
+	public static boolean validateManifestoAC(AccordoCooperazione manifestoAC,StringBuilder motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
 
 		int size = motivoErroreValidazione.length();
 		
@@ -352,7 +352,7 @@ public class XMLUtils  {
 			return true;
 		
 	}
-	public static boolean validateManifestoSC(ServizioComposto manifestoSC,StringBuffer motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
+	public static boolean validateManifestoSC(ServizioComposto manifestoSC,StringBuilder motivoErroreValidazione, boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata){
 
 		int size = motivoErroreValidazione.length();
 		
@@ -613,7 +613,7 @@ public class XMLUtils  {
 	/* ----- Marshall Manifest dell'accordo di servizio ----- */
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -626,7 +626,7 @@ public class XMLUtils  {
 	
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -651,7 +651,7 @@ public class XMLUtils  {
 
 	public static void generateManifestoAS(AccordoServizio manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAS(manifest, risultatoValidazione, includiInfoRegistroGenerale,lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -766,7 +766,7 @@ public class XMLUtils  {
 	/* ----- Marshall Manifest dell'accordo di cooperazione ----- */
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -779,7 +779,7 @@ public class XMLUtils  {
 	
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -804,7 +804,7 @@ public class XMLUtils  {
 
 	public static void generateManifestoAC(AccordoCooperazione manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoAC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -919,7 +919,7 @@ public class XMLUtils  {
 	/* ----- Marshall Manifest dell'accordo di servizio ----- */
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata, File out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -932,7 +932,7 @@ public class XMLUtils  {
 	
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,String fileName) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}
@@ -957,7 +957,7 @@ public class XMLUtils  {
 
 	public static void generateManifestoSC(ServizioComposto manifest,boolean includiInfoRegistroGenerale,boolean lunghezzaNomeAccordoLimitata,OutputStream out) throws XMLUtilsException{
 		try{
-			StringBuffer risultatoValidazione = new StringBuffer();
+			StringBuilder risultatoValidazione = new StringBuilder();
 			if(XMLUtils.validateManifestoSC(manifest, risultatoValidazione, includiInfoRegistroGenerale, lunghezzaNomeAccordoLimitata)==false){
 				throw new Exception(risultatoValidazione.toString());
 			}

@@ -64,7 +64,7 @@ public class IDGenericProperties implements java.io.Serializable {
 		
 	@Override 
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append(this.tipologia);
 		bf.append(":");
 		bf.append(this.nome);

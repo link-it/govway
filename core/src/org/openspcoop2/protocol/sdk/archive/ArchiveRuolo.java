@@ -37,7 +37,7 @@ public class ArchiveRuolo implements IArchiveObject {
 			throw new ProtocolException("nomeRuolo non fornito");
 		}
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Ruolo_");
 		bf.append(nomeRuolo);
 		return bf.toString();

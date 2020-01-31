@@ -220,7 +220,7 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 
 	public String getSubCaption() {
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
-		StringBuffer caption = new StringBuffer(captionText);
+		StringBuilder caption = new StringBuilder(captionText);
 		if(this.search.getDataInizio() != null && this.search.getDataFine() != null){
 			if ( this.btnLblPrefix(this.search).toLowerCase().contains(CostantiGrafici.ORA_KEY)) {
 				caption.append(MessageFormat.format(CostantiGrafici.DAL_AL_PATTERN, this.formatDate(this.search.getDataInizio(),true), this.formatDate(this.search.getDataFine(),true)));

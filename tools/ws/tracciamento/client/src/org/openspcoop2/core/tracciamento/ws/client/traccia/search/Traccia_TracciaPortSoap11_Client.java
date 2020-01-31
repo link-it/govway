@@ -138,7 +138,7 @@ public final class Traccia_TracciaPortSoap11_Client {
 						System.out.println("get.result=OK");
 					}
 					else{
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						_get__return.diff(tracciaCampione, bf);
 						System.out.println("get.result=KO "+bf.toString());
 					}
@@ -240,7 +240,7 @@ public final class Traccia_TracciaPortSoap11_Client {
 						System.out.println("find.result=OK");
 					}
 					else{
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						_find__return.diff(tracciaCampione, bf);
 						System.out.println("find.result=KO "+bf.toString());
 					}

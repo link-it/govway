@@ -58,7 +58,7 @@ public abstract class AbstractIntegrationConfiguration implements java.io.Serial
 	
 	protected String getNome(IDServizio idServizio, IDSoggetto idSoggetto, String name, String ruleName,
 			List<IntegrationConfigurationElementName> list) throws ProtocolException {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (IntegrationConfigurationElementName integrationConfigurationElementName : list) {
 			if(integrationConfigurationElementName.getPrefix()!=null && !"".equals(integrationConfigurationElementName.getPrefix())) {
 				bf.append(integrationConfigurationElementName.getPrefix());

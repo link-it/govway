@@ -493,7 +493,7 @@ public class JDBCUtilities {
 					returnClassAliases.get(index).add(nome);
 					
 					IField field = af.getField();
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					buildAliasesPrefix(field,bf);
 					String nomeField = bf.toString();
 					if(!returnClassAliases_simple.contains(nome)){
@@ -501,12 +501,12 @@ public class JDBCUtilities {
 					}
 				}
 				else if(o instanceof IAliasTableField){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					buildAliasesPrefix((IField)o,bf);
 					returnClassAliases.get(index).add(bf.toString());
 				}
 				else if(o instanceof ComplexField){
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					buildAliasesPrefix((IField)o,bf);
 					returnClassAliases.get(index).add(bf.toString());
 				}
@@ -539,7 +539,7 @@ public class JDBCUtilities {
 		return ll.get(0).get(0);
 	}
 	
-	private static void buildAliasesPrefix(IField field,StringBuffer prefix){
+	private static void buildAliasesPrefix(IField field,StringBuilder prefix){
 		
 		if(field instanceof IAliasTableField){
 			prefix.append(((IAliasTableField)field).getAliasTable()).
@@ -1370,7 +1370,7 @@ public class JDBCUtilities {
 			// Se sto aggiornando la root table, e non vi sono condizioni dinamiche (le quali possono riferire anche tabelle interne)
 			// non serve effettuare una ulteriore query che identifica gli id, ma posso applicare direttamente il where delle root columns.
 			if(rootTableListPKColumns!=null && rootTableIdValues!=null){
-				StringBuffer bfRowIdentification = new StringBuffer();
+				StringBuilder bfRowIdentification = new StringBuilder();
 				bfRowIdentification.append("( ");
 				for (int i = 0; i < rootTableListPKColumns.size(); i++) {
 					if(i>0){
@@ -1409,7 +1409,7 @@ public class JDBCUtilities {
 	//				if(valueIds.size()>1){
 	//					throw new ServiceException("Cannot exists more columns with PK column ids (table:"+table+"), found: "+valueIds.size());
 	//				}
-					StringBuffer bfRowIdentification = new StringBuffer();
+					StringBuilder bfRowIdentification = new StringBuilder();
 					bfRowIdentification.append("( ");
 					for (int i = 0; i < valueIds.size(); i++) {
 						if(i>0){

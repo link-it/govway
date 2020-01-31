@@ -496,7 +496,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				resource = dbManager.getResource(dominio, modulo, null);
 				Connection c = (Connection) resource.getResource();
 				String sql = "select * from "+CostantiDB.DB_INFO_CONSOLE +" order by id DESC";
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				pstmt = c.prepareStatement(sql);
 				try {
 					rs = pstmt.executeQuery();
@@ -634,7 +634,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			Resource resource = null;
 			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
 			String modulo = this.getClass().getName();
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 
 			if(this.openspcoopProperties!=null){
 				bf.append("TipoDatabase: "+this.openspcoopProperties.getDatabaseType());
@@ -693,7 +693,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniSSL(boolean cipherSuites, boolean providerInfo){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("SupportedProtocols: "+SSLUtilities.getSSLSupportedProtocols());
 			bf.append("\n");
 			// Molto verboso
@@ -745,7 +745,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
 		}
 	}
-	private void printSSLInfo(String protocol,StringBuffer bf,boolean cipherSuites){
+	private void printSSLInfo(String protocol,StringBuilder bf,boolean cipherSuites){
 		bf.append(protocol+": ");
 		try{
 			bf.append(SSLUtilities.getSSLEnabledProtocols(protocol));
@@ -763,7 +763,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			bf.append("\n");	
 		}
 	}
-	private void printSSLProviderInfo(Provider provider,StringBuffer bf){
+	private void printSSLProviderInfo(Provider provider,StringBuilder bf){
 		bf.append("\n");
 		bf.append(provider.getName());
 		bf.append("\n");	
@@ -785,7 +785,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniCryptographyKeyLength(){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			Set<?> algorithms = Security.getAlgorithms("Cipher");
 			if(algorithms!=null && algorithms.size()>0){
 				Iterator<?> it = algorithms.iterator();
@@ -814,7 +814,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniCharset(){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			bf.append("Property 'file.encoding': ").append(CharsetUtilities.getDefaultCharsetByProperties()).append("\n");
 			bf.append("java.io.Reader: ").append(CharsetUtilities.getDefaultCharsetByCode()).append("\n");
@@ -833,9 +833,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniInternazionalizzazione(boolean all){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
-			StringBuffer bfInternal = new StringBuffer();
+			StringBuilder bfInternal = new StringBuilder();
 			Utilities.toString(java.util.Locale.getDefault(), bfInternal, "\n");
 			if(bfInternal.length()>0){
 				if(all){
@@ -877,9 +877,9 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniTimeZone(boolean all){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
-			StringBuffer bfInternal = new StringBuffer();
+			StringBuilder bfInternal = new StringBuilder();
 			Utilities.toString(java.util.TimeZone.getDefault(), bfInternal, all);
 			if(bfInternal.length()>0){
 				if(all){
@@ -945,7 +945,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniProprietaJava(boolean allNetwork, boolean includeNetwork, boolean includeNotNetwork){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			if(System.getSecurityManager()!=null) {
 				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
@@ -1004,7 +1004,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getInformazioniProprietaSistema(){
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			
 			if(System.getSecurityManager()!=null) {
 				bf.append("SecurityManager=").append(System.getSecurityManager().getClass().getName());
@@ -1056,7 +1056,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		try{
 			if(this.openspcoopProperties!=null){
 				
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				if(System.getenv(CostantiPdD.OPENSPCOOP2_LOCAL_HOME)!=null){
 					if(bf.length()>0){
 						bf.append("\n");
@@ -1090,7 +1090,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 				throw new Exception("No protocol installed");
 			}
 			else{
-				StringBuffer bfProtocols = new StringBuffer();
+				StringBuilder bfProtocols = new StringBuilder();
 				Enumeration<String> keys = prots.keys();
 				while (keys.hasMoreElements()) {
 					String key = (String) keys.nextElement();
@@ -1125,7 +1125,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 			if(installerProperties==null || installerProperties.isEmpty()) {
 				throw new DriverConfigurazioneNotFound();
 			}
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			// raccolto id
 			List<String> ids = new ArrayList<String>();
 			for (int i = 0; i < installerProperties.size(); i++) {

@@ -92,14 +92,14 @@ public abstract class AbstractServletListExtendedDel extends AbstractServletList
 			DBManager dbManager = null;
 			Connection con = null;
 			List<WrapperExtendedBean> listDati = new ArrayList<WrapperExtendedBean>();
-			StringBuffer bfInUseTotal = new StringBuffer();
+			StringBuilder bfInUseTotal = new StringBuilder();
 			try{
 				dbManager = DBManager.getInstance();
 				con = dbManager.getConnection();
 				
 				for (int i = 0; i < idsToRemove.size(); i++) {
 
-					StringBuffer bfInUse = new StringBuffer();
+					StringBuilder bfInUse = new StringBuilder();
 					boolean inUse = extendedServlet.inUse(con, idsToRemove.get(i), bfInUse);
 					if(inUse){
 						

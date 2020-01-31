@@ -84,7 +84,7 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 		return this.toString(true);
 	}
 	public String toString(boolean checkEmpty){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("FiltroProtocolProperty: ");
 		this.addDetails(bf);
 		if(checkEmpty){
@@ -94,7 +94,7 @@ public class FiltroRicercaProtocolProperty implements Serializable{
 		}
 		return bf.toString();
 	}
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.name!=null)
 			bf.append(" [name:"+this.name+"]");
 		if(this.valueAsString!=null)

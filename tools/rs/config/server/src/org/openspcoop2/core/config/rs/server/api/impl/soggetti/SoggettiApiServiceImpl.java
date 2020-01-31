@@ -169,7 +169,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			
 			if  ( soggettoRegistro != null && soggettoConfig != null ) {
 
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				SoggettiUtilities.deleteSoggetto(
 						soggettoRegistro,
 						soggettoConfig,

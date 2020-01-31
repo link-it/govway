@@ -35,7 +35,7 @@ import org.openspcoop2.utils.date.DateUtils;
 public class EventiUtilities {
 
 	public static String toString(Evento evento){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		SimpleDateFormat sdf = DateUtils.getSimpleDateFormatMs();
 		if(evento.getOraRegistrazione()!=null){

@@ -220,7 +220,7 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 
 	public String getSubCaption(){
 		String captionText = StatsUtils.getSubCaption((StatsSearchForm)this.search);
-		StringBuffer caption = new StringBuffer(
+		StringBuilder caption = new StringBuilder(
 				captionText);
 		//		if(StringUtils.isNotBlank(this.search.getNomeServizio())){
 		//			caption.append("per il Servizio "+this.search.getNomeServizio());

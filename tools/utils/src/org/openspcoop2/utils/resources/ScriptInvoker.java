@@ -81,7 +81,7 @@ public class ScriptInvoker {
 				}catch(java.lang.IllegalThreadStateException exit){}
 			}
 
-			StringBuffer stampa = new StringBuffer();
+			StringBuilder stampa = new StringBuilder();
 			int read = 0;
 			while((read = bin.read())!=-1){
 				stampa.append((char)read);
@@ -90,7 +90,7 @@ public class ScriptInvoker {
 				this.outputStream = stampa.toString();
 			}
 				
-			StringBuffer stampaError = new StringBuffer();
+			StringBuilder stampaError = new StringBuilder();
 			read = 0;
 			while((read = berror.read())!=-1){
 				stampaError.append((char)read);

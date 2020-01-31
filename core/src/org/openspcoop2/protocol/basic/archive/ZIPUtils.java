@@ -51,7 +51,7 @@ public class ZIPUtils  {
 		return oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(nome, permitUnderscore, null);
 	}
 	public static String oldMethod_convertCharNonPermessiQualsiasiSistemaOperativo(String nome,boolean permitUnderscore,List<Character> permit){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (int i = 0; i < nome.length(); i++) {
 			if(Character.isLetterOrDigit(nome.charAt(i))){
 				bf.append(nome.charAt(i));

@@ -646,7 +646,7 @@ public class ConfigurazionePdDManager {
 	public boolean autorizzazioneRoles(PortaApplicativa pa, Soggetto soggetto, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
-			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pa, soggetto, sa, infoConnettoreIngresso, 
 				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}
@@ -703,7 +703,7 @@ public class ConfigurazionePdDManager {
 	public boolean autorizzazioneRoles(PortaDelegata pd, ServizioApplicativo sa, InfoConnettoreIngresso infoConnettoreIngresso,
 			PdDContext pddContext,
 			boolean checkRuoloRegistro, boolean checkRuoloEsterno,
-			StringBuffer details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+			StringBuilder details) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
 		return this.configurazionePdDReader.autorizzazioneRoles(this.registroServiziManager, pd, sa, infoConnettoreIngresso, 
 				pddContext, checkRuoloRegistro, checkRuoloEsterno, details);
 	}

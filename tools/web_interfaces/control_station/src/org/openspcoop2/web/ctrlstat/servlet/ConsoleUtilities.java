@@ -46,18 +46,18 @@ public class ConsoleUtilities {
 
 	public static boolean alreadyExistsCorrelazioneApplicativaRichiesta(PorteDelegateCore porteDelegateCore,
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		return _alreadyExistsCorrelazioneApplicativaRichiesta(true, porteDelegateCore, null, idPorta, elemento, idCorrelazione, existsMessage);
 	}
 	public static boolean alreadyExistsCorrelazioneApplicativaRichiesta(PorteApplicativeCore porteApplicativeCore,
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		return _alreadyExistsCorrelazioneApplicativaRichiesta(false, null, porteApplicativeCore, idPorta, elemento, idCorrelazione, existsMessage);
 	}
 	private static boolean _alreadyExistsCorrelazioneApplicativaRichiesta(boolean portaDelegata,
 			PorteDelegateCore porteDelegateCore, PorteApplicativeCore porteApplicativeCore,
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		// Controllo che non esistano altre correlazioni applicative con gli
 		// stessi dati
 		boolean giaRegistrato = false;
@@ -112,18 +112,18 @@ public class ConsoleUtilities {
 	
 	public static boolean alreadyExistsCorrelazioneApplicativaRisposta(PorteDelegateCore porteDelegateCore, 
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		return _alreadyExistsCorrelazioneApplicativaRisposta(true, porteDelegateCore, null, idPorta, elemento, idCorrelazione, existsMessage);
 	}
 	public static boolean alreadyExistsCorrelazioneApplicativaRisposta(PorteApplicativeCore porteApplicativeCore, 
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		return _alreadyExistsCorrelazioneApplicativaRisposta(false, null, porteApplicativeCore, idPorta, elemento, idCorrelazione, existsMessage);
 	}
 	private static boolean _alreadyExistsCorrelazioneApplicativaRisposta(boolean portaDelegata,
 			PorteDelegateCore porteDelegateCore, PorteApplicativeCore porteApplicativeCore,
 			long idPorta, String elemento, long idCorrelazione,
-			StringBuffer existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
+			StringBuilder existsMessage) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		
 		// Controllo che non esistano altre correlazioni applicative con gli
 		// stessi dati

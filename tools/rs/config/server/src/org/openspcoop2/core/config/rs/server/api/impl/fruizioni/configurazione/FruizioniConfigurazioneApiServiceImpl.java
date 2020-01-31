@@ -442,7 +442,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			policy.getFiltro().setTipoFruitore(pd.getTipoSoggettoProprietario());
 			policy.getFiltro().setNomeFruitore(pd.getNomeSoggettoProprietario());
 
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConfigurazioneUtilities.alreadyExists(
 					TipoOperazione.ADD,
 					env.confCore,
@@ -505,7 +505,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final Long idPorta = pd.getId();
 			
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRichiesta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
@@ -563,7 +563,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 			final Long idPorta = pd.getId();
 			
-			StringBuffer existsMessage = new StringBuffer();
+			StringBuilder existsMessage = new StringBuilder();
 			if ( ConsoleUtilities.alreadyExistsCorrelazioneApplicativaRisposta(env.pdCore, idPorta, body.getElemento(), 0, existsMessage)) {
 				throw FaultCode.CONFLITTO.toException(StringEscapeUtils.unescapeHtml(existsMessage.toString()));
 			}
@@ -741,7 +741,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			AttivazionePolicy policy = BaseHelper.findFirst( policies, p -> (PolicyUtilities.getNomeActivePolicy(p.getAlias(),p.getIdActivePolicy())).equals(idPolicy) ).orElse(null);
 			
 			if ( policy != null ) {
-				StringBuffer inUsoMessage = new StringBuffer();
+				StringBuilder inUsoMessage = new StringBuilder();
 				List<AttivazionePolicy> policyRimosse = new ArrayList<AttivazionePolicy>();
 				
 				ConfigurazioneUtilities.deleteAttivazionePolicy(

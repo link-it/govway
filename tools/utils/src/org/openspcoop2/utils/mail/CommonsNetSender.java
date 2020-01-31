@@ -66,7 +66,7 @@ public class CommonsNetSender extends Sender {
 			client.setConnectTimeout(this.getConnectionTimeout());
 			
 			if(mail.getSslConfig()!=null){
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				SSLContext sslContext = SSLUtilities.generateSSLContext(mail.getSslConfig(), bf);
 				if(debug)
 					this.log.debug(bf.toString());

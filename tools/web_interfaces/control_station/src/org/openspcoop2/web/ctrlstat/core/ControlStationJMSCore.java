@@ -84,7 +84,7 @@ public class ControlStationJMSCore {
 		ObjectMessage message = qs.createObjectMessage(operazioneDaSmistare);
 
 		// Preparo la StringProperty, che serve per il filtro
-		StringBuffer idOperazione = new StringBuffer();
+		StringBuilder idOperazione = new StringBuilder();
 		idOperazione.append("[" + operazione.name() + "]");
 		idOperazione.append("[" + oggettoDaSmistare.name() + "]");
 

@@ -267,7 +267,7 @@ public class StatisticBean {
 	@Override
 	public String toString(){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		bf.append("data[");
 		bf.append(this.data.toString());

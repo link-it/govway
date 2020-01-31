@@ -869,6 +869,10 @@ public abstract class OpenSPCoop2MessageFactory {
 	}
 	public OpenSPCoop2Message createEmptyMessage(MessageType messageType, MessageRole role, NotifierInputStreamParams notifierInputStreamParams) {
 		try{
+			// Fix per performance: creare un messaggio vuoto tramite il meccanismo sottostante, faceva utilizzare il metodo 'createMessage -> _internalCreateMessage' che portava
+			// a richiemare la struttura del messaggio tramite il controllo: op2Msg.castAsSoap().getSOAPHeader(); // Verifica struttura
+			// Tale controllo era costoso in termini di performance per questi messaggi vuoti.
+			/*
 			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
 				
 				byte[] xml = null;
@@ -888,10 +892,15 @@ public abstract class OpenSPCoop2MessageFactory {
 				return result.getMessage();
 			}
 			else{
-				return _internalCreateEmptyMessage(messageType, role);
+			*/
+			OpenSPCoop2Message msgEmpty = _internalCreateEmptyMessage(messageType, role);
+			if(MessageType.SOAP_11.equals(messageType) || MessageType.SOAP_12.equals(messageType)){
+				msgEmpty.setContentType(MessageUtilities.getDefaultContentType(messageType));
 			}
-		}
-		catch(Throwable e){
+			return msgEmpty;
+			//}
+				
+		}catch(Throwable e){
 			System.err.println("Exception non gestibile durante la creazione di un messaggio vuoto. " + e);
 			e.printStackTrace(System.err);
 		}

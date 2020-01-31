@@ -804,7 +804,7 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 				return false;
 			} 
 
-			// Check data aaaa-mm-gg
+			// Check data yyyy-MM-dd
 			String [] date = split[3].split("-");
 			if(date == null)
 				return false;

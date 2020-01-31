@@ -1103,7 +1103,7 @@ public class ModIProperties {
     	return ModIProperties.getRestSecurityTokenSignedHeaders;
 	}
 	public String  getRestSecurityTokenSignedHeadersAsString() throws Exception{
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		for (String hdr : getRestSecurityTokenSignedHeaders) {
 			if(bf.length()>0) {
 				bf.append(",");

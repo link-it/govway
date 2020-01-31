@@ -226,7 +226,7 @@ public class TransactionServiceLibrary implements Serializable {
 			//controllo se ci sono regole non trovate e/o "sporche"
 	
 			if(debug){
-				StringBuffer sbNotFound = new StringBuffer();
+				StringBuilder sbNotFound = new StringBuilder();
 				if(notFoundRules.size()>0){
 					sbNotFound.append("Regole non trovate:");
 					Enumeration<String> nfk = notFoundRules.keys();
@@ -238,7 +238,7 @@ public class TransactionServiceLibrary implements Serializable {
 				log.debug(sbNotFound.toString());
 			}
 	
-			StringBuffer sb = new StringBuffer();
+			StringBuilder sb = new StringBuilder();
 			if(dirtyRules.size()>0){
 				sb.append("\nRegole non valide:");
 				Enumeration<String> drk = dirtyRules.keys();
@@ -708,7 +708,7 @@ public class TransactionServiceLibrary implements Serializable {
 
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 
 		if(this.basicServiceLibrary==null){
 			bf.append("BasicServiceLibrary: notDefined");
@@ -879,7 +879,7 @@ public class TransactionServiceLibrary implements Serializable {
 	}
 
 	private String mascheramento(char carattereMascheramento, PosizioneMascheramento posizioneMascheramento, int numero, String originale){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(originale.length()<=numero || numero<=0  ){
 			for (int i = 0; i < originale.length(); i++) {
 				bf.append(carattereMascheramento);		

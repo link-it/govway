@@ -97,7 +97,7 @@ public class PorteNamingUtils {
 			
 			String [] tmp = nome.split("/");
 			if(tmp.length>=3) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < tmp.length; i++) {
 					if(i>0) {
 						bf.append("/");
@@ -183,7 +183,7 @@ public class PorteNamingUtils {
 			
 			String [] tmp = nome.split("/");
 			if(tmp.length>=3) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				for (int i = 0; i < tmp.length; i++) {
 					if(i>0) {
 						bf.append("/");

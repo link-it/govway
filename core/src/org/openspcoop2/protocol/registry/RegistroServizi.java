@@ -1561,8 +1561,8 @@ public class RegistroServizi  {
 
 		}else{
 			this.log.debug("Cerco nella mia gerarchia di registri");
-			StringBuffer notFoundProblem = new StringBuffer();
-			StringBuffer exceptionProblem = new StringBuffer();
+			StringBuilder notFoundProblem = new StringBuilder();
+			StringBuilder exceptionProblem = new StringBuilder();
 			boolean find = false;
 			for (Enumeration<?> en = this.driverRegistroServizi.keys() ; en.hasMoreElements() ;) {
 				String nomeRegInLista= (String) en.nextElement();
@@ -3408,8 +3408,8 @@ public class RegistroServizi  {
 
 		}else{
 			this.log.debug("Cerco nella mia gerarchia di registri");
-			StringBuffer notFoundProblem = new StringBuffer();
-			StringBuffer exceptionProblem = new StringBuffer();
+			StringBuilder notFoundProblem = new StringBuilder();
+			StringBuilder exceptionProblem = new StringBuilder();
 			boolean find = false;
 			for (Enumeration<?> en = this.driverRegistroServizi.keys() ; en.hasMoreElements() ;) {
 				String nomeRegInLista= (String) en.nextElement();

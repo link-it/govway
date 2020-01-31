@@ -45,7 +45,7 @@ public class ResultUtilities {
 		try {	  
 			log.debug("evaluete XACMLRequest (idPolicy:"+policyKey+") ... ");
 			results = pdp.evaluate(xacmlRequest);
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("----XACML Results (idPolicy:"+policyKey+") begin ---\n");
 			for(ResultType result: results) {
 				bf.append("Decision: "+result.getDecision().toString()+"\n");
@@ -60,7 +60,7 @@ public class ResultUtilities {
 	
 	public static String toRawString(List<ResultType> results) throws UtilsException{
 		try{
-			StringBuffer bfPolicy = new StringBuffer();
+			StringBuilder bfPolicy = new StringBuilder();
 			for (int i = 0; i < results.size(); i++) {
         		ResultType res = results.get(i);
 				if(bfPolicy.length()>0){
@@ -81,7 +81,7 @@ public class ResultUtilities {
 	
 	public static String toString(List<ResultType> results, DecisionType decision) throws UtilsException{
 		try{
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
         	for (int i = 0; i < results.size(); i++) {
         		ResultType res = results.get(i);
         		

@@ -182,7 +182,7 @@ public class ServizioApplicativoContentBasedBehaviour implements IBehaviour {
 								
 				if(saNome!=null) {
 				
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					if(prefix!=null) {
 						bf.append(prefix);
 					}

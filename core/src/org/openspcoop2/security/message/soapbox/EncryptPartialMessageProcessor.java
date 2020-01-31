@@ -350,7 +350,7 @@ public class EncryptPartialMessageProcessor implements Processor {
 
 		try {
 
-			StringBuffer line = new StringBuffer();
+			StringBuilder line = new StringBuilder();
 
 			for (MimeHeader mh : mhs) {
 

@@ -96,12 +96,12 @@ public class AliasField extends ComplexField {
 	@Override
 	public String toString(int indent){
 		
-		StringBuffer indentBuffer = new StringBuffer();
+		StringBuilder indentBuffer = new StringBuilder();
 		for (int i = 0; i < indent; i++) {
 			indentBuffer.append("	");
 		}
 		
-		StringBuffer bf = new StringBuffer(this.field.toString(indent));
+		StringBuilder bf = new StringBuilder(this.field.toString(indent));
 		
 		bf.append(indentBuffer.toString());
 		bf.append("- alias: "+this.alias);

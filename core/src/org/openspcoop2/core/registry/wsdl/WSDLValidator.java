@@ -255,7 +255,7 @@ public class WSDLValidator {
 		}
 		
 		
-		StringBuffer errorMsgValidazioneXSD = new StringBuffer();
+		StringBuilder errorMsgValidazioneXSD = new StringBuilder();
 		
 		
 		/** Validazione XSD senza considerare gli usi e gli stili (rpc/document e literal/encoded) */
@@ -566,7 +566,7 @@ public class WSDLValidator {
 				
 				// *** cerco l'operation all'interno del wsdl. Se esiste una o piu' operation con tale nome, proviamo a validare il messaggio. ***
 				this.logger.info("WSDL, effettuo validazione wsdlConformanceCheck cercando una qualche operation con nome ["+operationName+"]...");
-				StringBuffer bfEccezione = new StringBuffer();
+				StringBuilder bfEccezione = new StringBuilder();
 				boolean operationFound = _engineWsdlConformanceCheckAll(isRichiesta, soapAction, operationName, bfEccezione, throwSOAPActionException, logErrorAsDebug);
 				if(operationFound){
 					if(bfEccezione.length()>0){
@@ -605,7 +605,7 @@ public class WSDLValidator {
 				//     non avendo trovato una azione che matchava con il nome dell'operation name, 
 				//     valido rispetto a tutti i messaggi possibili, rispettando pero' il ruolo tra richiesta e risposta 
 				//  ***		
-				StringBuffer bfEccezione = new StringBuffer();
+				StringBuilder bfEccezione = new StringBuilder();
 				this.logger.info("WSDL, effettuo validazione wsdlConformanceCheck utilizzando una qualunque operation ...");
 				_engineWsdlConformanceCheckAll(isRichiesta, soapAction, null, bfEccezione, throwSOAPActionException, logErrorAsDebug);
 				if(bfEccezione.length()>0){
@@ -621,7 +621,7 @@ public class WSDLValidator {
 		
 	}
 	
-	private boolean _engineWsdlConformanceCheckAll(boolean isRichiesta,String soapAction,String operationName, StringBuffer bfEccezione,boolean throwSOAPActionException,boolean logErrorAsDebug) throws WSDLValidatorException{
+	private boolean _engineWsdlConformanceCheckAll(boolean isRichiesta,String soapAction,String operationName, StringBuilder bfEccezione,boolean throwSOAPActionException,boolean logErrorAsDebug) throws WSDLValidatorException{
 		
 		try{
 		
@@ -754,8 +754,8 @@ public class WSDLValidator {
 				throw new Exception("operations per il port type ["+portType+"] non presenti");
 			boolean matchingNameOperation = false, matchingArgomentsOperation = false;
 			String soapActionWSDL = null;
-			StringBuffer eccezioni = new StringBuffer();
-			StringBuffer eccezioneActionMatch = new StringBuffer();
+			StringBuilder eccezioni = new StringBuilder();
+			StringBuilder eccezioneActionMatch = new StringBuilder();
 			for(int i=0; i<portTypeAS.sizeAzioneList(); i++){
 				Operation operationAS = portTypeAS.getAzione(i);
 				if (operationAS.getNome().equals(operation)) {
@@ -827,7 +827,7 @@ public class WSDLValidator {
 						sizeArgumentsOperation = argumentsOperation.sizePartList();
 					}
 					int nodiContenutoApplicativoLength = 0;
-					StringBuffer nodiMessaggioErrore = new StringBuffer();
+					StringBuilder nodiMessaggioErrore = new StringBuilder();
 					for(int ii=0;ii<nodiContenutoApplicativo.getLength();ii++){
 //						if (!(nodiContenutoApplicativo.item(ii) instanceof Text && 
 //								((Text) nodiContenutoApplicativo.item(ii)).getData().trim().length() == 0)) { 
@@ -865,7 +865,7 @@ public class WSDLValidator {
 						
 						// Mi conservo gli elementi presenti nel body
 						List<RootElementBody> elementRootBody = new ArrayList<RootElementBody>();
-						StringBuffer bodyElements = new StringBuffer();
+						StringBuilder bodyElements = new StringBuilder();
 						int numeroBodyElements = 0;
 						int realIndexBody = 0;
 						for(int indexBody = 0 ; indexBody<nodiContenutoApplicativo.getLength(); indexBody++){
@@ -1012,7 +1012,7 @@ public class WSDLValidator {
 						}
 					}
 					else if(eccezioneActionMatch.length()>0){
-						StringBuffer bfMessage = new StringBuffer();
+						StringBuilder bfMessage = new StringBuilder();
 						for(int i=0; i<portTypeAS.sizeAzioneList(); i++){
 							Operation operationAS = portTypeAS.getAzione(i);
 							if (operationAS.getNome().equals(operation)) {
@@ -1184,8 +1184,8 @@ public class WSDLValidator {
 							(xml[i+4] == 'n') &&
 							(xml[i+5] == 's') &&
 							(xml[i+6] == ':')){
-							StringBuffer test = new StringBuffer("xmlns:");
-							StringBuffer prefixTest = new StringBuffer();
+							StringBuilder test = new StringBuilder("xmlns:");
+							StringBuilder prefixTest = new StringBuilder();
 							int contatoreFineAttributo = 0;
 							for(int k=7 ; ; k++){
 								if((i+k)>=xml.length)
@@ -1237,7 +1237,7 @@ public class WSDLValidator {
 					// Cerco Stringa  " xsi:type=\"xsd:TYPE\""
 					String XSITYPE_PREFIX = prefix+":type=\""; 
 					if(i+XSITYPE_PREFIX.length()+2 < risultato.length){
-						StringBuffer test = new StringBuffer("");
+						StringBuilder test = new StringBuilder("");
 						int contatoreFineAttributo = 0;
 						for(int k=1 ; ; k++){
 							if((i+k)>=risultato.length)
@@ -1441,7 +1441,7 @@ class RootElementBody{
 		return toString(localName, namespace, xsiType, null);
 	}
 	private static String toString(String localName,String namespace,String xsiType,String namespaceElementoCheContieneXSIType){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(xsiType==null){
 			bf.append("{");
 			bf.append(namespace);

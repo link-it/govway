@@ -57,7 +57,7 @@ public class Utilities {
 	}
 	
 	public static String toString(String [] values,String separator){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(values!=null){
 			for (int i = 0; i < values.length; i++) {
 				if(i>0){
@@ -129,7 +129,7 @@ public class Utilities {
 	
 
 
-	 public static String getTestoVisualizzabile(byte [] b,StringBuffer stringBuffer) {
+	 public static String getTestoVisualizzabile(byte [] b,StringBuilder stringBuffer) {
 		 try{
 			 // 1024 = 1K
 			 // Visualizzo al massimo 250K

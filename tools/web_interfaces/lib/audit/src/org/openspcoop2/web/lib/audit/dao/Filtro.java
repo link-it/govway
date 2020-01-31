@@ -137,7 +137,7 @@ public class Filtro implements Serializable {
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		if(this.username!=null){
 			bf.append("User["+this.username+"]");

@@ -84,7 +84,7 @@ public class ValidazioneStatoPackageException extends Exception {
 		return this.toString(" "," , ");
 	}
 	public String toString(String firstSeparator, String separator){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Stato "+this.tipoPackage+" ["+this.stato+"] ");
 		bf.append("non utilizzabile");
 		bf.append(":");

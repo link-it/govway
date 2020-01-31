@@ -71,7 +71,7 @@ public class GeneratoreMessaggiDiagnostici {
 	public static void emitDiagnostic(MsgDiagnostico msgDiag,String idDiagnostico, Logger log) {
 		
 		Hashtable<String, String> keywords = msgDiag.getKeywordLogPersonalizzati();
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		try{
 			if(keywords!=null && keywords.size()>0){
 				addNextValue(keywords, bf, GeneratoreMessaggiErrore.TEMPLATE_POLICY_ACTIVE_ID);
@@ -108,7 +108,7 @@ public class GeneratoreMessaggiDiagnostici {
 		}		
 		
 	}
-	private static void addNextValue(Hashtable<String, String> keywords,StringBuffer bf, String keyId) throws Exception{
+	private static void addNextValue(Hashtable<String, String> keywords,StringBuilder bf, String keyId) throws Exception{
 		if(bf.length()>0){
 			bf.append(MsgDiagnosticiProperties.DIAGNOSTIC_WITH_DYNAMIC_INFO_SEPARATOR);
 		}

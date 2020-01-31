@@ -303,7 +303,7 @@ public class ConnettoreStresstest extends ConnettoreBase {
 			idTransazione = (String) id;
 		}
     			
-		StringBuffer protocolHeader = new StringBuffer();
+		StringBuilder protocolHeader = new StringBuilder();
 		
     	if(bustaRichiesta!=null && (bustaRichiesta.sizeListaEccezioni()==0) && !ConsegnaContenutiApplicativi.ID_MODULO.equals(request.getIdModulo())){
 			// Creo busta di risposta solo se la busta di richiesta non conteneva una busta SPCoop Errore e se il profilo lo richiede.

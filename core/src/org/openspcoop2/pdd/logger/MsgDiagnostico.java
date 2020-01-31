@@ -678,8 +678,8 @@ public class MsgDiagnostico {
 			}
 		}
 		
-		StringBuffer bf = new StringBuffer();
-		StringBuffer keyword = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
+		StringBuilder keyword = new StringBuilder();
 		boolean separator = false;
 		char separatorChar = '@';
 		for(int i=0; i<msg.length(); i++){

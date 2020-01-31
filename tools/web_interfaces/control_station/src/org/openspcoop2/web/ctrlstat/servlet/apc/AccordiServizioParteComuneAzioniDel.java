@@ -117,7 +117,7 @@ public final class AccordiServizioParteComuneAzioniDel extends Action {
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(session);
 
-			StringBuffer errori = new StringBuffer();
+			StringBuilder errori = new StringBuilder();
 			for (int i = 0; i < idsToRemove.size(); i++) {
 
 				nomeaz = idsToRemove.get(i);

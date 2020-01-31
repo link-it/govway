@@ -116,7 +116,7 @@ public class FileSystemSerializer {
 			this.mkdir(dir);
 		}
 		
-		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew); // SimpleDateFormat non e' thread-safe
+		SimpleDateFormat dateformat = DateUtils.getDefaultDateTimeFormatter(formatNew);
 		
 		String nomeFile = prefix+"_"+dateformat.format(date)+"_"+IDUtilities.getUniqueSerialNumber()+".xml";
 		File f = new File(dir, nomeFile);

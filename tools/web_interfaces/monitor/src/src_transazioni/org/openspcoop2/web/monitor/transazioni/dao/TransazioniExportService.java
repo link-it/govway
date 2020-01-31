@@ -196,7 +196,7 @@ public class TransazioniExportService implements ITransazioniExportService {
 	//
 	// private Query createQuery(boolean isCount) {
 	//
-	// StringBuffer sb = new StringBuffer();
+	// StringBuilder sb = new StringBuilder();
 	//
 	// if (isCount)
 	// sb.append("SELECT count(t) FROM TransazioniExport t ");

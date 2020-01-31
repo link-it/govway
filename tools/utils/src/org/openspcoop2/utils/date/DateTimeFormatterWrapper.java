@@ -23,8 +23,6 @@ package org.openspcoop2.utils.date;
 import java.text.FieldPosition;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -60,6 +58,7 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 			switch (this.dataType) {
 			case JAVA_UTIL_DATE:
 			case JAVA_UTIL_DATE_TIME:
+			case JAVA_UTIL_TIME:
 				SimpleDateFormat sdf =  new SimpleDateFormat (this.format); // SimpleDateFormat non e' thread-safe
 				if(this.timeZone) {
 					sdf.setCalendar(Calendar.getInstance());
@@ -67,13 +66,16 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 				return sdf.parse(source);
 				
 			case JAVA_TIME_DATE:
-				return DateUtils.convertToDateViaInstant( LocalDate.parse(source, DateUtils.getDateTimeFormatter(this.format)) );
+				return DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDate(this.format, source) );
 			case JAVA_TIME_DATE_TIME:
-				return DateUtils.convertToDateViaInstant( LocalDateTime.parse(source, DateUtils.getDateTimeFormatter(this.format)) );
+				return DateUtils.convertToDateViaInstant( DateUtils.parseToLocalDateTime(this.format, source) );
+			case JAVA_TIME_TIME:
+				return DateUtils.convertToDateViaInstant( DateUtils.parseToLocalTime(this.format, source) );
 			
 			case JODA_DATE:
 			case JODA_DATE_TIME:
-				return DateUtils.convertToDate(DateUtils.getJodaDateTimeFormatter(this.format).parseDateTime(source));
+			case JODA_TIME:
+				return DateUtils.convertToDate(DateUtils.parseToJodaDateTime(this.format, source));
 				
 			}
 		}catch(Exception e) {
@@ -90,6 +92,7 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 			switch (this.dataType) {
 			case JAVA_UTIL_DATE:
 			case JAVA_UTIL_DATE_TIME:
+			case JAVA_UTIL_TIME:
 				SimpleDateFormat sdf =  new SimpleDateFormat (this.format); // SimpleDateFormat non e' thread-safe
 				if(this.timeZone) {
 					sdf.setCalendar(Calendar.getInstance());
@@ -99,11 +102,13 @@ public class DateTimeFormatterWrapper extends SimpleDateFormat {
 				
 			case JAVA_TIME_DATE:
 			case JAVA_TIME_DATE_TIME:
+			case JAVA_TIME_TIME:
 				toAppendTo.append(DateUtils.getDateTimeFormatter(this.format).format(DateUtils.convertToZonedDateTimeViaInstant(date)));
 				return toAppendTo;
 			
 			case JODA_DATE:
 			case JODA_DATE_TIME:
+			case JODA_TIME:
 				toAppendTo.append(DateUtils.convertToJodaDateTime(date).toString(DateUtils.getJodaDateTimeFormatter(this.format)));
 				return toAppendTo;
 			}

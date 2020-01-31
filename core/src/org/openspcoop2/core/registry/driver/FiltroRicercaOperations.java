@@ -72,7 +72,7 @@ public class FiltroRicercaOperations extends FiltroRicercaPortTypes implements S
 	
 	@Override
 	public String toString(){
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		bf.append("Filtro Azione: ");
 		this.addDetails(bf);
 		if(bf.length()=="Filtro Azione: ".length())
@@ -80,7 +80,7 @@ public class FiltroRicercaOperations extends FiltroRicercaPortTypes implements S
 		return bf.toString();
 	}
 	@Override
-	public void addDetails(StringBuffer bf){
+	public void addDetails(StringBuilder bf){
 		if(this.nomeAzione!=null)
 			bf.append(" [nome-azione:"+this.nomeAzione+"]");
 		if(this.protocolPropertiesAzione!=null && this.protocolPropertiesAzione.size()>0){

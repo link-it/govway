@@ -455,7 +455,7 @@ public class DBOggettiInUsoUtils  {
 					}
 					else {
 
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 
 						bf.append(idReferenteObject.getTipo());
 						bf.append("/");
@@ -1363,7 +1363,7 @@ public class DBOggettiInUsoUtils  {
 						accordi_list.add(getProtocolPrefix(protocollo)+NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo));
 					}
 					else {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
@@ -1399,7 +1399,7 @@ public class DBOggettiInUsoUtils  {
 						accordi_coop_list.add(getProtocolPrefix(protocollo)+NamingUtils.getLabelAccordoCooperazione(protocollo, idAccordo));
 					}
 					else {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
@@ -1439,7 +1439,7 @@ public class DBOggettiInUsoUtils  {
 						partecipanti_list.add(getProtocolPrefix(protocollo)+NamingUtils.getLabelAccordoServizioParteComune(protocollo, idAccordo));
 					}
 					else {
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						bf.append(idSoggettoRegistro.toString());
 						bf.append(":");
 						bf.append(nomeAccordo);
@@ -1929,7 +1929,7 @@ public class DBOggettiInUsoUtils  {
 				}
 				else {
 
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 
 					bf.append(idReferenteObject.getTipo());
 					bf.append("/");
@@ -1975,7 +1975,7 @@ public class DBOggettiInUsoUtils  {
 
 	public static String toString(IDAccordoCooperazione idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, boolean normalizeObjectIds){
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(normalizeObjectIds && idAccordo.getSoggettoReferente()!=null) {
 			try {
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idAccordo.getSoggettoReferente().getTipo());
@@ -2194,7 +2194,7 @@ public class DBOggettiInUsoUtils  {
 
 	public static String toString(IDAccordo idAccordo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, boolean normalizeObjectIds){
 
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(normalizeObjectIds && idAccordo.getSoggettoReferente()!=null) {
 			try {
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idAccordo.getSoggettoReferente().getTipo());
@@ -2649,7 +2649,7 @@ public class DBOggettiInUsoUtils  {
 				}
 				else {
 
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 
 					bf.append(idReferenteObject.getTipo());
 					bf.append("/");
@@ -2856,7 +2856,7 @@ public class DBOggettiInUsoUtils  {
 	public static String toString(IDServizio idServizio, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, 
 			boolean normalizeObjectIds, String oggetto){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(normalizeObjectIds) {
 			try {
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idServizio.getSoggettoErogatore().getTipo());
@@ -3270,7 +3270,7 @@ public class DBOggettiInUsoUtils  {
 
 	public static String toString(IDServizioApplicativo idServizioApplicativo, Map<ErrorsHandlerCostant, List<String>> whereIsInUso, boolean prefix, String separator, boolean normalizeObjectIds){
 		
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		if(normalizeObjectIds) {
 			try {
 				String protocollo = ProtocolFactoryManager.getInstance().getProtocolByOrganizationType(idServizioApplicativo.getIdSoggettoProprietario().getTipo());
