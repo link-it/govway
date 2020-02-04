@@ -250,6 +250,19 @@ public class GestoreCacheResponseCaching {
 	}
 	
 	
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		cache.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return cache.isDisableSyncronizedGet();
+	}
+	
 	
 	
 	private static GestoreCacheResponseCaching staticInstance = null;
@@ -295,10 +308,19 @@ public class GestoreCacheResponseCaching {
 			if(response == null)
 				throw new Exception("Risposta non definita");
 			
+			String digestKey = formatKeyDigest(digest);
+			
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			Object o = cache.get(digestKey);
+			if(o!=null) {
+				org.openspcoop2.utils.cache.CacheResponse responseCache = 
+						(org.openspcoop2.utils.cache.CacheResponse)  o;
+				return ((ResponseCached)responseCache.getObject()).getUuid(); // already saved concurrent thread
+			}
+			
 			synchronized (cache) {
 			
-				String digestKey = formatKeyDigest(digest);
-				Object o = cache.get(digestKey);
+				o = cache.get(digestKey);
 				if(o!=null) {
 					org.openspcoop2.utils.cache.CacheResponse responseCache = 
 							(org.openspcoop2.utils.cache.CacheResponse)  o;
@@ -353,17 +375,45 @@ public class GestoreCacheResponseCaching {
 			if(uuid == null)
 				throw new Exception("UUID non definito");
 
+			String uuidKey = formatKeyUUID(uuid);
+			
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			
+			Object oDigest = cache.get(uuidKey);
+			if(oDigest==null) {
+				return null; // messaggio non precedentemente salvato
+			}
+			
+			String digest = (String) oDigest;
+			String digestKey = formatKeyDigest(digest);
+			
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
+			if(response == null || response.getObject()==null){
+				// la rimozione la faccio in modalita' sincronizzata
+			}
+			else {
+				ResponseCached responseCached = (ResponseCached) response.getObject();
+				Date now = DateManager.getDate();
+				if(now.after(responseCached.getScadenza())) {
+					// la rimozione la faccio in modalita' sincronizzata
+				}
+				else {
+					return responseCached;
+				}
+			}
+			
 			synchronized (cache) {
 
-				String uuidKey = formatKeyUUID(uuid);
-				Object oDigest = cache.get(uuidKey);
+				
+				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
 					return null; // messaggio non precedentemente salvato
 				}
-				String digest = (String) oDigest;
-				String digestKey = formatKeyDigest(digest);
+				digest = (String) oDigest;
+				digestKey = formatKeyDigest(digest);
 			
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 						(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
 				if(response == null || response.getObject()==null){
 					this.log.error("In cache non è presente il mapping uuid ("+uuidKey+") - digest ("+digestKey+") ma poi non esiste l'oggetto??");
@@ -406,10 +456,18 @@ public class GestoreCacheResponseCaching {
 			if(uuid == null)
 				throw new Exception("UUID non definito");
 
+			String uuidKey = formatKeyUUID(uuid);
+			
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			
+			Object oDigest = cache.get(uuidKey);
+			if(oDigest==null) {
+				return; // messaggio non precedentemente salvato
+			}
+						
 			synchronized (cache) {
 
-				String uuidKey = formatKeyUUID(uuid);
-				Object oDigest = cache.get(uuidKey);
+				oDigest = cache.get(uuidKey);
 				if(oDigest==null) {
 					return; // messaggio non precedentemente salvato
 				}
@@ -448,17 +506,36 @@ public class GestoreCacheResponseCaching {
 			if(digest == null)
 				throw new Exception("Digest non definito");
 
+			String digestKey = formatKeyDigest(digest);
+				
+			
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
+			if(response == null || response.getObject()==null){
+				return null;
+			}
+			
+			ResponseCached responseCached = (ResponseCached) response.getObject();
+			Date now = DateManager.getDate();
+			if(now.after(responseCached.getScadenza())) {
+				// effettuo il controllo in modalita' sincronizzazione per fare le rimozioni
+			}
+			else {
+				return responseCached;
+			}
+						
 			synchronized (cache) {
 			
-				String digestKey = formatKeyDigest(digest);
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 						(org.openspcoop2.utils.cache.CacheResponse) cache.get(digestKey);
 				if(response == null || response.getObject()==null){
 					return null;
 				}
 				
-				ResponseCached responseCached = (ResponseCached) response.getObject();
-				Date now = DateManager.getDate();
+				responseCached = (ResponseCached) response.getObject();
+				now = DateManager.getDate();
 				if(now.after(responseCached.getScadenza())) {
 					String uuidKey = formatKeyUUID(responseCached.getUuid());
 					SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();

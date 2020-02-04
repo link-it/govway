@@ -1335,11 +1335,11 @@ public class ControlStationCore {
 				String username = this.getJmxPdD_remoteAccess_username(alias);
 				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
-				Properties p = new Properties();
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
+				Map<String, String> p = new HashMap<String, String>();
+				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				p.put(CostantiPdD.CHECK_STATO_PDD_METHOD_NAME, nomeMetodo);
 				if(parametro!=null && !"".equals(parametro)){
-					p.setProperty(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
+					p.put(CostantiPdD.CHECK_STATO_PDD_PARAM_VALUE, parametro);
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 
@@ -1386,9 +1386,9 @@ public class ControlStationCore {
 				String username = this.getJmxPdD_remoteAccess_username(alias);
 				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
-				Properties p = new Properties();
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
+				Map<String, String> p = new HashMap<String, String>();
+				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				
 				HttpResponse response = HttpUtilities.getHTTPResponse(urlWithParameters, username, password);
@@ -1421,14 +1421,14 @@ public class ControlStationCore {
 				String username = this.getJmxPdD_remoteAccess_username(alias);
 				String password = this.getJmxPdD_remoteAccess_password(alias);
 				
-				Properties p = new Properties();
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
-				p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
+				Map<String, String> p = new HashMap<String, String>();
+				p.put(CostantiPdD.CHECK_STATO_PDD_RESOURCE_NAME, nomeRisorsa);
+				p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_NAME, nomeAttributo);
 				if(value instanceof Boolean){
-					p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE, value.toString());
+					p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_BOOLEAN_VALUE, value.toString());
 				}
 				else{
-					p.setProperty(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE, value.toString());
+					p.put(CostantiPdD.CHECK_STATO_PDD_ATTRIBUTE_VALUE, value.toString());
 				}
 				String urlWithParameters = TransportUtils.buildLocationWithURLBasedParameter(p, url);
 				

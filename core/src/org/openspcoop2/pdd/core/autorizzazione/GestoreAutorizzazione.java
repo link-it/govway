@@ -81,6 +81,10 @@ public class GestoreAutorizzazione {
 	private static final String AUTORIZZAZIONE_CACHE_NAME = "autorizzazione";
 	/** Cache */
 	private static Cache cacheAutorizzazione = null;
+	private static final Boolean semaphoreAutorizzazionePD = true;
+	private static final Boolean semaphoreAutorizzazionePA = true;
+	private static final Boolean semaphoreAutorizzazioneContenutiPD = true;
+	private static final Boolean semaphoreAutorizzazioneContenutiPA = true;
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -295,6 +299,20 @@ public class GestoreAutorizzazione {
 
 	}
 	
+
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(GestoreAutorizzazione.cacheAutorizzazione==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		GestoreAutorizzazione.cacheAutorizzazione.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(GestoreAutorizzazione.cacheAutorizzazione==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return GestoreAutorizzazione.cacheAutorizzazione.isDisableSyncronizedGet();
+	}
+	
 	
 	
 	
@@ -358,9 +376,26 @@ public class GestoreAutorizzazione {
 	    	else{
 	    		String keyCache = buildCacheKey(true, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione) );
 	
-				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+	    		org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+						EsitoAutorizzazionePortaDelegata esito = (EsitoAutorizzazionePortaDelegata) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+    		
+				synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePD) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
@@ -476,9 +511,26 @@ public class GestoreAutorizzazione {
 	    	else{
 	    		String keyCache = buildCacheKey(false, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione));
 	
-				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+	    		org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+						EsitoAutorizzazionePortaApplicativa esito = (EsitoAutorizzazionePortaApplicativa) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+	    		
+	    		synchronized (GestoreAutorizzazione.semaphoreAutorizzazionePA) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
@@ -963,9 +1015,26 @@ public class GestoreAutorizzazione {
 	    	else{
 	    		String keyCache = buildCacheKeyContenuto(true, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione, msg) );
 	
-				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+	    		org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+						EsitoAutorizzazionePortaDelegata esito = (EsitoAutorizzazionePortaDelegata) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaDelegata) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+	    			    		
+				synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPD) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
@@ -1038,9 +1107,26 @@ public class GestoreAutorizzazione {
 	    	else{
 	    		String keyCache = buildCacheKeyContenuto(false, tipoAutorizzazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthorizationResultInCache(datiInvocazione, msg));
 	
-				synchronized (GestoreAutorizzazione.cacheAutorizzazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+	    		org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutorizzazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+						EsitoAutorizzazionePortaApplicativa esito = (EsitoAutorizzazionePortaApplicativa) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutorizzazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutorizzazionePortaApplicativa) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutorizzazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+	    		
+				synchronized (GestoreAutorizzazione.semaphoreAutorizzazioneContenutiPA) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutorizzazione.cacheAutorizzazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){

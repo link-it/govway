@@ -21,8 +21,8 @@
 
 package org.openspcoop2.security.message;
 
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
 import org.openspcoop2.message.constants.MessageRole;
@@ -83,7 +83,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 						throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 					}
 					if(restMessage.getTransportRequestContext().getParametersFormBased()==null) {
-						restMessage.getTransportRequestContext().setParametersFormBased(new Properties());
+						restMessage.getTransportRequestContext().setParametersFormBased(new HashMap<String, String>());
 					}
 					restMessage.getTransportRequestContext().removeParameterFormBased(signatureDetachedPropertyUrl); // sovrascrivo
 					//restMessage.getTransportRequestContext().getParametersFormBased().put(signatureDetachedPropertyUrl, detachedSignature);
@@ -100,7 +100,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
 				if(restMessage.getTransportRequestContext().getParametersTrasporto()==null) {
-					restMessage.getTransportRequestContext().setParametersTrasporto(new Properties());
+					restMessage.getTransportRequestContext().setParametersTrasporto(new HashMap<String, String>());
 				}
 				restMessage.getTransportRequestContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportRequestContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);
@@ -111,7 +111,7 @@ public abstract class AbstractRESTMessageSecuritySender implements IMessageSecur
 					throw new SecurityException(descriptionEngine+" (mode:"+mode+" message-role:"+restMessage.getMessageRole()+") property url '"+signatureDetachedPropertyUrl+"'; transporto context undefined");
 				}
 				if(restMessage.getTransportResponseContext().getParametersTrasporto()==null) {
-					restMessage.getTransportResponseContext().setParametersTrasporto(new Properties());
+					restMessage.getTransportResponseContext().setParametersTrasporto(new HashMap<String, String>());
 				}
 				restMessage.getTransportResponseContext().removeParameterTrasporto(signatureDetachedHeader); // sovrascrivo
 				//restMessage.getTransportResponseContext().getParametersTrasporto().put(signatureDetachedHeader, detachedSignature);

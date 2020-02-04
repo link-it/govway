@@ -33,8 +33,11 @@ import java.io.SequenceInputStream;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -1262,5 +1265,36 @@ public class Utilities {
 			url = url + contesto;
 		}
 		return url;
+	}
+	
+	
+	// ** ConcurrentHashMap **
+	
+	public static ConcurrentHashMap<String, String> convertToConcurrentHashMap(Properties map) {
+		if(map==null || map.isEmpty()) {
+			return null;
+		}
+		ConcurrentHashMap<String, String> newMap = new ConcurrentHashMap<String, String>();
+		Iterator<Object> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			Object k = it.next();
+			if(k instanceof String) {
+				String key = (String)k;
+				newMap.put(key, map.getProperty(key));
+			}
+		}
+		return newMap;
+	}
+	public static <K,V> ConcurrentHashMap<K, V> convertToConcurrentHashMap(Map<K, V> map) {
+		if(map==null || map.isEmpty()) {
+			return null;
+		}
+		ConcurrentHashMap<K, V> newMap = new ConcurrentHashMap<K, V>();
+		Iterator<K> it = map.keySet().iterator();
+		while (it.hasNext()) {
+			K k = (K) it.next();
+			newMap.put(k, map.get(k));
+		}
+		return newMap;
 	}
 }

@@ -60,7 +60,7 @@ public class GestoreControlloTraffico {
 	/** 
 	 * Threads attivi complessivi sulla Porta
 	 **/
-	private Boolean semaphore = true; // Serve perche' senno cambiando i valori usando auto-box un-box, si perde il riferimento.
+	private final Boolean semaphore = true; // Serve perche' senno cambiando i valori usando auto-box un-box, si perde il riferimento.
 	private Long activeThreads = 0l;
 	private Boolean pddCongestionata = false;
 	private boolean erroreGenerico;

@@ -150,6 +150,19 @@ public abstract class AbstractCacheWrapper {
 		return this.cache!=null;
 	}
 	
+	public void disableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		this.cache.disableSyncronizedGet();
+	}
+	public boolean isDisableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return this.cache.isDisableSyncronizedGet();
+	}
+	
 	public void resetCache() throws UtilsException{
 		if(this.cache!=null){
 			try{
@@ -351,21 +364,52 @@ public abstract class AbstractCacheWrapper {
 		}
 		else{
 		
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+//			if(keyCacheParam == null)
+//				throw new UtilsException("["+methodName+"]: KeyCache undefined");	
+			keyCache = this.buildKeyCache(keyCacheParam, methodName);
+			
+//			if(debug){
+//				this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
+//				this.log.debug("@"+keyCache+"@ Keys: \n\t"+this.cache.printKeys("\n\t"));
+//			}
+	
+			// se e' attiva una cache provo ad utilizzarla
+			org.openspcoop2.utils.cache.CacheResponse response = 
+				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					if(debug){
+						this.log.debug("@"+keyCache+"@ Object (type:"+response.getObject().getClass().getName()+") (method:"+methodName+") found in cache.");
+					}
+					return response.getObject();
+				}
+				else if(response.isObjectNull()){
+					if(debug){
+						this.log.debug("@"+keyCache+"@ Response null (method:"+methodName+") found in cache.");
+					}
+					return null;
+				}
+				else if(response.getException()!=null){
+					this.log.debug("@"+keyCache+"@ Exception (type:"+response.getException().getClass().getName()+") (method:"+methodName+") found in cache.");
+					throwException = true;
+					throw (Throwable) response.getException();
+				}else{
+					this.log.error("@"+keyCache+"@ Found entry in cache with key ["+keyCache+"] (method:"+methodName+") without object and exception???");
+				}
+			}
+			
 			synchronized(this.cache){
 			
 				try{
-					
-//					if(keyCacheParam == null)
-//						throw new UtilsException("["+methodName+"]: KeyCache undefined");	
-					keyCache = this.buildKeyCache(keyCacheParam, methodName);
-					
+										
 //					if(debug){
 //						this.log.debug("@"+keyCache+"@ Cache info: "+this.cache.toString());
 //						this.log.debug("@"+keyCache+"@ Keys: \n\t"+this.cache.printKeys("\n\t"));
 //					}
 		
 					// se e' attiva una cache provo ad utilizzarla
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){

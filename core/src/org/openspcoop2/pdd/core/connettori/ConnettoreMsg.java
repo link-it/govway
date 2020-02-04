@@ -22,7 +22,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.Property;
@@ -64,7 +65,7 @@ public class ConnettoreMsg  {
 	/** Messaggio da spedire */
 	private OpenSPCoop2Message request;
 	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
+	private java.util.Map<String,String> properties;
 	/** Errore generato con un prefisso del connettore */
 	protected boolean generateErrorWithConnectorPrefix = true;
 
@@ -73,9 +74,9 @@ public class ConnettoreMsg  {
 	/** Indicazione su di un eventuale sbustamento delle informazioni di protocollo */
 	private boolean sbustamentoInformazioniProtocollo; 
 	/** Proprieta' di trasporto che deve utilizzare il connettore */
-	private java.util.Properties propertiesTrasporto;
+	private Map<String, String> propertiesTrasporto;
 	/** Proprieta' urlBased che deve utilizzare il connettore */
-	private java.util.Properties propertiesUrlBased;
+	private Map<String, String> propertiesUrlBased;
 	/** Tipo di Autenticazione */
 	private String tipoAutenticazione;
 	/** Credenziali per l'autenticazione */
@@ -230,7 +231,7 @@ public class ConnettoreMsg  {
 	 * @param p Proprieta' del Connettore
 	 * 
 	 */   
-	public void setConnectorProperties(java.util.Hashtable<String,String> p) {
+	public void setConnectorProperties(java.util.Map<String,String> p) {
 		this.properties = p;
 	}
 	/**
@@ -321,7 +322,7 @@ public class ConnettoreMsg  {
 	 * @return Proprieta' del Connettore
 	 * 
 	 */   
-	public java.util.Hashtable<String,String> getConnectorProperties() {
+	public java.util.Map<String,String> getConnectorProperties() {
 		return this.properties;
 	}
 	/**
@@ -355,25 +356,25 @@ public class ConnettoreMsg  {
 	/**
 	 * @return the propertiesTrasporto
 	 */
-	public java.util.Properties getPropertiesTrasporto() {
+	public Map<String, String> getPropertiesTrasporto() {
 		return this.propertiesTrasporto;
 	}
 	/**
 	 * @return the propertiesUrlBased
 	 */
-	public java.util.Properties getPropertiesUrlBased() {
+	public Map<String, String> getPropertiesUrlBased() {
 		return this.propertiesUrlBased;
 	}
 	/**
 	 * @param propertiesTrasporto the propertiesTrasporto to set
 	 */
-	public void setPropertiesTrasporto(java.util.Properties propertiesTrasporto) {
+	public void setPropertiesTrasporto(Map<String, String> propertiesTrasporto) {
 		this.propertiesTrasporto = propertiesTrasporto;
 	}
 	/**
 	 * @param propertiesUrlBased the propertiesUrlBased to set
 	 */
-	public void setPropertiesUrlBased(java.util.Properties propertiesUrlBased) {
+	public void setPropertiesUrlBased(Map<String, String> propertiesUrlBased) {
 		this.propertiesUrlBased = propertiesUrlBased;
 	}
 	/**
@@ -459,9 +460,9 @@ public class ConnettoreMsg  {
 	}
 	public void initPolicyGestioneToken(ConfigurazionePdDManager configPdDManager) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		if(this.properties!=null && !this.properties.isEmpty()) {
-			Enumeration<String> en = this.properties.keys();
-			while (en.hasMoreElements()) {
-				String propertyName = (String) en.nextElement();
+			Iterator<String> en = this.properties.keySet().iterator();
+			while (en.hasNext()) {
+				String propertyName = (String) en.next();
 				if(CostantiConnettori.CONNETTORE_TOKEN_POLICY.equals(propertyName)) {
 					String tokenPolicy = this.properties.get(propertyName);
 					if(tokenPolicy!=null && !"".equals(tokenPolicy)) {

@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.services.service;
 
 import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.soap.SOAPFault;
@@ -446,14 +448,13 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			
 			
 			// Properties Trasporto
-			java.util.Properties headerTrasporto = null;
+			Map<String, String> headerTrasporto = null;
 			if(openSPCoopProperties.integrationManager_readInformazioniTrasporto()){
-				headerTrasporto = 
-					new java.util.Properties();	    
+				headerTrasporto = new HashMap<String, String>();
 				java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 				while(enTrasporto.hasMoreElements()){
 					String nomeProperty = (String)enTrasporto.nextElement();
-					headerTrasporto.setProperty(nomeProperty,req.getHeader(nomeProperty));
+					headerTrasporto.put(nomeProperty,req.getHeader(nomeProperty));
 					//log.info("Proprieta' Trasporto: nome["+nomeProperty+"] valore["+req.getHeader(nomeProperty)+"]");
 				} 
 			}
@@ -713,26 +714,26 @@ public class RicezioneContenutiApplicativiIntegrationManagerService {
 			}
 			
 			// Raccolgo l'eventuale header di integrazione
-			java.util.Properties headerIntegrazioneRisposta = context.getHeaderIntegrazioneRisposta();
+			Map<String, String> headerIntegrazioneRisposta = context.getHeaderIntegrazioneRisposta();
 			ProtocolHeaderInfo protocolHeaderInfoResponse = null; 
 			if(headerIntegrazioneRisposta!=null){
-				java.util.Properties keyValue = openSPCoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
+				java.util.concurrent.ConcurrentHashMap<String,String> keyValue = openSPCoopProperties.getKeyValue_HeaderIntegrazioneTrasporto();
 				protocolHeaderInfoResponse = new ProtocolHeaderInfo();
 
-				protocolHeaderInfoResponse.setID(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)));
-				protocolHeaderInfoResponse.setRiferimentoMessaggio(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)));
-				protocolHeaderInfoResponse.setIdCollaborazione(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)));
+				protocolHeaderInfoResponse.setID(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)));
+				protocolHeaderInfoResponse.setRiferimentoMessaggio(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)));
+				protocolHeaderInfoResponse.setIdCollaborazione(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)));
 
-				protocolHeaderInfoResponse.setMittente(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)));
-				protocolHeaderInfoResponse.setTipoMittente(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)));
+				protocolHeaderInfoResponse.setMittente(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)));
+				protocolHeaderInfoResponse.setTipoMittente(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)));
 
-				protocolHeaderInfoResponse.setDestinatario(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)));
-				protocolHeaderInfoResponse.setTipoDestinatario(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)));
+				protocolHeaderInfoResponse.setDestinatario(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)));
+				protocolHeaderInfoResponse.setTipoDestinatario(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)));
 
-				protocolHeaderInfoResponse.setServizio(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)));
-				protocolHeaderInfoResponse.setTipoServizio(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)));
+				protocolHeaderInfoResponse.setServizio(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)));
+				protocolHeaderInfoResponse.setTipoServizio(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)));
 
-				protocolHeaderInfoResponse.setAzione(headerIntegrazioneRisposta.getProperty(keyValue.getProperty(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)));
+				protocolHeaderInfoResponse.setAzione(headerIntegrazioneRisposta.get(keyValue.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)));
 			}
 
 			InformazioniErroriInfrastrutturali informazioniErrori = ServicesUtils.readInformazioniErroriInfrastrutturali(context.getPddContext());

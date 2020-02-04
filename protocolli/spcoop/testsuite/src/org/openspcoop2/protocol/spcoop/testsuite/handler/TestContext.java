@@ -24,6 +24,8 @@ package org.openspcoop2.protocol.spcoop.testsuite.handler;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.core.constants.TipoPdD;
@@ -48,7 +50,7 @@ public class TestContext implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private Properties forwardProperties;
+	private Map<String,String> forwardProperties;
 	private boolean generaErroreVerificaInstallazioneArchivioTest;
 	private EsitoTransazioneName esito;
 	private Integer returnCodePDReq;
@@ -75,10 +77,10 @@ public class TestContext implements Serializable {
 	public TestContext() throws HandlerException{
 		// Utilizzato dalla Testsuite
 	}
-	public TestContext(TipoPdD tipoPdD,Properties p) throws HandlerException{
+	public TestContext(TipoPdD tipoPdD,Map<String,String> p) throws HandlerException{
 		
 		if(TipoPdD.DELEGATA.equals(tipoPdD)){
-			this.forwardProperties = new Properties();
+			this.forwardProperties = new HashMap<String,String>();
 		}
 		
 		// Generazione errore
@@ -177,7 +179,7 @@ public class TestContext implements Serializable {
 		this.statelessPA = getBooleanValue(p, Costanti.TEST_CONTEXT_STATELESS_PA);
 	}
 	
-	private String getStringValue(Properties p,String key){
+	private String getStringValue(Map<String,String> p,String key){
 		Object o = getProperty(p, key);
 		if(o!=null && o instanceof String){
 			return (String) o;
@@ -185,7 +187,7 @@ public class TestContext implements Serializable {
 			return null;
 		}
 	}
-	private Integer getIntValue(Properties p,String key){
+	private Integer getIntValue(Map<String,String> p,String key){
 		Object o = getProperty(p, key);
 		if( (o!=null) && (o instanceof Integer) ){
 			return(Integer)o;
@@ -196,7 +198,7 @@ public class TestContext implements Serializable {
 			return null;
 		}
 	}
-	private Boolean getBooleanValue(Properties p,String key){
+	private Boolean getBooleanValue(Map<String,String> p,String key){
 		Object o = getProperty(p, key);
 		if( (o!=null) && (o instanceof Boolean) ){
 			return(Boolean)o;
@@ -207,7 +209,7 @@ public class TestContext implements Serializable {
 			return null;
 		}
 	}
-	private IDSoggetto getIDSoggettoValue(Properties p,String tipoKey,String nomeKey){
+	private IDSoggetto getIDSoggettoValue(Map<String,String> p,String tipoKey,String nomeKey){
 		Object tipo =  getStringValue(p, tipoKey);
 		Object nome =  getStringValue(p, nomeKey);
 		if(tipo!=null || nome!=null){
@@ -225,7 +227,7 @@ public class TestContext implements Serializable {
 		}
 	}
 	
-	private Object getProperty(Properties p,String key){
+	private Object getProperty(Map<String,String> p,String key){
 		
 		Object o = p.get(key);
 		if(o == null){
@@ -351,11 +353,11 @@ public class TestContext implements Serializable {
 		this.esito = esito;
 	}
 
-	public Properties getForwardProperties() {
+	public Map<String,String> getForwardProperties() {
 		return this.forwardProperties;
 	}
 
-	public void setForwardProperties(Properties forwardProperties) {
+	public void setForwardProperties(Map<String,String> forwardProperties) {
 		this.forwardProperties = forwardProperties;
 	}
 

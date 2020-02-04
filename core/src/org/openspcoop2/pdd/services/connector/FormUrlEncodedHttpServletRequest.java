@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -100,7 +101,7 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 	}
 	
 	private byte[] content;
-	private Properties properties;
+	private Map<String, String> properties;
 	public FormUrlEncodedHttpServletRequest(HttpServletRequest httpServletRequest) throws UtilsException{
 		super(httpServletRequest);
 		
@@ -124,7 +125,7 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		}
 		
 		java.util.Enumeration<?> en = httpServletRequest.getParameterNames();
-		this.properties = new Properties();
+		this.properties = new HashMap<String, String>();
 		while(en.hasMoreElements()){
 			String nomeProperty = (String)en.nextElement();
 			String valueProperty = httpServletRequest.getParameter(nomeProperty);
@@ -133,7 +134,18 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		if(this.properties.isEmpty() && this.content!=null && this.content.length>0) {
 			// su wildfly non vengono ritornati i parameters name
 			try (ByteArrayInputStream bin = new ByteArrayInputStream(this.content)) {
-				this.properties.load(bin);
+				Properties pTmp = new Properties();
+				pTmp.load(bin);
+				if(pTmp.size()>0) {
+					Enumeration<Object> enKeys = pTmp.keys();
+					while (enKeys.hasMoreElements()) {
+						Object oKey = (Object) enKeys.nextElement();
+						if(oKey instanceof String) {
+							String key = (String) oKey;
+							this.properties.put(key, pTmp.getProperty(key));
+						}
+					}
+				}
 			}catch(Throwable t) {}
 		}
 	}
@@ -198,8 +210,8 @@ public class FormUrlEncodedHttpServletRequest extends WrappedHttpServletRequest 
 		return TransportUtils.get(this.properties, key);
 	}
 
-	public Enumeration<Object> getFormUrlEncodedParameterNames() {
-		return this.properties.keys();
+	public Iterator<String> getFormUrlEncodedParameterNames() {
+		return this.properties.keySet().iterator();
 	}
 	
 	

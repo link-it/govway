@@ -121,9 +121,9 @@ public class SoapUtils {
 				throw new MessageException("Header http '"+Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION+"' non valorizzato (nessun header di trasporto trovato)");
 			}
 			
-			java.util.Enumeration<?> enTrasporto = transportRequestContext.getParametersTrasporto().keys();
-			while(enTrasporto.hasMoreElements()){
-				String nomeProperty = (String)enTrasporto.nextElement();
+			Iterator<String> enTrasporto = transportRequestContext.getParametersTrasporto().keySet().iterator();
+			while(enTrasporto.hasNext()){
+				String nomeProperty = (String)enTrasporto.next();
 				if(Costanti.SOAP11_MANDATORY_HEADER_HTTP_SOAP_ACTION.equalsIgnoreCase(nomeProperty)){
 					//System.out.println("TROVATO SOAP ACTION: "+req.getHeader(nomeProperty));
 					String soapAction = transportRequestContext.getParameterTrasporto(nomeProperty);

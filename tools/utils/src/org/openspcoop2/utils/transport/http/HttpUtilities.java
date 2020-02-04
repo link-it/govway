@@ -36,7 +36,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.net.ssl.CertPathTrustManagerParameters;
 import javax.net.ssl.HttpsURLConnection;
@@ -113,14 +112,14 @@ public class HttpUtilities {
 		}
 		return null;
 	}
-	public static String getClientAddress(Properties transportProperties) throws UtilsException{
+	public static String getClientAddress(Map<String, String> transportProperties) throws UtilsException{
 		try{
 			return getClientAddress(getClientAddressHeaders(), transportProperties);
 		}catch(Throwable e){
 			throw new UtilsException(e.getMessage(),e);
 		}
 	}
-	private static String getClientAddress(List<String> headers, Properties transportProperties) throws UtilsException{
+	private static String getClientAddress(List<String> headers, Map<String, String> transportProperties) throws UtilsException{
 		if(headers.size()>0){
 			for (String header : headers) {
 				String transportAddr = TransportUtils.get(transportProperties,header);
@@ -401,7 +400,7 @@ public class HttpUtilities {
 	}
 	
 	
-	public static boolean isNoCache(Properties headers) throws UtilsException{
+	public static boolean isNoCache(Map<String, String> headers) throws UtilsException{
 		List<String> l = getDirectiveCacheControl(headers);
 		if(l==null || l.isEmpty()) {
 			l = getDirectivePragma(headers);
@@ -413,7 +412,7 @@ public class HttpUtilities {
 			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_CACHE);
 		}
 	}
-	public static boolean isNoStore(Properties headers) throws UtilsException{
+	public static boolean isNoStore(Map<String, String> headers) throws UtilsException{
 		List<String> l = getDirectiveCacheControl(headers);
 		if(l==null || l.isEmpty()) {
 			l = getDirectivePragma(headers);
@@ -427,7 +426,7 @@ public class HttpUtilities {
 			return l.contains(HttpConstants.CACHE_STATUS_DIRECTIVE_NO_STORE);
 		}
 	}
-	public static Integer getCacheMaxAge(Properties headers) throws UtilsException{
+	public static Integer getCacheMaxAge(Map<String, String> headers) throws UtilsException{
 		List<String> l = getDirectiveCacheControl(headers);
 		if(l==null || l.isEmpty()) {
 			return null;
@@ -444,7 +443,7 @@ public class HttpUtilities {
 			return null;
 		}
 	}
-	public static List<String> getDirectiveCacheControl(Properties headers){
+	public static List<String> getDirectiveCacheControl(Map<String, String> headers){
 		
 		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_1);
 		
@@ -463,7 +462,7 @@ public class HttpUtilities {
 		
 		return values;
 	}
-	public static List<String> getDirectivePragma(Properties headers){
+	public static List<String> getDirectivePragma(Map<String, String> headers){
 		
 		String cacheControl = TransportUtils.get(headers, HttpConstants.CACHE_STATUS_HTTP_1_0);
 		

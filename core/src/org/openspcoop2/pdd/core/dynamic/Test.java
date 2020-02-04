@@ -23,7 +23,6 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -83,11 +82,11 @@ public class Test {
 		
 		ConnettoreMsg connettoreMsg = new ConnettoreMsg();
 		
-		connettoreMsg.setPropertiesTrasporto(new Properties());
+		connettoreMsg.setPropertiesTrasporto(new HashMap<String, String>());
 		connettoreMsg.getPropertiesTrasporto().put("Header1", "Valore1");
 		connettoreMsg.getPropertiesTrasporto().put("Header2", "Valore2");
 		
-		connettoreMsg.setPropertiesUrlBased(new Properties());
+		connettoreMsg.setPropertiesUrlBased(new HashMap<String, String>());
 		connettoreMsg.getPropertiesUrlBased().put("P1", "Valore1URL");
 		connettoreMsg.getPropertiesUrlBased().put("P2", "Valore2URL");
 		

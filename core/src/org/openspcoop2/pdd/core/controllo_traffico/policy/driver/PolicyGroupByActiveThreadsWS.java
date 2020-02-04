@@ -19,12 +19,9 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy.driver;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.slf4j.Logger;
-import org.openspcoop2.utils.transport.TransportUtils;
-import org.openspcoop2.utils.transport.http.HttpResponse;
-import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.openspcoop2.core.controllo_traffico.beans.DatiCollezionati;
 import org.openspcoop2.core.controllo_traffico.beans.IDUnivocoGroupByPolicy;
 import org.openspcoop2.core.controllo_traffico.beans.MisurazioniTransazione;
@@ -32,6 +29,10 @@ import org.openspcoop2.core.controllo_traffico.driver.CostantiServizioControlloT
 import org.openspcoop2.core.controllo_traffico.driver.IPolicyGroupByActiveThreads;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyException;
 import org.openspcoop2.core.controllo_traffico.driver.PolicyNotFoundException;
+import org.openspcoop2.utils.transport.TransportUtils;
+import org.openspcoop2.utils.transport.http.HttpResponse;
+import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.slf4j.Logger;
 
 /**     
  * PolicyGroupByActiveThreadsWS
@@ -56,9 +57,9 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public DatiCollezionati registerStartRequest(Logger log, IDUnivocoGroupByPolicy datiGroupBy)
 			throws PolicyException {
 		try{
-			Properties p = new Properties();
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
+			Map<String, String> p = new HashMap<String, String>();
+			p.put(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
+			p.put(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildLocationWithURLBasedParameter(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_START_REQUEST);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.registerStartRequest] invoke ("+url+") ...");
@@ -81,9 +82,9 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public DatiCollezionati updateDatiStartRequestApplicabile(Logger log, IDUnivocoGroupByPolicy datiGroupBy)
 			throws PolicyException, PolicyNotFoundException {
 		try{
-			Properties p = new Properties();
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
+			Map<String, String> p = new HashMap<String, String>();
+			p.put(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
+			p.put(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
 			String url = TransportUtils.buildLocationWithURLBasedParameter(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_UPDATE_START_REQUEST);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.updateDatiStartRequestApplicabile] invoke ("+url+") ...");
@@ -106,11 +107,11 @@ public class PolicyGroupByActiveThreadsWS implements IPolicyGroupByActiveThreads
 	public void registerStopRequest(Logger log, IDUnivocoGroupByPolicy datiGroupBy, MisurazioniTransazione dati,
 			boolean isApplicabile) throws PolicyException, PolicyNotFoundException {
 		try{
-			Properties p = new Properties();
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));
-			p.setProperty(CostantiServizioControlloTraffico.PARAMETER_APPLICABILE, isApplicabile+"");
+			Map<String, String> p = new HashMap<String, String>();
+			p.put(CostantiServizioControlloTraffico.PARAMETER_ACTIVE_ID, this.activeId);
+			p.put(CostantiServizioControlloTraffico.PARAMETER_GROUP_BY_ID, IDUnivocoGroupByPolicy.serialize(datiGroupBy));
+			p.put(CostantiServizioControlloTraffico.PARAMETER_MISURAZIONI_TRANSAZIONE, MisurazioniTransazione.serialize(dati));
+			p.put(CostantiServizioControlloTraffico.PARAMETER_APPLICABILE, isApplicabile+"");
 			String url = TransportUtils.buildLocationWithURLBasedParameter(p, this.uriService+CostantiServizioControlloTraffico.OPERAZIONE_REGISTER_STOP_REQUEST);
 			
 			this.log.debug("[PolicyGroupByActiveThreadsWS.registerStopRequest] invoke ("+url+") ...");

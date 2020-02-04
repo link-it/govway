@@ -31,7 +31,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -89,7 +88,7 @@ public class DynamicUtils {
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto, Properties url,
+			Busta busta, Map<String, String> trasporto, Map<String, String> url,
 			ErrorHandler errorHandler) {
 		_fillDynamicMap(log, dynamicMap, pddContext, urlInvocazione, 
 				message,
@@ -102,7 +101,7 @@ public class DynamicUtils {
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto,
+			Busta busta, Map<String, String> trasporto,
 			ErrorHandler errorHandler) {
 		Map<String, Object> dynamicMapResponse = new HashMap<>();
 		_fillDynamicMap(log, dynamicMapResponse, pddContext, null, 
@@ -150,18 +149,18 @@ public class DynamicUtils {
 			OpenSPCoop2Message message,
 			Element element,
 			String elementJson,
-			Busta busta, Properties trasporto, Properties url,
+			Busta busta, Map<String, String> trasporto, Map<String, String> url,
 			ErrorHandler errorHandler) {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setBusta(busta);
 		dInfo.setPddContext(pddContext);
 		if(trasporto!=null && !trasporto.isEmpty()) {
-			Properties pNew = new Properties();
+			Map<String, String> pNew = new HashMap<String, String>();
 			pNew.putAll(trasporto);
 			dInfo.setTrasporto(pNew);
 		}
 		if(url!=null && !url.isEmpty()) {
-			Properties pNew = new Properties();
+			Map<String, String> pNew = new HashMap<String, String>();
 			pNew.putAll(url);
 			dInfo.setQueryParameters(pNew);
 		}
@@ -220,14 +219,14 @@ public class DynamicUtils {
 		}
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_PROPERTY)==false && dynamicInfo!=null && 
 				dynamicInfo.getBusta()!=null && dynamicInfo.getBusta().sizeProperties()>0) {
-			Properties propertiesBusta = new Properties();
+			Map<String, String> propertiesBusta = new HashMap<String, String>();
 			String[] pNames = dynamicInfo.getBusta().getPropertiesNames();
 			if(pNames!=null && pNames.length>0) {
 				for (int j = 0; j < pNames.length; j++) {
 					String pName = pNames[j];
 					String pValue = dynamicInfo.getBusta().getProperty(pName);
 					if(pValue!=null) {
-						propertiesBusta.setProperty(pName, pValue);
+						propertiesBusta.put(pName, pValue);
 					}
 				}
 			}
@@ -293,8 +292,8 @@ public class DynamicUtils {
 		DynamicInfo dInfo = DynamicUtils.readDynamicInfo(msg);
 		Element element = dInfo.getXml();
 		String elementJson = dInfo.getJson();
-		Properties parametriTrasporto = dInfo.getTrasporto();
-		Properties parametriUrl = dInfo.getQueryParameters();
+		Map<String, String> parametriTrasporto = dInfo.getTrasporto();
+		Map<String, String> parametriUrl = dInfo.getQueryParameters();
 		String urlInvocazione = dInfo.getUrl();
 		Map<String, Object> dynamicMap = new Hashtable<String, Object>();
 		ErrorHandler errorHandler = new ErrorHandler();
@@ -317,8 +316,8 @@ public class DynamicUtils {
 	public static DynamicInfo readDynamicInfo(OpenSPCoop2Message message) throws DynamicException {
 		Element element = null;
 		String elementJson = null;
-		Properties parametriTrasporto = null;
-		Properties parametriUrl = null;
+		Map<String, String> parametriTrasporto = null;
+		Map<String, String> parametriUrl = null;
 		String urlInvocazione = null;
 		
 		try{
@@ -782,7 +781,7 @@ public class DynamicUtils {
 			ArchiveType archiveType, OutputStream out) throws DynamicException{
 		try {
 			try(ByteArrayInputStream bin = new ByteArrayInputStream(template)){
-				Properties p = new Properties();
+				java.util.Properties p = new java.util.Properties();
 				p.load(bin);
 				
 				ContentExtractor contentExtractor = null;

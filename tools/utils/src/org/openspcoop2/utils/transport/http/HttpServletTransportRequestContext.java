@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport.http;
 
+import java.util.HashMap;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.openspcoop2.utils.UtilsException;
@@ -67,20 +69,20 @@ public class HttpServletTransportRequestContext extends org.openspcoop2.utils.tr
 			this.httpServletRequest = req;
 			
 			// Properties FORM Based
-			this.parametersFormBased = new java.util.Properties();	       
+			this.parametersFormBased = new HashMap<String, String>();	       
 			java.util.Enumeration<?> en = req.getParameterNames();
 			while(en.hasMoreElements()){
 				String nomeProperty = (String)en.nextElement();
-				this.parametersFormBased.setProperty(nomeProperty,req.getParameter(nomeProperty));
+				this.parametersFormBased.put(nomeProperty,req.getParameter(nomeProperty));
 				//log.info("Proprieta': nome["+nomeProperty+"] valore["+req.getParameter(nomeProperty)+"]");
 			}
 
 			// Hedear Trasporto
-			this.parametersTrasporto = new java.util.Properties();	    
+			this.parametersTrasporto = new HashMap<String, String>();	    
 			java.util.Enumeration<?> enTrasporto = req.getHeaderNames();
 			while(enTrasporto.hasMoreElements()){
 				String nomeProperty = (String)enTrasporto.nextElement();
-				this.parametersTrasporto.setProperty(nomeProperty,req.getHeader(nomeProperty));
+				this.parametersTrasporto.put(nomeProperty,req.getHeader(nomeProperty));
 				//log.info("Proprieta' Trasporto: nome["+nomeProperty+"] valore["+req.getHeader(nomeProperty)+"]");
 			}
 			

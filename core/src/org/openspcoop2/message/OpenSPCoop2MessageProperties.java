@@ -20,8 +20,9 @@
 
 package org.openspcoop2.message;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.openspcoop2.utils.transport.TransportUtils;
 
@@ -34,7 +35,7 @@ import org.openspcoop2.utils.transport.TransportUtils;
  */
 public class OpenSPCoop2MessageProperties {
 
-	private Properties props = new Properties();	
+	private Map<String, String> props = new HashMap<String, String>();	
 
 	private boolean initialize = false;
 	
@@ -47,7 +48,7 @@ public class OpenSPCoop2MessageProperties {
 	}
 
 	public void addProperty(String key,String value){
-		this.props.setProperty(key, value);
+		this.props.put(key, value);
 	}
 	
 	public String removeProperty(String key){
@@ -55,15 +56,15 @@ public class OpenSPCoop2MessageProperties {
 		return (o!=null && o instanceof String) ? ((String)o) : null;
 	}
 	
-	public Enumeration<?> getKeys(){
-		return this.props.keys();
+	public Iterator<String> getKeys(){
+		return this.props.keySet().iterator();
 	}
 	
 	public String getProperty(String key){
 		return TransportUtils.get(this.props, key);
 	}
 	
-	public Properties getAsProperties(){
+	public Map<String, String> getAsMap(){
 		return this.props;
 	}
 	

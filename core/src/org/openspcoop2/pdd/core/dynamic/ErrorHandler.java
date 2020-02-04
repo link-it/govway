@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.dynamic;
 
-import java.util.Properties;
+import java.util.Map;
 
 /**
  * ErrorHandler
@@ -49,43 +49,43 @@ public class ErrorHandler {
 	public void setMessage(String detail, int responseCode) {
 		this._setMessage(detail, null, null, responseCode+"", null);
 	}
-	public void setMessage(String detail, int responseCode, Properties headers) {
+	public void setMessage(String detail, int responseCode, Map<String, String> headers) {
 		this._setMessage(detail, null, null, responseCode+"", headers);
 	}
 	public void setMessage(String detail, String responseCode) {
 		this._setMessage(detail, null, null, responseCode, null);
 	}
-	public void setMessage(String detail, String responseCode, Properties headers) {
+	public void setMessage(String detail, String responseCode, Map<String, String> headers) {
 		this._setMessage(detail, null, null, responseCode, headers);
 	}
 	
 	public void setMessage(String detail, String content, String contentType, int responseCode) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode+"", null);
 	}
-	public void setMessage(String detail, String content, String contentType, int responseCode, Properties headers) {
+	public void setMessage(String detail, String content, String contentType, int responseCode, Map<String, String> headers) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode+"", headers);
 	}
 	public void setMessage(String detail, String content, String contentType, String responseCode) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode, null);
 	}
-	public void setMessage(String detail, String content, String contentType, String responseCode, Properties headers) {
+	public void setMessage(String detail, String content, String contentType, String responseCode, Map<String, String> headers) {
 		this._setMessage(detail, content.getBytes(), contentType, responseCode, headers);
 	}
 	
 	public void setMessage(String detail, byte[] content, String contentType, int responseCode) {
 		this._setMessage(detail, content, contentType, responseCode+"", null);
 	}
-	public void setMessage(String detail, byte[] content, String contentType, int responseCode, Properties headers) {
+	public void setMessage(String detail, byte[] content, String contentType, int responseCode, Map<String, String> headers) {
 		this._setMessage(detail, content, contentType, responseCode+"", headers);
 	}
 	public void setMessage(String detail, byte[] content, String contentType, String responseCode) {
 		this._setMessage(detail, content, contentType, responseCode, null);
 	}
-	public void setMessage(String detail, byte[] content, String contentType, String responseCode, Properties headers) {
+	public void setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, String> headers) {
 		this._setMessage(detail, content, contentType, responseCode, headers);
 	}
 	
-	private void _setMessage(String detail, byte[] content, String contentType, String responseCode, Properties headers) {	
+	private void _setMessage(String detail, byte[] content, String contentType, String responseCode, Map<String, String> headers) {	
 		ErrorMessage messageError = new ErrorMessage();
 		messageError.setContent(content);
 		messageError.setContentType(contentType);

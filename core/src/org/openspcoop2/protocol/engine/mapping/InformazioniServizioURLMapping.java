@@ -541,7 +541,7 @@ public class InformazioniServizioURLMapping {
 			if(this.urlProtocolContext.getParametersTrasporto().containsKey(mappingInfo.getName())==false){
 				throw new ProtocolException("URLMapping["+oggetto+"] identificazione "+ModalitaIdentificazione.HEADER_BASED.toString()+" non riuscita: header di trasporto con nome ["+mappingInfo.getName()+"] non trovato");
 			}
-			return this.urlProtocolContext.getParametersTrasporto().getProperty(mappingInfo.getName());
+			return this.urlProtocolContext.getParametersTrasporto().get(mappingInfo.getName());
 		}
 		
 		else if(ModalitaIdentificazione.IDENTITY_BASED.equals(mappingInfo.getModalitaIdentificazione())){

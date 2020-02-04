@@ -33,7 +33,7 @@ public class GPLWriter {
  public static final String GPL = "/*\n"+
 				 " "+VERSION+" \n"+
 				 " * https://govway.org\n"+
-				 " *\n"+
+				 " * \n"+
 				 " * Copyright (c) 2005-2020 Link.it srl (https://link.it).\n"+ 
 				 " * \n"+
 				 " * This program is free software: you can redistribute it and/or modify\n"+

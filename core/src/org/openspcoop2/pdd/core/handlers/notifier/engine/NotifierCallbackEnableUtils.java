@@ -19,8 +19,8 @@
  */
 package org.openspcoop2.pdd.core.handlers.notifier.engine;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
@@ -90,17 +90,17 @@ public class NotifierCallbackEnableUtils {
 				
 				int length = -1;
 				if(op2Context.getPropertiesTrasportoRisposta()!=null && op2Context.getPropertiesTrasportoRisposta().size()>0){
-					Enumeration<Object> enumTransport = op2Context.getPropertiesTrasportoRisposta().keys();
-					while (enumTransport.hasMoreElements()) {
-						String key = (String) enumTransport.nextElement();
+					Iterator<String> keys = op2Context.getPropertiesTrasportoRisposta().keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
 						//notifierCallback.debug("TRANSPORT ["+key+"]=["+op2Context.getPropertiesTrasportoRisposta().getProperty(key)+"]");
 						if("Content-Length".equalsIgnoreCase(key)){
-							String lengthParam = op2Context.getPropertiesTrasportoRisposta().getProperty(key);
+							String lengthParam = op2Context.getPropertiesTrasportoRisposta().get(key);
 							length = Integer.parseInt(lengthParam);
 							notifierCallback.debug("CONTENT LENGTH RESPONSE ["+length+"]");				
 						}
 						else if("Content-Type".equalsIgnoreCase(key)){
-							String contentType = op2Context.getPropertiesTrasportoRisposta().getProperty(key);
+							String contentType = op2Context.getPropertiesTrasportoRisposta().get(key);
 							notifierCallback.debug("CONTENT TYPE RESPONSE ["+contentType+"]");	
 							op2Context.getPddContext().addObject(NotifierConstants.RESPONSE_CONTENT_TYPE, contentType);
 						}
@@ -165,7 +165,7 @@ public class NotifierCallbackEnableUtils {
 			Boolean requestDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_ENABLED);
 			if(requestDumpPostProcessEnabled){
 				
-				Properties headerTrasporto = null;
+				Map<String, String> headerTrasporto = null;
 				if(TipoPdD.DELEGATA.equals(op2Context.getTipoPorta())){
 					if(op2Context.getConnettore()!=null && op2Context.getConnettore().getUrlProtocolContext().getParametersTrasporto()!=null){
 						headerTrasporto = op2Context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
@@ -202,7 +202,7 @@ public class NotifierCallbackEnableUtils {
 			Boolean responseDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_ENABLED);
 			if(responseDumpPostProcessEnabled){
 				
-				Properties headerTrasporto = null;
+				Map<String, String> headerTrasporto = null;
 				if(TipoPdD.APPLICATIVA.equals(op2Context.getTipoPorta())){
 					if(op2Context.getPropertiesTrasportoRisposta()!=null){
 						headerTrasporto = op2Context.getPropertiesTrasportoRisposta();
@@ -235,7 +235,7 @@ public class NotifierCallbackEnableUtils {
 	}
 	
 	private static NotifierStreamingHandler newHandler(NotifierCallback notifierCallback, Logger log, TipoMessaggio tipoMessaggio,
-			PdDContext pddContext,Properties headerTrasporto, IDSoggetto dominio) throws Exception{
+			PdDContext pddContext,Map<String, String> headerTrasporto, IDSoggetto dominio) throws Exception{
 		long dumpPostProcessConfigId = (Long) pddContext.getObject(NotifierConstants.DUMP_POST_PROCESS_ID_CONFIG);
 		String idTransazione = (String) pddContext.getObject(Costanti.ID_TRANSAZIONE);
 		String contentType = null;
@@ -259,6 +259,7 @@ public class NotifierCallbackEnableUtils {
 
 	// *** getBufferState ***
 	
+	@SuppressWarnings("unchecked")
 	private static NotifierBufferState getBufferState(NotifierCallback notifierCallback, NotifierType notifierType,
 			Object context) throws Exception  {
 		
@@ -309,11 +310,11 @@ public class NotifierCallbackEnableUtils {
 			Boolean requestDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_ENABLED);
 			if(requestDumpPostProcessEnabled){
 			
-				Properties headerTrasporto = null;
+				Map<String, String> headerTrasporto = null;
 				if(TipoPdD.DELEGATA.equals(op2Context.getTipoPorta())){
 					Object o = op2Context.getPddContext().getObject(NotifierConstants.REQUEST_DUMP_POST_PROCESS_HEADER_TRASPORTO);
 					if(o!=null){
-						headerTrasporto = (Properties) o;
+						headerTrasporto = (Map<String, String>) o;
 					}
 				}
 				else{
@@ -430,11 +431,11 @@ public class NotifierCallbackEnableUtils {
 			Boolean responseDumpPostProcessEnabled = (Boolean) op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_ENABLED);	
 			if(responseDumpPostProcessEnabled){
 			
-				Properties headerTrasporto = null;
+				Map<String, String> headerTrasporto = null;
 				if(TipoPdD.APPLICATIVA.equals(op2Context.getTipoPorta())){
 					Object o = op2Context.getPddContext().getObject(NotifierConstants.RESPONSE_DUMP_POST_PROCESS_HEADER_TRASPORTO);
 					if(o!=null){
-						headerTrasporto = (Properties) o;
+						headerTrasporto = (Map<String, String>) o;
 					}
 				}
 				else{

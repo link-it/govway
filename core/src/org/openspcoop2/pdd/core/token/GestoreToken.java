@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -106,6 +107,10 @@ public class GestoreToken {
 	private static final String TOKEN_CACHE_NAME = "token";
 	/** Cache */
 	private static Cache cacheToken = null;
+	private static final Boolean semaphoreJWT = true;
+	private static final Boolean semaphoreIntrospection = true;
+	private static final Boolean semaphoreUserInfo = true;
+	private static final Boolean semaphoreNegoziazione = true;
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -317,6 +322,19 @@ public class GestoreToken {
 	}
 	
 	
+
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(GestoreToken.cacheToken==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		GestoreToken.cacheToken.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(GestoreToken.cacheToken==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return GestoreToken.cacheToken.isDisableSyncronizedGet();
+	}
 	
 	
 	
@@ -559,9 +577,26 @@ public class GestoreToken {
     		String funzione = "ValidazioneJWT";
     		String keyCache = buildCacheKey(funzione, portaDelegata, token);
 
-			synchronized (GestoreToken.cacheToken) {
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+					esitoGestioneToken.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreToken.semaphoreJWT) {
 
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
 					if(response.getObject()!=null){
@@ -728,9 +763,26 @@ public class GestoreToken {
     		String funzione = "Introspection";
     		String keyCache = buildCacheKey(funzione, portaDelegata, token);
 
-			synchronized (GestoreToken.cacheToken) {
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+					esitoGestioneToken.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreToken.semaphoreIntrospection) {
 
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
 					if(response.getObject()!=null){
@@ -887,9 +939,26 @@ public class GestoreToken {
     		String funzione = "UserInfo";
     		String keyCache = buildCacheKey(funzione, portaDelegata, token);
 
-			synchronized (GestoreToken.cacheToken) {
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					esitoGestioneToken = (EsitoGestioneToken) response.getObject();
+					esitoGestioneToken.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreToken.semaphoreUserInfo) {
 
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
 					if(response.getObject()!=null){
@@ -1293,8 +1362,8 @@ public class GestoreToken {
 				Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_JWS.equals(forwardInforRaccolteMode)) {
 			
 			OpenSPCoop2Properties properties = OpenSPCoop2Properties.getInstance();
-			java.util.Properties headerNames = null;
-			HashMap<String, Boolean> set = null;
+			java.util.concurrent.ConcurrentHashMap<String,String> headerNames = null;
+			java.util.concurrent.ConcurrentHashMap<String, Boolean> set = null;
 			JSONUtils jsonUtils = null;
 			ObjectNode jsonNode = null;
 			boolean op2headers = Costanti.POLICY_TOKEN_FORWARD_INFO_RACCOLTE_MODE_OP2_HEADERS.equals(forwardInforRaccolteMode);
@@ -2090,7 +2159,7 @@ public class GestoreToken {
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext();
 		transportRequestContext.setRequestType(httpMethod.name());
-		transportRequestContext.setParametersTrasporto(new Properties());
+		transportRequestContext.setParametersTrasporto(new HashMap<String, String>());
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
 			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
@@ -2108,7 +2177,7 @@ public class GestoreToken {
 			transportRequestContext.getParametersTrasporto().put(positionTokenName, token);
 			break;
 		case url:
-			transportRequestContext.setParametersFormBased(new Properties());
+			transportRequestContext.setParametersFormBased(new HashMap<String, String>());
 			transportRequestContext.getParametersFormBased().put(positionTokenName, token);
 			break;
 		case form:
@@ -2232,9 +2301,26 @@ public class GestoreToken {
     		String funzione = "Negoziazione";
     		String keyCache = buildCacheKeyNegoziazione(funzione, policyNegoziazioneToken.getName());
 
-			synchronized (GestoreToken.cacheToken) {
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		
+    		org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreToken.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					esitoNegoziazioneToken = (EsitoNegoziazioneToken) response.getObject();
+					esitoNegoziazioneToken.setInCache(true);
+				}else if(response.getException()!=null){
+					GestoreToken.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:"+funzione+") in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreToken.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreToken.semaphoreNegoziazione) {
 
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreToken.cacheToken.get(keyCache);
 				if(response != null){
 					if(response.getObject()!=null){
@@ -2494,7 +2580,7 @@ public class GestoreToken {
 		
 		TransportRequestContext transportRequestContext = new TransportRequestContext();
 		transportRequestContext.setRequestType(httpMethod.name());
-		transportRequestContext.setParametersTrasporto(new Properties());
+		transportRequestContext.setParametersTrasporto(new HashMap<String, String>());
 		if(bearer) {
 			String authorizationHeader = HttpConstants.AUTHORIZATION_PREFIX_BEARER+bearerToken;
 			transportRequestContext.getParametersTrasporto().put(HttpConstants.AUTHORIZATION, authorizationHeader);
@@ -2502,23 +2588,23 @@ public class GestoreToken {
 		transportRequestContext.removeParameterTrasporto(HttpConstants.CONTENT_TYPE);
 		transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_X_WWW_FORM_URLENCODED);
 		
-		Properties pContent = new Properties();
+		Map<String, String> pContent = new HashMap<String, String>();
 		if(policyNegoziazioneToken.isClientCredentialsGrant()) {
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_CLIENT_CREDENTIALS_GRANT);
 		}
 		else if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE, ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_GRANT_TYPE_RESOURCE_OWNER_PASSWORD_CREDENTIALS_GRANT);
 		}
 		else {
 			throw new Exception("Nessuna modalità definita");
 		}
 		if(basic && !basicAsAuthorizationHeader){
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_ID, username);
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_CLIENT_SECRET, password);
 		}
 		if(policyNegoziazioneToken.isUsernamePasswordGrant()) {
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_USERNAME, policyNegoziazioneToken.getUsernamePasswordGrant_username());
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_PASSWORD, policyNegoziazioneToken.getUsernamePasswordGrant_password());
 		}
 		List<String> scopes = policyNegoziazioneToken.getScopes();
 		if(scopes!=null && !scopes.isEmpty()) {
@@ -2530,12 +2616,12 @@ public class GestoreToken {
 				bf.append(scope);
 			}
 			if(bf.length()>0) {
-				pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
+				pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_SCOPE, bf.toString());
 			}
 		}
 		String aud = policyNegoziazioneToken.getAudience();
 		if(aud!=null && !"".equals(aud)) {
-			pContent.setProperty(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
+			pContent.put(ClaimsNegoziazione.OAUTH2_RFC_6749_REQUEST_AUDIENCE, aud);
 		}
 		String prefixUrl = "PREFIX?";
 		String contentString = TransportUtils.buildLocationWithURLBasedParameter(pContent, prefixUrl , log);

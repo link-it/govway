@@ -521,6 +521,19 @@ public class ConfigurazionePdD  {
 		}
 	}
 
+	public void disableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		this.cache.disableSyncronizedGet();
+	}
+	public boolean isDisableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return this.cache.isDisableSyncronizedGet();
+	}
+	
 
 	protected IDriverConfigurazioneGet getDriverConfigurazionePdD() {
 		return this.driverConfigurazionePdD;

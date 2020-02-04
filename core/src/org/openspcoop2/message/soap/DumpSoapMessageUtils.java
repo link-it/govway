@@ -23,10 +23,9 @@ package org.openspcoop2.message.soap;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
@@ -65,7 +64,7 @@ public class DumpSoapMessageUtils {
 			dumpMessaggio.setMessageType(msg.getMessageType());
 			dumpMessaggio.setContentType(msg.getContentType());
 						
-			Properties pTrasporto = null;
+			Map<String, String> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
 						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
@@ -83,11 +82,11 @@ public class DumpSoapMessageUtils {
 				}
 			}
 			if(config.isDumpHeaders() && pTrasporto!=null) {
-				Enumeration<?> en = pTrasporto.keys();
-				while (en.hasMoreElements()) {
-					String key = (String) en.nextElement();
+				Iterator<String> keys = pTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					if(key!=null){
-						String value = pTrasporto.getProperty(key);
+						String value = pTrasporto.get(key);
 						dumpMessaggio.getHeaders().put(key, value);
 					}
 				}
@@ -263,7 +262,7 @@ public class DumpSoapMessageUtils {
 		try{
 			StringBuilder out = new StringBuilder();
 			
-			Properties pTrasporto = null;
+			Map<String, String> pTrasporto = null;
 			if(msg.getTransportRequestContext()!=null) {
 				if(msg.getTransportRequestContext().getParametersTrasporto()!=null && 
 						msg.getTransportRequestContext().getParametersTrasporto().size()>0){
@@ -283,11 +282,11 @@ public class DumpSoapMessageUtils {
 			if(config.isDumpHeaders()) {
 				out.append("------ Header di trasporto ------\n");
 				if(pTrasporto!=null && pTrasporto.size()>0) {
-					Enumeration<?> en = pTrasporto.keys();
-					while (en.hasMoreElements()) {
-						String key = (String) en.nextElement();
+					Iterator<String> keys = pTrasporto.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
 						if(key!=null){
-							String value = pTrasporto.getProperty(key);
+							String value = pTrasporto.get(key);
 							out.append("- "+key+": "+value+"\n");
 						}
 					}

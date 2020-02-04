@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.pdd.core.controllo_traffico.policy;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.Costanti;
@@ -92,12 +92,12 @@ public class PolicyFiltroApplicativoUtilities {
 
 		case FORM_BASED:
 			
-			Properties pForm = context.getConnettore().getUrlProtocolContext().getParametersFormBased();
+			Map<String, String> pForm = context.getConnettore().getUrlProtocolContext().getParametersFormBased();
 			return TransportUtils.get(pForm, nome);
 			
 		case HEADER_BASED:
 			
-			Properties pTrasporto = context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
+			Map<String, String> pTrasporto = context.getConnettore().getUrlProtocolContext().getParametersTrasporto();
 			return TransportUtils.get(pTrasporto, nome);
 						
 		case SOAPACTION_BASED:

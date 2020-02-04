@@ -28,9 +28,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -244,7 +243,7 @@ public class RicezioneBuste {
 
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
 	public static String[] defaultGestoriIntegrazionePA = null;
-	public static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
+	public static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
 	
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
 	private static String [] tipiGestoriCredenziali = null;
@@ -304,14 +303,14 @@ public class RicezioneBuste {
 		}
 		if(s.size()>0){
 			RicezioneBuste.defaultGestoriIntegrazionePA = s.toArray(new String[1]);
-//			RicezioneBuste.gestoriIntegrazionePA = new Hashtable<String, IGestoreIntegrazionePA>();
+//			RicezioneBuste.gestoriIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, IGestoreIntegrazionePA>();
 //			while(s.size()>0){
 //				RicezioneBuste.gestoriIntegrazionePA.put(s.remove(0), v.remove(0));
 //			}
 		}
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
-		RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA = new Hashtable<String, String[]>();
+		RicezioneBuste.defaultPerProtocolloGestoreIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
 		Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 		while (enumProtocols.hasMoreElements()) {
 			String protocol = (String) enumProtocols.nextElement();
@@ -634,9 +633,9 @@ public class RicezioneBuste {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
-						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
+						outResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
 					}
-					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
+					Map<String, String> propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
 					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, false, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
@@ -1073,7 +1072,7 @@ public class RicezioneBuste {
 		}
 		
 		// Imposto header di risposta
-		Properties headerRisposta = new Properties();
+		Map<String, String> headerRisposta = new HashMap<String, String>();
 		UtilitiesIntegrazione utilitiesHttpRisposta = UtilitiesIntegrazione.getInstancePAResponse(logCore);
 		try{
 			utilitiesHttpRisposta.setInfoProductTransportProperties(headerRisposta);
@@ -1879,7 +1878,7 @@ public class RicezioneBuste {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(true);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
 					if(this.msgContext.getHeaderIntegrazioneRisposta()==null) {
-						this.msgContext.setHeaderIntegrazioneRisposta(new Properties());
+						this.msgContext.setHeaderIntegrazioneRisposta(new HashMap<String, String>());
 					}
 					this.msgContext.getHeaderIntegrazioneRisposta().putAll(res.getHeader());
 					this.msgContext.setMessageResponse(res.buildMessage());
@@ -7348,7 +7347,7 @@ public class RicezioneBuste {
 				OutResponsePAMessage outResponsePAMessage = new OutResponsePAMessage();
 				outResponsePAMessage.setBustaRichiesta(bustaRichiesta);
 				outResponsePAMessage.setMessage(responseMessage);
-				java.util.Properties propertiesIntegrazioneRisposta = new java.util.Properties();
+				Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
 				outResponsePAMessage.setProprietaTrasporto(propertiesIntegrazioneRisposta);
 				outResponsePAMessage.setPortaDelegata(pd);
 				outResponsePAMessage.setPortaApplicativa(pa);

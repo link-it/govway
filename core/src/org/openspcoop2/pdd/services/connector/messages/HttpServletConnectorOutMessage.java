@@ -20,7 +20,7 @@
 package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.OutputStream;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -81,9 +81,9 @@ public class HttpServletConnectorOutMessage implements ConnectorOutMessage {
 				forwardHeader = msg.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
 			}
 			if(forwardHeader!=null && forwardHeader.size()>0){
-				Enumeration<?> keys = forwardHeader.getKeys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				Iterator<String> keys = forwardHeader.getKeys();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = forwardHeader.getProperty(key);
 					this.setHeader(key, value);
 				}

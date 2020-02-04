@@ -23,9 +23,10 @@
 package org.openspcoop2.pdd.services.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import javax.xml.soap.SOAPBody;
 
@@ -770,14 +771,14 @@ public class RicezioneBusteService  {
 			msgDiag = context.getMsgDiagnostico();
 		}
 		if(context.getHeaderIntegrazioneRisposta()==null) {
-			context.setHeaderIntegrazioneRisposta(new Properties());
+			context.setHeaderIntegrazioneRisposta(new HashMap<String,String>());
 		}
 		ServicesUtils.setGovWayHeaderResponse(context.getHeaderIntegrazioneRisposta(), logCore, false, context.getPddContext(), requestInfo.getProtocolContext());
 		if(context.getHeaderIntegrazioneRisposta()!=null){
-			java.util.Enumeration<?> en = context.getHeaderIntegrazioneRisposta().keys();
-	    	while(en.hasMoreElements()){
-	    		String key = (String) en.nextElement();
-	    		res.setHeader(key,context.getHeaderIntegrazioneRisposta().getProperty(key));
+			Iterator<String> keys = context.getHeaderIntegrazioneRisposta().keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				res.setHeader(key,context.getHeaderIntegrazioneRisposta().get(key));
 	    	}	
 		}
 		if(context!=null && context.getProtocol()!=null){
@@ -945,12 +946,12 @@ public class RicezioneBusteService  {
 				
 				if(responseMessage.getForcedResponse().getHeaders()!=null &&
 						responseMessage.getForcedResponse().getHeaders().size()>0) {
-					java.util.Enumeration<?> en = responseMessage.getForcedResponse().getHeaders().keys();
-			    	while(en.hasMoreElements()){
-			    		String key = (String) en.nextElement();
-			    		String value = null;
+					Iterator<String> keys = responseMessage.getForcedResponse().getHeaders().keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						String value = null;
 			    		try{
-			    			value = responseMessage.getForcedResponse().getHeaders().getProperty(key);
+			    			value = responseMessage.getForcedResponse().getHeaders().get(key);
 			    			res.setHeader(key,value);
 			    		}catch(Exception e){
 			    			logCore.error("Response(Forced).setHeader("+key+","+value+") error: "+e.getMessage(),e);

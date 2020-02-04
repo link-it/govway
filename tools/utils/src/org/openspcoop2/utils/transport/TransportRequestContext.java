@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport;
 
+import java.util.Map;
+
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -41,9 +43,9 @@ public class TransportRequestContext implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 		
 	/* ---- Coppie nome/valori di invocazione form-based --- */
-	protected java.util.Properties parametersFormBased;
+	protected Map<String, String> parametersFormBased;
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	protected java.util.Properties parametersTrasporto;
+	protected Map<String, String> parametersTrasporto;
 	
 	protected Credential credential = null;
 	
@@ -96,7 +98,7 @@ public class TransportRequestContext implements java.io.Serializable {
 	public String getInterfaceName() {
 		return this.interfaceName;
 	}
-	public java.util.Properties getParametersFormBased(){
+	public Map<String, String> getParametersFormBased(){
 		return this.parametersFormBased;
 	}
 	public String getParameterFormBased(String name){
@@ -111,7 +113,7 @@ public class TransportRequestContext implements java.io.Serializable {
 		}
 		return TransportUtils.remove(this.parametersFormBased, name);
 	}
-	public java.util.Properties getParametersTrasporto() {
+	public Map<String, String> getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
 	public String getParameterTrasporto(String name){
@@ -168,11 +170,11 @@ public class TransportRequestContext implements java.io.Serializable {
 		return TransportUtils.buildLocationWithURLBasedParameter(this.parametersFormBased, this.requestURI);
 	}
 
-	public void setParametersFormBased(java.util.Properties parametersFormBased) {
+	public void setParametersFormBased(Map<String, String> parametersFormBased) {
 		this.parametersFormBased = parametersFormBased;
 	}
 
-	public void setParametersTrasporto(java.util.Properties parametersTrasporto) {
+	public void setParametersTrasporto(Map<String, String> parametersTrasporto) {
 		this.parametersTrasporto = parametersTrasporto;
 	}
 

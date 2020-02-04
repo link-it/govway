@@ -21,7 +21,8 @@
 
 package org.openspcoop2.pdd.core;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -40,7 +41,7 @@ import org.openspcoop2.utils.transport.http.WrappedHttpServletResponse;
  */
 public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 
-	private Properties properties = new Properties();
+	private Map<String, String> properties = new HashMap<String, String>();
 	private boolean portaApplicativa;
 	
 	public CORSWrappedHttpServletResponse(boolean portaApplicativa) {
@@ -80,7 +81,7 @@ public class CORSWrappedHttpServletResponse extends WrappedHttpServletResponse {
 	public int getStatus() {
 		return this.status;
 	}
-	public Properties getHeader() {
+	public Map<String, String> getHeader() {
 		return this.properties;
 	}
 }

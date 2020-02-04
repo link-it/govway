@@ -112,6 +112,7 @@ import org.openspcoop2.pdd.core.jmx.StatoServiziJMXResource;
 import org.openspcoop2.pdd.core.keystore.GestoreKeystoreCaching;
 import org.openspcoop2.pdd.core.response_caching.GestoreCacheResponseCaching;
 import org.openspcoop2.pdd.core.token.GestoreToken;
+import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.LogLevels;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -568,6 +569,18 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			/* ----------- Inizializzazione Risorse DOM/SOAP ------------ */
 			List<OpenSPCoop2MessageFactory> messageFactory = new ArrayList<OpenSPCoop2MessageFactory>();
 			try{
+				// TransazioneContext
+				TransactionContext.initGestioneStateful();
+				OpenSPCoop2Startup.log.info("TransactionContext.gestioneStateful: "+propertiesReader.isTransazioniStatefulEnabled());
+				TransactionContext.initResources();
+				OpenSPCoop2Startup.log.info("TransactionContext.type (sync:"+propertiesReader.isConfigurazioneCache_transactionContext_accessiSynchronized()+"): "+TransactionContext.getTransactionContextType());
+				
+				// Cache
+				if(!propertiesReader.isConfigurazioneCache_accessiSynchronized()) {
+					Cache.disableSyncronizedGetAsDefault();
+				}
+				OpenSPCoop2Startup.log.info("Cache.disableSyncronizedGetAsDefault: "+Cache.isDisableSyncronizedGetAsDefault());
+				
 				// MessageFactory
 				OpenSPCoop2MessageFactory.setMessageFactoryImpl(classNameReader.getOpenSPCoop2MessageFactory(propertiesReader.getOpenspcoop2MessageFactory()));
 				OpenSPCoop2MessageFactory.initDefaultMessageFactory(true);
@@ -851,11 +864,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				
 					UniqueIdentifierManager.inizializzaUniqueIdentifierManager(classClusterID,propertiesReader.getClusterId(false));
 					
+					OpenSPCoop2Startup.log.info("UUID Generator: "+classClusterID);
+					
 					if(propertiesReader.generazioneDateCasualiLogAbilitato()){
 						GeneratoreCasualeDate.init(OpenSPCoop2Properties.getGenerazioneDateCasualiLog_dataInizioIntervallo(), 
 								OpenSPCoop2Properties.getGenerazioneDateCasualiLog_dataFineIntervallo(),
 								OpenSPCoop2Startup.log);
-						
+						OpenSPCoop2Startup.log.info("Abilitata generazione date casuali");
 					}
 				}
 								

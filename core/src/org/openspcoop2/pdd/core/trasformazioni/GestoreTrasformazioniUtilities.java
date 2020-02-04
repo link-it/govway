@@ -23,10 +23,9 @@
 package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.xml.soap.AttachmentPart;
@@ -120,7 +119,7 @@ public class GestoreTrasformazioniUtilities {
 		
 	}
 	
-	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Properties properties, Properties forceAddProperties, String oggetto,
+	public static void trasformazione(Logger log, List<TrasformazioneRegolaParametro> list, Map<String, String> properties, Map<String, String> forceAddProperties, String oggetto,
 			Map<String, Object> dynamicMap, PdDContext pddContext) throws Exception {
 		if(list!=null && list.size()>0) {
 			for (TrasformazioneRegolaParametro parametro : list) {
@@ -355,8 +354,8 @@ public class GestoreTrasformazioniUtilities {
 	
 	public static OpenSPCoop2Message trasformaMessaggio(Logger log, OpenSPCoop2Message message, Element element, 
 			RequestInfo requestInfo, Map<String, Object> dynamicMap, PdDContext pddContext, OpenSPCoop2Properties op2Properties,
-			Properties trasporto, Properties forceAddTrasporto, 
-			Properties url, Properties forceAddUrl,
+			Map<String, String> trasporto, Map<String, String> forceAddTrasporto, 
+			Map<String, String> url, Map<String, String> forceAddUrl,
 			int status,
 			String contentTypeInput, Integer returnCodeInput,
 			RisultatoTrasformazioneContenuto risultato,
@@ -847,27 +846,21 @@ public class GestoreTrasformazioniUtilities {
 		}
 	}
 	
-	public static void addTransportInfo(Properties forceAddTrasporto, Properties forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
+	public static void addTransportInfo(Map<String, String> forceAddTrasporto, Map<String, String> forceAddUrl, Integer forceResponseStatus, OpenSPCoop2Message msg) {
 		if(forceAddTrasporto!=null && !forceAddTrasporto.isEmpty()) {
-			Enumeration<?> keys = forceAddTrasporto.keys();
-			while (keys.hasMoreElements()) {
-				Object object = (Object) keys.nextElement();
-				if(object instanceof String) {
-					String key = (String) object;
-					String value = forceAddTrasporto.getProperty(key);
-					msg.forceTransportHeader(key, value);	
-				}
+			Iterator<String> keys = forceAddTrasporto.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = forceAddTrasporto.get(key);
+				msg.forceTransportHeader(key, value);	
 			}
 		}
 		if(forceAddUrl!=null && !forceAddUrl.isEmpty()) {
-			Enumeration<?> keys = forceAddUrl.keys();
-			while (keys.hasMoreElements()) {
-				Object object = (Object) keys.nextElement();
-				if(object instanceof String) {
-					String key = (String) object;
-					String value = forceAddUrl.getProperty(key);
-					msg.forceUrlProperty(key, value);	
-				}
+			Iterator<String> keys = forceAddUrl.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = forceAddUrl.get(key);
+				msg.forceUrlProperty(key, value);	
 			}
 		}
 		if(forceResponseStatus!=null && forceResponseStatus.intValue()>0) {

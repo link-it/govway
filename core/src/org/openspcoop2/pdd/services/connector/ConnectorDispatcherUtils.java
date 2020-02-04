@@ -23,7 +23,9 @@ package org.openspcoop2.pdd.services.connector;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -361,7 +363,7 @@ public class ConnectorDispatcherUtils {
 		
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 		
-		Properties trasporto = new Properties();
+		Map<String, String> trasporto = new HashMap<String, String>();
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -378,11 +380,11 @@ public class ConnectorDispatcherUtils {
 				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
 			}
 			if(trasporto.size()>0){
-				java.util.Enumeration<?> en = trasporto.keys();
-		    	while(en.hasMoreElements()){
-		    		String key = (String) en.nextElement();
-		    		String value = null;
-		    		value = trasporto.getProperty(key);
+				Iterator<String> keys = trasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					String value = null;
+		    		value = trasporto.get(key);
 		    		res.setHeader(key,value);
 		    	}	
 			}
@@ -465,7 +467,7 @@ public class ConnectorDispatcherUtils {
 		
 		OpenSPCoop2Message msg = info.getMessage();
 		
-		Properties trasporto = info.getTrasporto();
+		Map<String, String> trasporto = info.getTrasporto();
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -482,11 +484,11 @@ public class ConnectorDispatcherUtils {
 				utilitiesIntegrazione.setInfoProductTransportProperties(trasporto);
 			}
 			if(trasporto.size()>0){
-				java.util.Enumeration<?> en = trasporto.keys();
-		    	while(en.hasMoreElements()){
-		    		String key = (String) en.nextElement();
-		    		String value = null;
-		    		value = trasporto.getProperty(key);
+				Iterator<String> keys = trasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					String value = null;
+		    		value = trasporto.get(key);
 		    		res.setHeader(key,value);
 		    	}	
 			}

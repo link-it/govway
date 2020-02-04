@@ -24,8 +24,8 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
 
 import javax.jms.BytesMessage;
 import javax.jms.Connection;
@@ -234,9 +234,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 			}
 			
 			// Properties da interfaccia
-			Enumeration<?> enumCTX = this.properties.keys();
-			while( enumCTX.hasMoreElements() ) {
-				String key = (String) enumCTX.nextElement();
+			Iterator<String> enumCTX = this.properties.keySet().iterator();
+			while( enumCTX.hasNext() ) {
+				String key = (String) enumCTX.next();
 				String value = this.properties.get(key);
 				if(key.startsWith(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX)){
 					key = key.substring(CostantiConnettori.CONNETTORE_JMS_CONTEXT_PREFIX.length());
@@ -470,9 +470,9 @@ public class ConnettoreJMS extends ConnettoreBase {
 			if(this.propertiesTrasporto != null){
 				if(this.debug)
 					this.logger.debug("Set proprieta' jms...");
-				Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
-				while( enumSPC.hasMoreElements() ) {
-					String key = (String) enumSPC.nextElement();
+				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = (String) this.propertiesTrasporto.get(key);
 					// Replace X--Value con Value
 					key = key.replace("X-", "");

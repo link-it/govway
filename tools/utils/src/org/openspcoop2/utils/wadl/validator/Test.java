@@ -20,7 +20,8 @@
 package org.openspcoop2.utils.wadl.validator;
 
 import java.net.URI;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -97,12 +98,12 @@ public class Test {
 			TextHttpRequestEntity httpEntity = new TextHttpRequestEntity();
 			httpEntity.setUrl("/prova2");
 			httpEntity.setMethod(HttpRequestMethod.GET);
-			Properties parametersFormBased = new Properties();
+			Map<String, String> parametersFormBased = new HashMap<String, String>();
 			parametersFormBased.put("idTrasmissionePROVA2Required", "24");
 			parametersFormBased.put("idTrasmissionePROVA2NOTRequired", "true");
 			httpEntity.setParametersQuery(parametersFormBased);
 	
-			Properties parametersTrasporto = new Properties();
+			Map<String, String> parametersTrasporto = new HashMap<String, String>();
 			parametersTrasporto.put("idTrasmissionePROVA2headerRequired", "67");
 			parametersTrasporto.put("idTrasmissionePROVA2headerNOTRequired", "true");
 			httpEntity.setParametersTrasporto(parametersTrasporto);

@@ -22,7 +22,7 @@
 
 package org.openspcoop2.pdd.config;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -66,7 +66,7 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	/** Indica se deve essere attesa o meno una ricevuta asincrona, in caso di profili asincroni */
 	private boolean ricevutaAsincrona;
 	/** Filtri per identificazione PA */
-	Hashtable<String, String> filtroProprietaPorteApplicative;
+	private Map<String, String> filtroProprietaPorteApplicative;
 	 /** Profilo di Gestione */
 	private String profiloGestione = null;
 	/** Nome del Servizio Applicativo che sta' richiedendo il servizio */
@@ -230,11 +230,11 @@ public class RichiestaApplicativa implements java.io.Serializable {
 	public boolean isRicevutaAsincrona() {
 		return this.ricevutaAsincrona;
 	}
-	public Hashtable<String, String> getFiltroProprietaPorteApplicative() {
+	public Map<String, String> getFiltroProprietaPorteApplicative() {
 		return this.filtroProprietaPorteApplicative;
 	}
 	public void setFiltroProprietaPorteApplicative(
-			Hashtable<String, String> filtroProprietaPorteApplicative) {
+			Map<String, String> filtroProprietaPorteApplicative) {
 		this.filtroProprietaPorteApplicative = filtroProprietaPorteApplicative;
 	}
 	

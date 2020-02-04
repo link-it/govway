@@ -54,7 +54,10 @@ public class GestoreCacheControlloTraffico {
 	private static final String CONTROLLO_TRAFFICO_CACHE_NAME = "controlloTraffico";
 	/** Cache */
 	private static Cache cache = null;
-	
+	private static final Boolean semaphoreNumeroRichieste = true;
+	private static final Boolean semaphoreOccupazioneBanda = true;
+	private static final Boolean semaphoreLatenza = true;
+	private static final Boolean semaphoreStato = true;
 
 	/* --------------- Cache --------------------*/
 	public static boolean isCacheAbilitata() throws Exception{
@@ -238,6 +241,18 @@ public class GestoreCacheControlloTraffico {
 		
 	}
 	
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		cache.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return cache.isDisableSyncronizedGet();
+	}
 	
 	
 	
@@ -313,7 +328,7 @@ public class GestoreCacheControlloTraffico {
 		return risultato;
 	}
 	
-	private synchronized RisultatoStatistico readNumeroRichiesteInCache(String keyCache,
+	private RisultatoStatistico readNumeroRichiesteInCache(String keyCache,
 			TipoRisorsa tipoRisorsa,TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, 
 			Date leftInterval, Date rightInterval,
 			DatiTransazione datiTransazione,IDUnivocoGroupByPolicy groupByPolicy) throws Exception{
@@ -324,8 +339,8 @@ public class GestoreCacheControlloTraffico {
 			if(keyCache == null)
 				throw new Exception("KeyCache non definita");
 
-			// se e' attiva una cache provo ad utilizzarla
-			if(cache!=null){
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+    		if(cache!=null){
 				org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
 				if(response != null){
@@ -341,30 +356,51 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}
-
-			// Effettuo le query nella mia gerarchia di registri.
-			this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
-			try{
-				obj = this.datiStatisticiReader.readNumeroRichieste(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
-						datiTransazione, groupByPolicy);
-			}catch(Exception e){
-				throw e;
-			}
-
-			// Aggiungo la risposta in cache (se esiste una cache)	
-			// Se ho una eccezione aggiungo in cache solo una not found
-			if( cache!=null ){ 	
-				if(obj!=null){
-					this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
-				}else{
-					throw new Exception("Ricerca ha ritornato un valore null");
+			
+			synchronized (semaphoreNumeroRichieste) {
+				
+				// se e' attiva una cache provo ad utilizzarla
+				if(cache!=null){
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] valore["+response.getObject()+"] in cache.");
+							//System.out.println("RITORNO OGGETTO IN CACHE CON CHIAVE ["+keyCache+"]: ["+response.getObject()+"]");
+							return (RisultatoStatistico) response.getObject();
+						}else if(response.getException()!=null){
+							this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] in cache.");
+							throw (Exception) response.getException();
+						}else{
+							this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
 				}
-				try{	
-					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-					responseCache.setObject((java.io.Serializable)obj);
-					cache.put(keyCache,responseCache);
-				}catch(UtilsException e){
-					this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+	
+				// Effettuo le query nella mia gerarchia di registri.
+				this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
+				try{
+					obj = this.datiStatisticiReader.readNumeroRichieste(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
+							datiTransazione, groupByPolicy);
+				}catch(Exception e){
+					throw e;
+				}
+	
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Se ho una eccezione aggiungo in cache solo una not found
+				if( cache!=null ){ 	
+					if(obj!=null){
+						this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
+					}else{
+						throw new Exception("Ricerca ha ritornato un valore null");
+					}
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject((java.io.Serializable)obj);
+						cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+					}
 				}
 			}
 
@@ -420,7 +456,7 @@ public class GestoreCacheControlloTraffico {
 		return risultato;
 	}
 	
-	private synchronized RisultatoStatistico readOccupazioneBandaInCache(String keyCache,
+	private RisultatoStatistico readOccupazioneBandaInCache(String keyCache,
 			TipoRisorsa tipoRisorsa, TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, 
 			Date leftInterval, Date rightInterval,
 			TipoBanda tipoBanda,
@@ -432,7 +468,7 @@ public class GestoreCacheControlloTraffico {
 			if(keyCache == null)
 				throw new Exception("KeyCache non definita");
 
-			// se e' attiva una cache provo ad utilizzarla
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
 			if(cache!=null){
 				org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
@@ -449,31 +485,53 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}
-
-			// Effettuo le query nella mia gerarchia di registri.
-			this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
-			try{
-				obj = this.datiStatisticiReader.readOccupazioneBanda(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, tipoBanda,
-						datiTransazione, groupByPolicy);
-			}catch(Exception e){
-				throw e;
-			}
-
-			// Aggiungo la risposta in cache (se esiste una cache)	
-			// Se ho una eccezione aggiungo in cache solo una not found
-			if( cache!=null ){ 	
-				if(obj!=null){
-					this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
-				}else{
-					throw new Exception("Ricerca ha ritornato un valore null");
+			
+			synchronized (semaphoreOccupazioneBanda) {
+				
+				// se e' attiva una cache provo ad utilizzarla
+				if(cache!=null){
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] valore["+response.getObject()+"] in cache.");
+							//System.out.println("RITORNO OGGETTO IN CACHE CON CHIAVE ["+keyCache+"]: ["+response.getObject()+"]");
+							return (RisultatoStatistico) response.getObject();
+						}else if(response.getException()!=null){
+							this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] in cache.");
+							throw (Exception) response.getException();
+						}else{
+							this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
 				}
-				try{	
-					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-					responseCache.setObject((java.io.Serializable)obj);
-					cache.put(keyCache,responseCache);
-				}catch(UtilsException e){
-					this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+	
+				// Effettuo le query nella mia gerarchia di registri.
+				this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
+				try{
+					obj = this.datiStatisticiReader.readOccupazioneBanda(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, tipoBanda,
+							datiTransazione, groupByPolicy);
+				}catch(Exception e){
+					throw e;
 				}
+	
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Se ho una eccezione aggiungo in cache solo una not found
+				if( cache!=null ){ 	
+					if(obj!=null){
+						this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
+					}else{
+						throw new Exception("Ricerca ha ritornato un valore null");
+					}
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject((java.io.Serializable)obj);
+						cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+					}
+				}
+				
 			}
 
 		}
@@ -529,7 +587,7 @@ public class GestoreCacheControlloTraffico {
 		return risultato;
 	}
 	
-	private synchronized RisultatoStatistico readLatenzaInCache(String keyCache,
+	private RisultatoStatistico readLatenzaInCache(String keyCache,
 			TipoRisorsa tipoRisorsa,TipoFinestra tipoFinestra,TipoPeriodoStatistico tipoPeriodo, 
 			Date leftInterval, Date rightInterval,
 			TipoLatenza tipoLatenza,
@@ -541,7 +599,7 @@ public class GestoreCacheControlloTraffico {
 			if(keyCache == null)
 				throw new Exception("KeyCache non definita");
 
-			// se e' attiva una cache provo ad utilizzarla
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
 			if(cache!=null){
 				org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
@@ -558,31 +616,53 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}
-
-			// Effettuo le query nella mia gerarchia di registri.
-			this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
-			try{
-				obj = this.datiStatisticiReader.readLatenza(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
-						tipoLatenza, datiTransazione, groupByPolicy);
-			}catch(Exception e){
-				throw e;
-			}
-
-			// Aggiungo la risposta in cache (se esiste una cache)	
-			// Se ho una eccezione aggiungo in cache solo una not found
-			if( cache!=null ){ 	
-				if(obj!=null){
-					this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
-				}else{
-					throw new Exception("Ricerca ha ritornato un valore null");
+			
+			synchronized (semaphoreLatenza) {
+				
+				// se e' attiva una cache provo ad utilizzarla
+				if(cache!=null){
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] valore["+response.getObject()+"] in cache.");
+							//System.out.println("RITORNO OGGETTO IN CACHE CON CHIAVE ["+keyCache+"]: ["+response.getObject()+"]");
+							return (RisultatoStatistico) response.getObject();
+						}else if(response.getException()!=null){
+							this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] in cache.");
+							throw (Exception) response.getException();
+						}else{
+							this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
 				}
-				try{	
-					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-					responseCache.setObject((java.io.Serializable)obj);
-					cache.put(keyCache,responseCache);
-				}catch(UtilsException e){
-					this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+	
+				// Effettuo le query nella mia gerarchia di registri.
+				this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
+				try{
+					obj = this.datiStatisticiReader.readLatenza(keyCache, tipoRisorsa, tipoFinestra, tipoPeriodo, leftInterval, rightInterval, 
+							tipoLatenza, datiTransazione, groupByPolicy);
+				}catch(Exception e){
+					throw e;
 				}
+	
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Se ho una eccezione aggiungo in cache solo una not found
+				if( cache!=null ){ 	
+					if(obj!=null){
+						this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
+					}else{
+						throw new Exception("Ricerca ha ritornato un valore null");
+					}
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject((java.io.Serializable)obj);
+						cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+					}
+				}
+				
 			}
 
 		}
@@ -625,7 +705,7 @@ public class GestoreCacheControlloTraffico {
 		}
 	}
 	
-	private synchronized RisultatoStato getStatoInCache(String keyCache,DatiTransazione datiTransazione, 
+	private RisultatoStato getStatoInCache(String keyCache,DatiTransazione datiTransazione, 
 			String idStato) throws Exception{
 
 		RisultatoStato obj = null;
@@ -634,7 +714,7 @@ public class GestoreCacheControlloTraffico {
 			if(keyCache == null)
 				throw new Exception("KeyCache non definita");
 
-			// se e' attiva una cache provo ad utilizzarla
+			// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
 			if(cache!=null){
 				org.openspcoop2.utils.cache.CacheResponse response = 
 					(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
@@ -651,30 +731,52 @@ public class GestoreCacheControlloTraffico {
 					}
 				}
 			}
-
-			// Effettuo le query nella mia gerarchia di registri.
-			this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
-			try{
-				obj = this.datiNotifierReader.getStato(this.log, datiTransazione, idStato);
-			}catch(Exception e){
-				throw e;
-			}
-
-			// Aggiungo la risposta in cache (se esiste una cache)	
-			// Se ho una eccezione aggiungo in cache solo una not found
-			if( cache!=null ){ 	
-				if(obj!=null){
-					this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
-				}else{
-					throw new Exception("Ricerca ha ritornato un valore null");
+			
+			synchronized (semaphoreStato) {
+				
+				// se e' attiva una cache provo ad utilizzarla
+				if(cache!=null){
+					org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) cache.get(keyCache);
+					if(response != null){
+						if(response.getObject()!=null){
+							this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] valore["+response.getObject()+"] in cache.");
+							//System.out.println("RITORNO OGGETTO IN CACHE CON CHIAVE ["+keyCache+"]: ["+response.getObject()+"]");
+							return (RisultatoStato) response.getObject();
+						}else if(response.getException()!=null){
+							this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] in cache.");
+							throw (Exception) response.getException();
+						}else{
+							this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+						}
+					}
 				}
-				try{	
-					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
-					responseCache.setObject((java.io.Serializable)obj);
-					cache.put(keyCache,responseCache);
-				}catch(UtilsException e){
-					this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+	
+				// Effettuo le query nella mia gerarchia di registri.
+				this.log.debug("oggetto con chiave ["+keyCache+"] non in cache, effettuo ricerca...");
+				try{
+					obj = this.datiNotifierReader.getStato(this.log, datiTransazione, idStato);
+				}catch(Exception e){
+					throw e;
 				}
+	
+				// Aggiungo la risposta in cache (se esiste una cache)	
+				// Se ho una eccezione aggiungo in cache solo una not found
+				if( cache!=null ){ 	
+					if(obj!=null){
+						this.log.debug("Aggiungo oggetto con chiave ["+keyCache+"] valore["+obj+"] in cache");
+					}else{
+						throw new Exception("Ricerca ha ritornato un valore null");
+					}
+					try{	
+						org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+						responseCache.setObject((java.io.Serializable)obj);
+						cache.put(keyCache,responseCache);
+					}catch(UtilsException e){
+						this.log.error("Errore durante l'inserimento in cache con chiave ["+keyCache+"] valore["+obj+"]: "+e.getMessage());
+					}
+				}
+				
 			}
 
 		}

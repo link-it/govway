@@ -309,16 +309,14 @@ public class BackwardCompatibilityProperties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'trasporto'
 	 *  
 	 */
-	private static java.util.Properties keyValue_HeaderIntegrazioneTrasporto = null;
-	public java.util.Properties getKeyValue_HeaderIntegrazioneTrasporto() {	
+	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneTrasporto = null;
+	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneTrasporto() {	
 		if(BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneTrasporto==null){
 
-			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.trasporto.keyword.");
-				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneTrasporto = prop;
-
+				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneTrasporto = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.trasporto.keyword.");
+				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.backwardCompatibility.integrazione.trasporto.keyword.*': "+e.getMessage());
 				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneTrasporto = null;
@@ -334,16 +332,14 @@ public class BackwardCompatibilityProperties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'urlBased'.
 	 *  
 	 */
-	private static java.util.Properties keyValue_HeaderIntegrazioneUrlBased = null;
-	public java.util.Properties getKeyValue_HeaderIntegrazioneUrlBased() {	
+	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneUrlBased = null;
+	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneUrlBased() {	
 		if(BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneUrlBased==null){
 
-			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.urlBased.keyword.");
-				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneUrlBased = prop;
-
+				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneUrlBased = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.urlBased.keyword.");
+				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.backwardCompatibility.integrazione.urlBased.keyword.*': "+e.getMessage());
 				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneUrlBased = null;
@@ -359,16 +355,14 @@ public class BackwardCompatibilityProperties {
 	 * @return Restituisce le proprieta' che identificano gli header di integrazione in caso di 'soap'.
 	 *  
 	 */
-	private static java.util.Properties keyValue_HeaderIntegrazioneSoap = null;
-	public java.util.Properties getKeyValue_HeaderIntegrazioneSoap() {	
+	private static java.util.concurrent.ConcurrentHashMap<String, String> keyValue_HeaderIntegrazioneSoap = null;
+	public java.util.concurrent.ConcurrentHashMap<String, String> getKeyValue_HeaderIntegrazioneSoap() {	
 		if(BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneSoap==null){
 
-			java.util.Properties prop = new java.util.Properties();
 			try{ 
 
-				prop = this.reader.readProperties_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.soap.keyword.");
-				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneSoap = prop;
-
+				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneSoap = this.reader.readPropertiesAsConcurrentHashMap_convertEnvProperties("org.openspcoop2.backwardCompatibility.integrazione.soap.keyword.");
+				
 			}catch(java.lang.Exception e) {
 				this.log.error("Riscontrato errore durante la lettura delle proprieta' 'org.openspcoop2.backwardCompatibility.integrazione.soap.keyword.*': "+e.getMessage());
 				BackwardCompatibilityProperties.keyValue_HeaderIntegrazioneSoap = null;

@@ -20,7 +20,7 @@
 
 package org.openspcoop2.message.utils;
 
-import java.util.Properties;
+import java.util.HashMap;
 
 import org.openspcoop2.message.ForcedResponseMessage;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -45,7 +45,7 @@ public class WWWAuthenticateGenerator {
 		forcedResponseMessage.setContent(null); // vuoto
 		forcedResponseMessage.setContentType(null); // vuoto
 		forcedResponseMessage.setResponseCode(getReturnCode(errorCode)+"");	
-		forcedResponseMessage.setHeaders(new Properties());
+		forcedResponseMessage.setHeaders(new HashMap<String, String>());
 		String headerValue = buildHeaderValue(errorCode, realm, genericError, error, scope);
 		forcedResponseMessage.getHeaders().put(HttpConstants.AUTHORIZATION_RESPONSE_WWW_AUTHENTICATE, headerValue);
 		errorMessage.forceResponse(forcedResponseMessage);

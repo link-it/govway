@@ -140,7 +140,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	public static void initializeQueueNodeReceiver(java.util.Properties contextQueue) throws Exception{
 
 		// Tabella per i nomi jndi delle code
-		java.util.Hashtable<String,String> nomiJndi = 
+		java.util.Map<String,String> nomiJndi = 
 			OpenSPCoop2Properties.getInstance().getJNDIQueueName(true,false);
 			
 		// Inizializzazione Code
@@ -162,7 +162,7 @@ public class QueueManager implements java.io.Serializable,IMonitoraggioRisorsa{
 	public static void initializeQueueNodeSender(java.util.Properties contextQueue) throws Exception{
 
 		// Tabella per i nomi jndi delle code
-		java.util.Hashtable<String,String> nomiJndi = OpenSPCoop2Properties.getInstance().getJNDIQueueName(false,true);
+		java.util.Map<String,String> nomiJndi = OpenSPCoop2Properties.getInstance().getJNDIQueueName(false,true);
 		
 		// Inizializzazione Code
 		GestoreJNDI jndiQueue = new GestoreJNDI(contextQueue);

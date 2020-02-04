@@ -21,6 +21,8 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Map;
+
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.pdd.core.credenziali.Credenziali;
 
@@ -39,15 +41,15 @@ public class InfoConnettoreUscita {
 	/** Location */
 	private String location;
 	/** Proprieta' del connettore */
-	private java.util.Hashtable<String,String> properties;
+	private java.util.Map<String,String> properties;
 	/** Indicazione su di un eventuale sbustamento SOAP */
 	private boolean sbustamentoSoap;
 	/** Indicazione su di un eventuale sbustamento delle informazioni di Protocollo */
 	private boolean sbustamentoInformazioniProtocollo;
 	/** Proprieta' di trasporto che deve utilizzare il connettore */
-	private java.util.Properties propertiesTrasporto;
+	private Map<String, String> propertiesTrasporto;
 	/** Proprieta' urlBased che deve utilizzare il connettore */
-	private java.util.Properties propertiesUrlBased;
+	private Map<String, String> propertiesUrlBased;
 	/** Tipo di Autenticazione */
 	private String tipoAutenticazione;
 	/** Credenziali */
@@ -65,10 +67,10 @@ public class InfoConnettoreUscita {
 	public void setLocation(String location) {
 		this.location = location;
 	}
-	public java.util.Hashtable<String, String> getProperties() {
+	public java.util.Map<String, String> getProperties() {
 		return this.properties;
 	}
-	public void setProperties(java.util.Hashtable<String, String> properties) {
+	public void setProperties(java.util.Map<String, String> properties) {
 		this.properties = properties;
 	}
 	public boolean isSbustamentoSoap() {
@@ -77,16 +79,16 @@ public class InfoConnettoreUscita {
 	public void setSbustamentoSoap(boolean sbustamentoSoap) {
 		this.sbustamentoSoap = sbustamentoSoap;
 	}
-	public java.util.Properties getPropertiesTrasporto() {
+	public Map<String, String> getPropertiesTrasporto() {
 		return this.propertiesTrasporto;
 	}
-	public void setPropertiesTrasporto(java.util.Properties propertiesTrasporto) {
+	public void setPropertiesTrasporto(Map<String, String> propertiesTrasporto) {
 		this.propertiesTrasporto = propertiesTrasporto;
 	}
-	public java.util.Properties getPropertiesUrlBased() {
+	public Map<String, String> getPropertiesUrlBased() {
 		return this.propertiesUrlBased;
 	}
-	public void setPropertiesUrlBased(java.util.Properties propertiesUrlBased) {
+	public void setPropertiesUrlBased(Map<String, String> propertiesUrlBased) {
 		this.propertiesUrlBased = propertiesUrlBased;
 	}
 	public String getTipoAutenticazione() {

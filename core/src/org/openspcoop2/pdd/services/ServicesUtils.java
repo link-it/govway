@@ -24,6 +24,7 @@ package org.openspcoop2.pdd.services;
 import java.io.ByteArrayOutputStream;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
@@ -367,7 +368,7 @@ public class ServicesUtils {
 	}
 	
 	
-	public static void setGovWayHeaderResponse(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+	public static void setGovWayHeaderResponse(Map<String, String> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
 		try {
 			UtilitiesIntegrazione utilitiesIntegrazione = null;
 			if(portaDelegata) {
@@ -405,7 +406,7 @@ public class ServicesUtils {
 	
 	
 	
-	private static void setCORSAllowOrigin(Properties propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
+	private static void setCORSAllowOrigin(Map<String, String> propertiesTrasporto, Logger logCore, boolean portaDelegata, PdDContext pddContext, URLProtocolContext protocolContext) {
 		try {
 			
 			Object nomePortaObject = pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);

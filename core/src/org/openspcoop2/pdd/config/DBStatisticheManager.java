@@ -22,7 +22,6 @@ package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
 import java.sql.Statement;
-import java.util.Hashtable;
 
 import javax.sql.DataSource;
 
@@ -69,7 +68,7 @@ public class DBStatisticheManager implements IMonitoraggioRisorsa {
 	
 	
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static Hashtable<String,Resource> risorseInGestione = new Hashtable<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
 	
 	public static String[] getStatoRisorse() throws Exception{	
 		return DBManager.getStatoRisorse(DBStatisticheManager.risorseInGestione);

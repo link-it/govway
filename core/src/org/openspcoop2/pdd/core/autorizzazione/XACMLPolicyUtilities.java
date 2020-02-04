@@ -25,7 +25,6 @@ package org.openspcoop2.pdd.core.autorizzazione;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -261,29 +260,23 @@ public class XACMLPolicyUtilities {
 		xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_ATTRIBUTE_ID, urlProtocolContext.getRequestURI());    	
 
 		if(urlProtocolContext.getParametersFormBased()!=null && urlProtocolContext.getParametersFormBased().size()>0){
-			Enumeration<Object> en = urlProtocolContext.getParametersFormBased().keys();
-			while (en.hasMoreElements()) {
-				Object o = (Object) en.nextElement();
-				if(o instanceof String){
-					String key = (String) o;
-					String value = urlProtocolContext.getParametersFormBased().getProperty(key);
-					if(key!=null && !key.contains(" ") && value!=null){
-						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_PARAMETER_ATTRIBUTE_ID+key, value);    	
-					}
+			Iterator<String> keys = urlProtocolContext.getParametersFormBased().keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = urlProtocolContext.getParametersFormBased().get(key);
+				if(key!=null && !key.contains(" ") && value!=null){
+					xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_URL_PARAMETER_ATTRIBUTE_ID+key, value);    	
 				}
 			}
 		}
 
 		if(urlProtocolContext.getParametersTrasporto()!=null && urlProtocolContext.getParametersTrasporto().size()>0){
-			Enumeration<Object> en = urlProtocolContext.getParametersTrasporto().keys();
-			while (en.hasMoreElements()) {
-				Object o = (Object) en.nextElement();
-				if(o instanceof String){
-					String key = (String) o;
-					String value = urlProtocolContext.getParametersFormBased().getProperty(key);
-					if(key!=null && !key.contains(" ") && value!=null){
-						xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TRANSPORT_HEADER_ATTRIBUTE_ID+key, value);    	
-					}
+			Iterator<String> keys = urlProtocolContext.getParametersTrasporto().keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = urlProtocolContext.getParametersTrasporto().get(key);
+				if(key!=null && !key.contains(" ") && value!=null){
+					xacmlRequest.addActionAttribute(XACMLCostanti.XACML_REQUEST_ACTION_TRANSPORT_HEADER_ATTRIBUTE_ID+key, value);    	
 				}
 			}
 		}

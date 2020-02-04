@@ -20,6 +20,8 @@
 
 package org.openspcoop2.utils.transport;
 
+import java.util.Map;
+
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -41,7 +43,7 @@ public class TransportResponseContext implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 		
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	protected java.util.Properties parametersTrasporto;
+	protected Map<String, String> parametersTrasporto;
 	
 	protected String codiceTrasporto = null; 
 	protected long contentLength = -1;
@@ -52,7 +54,7 @@ public class TransportResponseContext implements java.io.Serializable {
 	public TransportResponseContext() throws UtilsException{
 		
 	}
-	public TransportResponseContext(java.util.Properties parametersTrasporto,String codiceTrasporto,long contentLength,String errore,Exception exception) throws UtilsException{
+	public TransportResponseContext(Map<String, String> parametersTrasporto,String codiceTrasporto,long contentLength,String errore,Exception exception) throws UtilsException{
 		this.parametersTrasporto = parametersTrasporto;
 		this.codiceTrasporto = codiceTrasporto;
 		this.contentLength = contentLength;
@@ -70,7 +72,7 @@ public class TransportResponseContext implements java.io.Serializable {
 	public String getErrore() {
 		return this.errore;
 	}
-	public java.util.Properties getParametersTrasporto() {
+	public Map<String, String> getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
 	public String getParameterTrasporto(String name){
@@ -101,7 +103,7 @@ public class TransportResponseContext implements java.io.Serializable {
 	public void setErrore(String errore) {
 		this.errore = errore;
 	}
-	public void setParametersTrasporto(java.util.Properties parametersTrasporto) {
+	public void setParametersTrasporto(Map<String, String> parametersTrasporto) {
 		this.parametersTrasporto = parametersTrasporto;
 	}
 

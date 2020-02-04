@@ -22,7 +22,9 @@ package org.openspcoop2.pdd.core.transazioni;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 
@@ -36,15 +38,25 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 public class TransactionContext {
 
 	private static Boolean gestioneStateful = null;
-	private static synchronized void initGestioneStateful() throws Exception{
+	public static synchronized void initGestioneStateful() throws Exception{
 		if(gestioneStateful==null){
 			gestioneStateful = OpenSPCoop2Properties.getInstance().isTransazioniStatefulEnabled();
 		}
 	}
 	
 	
-	private static Hashtable<String, Transaction> transactionContext = 
-		new Hashtable<String, Transaction>();
+	private static Map<String, Transaction> transactionContext = null;
+	public static synchronized void initResources() throws Exception{
+		if(OpenSPCoop2Properties.getInstance().isConfigurazioneCache_transactionContext_accessiSynchronized()) {
+			transactionContext = new Hashtable<>();
+		}
+		else {
+			transactionContext = new ConcurrentHashMap<String, Transaction>();
+		}
+	}
+	public static String getTransactionContextType() {
+		return transactionContext.getClass().getName();
+	}
 	
 	public static List<String> getTransactionKeys() {
 		// Lo clono per non incorrere in errori di modifica durante il runtime

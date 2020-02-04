@@ -144,10 +144,46 @@ public class Cache {
 		this.cacheAdmin = new JCSAdminBean();
 	}
 	public Cache(String name) throws UtilsException{
+		this(name, DEFAULT_DISABLE_SYNCRONIZED_GET);
+	}
+	private Cache(String name, boolean disableSyncronizedGet) throws UtilsException{
 		try{
 			this.cacheAdmin = new JCSAdminBean();
 			this.cacheName = name;
 			this.cache = JCS.getInstance(name);
+			if(disableSyncronizedGet) {
+				this.cache.getCacheControl().setSyncDisabled(disableSyncronizedGet);
+			}
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	private static boolean DEFAULT_DISABLE_SYNCRONIZED_GET = false;
+	public static boolean DISABLE_SYNCRONIZED_GET = true;
+	public static void disableSyncronizedGetAsDefault() {
+		DEFAULT_DISABLE_SYNCRONIZED_GET = DISABLE_SYNCRONIZED_GET;
+	}
+	public static boolean isDisableSyncronizedGetAsDefault() {
+		return DEFAULT_DISABLE_SYNCRONIZED_GET;
+	}
+	
+	public void disableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		try{
+			this.cache.getCacheControl().setSyncDisabled(true);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	public boolean isDisableSyncronizedGet() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		try{
+			return this.cache.getCacheControl().isSyncDisabled();
 		}catch(Exception e){
 			throw new UtilsException(e.getMessage(),e);
 		}
@@ -485,6 +521,12 @@ public class Cache {
 			
 			bf.append("Stato:");
 			bf.append(cache.getStatus());
+			bf.append(" ");
+			
+			bf.append(separator);
+			
+			bf.append("GetSyncDisabled:");
+			bf.append(cache.isSyncDisabled());
 			bf.append(" ");
 			
 			bf.append(separator);

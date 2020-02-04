@@ -27,7 +27,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import javax.naming.RefAddr;
 import javax.sql.DataSource;
@@ -68,7 +67,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 	private MsgDiagnostico msgDiag = null;
 
 	/** Informazione sui proprietari che hanno richiesto una connessione */
-	private static Hashtable<String,Resource> risorseInGestione = new Hashtable<String,Resource>();
+	private static java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione = new java.util.concurrent.ConcurrentHashMap<String,Resource>();
 	
 	/** Stato di inizializzazione del manager */
 	private static boolean initialized = false;
@@ -76,7 +75,7 @@ public class DBManager implements IMonitoraggioRisorsa {
 	public static String[] getStatoRisorse() throws Exception{	
 		return getStatoRisorse(DBManager.risorseInGestione);
 	}
-	public static String[] getStatoRisorse(Hashtable<String,Resource> risorseInGestione) throws Exception{	
+	public static String[] getStatoRisorse(java.util.concurrent.ConcurrentHashMap<String,Resource> risorseInGestione) throws Exception{	
 		Object[] o = risorseInGestione.values().toArray(new Resource[0]);
 		if(o==null)
 			return null;

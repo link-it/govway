@@ -25,9 +25,10 @@ package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
@@ -303,7 +304,7 @@ public class Dump {
 	}
 
 	
-	public void dumpBinarioRispostaIngresso(byte[] msg, InfoConnettoreUscita infoConnettore, java.util.Properties transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaIngresso(byte[] msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaIngresso();
 		}
@@ -317,7 +318,7 @@ public class Dump {
 		}
 	}
 	
-	public void dumpRispostaIngresso(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore, java.util.Properties transportHeaderRisposta) throws DumpException {
+	public void dumpRispostaIngresso(OpenSPCoop2Message msg, InfoConnettoreUscita infoConnettore, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaIngresso();
 		}
@@ -333,7 +334,7 @@ public class Dump {
 	
 
 	
-	public void dumpBinarioRispostaUscita(byte[] msg, URLProtocolContext protocolContext, java.util.Properties transportHeaderRisposta) throws DumpException {
+	public void dumpBinarioRispostaUscita(byte[] msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpBinarioRispostaUscita();
 		}
@@ -347,7 +348,7 @@ public class Dump {
 		}
 	}
 	
-	public void dumpRispostaUscita(OpenSPCoop2Message msg, URLProtocolContext protocolContext, java.util.Properties transportHeaderRisposta) throws DumpException {
+	public void dumpRispostaUscita(OpenSPCoop2Message msg, URLProtocolContext protocolContext, Map<String, String> transportHeaderRisposta) throws DumpException {
 		if(this.transactionNullable!=null) {
 			this.transactionNullable.getTempiElaborazione().startDumpRispostaUscita();
 		}
@@ -384,7 +385,7 @@ public class Dump {
 	 * 
 	 */
 	private void dump(TipoMessaggio tipoMessaggio,OpenSPCoop2Message msg,byte[] msgBytes, 
-			String location,java.util.Properties transportHeaderParam) throws DumpException {
+			String location,Map<String, String> transportHeaderParam) throws DumpException {
 
 		boolean dumpNormale = TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) ||
 				TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio) ||
@@ -476,7 +477,7 @@ public class Dump {
 		
 		
 		// HEADERS
-		java.util.Properties transportHeader = new java.util.Properties(); // uso anche sotto per content type in caso msg bytes
+		Map<String, String> transportHeader = new HashMap<String, String>(); // uso anche sotto per content type in caso msg bytes
 		try{
 			if(transportHeaderParam!=null && transportHeaderParam.size()>0){
 				transportHeader.putAll(transportHeaderParam);
@@ -500,9 +501,9 @@ public class Dump {
 					}
 				}
 				if(forwardHeader!=null && forwardHeader.size()>0){
-					Enumeration<?> enHdr = forwardHeader.getKeys();
-					while (enHdr.hasMoreElements()) {
-						String key = (String) enHdr.nextElement();
+					Iterator<String> enHdr = forwardHeader.getKeys();
+					while (enHdr.hasNext()) {
+						String key = (String) enHdr.next();
 						if(key!=null){
 							String value = forwardHeader.getProperty(key);
 							if(value!=null){
@@ -529,11 +530,11 @@ public class Dump {
 		}
 		if(dumpHeaders) {
 			if(transportHeader!=null && transportHeader.size()>0){
-				Enumeration<?> en = transportHeader.keys();
-				while (en.hasMoreElements()) {
-					String key = (String) en.nextElement();
+				Iterator<String> keys = transportHeader.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					if(key!=null){
-						String value = transportHeader.getProperty(key);
+						String value = transportHeader.get(key);
 						messaggio.getHeaders().put(key, value);
 					}
 				}
@@ -627,14 +628,16 @@ public class Dump {
 					
 					if(dumpBody) {
 					
-						Enumeration<?> en = transportHeader.keys();
-						while (en.hasMoreElements()) {
-							String key = (String) en.nextElement();
-							String value = null;
-							if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)){
-								value = transportHeader.getProperty(key);	
-								messaggio.setContentType(value);
-								break;
+						if(transportHeader!=null && !transportHeader.isEmpty()) {
+							Iterator<String> keys = transportHeader.keySet().iterator();
+							while (keys.hasNext()) {
+								String key = (String) keys.next();
+								String value = null;
+								if(HttpConstants.CONTENT_TYPE.equalsIgnoreCase(key)){
+									value = transportHeader.get(key);	
+									messaggio.setContentType(value);
+									break;
+								}
 							}
 						}
 						

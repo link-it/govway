@@ -23,7 +23,6 @@ import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,7 +44,7 @@ public class TransportUtils {
 
 	/* Gestione CaseInsensitive per Properties */
 	
-	public static boolean hasKey(java.util.Properties p, String name) {
+	public static boolean hasKey(Map<String, String> p, String name) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -64,30 +63,27 @@ public class TransportUtils {
 		if(p.containsKey(name.toUpperCase())) {
 			return true;
 		}
-		Enumeration<?> keys = p.keys();
-		while (keys.hasMoreElements()) {
-			Object objectKey = (Object) keys.nextElement();
-			if(objectKey!=null && objectKey instanceof String) {
-				String key = (String) objectKey;
-				String keyCaseInsensitive = key.toLowerCase();
-				String nameCaseInsensitive = name.toLowerCase();
-				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
-					return true;
-				}
+		Iterator<String> keys = p.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
+			String keyCaseInsensitive = key.toLowerCase();
+			String nameCaseInsensitive = name.toLowerCase();
+			if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+				return true;
 			}
 		}
 		return false;
 		
 	}
 	
-	public static String get(java.util.Properties p, String name) {
+	public static String get(Map<String, String> p, String name) {
 		Object o = _properties(p, name, true);
 		return (o !=null && o instanceof String) ? ((String)o) : null;
 	}
-	public static Object remove(java.util.Properties p, String name) {
+	public static Object remove(Map<String, String> p, String name) {
 		return _properties(p, name, false);
 	}
-	private static Object _properties(java.util.Properties p, String name, boolean get) {
+	private static Object _properties(Map<String, String> p, String name, boolean get) {
 		
 		// rfc7230#page-22: Each header field consists of a case-insensitive field name followed by a colon (":")
 		
@@ -97,24 +93,21 @@ public class TransportUtils {
 		if(name==null) {
 			return null;
 		}
-		Object value = get ? p.getProperty(name) : p.remove(name);
+		Object value = get ? p.get(name) : p.remove(name);
 		if(value==null){
-			value = get ? p.getProperty(name.toLowerCase()) : p.remove(name.toLowerCase());
+			value = get ? p.get(name.toLowerCase()) : p.remove(name.toLowerCase());
 		}
 		if(value==null){
-			value = get ? p.getProperty(name.toUpperCase()) : p.remove(name.toUpperCase()); 
+			value = get ? p.get(name.toUpperCase()) : p.remove(name.toUpperCase()); 
 		}
 		if(value==null){
-			Enumeration<?> keys = p.keys();
-			while (keys.hasMoreElements()) {
-				Object objectKey = (Object) keys.nextElement();
-				if(objectKey!=null && objectKey instanceof String) {
-					String key = (String) objectKey;
-					String keyCaseInsensitive = key.toLowerCase();
-					String nameCaseInsensitive = name.toLowerCase();
-					if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
-						return get ? p.getProperty(key) : p.remove(key);
-					}
+			Iterator<String> keys = p.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String keyCaseInsensitive = key.toLowerCase();
+				String nameCaseInsensitive = name.toLowerCase();
+				if(keyCaseInsensitive.equals(nameCaseInsensitive)) {
+					return get ? p.get(key) : p.remove(key);
 				}
 			}
 		}
@@ -340,16 +333,16 @@ public class TransportUtils {
 	
 	/* Gestione URL */
 	
-	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location){
+	public static String buildLocationWithURLBasedParameter(Map<String, String> propertiesURLBased, String location){
 		return buildLocationWithURLBasedParameter(propertiesURLBased, location, false, LoggerWrapperFactory.getLogger(TransportUtils.class));
 	}
-	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location, Logger log){
+	public static String buildLocationWithURLBasedParameter(Map<String, String> propertiesURLBased, String location, Logger log){
 		return buildLocationWithURLBasedParameter(propertiesURLBased, location, false, log);
 	}
-	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location, boolean encodeLocation){
+	public static String buildLocationWithURLBasedParameter(Map<String, String> propertiesURLBased, String location, boolean encodeLocation){
 		return buildLocationWithURLBasedParameter(propertiesURLBased, location, encodeLocation, LoggerWrapperFactory.getLogger(TransportUtils.class));
 	}
-	public static String buildLocationWithURLBasedParameter(Properties propertiesURLBased, String location, boolean encodeLocation, Logger log){
+	public static String buildLocationWithURLBasedParameter(Map<String, String> propertiesURLBased, String location, boolean encodeLocation, Logger log){
 		
 		String locationEncoded = location;
 		if(encodeLocation) {
@@ -358,14 +351,15 @@ public class TransportUtils {
 		
 		if(propertiesURLBased != null && propertiesURLBased.size()>0){
 			StringBuilder urlBuilder = new StringBuilder(locationEncoded);
-			Enumeration<?> enumForm = propertiesURLBased.keys();
-			while( enumForm.hasMoreElements() ) {
+			Iterator<String> keys = propertiesURLBased.keySet().iterator();
+			while (keys.hasNext()) {
+				
 				if(urlBuilder.toString().contains("?")==false)
 					urlBuilder.append("?");
 				else
 					urlBuilder.append("&");
 				
-				String key = (String) enumForm.nextElement();
+				String key = (String) keys.next();
 				String value = (String) propertiesURLBased.get(key);
 				
 				try{

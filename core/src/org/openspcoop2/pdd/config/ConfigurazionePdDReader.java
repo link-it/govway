@@ -25,6 +25,7 @@ package org.openspcoop2.pdd.config;
 
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -2922,7 +2923,7 @@ public class ConfigurazionePdDReader {
 
 
 		// PROTOCOL-PROPERTIES
-		java.util.Properties protocol_properties = new java.util.Properties();
+		Map<String, String> protocol_properties = new HashMap<String, String>();
 		for(int i=0;i<pa.sizeProprietaList();i++){
 			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
 		}
@@ -3186,7 +3187,7 @@ public class ConfigurazionePdDReader {
 
 
 		// PROTOCOL-PROPERTIES
-		java.util.Properties protocol_properties = new java.util.Properties();
+		Map<String, String> protocol_properties = new HashMap<String, String>();
 		for(int i=0;i<pa.sizeProprietaList();i++){
 			protocol_properties.put(pa.getProprieta(i).getNome(),pa.getProprieta(i).getValore());
 		}

@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.oasis_open.docs.ebxml_msg.ebms.v3_0.ns.core._200704.UserMessage;
 import org.openspcoop2.core.constants.Costanti;
@@ -103,11 +102,11 @@ public class AS4ConnectorInMessage implements ConnectorInMessage {
 						
 			URLProtocolContext urlProtocolContext = new URLProtocolContext();
 			
-			Properties pFormBased = new Properties();
+			Map<String, String> pFormBased = new HashMap<String, String>();
 			pFormBased.putAll(this.parameters);
 			urlProtocolContext.setParametersFormBased(pFormBased);
 			
-			Properties pTrasporto = new Properties();
+			Map<String, String> pTrasporto = new HashMap<String, String>();
 			pTrasporto.putAll(this.headers);
 			urlProtocolContext.setParametersFormBased(pTrasporto);
 			

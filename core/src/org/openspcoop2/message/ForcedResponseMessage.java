@@ -21,7 +21,7 @@
 package org.openspcoop2.message;
 
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.utils.transport.http.HttpConstants;
 
@@ -37,7 +37,7 @@ public class ForcedResponseMessage {
 	
 	private byte[] content;
 	private String contentType = HttpConstants.CONTENT_TYPE_APPLICATION_OCTET_STREAM;
-	private Properties headers;
+	private Map<String, String> headers;
 	private String responseCode;
 	
 	public byte[] getContent() {
@@ -52,10 +52,10 @@ public class ForcedResponseMessage {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
-	public Properties getHeaders() {
+	public Map<String, String> getHeaders() {
 		return this.headers;
 	}
-	public void setHeaders(Properties headers) {
+	public void setHeaders(Map<String, String> headers) {
 		this.headers = headers;
 	}
 	public String getResponseCode() {

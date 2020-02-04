@@ -20,25 +20,26 @@
 
 package org.openspcoop2.utils.rest.entity;
 
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * HttpBaseRequestEntity
  *
  *
- * @author Poli Andrea (apoli@link.it)
+ * @author Poli Andrea (a	poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public abstract class HttpBaseRequestEntity<T> extends HttpBaseEntity<T> {
 	
 	/* ---- Coppie nome/valori di invocazione della query --- */
-	private java.util.Properties parametersQuery = new Properties();
+	private Map<String, String> parametersQuery = new HashMap<>();
 	
-	public java.util.Properties getParametersQuery() {
+	public Map<String, String> getParametersQuery() {
 		return this.parametersQuery;
 	}
-	public void setParametersQuery(java.util.Properties parametersQuery) {
+	public void setParametersQuery(Map<String, String> parametersQuery) {
 		this.parametersQuery = parametersQuery;
 	}
 }

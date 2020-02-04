@@ -21,9 +21,9 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
@@ -135,11 +135,11 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
 			if(this.propertiesTrasporto==null){
-				this.propertiesTrasporto = new Properties();
+				this.propertiesTrasporto = new HashMap<String, String>();
 			}
-			Enumeration<?> keys = forwardHeader.getKeys();
-			while (keys.hasMoreElements()) {
-				String key = (String) keys.nextElement();
+			Iterator<String> keys = forwardHeader.getKeys();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
 				String value = forwardHeader.getProperty(key);
 				if(this.debug)
 					this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");

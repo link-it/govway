@@ -96,6 +96,9 @@ public class GestoreAutenticazione {
 	private static final String AUTENTICAZIONE_CACHE_NAME = "autenticazione";
 	/** Cache */
 	private static Cache cacheAutenticazione = null;
+	private static final Boolean semaphoreAutenticazionePD = true;
+	private static final Boolean semaphoreAutenticazionePA = true;
+	private static final Boolean semaphoreCredenzialiMittente = true;
 	/** Logger log */
 	private static Logger logger = null;
 	private static Logger logConsole = OpenSPCoop2Logger.getLoggerOpenSPCoopConsole();
@@ -311,6 +314,19 @@ public class GestoreAutenticazione {
 
 	}
 	
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(GestoreAutenticazione.cacheAutenticazione==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		GestoreAutenticazione.cacheAutenticazione.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(GestoreAutenticazione.cacheAutenticazione==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return GestoreAutenticazione.cacheAutenticazione.isDisableSyncronizedGet();
+	}
+	
 
     public static EsitoAutenticazionePortaDelegata verificaAutenticazionePortaDelegata(String tipoAutenticazione, 
     		DatiInvocazionePortaDelegata datiInvocazione, ParametriAutenticazione parametriAutenticazione,
@@ -343,9 +359,26 @@ public class GestoreAutenticazione {
 	    	else{
 	    		String keyCache = buildCacheKey(messageBox, true, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
 	
-				synchronized (GestoreAutenticazione.cacheAutenticazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+	    		org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
+						EsitoAutenticazionePortaDelegata esito = (EsitoAutenticazionePortaDelegata) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaDelegata) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+	    		
+				synchronized (GestoreAutenticazione.semaphoreAutenticazionePD) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
@@ -409,9 +442,26 @@ public class GestoreAutenticazione {
 	    	else{
 	    		String keyCache = buildCacheKey(false, false, tipoAutenticazione, datiInvocazione.getKeyCache(), auth.getSuffixKeyAuthenticationResultInCache(datiInvocazione));
 	
-				synchronized (GestoreAutenticazione.cacheAutenticazione) {
+	    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
+						EsitoAutenticazionePortaApplicativa esito = (EsitoAutenticazionePortaApplicativa) response.getObject();
+						esito.setEsitoPresenteInCache(true);
+						return esito;
+					}else if(response.getException()!=null){
+						GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:verificaAutenticazionePortaApplicativa) in cache.");
+						throw (Exception) response.getException();
+					}else{
+						GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+	    		
+				synchronized (GestoreAutenticazione.semaphoreAutenticazionePA) {
 	
-					org.openspcoop2.utils.cache.CacheResponse response = 
+					response = 
 						(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
 					if(response != null){
 						if(response.getObject()!=null){
@@ -857,9 +907,27 @@ public class GestoreAutenticazione {
     	else{
     		String keyCache = buildCacheKey(searchCredential, credential);
 
-			synchronized (GestoreAutenticazione.cacheAutenticazione) {
+    		// Fix: devo prima verificare se ho la chiave in cache prima di mettermi in sincronizzazione.
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
+			if(response != null){
+				if(response.getObject()!=null){
+					GestoreAutenticazione.logger.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (method:getCredenzialeMittente) in cache.");
+					CredenzialeMittente credenziale = (CredenzialeMittente) response.getObject();
+					if(credenziale.getOraRegistrazione().after(scadenzaEntry)) {
+						return credenziale; // informazione in cache valida
+					}
+				}else if(response.getException()!=null){
+					GestoreAutenticazione.logger.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (method:getCredenzialeMittente) in cache.");
+					throw (Exception) response.getException();
+				}else{
+					GestoreAutenticazione.logger.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+				}
+			}
+    		
+			synchronized (GestoreAutenticazione.semaphoreCredenzialiMittente) {
 
-				org.openspcoop2.utils.cache.CacheResponse response = 
+				response = 
 					(org.openspcoop2.utils.cache.CacheResponse) GestoreAutenticazione.cacheAutenticazione.get(keyCache);
 				if(response != null){
 					if(response.getObject()!=null){

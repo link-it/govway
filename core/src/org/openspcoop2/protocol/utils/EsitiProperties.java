@@ -22,9 +22,9 @@ package org.openspcoop2.protocol.utils;
 
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -50,7 +50,7 @@ public class EsitiProperties {
 
 
 	/** Copia Statica */
-	private static Hashtable<String, EsitiProperties> esitiPropertiesMap = null;
+	private static ConcurrentHashMap<String, EsitiProperties> esitiPropertiesMap = null;
 
 	/* ********  F I E L D S  P R I V A T I  ******** */
 
@@ -139,7 +139,7 @@ public class EsitiProperties {
 
 		if(EsitiProperties.esitiPropertiesMap==null){
 			
-			EsitiProperties.esitiPropertiesMap = new Hashtable<>();
+			EsitiProperties.esitiPropertiesMap = new ConcurrentHashMap<>();
 			
 			// Aggiungo configurazione speciale usato dal metodo org.openspcoop2.protocol.utils.EsitiConfigUtils
 			// e usata anche per validare il file di properties esiti.properties
@@ -671,7 +671,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private Hashtable<String,String> esitoName= null;
+	private ConcurrentHashMap<String,String> esitoName= null;
 	public String getEsitoName(Integer codeEsito) throws ProtocolException {
 		if(this.esitoName == null){
 			this.initEsitoName();
@@ -683,7 +683,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoName() throws ProtocolException {
 		if(this.esitoName == null){
-			this.esitoName = new Hashtable<String, String>();
+			this.esitoName = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCodeSenzaFiltri();
 			for (Integer code : codes) {
 				this.esitoName.put(code+"", getProperty("esito."+code+".name"));
@@ -691,7 +691,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private Hashtable<String,String> esitoDescription= null;
+	private ConcurrentHashMap<String,String> esitoDescription= null;
 	public String getEsitoDescription(Integer codeEsito) throws ProtocolException {
 		if(this.esitoDescription == null){
 			this.initEsitoDescription();
@@ -703,7 +703,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoDescription() throws ProtocolException {
 		if(this.esitoDescription == null){
-			this.esitoDescription = new Hashtable<String, String>();
+			this.esitoDescription = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				this.esitoDescription.put(code+"", getProperty("esito."+code+".description"));
@@ -711,7 +711,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private Hashtable<String,String> esitoLabel= null;
+	private ConcurrentHashMap<String,String> esitoLabel= null;
 	public String getEsitoLabel(Integer codeEsito) throws ProtocolException {
 		if(this.esitoLabel == null){
 			this.initEsitoLabel(); 
@@ -723,7 +723,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoLabel() throws ProtocolException {
 		if(this.esitoLabel == null){
-			this.esitoLabel = new Hashtable<String, String>();
+			this.esitoLabel = new ConcurrentHashMap<String, String>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String label = getProperty("esito."+code+".label");
@@ -733,7 +733,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private Hashtable<String,EsitoIdentificationMode> esitoIdentificationMode= null;
+	private ConcurrentHashMap<String,EsitoIdentificationMode> esitoIdentificationMode= null;
 	public EsitoIdentificationMode getEsitoIdentificationMode(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationMode == null){
 			this.initEsitoIdentificationMode();  
@@ -745,7 +745,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationMode() throws ProtocolException {
 		if(this.esitoIdentificationMode == null){
-			this.esitoIdentificationMode = new Hashtable<String, EsitoIdentificationMode>();
+			this.esitoIdentificationMode = new ConcurrentHashMap<String, EsitoIdentificationMode>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				String prop = "esito."+code+".mode";
@@ -765,7 +765,7 @@ public class EsitiProperties {
 		}
 	}
 	
-	private Hashtable<String,List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList= null;
+	private ConcurrentHashMap<String,List<EsitoIdentificationModeSoapFault>> esitoIdentificationModeSoapFaultList= null;
 	public List<EsitoIdentificationModeSoapFault> getEsitoIdentificationModeSoapFaultList(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationModeSoapFaultList==null){
 			this.initEsitoIdentificationModeSoapFaultList();
@@ -774,7 +774,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeSoapFaultList() throws ProtocolException {
 		if(this.esitoIdentificationModeSoapFaultList==null){
-			this.esitoIdentificationModeSoapFaultList = new Hashtable<String, List<EsitoIdentificationModeSoapFault>>();
+			this.esitoIdentificationModeSoapFaultList = new ConcurrentHashMap<String, List<EsitoIdentificationModeSoapFault>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
@@ -840,7 +840,7 @@ public class EsitiProperties {
 	
 	
 	
-	private Hashtable<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
+	private ConcurrentHashMap<String,List<EsitoIdentificationModeContextProperty>> esitoIdentificationModeContextPropertyList= null;
 	public List<EsitoIdentificationModeContextProperty> getEsitoIdentificationModeContextPropertyList(Integer codeEsito) throws ProtocolException {
 		if(this.esitoIdentificationModeContextPropertyList==null){
 			this.initEsitoIdentificationModeContextPropertyList();
@@ -849,7 +849,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoIdentificationModeContextPropertyList() throws ProtocolException {
 		if(this.esitoIdentificationModeContextPropertyList==null){
-			this.esitoIdentificationModeContextPropertyList = new Hashtable<String, List<EsitoIdentificationModeContextProperty>>();
+			this.esitoIdentificationModeContextPropertyList = new ConcurrentHashMap<String, List<EsitoIdentificationModeContextProperty>>();
 			List<Integer> codes = getEsitiCode();
 			for (Integer code : codes) {
 				try{
@@ -954,7 +954,7 @@ public class EsitiProperties {
 		}
 	}
 
-	private Hashtable<String,String> esitoTransactionContextLabel= null;
+	private ConcurrentHashMap<String,String> esitoTransactionContextLabel= null;
 	public String getEsitoTransactionContextLabel(String tipo) throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
 			this.initEsitoTransactionContextLabel();
@@ -966,7 +966,7 @@ public class EsitiProperties {
 	}
 	private synchronized void initEsitoTransactionContextLabel() throws ProtocolException {
 		if(this.esitoTransactionContextLabel == null){
-			this.esitoTransactionContextLabel = new Hashtable<String, String>();
+			this.esitoTransactionContextLabel = new ConcurrentHashMap<String, String>();
 			List<String> codes = getEsitiTransactionContextCode();
 			for (String code : codes) {
 				this.esitoTransactionContextLabel.put(code, getProperty("esiti.transactionContext."+code+".label"));

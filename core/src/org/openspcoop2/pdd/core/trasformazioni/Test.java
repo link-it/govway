@@ -21,10 +21,10 @@
 package org.openspcoop2.pdd.core.trasformazioni;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.xml.soap.AttachmentPart;
 
@@ -570,15 +570,15 @@ public class Test {
 		busta.setMittente(BUSTA_MITTENTE_VALORE);
 		busta.addProperty(BUSTA_PROPERTY, BUSTA_PROPERTY_VALORE);
 		
-		Properties parametriTrasporto = new Properties();
+		Map<String, String> parametriTrasporto = new HashMap<String, String>();
 		parametriTrasporto.put(HEADER1, HEADER1_VALORE);
 		parametriTrasporto.put(HEADER2, HEADER2_VALORE);
 		
-		Properties parametriTrasportoRisposta = new Properties();
+		Map<String, String> parametriTrasportoRisposta = new HashMap<String, String>();
 		parametriTrasportoRisposta.put(HEADER1_RISPOSTA, HEADER1_VALORE_RISPOSTA);
 		parametriTrasportoRisposta.put(HEADER2_RISPOSTA, HEADER2_VALORE_RISPOSTA);
 		
-		Properties parametriUrl = new Properties();
+		Map<String, String> parametriUrl = new HashMap<String, String>();
 		parametriUrl.put(QUERY1, QUERY1_VALORE);
 		parametriUrl.put(QUERY2, QUERY2_VALORE);
 		parametriUrl.put(QUERY3, QUERY3_VALORE);

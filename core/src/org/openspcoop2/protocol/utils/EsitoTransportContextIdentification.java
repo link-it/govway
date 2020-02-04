@@ -21,8 +21,8 @@
 
 package org.openspcoop2.protocol.utils;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.regexp.RegExpException;
@@ -79,10 +79,10 @@ public class EsitoTransportContextIdentification  {
 		this.type = type;
 	}
 	
-	public boolean match(Properties p) throws ProtocolException{
-		Enumeration<?> keys = p.keys();
-		while (keys.hasMoreElements()) {
-			String key = (String) keys.nextElement();
+	public boolean match(Map<String, String> p) throws ProtocolException{
+		Iterator<String> keys = p.keySet().iterator();
+		while (keys.hasNext()) {
+			String key = (String) keys.next();
 			String valueKey = TransportUtils.get(p, key);
 			if(key.equalsIgnoreCase(this.name)){
 				

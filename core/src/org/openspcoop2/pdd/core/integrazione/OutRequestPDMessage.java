@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
+import java.util.Map;
+
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -37,8 +39,8 @@ public class OutRequestPDMessage {
 
 	private PortaDelegata portaDelegata;
 	private OpenSPCoop2Message message;
-	private java.util.Properties proprietaTrasporto;
-	private java.util.Properties proprietaUrlBased;
+	private Map<String, String> proprietaTrasporto;
+	private Map<String, String> proprietaUrlBased;
 	private IDSoggetto soggettoMittente;
 	private IDServizio servizio;
 	private Busta bustaRichiesta;
@@ -49,16 +51,16 @@ public class OutRequestPDMessage {
 	public void setBustaRichiesta(Busta busta) {
 		this.bustaRichiesta = busta;
 	}
-	public java.util.Properties getProprietaTrasporto() {
+	public Map<String, String> getProprietaTrasporto() {
 		return this.proprietaTrasporto;
 	}
-	public void setProprietaTrasporto(java.util.Properties proprietaTrasporto) {
+	public void setProprietaTrasporto(Map<String, String> proprietaTrasporto) {
 		this.proprietaTrasporto = proprietaTrasporto;
 	}
-	public java.util.Properties getProprietaUrlBased() {
+	public Map<String, String> getProprietaUrlBased() {
 		return this.proprietaUrlBased;
 	}
-	public void setProprietaUrlBased(java.util.Properties proprietaUrlBased) {
+	public void setProprietaUrlBased(Map<String, String> proprietaUrlBased) {
 		this.proprietaUrlBased = proprietaUrlBased;
 	}
 	public IDSoggetto getSoggettoMittente() {

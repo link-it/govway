@@ -20,8 +20,9 @@
 
 package org.openspcoop2.pdd.mdb;
 
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.xml.soap.SOAPFault;
 
@@ -1080,7 +1081,7 @@ public class InoltroRisposte extends GenericLib{
 
 			// timeout di default
 			if(connettoreMsg.getConnectorProperties()==null){
-				java.util.Hashtable<String,String> propCon = new java.util.Hashtable<String,String>();
+				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
@@ -1093,7 +1094,7 @@ public class InoltroRisposte extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePAResponse(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Properties trasporto = new Properties();
+				Map<String, String>  trasporto = new HashMap<String, String> ();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());
@@ -1135,7 +1136,7 @@ public class InoltroRisposte extends GenericLib{
 				faultConnectionReplyMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				codiceRitornato = connectorSender.getCodiceTrasporto();
 				responseHttpReply = connectorSender.getResponse();
-				Properties headerTrasportoReply = connectorSender.getHeaderTrasporto();
+				Map<String, String>  headerTrasportoReply = connectorSender.getHeaderTrasporto();
 				// gestione connessione connettore
 				// Sono nella casistica di messaggio preso in carico.
 				// Non si deve chiudere immediatamente la connessione, poiche' nel resto del modulo, il messaggio puo' ancora essere utilizzato (es. dump)

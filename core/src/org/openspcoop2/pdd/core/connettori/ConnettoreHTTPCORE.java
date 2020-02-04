@@ -23,11 +23,10 @@ package org.openspcoop2.pdd.core.connettori;
 import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.http.Header;
@@ -180,9 +179,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			
 			
 			// Collezione header di trasporto per dump
-			Properties propertiesTrasportoDebug = null;
+			Map<String, String> propertiesTrasportoDebug = null;
 			if(this.debug) {
-				propertiesTrasportoDebug = new Properties();
+				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 
 			
@@ -422,9 +421,9 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 			}
 			this.forwardHttpRequestHeader();
 			if(this.propertiesTrasporto != null){
-				Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
-				while( enumSPC.hasMoreElements() ) {
-					String key = (String) enumSPC.nextElement();
+				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = (String) this.propertiesTrasporto.get(key);
 					if(this.debug)
 						this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
@@ -721,7 +720,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
     			this.requestMsg.getTransportRequestContext().removeParameterFormBased(nv.getName()); // Fix: senno sovrascriveva il vecchio token
     		}
     		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new Properties();
+    			this.propertiesUrlBased = new HashMap<String,String>();
     		}
     		this.propertiesUrlBased.put(nv.getName(), nv.getValue());
     	}
@@ -733,7 +732,7 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	
 	
 	
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Map<String, String> propertiesTrasportoDebug) throws Exception {
     	if(validazioneHeaderRFC2047){
     		try{
         		RFC2047Utilities.validHeader(key, value);

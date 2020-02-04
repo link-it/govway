@@ -20,10 +20,9 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.constants.TipiConnettore;
@@ -151,7 +150,7 @@ public class ConnettoreUtils {
 		return location;
 	}
 	
-	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Properties propertiesURLBased, String locationParam,
+	public static String buildLocationWithURLBasedParameter(OpenSPCoop2Message msg, String tipoConnettore, Map<String, String> propertiesURLBased, String locationParam,
 			IProtocolFactory<?> protocolFactory, String idModulo) throws ConnettoreException{
 		
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
@@ -170,20 +169,20 @@ public class ConnettoreUtils {
 					forwardParameter = msg.getForwardUrlProperties(OpenSPCoop2Properties.getInstance().getSOAPServicesUrlParametersForwardConfig());
 				}
 				
-				Properties p = propertiesURLBased;
+				Map<String, String>  p = propertiesURLBased;
 				if(forwardParameter!=null && forwardParameter.size()>0){
 					if(p==null){
-						p = new Properties();
+						p = new HashMap<String, String> ();
 					}
-					Enumeration<?> keys = forwardParameter.getKeys();
-					while (keys.hasMoreElements()) {
-						String key = (String) keys.nextElement();
+					Iterator<String> keys = forwardParameter.getKeys();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
 						String value = forwardParameter.getProperty(key);
 						if(value!=null){
 							if(p.containsKey(key)){
 								p.remove(key);
 							}
-							p.setProperty(key, value);
+							p.put(key, value);
 						}
 					}
 				}
@@ -229,7 +228,7 @@ public class ConnettoreUtils {
 		return TransportUtils.limitLocation255Character(location);
 	}
 	
-	public static String addProxyInfoToLocationForHTTPConnector(String tipoConnettore, Hashtable<String, String> properties, String location){
+	public static String addProxyInfoToLocationForHTTPConnector(String tipoConnettore, Map<String, String> properties, String location){
 		if(TipiConnettore.HTTP.toString().equals(tipoConnettore) || 
 				TipiConnettore.HTTPS.toString().equals(tipoConnettore)){
 			if(properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_TYPE)!=null){

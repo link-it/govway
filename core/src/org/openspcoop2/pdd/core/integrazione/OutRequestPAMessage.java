@@ -20,12 +20,14 @@
 
 package org.openspcoop2.pdd.core.integrazione;
 
-import org.openspcoop2.core.id.IDSoggetto;
+import java.util.Map;
+
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.core.id.IDServizio;
 
 /**
  * OutRequestPAMessage
@@ -37,8 +39,8 @@ import org.openspcoop2.core.id.IDServizio;
 public class OutRequestPAMessage {
 
 	private OpenSPCoop2Message message;
-	private java.util.Properties proprietaTrasporto;
-	private java.util.Properties proprietaUrlBased;
+	private Map<String, String> proprietaTrasporto;
+	private Map<String, String> proprietaUrlBased;
 	private PortaApplicativa portaApplicativa;
 	private PortaDelegata portaDelegata; // presente al posto della PA in caso di SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA
 	private IDSoggetto soggettoMittente;
@@ -57,10 +59,10 @@ public class OutRequestPAMessage {
 	public void setMessage(OpenSPCoop2Message message) {
 		this.message = message;
 	}
-	public java.util.Properties getProprietaTrasporto() {
+	public Map<String, String> getProprietaTrasporto() {
 		return this.proprietaTrasporto;
 	}
-	public void setProprietaTrasporto(java.util.Properties proprietaTrasporto) {
+	public void setProprietaTrasporto(Map<String, String> proprietaTrasporto) {
 		this.proprietaTrasporto = proprietaTrasporto;
 	}
 	public IDSoggetto getSoggettoMittente() {
@@ -87,10 +89,10 @@ public class OutRequestPAMessage {
 	public void setPortaDelegata(PortaDelegata portaDelegata) {
 		this.portaDelegata = portaDelegata;
 	}
-	public java.util.Properties getProprietaUrlBased() {
+	public Map<String, String> getProprietaUrlBased() {
 		return this.proprietaUrlBased;
 	}
-	public void setProprietaUrlBased(java.util.Properties proprietaUrlBased) {
+	public void setProprietaUrlBased(Map<String, String> proprietaUrlBased) {
 		this.proprietaUrlBased = proprietaUrlBased;
 	}
 	

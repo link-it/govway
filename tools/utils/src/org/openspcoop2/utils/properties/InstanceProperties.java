@@ -30,6 +30,7 @@ import java.util.Vector;
 
 import org.slf4j.Logger;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 
 
@@ -94,6 +95,14 @@ public abstract class InstanceProperties {
 	
 	public java.util.Properties readProperties_convertEnvProperties (String prefix)throws UtilsException{
 		return readPropertiesEngine(prefix, true);
+	}
+	
+	public java.util.concurrent.ConcurrentHashMap<String, String> readPropertiesAsConcurrentHashMap (String prefix)throws UtilsException{
+		return Utilities.convertToConcurrentHashMap(readProperties(prefix));
+	}
+	
+	public java.util.concurrent.ConcurrentHashMap<String, String> readPropertiesAsConcurrentHashMap_convertEnvProperties (String prefix)throws UtilsException{
+		return Utilities.convertToConcurrentHashMap(readProperties_convertEnvProperties(prefix));
 	}
 	
 	public String convertEnvProperties(String value)throws UtilsException{

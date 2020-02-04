@@ -382,6 +382,21 @@ public class GestoreMessaggi  {
 		}
 
 	}
+	
+	
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		GestoreMessaggi.cacheMappingGestoreMessaggi.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(GestoreMessaggi.cacheMappingGestoreMessaggi==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return GestoreMessaggi.cacheMappingGestoreMessaggi.isDisableSyncronizedGet();
+	}
+	
 
 
 

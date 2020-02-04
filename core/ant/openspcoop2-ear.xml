@@ -34,7 +34,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.0.1-gov4j.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.0.1-gov4j.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.0.2.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2-gov4j-1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.3.1.jar"/>
@@ -798,7 +798,7 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
-				<include name="commons-jcs-core-2.2-gov4j-1.jar"/>
+				<include name="commons-jcs-core-2.2-gov4j-2.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xerces_jar}"/>

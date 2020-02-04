@@ -22,8 +22,9 @@ package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -48,7 +49,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 	private ConnectorOutMessage connectorOutMessage;
 	private ByteArrayOutputStream bout = null;
 	private ParseException parseException = null;
-	private Properties trasporto = new Properties();
+	private Map<String, String> trasporto = new HashMap<String, String>();
 	private Integer contentLenght;
 	private String contentType;
 	private Integer status;
@@ -97,7 +98,7 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 		return null;
 	}
 	
-	public Properties getTrasporto() {
+	public Map<String, String> getTrasporto() {
 		return this.trasporto;
 	}
 
@@ -126,9 +127,9 @@ public class DumpRawConnectorOutMessage implements ConnectorOutMessage {
 				forwardHeader = message.getForwardTransportHeader(this.openspcoopProperties.getSOAPServicesHeadersForwardConfig(false));
 			}
 			if(forwardHeader!=null && forwardHeader.size()>0){
-				Enumeration<?> keys = forwardHeader.getKeys();
-				while (keys.hasMoreElements()) {
-					String key = (String) keys.nextElement();
+				Iterator<String> keys = forwardHeader.getKeys();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = forwardHeader.getProperty(key);
 					this.setHeader(key, value);	
 				}

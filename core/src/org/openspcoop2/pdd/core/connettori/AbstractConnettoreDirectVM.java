@@ -23,7 +23,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -111,7 +111,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 
 	}
 
-	private IProtocolFactory<?> buildProtocolFactoryForForwardMessage(Hashtable<String, String> properties) throws Exception{
+	private IProtocolFactory<?> buildProtocolFactoryForForwardMessage(Map<String, String> properties) throws Exception{
 		// protocol
 		IProtocolFactory<?> pFactory = this.getProtocolFactory();
 		String protocol = properties.get(CostantiConnettori.CONNETTORE_DIRECT_VM_PROTOCOL);
@@ -125,7 +125,7 @@ public abstract class AbstractConnettoreDirectVM extends ConnettoreBase {
 		return pFactory;
 	}
 	
-	public void buildLocation(Hashtable<String, String> properties, boolean setFormBasedParameter) throws Exception{
+	public void buildLocation(Map<String, String> properties, boolean setFormBasedParameter) throws Exception{
 		
 		// protocol
 		IProtocolFactory<?> pFactory = buildProtocolFactoryForForwardMessage(properties);

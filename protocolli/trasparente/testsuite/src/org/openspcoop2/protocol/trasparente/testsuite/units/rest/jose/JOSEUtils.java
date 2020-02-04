@@ -21,6 +21,8 @@
 package org.openspcoop2.protocol.trasparente.testsuite.units.rest.jose;
 
 import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import org.openspcoop2.message.constants.MessageType;
@@ -84,7 +86,7 @@ public class JOSEUtils {
 	
 	public int returnCodeAtteso = 200;
 	public boolean delegata = true;
-	public Properties queryParameters = new Properties();
+	public Map<String,String> queryParameters = new HashMap<String,String>();
 	
 	public boolean signature = true;
 	public boolean payloadEncoding = true;

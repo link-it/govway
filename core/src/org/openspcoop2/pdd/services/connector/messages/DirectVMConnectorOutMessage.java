@@ -19,9 +19,9 @@
  */
 package org.openspcoop2.pdd.services.connector.messages;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.services.DirectVMProtocolInfo;
@@ -75,8 +75,8 @@ public class DirectVMConnectorOutMessage implements ConnectorOutMessage {
 	public String getHeader(String key) throws ConnectorException{
 		return this.headers.get(key);
 	}
-	public Properties getHeaders(){
-		Properties pH = new Properties();
+	public Map<String, String> getHeaders(){
+		Map<String, String> pH = new HashMap<String, String>();
 		pH.putAll(this.headers);
 		return pH;
 	}

@@ -24,9 +24,10 @@ import java.io.ByteArrayOutputStream;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
@@ -103,7 +104,7 @@ public class HashGenerator {
 					this.addList(requestInfo.getProtocolContext().getParametersFormBased(), false, sb);
 				}
 				else {
-					Properties pUrlForDigest = new Properties();
+					Map<String, String> pUrlForDigest = new HashMap<String, String>();
 					if(requestInfo.getProtocolContext().getParametersFormBased()!=null && configHash.sizeQueryParameterList()>0) {
 						for (String queryParameter : configHash.getQueryParameterList()) {
 							String v = requestInfo.getProtocolContext().getParameterFormBased(queryParameter);
@@ -114,7 +115,7 @@ public class HashGenerator {
 					}
 					
 					if(!pUrlForDigest.isEmpty()) {
-						this.addList(pUrlForDigest, false, sb);
+						this.addList(pUrlForDigest, false, sb);	
 					}
 				}
 				digest.update(sb.toString().getBytes());
@@ -126,7 +127,7 @@ public class HashGenerator {
 				
 				// Gli header vengono riordinati e le chiavi vengono prese lowerCase proprio per far si che tali differenze non impattano nel digest
 				
-				Properties pTrasportoForDigest = new Properties();
+				Map<String, String> pTrasportoForDigest = new HashMap<String, String>();
 				if(requestInfo.getProtocolContext().getParametersTrasporto()!=null && configHash.sizeHeaderList()>0) {
 					for (String header : configHash.getHeaderList()) {
 						String v = requestInfo.getProtocolContext().getParameterTrasporto(header);
@@ -168,17 +169,14 @@ public class HashGenerator {
 		return Base64Utilities.encodeAsString(digest.digest());
 	}
 	
-	private void addList(Properties p, boolean toLowerCase, StringBuilder sb) {
+	private void addList(Map<String, String> p, boolean toLowerCase, StringBuilder sb) {
 		if(p!=null &&
 				!p.isEmpty()) {
-			Enumeration<Object> en = p.keys();
 			List<String> sortKeys = new ArrayList<>();
-			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
-				if(object!=null && object instanceof String) {
-					String key = (String) object;
-					sortKeys.add(key);
-				}
+			Iterator<String> keys = p.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				sortKeys.add(key);
 			}
 			Collections.sort(sortKeys);
 			for (String sortKey : sortKeys) {

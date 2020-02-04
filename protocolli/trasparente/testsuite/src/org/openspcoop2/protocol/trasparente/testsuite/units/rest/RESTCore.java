@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.trasparente.testsuite.units.rest;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
+import java.util.Map;
 
 import javax.mail.internet.ContentType;
 
@@ -452,7 +452,7 @@ public class RESTCore {
 			if(!"soap11".equals(tipoTest) && !"soap12".equals(tipoTest)) {
 				bf.append("/service/").append(action);
 			}
-			Properties propertiesURLBased = new Properties();
+			Map<String,String> propertiesURLBased = new HashMap<String,String>();
 			if(propertiesRequest!=null && !propertiesRequest.isEmpty()) {
 				propertiesURLBased.putAll(propertiesRequest);
 			}
@@ -520,7 +520,7 @@ public class RESTCore {
 						}
 					}
 				} else {
-					if(!propertiesURLBased.contains("fault") && !propertiesURLBased.contains("problem")) {
+					if(!propertiesURLBased.containsKey("fault") && !propertiesURLBased.containsKey("problem")) {
 						propertiesURLBased.put("destFileContentType", contentType != null ? contentType : fileEntry.getExtRispostaKo());
 						propertiesURLBased.put("destFile", fileEntry.getFilenameRispostaKo());
 					}
@@ -582,10 +582,10 @@ public class RESTCore {
 					urlAttesa = "/";
 				}
 				else if(returnCodeAtteso==307) {
-					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBaseSenzaHostPort);
+					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new HashMap<String,String>(), urlBaseSenzaHostPort);
 				}
 				else {
-					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new Properties(), urlBase);
+					urlAttesa = TransportUtils.buildLocationWithURLBasedParameter(new HashMap<String,String>(), urlBase);
 				}
 				if(urlAttesa.contains("govway/api/in/")) {
 					//urlAttesa = urlAttesa.replace("govway/api/in/", "govway/in/"); // la url ritornata e' normalizzata

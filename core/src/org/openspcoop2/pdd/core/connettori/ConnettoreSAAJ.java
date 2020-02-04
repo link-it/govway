@@ -26,9 +26,8 @@ package org.openspcoop2.pdd.core.connettori;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Properties;
 
 import javax.xml.soap.MimeHeader;
 import javax.xml.soap.SOAPConnection;
@@ -223,11 +222,11 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					if(this.debug)
 						this.logger.debug("Forward header di trasporto (size:"+forwardHeader.size()+") ...");
 					if(this.propertiesTrasporto==null){
-						this.propertiesTrasporto = new Properties();
+						this.propertiesTrasporto = new HashMap<String, String>();
 					}
-					Enumeration<?> keys = forwardHeader.getKeys();
-					while (keys.hasMoreElements()) {
-						String key = (String) keys.nextElement();
+					Iterator<String> keys = forwardHeader.getKeys();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
 						String value = forwardHeader.getProperty(key);
 						if(this.debug)
 							this.logger.debug("Forward Transport Header ["+key+"]=["+value+"]");
@@ -235,9 +234,9 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 					}
 				}
 				if(this.propertiesTrasporto != null){
-					Enumeration<?> enumSPC = this.propertiesTrasporto.keys();
-					while( enumSPC.hasMoreElements() ) {
-						String key = (String) enumSPC.nextElement();
+					Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
 						if(HttpConstants.USER_AGENT.equalsIgnoreCase(key)==false){
 							String value = (String) this.propertiesTrasporto.get(key);
 							if(this.debug)
@@ -326,7 +325,7 @@ public class ConnettoreSAAJ extends ConnettoreBase {
 				if(soapResponse.getMimeHeaders()!=null){
 					
 					if(this.propertiesTrasportoRisposta==null){
-						this.propertiesTrasportoRisposta = new Properties();
+						this.propertiesTrasportoRisposta = new HashMap<String, String>();
 					}
 					
 					Iterator<?> it = soapResponse.getMimeHeaders().getAllHeaders();

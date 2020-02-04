@@ -24,7 +24,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.SequenceInputStream;
-import java.util.Properties;
+import java.util.Map;
 
 import org.apache.commons.io.input.CountingInputStream;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -115,7 +115,7 @@ public abstract class ConnettoreBaseWithResponse extends ConnettoreBase {
 		}
 	}
 	
-	protected void dumpResponse(Properties trasporto) throws Exception{
+	protected void dumpResponse(Map<String, String> trasporto) throws Exception{
 		if(this.isResponse!=null){
 			// Registro Debug.
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();

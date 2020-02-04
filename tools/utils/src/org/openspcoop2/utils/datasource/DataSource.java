@@ -72,11 +72,10 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 		if(this.releasedConnections==null || this.releasedConnections.size()<=0)
 			return null;
 	
-		Collection<org.openspcoop2.utils.datasource.Connection> list = this.releasedConnections.values();
-		Iterator<org.openspcoop2.utils.datasource.Connection> it = list.iterator();
+		org.openspcoop2.utils.datasource.Connection[] list = this.releasedConnections.values().toArray(new org.openspcoop2.utils.datasource.Connection[1]);
 		List<String> listResource = new ArrayList<String>();
-		while (it.hasNext()) {
-			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) it.next();
+		for (int i = 0; i < list.length; i++) {
+			org.openspcoop2.utils.datasource.Connection connection = (org.openspcoop2.utils.datasource.Connection) list[i];
 			StringBuilder bf = new StringBuilder();
 			SimpleDateFormat dateformat = DateUtils.getSimpleDateFormatMs();
 			bf.append("(").append(dateformat.format(connection.getDate())).append(") ");

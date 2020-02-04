@@ -22,9 +22,9 @@
 
 package org.openspcoop2.pdd.core.trasformazioni;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.config.TrasformazioneRegola;
@@ -179,8 +179,8 @@ public class GestoreTrasformazioni {
 		Element element = null;
 		String elementJson = null;
 		boolean contenutoNonNavigabile = false;
-		Properties parametriTrasporto = null;
-		Properties parametriUrl = null;
+		Map<String, String> parametriTrasporto = null;
+		Map<String, String> parametriUrl = null;
 		String urlInvocazione = null;
 		
 		try{
@@ -419,8 +419,8 @@ public class GestoreTrasformazioni {
 		
 		try {	
 			// conversione header
-			Properties trasporto = parametriTrasporto;
-			Properties forceAddTrasporto = new Properties();
+			Map<String, String> trasporto = parametriTrasporto;
+			Map<String, String> forceAddTrasporto = new HashMap<String, String>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(richiesta.getContentType()!=null) {
 				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);
@@ -428,8 +428,8 @@ public class GestoreTrasformazioni {
 			}
 			
 			// conversione url
-			Properties url = parametriUrl;
-			Properties forceAddUrl = new Properties();
+			Map<String, String> url = parametriUrl;
+			Map<String, String> forceAddUrl = new HashMap<String, String>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, richiesta.getParametroUrlList(), url, forceAddUrl, "QueryParameter", dynamicMap, this.pddContext);
 			
 			if(!trasformazioneContenuto) {
@@ -523,7 +523,7 @@ public class GestoreTrasformazioni {
 		Element element = null;
 		String elementJson = null;
 		boolean contenutoNonNavigabile = false;
-		Properties parametriTrasporto = null;
+		Map<String, String> parametriTrasporto = null;
 		int httpStatus = -1;
 		try{
 			if(ServiceBinding.SOAP.equals(message.getServiceBinding())){
@@ -738,8 +738,8 @@ public class GestoreTrasformazioni {
 		try {
 			
 			// conversione header
-			Properties trasporto = parametriTrasporto;
-			Properties forceAddTrasporto = new Properties();
+			Map<String, String> trasporto = parametriTrasporto;
+			Map<String, String> forceAddTrasporto = new HashMap<String, String>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(trasformazioneRisposta.getContentType()!=null) {
 				TransportUtils.remove(trasporto, HttpConstants.CONTENT_TYPE);

@@ -23,7 +23,8 @@ package org.openspcoop2.utils.openapi.validator;
 
 import java.io.File;
 import java.net.URI;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.json.JsonValidatorAPI.ApiName;
@@ -75,7 +76,7 @@ public class Test {
 				HttpBaseEntity<?> httpEntity = new TextHttpRequestEntity();
 				httpEntity.setMethod(HttpRequestMethod.GET);
 				httpEntity.setUrl(testUrl1);	
-				Properties parametersTrasporto = new Properties();
+				Map<String, String> parametersTrasporto = new HashMap<>();
 				parametersTrasporto.put("api_key", "aaa");
 				httpEntity.setParametersTrasporto(parametersTrasporto);
 				apiValidator.validate(httpEntity);	
@@ -95,7 +96,7 @@ public class Test {
 				}
 				
 				System.out.println("["+testName+"] Test #3 (Richiesta GET con parametri query)");
-				Properties parametersQuery = new Properties();
+				Map<String, String> parametersQuery = new HashMap<String, String>();
 				HttpBaseRequestEntity<?> httpEntity3 = new TextHttpRequestEntity();
 				parametersQuery.put("status", "available");
 				if(addParameterTipizzati) {

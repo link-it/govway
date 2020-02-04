@@ -24,7 +24,6 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
 
 import javax.mail.BodyPart;
 import javax.mail.internet.InternetHeaders;
@@ -287,7 +286,7 @@ public class AS4Sbustamento {
 				}
 			}
 			if(transportRequestContext.getParametersTrasporto()==null) {
-				transportRequestContext.setParametersTrasporto(new Properties());
+				transportRequestContext.setParametersTrasporto(new HashMap<>());
 			}
 			transportRequestContext.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
 			transportRequestContext.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, mimeTypeRoot);

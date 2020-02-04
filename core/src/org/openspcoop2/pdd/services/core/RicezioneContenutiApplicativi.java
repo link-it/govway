@@ -27,9 +27,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Random;
 
 import javax.servlet.http.HttpServletRequest;
@@ -214,7 +213,7 @@ public class RicezioneContenutiApplicativi {
 
 	/** IGestoreIntegrazionePD: lista di gestori, ordinati per priorita' minore */
 	private static String[] defaultGestoriIntegrazionePD = null;
-	private static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePD = null;
+	private static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePD = null;
 
 	/** IGestoreCredenziali: lista di gestori delle credenziali */
 	private static String [] tipiGestoriCredenziali = null;
@@ -276,7 +275,7 @@ public class RicezioneContenutiApplicativi {
 		}
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
-		RicezioneContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePD = new Hashtable<String, String[]>();
+		RicezioneContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePD = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
 		Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 		while (enumProtocols.hasMoreElements()) {
 			String protocol = (String) enumProtocols.nextElement();
@@ -591,9 +590,9 @@ public class RicezioneContenutiApplicativi {
 					
 					Dump dumpApplicativo = getDump(configurazionePdDReader, protocolFactory, internalObjects, msgDiag.getPorta());
 					if(outResponseContext.getPropertiesRispostaTrasporto()==null) {
-						outResponseContext.setPropertiesRispostaTrasporto(new Properties());
+						outResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
 					}
-					Properties propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
+					Map<String, String> propertiesTrasporto = outResponseContext.getPropertiesRispostaTrasporto();
 					ServicesUtils.setGovWayHeaderResponse(propertiesTrasporto, logCore, true, outResponseContext.getPddContext(), this.msgContext.getRequestInfo().getProtocolContext());
 					dumpApplicativo.dumpRispostaUscita(msgRisposta, 
 							inRequestContext.getConnettore().getUrlProtocolContext(), 
@@ -1428,7 +1427,7 @@ public class RicezioneContenutiApplicativi {
 					CORSWrappedHttpServletResponse res = new CORSWrappedHttpServletResponse(false);
 					corsFilter.doCORS(httpServletRequest, res, CORSRequestType.PRE_FLIGHT, true);
 					if(this.msgContext.getHeaderIntegrazioneRisposta()==null) {
-						this.msgContext.setHeaderIntegrazioneRisposta(new Properties());
+						this.msgContext.setHeaderIntegrazioneRisposta(new HashMap<String, String>());
 					}
 					this.msgContext.getHeaderIntegrazioneRisposta().putAll(res.getHeader());
 					this.msgContext.setMessageResponse(res.buildMessage());
@@ -2778,7 +2777,7 @@ public class RicezioneContenutiApplicativi {
 		if (containsHeaderIntegrazioneTrasporto
 				|| this.msgContext.getIdModulo().startsWith(RicezioneContenutiApplicativi.ID_MODULO+ IntegrationManager.ID_MODULO)) {
 			try {
-				java.util.Properties propertiesIntegrazioneRisposta = new java.util.Properties();
+				Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
 //				IGestoreIntegrazionePD gestore = 
 //					RicezioneContenutiApplicativi.gestoriIntegrazionePD.get(CostantiConfigurazione.HEADER_INTEGRAZIONE_TRASPORTO);
 				
@@ -5374,7 +5373,7 @@ public class RicezioneContenutiApplicativi {
 		}
 		outResponsePDMessage.setMessage(responseMessage);
 		outResponsePDMessage.setPortaDelegata(parametriGestioneRisposta.getPortaDelegata());
-		java.util.Properties propertiesIntegrazioneRisposta = new java.util.Properties();
+		Map<String, String> propertiesIntegrazioneRisposta = new HashMap<String, String>();
 		outResponsePDMessage.setProprietaTrasporto(propertiesIntegrazioneRisposta);
 		outResponsePDMessage.setServizio(parametriGestioneRisposta.getIdServizio());
 		outResponsePDMessage.setSoggettoMittente(parametriGestioneRisposta.getSoggettoMittente());

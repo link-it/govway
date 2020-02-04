@@ -21,8 +21,8 @@
 package org.openspcoop2.pdd.services.service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -502,7 +502,7 @@ public class RicezioneBusteServiceUtils {
 			postOutResponseContext.setReturnCode(info.getStatus());
 			postOutResponseContext.setPropertiesRispostaTrasporto(info.getTrasporto());
 			if(info.getContentType()!=null) {
-				postOutResponseContext.setPropertiesRispostaTrasporto(new Properties());
+				postOutResponseContext.setPropertiesRispostaTrasporto(new HashMap<String, String>());
 				postOutResponseContext.getPropertiesRispostaTrasporto().put(HttpConstants.CONTENT_TYPE, info.getContentType());
 			}
 					

@@ -19,18 +19,17 @@
  */
 package org.openspcoop2.pdd.core.handlers.notifier.engine;
 
-import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
-import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
-
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.Properties;
+import java.util.Map;
 
-import org.slf4j.Logger;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.notifier.unblocked.AbstractStreamingHandler;
 import org.openspcoop2.utils.io.notifier.unblocked.ResultStreamingHandler;
+import org.slf4j.Logger;
 
 /**     
  * NotifierStreamingHandler
@@ -46,14 +45,14 @@ public class NotifierStreamingHandler extends AbstractStreamingHandler {
 	
 	private String idTransazione;
 	private TipoMessaggio tipoMessaggio;
-	private Properties headerTrasporto;
+	private Map<String, String> headerTrasporto;
 	private long idDumpConfigurazione;
 	private String contentType;
 	private NotifierCallback notifierCallback;
 	private IDSoggetto dominio;
 	
 	public NotifierStreamingHandler(NotifierCallback notifierCallback, String idTransazione, TipoMessaggio tipoMessaggio,
-			Properties headerTrasporto,
+			Map<String, String> headerTrasporto,
 			long idDumpConfigurazione,
 			String contentType, Logger log,
 			IDSoggetto dominio) throws Exception{

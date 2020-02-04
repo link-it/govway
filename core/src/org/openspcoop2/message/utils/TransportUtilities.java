@@ -21,9 +21,9 @@
 package org.openspcoop2.message.utils;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -41,14 +41,14 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 public class TransportUtilities {
 	
 	public static void initializeTransportHeaders(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
-			Properties transportHeaders, ForwardConfig forwardConfig) throws MessageException{
+			Map<String, String> transportHeaders, ForwardConfig forwardConfig) throws MessageException{
 		
 		initializeHeaders(true,op2MessageProperties, messageRole, transportHeaders, forwardConfig);
 		
 	}
 	
 	public static void initializeForwardUrlParameters(OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
-			Properties forwardUrlParameters, ForwardConfig forwardConfig) throws MessageException{
+			Map<String, String> forwardUrlParameters, ForwardConfig forwardConfig) throws MessageException{
 		
 		initializeHeaders(false,op2MessageProperties, messageRole, forwardUrlParameters, forwardConfig);
 		
@@ -82,7 +82,7 @@ public class TransportUtilities {
 	}
 		
 	private static void initializeHeaders(boolean trasporto, OpenSPCoop2MessageProperties op2MessageProperties, MessageRole messageRole, 
-			Properties applicativeInfo, ForwardConfig forwardConfig) throws MessageException{
+			Map<String, String> applicativeInfo, ForwardConfig forwardConfig) throws MessageException{
 		
 		try{
 //			String tipo = "Header";
@@ -93,9 +93,9 @@ public class TransportUtilities {
 			//System.out.println(tipo+" =============================== ["+messageRole+"]");
 			
 			if(applicativeInfo!=null && applicativeInfo.size()>0){
-				Enumeration<?> enumHeader = applicativeInfo.keys();
-				while (enumHeader.hasMoreElements()) {
-					String key = (String) enumHeader.nextElement();
+				Iterator<String> keys = applicativeInfo.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					if(MessageRole.REQUEST.equals(messageRole)==false){
 						if(trasporto && HttpConstants.RETURN_CODE.equalsIgnoreCase(key)){
 							continue;
@@ -113,7 +113,7 @@ public class TransportUtilities {
 					}
 					if( add ){
 						//System.out.println("ADD ["+key+"] ["+applicativeInfo.getProperty(key)+"]");
-						op2MessageProperties.addProperty(key, applicativeInfo.getProperty(key));
+						op2MessageProperties.addProperty(key, applicativeInfo.get(key));
 					}
 //					else {
 //						System.out.println("FILTRO ["+key+"]");

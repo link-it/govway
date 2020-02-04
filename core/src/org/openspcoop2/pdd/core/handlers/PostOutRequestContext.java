@@ -20,6 +20,9 @@
 package org.openspcoop2.pdd.core.handlers;
 
 import org.slf4j.Logger;
+
+import java.util.Map;
+
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 /**
@@ -51,16 +54,16 @@ public class PostOutRequestContext extends OutRequestContext {
 	}
 	
 	/** Proprieta' di trasporto della risposta */
-	private java.util.Properties propertiesTrasportoRisposta;
+	private Map<String, String> propertiesTrasportoRisposta;
 	
 	private int codiceTrasporto;
 
-	public java.util.Properties getPropertiesTrasportoRisposta() {
+	public Map<String, String> getPropertiesTrasportoRisposta() {
 		return this.propertiesTrasportoRisposta;
 	}
 
 	public void setPropertiesTrasportoRisposta(
-			java.util.Properties propertiesTrasportoRisposta) {
+			Map<String, String> propertiesTrasportoRisposta) {
 		this.propertiesTrasportoRisposta = propertiesTrasportoRisposta;
 	}
 

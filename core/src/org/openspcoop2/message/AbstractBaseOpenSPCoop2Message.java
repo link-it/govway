@@ -26,13 +26,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.message.constants.MessageRole;
@@ -375,20 +373,17 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			throw new MessageException(e.getMessage(),e);
 		}		
 	}
-	protected List<StringParameter> _msgContext_convertTo(Properties p){
+	protected List<StringParameter> _msgContext_convertTo(Map<String, String> p){
 		List<StringParameter> l = new ArrayList<>();
 		if(p.size()>0) {
-			Enumeration<?> en = p.keys();
-			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
-				if(object instanceof String) {
-					String key = (String) object;
-					String value = p.getProperty(key);
-					StringParameter sp = new StringParameter();
-					sp.setBase(value);
-					sp.setNome(key);
-					l.add(sp);
-				}
+			Iterator<String> keys = p.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = p.get(key);
+				StringParameter sp = new StringParameter();
+				sp.setBase(value);
+				sp.setNome(key);
+				l.add(sp);
 			}
 		}
 		return l;
@@ -415,14 +410,14 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				
 				if(messageContext.getTransportRequestContext().getUrlParameters()!=null &&
 						messageContext.getTransportRequestContext().getUrlParameters().sizeUrlParameterList()>0) {
-					Properties p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getUrlParameters().getUrlParameterList());
+					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getUrlParameters().getUrlParameterList());
 					if(p!=null && p.size()>0) {
 						this.transportRequestContext.setParametersFormBased(p);
 					}	
 				}
 				if(messageContext.getTransportRequestContext().getHeaderParameters()!=null &&
 						messageContext.getTransportRequestContext().getHeaderParameters().sizeHeaderParameterList()>0) {
-					Properties p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getHeaderParameters().getHeaderParameterList());
+					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportRequestContext().getHeaderParameters().getHeaderParameterList());
 					if(p!=null && p.size()>0) {
 						this.transportRequestContext.setParametersTrasporto(p);
 					}	
@@ -467,7 +462,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 				
 				if(messageContext.getTransportResponseContext().getHeaderParameters()!=null &&
 						messageContext.getTransportResponseContext().getHeaderParameters().sizeHeaderParameterList()>0) {
-					Properties p = this._msgContext_convertTo(messageContext.getTransportResponseContext().getHeaderParameters().getHeaderParameterList());
+					Map<String, String> p = this._msgContext_convertTo(messageContext.getTransportResponseContext().getHeaderParameters().getHeaderParameterList());
 					if(p!=null && p.size()>0) {
 						this.transportResponseContext.setParametersTrasporto(p);
 					}	
@@ -490,7 +485,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 					f.setResponseCode(messageContext.getForcedResponse().getResponseMessage().getResponseCode());
 					if(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters()!=null &&
 							messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().sizeHeaderParameterList()>0) {
-						Properties p = this._msgContext_convertTo(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().getHeaderParameterList());
+						Map<String, String> p = this._msgContext_convertTo(messageContext.getForcedResponse().getResponseMessage().getHeaderParameters().getHeaderParameterList());
 						if(p!=null && p.size()>0) {
 							f.setHeaders(p);
 						}	
@@ -562,8 +557,8 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			throw new MessageException(e.getMessage(),e);
 		}	
 	}
-	protected Properties _msgContext_convertTo(List<StringParameter> list){
-		Properties p = new Properties();
+	protected Map<String, String> _msgContext_convertTo(List<StringParameter> list){
+		Map<String, String> p = new HashMap<String, String>();
 		if(list.size()>0) {
 			for (StringParameter stringParameter : list) {
 				p.put(stringParameter.getNome(), stringParameter.getBase());
@@ -702,7 +697,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			}
 			if(this.forwardTransportHeader.isInitialize()==false){
 				
-				Properties transportHeaders = null;
+				Map<String, String> transportHeaders = null;
 				if(MessageRole.REQUEST.equals(this.messageRole)){
 					if(this.transportRequestContext!=null){
 						transportHeaders = this.transportRequestContext.getParametersTrasporto();
@@ -751,7 +746,7 @@ public abstract class AbstractBaseOpenSPCoop2Message implements org.openspcoop2.
 			}
 			if(this.forwardUrlProperties.isInitialize()==false){
 				
-				Properties forwardUrlParamters = null;
+				Map<String, String> forwardUrlParamters = null;
 				if(this.transportRequestContext!=null){
 					forwardUrlParamters = this.transportRequestContext.getParametersFormBased();
 				}

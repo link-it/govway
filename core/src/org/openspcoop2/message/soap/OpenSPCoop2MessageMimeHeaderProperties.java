@@ -20,8 +20,8 @@
 
 package org.openspcoop2.message.soap;
 
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.soap.SOAPMessage;
 
@@ -43,16 +43,13 @@ public class OpenSPCoop2MessageMimeHeaderProperties extends OpenSPCoop2MessagePr
 		
 		// inizializzo eventuali header gia' inseriti
 		if(original!=null && original.size()>0) {
-			Properties p = original.getAsProperties();
-			Enumeration<?> en = p.keys();
-			while (en.hasMoreElements()) {
-				Object object = (Object) en.nextElement();
-				if(object instanceof String) {
-					String key = (String) object;
-					String value = p.getProperty(key);
-					super.addProperty(key, value);
-					this.soapMessage.getMimeHeaders().addHeader(key, value);
-				}
+			Map<String, String> p = original.getAsMap();
+			Iterator<String> keys = p.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				String value = p.get(key);
+				super.addProperty(key, value);
+				this.soapMessage.getMimeHeaders().addHeader(key, value);
 			}
 		}
 	}

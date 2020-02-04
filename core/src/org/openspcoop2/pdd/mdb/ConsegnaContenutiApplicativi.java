@@ -26,8 +26,10 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -174,10 +176,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
-	//public static java.util.Hashtable<String,IGestoreIntegrazionePA> gestoriIntegrazionePA = null;
+	//public static java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePA> gestoriIntegrazionePA = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	public static String[] defaultGestoriIntegrazionePA = null;
-	private static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
+	private static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePA = null;
 	
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
@@ -198,7 +200,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		// Inizializzo IGestoreIntegrazionePA list
 		ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA = propertiesReader.getTipoIntegrazionePA();
-//		ConsegnaContenutiApplicativi.gestoriIntegrazionePA = new java.util.Hashtable<String,IGestoreIntegrazionePA>();
+//		ConsegnaContenutiApplicativi.gestoriIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePA>();
 		for(int i=0; i<ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA.length; i++){
 			String classType = className.getIntegrazionePortaApplicativa(ConsegnaContenutiApplicativi.defaultGestoriIntegrazionePA[i]);
 			try{
@@ -218,7 +220,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 		
 		// Inizializzo IGestoreIntegrazionePA per protocollo
-		ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA = new Hashtable<String, String[]>();
+		ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
 		try{
 			Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 			while (enumProtocols.hasMoreElements()) {
@@ -1324,8 +1326,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
 
-			java.util.Properties propertiesTrasporto = new java.util.Properties();
-			java.util.Properties propertiesUrlBased = new java.util.Properties();
+			Map<String, String> propertiesTrasporto = new HashMap<String, String>();
+			Map<String, String> propertiesUrlBased = new HashMap<String, String>();
 
 			if(tipiIntegrazione==null){
 				if(ConsegnaContenutiApplicativi.defaultPerProtocolloGestoreIntegrazionePA.containsKey(protocolFactory.getProtocol())){
@@ -1595,7 +1597,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 			// timeout di default
 			if(connettoreMsg.getConnectorProperties()==null){
-				java.util.Hashtable<String,String> propCon = new java.util.Hashtable<String,String>();
+				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
@@ -3468,15 +3470,15 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}
 	}
 
-	private void mappingProtocolProperties(java.util.Properties protocolProperties,java.util.Properties propertiesDaImpostare,
+	private void mappingProtocolProperties(Map<String, String> protocolProperties,Map<String, String> propertiesDaImpostare,
 			IDSoggetto soggettoFruitoreHeaderIntegrazione, IDServizio servizioHeaderIntegrazione,
 			IDSoggetto soggettoFruitore,IDServizio idServizio,
 			Busta bustaRichiesta, String idCorrelazioneApplicativa){
 		// mapping in valori delle keyword delle proprieta di trasporto protocol-properties.
 		if(protocolProperties != null){
-			Enumeration<?> enumProperties = protocolProperties.keys();
-			while( enumProperties.hasMoreElements() ) {
-				String key = (String) enumProperties.nextElement();
+			Iterator<String> keys = protocolProperties.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
 				String value = (String) protocolProperties.get(key);
 				
 				if(ProprietaProtocolloValore.TIPO_MITTENTE.equals(value)){

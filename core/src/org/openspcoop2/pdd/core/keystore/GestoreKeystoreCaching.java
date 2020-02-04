@@ -28,6 +28,7 @@ import org.openspcoop2.security.keystore.MerlinTruststore;
 import org.openspcoop2.security.keystore.MultiKeystore;
 import org.openspcoop2.security.keystore.SymmetricKeystore;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.slf4j.Logger;
@@ -274,6 +275,22 @@ public class GestoreKeystoreCaching {
 		
 		org.openspcoop2.security.keystore.cache.GestoreKeystoreCache.setKeystoreCacheJCS(true, longItemLife>0 ? (int)longItemLife : 7200, cache);
 	}
+	
+
+	public static void disableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		cache.disableSyncronizedGet();
+	}
+	public static boolean isDisableSyncronizedGet() throws UtilsException {
+		if(cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		return cache.isDisableSyncronizedGet();
+	}
+	
+	
 	
 	private static long itemCrlLifeSecond; 
 	public static void setCacheCrlLifeSeconds(long itemCrlLifeSecondParam,Logger alog) throws Exception{

@@ -396,7 +396,13 @@ public abstract class OpenSPCoop2MessageFactory {
 			
 			result.setMessage(op2Msg);
 		}catch(Throwable t){
-			result.setParseException(ParseExceptionUtils.buildParseException(t));
+			try {
+				result.setParseException(ParseExceptionUtils.buildParseException(t));
+			}catch(Throwable e) {
+				System.err.println("Message reading error: "+t.getMessage());
+				t.printStackTrace(System.err);
+				throw new RuntimeException(t.getMessage(),t);
+			}
 		}
 		return result;
 	}

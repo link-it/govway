@@ -27,9 +27,9 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Random;
 
 import javax.xml.soap.SOAPFault;
@@ -202,10 +202,10 @@ public class InoltroBuste extends GenericLib{
 	
 	
 	/** IGestoreIntegrazionePA: lista di gestori, ordinati per priorita' minore */
-	//public static java.util.Hashtable<String,IGestoreIntegrazionePD> gestoriIntegrazionePD = null;
+	//public static java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePD> gestoriIntegrazionePD = null;
 	// E' stato aggiunto lo stato dentro l'oggetto.
 	public static String[] defaultGestoriIntegrazionePD = null;
-	private static Hashtable<String, String[]> defaultPerProtocolloGestoreIntegrazionePD = null;
+	private static java.util.concurrent.ConcurrentHashMap<String, String[]> defaultPerProtocolloGestoreIntegrazionePD = null;
 
 	/** Indicazione se sono state inizializzate le variabili del servizio */
 	public static boolean initializeService = false;
@@ -226,7 +226,7 @@ public class InoltroBuste extends GenericLib{
 		
 		// Inizializzo IGestoreIntegrazionePD list
 		InoltroBuste.defaultGestoriIntegrazionePD = propertiesReader.getTipoIntegrazionePD();
-		//InoltroBuste.gestoriIntegrazionePD = new java.util.Hashtable<String,IGestoreIntegrazionePD>();
+		//InoltroBuste.gestoriIntegrazionePD = new java.util.concurrent.ConcurrentHashMap<String,IGestoreIntegrazionePD>();
 		for(int i=0; i<InoltroBuste.defaultGestoriIntegrazionePD.length; i++){
 			String classType = className.getIntegrazionePortaDelegata(InoltroBuste.defaultGestoriIntegrazionePD[i]);
 			try{
@@ -243,7 +243,7 @@ public class InoltroBuste extends GenericLib{
 		}
 		
 		// Inizializzo IGestoreIntegrazionePD per protocollo
-		InoltroBuste.defaultPerProtocolloGestoreIntegrazionePD = new Hashtable<String, String[]>();
+		InoltroBuste.defaultPerProtocolloGestoreIntegrazionePD = new java.util.concurrent.ConcurrentHashMap<String, String[]>();
 		try{
 			Enumeration<String> enumProtocols = ProtocolFactoryManager.getInstance().getProtocolNames();
 			while (enumProtocols.hasMoreElements()) {
@@ -1178,8 +1178,8 @@ public class InoltroBuste extends GenericLib{
 			headerIntegrazione.setIdApplicativo(idCorrelazioneApplicativa);
 			headerIntegrazione.setServizioApplicativo(servizioApplicativoFruitore);
 
-			java.util.Properties propertiesTrasporto = new java.util.Properties();
-			java.util.Properties propertiesUrlBased = new java.util.Properties();
+			Map<String, String>  propertiesTrasporto = new HashMap<String, String> ();
+			Map<String, String>  propertiesUrlBased = new HashMap<String, String> ();
 
 			String [] tipiIntegrazionePD = null;
 			try {
@@ -1971,7 +1971,7 @@ public class InoltroBuste extends GenericLib{
 
 			// timeout di default
 			if(connettoreMsg.getConnectorProperties()==null){
-				java.util.Hashtable<String,String> propCon = new java.util.Hashtable<String,String>();
+				java.util.Map<String,String> propCon = new java.util.HashMap<String,String>();
 				connettoreMsg.setConnectorProperties(propCon);
 			}
 			if(connettoreMsg.getConnectorProperties().get(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)==null){
@@ -1984,7 +1984,7 @@ public class InoltroBuste extends GenericLib{
 			// User-Agent e X-* header
 			UtilitiesIntegrazione httpUtilities = UtilitiesIntegrazione.getInstancePDRequest(this.log);
 			if(connettoreMsg.getPropertiesTrasporto()==null){
-				Properties trasporto = new Properties();
+				Map<String, String> trasporto = new HashMap<String, String>();
 				connettoreMsg.setPropertiesTrasporto(trasporto);
 			}
 			httpUtilities.setInfoProductTransportProperties(connettoreMsg.getPropertiesTrasporto());

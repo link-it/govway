@@ -21,8 +21,9 @@
 package org.openspcoop2.utils.rest.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -41,9 +42,9 @@ public abstract class HttpBaseEntity<T> {
 	private String contentType;
 
 	/* ---- Coppie nome/valori di invocazione inserite nell'header del trasporto --- */
-	private java.util.Properties parametersTrasporto = new Properties();
+	private Map<String, String> parametersTrasporto = new HashMap<>();
 	/* ---- Coppie nome/valori di invocazione form ----- */
-	private java.util.Properties parametersForm = new Properties();
+	private Map<String, String> parametersForm = new HashMap<>();
 	/* ---- Cookies ----- */
 	private List<Cookie> cookies = new ArrayList<>();
 	
@@ -74,16 +75,16 @@ public abstract class HttpBaseEntity<T> {
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
 	}
-	public java.util.Properties getParametersForm() {
+	public Map<String, String> getParametersForm() {
 		return this.parametersForm;
 	}
-	public void setParametersForm(java.util.Properties parametersForm) {
+	public void setParametersForm(Map<String, String> parametersForm) {
 		this.parametersForm = parametersForm;
 	}
-	public java.util.Properties getParametersTrasporto() {
+	public Map<String, String> getParametersTrasporto() {
 		return this.parametersTrasporto;
 	}
-	public void setParametersTrasporto(java.util.Properties parametersTrasporto) {
+	public void setParametersTrasporto(Map<String, String> parametersTrasporto) {
 		this.parametersTrasporto = parametersTrasporto;
 	}
 	public List<Cookie> getCookies() {

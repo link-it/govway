@@ -23,10 +23,15 @@ import java.io.File;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.util.Enumeration;
-import java.util.Properties;
+import java.util.Iterator;
+import java.util.Map;
 
+import org.openspcoop2.core.commons.dao.DAOFactory;
+import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.transazioni.DumpMessaggio;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioService;
 import org.openspcoop2.generic_project.expression.impl.sql.ISQLFieldConverter;
 import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.pdd.config.DBTransazioniManager;
@@ -39,12 +44,6 @@ import org.openspcoop2.utils.jdbc.JDBCAdapterFactory;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
 import org.slf4j.Logger;
-
-import org.openspcoop2.core.commons.dao.DAOFactory;
-import org.openspcoop2.core.commons.dao.DAOFactoryProperties;
-import org.openspcoop2.core.transazioni.DumpMessaggio;
-import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
-import org.openspcoop2.core.transazioni.dao.jdbc.JDBCDumpMessaggioService;
 
 /**     
  * NotifierDump
@@ -129,7 +128,7 @@ public class NotifierDump {
 
 	
 	private int save(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio,Properties headerTrasporto,
+			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, String> headerTrasporto,
 			long idDumpConfigurazione,
 			String contentType,
 			InputStream is,File file,byte[]buffer,
@@ -229,16 +228,16 @@ public class NotifierDump {
 		}
 	}
 	
-	private String toString(Properties headerTrasporto){
+	private String toString(Map<String, String> headerTrasporto){
 		StringBuilder bf = new StringBuilder();
 		if(headerTrasporto!=null && headerTrasporto.size()>0){
-			Enumeration<?> enumTrasporto = headerTrasporto.keys();
-			while (enumTrasporto.hasMoreElements()) {
-				String key = (String) enumTrasporto.nextElement();
+			Iterator<String> keys = headerTrasporto.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
 				if(bf.length()>0){
 					bf.append("\n");
 				}
-				bf.append(key).append("=").append(headerTrasporto.getProperty(key));
+				bf.append(key).append("=").append(headerTrasporto.get(key));
 			}
 		}
 		if(bf.length()>0){
@@ -250,7 +249,7 @@ public class NotifierDump {
 	}
 	
 	public int saveOnDatabase(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Properties headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,InputStream is,
 			IDSoggetto dominio) throws Exception{
@@ -258,7 +257,7 @@ public class NotifierDump {
 	}
 	
 	public int saveOnFileSystem(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Properties headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,File file,
 			IDSoggetto dominio) throws Exception{
@@ -266,7 +265,7 @@ public class NotifierDump {
 	}
 	
 	public int saveBuffer(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio, Properties headerTrasporto, 
+			String idTransazione,TipoMessaggio tipoMessaggio, Map<String, String> headerTrasporto, 
 			long idDumpConfigurazione,
 			String contentType,byte[] content,
 			IDSoggetto dominio) throws Exception{
@@ -275,7 +274,7 @@ public class NotifierDump {
 	
 	
 	public int update(NotifierCallback notifierCallback,
-			String idTransazione,TipoMessaggio tipoMessaggio,Properties headerTrasporto,
+			String idTransazione,TipoMessaggio tipoMessaggio,Map<String, String> headerTrasporto,
 			IDSoggetto dominio) throws Exception{
 
 		PreparedStatement stmt = null;

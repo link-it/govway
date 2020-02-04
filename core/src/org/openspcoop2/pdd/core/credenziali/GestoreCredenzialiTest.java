@@ -20,7 +20,7 @@
 
 package org.openspcoop2.pdd.core.credenziali;
 
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.core.AbstractCore;
@@ -94,7 +94,7 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		return this.identita;
 	}
 	
-	private boolean existsHeader(Properties properties, String name){
+	private boolean existsHeader(Map<String, String> properties, String name){
 		if(properties!=null){
 			return TransportUtils.hasKey(properties, name);
 		}else{
@@ -102,7 +102,7 @@ public class GestoreCredenzialiTest extends AbstractCore implements IGestoreCred
 		}
 	}
 	
-	private String getProperty(Properties properties, String name){
+	private String getProperty(Map<String, String> properties, String name){
 		if(properties!=null){
 			return TransportUtils.get(properties, name);
 		}else{

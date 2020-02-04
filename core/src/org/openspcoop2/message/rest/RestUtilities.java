@@ -22,7 +22,8 @@ package org.openspcoop2.message.rest;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Properties;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openspcoop2.message.constants.Costanti;
 import org.openspcoop2.utils.transport.TransportRequestContext;
@@ -55,7 +56,7 @@ public class RestUtilities {
 		return resourcePath;
 	}
 	
-	public static String buildUrl(String url,Properties p,TransportRequestContext requestContext, String normalizedInterfaceName){
+	public static String buildUrl(String url,Map<String, String>  p,TransportRequestContext requestContext, String normalizedInterfaceName){
 		
 		String baseUrl = url;
 		String parameterOriginalUrl = null;
@@ -104,7 +105,7 @@ public class RestUtilities {
 			String [] split = parameterOriginalUrl.split("&");
 			if(split!=null){
 				if(p==null){
-					p = new Properties();
+					p = new HashMap<String, String> ();
 				}
 				for (int i = 0; i < split.length; i++) {
 					if(split[i].contains("=")){

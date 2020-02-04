@@ -24,7 +24,9 @@ package org.openspcoop2.protocol.spcoop.backward_compatibility.integrazione;
 
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPElement;
@@ -78,9 +80,9 @@ public class UtilitiesIntegrazione {
 	
 	// ***** INSTANCE *****
 	
-	private java.util.Properties keyValueIntegrazioneTrasporto = null;
-	private java.util.Properties keyValueIntegrazioneUrlBased = null;
-	private java.util.Properties keyValueIntegrazioneSoap = null;
+	private Map<String, String> keyValueIntegrazioneTrasporto = null;
+	private Map<String, String> keyValueIntegrazioneUrlBased = null;
+	private Map<String, String> keyValueIntegrazioneSoap = null;
 	private BackwardCompatibilityProperties backwardCompatibilityProperties = null;
 	private OpenSPCoop2Properties openspcoop2Properties = null;
 	private ValidatoreXSD validatoreXSD = null;
@@ -103,7 +105,7 @@ public class UtilitiesIntegrazione {
 
 
 
-	public void readTransportProperties(java.util.Properties prop,
+	public void readTransportProperties(Map<String, String> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
@@ -111,75 +113,75 @@ public class UtilitiesIntegrazione {
 				if(this.backwardCompatibilityProperties.isBackwardCompatibilityHeaderIntegrazione()){
 					
 					// Ricerca tra l'header del trasporto
-					java.util.Enumeration<?> keys =  prop.propertyNames();
-					while(keys.hasMoreElements()){
-						String key = (String) keys.nextElement();
-	
+					Iterator<String> keys = prop.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						
 						if(key!=null){
 							// Egov
 							if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_TIPO_MITTENTE))
-								integrazione.getBusta().setTipoMittente(prop.getProperty(key));
+								integrazione.getBusta().setTipoMittente(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_MITTENTE))
-								integrazione.getBusta().setMittente(prop.getProperty(key));
+								integrazione.getBusta().setMittente(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_TIPO_DESTINATARIO))
-								integrazione.getBusta().setTipoDestinatario(prop.getProperty(key));
+								integrazione.getBusta().setTipoDestinatario(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_DESTINATARIO))
-								integrazione.getBusta().setDestinatario(prop.getProperty(key));
+								integrazione.getBusta().setDestinatario(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_TIPO_SERVIZIO))
-								integrazione.getBusta().setTipoServizio(prop.getProperty(key));
+								integrazione.getBusta().setTipoServizio(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_SERVIZIO))
-								integrazione.getBusta().setServizio(prop.getProperty(key));
+								integrazione.getBusta().setServizio(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_AZIONE))
-								integrazione.getBusta().setAzione(prop.getProperty(key));
+								integrazione.getBusta().setAzione(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_ID_EGOV))
-								integrazione.getBusta().setID(prop.getProperty(key));
+								integrazione.getBusta().setID(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_RIFERIMENTO_MESSAGGIO))
-								integrazione.getBusta().setRiferimentoMessaggio(prop.getProperty(key));
+								integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_COLLABORAZIONE))
-								integrazione.getBusta().setIdCollaborazione(prop.getProperty(key));
+								integrazione.getBusta().setIdCollaborazione(prop.get(key));
 	
 							// id e servizio applicativo
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_ID_APPLICATIVO))
-								integrazione.setIdApplicativo(prop.getProperty(key));
+								integrazione.setIdApplicativo(prop.get(key));
 							else if(key.equalsIgnoreCase(Costanti.HEADER_INTEGRAZIONE_HTTP_BACKWARD_COMPATIBILITY_SERVIZIO_APPLICATIVO))
-								integrazione.setServizioApplicativo(prop.getProperty(key));
+								integrazione.setServizioApplicativo(prop.get(key));
 						}
 					}
 				}
 				
 				// Ricerca tra l'header del trasporto
-				java.util.Enumeration<?> keys =  prop.propertyNames();
-				while(keys.hasMoreElements()){
-					String key = (String) keys.nextElement();
-
+				Iterator<String> keys = prop.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+				
 					if(key!=null){
 						// Busta
 						if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)))
-							integrazione.getBusta().setTipoMittente(prop.getProperty(key));
+							integrazione.getBusta().setTipoMittente(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)))
-							integrazione.getBusta().setMittente(prop.getProperty(key));
+							integrazione.getBusta().setMittente(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)))
-							integrazione.getBusta().setTipoDestinatario(prop.getProperty(key));
+							integrazione.getBusta().setTipoDestinatario(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)))
-							integrazione.getBusta().setDestinatario(prop.getProperty(key));
+							integrazione.getBusta().setDestinatario(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)))
-							integrazione.getBusta().setTipoServizio(prop.getProperty(key));
+							integrazione.getBusta().setTipoServizio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)))
-							integrazione.getBusta().setServizio(prop.getProperty(key));
+							integrazione.getBusta().setServizio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)))
-							integrazione.getBusta().setAzione(prop.getProperty(key));
+							integrazione.getBusta().setAzione(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)))
-							integrazione.getBusta().setID(prop.getProperty(key));
+							integrazione.getBusta().setID(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)))
-							integrazione.getBusta().setRiferimentoMessaggio(prop.getProperty(key));
+							integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)))
-							integrazione.getBusta().setIdCollaborazione(prop.getProperty(key));
+							integrazione.getBusta().setIdCollaborazione(prop.get(key));
 
 						// id e servizio applicativo
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)))
-							integrazione.setIdApplicativo(prop.getProperty(key));
+							integrazione.setIdApplicativo(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
-							integrazione.setServizioApplicativo(prop.getProperty(key));
+							integrazione.setServizioApplicativo(prop.get(key));
 					}
 				}
 			}
@@ -188,44 +190,44 @@ public class UtilitiesIntegrazione {
 		}
 	}
 	
-	public void readUrlProperties(java.util.Properties prop,
+	public void readUrlProperties(Map<String, String> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
 			
 				// Ricerca tra le proprieta' dell'url
-				java.util.Enumeration<?> keys =  prop.propertyNames();
-				while(keys.hasMoreElements()){
-					String key = (String) keys.nextElement();
-
+				Iterator<String> keys = prop.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+				
 					if(key!=null){
 						// Busta
 						if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE)))
-							integrazione.getBusta().setTipoMittente(prop.getProperty(key));
+							integrazione.getBusta().setTipoMittente(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE)))
-							integrazione.getBusta().setMittente(prop.getProperty(key));
+							integrazione.getBusta().setMittente(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO)))
-							integrazione.getBusta().setTipoDestinatario(prop.getProperty(key));
+							integrazione.getBusta().setTipoDestinatario(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO)))
-							integrazione.getBusta().setDestinatario(prop.getProperty(key));
+							integrazione.getBusta().setDestinatario(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO)))
-							integrazione.getBusta().setTipoServizio(prop.getProperty(key));
+							integrazione.getBusta().setTipoServizio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO)))
-							integrazione.getBusta().setServizio(prop.getProperty(key));
+							integrazione.getBusta().setServizio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE)))
-							integrazione.getBusta().setAzione(prop.getProperty(key));
+							integrazione.getBusta().setAzione(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO)))
-							integrazione.getBusta().setID(prop.getProperty(key));
+							integrazione.getBusta().setID(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO)))
-							integrazione.getBusta().setRiferimentoMessaggio(prop.getProperty(key));
+							integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE)))
-							integrazione.getBusta().setIdCollaborazione(prop.getProperty(key));
+							integrazione.getBusta().setIdCollaborazione(prop.get(key));
 
 						// id e servizio applicativo
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO)))
-							integrazione.setIdApplicativo(prop.getProperty(key));
+							integrazione.setIdApplicativo(prop.get(key));
 						else if(key.equalsIgnoreCase((String)this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO)))
-							integrazione.setServizioApplicativo(prop.getProperty(key));
+							integrazione.setServizioApplicativo(prop.get(key));
 					}
 				}
 			}
@@ -237,15 +239,15 @@ public class UtilitiesIntegrazione {
 
 
 	public void setRequestUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties) throws HeaderIntegrazioneException{
+			Map<String, String> properties) throws HeaderIntegrazioneException{
 		setUrlProperties(integrazione, properties, true, false);
 	}
 	public void setResponseUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties) throws HeaderIntegrazioneException{
+			Map<String, String> properties) throws HeaderIntegrazioneException{
 		setUrlProperties(integrazione, properties, false, true);
 	}
 	private void setUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,boolean request,boolean response) throws HeaderIntegrazioneException{
+			Map<String, String> properties,boolean request,boolean response) throws HeaderIntegrazioneException{
 
 		try{
 			if(properties!=null && integrazione!=null){
@@ -293,15 +295,15 @@ public class UtilitiesIntegrazione {
 	}
 	
 	public void setRequestTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties) throws HeaderIntegrazioneException{
+			Map<String, String> properties) throws HeaderIntegrazioneException{
 		setTransportProperties(integrazione, properties, true, false);
 	}
 	public void setResponseTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties) throws HeaderIntegrazioneException{
+			Map<String, String> properties) throws HeaderIntegrazioneException{
 		setTransportProperties(integrazione, properties, false, true);
 	}
 	private void setTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,boolean request,boolean response) throws HeaderIntegrazioneException{
+			Map<String, String> properties,boolean request,boolean response) throws HeaderIntegrazioneException{
 
 		try{
 			if(properties!=null && integrazione!=null){

@@ -25,7 +25,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.config.InvocazioneCredenziali;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
@@ -91,7 +90,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	public final static String LOCATION_CACHED_SEPARATOR_REQUEST_URL = "\n";
 	
 	/** Proprieta' del connettore */
-	protected java.util.Hashtable<String,String> properties;
+	protected java.util.Map<String,String> properties;
 	
 	/** Tipo di Connettore */
 	protected String tipoConnettore;
@@ -105,10 +104,10 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	protected boolean sbustamentoSoap;
 	
 	/** Proprieta' del trasporto che deve gestire il connettore */
-	protected java.util.Properties propertiesTrasporto;
+	protected Map<String, String> propertiesTrasporto;
 	
 	/** Proprieta' urlBased che deve gestire il connettore */
-	protected java.util.Properties propertiesUrlBased;
+	protected Map<String, String> propertiesUrlBased;
 	
 	/** Tipo di Autenticazione */
 	//private String tipoAutenticazione;
@@ -152,7 +151,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 	/** Eccezione processamento */
 	protected Exception eccezioneProcessamento = null;
 	/** Proprieta' del trasporto della risposta */
-	protected java.util.Properties propertiesTrasportoRisposta = new Properties();
+	protected Map<String, String> propertiesTrasportoRisposta = new HashMap<String, String>();
 	/** CreationDate */
 	protected Date creationDate;
 	
@@ -322,7 +321,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 							}
 							if(cacheControl!=null) {
 						
-								Properties trasportoRichiesta = null;
+								Map<String, String> trasportoRichiesta = null;
 								if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
 										this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
 									trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
@@ -537,7 +536,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 					byteMax = kbMax.longValue() * 1024;
 				}
 				
-				Properties trasportoRichiesta = null;
+				Map<String, String> trasportoRichiesta = null;
 				if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null && 
 						this.requestMsg.getTransportRequestContext().getParametersTrasporto()!=null) {
 					trasportoRichiesta = this.requestMsg.getTransportRequestContext().getParametersTrasporto();
@@ -702,7 +701,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
      * 
      */
     @Override
-	public java.util.Properties getHeaderTrasporto(){
+	public Map<String, String> getHeaderTrasporto(){
     	if(this.propertiesTrasportoRisposta.size()<=0){
     		return null;
     	}else{
@@ -1000,7 +999,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     
     
     private InfoConnettoreUscita infoConnettoreUscita = null;
-    protected void dumpBinarioRichiestaUscita(byte[]raw,String location, Properties trasporto) throws DumpException {
+    protected void dumpBinarioRichiestaUscita(byte[]raw,String location, Map<String, String> trasporto) throws DumpException {
     	if(this.dump!=null) {
 			this.infoConnettoreUscita = new InfoConnettoreUscita();
 			this.infoConnettoreUscita.setLocation(location);
@@ -1008,7 +1007,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
 			this.dump.dumpBinarioRichiestaUscita(raw, this.infoConnettoreUscita);
     	}
     }
-    protected void dumpBinarioRispostaIngresso(byte[]raw,Properties trasportoRisposta) throws DumpException {
+    protected void dumpBinarioRispostaIngresso(byte[]raw,Map<String, String> trasportoRisposta) throws DumpException {
     	if(this.dump!=null) {
 			this.dump.dumpBinarioRispostaIngresso(raw, this.infoConnettoreUscita, trasportoRisposta);
     	}
@@ -1086,7 +1085,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     private HashMap<String,String> headersImpostati = new HashMap<String,String>(); // per evitare che header generati nel conettore siano sovrascritti da eventuali forward. Gli header del connettore vengono impostati prima del forward.
     private Messaggio messaggioDumpUscita = null;
     protected void setRequestHeader(String key,String value) throws Exception {} // ridefinito nei connettori dove esistono header da spedire 
-    protected void setRequestHeader(String key,String value, Properties propertiesTrasportoDebug) throws Exception {
+    protected void setRequestHeader(String key,String value, Map<String, String> propertiesTrasportoDebug) throws Exception {
     	if(!this.headersImpostati.containsKey(key)) {
     		this.headersImpostati.put(key,value);
 	    	this.setRequestHeader(key,value);

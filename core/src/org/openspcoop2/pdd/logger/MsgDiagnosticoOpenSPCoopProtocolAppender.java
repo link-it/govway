@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.logger;
 
 import java.sql.Connection;
 import java.util.Enumeration;
-import java.util.Hashtable;
 
 import org.openspcoop2.core.commons.CoreException;
 import org.openspcoop2.core.config.OpenspcoopAppender;
@@ -47,7 +46,7 @@ import org.openspcoop2.utils.resources.MapReader;
  */
 public class MsgDiagnosticoOpenSPCoopProtocolAppender implements IDiagnosticProducer{
 
-	private static Hashtable<String, IDiagnosticProducer> mappingProtocolToAppenders = new Hashtable<String, IDiagnosticProducer>();
+	private static java.util.concurrent.ConcurrentHashMap<String, IDiagnosticProducer> mappingProtocolToAppenders = new java.util.concurrent.ConcurrentHashMap<String, IDiagnosticProducer>();
 	
 	private static synchronized void initProtocolAppender(String protocol,OpenspcoopAppender appenderProperties) throws ProtocolException{
 		if(MsgDiagnosticoOpenSPCoopProtocolAppender.mappingProtocolToAppenders.containsKey(protocol)==false){

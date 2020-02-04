@@ -24,7 +24,6 @@ package org.openspcoop2.pdd.core.integrazione;
 
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -132,21 +131,21 @@ public class UtilitiesIntegrazione {
 
 	private List<String> keywordsIntegrazione = null;
 	
-	private java.util.Properties keyValueIntegrazioneTrasporto = null;
-	private HashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
-	private HashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
+	private java.util.concurrent.ConcurrentHashMap<String,String> keyValueIntegrazioneTrasporto = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneTrasporto = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneTrasporto = null;
 	
-	private java.util.Properties keyValueIntegrazioneUrlBased = null;
-	private HashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
-	private HashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
+	private java.util.concurrent.ConcurrentHashMap<String,String> keyValueIntegrazioneUrlBased = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneUrlBased = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneUrlBased = null;
 	
-	private java.util.Properties keyValueIntegrazioneSoap = null;
-	private HashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
-	private HashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
+	private java.util.concurrent.ConcurrentHashMap<String,String> keyValueIntegrazioneSoap = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keySetEnabled_HeaderIntegrazioneSoap = null;
+	private java.util.concurrent.ConcurrentHashMap<String, Boolean> keyReadEnabled_HeaderIntegrazioneSoap = null;
 	
 	private OpenSPCoop2Properties openspcoopProperties = null;
-	private HashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new HashMap<String, ValidatoreXSD>();
-	private HashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new HashMap<String, ValidatoreXSD>();
+	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap11_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
+	private java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD> validatoreXSD_soap12_map = new java.util.concurrent.ConcurrentHashMap<String, ValidatoreXSD>();
 	
 	private boolean request;
 	
@@ -254,16 +253,16 @@ public class UtilitiesIntegrazione {
 		
 	}
 	
-	public void readTransportProperties(java.util.Properties prop,
+	public void readTransportProperties(Map<String, String> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
 								
 				// Ricerca tra l'header del trasporto
-				java.util.Enumeration<?> keys =  prop.propertyNames();
-				while(keys.hasMoreElements()){
-					String key = (String) keys.nextElement();
-
+				Iterator<String> keys = prop.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					
 					if(key!=null){
 						
 						for (String keywordIntegrazione : this.keywordsIntegrazione) {
@@ -273,52 +272,52 @@ public class UtilitiesIntegrazione {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(prop.getProperty(key));	
+										integrazione.getBusta().setTipoMittente(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setMittente(prop.getProperty(key));	
+										integrazione.getBusta().setMittente(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(prop.getProperty(key));	
+										integrazione.getBusta().setTipoDestinatario(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setDestinatario(prop.getProperty(key));	
+										integrazione.getBusta().setDestinatario(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(prop.getProperty(key));	
+										integrazione.getBusta().setTipoServizio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setServizio(prop.getProperty(key));	
+										integrazione.getBusta().setServizio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO.equals(keywordIntegrazione)) {
 										try{
-											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.getProperty(key)));
+											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.get(key)));
 										}catch(Exception e){
-											throw new Exception("Formato versione ["+prop.getProperty(key)+"] non corretto: "+e.getMessage(),e);
+											throw new Exception("Formato versione ["+prop.get(key)+"] non corretto: "+e.getMessage(),e);
 										}
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setAzione(prop.getProperty(key));	
+										integrazione.getBusta().setAzione(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setID(prop.getProperty(key));	
+										integrazione.getBusta().setID(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setRiferimentoMessaggio(prop.getProperty(key));	
+										integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setIdCollaborazione(prop.getProperty(key));	
+										integrazione.getBusta().setIdCollaborazione(prop.get(key));	
 									}
 									
 									// id e servizio applicativo
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setIdApplicativo(prop.getProperty(key));	
+										integrazione.setIdApplicativo(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setServizioApplicativo(prop.getProperty(key));	
+										integrazione.setServizioApplicativo(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
-										integrazione.setIdTransazione(prop.getProperty(key));	
+										integrazione.setIdTransazione(prop.get(key));	
 									}
 								}
 								break;
@@ -333,15 +332,15 @@ public class UtilitiesIntegrazione {
 		}
 	}
 	
-	public void readUrlProperties(java.util.Properties prop,
+	public void readUrlProperties(Map<String, String> prop,
 			HeaderIntegrazione integrazione) throws HeaderIntegrazioneException{
 		try{
 			if(prop!=null && integrazione!=null){
 			
 				// Ricerca tra le proprieta' dell'url
-				java.util.Enumeration<?> keys =  prop.propertyNames();
-				while(keys.hasMoreElements()){
-					String key = (String) keys.nextElement();
+				Iterator<String> keys = prop.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 
 					if(key!=null){
 						
@@ -352,52 +351,52 @@ public class UtilitiesIntegrazione {
 								
 									// Busta
 									if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoMittente(prop.getProperty(key));	
+										integrazione.getBusta().setTipoMittente(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_MITTENTE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setMittente(prop.getProperty(key));	
+										integrazione.getBusta().setMittente(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoDestinatario(prop.getProperty(key));	
+										integrazione.getBusta().setTipoDestinatario(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_DESTINATARIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setDestinatario(prop.getProperty(key));	
+										integrazione.getBusta().setDestinatario(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_TIPO_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setTipoServizio(prop.getProperty(key));	
+										integrazione.getBusta().setTipoServizio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setServizio(prop.getProperty(key));	
+										integrazione.getBusta().setServizio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_VERSIONE_SERVIZIO.equals(keywordIntegrazione)) {
 										try{
-											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.getProperty(key)));
+											integrazione.getBusta().setVersioneServizio(Integer.parseInt(prop.get(key)));
 										}catch(Exception e){
-											throw new Exception("Formato versione ["+prop.getProperty(key)+"] non corretto: "+e.getMessage(),e);
+											throw new Exception("Formato versione ["+prop.get(key)+"] non corretto: "+e.getMessage(),e);
 										}
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_AZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setAzione(prop.getProperty(key));	
+										integrazione.getBusta().setAzione(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setID(prop.getProperty(key));	
+										integrazione.getBusta().setID(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_RIFERIMENTO_MESSAGGIO.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setRiferimentoMessaggio(prop.getProperty(key));	
+										integrazione.getBusta().setRiferimentoMessaggio(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_COLLABORAZIONE.equals(keywordIntegrazione)) {
-										integrazione.getBusta().setIdCollaborazione(prop.getProperty(key));	
+										integrazione.getBusta().setIdCollaborazione(prop.get(key));	
 									}
 									
 									// id e servizio applicativo
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setIdApplicativo(prop.getProperty(key));	
+										integrazione.setIdApplicativo(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO.equals(keywordIntegrazione)) {
-										integrazione.setServizioApplicativo(prop.getProperty(key));	
+										integrazione.setServizioApplicativo(prop.get(key));	
 									}
 									else if(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE.equals(keywordIntegrazione)) {
-										integrazione.setIdTransazione(prop.getProperty(key));	
+										integrazione.setIdTransazione(prop.get(key));	
 									}
 								}
 								break;
@@ -415,7 +414,7 @@ public class UtilitiesIntegrazione {
 
 
 	public void setUrlProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,
+			Map<String, String> properties,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{
@@ -525,11 +524,11 @@ public class UtilitiesIntegrazione {
 		}
 	}
 	
-	public void setInfoProductTransportProperties(java.util.Properties properties) throws HeaderIntegrazioneException{
+	public void setInfoProductTransportProperties(Map<String, String> properties) throws HeaderIntegrazioneException{
 		setTransportProperties(null, properties, null);
 	}
 	public void setTransportProperties(HeaderIntegrazione integrazione,
-			java.util.Properties properties,
+			Map<String, String> properties,
 			Map<String, String> protocolInfos) throws HeaderIntegrazioneException{
 
 		try{

@@ -21,10 +21,10 @@ package org.openspcoop2.pdd.services.connector.messages;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
 import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.message.OpenSPCoop2Message;
@@ -72,8 +72,8 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 	private Date dataIngressoRichiesta;
 	
 	public DirectVMConnectorInMessage(OpenSPCoop2Message msg,IDService idModuloAsIDService, String idModulo,
-			Properties trasporto,
-			Properties formUrl,
+			Map<String, String> trasporto,
+			Map<String, String> formUrl,
 			IProtocolFactory<?> protocolFactory,
 			String function, String url,
 			Credenziali credenziali,
@@ -91,16 +91,20 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 			this.idModuloAsIDService = idModuloAsIDService;
 			this.idModulo = idModulo;
 			
-			Enumeration<?> enTrasporto = trasporto.keys();
-			while (enTrasporto.hasMoreElements()) {
-				String key = (String) enTrasporto.nextElement();
-				this.headers.put(key, trasporto.getProperty(key));
+			if(trasporto!=null && !trasporto.isEmpty()) {
+				Iterator<String> keys = trasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					this.headers.put(key, trasporto.get(key));
+				}
 			}
 			
-			Enumeration<?> enUrlBased = formUrl.keys();
-			while (enUrlBased.hasMoreElements()) {
-				String key = (String) enUrlBased.nextElement();
-				this.parameters.put(key, formUrl.getProperty(key));
+			if(formUrl!=null && !formUrl.isEmpty()) {
+				Iterator<String> keys = formUrl.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					this.parameters.put(key, formUrl.get(key));
+				}
 			}
 			
 			this.protocolFactory = protocolFactory;
@@ -122,11 +126,11 @@ public class DirectVMConnectorInMessage implements ConnectorInMessage {
 						
 			URLProtocolContext urlProtocolContext = new URLProtocolContext();
 			
-			Properties pFormBased = new Properties();
+			Map<String, String> pFormBased = new HashMap<String, String>();
 			pFormBased.putAll(this.parameters);
 			urlProtocolContext.setParametersFormBased(pFormBased);
 			
-			Properties pTrasporto = new Properties();
+			Map<String, String> pTrasporto = new HashMap<String, String>();
 			pTrasporto.putAll(this.headers);
 			urlProtocolContext.setParametersFormBased(pTrasporto);
 			

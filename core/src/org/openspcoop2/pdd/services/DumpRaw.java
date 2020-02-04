@@ -24,9 +24,9 @@ import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Enumeration;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -342,13 +342,13 @@ public class DumpRaw {
 //					this.bfRequest.append("\n");
 //				}
 				
-				Properties transportHeader = urlProtocolContext.getParametersTrasporto();
+				Map<String, String> transportHeader = urlProtocolContext.getParametersTrasporto();
 				if(transportHeader!=null && transportHeader.size()>0){
 					this.bfRequest.append("TransportHeaders: "+transportHeader.size()+"\n");
-					Enumeration<?> keys = transportHeader.keys();
-					while(keys.hasMoreElements()){
-						String key = (String) keys.nextElement();
-						Object value = transportHeader.getProperty(key);
+					Iterator<String> keys = transportHeader.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						Object value = transportHeader.get(key);
 						if(value instanceof String){
 							this.bfRequest.append("\t"+key+"="+value+"\n");
 						}
@@ -361,13 +361,13 @@ public class DumpRaw {
 					this.bfRequest.append("TransportHeaders: "+0+"\n");
 				}
 				
-				Properties parameterUrl = urlProtocolContext.getParametersFormBased();
+				Map<String, String> parameterUrl = urlProtocolContext.getParametersFormBased();
 				if(parameterUrl!=null && parameterUrl.size()>0){
 					this.bfRequest.append("URLParameters: "+parameterUrl.size()+"\n");
-					Enumeration<?> keys = parameterUrl.keys();
-					while(keys.hasMoreElements()){
-						String key = (String) keys.nextElement();
-						Object value = parameterUrl.getProperty(key);
+					Iterator<String> keys = parameterUrl.keySet().iterator();
+					while (keys.hasNext()) {
+						String key = (String) keys.next();
+						Object value = parameterUrl.get(key);
 						if(value instanceof String){
 							this.bfRequest.append("\t"+key+"="+value+"\n");
 						}
@@ -438,7 +438,7 @@ public class DumpRaw {
 		}
 	}
 	
-	public void serializeResponse(String rawMessage,String parsingError,Properties transportHeader,Integer contentLength, String contentType, Integer status) {
+	public void serializeResponse(String rawMessage,String parsingError,Map<String, String> transportHeader,Integer contentLength, String contentType, Integer status) {
 		
 		this.bfResponse.append("------ Response ("+this.idTransaction+") ------\n");
 		
@@ -477,10 +477,10 @@ public class DumpRaw {
 		
 		if(transportHeader!=null && transportHeader.size()>0){
 			this.bfResponse.append("TransportHeaders: "+transportHeader.size()+"\n");
-			Enumeration<?> keys = transportHeader.keys();
-			while(keys.hasMoreElements()){
-				String key = (String) keys.nextElement();
-				Object value = transportHeader.getProperty(key);
+			Iterator<String> keys = transportHeader.keySet().iterator();
+			while (keys.hasNext()) {
+				String key = (String) keys.next();
+				Object value = transportHeader.get(key);
 				if(value instanceof String){
 					this.bfResponse.append("\t"+key+"="+value+"\n");
 				}

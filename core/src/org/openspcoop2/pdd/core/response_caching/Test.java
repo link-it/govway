@@ -21,7 +21,7 @@
 package org.openspcoop2.pdd.core.response_caching;
 
 import java.io.ByteArrayInputStream;
-import java.util.Properties;
+import java.util.HashMap;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
@@ -61,11 +61,11 @@ public class Test {
 		protocolContext.setInterfaceName("nomePortaDelegataXXXX");
 		protocolContext.setFunction("PD");
 		protocolContext.setRequestURI("http://govway/in/GW_serv/RGT");
-		protocolContext.setParametersFormBased(new Properties());
+		protocolContext.setParametersFormBased(new HashMap<String, String>());
 		protocolContext.getParametersFormBased().put("p1", "v1");
 		protocolContext.getParametersFormBased().put("p2", "v2");
 		
-		protocolContext.setParametersTrasporto(new Properties());
+		protocolContext.setParametersTrasporto(new HashMap<String, String>());
 		protocolContext.getParametersTrasporto().put("h1", "v1");
 		protocolContext.getParametersTrasporto().put("h2", "v2");
 		protocolContext.getParametersTrasporto().put("h3", "v3");

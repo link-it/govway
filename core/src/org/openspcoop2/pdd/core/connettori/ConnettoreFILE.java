@@ -29,7 +29,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -247,9 +249,9 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			
 			
 			// Collezione header di trasporto per dump
-			Properties propertiesTrasportoDebug = null;
+			Map<String, String> propertiesTrasportoDebug = null;
 			if(this.debug) {
-				propertiesTrasportoDebug = new Properties();
+				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 			
 			
@@ -299,9 +301,9 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 			if(this.debug)
 				this.logger.debug("Impostazione header di trasporto...");
 			if(this.propertiesTrasporto != null){
-				Enumeration<?> enumProperties = this.propertiesTrasporto.keys();
-				while( enumProperties.hasMoreElements() ) {
-					String key = (String) enumProperties.nextElement();
+				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = (String) this.propertiesTrasporto.get(key);
 					setRequestHeader(key, value, this.logger, propertiesTrasportoDebug);
 				}
@@ -407,10 +409,22 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				// InputFile Header
 				if(this.inputFileHeaders!=null){
 					this.checkInputFile(this.inputFileHeaders, "Response-Headers");
-					this.propertiesTrasportoRisposta = new Properties();
+					this.propertiesTrasportoRisposta = new HashMap<String, String>();
 					FileInputStream fin = new FileInputStream(this.inputFileHeaders);
 					try{
-						this.propertiesTrasportoRisposta.load(fin);
+						Properties pTmp = new Properties();
+						pTmp.load(fin);
+						if(pTmp.size()>0) {
+							Enumeration<Object> en = pTmp.keys();
+							while (en.hasMoreElements()) {
+								Object oKey = (Object) en.nextElement();
+								if(oKey instanceof String) {
+									String key = (String) oKey;
+									this.propertiesTrasportoRisposta.put(key, pTmp.getProperty(key));				
+								}
+							}
+							
+						}
 					}
 					catch(Exception e){
 						throw new Exception("Input File (Response-Headers) ["+this.inputFileHeaders.getAbsolutePath()+"] with wrong format: "+e.getMessage(),e);
@@ -434,7 +448,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.tipoRisposta==null || "".equals(this.tipoRisposta)) {
 					this.tipoRisposta = contentTypeRichiesta;
 					if(this.propertiesTrasportoRisposta==null) {
-						this.propertiesTrasportoRisposta = new Properties();
+						this.propertiesTrasportoRisposta = new HashMap<String, String>();
 					}
 					this.propertiesTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, this.tipoRisposta);
 				}
@@ -444,10 +458,10 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
 				if(this.isSoap){
 					this.imbustamentoConAttachment = false;
 					if(this.propertiesTrasportoRisposta!=null && this.propertiesTrasportoRisposta.size()>0){
-						if("true".equals(this.propertiesTrasportoRisposta.getProperty(this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
+						if("true".equals(this.propertiesTrasportoRisposta.get(this.openspcoopProperties.getTunnelSOAPKeyWord_headerTrasporto()))){
 							this.imbustamentoConAttachment = true;
 						}
-						this.mimeTypeAttachment = this.propertiesTrasportoRisposta.getProperty(this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
+						this.mimeTypeAttachment = this.propertiesTrasportoRisposta.get(this.openspcoopProperties.getTunnelSOAPKeyWordMimeType_headerTrasporto());
 						if(this.mimeTypeAttachment==null)
 							this.mimeTypeAttachment = HttpConstants.CONTENT_TYPE_OPENSPCOOP2_TUNNEL_SOAP;
 						//System.out.println("IMB["+imbustamentoConAttachment+"] MIME["+mimeTypeAttachment+"]");
@@ -575,7 +589,7 @@ public class ConnettoreFILE extends ConnettoreBaseWithResponse {
     }
 
 
-    private void setRequestHeader(String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
+    private void setRequestHeader(String key, String value, ConnettoreLogger logger, Map<String, String> propertiesTrasportoDebug) throws Exception {
     	
     	if(this.debug)
 			this.logger.info("Set proprietà trasporto ["+key+"]=["+value+"]",false);

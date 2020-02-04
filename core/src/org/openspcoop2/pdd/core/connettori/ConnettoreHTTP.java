@@ -32,11 +32,10 @@ import java.net.PasswordAuthentication;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -387,9 +386,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 
 			
 			// Collezione header di trasporto per dump
-			Properties propertiesTrasportoDebug = null;
+			Map<String, String> propertiesTrasportoDebug = null;
 			if(this.debug) {
-				propertiesTrasportoDebug = new Properties();
+				propertiesTrasportoDebug = new HashMap<String, String>();
 			}
 
 			
@@ -646,9 +645,9 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			}
 			this.forwardHttpRequestHeader();
 			if(this.propertiesTrasporto != null){
-				Enumeration<?> enumProperties = this.propertiesTrasporto.keys();
-				while( enumProperties.hasMoreElements() ) {
-					String key = (String) enumProperties.nextElement();
+				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
 					String value = (String) this.propertiesTrasporto.get(key);
 					if(this.debug)
 						this.logger.info("Set Transport Header ["+key+"]=["+value+"]",false);
@@ -734,7 +733,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
 			Map<String, List<String>> mapHeaderHttpResponse = this.httpConn.getHeaderFields();
 			if(mapHeaderHttpResponse!=null && mapHeaderHttpResponse.size()>0){
 				if(this.propertiesTrasportoRisposta==null){
-					this.propertiesTrasportoRisposta = new Properties();
+					this.propertiesTrasportoRisposta = new HashMap<String, String>();
 				}
 				Iterator<String> itHttpResponse = mapHeaderHttpResponse.keySet().iterator();
 				while(itHttpResponse.hasNext()){
@@ -994,7 +993,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     			this.requestMsg.getTransportRequestContext().removeParameterFormBased(nv.getName()); // Fix: senno sovrascriveva il vecchio token
     		}
     		if(this.propertiesUrlBased==null) {
-    			this.propertiesUrlBased = new Properties();
+    			this.propertiesUrlBased = new HashMap<String, String>();
     		}
     		this.propertiesUrlBased.put(nv.getName(), nv.getValue());
     	}
@@ -1005,7 +1004,7 @@ public class ConnettoreHTTP extends ConnettoreBaseHTTP {
     }
     
 
-    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Properties propertiesTrasportoDebug) throws Exception {
+    private void setRequestHeader(boolean validazioneHeaderRFC2047, String key, String value, ConnettoreLogger logger, Map<String, String> propertiesTrasportoDebug) throws Exception {
     	
     	if(validazioneHeaderRFC2047){
     		try{
