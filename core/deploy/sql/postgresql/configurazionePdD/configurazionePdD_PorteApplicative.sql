@@ -129,6 +129,8 @@ CREATE TABLE porte_applicative
 	CONSTRAINT pk_porte_applicative PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_porte_applicative_1 ON porte_applicative (id_soggetto);
 
 
 
@@ -336,6 +338,8 @@ CREATE TABLE pa_correlazione
 	CONSTRAINT pk_pa_correlazione PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CORR_REQ ON pa_correlazione (id_porta);
 
 
 
@@ -358,6 +362,8 @@ CREATE TABLE pa_correlazione_risposta
 	CONSTRAINT pk_pa_correlazione_risposta PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CORR_RES ON pa_correlazione_risposta (id_porta);
 
 
 
@@ -471,6 +477,8 @@ CREATE TABLE pa_cache_regole
 	CONSTRAINT pk_pa_cache_regole PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CACHE ON pa_cache_regole (id_porta);
 
 
 

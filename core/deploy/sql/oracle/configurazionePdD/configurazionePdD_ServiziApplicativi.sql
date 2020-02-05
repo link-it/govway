@@ -63,6 +63,8 @@ CREATE TABLE servizi_applicativi
 	CONSTRAINT pk_servizi_applicativi PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_servizi_applicativi_1 ON servizi_applicativi (id_soggetto);
 
 ALTER TABLE servizi_applicativi MODIFY sbustamentorisp DEFAULT 0;
 ALTER TABLE servizi_applicativi MODIFY sbustamento_protocol_info_risp DEFAULT 1;

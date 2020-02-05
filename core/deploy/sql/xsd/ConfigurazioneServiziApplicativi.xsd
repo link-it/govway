@@ -56,6 +56,9 @@
                             <linkit:sql-table-unique-field name="nome"/>
                             <linkit:sql-table-unique-field name="id_soggetto"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

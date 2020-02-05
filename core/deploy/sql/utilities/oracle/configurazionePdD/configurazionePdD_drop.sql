@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX index_generic_property_1;
 DROP TRIGGER trg_generic_property;
 DROP TRIGGER trg_generic_properties;
 DROP TRIGGER trg_pdd_sys_props;

@@ -140,6 +140,8 @@ CREATE TABLE porte_delegate
 	CONSTRAINT pk_porte_delegate PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto);
 
 
 
@@ -349,6 +351,8 @@ CREATE TABLE pd_correlazione
 	CONSTRAINT pk_pd_correlazione PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CORR_REQ ON pd_correlazione (id_porta);
 
 
 
@@ -371,6 +375,8 @@ CREATE TABLE pd_correlazione_risposta
 	CONSTRAINT pk_pd_correlazione_risposta PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CORR_RES ON pd_correlazione_risposta (id_porta);
 
 
 
@@ -444,6 +450,8 @@ CREATE TABLE pd_cache_regole
 	CONSTRAINT pk_pd_cache_regole PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CACHE ON pd_cache_regole (id_porta);
 
 
 

@@ -13,7 +13,10 @@
 -- DROP INDEX idx_pa_trasf_hdr_resp_1 ON pa_transform_risp_hdr ;
 -- DROP INDEX idx_pa_trasf_url_1 ON pa_transform_url ;
 -- DROP INDEX idx_pa_trasf_hdr_1 ON pa_transform_hdr ;
+-- DROP INDEX INDEX_PA_CACHE ON pa_cache_regole ;
 -- DROP INDEX INDEX_PA_SA_AUTH ON porte_applicative_sa_auth ;
+-- DROP INDEX INDEX_PA_CORR_RES ON pa_correlazione_risposta ;
+-- DROP INDEX INDEX_PA_CORR_REQ ON pa_correlazione ;
 -- DROP INDEX INDEX_PA_WSSRES ON pa_security_response ;
 -- DROP INDEX INDEX_PA_WSSREQ ON pa_security_request ;
 -- DROP INDEX INDEX_PA_MTOMTRES ON pa_mtom_response ;
@@ -23,6 +26,7 @@
 -- DROP INDEX INDEX_PA_AUTHZ_PROP ON pa_authz_properties ;
 -- DROP INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
+-- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
 DROP TABLE pa_transform_risp_hdr;
 DROP TABLE pa_transform_risp;
 DROP TABLE pa_transform_url;

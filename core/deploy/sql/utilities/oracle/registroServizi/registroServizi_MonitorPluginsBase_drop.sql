@@ -1,5 +1,7 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
 -- DROP INDEX idx_conf_servizi_1;
+-- DROP INDEX idx_plug_filtro_com_1;
+-- DROP INDEX idx_plug_ser_com_1;
 DROP TRIGGER trg_plugins_conf_filtri;
 DROP TRIGGER trg_plugins_conf_azioni;
 DROP TRIGGER trg_plugins_conf_servizi;

@@ -189,6 +189,27 @@ public class Cache {
 		}
 	}
 	
+	public void enableDebugSystemOut() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		try{
+			this.cache.getCacheControl().setDebugSystemOut(true);
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	public boolean isEnableDebugSystemOut() throws UtilsException {
+		if(this.cache==null) {
+			throw new UtilsException("Cache disabled");
+		}
+		try{
+			return this.cache.getCacheControl().isDebugSystemOut();
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
 
 	public int getCacheSize() {
 		return this.cache.getCacheAttributes().getMaxObjects();

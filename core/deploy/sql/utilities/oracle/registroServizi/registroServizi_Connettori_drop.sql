@@ -1,4 +1,5 @@
 -- Gli indici vengono eliminati automaticamente una volta eliminata la tabella
+-- DROP INDEX idx_conn_custom_1;
 DROP TRIGGER trg_connettori_properties;
 DROP TRIGGER trg_connettori_custom;
 DROP TRIGGER trg_connettori;

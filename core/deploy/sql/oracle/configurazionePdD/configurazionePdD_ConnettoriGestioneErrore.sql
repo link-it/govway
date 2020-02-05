@@ -47,6 +47,8 @@ CREATE TABLE gestione_errore_trasporto
 	CONSTRAINT pk_gestione_errore_trasporto PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_gest_err_trasporto_1 ON gestione_errore_trasporto (id_gestione_errore);
 CREATE TRIGGER trg_gestione_errore_trasporto
 BEFORE
 insert on gestione_errore_trasporto
@@ -79,6 +81,8 @@ CREATE TABLE gestione_errore_soap
 	CONSTRAINT pk_gestione_errore_soap PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_gest_err_soap_1 ON gestione_errore_soap (id_gestione_errore);
 CREATE TRIGGER trg_gestione_errore_soap
 BEFORE
 insert on gestione_errore_soap

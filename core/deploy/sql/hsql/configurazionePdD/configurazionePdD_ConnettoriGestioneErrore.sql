@@ -38,6 +38,8 @@ CREATE TABLE gestione_errore_trasporto
 	CONSTRAINT pk_gestione_errore_trasporto PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_gest_err_trasporto_1 ON gestione_errore_trasporto (id_gestione_errore);
 CREATE TABLE gestione_errore_trasporto_init_seq (id BIGINT);
 INSERT INTO gestione_errore_trasporto_init_seq VALUES (NEXT VALUE FOR seq_gestione_errore_trasporto);
 
@@ -61,6 +63,8 @@ CREATE TABLE gestione_errore_soap
 	CONSTRAINT pk_gestione_errore_soap PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_gest_err_soap_1 ON gestione_errore_soap (id_gestione_errore);
 CREATE TABLE gestione_errore_soap_init_seq (id BIGINT);
 INSERT INTO gestione_errore_soap_init_seq VALUES (NEXT VALUE FOR seq_gestione_errore_soap);
 

@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/db2/registroServizi/2020-02-05-patch.sql

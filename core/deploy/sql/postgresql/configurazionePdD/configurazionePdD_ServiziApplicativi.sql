@@ -63,6 +63,8 @@ CREATE TABLE servizi_applicativi
 	CONSTRAINT pk_servizi_applicativi PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_servizi_applicativi_1 ON servizi_applicativi (id_soggetto);
 
 
 

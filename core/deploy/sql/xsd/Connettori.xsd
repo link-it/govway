@@ -389,7 +389,8 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="connettori_custom"
                                               comment="Elenco di proprietà nome/valore che definiscono un connettore personalizzato">
-                       <linkit:sql-table-foreign-key
+                        <linkit:sql-table-constraint index="idx_conn_custom"/>
+                        <linkit:sql-table-foreign-key
                            reference-object-name="connettori"
                            reference-object-type="connettori"
                            reference-primary-key="true">
@@ -400,6 +401,9 @@
                             <linkit:sql-table-unique-field name="name"/>
                             <linkit:sql-table-unique-field name="value"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_connettore"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

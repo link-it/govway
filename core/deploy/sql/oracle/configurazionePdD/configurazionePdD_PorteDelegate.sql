@@ -140,6 +140,8 @@ CREATE TABLE porte_delegate
 	CONSTRAINT pk_porte_delegate PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_porte_delegate_1 ON porte_delegate (id_soggetto);
 
 ALTER TABLE porte_delegate MODIFY versione_servizio DEFAULT 1;
 ALTER TABLE porte_delegate MODIFY ora_registrazione DEFAULT CURRENT_TIMESTAMP;
@@ -463,6 +465,8 @@ CREATE TABLE pd_correlazione
 	CONSTRAINT pk_pd_correlazione PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CORR_REQ ON pd_correlazione (id_porta);
 CREATE TRIGGER trg_pd_correlazione
 BEFORE
 insert on pd_correlazione
@@ -496,6 +500,8 @@ CREATE TABLE pd_correlazione_risposta
 	CONSTRAINT pk_pd_correlazione_risposta PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CORR_RES ON pd_correlazione_risposta (id_porta);
 CREATE TRIGGER trg_pd_correlazione_risposta
 BEFORE
 insert on pd_correlazione_risposta
@@ -613,6 +619,8 @@ CREATE TABLE pd_cache_regole
 	CONSTRAINT pk_pd_cache_regole PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PD_CACHE ON pd_cache_regole (id_porta);
 
 ALTER TABLE pd_cache_regole MODIFY fault DEFAULT 0;
 

@@ -366,6 +366,7 @@ CREATE TABLE accordi_coop_partecipanti
 
 -- index
 CREATE INDEX INDEX_AC_COOP_PAR ON accordi_coop_partecipanti (id_accordo_cooperazione);
+CREATE INDEX INDEX_AC_SOG ON accordi_coop_partecipanti (id_soggetto);
 
 
 
@@ -407,6 +408,8 @@ CREATE TABLE servizi
 
 -- index
 CREATE UNIQUE INDEX index_servizi_1 ON servizi (id_soggetto,tipo_servizio,nome_servizio,versione_servizio);
+CREATE INDEX INDEX_SERV_ACC ON servizi (id_accordo);
+CREATE INDEX INDEX_SERV_SOG ON servizi (id_soggetto);
 
 
 
@@ -470,6 +473,7 @@ CREATE TABLE servizi_fruitori
 
 -- index
 CREATE UNIQUE INDEX index_servizi_fruitori_1 ON servizi_fruitori (id_servizio,id_soggetto);
+CREATE INDEX INDEX_SERV_FRU_SOG ON servizi_fruitori (id_soggetto);
 
 
 
@@ -545,5 +549,6 @@ CREATE TABLE acc_serv_componenti
 
 -- index
 CREATE INDEX INDEX_AC_SC_SC ON acc_serv_componenti (id_servizio_composto);
+CREATE INDEX INDEX_AC_SC_SERV ON acc_serv_componenti (id_servizio_componente);
 
 

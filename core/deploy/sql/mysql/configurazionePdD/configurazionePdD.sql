@@ -517,5 +517,7 @@ CREATE TABLE generic_property
 	CONSTRAINT pk_generic_property PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX index_generic_property_1 ON generic_property (id_props);
 
 

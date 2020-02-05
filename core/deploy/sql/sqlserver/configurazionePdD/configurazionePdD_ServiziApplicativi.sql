@@ -63,6 +63,7 @@ CREATE TABLE servizi_applicativi
 
 -- index
 CREATE UNIQUE INDEX index_servizi_applicativi_1 ON servizi_applicativi (nome,id_soggetto);
+CREATE INDEX index_servizi_applicativi_2 ON servizi_applicativi (id_soggetto);
 
 
 

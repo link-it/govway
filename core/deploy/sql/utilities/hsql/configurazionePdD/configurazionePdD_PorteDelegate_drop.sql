@@ -11,6 +11,9 @@
 -- DROP INDEX idx_pd_trasf_hdr_resp_1;
 -- DROP INDEX idx_pd_trasf_url_1;
 -- DROP INDEX idx_pd_trasf_hdr_1;
+-- DROP INDEX INDEX_PD_CACHE;
+-- DROP INDEX INDEX_PD_CORR_RES;
+-- DROP INDEX INDEX_PD_CORR_REQ;
 -- DROP INDEX INDEX_PD_WSSRES;
 -- DROP INDEX INDEX_PD_WSSREQ;
 -- DROP INDEX INDEX_PD_MTOMTRES;
@@ -20,6 +23,7 @@
 -- DROP INDEX INDEX_PD_AUTHZ_PROP;
 -- DROP INDEX INDEX_PD_AUTH_PROP;
 -- DROP INDEX INDEX_PD_SA;
+-- DROP INDEX index_porte_delegate_2;
 DROP TABLE pd_transform_risp_hdr_init_seq;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp_init_seq;

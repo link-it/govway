@@ -130,6 +130,7 @@ CREATE TABLE porte_applicative
 
 -- index
 CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (nome_porta);
+CREATE INDEX index_porte_applicative_2 ON porte_applicative (id_soggetto);
 
 
 
@@ -317,6 +318,8 @@ CREATE TABLE pa_correlazione
 	CONSTRAINT pk_pa_correlazione PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX INDEX_PA_CORR_REQ ON pa_correlazione (id_porta);
 
 
 
@@ -337,6 +340,8 @@ CREATE TABLE pa_correlazione_risposta
 	CONSTRAINT pk_pa_correlazione_risposta PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX INDEX_PA_CORR_RES ON pa_correlazione_risposta (id_porta);
 
 
 
@@ -446,6 +451,8 @@ CREATE TABLE pa_cache_regole
 	CONSTRAINT pk_pa_cache_regole PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX INDEX_PA_CACHE ON pa_cache_regole (id_porta);
 
 
 

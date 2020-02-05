@@ -555,5 +555,7 @@ CREATE TABLE generic_property
 	CONSTRAINT pk_generic_property PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_generic_property_1 ON generic_property (id_props);
 
 

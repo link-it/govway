@@ -3,6 +3,7 @@
 -- DROP INDEX index_pdd_sys_props_1 ON pdd_sys_props ;
 -- DROP INDEX index_servizi_pdd_1 ON servizi_pdd ;
 -- DROP INDEX index_config_url_regole_1 ON config_url_regole ;
+-- DROP INDEX index_generic_property_1 ON generic_property ;
 DROP TABLE generic_property;
 DROP TABLE generic_properties;
 DROP TABLE pdd_sys_props;

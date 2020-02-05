@@ -613,6 +613,8 @@ CREATE TABLE generic_property
 	CONSTRAINT pk_generic_property PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX index_generic_property_1 ON generic_property (id_props);
 CREATE TABLE generic_property_init_seq (id BIGINT);
 INSERT INTO generic_property_init_seq VALUES (NEXT VALUE FOR seq_generic_property);
 

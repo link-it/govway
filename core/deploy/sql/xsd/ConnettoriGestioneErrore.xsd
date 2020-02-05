@@ -97,12 +97,16 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="gestione_errore_trasporto"
                                                comment="Contiene la personalizzazione della gestione dell'errore a seconda del codice di trasporto ottenuto">
-                       <linkit:sql-table-foreign-key
+                        <linkit:sql-table-constraint index="idx_gest_err_trasporto"/>
+                        <linkit:sql-table-foreign-key
                            reference-object-name="gestione-errore"
                            reference-object-type="gestione-errore"
                            reference-primary-key="true">
                                    <linkit:sql-table-fk-field name="id_gestione_errore"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_gestione_errore"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -181,12 +185,16 @@
                     <linkit:interface crud="false" id="xsd:string"/>
                     <linkit:sql-table-mapping name="gestione_errore_soap"
                                               comment="Contiene la personalizzazione della gestione dell'errore in base al tipo di SOAPFault ricevuto come risposta">
+                        <linkit:sql-table-constraint index="idx_gest_err_soap"/>
                         <linkit:sql-table-foreign-key
                             reference-object-name="gestione-errore"
                             reference-object-type="gestione-errore"
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_gestione_errore"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_gestione_errore"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

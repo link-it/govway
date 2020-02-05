@@ -70,6 +70,9 @@
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome_porta"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1506,6 +1509,9 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_CORR_REQ">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1592,6 +1598,9 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_CORR_RES">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1962,6 +1971,9 @@ Il tipo indicato deve essere stato registrato nel file 'govway.classRegistry.pro
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PA_CACHE">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

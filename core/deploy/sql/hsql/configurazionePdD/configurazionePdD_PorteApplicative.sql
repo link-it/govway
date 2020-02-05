@@ -131,6 +131,7 @@ CREATE TABLE porte_applicative
 
 -- index
 CREATE UNIQUE INDEX index_porte_applicative_1 ON porte_applicative (nome_porta);
+CREATE INDEX index_porte_applicative_2 ON porte_applicative (id_soggetto);
 
 ALTER TABLE porte_applicative ALTER COLUMN versione_servizio SET DEFAULT 1;
 ALTER TABLE porte_applicative ALTER COLUMN ora_registrazione SET DEFAULT CURRENT_TIMESTAMP;
@@ -362,6 +363,8 @@ CREATE TABLE pa_correlazione
 	CONSTRAINT pk_pa_correlazione PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CORR_REQ ON pa_correlazione (id_porta);
 CREATE TABLE pa_correlazione_init_seq (id BIGINT);
 INSERT INTO pa_correlazione_init_seq VALUES (NEXT VALUE FOR seq_pa_correlazione);
 
@@ -386,6 +389,8 @@ CREATE TABLE pa_correlazione_risposta
 	CONSTRAINT pk_pa_correlazione_risposta PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CORR_RES ON pa_correlazione_risposta (id_porta);
 CREATE TABLE pa_correlazione_risposta_init_seq (id BIGINT);
 INSERT INTO pa_correlazione_risposta_init_seq VALUES (NEXT VALUE FOR seq_pa_correlazione_risposta);
 
@@ -519,6 +524,8 @@ CREATE TABLE pa_cache_regole
 	CONSTRAINT pk_pa_cache_regole PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX INDEX_PA_CACHE ON pa_cache_regole (id_porta);
 
 ALTER TABLE pa_cache_regole ALTER COLUMN fault SET DEFAULT 0;
 

@@ -88,6 +88,8 @@ CREATE TABLE connettori_custom
 	CONSTRAINT pk_connettori_custom PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_conn_custom_1 ON connettori_custom (id_connettore);
 CREATE TABLE connettori_custom_init_seq (id BIGINT);
 INSERT INTO connettori_custom_init_seq VALUES (NEXT VALUE FOR seq_connettori_custom);
 

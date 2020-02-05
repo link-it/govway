@@ -67,6 +67,9 @@
                         <linkit:sql-table-unique create-index="true">
                             <linkit:sql-table-unique-field name="nome_porta"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1546,6 +1549,9 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PD_CORR_REQ">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1644,6 +1650,9 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PD_CORR_RES">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -1892,6 +1901,9 @@ Indicazione se prima di procedere con la validazione tramite schemi xsd si deve 
                             reference-primary-key="true">
                             <linkit:sql-table-fk-field name="id_porta"/>
                         </linkit:sql-table-foreign-key>
+                        <linkit:sql-table-index name="INDEX_PD_CACHE">
+                            <linkit:sql-table-index-field name="id_porta"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

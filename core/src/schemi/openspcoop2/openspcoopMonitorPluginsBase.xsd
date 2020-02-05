@@ -193,9 +193,9 @@
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:sql-table-mapping name="plugins_servizi_comp" comment="Indica i servizi per cui i plugins sono compatibili">
 						<linkit:sql-table-constraint unique="uniq_plug_ser_com" index="idx_plug_ser_com"/>
-						<!-- <linkit:sql-table-index>
+						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_plugin"/>
-							</linkit:sql-table-index> -->
+						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>
@@ -274,9 +274,9 @@
 				<linkit:generator xmlns:linkit="http://www.link.it/project_generator">
 					<linkit:sql-table-mapping name="plugins_filtro_comp" comment="Indica i criteri di filtro che definiscono la compatibilità del plugin">
 						<linkit:sql-table-constraint unique="uniq_plug_filtro_com" index="idx_plug_filtro_com"/>
-						<!-- <linkit:sql-table-index>
+						<linkit:sql-table-index>
 							<linkit:sql-table-index-column name="id_plugin"/>
-							</linkit:sql-table-index> -->
+						</linkit:sql-table-index>
 					</linkit:sql-table-mapping>
 				</linkit:generator>
 			</xsd:appinfo>

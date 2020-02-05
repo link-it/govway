@@ -57,6 +57,8 @@ CREATE TABLE plugins_servizi_comp
 	CONSTRAINT pk_plugins_servizi_comp PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_plug_ser_com_1 ON plugins_servizi_comp (id_plugin);
 CREATE TRIGGER trg_plugins_servizi_comp
 BEFORE
 insert on plugins_servizi_comp
@@ -122,6 +124,8 @@ CREATE TABLE plugins_filtro_comp
 	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_plug_filtro_com_1 ON plugins_filtro_comp (id_plugin);
 
 ALTER TABLE plugins_filtro_comp MODIFY versione_servizio DEFAULT 1;
 

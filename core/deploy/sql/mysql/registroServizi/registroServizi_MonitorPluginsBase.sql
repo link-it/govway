@@ -45,6 +45,8 @@ CREATE TABLE plugins_servizi_comp
 	CONSTRAINT pk_plugins_servizi_comp PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX idx_plug_ser_com_1 ON plugins_servizi_comp (id_plugin);
 
 
 
@@ -86,6 +88,8 @@ CREATE TABLE plugins_filtro_comp
 	CONSTRAINT pk_plugins_filtro_comp PRIMARY KEY (id)
 )ENGINE INNODB CHARACTER SET latin1 COLLATE latin1_general_cs ROW_FORMAT DYNAMIC;
 
+-- index
+CREATE INDEX idx_plug_filtro_com_1 ON plugins_filtro_comp (id_plugin);
 
 
 

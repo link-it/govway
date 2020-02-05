@@ -5,6 +5,8 @@
 -- DROP INDEX index_plugins_2 ON plugins ;
 -- DROP INDEX index_plugins_1 ON plugins ;
 -- DROP INDEX idx_conf_servizi_1 ON plugins_conf_servizi ;
+-- DROP INDEX idx_plug_filtro_com_1 ON plugins_filtro_comp ;
+-- DROP INDEX idx_plug_ser_com_1 ON plugins_servizi_comp ;
 DROP TABLE plugins_conf_filtri;
 DROP TABLE plugins_conf_azioni;
 DROP TABLE plugins_conf_servizi;

@@ -1988,6 +1988,9 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         <linkit:sql-table-index name="INDEX_AC_COOP_PAR">
                             <linkit:sql-table-index-field name="id_accordo_cooperazione"/>
                         </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_AC_SOG">
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -2050,6 +2053,12 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                             <linkit:sql-table-unique-field name="nome_servizio"/>
                             <linkit:sql-table-unique-field name="versione_servizio"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_SERV_ACC">
+                            <linkit:sql-table-index-field name="id_accordo"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_SERV_SOG">
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -2387,6 +2396,9 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                             <linkit:sql-table-unique-field name="id_servizio"/>
                             <linkit:sql-table-unique-field name="id_soggetto"/>
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index name="INDEX_SERV_FRU_SOG">
+                            <linkit:sql-table-index-field name="id_soggetto"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>
@@ -2668,6 +2680,9 @@ Se la tipologia dell'accordo è rest (colonna service_binding='rest') i processo
                         </linkit:sql-table-foreign-key>
                         <linkit:sql-table-index name="INDEX_AC_SC_SC">
                             <linkit:sql-table-index-field name="id_servizio_composto"/>
+                        </linkit:sql-table-index>
+                        <linkit:sql-table-index name="INDEX_AC_SC_SERV">
+                            <linkit:sql-table-index-field name="id_servizio_componente"/>
                         </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>

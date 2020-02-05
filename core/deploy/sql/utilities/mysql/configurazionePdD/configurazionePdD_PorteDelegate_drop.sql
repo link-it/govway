@@ -11,6 +11,9 @@
 -- DROP INDEX idx_pd_trasf_hdr_resp_1 ON pd_transform_risp_hdr ;
 -- DROP INDEX idx_pd_trasf_url_1 ON pd_transform_url ;
 -- DROP INDEX idx_pd_trasf_hdr_1 ON pd_transform_hdr ;
+-- DROP INDEX INDEX_PD_CACHE ON pd_cache_regole ;
+-- DROP INDEX INDEX_PD_CORR_RES ON pd_correlazione_risposta ;
+-- DROP INDEX INDEX_PD_CORR_REQ ON pd_correlazione ;
 -- DROP INDEX INDEX_PD_WSSRES ON pd_security_response ;
 -- DROP INDEX INDEX_PD_WSSREQ ON pd_security_request ;
 -- DROP INDEX INDEX_PD_MTOMTRES ON pd_mtom_response ;
@@ -20,6 +23,7 @@
 -- DROP INDEX INDEX_PD_AUTHZ_PROP ON pd_authz_properties ;
 -- DROP INDEX INDEX_PD_AUTH_PROP ON pd_auth_properties ;
 -- DROP INDEX INDEX_PD_SA ON porte_delegate_sa ;
+-- DROP INDEX index_porte_delegate_2 ON porte_delegate ;
 DROP TABLE pd_transform_risp_hdr;
 DROP TABLE pd_transform_risp;
 DROP TABLE pd_transform_url;

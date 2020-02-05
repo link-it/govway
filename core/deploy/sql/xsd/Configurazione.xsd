@@ -2535,6 +2535,9 @@ FOREIGN KEY (id_ge_cooperazione) REFERENCES gestione_errore(id) Nota: indica un 
                             <linkit:sql-table-unique-field name="nome"/>
                             <!-- <linkit:sql-table-unique-field name="valore"/> (Se si re-inserisci occhio alla dimensione dello unique totale che deve essere <=3000 per mysql) -->
                         </linkit:sql-table-unique>
+                        <linkit:sql-table-index>
+                            <linkit:sql-table-index-field name="id_props"/>
+                        </linkit:sql-table-index>
                     </linkit:sql-table-mapping>
                 </linkit:generator>
             </xsd:appinfo>

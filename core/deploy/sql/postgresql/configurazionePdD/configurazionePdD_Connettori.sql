@@ -79,6 +79,8 @@ CREATE TABLE connettori_custom
 	CONSTRAINT pk_connettori_custom PRIMARY KEY (id)
 );
 
+-- index
+CREATE INDEX idx_conn_custom_1 ON connettori_custom (id_connettore);
 
 
 

@@ -14,10 +14,15 @@
 -- DROP INDEX index_accordi_azioni_1 ON accordi_azioni ;
 -- DROP INDEX index_accordi_1 ON accordi ;
 -- DROP INDEX index_documenti_1 ON documenti ;
+-- DROP INDEX INDEX_AC_SC_SERV ON acc_serv_componenti ;
 -- DROP INDEX INDEX_AC_SC_SC ON acc_serv_componenti ;
 -- DROP INDEX INDEX_AC_SC ON acc_serv_composti ;
 -- DROP INDEX index_serv_fru_azioni_1 ON servizi_fruitori_azioni ;
+-- DROP INDEX INDEX_SERV_FRU_SOG ON servizi_fruitori ;
 -- DROP INDEX index_servizi_azioni_1 ON servizi_azioni ;
+-- DROP INDEX INDEX_SERV_SOG ON servizi ;
+-- DROP INDEX INDEX_SERV_ACC ON servizi ;
+-- DROP INDEX INDEX_AC_SOG ON accordi_coop_partecipanti ;
 -- DROP INDEX INDEX_AC_COOP_PAR ON accordi_coop_partecipanti ;
 -- DROP INDEX INDEX_OP_MESSAGES ON operation_messages ;
 -- DROP INDEX INDEX_DOC_SEARCH ON documenti ;
