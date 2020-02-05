@@ -1066,7 +1066,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 				de.setValue(this.getLabelNomeSoggetto(protocollo, elem.getTipo(), elem.getNome()));
 				de.setIdToRemove(elem.getId().toString());
 				de.setToolTip(de.getValue());
-				de.setSize(100);
+				de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 				e.addElement(de);
 
 				if(showProtocolli) {
@@ -1339,6 +1339,7 @@ public class SoggettiHelper extends ConnettoriHelper {
 						new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_TIPO,elem.getTipo()));
 				de.setValue(elem.getTipo() + "/" + elem.getNome());
 				de.setIdToRemove(elem.getId().toString());
+				de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 				e.addElement(de);
 
 				if(showProtocolli) {

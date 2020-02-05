@@ -790,6 +790,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "elenchi_menu.visualizzazionePulsantiImportExportPackage");
 	}
 	
+	public Integer getElenchiMenuIdentificativiLunghezzaMassima() throws UtilsException{
+		return this.readIntegerProperty(true, "elenchi_menu.identificativi.lunghezzaMassima");
+	}
+	
 	public String getTokenPolicyForceId() throws UtilsException{
 		return this.readProperty(false, "console.tokenPolicy.forceId");
 	}

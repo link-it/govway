@@ -78,7 +78,7 @@ if (!message.equals("") && messageType.equals(MessageType.CONFIRM.toString())) {
 		    
 		    for (var k=0; k<document.form.elements.length; k++) {
 				var nome = document.form.elements[k].name;
-				if (nome.length > 0 && nome != "idhid") {
+				if (nome && nome.length > 0 && nome != "idhid") {
 				    var tipo = document.form.elements[k].type;
 				    var valore = "";
 				    if ( tipo == "hidden"){

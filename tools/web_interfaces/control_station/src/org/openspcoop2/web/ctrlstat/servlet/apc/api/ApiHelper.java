@@ -543,14 +543,14 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			labelServiceBinding= CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_REST;
 			tipoWsdl = AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_CONCETTUALE;
 			tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_CONCETTUALE;
-			download = as.getByteWsdlConcettuale()!=null;
+			download = as.getByteWsdlConcettuale()!=null &&  as.getByteWsdlConcettuale().length>0;
 			break;
 		case SOAP:
 		default:
 			labelServiceBinding= CostantiControlStation.LABEL_PARAMETRO_SERVICE_BINDING_SOAP;
 			tipoWsdl = AccordiServizioParteComuneCostanti.PARAMETRO_APC_WSDL_EROGATORE;
 			tipologiaDocumentoScaricare = ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO_WSDL_LOGICO_EROGATORE;
-			download = as.getByteWsdlLogicoErogatore()!=null;
+			download = as.getByteWsdlLogicoErogatore()!=null &&  as.getByteWsdlLogicoErogatore().length>0;
 			break;
 		}
 		

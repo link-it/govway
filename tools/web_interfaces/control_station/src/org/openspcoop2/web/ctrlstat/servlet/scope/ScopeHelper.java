@@ -301,6 +301,7 @@ public class ScopeHelper extends ConsoleHelper{
 					de.setValue(scope.getNome());
 					de.setIdToRemove(scope.getNome());
 					de.setToolTip(scope.getDescrizione());
+					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					e.addElement(de);
 					
 					if(this.mostraFiltroScopeTipologia){

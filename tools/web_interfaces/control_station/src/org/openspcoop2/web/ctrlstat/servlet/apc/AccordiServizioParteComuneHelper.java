@@ -799,6 +799,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPE_OPERATION_NOME, op.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
+					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					de.setValue(op.getNome());
 					de.setIdToRemove(op.getNome());
 					e.addElement(de);
@@ -1539,15 +1540,27 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// setto le label delle colonne
 			// String[] labels = { "Soggetto", "Servizio",
 			// "Accordo unilaterale", "Fruitori" };
-			String[] labels = {AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME,AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE , 
+			String[] labels = {AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_NOME,
+					AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_DESCRIZIONE , 
 					AccordiServizioParteComuneCostanti.LABEL_AZIONI };
 			this.pd.setLabels(labels);
 
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
 
+			boolean existsBigDescription = false;
 			if (lista != null) {
+				
 				Iterator<org.openspcoop2.core.registry.PortType> it = lista.iterator();
+				while (it.hasNext()) {
+					org.openspcoop2.core.registry.PortType pt = it.next();
+					if(pt.getDescrizione()!=null && pt.getDescrizione().length()>30) {
+						existsBigDescription = true;
+						break;
+					}
+				}
+
+				it = lista.iterator();
 
 				while (it.hasNext()) {
 					org.openspcoop2.core.registry.PortType pt = it.next();
@@ -1560,7 +1573,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_PORT_TYPES_NOME, pt.getNome()),
 							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
 							);
+					if(existsBigDescription==false) {
+						de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
+					}
 					de.setValue(pt.getNome());
+					de.setToolTip(pt.getNome());
 					de.setIdToRemove(pt.getNome());
 					e.addElement(de);
 
@@ -6135,7 +6152,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					de.setToolTip(nomeRisorsa);
 					de.setIdToRemove(nomeRisorsa);
 					if(existsBigDescription==false) {
-						de.setSize(100);
+						de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					}
 					e.addElement(de);
 					

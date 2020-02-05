@@ -300,6 +300,7 @@ public class RuoliHelper extends ConsoleHelper{
 					de.setValue(ruolo.getNome());
 					de.setIdToRemove(ruolo.getNome());
 					de.setToolTip(ruolo.getDescrizione());
+					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					e.addElement(de);
 
 					de = new DataElement();

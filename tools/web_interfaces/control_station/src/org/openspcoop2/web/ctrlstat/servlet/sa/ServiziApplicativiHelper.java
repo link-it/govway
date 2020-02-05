@@ -1753,6 +1753,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID, sa.getId()+""),
 							new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, sa.getIdSoggetto()+""),
 							new Parameter(SoggettiCostanti.PARAMETRO_SOGGETTO_DOMINIO, dominio));
+					de.setSize(this.core.getElenchiMenuIdentificativiLunghezzaMassima());
 					de.setValue(sa.getNome());
 					de.setIdToRemove(sa.getId().toString());
 					e.addElement(de);

@@ -601,6 +601,7 @@ public class ControlStationCore {
 	private boolean showAllConnettori = false;
 	private boolean showDebugOptionConnettore = true;
 	private boolean showPulsantiImportExport = false;
+	private int elenchiMenuIdentificativiLunghezzaMassima = 100;
 	private boolean showCountElementInLinkList = false;
 	private boolean conservaRisultatiRicerca = false;
 	public static Boolean conservaRisultatiRicerca_staticInfo_read = null;
@@ -645,6 +646,9 @@ public class ControlStationCore {
 	}	
 	public boolean isShowPulsantiImportExport() {
 		return this.showPulsantiImportExport;
+	}
+	public int getElenchiMenuIdentificativiLunghezzaMassima() {
+		return this.elenchiMenuIdentificativiLunghezzaMassima;
 	}
 	public boolean isShowCountElementInLinkList() {
 		return this.showCountElementInLinkList;
@@ -1694,6 +1698,7 @@ public class ControlStationCore {
 		this.showAllConnettori = core.showAllConnettori;
 		this.showDebugOptionConnettore = core.showDebugOptionConnettore;
 		this.showPulsantiImportExport = core.showPulsantiImportExport;
+		this.elenchiMenuIdentificativiLunghezzaMassima = core.elenchiMenuIdentificativiLunghezzaMassima;
 		this.showCountElementInLinkList = core.showCountElementInLinkList;
 		this.conservaRisultatiRicerca = core.conservaRisultatiRicerca;
 		this.showAccordiColonnaAzioni = core.showAccordiColonnaAzioni;
@@ -2000,6 +2005,7 @@ public class ControlStationCore {
 			}
 			this.showAccordiColonnaAzioni = consoleProperties.isElenchiAccordiVisualizzaColonnaAzioni();
 			this.showPulsantiImportExport = consoleProperties.isElenchiMenuVisualizzazionePulsantiImportExportPackage();
+			this.elenchiMenuIdentificativiLunghezzaMassima = consoleProperties.getElenchiMenuIdentificativiLunghezzaMassima();
 			this.enableAutoMappingWsdlIntoAccordo = consoleProperties.isEnableAutoMappingWsdlIntoAccordo();
 			this.enableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes = consoleProperties.isEnableAutoMappingWsdlIntoAccordo_estrazioneSchemiInWsdlTypes();
 			this.showMTOMVisualizzazioneCompleta = consoleProperties.isMenuMTOMVisualizzazioneCompleta();
