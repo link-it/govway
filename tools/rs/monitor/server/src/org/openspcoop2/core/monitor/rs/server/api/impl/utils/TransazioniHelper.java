@@ -80,9 +80,8 @@ public class TransazioniHelper {
 		return StringUtils.isEmpty(_this.getTipo()) || StringUtils.isEmpty(_this.getNome()); 
 	}
 
-	public static final void overrideFiltroApiBase(String tag, FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
+	public static final void overrideFiltroApiBase(FiltroApiBase filtro_api, String azione, IDSoggetto erogatore, TransazioniSearchForm search, MonitoraggioEnv env) {
 		
-		search.setGruppo(tag);
 		search.setNomeAzione(azione);
 		
 		if (filtro_api == null)
@@ -125,20 +124,20 @@ public class TransazioniHelper {
 		}
 	}
 
-	public static final void overrideFiltroFruizione(String tag, FiltroFruizione filtro, String azione,
+	public static final void overrideFiltroFruizione(FiltroFruizione filtro, String azione,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(tag, filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 	}
 	
-	public static final void overrideFiltroQualsiasi(String tag, FiltroApiQualsiasi filtro, String azione,
+	public static final void overrideFiltroQualsiasi(FiltroApiQualsiasi filtro, String azione,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(tag, filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 		if (!StringUtils.isEmpty(filtro.getSoggettoRemoto()))
 			search.setTipoNomeTrafficoPerSoggetto(new IDSoggetto(env.soggetto.getTipo(), filtro.getSoggettoRemoto()).toString());	
 	}
@@ -222,16 +221,18 @@ public class TransazioniHelper {
 		if (body.getAzione() != null && body.getApi() == null) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Se viene specificato il filtro 'azione' è necessario specificare anche il filtro Api");
 		}
+		
+		search.setGruppo(body.getTag());
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(body.getTag(), deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			overrideFiltroApiBase(deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroFruizione(body.getTag(), deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			overrideFiltroFruizione(deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroQualsiasi(body.getTag(), deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
+			overrideFiltroQualsiasi(deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
 			break;
 		}
 

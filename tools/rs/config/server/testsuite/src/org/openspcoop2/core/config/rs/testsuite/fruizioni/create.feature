@@ -15,7 +15,7 @@ Background:
 * def api_spcoop_path = 'api/' + api_spcoop.nome + '/' + api_spcoop.versione
 
 * def erogatore = read('soggetto_erogatore.json')
-* eval randomize (erogatore, ["nome"])
+* eval randomize (erogatore, ["nome", "credenziali.username"])
 
 * def fruizione_petstore = read('fruizione_petstore.json')
 * eval fruizione_petstore.api_nome = api_petstore.nome

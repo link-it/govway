@@ -196,8 +196,7 @@ public class SoggettiApiHelper {
 	
 	//String getTipoAuth
 	
-	public static final org.openspcoop2.core.config.Soggetto soggettoRegistroToConfig(org.openspcoop2.core.registry.Soggetto s, boolean isRouter) {
-		org.openspcoop2.core.config.Soggetto ret = new org.openspcoop2.core.config.Soggetto();
+	public static final org.openspcoop2.core.config.Soggetto soggettoRegistroToConfig(org.openspcoop2.core.registry.Soggetto s, org.openspcoop2.core.config.Soggetto ret, boolean isRouter) {
 		
 		ret.setNome(s.getNome());
 		ret.setTipo(s.getTipo());

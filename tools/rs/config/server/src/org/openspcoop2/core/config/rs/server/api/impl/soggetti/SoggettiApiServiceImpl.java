@@ -121,7 +121,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 	
 			// Dal debug isRouter è sempre false.
-			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(soggettoRegistro,false);
+			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(soggettoRegistro,new org.openspcoop2.core.config.Soggetto(),false);
 			SoggettoCtrlStat sog = new SoggettoCtrlStat(soggettoRegistro, soggettoConfig);
 			
 			env.soggettiCore.performCreateOperation(env.userLogin, false, sog);		
@@ -333,6 +333,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			if (oldSoggetto == null)
 				throw FaultCode.NOT_FOUND.toException("Nessun soggetto trovato corrisponde al nome " + nome + " e profilo " + profilo.toString());
 			
+			SoggettoCtrlStat oldSoggettoCtrlStat = env.soggettiCore.getSoggettoCtrlStat(oldSoggetto.getId());
+			
 			final org.openspcoop2.core.registry.Soggetto newSoggetto = env.soggettiCore.getSoggettoRegistro(idSogg);
 			
 			SoggettiApiHelper.convert(body, newSoggetto, env);
@@ -353,7 +355,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			if (!isOk)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 			
-			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(newSoggetto,false);
+			org.openspcoop2.core.config.Soggetto soggettoConfig = SoggettiApiHelper.soggettoRegistroToConfig(newSoggetto,oldSoggettoCtrlStat.getSoggettoConf(),false);
 			newSoggetto.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));
 			soggettoConfig.setOldIDSoggettoForUpdate(new IDSoggetto(oldSoggetto.getTipo(), oldSoggetto.getNome()));
 
