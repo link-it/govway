@@ -337,6 +337,22 @@
 		</antcall>
 	</target>
 
+	<target name="tomcat_runtime_for_console_ds_settings">
+		<antcall target="_tomcat_ds_settings">
+			<param name="templateDataSourceFile" value="${templateDataSourceFile}"/>
+			<param name="templateDataSourceNameSrc" value="org\.govway\.datasource\.console"/>
+			<param name="dataSourceNameSrc" value="org.govway.datasource.console"/>
+			<param name="dataSourceNameDest" value="${templateDataSourceName}"/>
+			<param name="templateOracleName" value="${antinstaller_oracle_mode}"/>
+			<param name="templateDbName" value="${antinstaller_dbname}"/>
+			<param name="templateDbHost" value="${antinstaller_dbhost}"/>
+			<param name="templateDbPort" value="${antinstaller_dbport}"/>
+			<param name="templateDbUsername" value="${antinstaller_dbusername}"/>
+			<param name="templateDbPassword" value="${antinstaller_dbpassword}"/>
+			<param name="headerDataSource" value="&lt;!-- Datasouce contenente ${templateDataSourceTipoInfo} -->"/>
+		</antcall>
+	</target>
+
 	<target name="_tomcat_ds_settings">
 		<loadfile
 		    encoding="UTF-8"

@@ -115,9 +115,11 @@
 			<then>
 				<mkdir dir="${dist}/datasource/manager"/>
 				<mkdir dir="${dist}/datasource/runtime"/>
+
+				<!-- copio datasource in manager -->
 				<copy todir="${dist}/datasource/manager">
 					<fileset dir="${dist}/datasource">
-						<exclude name="govway-ds.xml"/>
+						<!-- ci vuole per govwayConsole monitoraggio messaggi in carico <exclude name="govway-ds.xml"/> -->
 						<exclude name="domibus-ds.xml"/>
 						<exclude name="govway.xml"/>
 						<exclude name="govwaySec.xml"/>
@@ -125,6 +127,8 @@
 						<exclude name="runtime"/>
 					</fileset>
 				</copy>
+
+				<!-- elimino datasource che non servono in runtime -->
 				<if>
 					<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 					<then>
@@ -139,6 +143,23 @@
 						</delete>
 					</then>
 				</if>
+				<if>
+					<and>
+						<equals arg1="${antinstaller_log_db}" arg2="runtime"/>
+						<equals arg1="${antinstaller_config_db}" arg2="config"/>
+					</and>
+					<then>
+						<delete file="${dist}/datasource/govway_tracciamento-ds.xml"/>
+					</then>
+				</if>
+				<if>
+					<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+					<then>
+						<delete file="${dist}/datasource/govway_statistiche-ds.xml"/>
+					</then>
+				</if>
+
+				<!-- copio datasource in runtime -->
 				<move todir="${dist}/datasource/runtime">
 					<fileset dir="${dist}/datasource">
 						<exclude name="manager"/>

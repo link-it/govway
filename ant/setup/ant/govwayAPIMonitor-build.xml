@@ -159,6 +159,17 @@
 					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
 				</antcall>
 			</then>
+			<elseif>
+				<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+				<equals arg1="${antinstaller_config_db}" arg2="config"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="db.tracce.dataSource"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+				</then>
+			</elseif>
 			<else>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
@@ -184,6 +195,34 @@
 						<param name="token" value="db.statistiche.dataSource"/>
 						<param name="value" value="${datasource_pdd_name}.statistiche"/>
 					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<!-- se le statistiche sono nel database di runtime e 
+					il database delle configurazioni e' a se
+				 le applicazioni "console" dovranno usare un datasource differente -->
+				<and>
+					<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+					<equals arg1="${antinstaller_config_db}" arg2="config"/>
+				</and>
+				<then>
+					<if>
+						<equals arg1="${antinstaller_log_db}" arg2="log"/>
+						<then>
+							<antcall target="set_property">
+							    <param name="file" value="${file}"/>
+								<param name="token" value="db.statistiche.dataSource"/>
+								<param name="value" value="${datasource_pdd_name}.statistiche"/>
+							</antcall>
+						</then>
+						<else>
+							<antcall target="set_property">
+							    <param name="file" value="${file}"/>
+								<param name="token" value="db.statistiche.dataSource"/>
+								<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+							</antcall>
+						</else>
+					</if>
 				</then>
 			</elseif>
 			<else>

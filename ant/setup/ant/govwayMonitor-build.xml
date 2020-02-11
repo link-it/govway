@@ -208,6 +208,32 @@
 					<param name="value" value="${datasource_pdd_name}.tracciamento"/>
 				</antcall>				
 			</then>
+			<elseif>
+				<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+				<equals arg1="${antinstaller_config_db}" arg2="config"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.transazioni.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.eventi.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.tracciamento.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="factory.diagnostica.db.datasource.jndiName"/>
+						<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+					</antcall>
+				</then>
+			</elseif>
 		</if>
 		<if>
 			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
@@ -227,6 +253,34 @@
 					<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
 					<param name="value" value="${datasource_pdd_name}.statistiche"/>
 				</antcall>
+			</then>
+		</if>
+		<if>
+			<!-- se le statistiche sono nel database di runtime e 
+				il database delle configurazioni e' a se
+				 le applicazioni "console" dovranno usare un datasource differente -->
+			<and>
+				<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+				<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			</and>
+			<then>
+				<if>
+					<equals arg1="${antinstaller_log_db}" arg2="log"/>
+					<then>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+							<param name="value" value="${datasource_pdd_name}.statistiche"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="set_property">
+						    <param name="file" value="${file}"/>
+							<param name="token" value="factory.statistiche.db.datasource.jndiName"/>
+							<param name="value" value="${datasource_pdd_name}.tracciamento"/>
+						</antcall>
+					</else>
+				</if>
 			</then>
 		</if>
 		

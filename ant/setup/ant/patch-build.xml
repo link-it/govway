@@ -297,6 +297,30 @@ Esempi:
 			</then>
 		</if>
 
+		<!-- *** Aggiunta dell'applicazione generatoreStatistiche ***-->
+		<if>
+			<equals arg1="${antinstaller_stats_env}" arg2="batch"/>
+			<then>
+				<if>
+					<or>
+						<equals arg1="${patchArchiveType}" arg2="all"/>
+						<equals arg1="${patchArchiveType}" arg2="generatoreStatistiche"/>
+					</or>
+					<then>
+						<var name="patchTmpArchive" value="${tmp_batch}/generatoreStatistiche"/>
+						<var name="patchTmpArchiveType" value="ear"/>
+						<foreach target="-patch-resource" param="patchResource" inheritall="true">
+							<path>
+								<dirset dir="${patchArchive}" casesensitive="yes">
+									<include name="*"/>
+								</dirset>
+							</path>
+						</foreach>
+					</then>
+				</if>
+			</then>
+		</if>
+
 		<echo message="Patch archiveType [${patchArchiveType}] ok"/>
 
 	</target>

@@ -49,11 +49,27 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-003:Gestione avanzata della configurazione:antinstaller_conf_avanzata_enabled', '@VALORE@');
 </concat>
-		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_conf_avanzata_enabled}"/>
+		<if>
+			<equals arg1="${antinstaller_conf_avanzata_enabled}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_conf_avanzata_enabled}"/>
+			</else>
+		</if>
 
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-004:Gestione avanzata dell''architettura:antinstaller_architettura_avanzata_enabled', '@VALORE@');
 </concat>
-		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_architettura_avanzata_enabled}"/>
+		<if>
+			<equals arg1="${antinstaller_architettura_avanzata_enabled}" arg2=""/>
+			<then>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="N.D."/>
+			</then>
+			<else>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_architettura_avanzata_enabled}"/>
+			</else>
+		</if>
 
 
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '000-005:Modalità:antinstaller_modalita_installazione', '@VALORE@');

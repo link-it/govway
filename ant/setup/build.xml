@@ -1450,6 +1450,21 @@
 						    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<equals arg1="${antinstaller_config_db}" arg2="config"/>
+						<then>
+							<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
+							<antcall target="ds_settings">
+							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+							</antcall>
+							<antcall target="replace_token">
+							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+								<param name="token" value="org.govway.datasource.console"/>
+								<param name="value" value="org.govway.datasource.tracciamento"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 
 				<!-- Statistiche -->
@@ -1461,6 +1476,27 @@
 						    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le statistiche sono nel database di runtime e 
+							il database delle configurazioni e' a se, e
+							il database delle trace e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<and>
+							<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+							<equals arg1="${antinstaller_config_db}" arg2="config"/>
+							<equals arg1="${antinstaller_log_db}" arg2="log"/>
+						</and>
+						<then>
+							<copy file="${deploy_ds}/jboss/${jboss_datasource_dir_name}/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
+							<antcall target="ds_settings">
+							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+							</antcall>
+							<antcall target="replace_token">
+							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+								<param name="token" value="org.govway.datasource.console"/>
+								<param name="value" value="org.govway.datasource.statistiche"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 
 				<!-- AS4 eDelivery -->
@@ -1511,6 +1547,21 @@
 						    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<equals arg1="${antinstaller_config_db}" arg2="config"/>
+						<then>
+							<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_tracciamento-ds.xml"/>
+							<antcall target="ds_settings">
+							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+							</antcall>
+							<antcall target="replace_token">
+							    <param name="file" value="${tmp_ds}/govway_tracciamento-ds.xml"/>
+								<param name="token" value="org.govway.datasource.console"/>
+								<param name="value" value="org.govway.datasource.tracciamento"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 
 				<!-- Statistiche -->
@@ -1522,6 +1573,27 @@
 						    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le statistiche sono nel database di runtime e 
+							il database delle configurazioni e' a se, e
+							il database delle trace e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<and>
+							<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+							<equals arg1="${antinstaller_config_db}" arg2="config"/>
+							<equals arg1="${antinstaller_log_db}" arg2="log"/>
+						</and>
+						<then>
+							<copy file="${deploy_ds}/wildfly/${antinstaller_tipo_database}/govway_console-ds.xml" tofile="${tmp_ds}/govway_statistiche-ds.xml"/>
+							<antcall target="ds_settings">
+							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+							</antcall>
+							<antcall target="replace_token">
+							    <param name="file" value="${tmp_ds}/govway_statistiche-ds.xml"/>
+								<param name="token" value="org.govway.datasource.console"/>
+								<param name="value" value="org.govway.datasource.statistiche"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 
 				<!-- AS4 eDelivery -->
@@ -1634,6 +1706,17 @@
 						    <param name="log_for_runtime" value="false"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<equals arg1="${antinstaller_config_db}" arg2="config"/>
+						<then>
+							<antcall target="tomcat_runtime_for_console_ds_settings">
+							    <param name="templateDataSourceFile" value="${tmp_ds}/govwayConsole.xml"/>
+							    <param name="templateDataSourceName" value="org.govway.datasource.tracciamento"/>
+							    <param name="templateDataSourceTipoInfo" value="le tracce di GovWay"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 				<if>
 					<equals arg1="${antinstaller_config_db}" arg2="config"/>
@@ -1657,6 +1740,17 @@
 						    <param name="log_for_runtime" value="false"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le tracce sono nel database di runtime e il database delle configurazioni e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<equals arg1="${antinstaller_config_db}" arg2="config"/>
+						<then>
+							<antcall target="tomcat_runtime_for_console_ds_settings">
+							    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
+							    <param name="templateDataSourceName" value="org.govway.datasource.tracciamento"/>
+							    <param name="templateDataSourceTipoInfo" value="le tracce di GovWay"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 				<if>
 					<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
@@ -1665,6 +1759,23 @@
 						    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
 						</antcall>
 					</then>
+					<elseif>
+						<!-- se le statistiche sono nel database di runtime e 
+							il database delle configurazioni e' a se, e
+							il database delle trace e' a se, le applicazioni "console" dovranno usare un datasource differente -->
+						<and>
+							<equals arg1="${antinstaller_stats_db}" arg2="runtime"/>
+							<equals arg1="${antinstaller_config_db}" arg2="config"/>
+							<equals arg1="${antinstaller_log_db}" arg2="log"/>
+						</and>
+						<then>
+							<antcall target="tomcat_runtime_for_console_ds_settings">
+							    <param name="templateDataSourceFile" value="${tmp_ds}/govwayMonitor.xml"/>
+							    <param name="templateDataSourceName" value="org.govway.datasource.statistiche"/>
+							    <param name="templateDataSourceTipoInfo" value="le informazioni statistiche"/>
+							</antcall>
+						</then>
+					</elseif>
 				</if>
 				<if>
 					<equals arg1="${antinstaller_config_db}" arg2="config"/>
