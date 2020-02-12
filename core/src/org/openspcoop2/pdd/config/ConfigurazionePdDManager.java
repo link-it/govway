@@ -997,6 +997,10 @@ public class ConfigurazionePdDManager {
 		return this.configurazionePdDReader.getConfigurazioneResponseCachingCache(this.getConnection());
 	}
 	
+	public Cache getConfigurazioneConsegnaApplicativiCache() throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		return this.configurazionePdDReader.getConfigurazioneConsegnaApplicativiCache(this.getConnection());
+	}
+	
 	public UrlInvocazioneAPI getConfigurazioneUrlInvocazione(IProtocolFactory<?> protocolFactory, RuoloContesto ruolo, ServiceBinding serviceBinding, 
 			String interfaceName, IDSoggetto soggettoOperativo) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{
 		return this.configurazionePdDReader.getConfigurazioneUrlInvocazione(this.getConnection(),

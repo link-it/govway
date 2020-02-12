@@ -39,7 +39,10 @@ import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+import org.openspcoop2.core.config.InvocazioneServizio;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -93,6 +96,8 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -324,6 +329,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			String erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -367,7 +376,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			porteDelegateCore = new PorteDelegateCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
-
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+			
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
@@ -380,6 +390,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
+			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(apsHelper);
+			
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 			
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 
@@ -643,6 +657,42 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					PortType portType2 = iterator.next();
 					ptList[i] = portType2.getNome();
 					i++;
+				}
+			}
+			
+			// Lista dei servizi applicativi per la creazione automatica
+			String [] saSoggetti = null;	
+			if (gestioneErogatori && (provider != null) && !provider.equals("")) {
+				int idErogatore = Integer.parseInt(provider);
+	
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), tipoSA);
+	
+				// rif bug #45
+				// I servizi applicativi da visualizzare sono quelli che hanno
+				// -Integration Manager (getMessage abilitato)
+				// -connettore != disabilitato
+				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
+				for (ServizioApplicativo sa : listaSA) {
+					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
+					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
+					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+	
+					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
+						// il connettore non e' disabilitato oppure il get
+						// message e' abilitato
+						// Lo aggiungo solo se gia' non esiste tra quelli
+						// aggiunti
+						validSA.add(sa);
+					}
+				}
+	
+				// Prendo la lista di servizioApplicativo associati al soggetto
+				// e la metto in un array
+				saSoggetti = new String[validSA.size()+1];
+				saSoggetti[0] = "-"; // elemento nullo di default
+				for (int i = 0; i < validSA.size(); i++) {
+					ServizioApplicativo sa = validSA.get(i);
+					saSoggetti[i] = sa.getNome();
 				}
 			}
 
@@ -1098,10 +1148,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					else {
+						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
 						dati = apsHelper.addEndPointToDatiAsHidden(dati,
 								endpointtype, url, nome, tipo,
@@ -1188,7 +1240,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null, null, null, null,
 					tipoProtocollo,null, 
 					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
-					autenticazioneToken, token_policy);
+					autenticazioneToken, token_policy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 			
 			// updateDynamic
 			if(isOk) {
@@ -1285,10 +1337,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							tipoProtocollo, false, false);
+							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+							erogazioneServizioApplicativoServer, saSoggetti);
 					
 				}
 				else {
+					
+					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 					
 					dati = apsHelper.addEndPointToDatiAsHidden(dati,
 							endpointtype, url, nome, tipo,
@@ -1395,7 +1450,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					
@@ -1405,6 +1461,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,tipoProtocollo,generaPACheckSoggetto);
 
+					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
+					
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
@@ -1421,8 +1479,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
-							);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
 					
 					if(backToStato != null) {
 						// backtostato per chiudere la modifica dopo la conferma
@@ -1728,10 +1785,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					else {
+						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
 						dati = apsHelper.addEndPointToDatiAsHidden(dati,
 								endpointtype, url, nome, tipo,

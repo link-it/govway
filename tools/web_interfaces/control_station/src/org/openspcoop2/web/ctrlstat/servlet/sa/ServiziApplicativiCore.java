@@ -55,8 +55,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	public ServiziApplicativiCore(ControlStationCore core) throws Exception {
 		super(core);
 	}
-	
-	
+		
 	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativo";
@@ -315,8 +314,10 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	
 	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.getServiziApplicativiByIdErogatore(idErogatore, null);
+	}
+	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getServiziApplicativiWithIdErogatore";
 		DriverControlStationDB driver = null;
@@ -327,7 +328,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore);
+			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore, tipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -338,6 +339,10 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	}
 
 	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, null);
+	}
+	
+	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -348,7 +353,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale);
+			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale, tipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -507,4 +512,24 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 	
+	public long getIdServizioApplicativoByConnettore(long idConnettore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIdServizioApplicativoByConnettore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getIdServizioApplicativoByConnettore(idConnettore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

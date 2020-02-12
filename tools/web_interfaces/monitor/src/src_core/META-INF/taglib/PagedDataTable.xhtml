@@ -15,6 +15,12 @@
 			<c:set var="width" value="100%"/>
 		</c:if>
 		
+		<c:if test="#{empty mostraComandiFooterSelezionePageSize}">
+			<c:set var="mostraComandiFooterSelezionePageSize" value="false"/>
+		</c:if>
+		<c:if test="#{empty rowsToDisplay}">
+			<c:set var="rowsToDisplay" value="#{value.rowsToDisplay}"/>
+		</c:if>
 		<c:if test="#{empty rowsToDisplay}">
 			<c:set var="rowsToDisplay" value="25"/>
 		</c:if>
@@ -36,12 +42,21 @@
 		<c:if test="#{empty useCount}">
 			<c:set var="useCount" value="true"/>
 		</c:if>
+		<c:if test="#{empty rowClasses}">
+			<c:set var="rowClasses" value="even,odd"/>
+		</c:if>
+		<a4j:outputPanel id="#{id}_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+			<a4j:outputPanel layout="block" styleClass="buttonrow">
+				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+			</a4j:outputPanel>
+		</a4j:outputPanel>
 		<a4j:outputPanel id="#{id}" layout="block">
 			<script type="text/javascript">
 				 jQuery(document).ready(function() {
 					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					visualizzaColonnaSelectAll('#{id}');
+					visualizzaMessaggioNoData('#{id}');
 				 });
 			</script>
 			<c:if test="#{useCount == true}">
@@ -61,7 +76,7 @@
 							<c:set var="_totRowsToDisplay" value="#{rowsToDisplay gt 0 ? (_totRows lt rowsToDisplay ? _totRows : rowsToDisplay) : _totRows}"/>
 							<c:set var="_rowsCount" value="#{(page*(_totRowsToDisplay))}"/>
 							<c:set var="_currentRowDisplayed" value="#{((page-1)*rowsToDisplay)+1}"/>						
-							<h:panelGroup id="#{id}tableHeaderText">
+							<h:panelGroup id="#{id}_tableHeaderText">
 								<h:outputText value="#{headerText}: " rendered="#{not empty headerText}" escape="false"/>
 								<h:outputText value="record [#{(_totRows gt 0) ? _currentRowDisplayed : 0} - #{ _rowsCount gt _totRows ? _totRows : _rowsCount }] su #{_totRows}" />
 							</h:panelGroup>						
@@ -126,12 +141,12 @@
 				rows="#{rowsToDisplay}" 
 				id="#{id}_tbl" 
 				onRowMouseOver="activeRow(this)" 
-				rowClasses="even,odd"
+				rowClasses="#{rowClasses}"
 				width="#{width}">
 				
 					<rich:column align="center" width="50px" id="ckbClmn" rendered="#{showSelectAll and not empty mBean}">
 	                    <f:facet name="header">
-	                      <h:panelGroup style="width:50px;" layout="block">
+	                      <h:panelGroup style="width:50px;" layout="block" id="chkClmnPg">
 	                        <h:selectBooleanCheckbox id="#{id}_checkAll" title="Seleziona Tutti" onclick="checkAllCheckboxesInTable( '#{id}', this.checked , #{showSelectAll}, #{value.rowCount} , #{rowsToDisplay});">
 	                        	
 	                        </h:selectBooleanCheckbox>
@@ -166,6 +181,21 @@
 						   renderIfSinglePage="false" 
 						   pagesVar="pages" 
 						   pageIndexVar="page" reRender="#{id}_ds_top" fastControls="hide">
+						   
+					    <f:facet name="pages">
+					   		<h:panelGrid columns="3">
+								<rich:spacer width="10px"/>
+								<h:panelGroup id="tableDsDownText">
+									<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
+									<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+										<f:selectItems value="#{value.listaNumeroRisultati}"  />
+										<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
+											actionListener="#{value.rowsToDisplaySelected}" />
+									</rich:comboBox>
+								</h:panelGroup>						
+								<rich:spacer width="10px"/>
+							</h:panelGrid>
+						</f:facet>
 						   
 						<f:facet name="previous">
 							<h:graphicImage id="#{id}_prev" value="/images/tema_link/go_prev.png" >
@@ -251,7 +281,7 @@
 								<td>
 									<h:panelGrid columns="3">
 										<rich:spacer width="10px"/>
-										<h:panelGroup id="tableHeaderText">
+										<h:panelGroup id="#{id}_tableHeaderText">
 											<h:outputText value="#{headerText}" rendered="#{not empty headerText and empty value.recordLabel}"/>
 											<h:outputText value="#{headerText}: " rendered="#{not empty headerText and not empty value.recordLabel}"/>
 											<h:outputText value="#{value.recordLabel}" rendered="#{not empty value.recordLabel}"/>
@@ -306,7 +336,12 @@
 										<h:panelGrid columns="3">
 											<rich:spacer width="10px"/>
 											<h:panelGroup id="tableDsDownText">
-												<h:outputText value="Pagina #{value.currentPage}"/>
+												<h:outputText value="Pagina #{value.currentPage}" rendered="#{not mostraComandiFooterSelezionePageSize}"/>
+												<rich:comboBox id="rowsToDisplayCombo" value="#{value.rowsToDisplay}" converter="selectItemConverter" width="120" rendered="#{mostraComandiFooterSelezionePageSize}" enableManualInput="false">
+													<f:selectItems value="#{value.listaNumeroRisultati}"  />
+													<a4j:support status="mainStatus" event="onselect" reRender="#{reRenderIds}" limitToList="true" 
+														actionListener="#{value.rowsToDisplaySelected}" />
+												</rich:comboBox>
 											</h:panelGroup>						
 											<rich:spacer width="10px"/>
 										</h:panelGrid>

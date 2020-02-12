@@ -108,6 +108,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link AccessoDatiConsegnaApplicativi }
+     */
+    public AccessoDatiConsegnaApplicativi createAccessoDatiConsegnaApplicativi() {
+        return new AccessoDatiConsegnaApplicativi();
+    }
+
+    /**
      * Create an instance of {@link ValidazioneBuste }
      */
     public ValidazioneBuste createValidazioneBuste() {
@@ -388,6 +395,13 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativaServizioApplicativoConnettore }
+     */
+    public PortaApplicativaServizioApplicativoConnettore createPortaApplicativaServizioApplicativoConnettore() {
+        return new PortaApplicativaServizioApplicativoConnettore();
+    }
+
+    /**
      * Create an instance of {@link Ruolo }
      */
     public Ruolo createRuolo() {
@@ -651,6 +665,13 @@ public class ObjectFactory {
      */
     public Risposte createRisposte() {
         return new Risposte();
+    }
+
+    /**
+     * Create an instance of {@link PortaApplicativaBehaviour }
+     */
+    public PortaApplicativaBehaviour createPortaApplicativaBehaviour() {
+        return new PortaApplicativaBehaviour();
     }
 
     /**

@@ -313,7 +313,7 @@ public class ConsoleProperties {
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
 	}
-	
+
 	public List<String> getMessageEngines() throws UtilsException{
 		String s = this.readProperty(false, "messageEngine");
 		List<String>  l = null;
@@ -343,8 +343,16 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "applicativi.credenzialiBasic.checkUnique.usePassword");
 	}
 	
+	public boolean isConnettoriMultipliEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
+	}
+	
+	public boolean isApplicativiServerEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "applicativiServer.enabled");
+	}
 	
 	
+
 	/* ----- Impostazioni grafiche ------- */
 	
 	public String getConsoleNomeSintesi() throws UtilsException{
@@ -631,6 +639,12 @@ public class ConsoleProperties {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getInformazioniDatabaseDatasourcesGW");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaGestioneConsegnaApplicativi");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
 	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");

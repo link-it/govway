@@ -778,7 +778,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
 						//spostato dentro l'helper
 					}
@@ -920,7 +920,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, false,
-							protocollo, forceHttps, forceHttpsClient);
+							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}else{
 					//spostato dentro l'helper
 				}
@@ -1076,7 +1076,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
 						//spostato dentro l'helper
 					}

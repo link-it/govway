@@ -109,6 +109,16 @@ public class PrincipalUtilities {
 				}
 			}
 			return principal;
+		case INDIRIZZO_IP_X_FORWARDED_FOR:
+			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_TRANSPORT_ADDRESS)) {
+				principal = PdDContext.getValue(Costanti.CLIENT_IP_TRANSPORT_ADDRESS, pddContext);
+			}
+			if(principal==null || "".equals(principal)) {
+				if(throwException) {
+					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client, tramite 'X-Forwarded-For', non disponibile");
+				}
+			}
+			return principal;
 		// Ho levato il contenuto, poichè senno devo fare il digest per poterlo poi cachare
 //			case CONTENT:
 		case TOKEN:

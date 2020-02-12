@@ -62,6 +62,7 @@ import org.openspcoop2.pdd.mdb.Sbustamento;
 import org.openspcoop2.pdd.mdb.SbustamentoRisposte;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
 import org.openspcoop2.pdd.services.core.RicezioneContenutiApplicativi;
+import org.openspcoop2.pdd.timers.TimerConsegnaContenutiApplicativiThread;
 import org.openspcoop2.pdd.timers.TimerGestoreMessaggi;
 import org.openspcoop2.pdd.timers.TimerLock;
 import org.openspcoop2.pdd.timers.TimerLockNotAvailableException;
@@ -86,6 +87,7 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.cache.Cache;
 import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.id.serial.InfoStatistics;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.jdbc.IJDBCAdapter;
@@ -98,6 +100,7 @@ import org.openspcoop2.utils.semaphore.SemaphoreLogEventGenerator;
 import org.openspcoop2.utils.semaphore.SemaphoreMapping;
 import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.utils.sql.SQLObjectFactory;
+import org.openspcoop2.utils.threads.RunnableLogger;
 import org.slf4j.Logger;
 
 
@@ -1302,7 +1305,7 @@ public class GestoreMessaggi  {
 	public void registraDestinatarioMessaggio(String serv, 
 			boolean sbustamentoSOAP,boolean sbustamentoInfoProtocol,
 			boolean integrationManager,String tipoConsegna,Timestamp oraRegistrazioneMessaggio,
-			String nomePorta)throws GestoreMessaggiException{
+			String nomePorta, boolean attesaEsito, boolean impostaPerConsegnaTimerContenutiApplicativi)throws GestoreMessaggiException{
 		if(this.openspcoopstate instanceof OpenSPCoopStateful || this.oneWayVersione11) {
 			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
 					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
@@ -1315,28 +1318,46 @@ public class GestoreMessaggi  {
 				StringBuilder query = new StringBuilder();
 				query.append("INSERT INTO ");
 				query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA) VALUES ( ? , ? , ? , ? , ? , ? , ? , ?)");
+				String columnErroreProcessamento = "";
+				String valueErroreProcessamento = "";
+				if(impostaPerConsegnaTimerContenutiApplicativi) {
+					columnErroreProcessamento = ",ERRORE_PROCESSAMENTO,ERRORE_PROCESSAMENTO_COMPACT";
+					valueErroreProcessamento = ", ? , ?";
+				}
+				query.append("(ID_MESSAGGIO,SERVIZIO_APPLICATIVO,SBUSTAMENTO_SOAP,SBUSTAMENTO_INFO_PROTOCOL,INTEGRATION_MANAGER,TIPO_CONSEGNA,RISPEDIZIONE,NOME_PORTA,ATTESA_ESITO"+columnErroreProcessamento+
+						") VALUES ( ? , ? , ? , ? , ? , ? , ? , ?, ?"+valueErroreProcessamento+")");
 
 				pstmt = connectionDB.prepareStatement(query.toString());
-				pstmt.setString(1,this.idBusta);
-				pstmt.setString(2,serv);
+				int index = 1;
+				pstmt.setString(index++,this.idBusta);
+				pstmt.setString(index++,serv);
 				if(sbustamentoSOAP)
-					pstmt.setInt(3,1);
+					pstmt.setInt(index++,CostantiDB.TRUE);
 				else
-					pstmt.setInt(3,0);
+					pstmt.setInt(index++,CostantiDB.FALSE);
 				if(sbustamentoInfoProtocol)
-					pstmt.setInt(4,1);
+					pstmt.setInt(index++,CostantiDB.TRUE);
 				else
-					pstmt.setInt(4,0);
+					pstmt.setInt(index++,CostantiDB.FALSE);
 				if(integrationManager)
-					pstmt.setInt(5,1);
+					pstmt.setInt(index++,CostantiDB.TRUE);
 				else
-					pstmt.setInt(5,0);
-				pstmt.setString(6,tipoConsegna);
+					pstmt.setInt(index++,CostantiDB.FALSE);
+				pstmt.setString(index++,tipoConsegna);
 
-				pstmt.setTimestamp(7,oraRegistrazioneMessaggio);
+				pstmt.setTimestamp(index++,oraRegistrazioneMessaggio);
 				
-				pstmt.setString(8,nomePorta);
+				pstmt.setString(index++,nomePorta);
+				
+				if(attesaEsito)
+					pstmt.setInt(index++,CostantiDB.TRUE);
+				else
+					pstmt.setInt(index++,CostantiDB.FALSE);
+				
+				if(impostaPerConsegnaTimerContenutiApplicativi) {
+					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+					pstmt.setString(index++, TimerConsegnaContenutiApplicativiThread.ID_MODULO);
+				}
 
 				//this.log.debug("[registraDestinatarioMessaggio] Aggiorno MSG["+this.tipo+"/"+this.idBusta+"] RISPEDIZIONE["+oraRegistrazioneMessaggio.toString()+"]");
 
@@ -1572,18 +1593,25 @@ public class GestoreMessaggi  {
 						query.append(GestoreMessaggi.MESSAGGI);
 					else
 						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(" SET ERRORE_PROCESSAMENTO=? WHERE ID_MESSAGGIO = ?");
+					query.append(" SET ERRORE_PROCESSAMENTO=?, ERRORE_PROCESSAMENTO_COMPACT=? WHERE ID_MESSAGGIO = ?");
 					if(servizioApplicativo!=null)
 						query.append(" AND SERVIZIO_APPLICATIVO=?");
 					else
 						query.append(" AND TIPO=?");
 					pstmt = connectionDB.prepareStatement(query.toString());
-					pstmt.setString(1,prefix+motivoErrore);
-					pstmt.setString(2,this.idBusta);
+					int index = 1;
+					pstmt.setString(index++,prefix+motivoErrore);
+					if(motivoErrore!=null && motivoErrore.length()>=200) { // per evitare anche caratteri strani che occupano maggiore spazio
+						pstmt.setString(index++,motivoErrore.substring(0, 200)+" ...");
+					}
+					else {
+						pstmt.setString(index++,motivoErrore);
+					}
+					pstmt.setString(index++,this.idBusta);
 					if(servizioApplicativo!=null)
-						pstmt.setString(3,servizioApplicativo);
+						pstmt.setString(index++,servizioApplicativo);
 					else
-						pstmt.setString(3,this.tipo);
+						pstmt.setString(index++,this.tipo);
 
 					pstmt.execute();
 					pstmt.close();
@@ -1756,7 +1784,7 @@ public class GestoreMessaggi  {
 					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
 				else
 					query.append(GestoreMessaggi.MESSAGGI);
-				query.append(" SET RISPEDIZIONE=?, ERRORE_PROCESSAMENTO=? WHERE  ID_MESSAGGIO = ?");
+				query.append(" SET RISPEDIZIONE=?, ERRORE_PROCESSAMENTO=? WHERE  ID_MESSAGGIO = ?"); // non devo aggiornare ERRORE_PROCESSAMENTO_COMPACT poichè li non vi è l'informazione sulla rispedizione.
 				if(servizioApplicativo!=null)
 					query.append(" AND SERVIZIO_APPLICATIVO=?");
 				else
@@ -3017,7 +3045,7 @@ public class GestoreMessaggi  {
 				}
 
 				// Costruzione Query
-				String query = "SELECT "+fieldNamesPdDContext_db.toString()+" FROM "+GestoreMessaggi.MESSAGGI+" WHERE ID_MESSAGGIO = ? AND TIPO=?";
+				String query = "SELECT id_transazione, "+fieldNamesPdDContext_db.toString()+" FROM "+GestoreMessaggi.MESSAGGI+" WHERE ID_MESSAGGIO = ? AND TIPO=?";
 
 				//log.debug("Query: "+query);
 				pstmtRead = connectionDB.prepareStatement(query);
@@ -3032,6 +3060,11 @@ public class GestoreMessaggi  {
 						String keyDB = keysDB.nextElement();
 						Object object = rs.getObject(keyDB);
 						pddContext.addObject(mapping.get(keyDB), object);
+					}
+					
+					String idTransazione = rs.getString("id_transazione");
+					if(idTransazione!=null) {
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE, idTransazione);
 					}
 
 				}else{
@@ -4284,7 +4317,9 @@ public class GestoreMessaggi  {
 
 	/* ------------- LETTURA MESSAGGI DA RICONSEGNARE -------------- */
 
-	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBox(int limit,boolean logQuery, boolean orderBy, Date riconsegna)throws GestoreMessaggiException{
+	public List<MessaggioServizioApplicativo> readMessaggiDaRiconsegnareIntoBox(int limit,
+			Date riconsegna, int presaInConsegnaMaxLife, 
+			boolean debug, RunnableLogger loggerSql)throws GestoreMessaggiException{
 
 		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
 			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta())
@@ -4293,6 +4328,8 @@ public class GestoreMessaggi  {
 
 			List<MessaggioServizioApplicativo> idMsg = new ArrayList<MessaggioServizioApplicativo>();
 
+			Date dataRilascioLock = new Date( DateManager.getTimeMillis() - this.propertiesReader.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife() );
+			
 			PreparedStatement pstmtMsgEliminati = null;
 			ResultSet rs = null;
 			String queryString = null;
@@ -4305,10 +4342,14 @@ public class GestoreMessaggi  {
 				if(Configurazione.getSqlQueryObjectType()==null){
 					StringBuilder query = new StringBuilder();
 					query.append("SELECT "+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO as idmess, ");
+					query.append(" "+GestoreMessaggi.MESSAGGI+".id_transazione as idtransazione, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO as sa, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_SOAP as sbSoap, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_INFO_PROTOCOL as sbProtocol ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".NOME_PORTA as nomePorta ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".LOCK_CONSEGNA as lock ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".CLUSTER_ID as cluster ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".ATTESA_ESITO as attesa ");
 					
 					query.append(" FROM ");
 					query.append(GestoreMessaggi.MESSAGGI);
@@ -4327,8 +4368,18 @@ public class GestoreMessaggi  {
 					query.append(" ").append(GestoreMessaggi.MESSAGGI).append(".TIPO=? AND ").
 						  append(GestoreMessaggi.MESSAGGI).append(".PROPRIETARIO=? ");
 					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".TIPO_CONSEGNA=? ");
-					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO is not null "); // per non intralciare con la "prima" consegna
+					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ERRORE_PROCESSAMENTO_COMPACT is not null "); // per non intralciare con la "prima" consegna
 					query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".RISPEDIZIONE<=? ");
+					query.append(" AND (").
+						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA is null ").
+						append(" OR ").
+						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".LOCK_CONSEGNA < ? ").
+						append(")");
+					query.append(" AND (").
+						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ATTESA_ESITO is null ").
+						append(" OR ").
+						append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".ATTESA_ESITO <> ? ").
+						append(")");
 
 					queryString = query.toString();
 				}else{
@@ -4338,10 +4389,14 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"sa");
 					
 					sqlQueryObject.addSelectAliasField("m", "ID_MESSAGGIO", "idmess");
+					sqlQueryObject.addSelectAliasField("m", "id_transazione", "idtransazione");
 					sqlQueryObject.addSelectAliasField("sa", "SERVIZIO_APPLICATIVO", "sa");
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_SOAP", "sbSoap");
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_INFO_PROTOCOL", "sbProtocol");
 					sqlQueryObject.addSelectAliasField("sa", "NOME_PORTA", "nomePorta");
+					sqlQueryObject.addSelectAliasField("sa", "LOCK_CONSEGNA", "lock");
+					sqlQueryObject.addSelectAliasField("sa", "CLUSTER_ID", "cluster");
+					sqlQueryObject.addSelectAliasField("sa", "ATTESA_ESITO", "attesa");
 					sqlQueryObject.addSelectField("m","ORA_REGISTRAZIONE");
 					sqlQueryObject.addSelectField("m","PROPRIETARIO");
 					sqlQueryObject.addSelectField("m","TIPO");
@@ -4352,14 +4407,15 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addWhereCondition("m.TIPO=?");
 					sqlQueryObject.addWhereCondition("m.PROPRIETARIO=?");
 					sqlQueryObject.addWhereCondition("sa.TIPO_CONSEGNA=?");
-					sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO is not null"); // per non intralciare con la "prima" consegna
+					sqlQueryObject.addWhereCondition("sa.ERRORE_PROCESSAMENTO_COMPACT is not null"); // per non intralciare con la "prima" consegna
 					sqlQueryObject.addWhereCondition("sa.RISPEDIZIONE<=?");
+					sqlQueryObject.addWhereCondition(false, "sa.LOCK_CONSEGNA is null", "sa.LOCK_CONSEGNA < ?");
+					sqlQueryObject.addWhereCondition(false, "sa.ATTESA_ESITO is null", "sa.ATTESA_ESITO <> ?");
 					
 					sqlQueryObject.setANDLogicOperator(true);
-					if(orderBy){
-						sqlQueryObject.addOrderBy("m.ORA_REGISTRAZIONE");
-						sqlQueryObject.setSortType(true);
-					}
+					sqlQueryObject.addOrderBy("m.ORA_REGISTRAZIONE");
+					sqlQueryObject.setSortType(true);
+					
 					sqlQueryObject.setLimit(limit);
 					queryString = sqlQueryObject.createSQLQuery();
 				}
@@ -4367,25 +4423,31 @@ public class GestoreMessaggi  {
 
 				//log.debug("Query: "+query);
 				pstmtMsgEliminati = connectionDB.prepareStatement(queryString);
-				pstmtMsgEliminati.setString(1,tipo);
-				pstmtMsgEliminati.setString(2,ConsegnaContenutiApplicativi.ID_MODULO);
-				pstmtMsgEliminati.setString(3,GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE);
-				pstmtMsgEliminati.setTimestamp(4,new Timestamp(riconsegna.getTime()));
+				int index = 1;
+				pstmtMsgEliminati.setString(index++,tipo);
+				pstmtMsgEliminati.setString(index++,ConsegnaContenutiApplicativi.ID_MODULO);
+				pstmtMsgEliminati.setString(index++,GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE);
+				pstmtMsgEliminati.setTimestamp(index++,new Timestamp(riconsegna.getTime()));
+				pstmtMsgEliminati.setTimestamp(index++, new Timestamp(dataRilascioLock.getTime()));
+				pstmtMsgEliminati.setInt(index++,CostantiDB.TRUE);
 
 				long startDateSQLCommand = DateManager.getTimeMillis();
-				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+ConsegnaContenutiApplicativi.ID_MODULO+"] 3["+
-							GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"] 4["+riconsegna.toString()+"]...");
+				if(debug)
+					loggerSql.debug("[QUERY] (Messaggi.daRispedire) ["+queryString+"] 1["+tipo+"] 2["+ConsegnaContenutiApplicativi.ID_MODULO+"] 3["+
+							GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"] 4["+DateUtils.getSimpleDateFormatMs().format(riconsegna)+"] 5["+
+							DateUtils.getSimpleDateFormatMs().format(dataRilascioLock)+"] 6["+CostantiDB.TRUE+"] ...");
 				rs = pstmtMsgEliminati.executeQuery();
 				long endDateSQLCommand = DateManager.getTimeMillis();
-				long secondSQLCommand = (endDateSQLCommand - startDateSQLCommand) / 1000;
-				if(logQuery)
-					this.log.debug("[QUERY] (Messaggi.eliminatiLogicamente) ["+queryString+"] 1["+tipo+"] 2["+ConsegnaContenutiApplicativi.ID_MODULO+"] 3["+
-							GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"] 4["+riconsegna.toString()+"] effettuata in "+secondSQLCommand+" secondi");
+				long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
+				if(debug)
+					loggerSql.debug("[QUERY] (Messaggi.daRispedire) ["+queryString+"] 1["+tipo+"] 2["+ConsegnaContenutiApplicativi.ID_MODULO+"] 3["+
+							GestoreMessaggi.CONSEGNA_TRAMITE_CONNETTORE+"] 4["+DateUtils.getSimpleDateFormatMs().format(riconsegna)+"] 5["+
+							DateUtils.getSimpleDateFormatMs().format(dataRilascioLock)+"] 6["+CostantiDB.TRUE+"] effettuata in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
 
 				int countLimit = 0;
 				while(rs.next()){
 					MessaggioServizioApplicativo msg = new MessaggioServizioApplicativo();
+					msg.setIdTransazione(rs.getString("idtransazione"));
 					msg.setIdMessaggio(rs.getString("idmess"));
 					msg.setServizioApplicativo(rs.getString("sa"));
 					int sbSoap = rs.getInt("sbSoap");
@@ -4393,6 +4455,13 @@ public class GestoreMessaggi  {
 					int sbInfoProt = rs.getInt("sbProtocol");
 					msg.setSbustamentoInformazioniProtocollo(sbInfoProt==CostantiDB.TRUE);
 					msg.setNomePorta(rs.getString("nomePorta"));
+					
+					Timestamp dataPresaInConsegna = rs.getTimestamp("lock");
+					msg.setDataPresaInConsegna(dataPresaInConsegna);
+					msg.setClusterIdPresaInConsegna(rs.getString("cluster"));
+					int attesaTransazioneCapostipite = rs.getInt("attesa");
+					msg.setAttesaEsitoTransazioneCapostipite(attesaTransazioneCapostipite==CostantiDB.TRUE);
+					
 					idMsg.add(msg);
 					// LIMIT Applicativo
 					if(Configurazione.getSqlQueryObjectType()==null){
@@ -4416,7 +4485,176 @@ public class GestoreMessaggi  {
 					if(pstmtMsgEliminati != null)
 						pstmtMsgEliminati.close();
 				} catch(Exception er) { }
-				this.log.error(errorMsg,e);
+				loggerSql.error(errorMsg,e);
+				throw new GestoreMessaggiException(errorMsg,e);
+			}
+			// else if (this.openspcoopstate instanceof OpenSPCoopStateless){
+			// NOP stateful only
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+
+	}
+	
+	public MessaggioServizioApplicativo readInfoDestinatario(String applicativo, boolean debug, Logger log)throws GestoreMessaggiException{
+		List<MessaggioServizioApplicativo> l = _readInfoDestinatari(debug, log, applicativo);
+		if(l!=null && !l.isEmpty()) {
+			if(l.size()==1) {
+				return l.get(0);
+			}
+			else {
+				throw new GestoreMessaggiException("More than one result ("+l.size()+")");
+			}
+		}
+		return null;
+	}
+	public List<MessaggioServizioApplicativo> readInfoDestinatari(boolean debug, Logger log)throws GestoreMessaggiException{
+		return _readInfoDestinatari(debug, log, null);
+	}
+	private List<MessaggioServizioApplicativo> _readInfoDestinatari(boolean debug, Logger log, String applicativo)throws GestoreMessaggiException{
+
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StatefulMessage stateful = (this.isRichiesta) ? ((StatefulMessage)this.openspcoopstate.getStatoRichiesta())
+					: ((StatefulMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateful.getConnectionDB();
+
+			List<MessaggioServizioApplicativo> idMsg = new ArrayList<MessaggioServizioApplicativo>();
+
+			PreparedStatement pstmtMsg = null;
+			ResultSet rs = null;
+			String queryString = null;
+			String tipo = null;
+			try{   
+				// tipo
+				tipo = Costanti.INBOX;
+
+				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
+				if(Configurazione.getSqlQueryObjectType()==null){
+					StringBuffer query = new StringBuffer();
+					query.append("SELECT "+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO as idmess, ");
+					query.append(" "+GestoreMessaggi.MESSAGGI+".id_transazione as idtransazione, ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO as sa, ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_SOAP as sbSoap, ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_INFO_PROTOCOL as sbProtocol ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".NOME_PORTA as nomePorta ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".LOCK_CONSEGNA as lock ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".CLUSTER_ID as cluster ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".ATTESA_ESITO as attesa ");
+					
+					query.append(" FROM ");
+					query.append(GestoreMessaggi.MESSAGGI);
+					query.append(",");
+					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+					
+					query.append(" WHERE ");
+					
+					// join
+					query.append(" ");
+					query.append(GestoreMessaggi.MESSAGGI);
+					query.append(".ID_MESSAGGIO=");
+					query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
+					query.append(".ID_MESSAGGIO AND ");
+					
+					query.append(" ").append(GestoreMessaggi.MESSAGGI).append(".ID_MESSAGGIO=? AND ");
+					query.append(" ").append(GestoreMessaggi.MESSAGGI).append(".TIPO=?");
+					if(applicativo!=null) {
+						query.append(" AND ").append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI).append(".SERVIZIO_APPLICATIVO=?");
+					}
+
+					queryString = query.toString();
+				}else{
+
+					ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(Configurazione.getSqlQueryObjectType());
+					sqlQueryObject.addFromTable(GestoreMessaggi.MESSAGGI,"m");
+					sqlQueryObject.addFromTable(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI,"sa");
+					
+					sqlQueryObject.addSelectAliasField("m", "ID_MESSAGGIO", "idmess");
+					sqlQueryObject.addSelectAliasField("m", "id_transazione", "idtransazione");
+					sqlQueryObject.addSelectAliasField("sa", "SERVIZIO_APPLICATIVO", "sa");
+					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_SOAP", "sbSoap");
+					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_INFO_PROTOCOL", "sbProtocol");
+					sqlQueryObject.addSelectAliasField("sa", "NOME_PORTA", "nomePorta");
+					sqlQueryObject.addSelectAliasField("sa", "LOCK_CONSEGNA", "lock");
+					sqlQueryObject.addSelectAliasField("sa", "CLUSTER_ID", "cluster");
+					sqlQueryObject.addSelectAliasField("sa", "ATTESA_ESITO", "attesa");
+					sqlQueryObject.addSelectField("m","ORA_REGISTRAZIONE");
+					sqlQueryObject.addSelectField("m","PROPRIETARIO");
+					sqlQueryObject.addSelectField("m","TIPO");
+					
+					// join
+					sqlQueryObject.addWhereCondition("m.ID_MESSAGGIO=sa.ID_MESSAGGIO");
+					
+					sqlQueryObject.addWhereCondition("m.ID_MESSAGGIO=?");
+					sqlQueryObject.addWhereCondition("m.TIPO=?");
+					if(applicativo!=null) {
+						sqlQueryObject.addWhereCondition("sa.SERVIZIO_APPLICATIVO=?");
+					}
+					
+					sqlQueryObject.setANDLogicOperator(true);
+					
+					queryString = sqlQueryObject.createSQLQuery();
+				}
+				//System.out.println("QUERY MESSAGGI ELIMINATI IS: ["+queryString+"]  1["+idModuloCleaner+"]  2["+tipo+"]");
+
+				//log.debug("Query: "+query);
+				pstmtMsg = connectionDB.prepareStatement(queryString);
+				int index = 1;
+				pstmtMsg.setString(index++,this.idBusta);
+				pstmtMsg.setString(index++,tipo);
+				if(applicativo!=null) {
+					pstmtMsg.setString(index++,applicativo);
+				}
+				
+				String terzoArgomento = "";
+				if(applicativo!=null) {
+					terzoArgomento = " 3["+applicativo+"]";
+				}
+				
+				long startDateSQLCommand = DateManager.getTimeMillis();
+				if(debug)
+					log.debug("[QUERY] (Messaggi.readDestinatari) ["+queryString+"] 1["+this.idBusta+"] 2["+tipo+"]"+terzoArgomento+" ...");
+				rs = pstmtMsg.executeQuery();
+				long endDateSQLCommand = DateManager.getTimeMillis();
+				long diffSQLCommand = endDateSQLCommand - startDateSQLCommand;
+				if(debug)
+					log.debug("[QUERY] (Messaggi.readDestinatari) ["+queryString+"] 1["+this.idBusta+"] 2["+tipo+"]"+terzoArgomento+" effettuata in "+Utilities.convertSystemTimeIntoString_millisecondi(diffSQLCommand, true));
+
+				while(rs.next()){
+					MessaggioServizioApplicativo msg = new MessaggioServizioApplicativo();
+					msg.setIdTransazione(rs.getString("idtransazione"));
+					msg.setIdMessaggio(rs.getString("idmess"));
+					msg.setServizioApplicativo(rs.getString("sa"));
+					int sbSoap = rs.getInt("sbSoap");
+					msg.setSbustamentoSoap(sbSoap==CostantiDB.TRUE);
+					int sbInfoProt = rs.getInt("sbProtocol");
+					msg.setSbustamentoInformazioniProtocollo(sbInfoProt==CostantiDB.TRUE);
+					msg.setNomePorta(rs.getString("nomePorta"));
+					
+					Timestamp dataPresaInConsegna = rs.getTimestamp("lock");
+					msg.setDataPresaInConsegna(dataPresaInConsegna);
+					msg.setClusterIdPresaInConsegna(rs.getString("cluster"));
+					int attesaTransazioneCapostipite = rs.getInt("attesa");
+					msg.setAttesaEsitoTransazioneCapostipite(attesaTransazioneCapostipite==CostantiDB.TRUE);
+					
+					idMsg.add(msg);
+
+				}
+				rs.close();
+				pstmtMsg.close();
+
+				return idMsg;
+
+			} catch(Exception e) {
+				String errorMsg = "[GestoreMessaggi.readDestinatari] errore, queryString["+queryString+"]: "+e.getMessage();
+				try{
+					if(rs != null)
+						rs.close();
+				} catch(Exception er) {}
+				try{
+					if(pstmtMsg != null)
+						pstmtMsg.close();
+				} catch(Exception er) { }
+				log.error(errorMsg,e);
 				throw new GestoreMessaggiException(errorMsg,e);
 			}
 			// else if (this.openspcoopstate instanceof OpenSPCoopStateless){
@@ -4427,9 +4665,176 @@ public class GestoreMessaggi  {
 
 	}
 
+	public void updateMessaggioPresaInCosegna(String servizioApplicativo, String clusterId,
+			boolean debug, RunnableLogger loggerSql) throws GestoreMessaggiException {
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateMSG.getConnectionDB();
 
+			PreparedStatement pstmt = null;
+			try{
 
+				Timestamp now = DateManager.getTimestamp();
+				
+				
+				// Costruzione Query Update
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE ID_MESSAGGIO=? AND SERVIZIO_APPLICATIVO=?";
+				//log.debug("Query: "+query);
+				pstmt= connectionDB.prepareStatement(query);
+				int index = 1;
+				pstmt.setTimestamp(index++,now);
+				pstmt.setString(index++,clusterId);
+				pstmt.setString(index++,this.idBusta);
+				pstmt.setString(index++,servizioApplicativo);
 
+				int row = pstmt.executeUpdate();
+				if(debug) {
+					loggerSql.debug("(rows update: "+row+") UPDATE MSG_SERVIZI_APPLICATIVI SET LOCK_CONSEGNA='"+DateUtils.getSimpleDateFormatMs().format(now)+"', CLUSTER_ID='"+cluster_id+"' WHERE ID_MESSAGGIO='"+this.idBusta+"' AND SERVIZIO_APPLICATIVO='"+servizioApplicativo+"'");
+				}
+				
+				pstmt.close();
+
+			} catch(Exception e) {
+				try{
+					if( pstmt != null  )
+						pstmt.close();
+				} catch(Exception er) {}
+				String msgError = "ERROR updateMessaggioPresaInCosegna: "+e.getMessage();
+				loggerSql.error(msgError,e);
+				throw new GestoreMessaggiException(msgError,e);
+			}
+
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+	
+	public void releaseMessaggioPresaInCosegna(String servizioApplicativo, String clusterId,
+			boolean debug, RunnableLogger loggerSql) throws GestoreMessaggiException {
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateMSG.getConnectionDB();
+
+			PreparedStatement pstmt = null;
+			try{
+
+				// Costruzione Query Update
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE ID_MESSAGGIO=? AND SERVIZIO_APPLICATIVO=?";
+				//log.debug("Query: "+query);
+				pstmt= connectionDB.prepareStatement(query);
+				int index = 1;
+				pstmt.setTimestamp(index++,null);
+				pstmt.setString(index++,null);
+				pstmt.setString(index++,this.idBusta);
+				pstmt.setString(index++,servizioApplicativo);
+
+				int row = pstmt.executeUpdate();
+				if(debug) {
+					loggerSql.debug("(rows update: "+row+") UPDATE MSG_SERVIZI_APPLICATIVI SET LOCK_CONSEGNA=null, CLUSTER_ID=null WHERE ID_MESSAGGIO='"+this.idBusta+"' AND SERVIZIO_APPLICATIVO='"+servizioApplicativo+"'");
+				}
+				
+				pstmt.close();
+
+			} catch(Exception e) {
+				try{
+					if( pstmt != null  )
+						pstmt.close();
+				} catch(Exception er) {}
+				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
+				loggerSql.error(msgError,e);
+				throw new GestoreMessaggiException(msgError,e);
+			}
+
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+	
+	public void releaseMessaggiPresaInCosegna(String clusterId,
+			boolean debug, RunnableLogger loggerSql) throws GestoreMessaggiException {
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateMSG.getConnectionDB();
+
+			PreparedStatement pstmt = null;
+			try{
+
+				// Costruzione Query Update
+				String condition = (clusterId==null || "".equals(clusterId)) ? "CLUSTER_ID is null" : " CLUSTER_ID=?";
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET LOCK_CONSEGNA=?, CLUSTER_ID=? WHERE "+condition+" AND LOCK_CONSEGNA is not null";
+				//log.debug("Query: "+query);
+				pstmt= connectionDB.prepareStatement(query);
+				int index = 1;
+				pstmt.setTimestamp(index++,null);
+				pstmt.setString(index++,null);
+				if((clusterId!=null && !"".equals(clusterId))) {
+					pstmt.setString(index++,clusterId);
+				}
+
+				int row = pstmt.executeUpdate();
+				if(debug) {
+					loggerSql.debug("(rows update: "+row+") (clusterID: "+clusterId+") UPDATE MSG_SERVIZI_APPLICATIVI SET LOCK_CONSEGNA=null, CLUSTER_ID=null WHERE "+condition);
+				}
+				
+				pstmt.close();
+
+			} catch(Exception e) {
+				try{
+					if( pstmt != null  )
+						pstmt.close();
+				} catch(Exception er) {}
+				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
+				loggerSql.error(msgError,e);
+				throw new GestoreMessaggiException(msgError,e);
+			}
+
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+
+	public void releaseAttesaEsiti(boolean debug, Logger log) throws GestoreMessaggiException {
+		if(this.openspcoopstate instanceof OpenSPCoopStateful) {
+			StateMessage stateMSG = (this.isRichiesta) ? ((StateMessage)this.openspcoopstate.getStatoRichiesta()) 
+					: ((StateMessage)this.openspcoopstate.getStatoRisposta()) ;
+			Connection connectionDB = stateMSG.getConnectionDB();
+
+			PreparedStatement pstmt = null;
+			try{
+
+				// Costruzione Query Update
+				String query = "UPDATE "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+" SET ATTESA_ESITO=? WHERE ID_MESSAGGIO=?";
+				//log.debug("Query: "+query);
+				pstmt= connectionDB.prepareStatement(query);
+				int index = 1;
+				pstmt.setInt(index++,CostantiDB.FALSE);
+				pstmt.setString(index++,this.idBusta);
+
+				int row = pstmt.executeUpdate();
+				if(debug) {
+					log.debug("(rows update: "+row+") UPDATE MSG_SERVIZI_APPLICATIVI SET ATTESA_ESITO="+CostantiDB.FALSE+" WHERE ID_MESSAGGIO='"+this.idBusta+"'");
+				}
+				
+				pstmt.close();
+
+			} catch(Exception e) {
+				try{
+					if( pstmt != null  )
+						pstmt.close();
+				} catch(Exception er) {}
+				String msgError = "ERROR releaseMessaggioPresaInCosegna: "+e.getMessage();
+				log.error(msgError,e);
+				throw new GestoreMessaggiException(msgError,e);
+			}
+
+		}else{
+			throw new GestoreMessaggiException("Metodo invocato con OpenSPCoopState non valido");
+		}
+	}
+	
 
 
 

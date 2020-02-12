@@ -39,6 +39,8 @@ public class ProblemRFC7807 {
 	private String instance;
 	
 	private Map<String, Object> custom = new HashMap<>();
+
+	private String raw;
 	
 	public String getType() {
 		return this.type;
@@ -80,6 +82,13 @@ public class ProblemRFC7807 {
 	}
 	public void setCustom(Map<String, Object> custom) {
 		this.custom = custom;
+	}
+	
+	public String getRaw() {
+		return this.raw;
+	}
+	public void setRaw(String raw) {
+		this.raw = raw;
 	}
 	
 	@Override

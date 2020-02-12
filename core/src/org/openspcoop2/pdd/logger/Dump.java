@@ -33,9 +33,11 @@ import java.util.Map;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -49,6 +51,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreUscita;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.core.transazioni.RepositoryGestioneStateful;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
@@ -86,7 +89,7 @@ public class Dump {
 	/** Indicazione di un dump funzionante */
 	public static boolean sistemaDumpDisponibile = true;
 	/** Primo errore avvenuto nel momento in cui è stato rilevato un malfunzionamento nel sistema di dump */
-	public static Exception motivoMalfunzionamentoDump = null;
+	public static Throwable motivoMalfunzionamentoDump = null;
 
 
 	/**  Logger log4j utilizzato per effettuare un dump dei messaggi applicativi */
@@ -132,6 +135,16 @@ public class Dump {
 	
 	/** Transaction */
 	private Transaction transactionNullable = null;
+	
+	/** -----------------Impostazione TransazioneApplicativoServer ---------------- */
+	private TransazioneApplicativoServer transazioneApplicativoServer;
+	private IDPortaApplicativa idPortaApplicativa;
+	private Date dataConsegnaTransazioneApplicativoServer;
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer, IDPortaApplicativa idPortaApplicativa, Date dataConsegnaTransazioneApplicativoServer) {
+		this.transazioneApplicativoServer = transazioneApplicativoServer;
+		this.idPortaApplicativa = idPortaApplicativa;
+		this.dataConsegnaTransazioneApplicativoServer = dataConsegnaTransazioneApplicativoServer;
+	}
 	
 	/**
 	 * Costruttore. 
@@ -667,40 +680,65 @@ public class Dump {
 		
 		// TransazioneContext
 		if(this.properties.isTransazioniSaveDumpInUniqueTransaction()) {
-			Exception exc = null;
-			boolean gestioneStateful = false;
-			try {
-				Transaction tr = TransactionContext.getTransaction(this.idTransazione);
-				tr.addMessaggio(messaggio);
-			}catch(TransactionDeletedException e){
-				gestioneStateful = true;
-			}catch(TransactionNotExistsException e){
-				gestioneStateful = true;
-			}catch(Exception e){
-				exc = e;
+			
+			
+			if(this.transazioneApplicativoServer!=null) {
+				try {
+					// forzo
+					messaggio.setIdTransazione(this.transazioneApplicativoServer.getIdTransazione());
+					messaggio.setServizioApplicativoErogatore(this.transazioneApplicativoServer.getServizioApplicativoErogatore());
+					messaggio.setDataConsegna(this.dataConsegnaTransazioneApplicativoServer);
+					GestoreConsegnaMultipla.getInstance().safeSave(messaggio, this.idPortaApplicativa);
+				}catch(Throwable t) {
+					String msgError = "Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage();
+					this.loggerDump.error(msgError,t);
+					OpenSPCoop2Logger.loggerOpenSPCoopResources.error(msgError,t);
+					try{
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,t.getMessage());
+						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+					}catch(Exception eMsg){}
+					gestioneErroreDump(t);
+				}
 			}
-			if(gestioneStateful){
-				try{
-					//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
-					RepositoryGestioneStateful.addMessaggio(location, messaggio);
+			else {
+			
+				Exception exc = null;
+				boolean gestioneStateful = false;
+				try {
+					Transaction tr = TransactionContext.getTransaction(this.idTransazione);
+					tr.addMessaggio(messaggio);
+				}catch(TransactionDeletedException e){
+					gestioneStateful = true;
+				}catch(TransactionNotExistsException e){
+					gestioneStateful = true;
 				}catch(Exception e){
 					exc = e;
 				}
-			}
-			if(exc!=null) {
-				try{
-					// Registro l'errore sul file dump.log
-					this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-							") con identificativo di transazione ["+this.idTransazione+"]:"+exc.getMessage());
-				}catch(Exception eLog){}
-				OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
-						") con identificativo di transazione ["+this.idTransazione+"]: "+exc.getMessage(),exc);
-				try{
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
-					this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
-					this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
-				}catch(Exception eMsg){}
-				gestioneErroreDump(exc);
+				if(gestioneStateful){
+					try{
+						//System.out.println("@@@@@REPOSITORY@@@@@ LOG DUMP ID TRANSAZIONE ["+idTransazione+"] ADD");
+						RepositoryGestioneStateful.addMessaggio(location, messaggio);
+					}catch(Exception e){
+						exc = e;
+					}
+				}
+				if(exc!=null) {
+					try{
+						// Registro l'errore sul file dump.log
+						this.loggerDump.error("Riscontrato errore durante la registrazione, nel contesto della transazione, del dump del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+								") con identificativo di transazione ["+this.idTransazione+"]:"+exc.getMessage());
+					}catch(Exception eLog){}
+					OpenSPCoop2Logger.loggerOpenSPCoopResources.error("Errore durante la registrazione, nel contesto della transazione, del contenuto applicativo presente nel messaggio ("+tipoMessaggio+
+							") con identificativo di transazione ["+this.idTransazione+"]: "+exc.getMessage(),exc);
+					try{
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIA_TIPO, tipoMessaggio.getValue());
+						this.msgDiagErroreDump.addKeyword(CostantiPdD.KEY_TRACCIAMENTO_ERRORE,exc.getMessage());
+						this.msgDiagErroreDump.logPersonalizzato("dumpContenutiApplicativi.registrazioneNonRiuscita");
+					}catch(Exception eMsg){}
+					gestioneErroreDump(exc);
+				}
+				
 			}
 		}
 		
@@ -841,7 +879,7 @@ public class Dump {
 	
 
 	
-	private void gestioneErroreDump(Exception e) throws DumpException{
+	private void gestioneErroreDump(Throwable e) throws DumpException{
 		
 		if(this.properties.isDumpFallito_BloccoServiziPdD()){
 			Dump.sistemaDumpDisponibile=false;

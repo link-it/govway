@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.CorrelazioneApplicativaElemento;
 import org.openspcoop2.core.config.CorrelazioneApplicativaRispostaElemento;
 import org.openspcoop2.core.config.MessageSecurity;
@@ -554,9 +555,13 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				} else {
 		
 					de = new DataElement();
-					if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
-							|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
-						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED))) {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+						de.setValue(patternAzione);
+						de.setRequired(true);
+					}
+					else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+						de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
 						de.setValue(patternAzione);
 						de.setRequired(true);
 					}
@@ -597,7 +602,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 		
 				// se non e' selezionata la modalita userInput / wsdlbased / registerInput faccio vedere il check box forceWsdlbased
 				de = new DataElement();
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
 				if( (!visualizzazioneSpecialeSoapPerEssereUgualeARest) &&
 						modeaz!= null && 
 						(
@@ -617,6 +622,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					}
 					else {
 						de.setType(DataElementType.CHECKBOX);
+						de.setLabelRight(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_RIGHT);
 						if( ServletUtils.isCheckBoxEnabled(forceWsdlBased) || CostantiRegistroServizi.ABILITATO.equals(forceWsdlBased) ){
 							de.setSelected(true);
 						}
@@ -703,10 +709,14 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				DataElement deLabel = new DataElement();
 				deLabel.setType(DataElementType.TEXT);
-				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED) 
-						|| modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+				if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_URL_BASED))) {
 					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+					deLabel.setValue(patternAzione);
+				} 
+				else if ((modeaz != null) && (modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_CONTENT_BASED))) {
+					deLabel.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
 					deLabel.setValue(patternAzione);
 				} 
 				else if ((modeaz != null) && modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_HEADER_BASED)
@@ -739,7 +749,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 			}
 			
 			de = new DataElement();
-			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+			de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
 			de.setType(DataElementType.HIDDEN);
 			de.setValue(forceWsdlBased);
 			de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
@@ -751,7 +761,7 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 						!modeaz.equals(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE_INTERFACE_BASED))
 				){
 					DataElement deLabel = new DataElement();
-					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED);
+					deLabel.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_FORCE_INTERFACE_BASED_LEFT);
 					deLabel.setType(DataElementType.TEXT);
 					deLabel.setValue(ServletUtils.isCheckBoxEnabled(forceWsdlBased) ? CostantiConfigurazione.ABILITATO.getValue() : CostantiConfigurazione.DISABILITATO.getValue() );
 					dati.addElement(deLabel);
@@ -1332,12 +1342,20 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_INPUT_BASED ,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO 
 		};
+		List<String> labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.URL_BASED,
+				ModalitaIdentificazione.HEADER_BASED,
+				ModalitaIdentificazione.CONTENT_BASED,
+				ModalitaIdentificazione.INPUT_BASED);
+		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+				
 		//String[] tipoMode = { "contentBased", "disabilitato" };
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 		de.setValues(tipoMode);
+		de.setLabels(labels);
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrApp('add','')");
 		de.setPostBack(true);
@@ -1352,11 +1370,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+				}
+				else {
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+				}
 				de.setType(DataElementType.TEXT_AREA);
 				
 				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
-					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
@@ -1462,12 +1485,19 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_INPUT_BASED ,
 				PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_DISABILITATO 
 		};
+		List<String> labels = ModalitaIdentificazione.getLabels(
+				ModalitaIdentificazione.HEADER_BASED,
+				ModalitaIdentificazione.CONTENT_BASED,
+				ModalitaIdentificazione.INPUT_BASED);
+		labels.add(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+		
 		//String[] tipoMode = { "contentBased", "disabilitato" };
 		de = new DataElement();
 		de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_MODALITA_IDENTIFICAZIONE);
 		de.setType(DataElementType.SELECT);
 		de.setName(PorteDelegateCostanti.PARAMETRO_PORTE_DELEGATE_MODE);
 		de.setValues(tipoMode);
+		de.setLabels(labels);
 		de.setSelected(mode);
 		//				de.setOnChange("CambiaModeCorrApp('add','')");
 		de.setPostBack(true);
@@ -1482,11 +1512,16 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 				de.setType(DataElementType.TEXT_EDIT);
 			}
 			else {
-				de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_URL_BASED)) {
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_ESPRESSIONE_REGOLARE);
+				}
+				else {
+					de.setLabel(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
+				}
 				de.setType(DataElementType.TEXT_AREA);
 				
 				if(mode.equals(PorteDelegateCostanti.VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_MODE_CORRELAZIONE_CONTENT_BASED)) {
-					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_PATTERN);
+					dInfoPattern = new DataElementInfo(PorteDelegateCostanti.LABEL_PARAMETRO_PORTE_DELEGATE_CONTENT_PATTERN);
 					if(org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(serviceBinding)) {
 						dInfoPattern.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_REST);
 						dInfoPattern.setListBody(CostantiControlStation.LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_PATTERN_VALORI_REST);
@@ -2909,8 +2944,26 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					if(cae.getIdentificazione()!=null)
-						de.setValue(cae.getIdentificazione().toString());
+					if(cae.getIdentificazione()!=null) {
+						//de.setValue(cae.getIdentificazione().toString());
+						switch (cae.getIdentificazione()) {
+						case DISABILITATO:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+							break;
+						case HEADER_BASED:
+							de.setValue(ModalitaIdentificazione.HEADER_BASED.getLabel());
+							break;
+						case URL_BASED:
+							de.setValue(ModalitaIdentificazione.URL_BASED.getLabel());
+							break;
+						case CONTENT_BASED:
+							de.setValue(ModalitaIdentificazione.CONTENT_BASED.getLabel());
+							break;
+						case INPUT_BASED:
+							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
+							break;
+						}
+					}
 					e.addElement(de);
 
 					dati.addElement(e);
@@ -3225,8 +3278,23 @@ public class PorteDelegateHelper extends ConnettoriHelper {
 					e.addElement(de);
 
 					de = new DataElement();
-					if(cae.getIdentificazione()!=null)
-						de.setValue(cae.getIdentificazione().toString());
+					if(cae.getIdentificazione()!=null) {
+						//de.setValue(cae.getIdentificazione().toString());
+						switch (cae.getIdentificazione()) {
+						case DISABILITATO:
+							de.setValue(CostantiControlStation.LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO);
+							break;
+						case HEADER_BASED:
+							de.setValue(ModalitaIdentificazione.HEADER_BASED.getLabel());
+							break;
+						case CONTENT_BASED:
+							de.setValue(ModalitaIdentificazione.CONTENT_BASED.getLabel());
+							break;
+						case INPUT_BASED:
+							de.setValue(ModalitaIdentificazione.INPUT_BASED.getLabel());
+							break;
+						}
+					}
 					e.addElement(de);
 
 					dati.addElement(e);

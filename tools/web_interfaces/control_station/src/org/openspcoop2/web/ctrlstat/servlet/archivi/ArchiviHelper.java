@@ -2234,10 +2234,11 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				getmsgUsername = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				getmsgPassword = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				//}
-				
+				boolean erogazioneServizioApplicativoServerEnabled = false;
 				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
-						null,null,protocollo,false,true, showSection, null,null, null);
+						null,null,protocollo,false,true, showSection, null,null, null, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 							
 				boolean forceEnabled = true; // non ha senso non fornire un connettore a meno che non vi sia la possibilita' di utilizzare l'integration manager
 				boolean showSectionTitle = false;
@@ -2695,7 +2696,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken,token_policy,
 					listExtendedConnettore, forceEnabled,
-					null, false,false);
+					null, false,false
+					, false, false, null, null
+					);
 			
 		}finally{
 			// ripristino tipologia

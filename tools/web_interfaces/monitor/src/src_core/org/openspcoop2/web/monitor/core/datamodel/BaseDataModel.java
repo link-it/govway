@@ -26,11 +26,14 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.web.monitor.core.dao.IService;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
@@ -63,6 +66,7 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
     protected Integer rowCount;
     protected IExpression countFilter= null;
     protected Integer currentPage = 1;
+    protected Integer rowsToDisplay = 25;
     
     /**
      * The boolean field, detached, starts as false.  
@@ -275,6 +279,27 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 	public void setCurrentPage(Integer currentPage) {
 		this.currentPage = currentPage;
 	}
+
+	public Integer getRowsToDisplay() {
+		return  this.rowsToDisplay;
+	}
+
+	public void setRowsToDisplay(Integer rowsToDisplay) {
+		this.rowsToDisplay = rowsToDisplay;
+	}
+	
+	public void rowsToDisplaySelected(ActionEvent ae) {}
     
-    
+	public List<SelectItem> getListaNumeroRisultati(){
+		List<SelectItem> lst = new ArrayList<>();
+		
+		lst.add(new SelectItem(new Integer(25), "25 Entries"));  
+		lst.add(new SelectItem(new Integer(75), "75 Entries"));
+		lst.add(new SelectItem(new Integer(125), "125 Entries"));
+		lst.add(new SelectItem(new Integer(250), "250 Entries"));
+		lst.add(new SelectItem(new Integer(500), "500 Entries"));
+		lst.add(new SelectItem(new Integer(1000), "1000 Entries"));
+		
+		return lst;
+	}
 }

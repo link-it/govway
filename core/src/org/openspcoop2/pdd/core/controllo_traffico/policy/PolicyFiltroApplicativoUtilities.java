@@ -102,7 +102,17 @@ public class PolicyFiltroApplicativoUtilities {
 						
 		case SOAPACTION_BASED:
 			
-			return context.getConnettore().getSoapAction();
+			String soapAction = context.getConnettore().getSoapAction();
+			if(soapAction!=null) {
+				soapAction = soapAction.trim();
+				if(soapAction.startsWith("\"") && soapAction.length()>1){
+					soapAction = soapAction.substring(1);
+				}
+				if(soapAction.endsWith("\"")  && soapAction.length()>1){
+					soapAction = soapAction.substring(0, (soapAction.length()-1));
+				}
+			}
+			return soapAction;
 			
 		case INDIRIZZO_IP:
 			

@@ -19,6 +19,9 @@
 		</c:if>
 		
 		<c:if test="#{empty rowsToDisplay}">
+			<c:set var="rowsToDisplay" value="#{value.rowsToDisplay}"/>
+		</c:if>	
+		<c:if test="#{empty rowsToDisplay}">
 			<c:set var="rowsToDisplay" value="25"/>
 		</c:if>
 		<c:if test="#{empty showSelectAll}">
@@ -39,6 +42,11 @@
 		<c:if test="#{empty useCount}">
 			<c:set var="useCount" value="true"/>
 		</c:if>
+		<a4j:outputPanel id="#{id}_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+			<a4j:outputPanel layout="block" styleClass="buttonrow">
+				<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+			</a4j:outputPanel>
+		</a4j:outputPanel>
 		<a4j:outputPanel id="#{id}" layout="block">
 			
 			<script type="text/javascript">			
@@ -46,6 +54,7 @@
 					checkBrowser();
 					visualizzaTastoRimuovi('#{id}','#{id}_deleteBtn');
 					abilitaColonnaSelectAll('#{id}');
+					visualizzaMessaggioNoData('#{id}');
 				 });
 			</script>
 			<c:if test="#{useCount == true}">
@@ -65,7 +74,7 @@
 							<c:set var="_totRowsToDisplay" value="#{rowsToDisplay gt 0 ? (_totRows lt rowsToDisplay ? _totRows : rowsToDisplay) : _totRows}"/>
 							<c:set var="_rowsCount" value="#{(page*(_totRowsToDisplay))}"/>
 							<c:set var="_currentRowDisplayed" value="#{((page-1)*rowsToDisplay)+1}"/>						
-							<h:panelGroup id="tableHeaderText">
+							<h:panelGroup id="#{id}_tableHeaderText">
 								<h:outputText value="#{headerText}: " rendered="#{not empty headerText}"/>
 								<h:outputText value="record [#{(_totRows gt 0) ? _currentRowDisplayed : 0} - #{ _rowsCount gt _totRows ? _totRows : _rowsCount }] su #{_totRows}" />
 							</h:panelGroup>						
@@ -255,7 +264,7 @@
 								<td>
 									<h:panelGrid columns="3">
 										<rich:spacer width="10px"/>
-										<h:panelGroup id="tableHeaderText">
+										<h:panelGroup id="#{id}_tableHeaderText">
 											<h:outputText value="#{headerText}" rendered="#{not empty headerText and empty value.recordLabel}"/>
 											<h:outputText value="#{headerText}: " rendered="#{not empty headerText and not empty value.recordLabel}"/>
 											<h:outputText value="#{value.recordLabel}" rendered="#{not empty value.recordLabel}"/>

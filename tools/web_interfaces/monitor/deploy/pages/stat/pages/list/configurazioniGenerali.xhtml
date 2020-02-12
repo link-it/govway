@@ -152,6 +152,15 @@
 				   jQuery(document).ready(nascondiComandi);
 				   
 				   function nascondiComandi(){
+					   jQuery("div[id$='chkClmnPg']").attr('style', '');
+					   jQuery("th[id$='ckbClmnheader']").css('padding','8px');
+					   jQuery("th[id$='ckbClmnheader']").css('width','16px');
+					   jQuery("input[id$='tableConfigurazioni_column_ckb']").parent().attr('width','16px');
+					   jQuery("input[id$='tableConfigurazioni_column_ckb']").parent().css('padding','12px');
+					   jQuery("input[id$='tableConfigurazioni_column_ckb']").parent().addClass('align-center');
+					   jQuery("input[id$='tableConfigurazioni_column_ckb']").css('padding','0px');
+					   jQuery("input[id$='tableConfigurazioni_checkAll']").css('margin-top','0px');
+					   
 					   visualizzaPannelloComandi('tableConfigurazioni');
 				   }
 				 //]]>	
@@ -161,7 +170,7 @@
 						mBean="#{configurazioniGeneraliBean}" showSelectAll="true" mostraComandiFooter="true"
 						selectionMapTarget="#{configurazioniGeneraliBean.selectedIds[item]}"
 						headerText="Lista Configurazioni" enableDelete="false"
-						reRenderIds="configurazioniTbl"
+						reRenderIds="configurazioniTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{configurazioniGeneraliSearchForm.useCount}">
 						
 						<rich:column rendered="#{configurazioniGeneraliSearchForm._value_tipologiaTransazioni == 'delegata' and configurazioniGeneraliSearchForm.multitenant}">

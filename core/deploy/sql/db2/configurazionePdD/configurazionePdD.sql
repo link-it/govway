@@ -170,6 +170,12 @@ CREATE TABLE configurazione
 	response_cache_algoritmocache VARCHAR(255),
 	response_cache_idlecache VARCHAR(255),
 	response_cache_lifecache VARCHAR(255),
+	-- Cache per la consegna agli applicativi
+	consegna_statocache VARCHAR(255),
+	consegna_dimensionecache VARCHAR(255),
+	consegna_algoritmocache VARCHAR(255),
+	consegna_idlecache VARCHAR(255),
+	consegna_lifecache VARCHAR(255),
 	-- fk/pk columns
 	id BIGINT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1 INCREMENT BY 1 NO CYCLE NO CACHE),
 	-- fk/pk keys constraints

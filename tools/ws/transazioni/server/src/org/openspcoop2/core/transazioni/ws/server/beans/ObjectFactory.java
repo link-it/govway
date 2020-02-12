@@ -76,5 +76,12 @@ public class ObjectFactory {
         return new UseInfo();
     }
     
+    /**
+     * Create an instance of {@link WrapperIdTransazioneApplicativoServer }
+     */
+    public WrapperIdTransazioneApplicativoServer createWrapperIdTransazioneApplicativoServer() {
+        return new WrapperIdTransazioneApplicativoServer();
+    }
+    
 
 }

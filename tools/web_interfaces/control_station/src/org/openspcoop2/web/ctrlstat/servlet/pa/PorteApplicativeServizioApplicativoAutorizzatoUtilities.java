@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -60,7 +61,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 	
 	public void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
-			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper) throws Exception {
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer) throws Exception {
 		
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
@@ -92,6 +93,8 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		this.saList = pa.getServiziApplicativiAutorizzati();
 		this.saSize = this.saList!=null ? this.saList.sizeServizioApplicativoList() : 0;
 		this.listServiziApplicativi = new HashMap<>();
+		
+		String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 		if(listSoggetti!=null && !listSoggetti.isEmpty()) {
 			List<String> soggettiListBuild = new ArrayList<>();
 			List<String> soggettiLabelListBuild = new ArrayList<>();
@@ -100,7 +103,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
 				List<ServizioApplicativo> listServiziApplicativiTmp = null;
 				if(!modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
-					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, filtroTipoSA);
 				}
 				else {
 					// modipa, soggetto interno
@@ -108,6 +111,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					filtro.setTipoSoggetto(idSoggetto.getTipo());
 					filtro.setNomeSoggetto(idSoggetto.getNome());
 					filtro.setProtocolProperties(new ArrayList<>());
+					filtro.setTipo(filtroTipoSA);
 					FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
 					pp.setName(porteApplicativeHelper.getProfiloModIPASicurezzaMessaggioPropertyName());
 					pp.setValueAsBoolean(true);

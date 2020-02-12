@@ -31,10 +31,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.constants.TipoPdD;
+import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.ClassNameProperties;
@@ -43,6 +45,7 @@ import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.MessaggioServizioApplicativo;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
@@ -56,6 +59,7 @@ import org.openspcoop2.pdd.core.handlers.HandlerException;
 import org.openspcoop2.pdd.core.handlers.IntegrationManagerRequestContext;
 import org.openspcoop2.pdd.core.handlers.IntegrationManagerResponseContext;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.logger.Dump;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
@@ -986,9 +990,10 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 			}
 			
 			// TipoMessaggio
+			GestoreMessaggi gestoreMessaggiComprensione = null;
 			RuoloMessaggio ruoloMessaggio = RuoloMessaggio.RICHIESTA;
 			try{
-				GestoreMessaggi gestoreMessaggiComprensione = new GestoreMessaggi(stato, true, idMessaggioRichiesto, Costanti.INBOX, msgDiag, pddContext);
+				gestoreMessaggiComprensione = new GestoreMessaggi(stato, true, idMessaggioRichiesto, Costanti.INBOX, msgDiag, pddContext);
 				ruoloMessaggio = gestoreMessaggiComprensione.getRiferimentoMessaggio()==null ? RuoloMessaggio.RICHIESTA : RuoloMessaggio.RISPOSTA;
 			}catch(Exception e){
 				logCore.error("Comprensione tipo messaggio non riuscita: "+e.getMessage(),e);
@@ -1048,6 +1053,27 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 
 			imResponseContext.setEsito(this.getEsitoTransazione(protocolFactory, imRequestContext, EsitoTransazioneName.OK));
 			imResponseContext.setDimensioneMessaggioBytes(Long.valueOf(msgReturn.getMessage().length));
+			
+			// Informazione da salvare
+			try {
+				MessaggioServizioApplicativo info = gestoreMessaggiComprensione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+				if(info!=null) {
+					TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
+					transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
+					transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+					transazioneApplicativoServer.setDataPrelievoIm(DateManager.getDate());
+					transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(info.getNomePorta());
+					try {
+						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA);
+					}catch(Throwable t) {
+						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+					}
+				}
+			}catch(Exception e){
+				logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+			}
 			
 			return msgReturn;
 
@@ -1284,9 +1310,39 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_520_READ_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
 			}
 
-			//	Elimino Messaggio
+			//	Gestore Messaggio da eliminare
+			GestoreMessaggi gestoreEliminazione = null;
 			try{
-				GestoreMessaggi gestoreEliminazione = new GestoreMessaggi(stato, true, idMessaggioRichiesto,Costanti.INBOX,msgDiag,pddContext);
+				gestoreEliminazione = new GestoreMessaggi(stato, true, idMessaggioRichiesto,Costanti.INBOX,msgDiag,pddContext);
+			}catch(Exception e){
+				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");
+				throw new IntegrationManagerException(protocolFactory,ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
+						get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_522_DELETE_MSG_FROM_INTEGRATION_MANAGER),id_servizio_applicativo);
+			}
+			
+			// Aggiorno la transazione prima di eliminare il messaggio
+			try {
+				MessaggioServizioApplicativo info = gestoreEliminazione.readInfoDestinatario(id_servizio_applicativo.getNome(), true, logCore);
+				if(info!=null) {
+					TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
+					transazioneApplicativoServer.setIdTransazione(info.getIdTransazione());
+					transazioneApplicativoServer.setServizioApplicativoErogatore(info.getServizioApplicativo());
+					transazioneApplicativoServer.setDataEliminazioneIm(DateManager.getDate());
+					transazioneApplicativoServer.setProtocollo(protocolFactory.getProtocol());
+					IDPortaApplicativa idPA = new IDPortaApplicativa();
+					idPA.setNome(info.getNomePorta());
+					try {
+						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA);
+					}catch(Throwable t) {
+						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+					}
+				}
+			}catch(Exception e){
+				logCore.error("Salvataggio informazioni sulla transazione non riuscita: "+e.getMessage(),e);
+			}
+			
+			// Elimino Messaggio
+			try{
 				gestoreEliminazione.eliminaDestinatarioMessaggio(servizio_applicativo, gestoreEliminazione.getRiferimentoMessaggio());
 			}catch(Exception e){
 				msgDiag.logErroreGenerico(e,"gestoreMessaggi.eliminaDestinatarioMessaggio("+tipoOperazione+","+servizio_applicativo+","+idMessaggio+")");

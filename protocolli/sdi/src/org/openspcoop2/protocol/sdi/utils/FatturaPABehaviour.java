@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.generic_project.exception.SerializerException;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageParseResult;
@@ -32,11 +33,13 @@ import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
+import org.openspcoop2.pdd.core.behaviour.BehaviourEmitDiagnosticException;
+import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardTo;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
 import org.openspcoop2.pdd.core.behaviour.BehaviourResponseTo;
-import org.openspcoop2.pdd.core.behaviour.DefaultBehaviour;
 import org.openspcoop2.pdd.core.behaviour.StatoFunzionalita;
+import org.openspcoop2.pdd.core.behaviour.built_in.DefaultBehaviour;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdi.SDIFactory;
@@ -77,7 +80,8 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 	}
 	
 	@Override
-	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, RequestInfo requestInfo) throws CoreException {
+	public Behaviour behaviour(GestoreMessaggi gestoreMessaggioRichiesta, Busta busta, 
+			PortaApplicativa pa, RequestInfo requestInfo) throws BehaviourException,BehaviourEmitDiagnosticException {
 		
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio()) &&
 				SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(busta.getAzione())){
@@ -262,13 +266,13 @@ public class FatturaPABehaviour extends DefaultBehaviour {
 				
 				return behaviour;
 			}catch(Exception e){
-				throw new CoreException(e.getMessage(),e);
+				throw new BehaviourException(e.getMessage(),e);
 			}
 			
 		}
 		
 		else{
-			return super.behaviour(gestoreMessaggioRichiesta, busta, requestInfo);
+			return super.behaviour(gestoreMessaggioRichiesta, busta, pa, requestInfo);
 		}
 		
 	}

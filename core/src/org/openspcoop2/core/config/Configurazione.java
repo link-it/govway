@@ -44,6 +44,7 @@ import java.util.List;
  * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="accesso-dati-consegna-applicativi" type="{http://www.openspcoop2.org/core/config}accesso-dati-consegna-applicativi" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="url-invocazione" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
@@ -83,6 +84,7 @@ import java.util.List;
   	"accessoDatiAutenticazione",
   	"accessoDatiGestioneToken",
   	"accessoDatiKeystore",
+  	"accessoDatiConsegnaApplicativi",
   	"multitenant",
   	"urlInvocazione",
   	"validazioneBuste",
@@ -203,6 +205,14 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   public void setAccessoDatiKeystore(AccessoDatiKeystore accessoDatiKeystore) {
     this.accessoDatiKeystore = accessoDatiKeystore;
+  }
+
+  public AccessoDatiConsegnaApplicativi getAccessoDatiConsegnaApplicativi() {
+    return this.accessoDatiConsegnaApplicativi;
+  }
+
+  public void setAccessoDatiConsegnaApplicativi(AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi) {
+    this.accessoDatiConsegnaApplicativi = accessoDatiConsegnaApplicativi;
   }
 
   public ConfigurazioneMultitenant getMultitenant() {
@@ -442,6 +452,9 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   @XmlElement(name="accesso-dati-keystore",required=false,nillable=false)
   protected AccessoDatiKeystore accessoDatiKeystore;
+
+  @XmlElement(name="accesso-dati-consegna-applicativi",required=false,nillable=false)
+  protected AccessoDatiConsegnaApplicativi accessoDatiConsegnaApplicativi;
 
   @XmlElement(name="multitenant",required=false,nillable=false)
   protected ConfigurazioneMultitenant multitenant;

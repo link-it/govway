@@ -324,9 +324,13 @@ function Esporta(tipo) {
 	    	elemToExport +=document.form.selectcheckbox.value;
 	  }
 
-
-	if(elemToExport !== '')
-		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport;  
+	
+	if(elemToExport !== '') {
+		<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>
+		document.location = "<%= request.getContextPath() %>/export.do?tipoExport="+tipo+"&obj="+elemToExport; 
+	} else {
+		$( "#selezioneRichiestaModal" ).dialog( "open" );
+	}
 		  
 };
 

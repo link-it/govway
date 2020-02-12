@@ -25,6 +25,8 @@
 -- DROP INDEX INDEX_PA_AUTHZC_PROP ON pa_authzc_properties ;
 -- DROP INDEX INDEX_PA_AUTHZ_PROP ON pa_authz_properties ;
 -- DROP INDEX INDEX_PA_AUTH_PROP ON pa_auth_properties ;
+-- DROP INDEX INDEX_PA_BEHAVIOUR_PROP ON pa_behaviour_props ;
+-- DROP INDEX INDEX_PA_SA_PROP ON pa_sa_properties ;
 -- DROP INDEX INDEX_PA_SA ON porte_applicative_sa ;
 -- DROP INDEX index_porte_applicative_2 ON porte_applicative ;
 DROP TABLE pa_transform_risp_hdr;
@@ -50,5 +52,7 @@ DROP TABLE pa_properties;
 DROP TABLE pa_authzc_properties;
 DROP TABLE pa_authz_properties;
 DROP TABLE pa_auth_properties;
+DROP TABLE pa_behaviour_props;
+DROP TABLE pa_sa_properties;
 DROP TABLE porte_applicative_sa;
 DROP TABLE porte_applicative;

@@ -161,12 +161,27 @@
 			<div class="spacer"></div>
 	
 			<a4j:outputPanel id="eventiTbl" layout="block" styleClass="panelLista" rendered="#{eventiDM.executeQuery}">
+			
+				<script type="text/javascript">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						
+						   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+						   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+					   }
+					   
+					   function completa(evt){   }
+					 //]]>	
+				</script>
+				
 				<h:form>
 					<link:dataTable value="#{eventiDM}" id="tableEventi"
 						mBean="#{eventiBean}" showSelectAll="false"
 						selectionMapTarget="#{eventiBean.selectedIds[item]}"
 						headerText="Lista Eventi" enableDelete="false"
-						reRenderIds="eventiTbl"
+						reRenderIds="eventiTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{searchFormEventi.useCount}">
 		
 						<rich:column id="colEsitoImg" style="text-align: center;">

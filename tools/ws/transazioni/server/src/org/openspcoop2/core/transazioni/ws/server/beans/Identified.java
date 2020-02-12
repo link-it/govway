@@ -38,6 +38,8 @@ public enum Identified implements IEnumeration , Serializable , Cloneable {
 
 	@javax.xml.bind.annotation.XmlEnumValue("Transazione")
 	TRANSAZIONE ("Transazione"),
+	@javax.xml.bind.annotation.XmlEnumValue("TransazioneApplicativoServer")
+	TRANSAZIONE_APPLICATIVO_SERVER ("TransazioneApplicativoServer"),
 	@javax.xml.bind.annotation.XmlEnumValue("DumpMessaggio")
 	DUMP_MESSAGGIO ("DumpMessaggio");
 	

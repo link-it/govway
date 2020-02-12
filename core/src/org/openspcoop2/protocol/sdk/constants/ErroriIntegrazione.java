@@ -80,7 +80,7 @@ public enum ErroriIntegrazione {
 			CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_MSG_ECCEZIONE,
 			CodiceErroreIntegrazione.CODICE_402_AUTENTICAZIONE_FALLITA),
 			
-	ERRORE_403_AZIONE_NON_IDENTIFICATA("Identificazione dinamica dell'azione associata alla porta delegata fallita",
+	ERRORE_403_AZIONE_NON_IDENTIFICATA("Identificazione dinamica dell'operazione fallita",
 			CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA),
 			
 	ERRORE_404_AUTORIZZAZIONE_FALLITA_SA("Il servizio applicativo "+CostantiProtocollo.KEY_ERRORE_INTEGRAZIONE_IDENTITA_SERVIZIO_APPLICATIVO+

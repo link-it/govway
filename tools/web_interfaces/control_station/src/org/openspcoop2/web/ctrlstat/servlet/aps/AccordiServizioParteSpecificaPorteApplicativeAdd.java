@@ -78,6 +78,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -154,6 +155,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String erogazioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
 			String erogazioneSoggettoAutenticato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
 
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			String erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			  
 			String nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
 			
 			String gestioneToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
@@ -267,6 +272,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+
 
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
@@ -317,6 +324,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
 			
+			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(apsHelper);
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
+			
 			AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPA, asps, apsCore);
 			MappingErogazionePortaApplicativa mappingSelezionato = mappingInfo.getMappingSelezionato();
 			MappingErogazionePortaApplicativa mappingDefault = mappingInfo.getMappingDefault();
@@ -325,6 +336,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String[] listaMappingValues = mappingInfo.getListaMappingValues();
 			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
 			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
+			boolean paMappingSelezionatoMulti = mappingInfo.isPaMappingSelezionatoMulti();
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
@@ -376,13 +388,20 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						initConnettore = true;
 					}
 				}
+				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
+					// devo resettare il connettore se passo da SA Server a Default
+					if(!erogazioneServizioApplicativoServerEnabled) {
+						initConnettore = true;
+					}
+				}
 			}
 
 			String [] saSoggetti = null;
 			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
 				int idErogatore = Integer.parseInt(idSoggettoErogatoreDelServizio);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
+				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore),tipoSA);
 
 				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno
@@ -405,11 +424,11 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
-				saSoggetti = new String[validSA.size()+1];
-				saSoggetti[0] = "-"; // elemento nullo di default
+				saSoggetti = new String[validSA.size()];
+//				saSoggetti[0] = "-"; // elemento nullo di default
 				for (int i = 0; i < validSA.size(); i++) {
 					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i+1] = sa.getNome();
+					saSoggetti[i] = sa.getNome();
 				}
 			}
 			
@@ -644,7 +663,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPA, mappingLabel, nomeSA, saSoggetti, 
+							mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 							controlloAccessiStato,
 							erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -682,7 +701,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								protocollo,false,false);
+								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 					}
 				}
 					
@@ -715,7 +735,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, token_policy,
-						listExtendedConnettore);
+						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
+						erogazioneServizioApplicativoServer);
 			}
 			
 			
@@ -732,7 +753,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPA, mappingLabel, nomeSA, saSoggetti, 
+						mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 						controlloAccessiStato,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -768,7 +789,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							protocollo,false,false);
+							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+							erogazioneServizioApplicativoServer, saSoggetti);
 				}
 
 				pd.setDati(dati);
@@ -794,7 +816,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				erogazioneAutorizzazioneRuoliMatch = null;
 				
 			}
-
+			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(mappingDefault,
 					mappingSelezionato,
 					nome, nomeGruppo, azioni, modeCreazione, modeCreazioneConnettore,
@@ -829,7 +851,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					asps, 
 					protocollo, userLogin,
-					apsCore, apsHelper);
+					apsCore, apsHelper,erogazioneServizioApplicativoServer);
 			
 			
 			// Preparo la lista

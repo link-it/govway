@@ -113,6 +113,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		IdDumpMessaggio idDumpMessaggio = new IdDumpMessaggio();
 		idDumpMessaggio.setIdTransazione(dumpMessaggio.getIdTransazione());
         idDumpMessaggio.setTipoMessaggio(dumpMessaggio.getTipoMessaggio());
+        idDumpMessaggio.setServizioApplicativoErogatore(dumpMessaggio.getServizioApplicativoErogatore());
         return idDumpMessaggio;
 	}
 	
@@ -155,9 +156,11 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         	sqlQueryObjectReadIds.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
         	sqlQueryObjectReadIds.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE, false));
         	sqlQueryObjectReadIds.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO, false));
+        	sqlQueryObjectReadIds.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, false));
         	sqlQueryObjectReadIds.addWhereCondition("id=?");
         	
         	List<Class<?>> returnTypes = new ArrayList<Class<?>>();
+        	returnTypes.add(String.class);
         	returnTypes.add(String.class);
         	returnTypes.add(String.class);
         	JDBCObject param = new JDBCObject(id, Long.class);
@@ -166,6 +169,10 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
         	IdDumpMessaggio idDumpMessaggio = new IdDumpMessaggio();
         	idDumpMessaggio.setIdTransazione((String)result.get(0));
         	idDumpMessaggio.setTipoMessaggio(TipoMessaggio.toEnumConstant((String)result.get(1)));
+        	Object sa = result.get(2);
+        	if(sa!=null && sa instanceof String) {
+        		idDumpMessaggio.setServizioApplicativoErogatore((String)sa);
+        	}
         	list.add(idDumpMessaggio);
         }
 
@@ -594,6 +601,8 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet_dumpMessaggio.addSelectField("id");
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().PROTOCOLLO,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE,true));
+		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().FORMATO_MESSAGGIO,true));
 		sqlQueryObjectGet_dumpMessaggio.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().CONTENT_TYPE,true));
@@ -957,6 +966,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet.addFromTable(this.getDumpMessaggioFieldConverter().toTable(DumpMessaggio.model()));
 		sqlQueryObjectGet.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true));
 		sqlQueryObjectGet.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true));
+		sqlQueryObjectGet.addSelectField(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE,true));
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.addWhereCondition("id=?");
 
@@ -965,6 +975,7 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(tableId,Long.class)
 		};
 		List<Class<?>> listaFieldIdReturnType_dumpMessaggio = new ArrayList<Class<?>>();
+		listaFieldIdReturnType_dumpMessaggio.add(String.class);
 		listaFieldIdReturnType_dumpMessaggio.add(String.class);
 		listaFieldIdReturnType_dumpMessaggio.add(String.class);
 		IdDumpMessaggio id_dumpMessaggio = null;
@@ -980,6 +991,10 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 			id_dumpMessaggio = new IdDumpMessaggio();
 			id_dumpMessaggio.setIdTransazione((String)listaFieldId_dumpMessaggio.get(0));
 			id_dumpMessaggio.setTipoMessaggio(TipoMessaggio.toEnumConstant((String)listaFieldId_dumpMessaggio.get(1)));
+			Object sa = listaFieldId_dumpMessaggio.get(2);
+        	if(sa!=null && sa instanceof String) {
+        		id_dumpMessaggio.setServizioApplicativoErogatore((String)sa);
+        	}
 		}
 		
 		return id_dumpMessaggio;
@@ -1015,14 +1030,24 @@ public class JDBCDumpMessaggioServiceSearchImpl implements IJDBCServiceSearchWit
 		sqlQueryObjectGet.addSelectField("id");
 		sqlQueryObjectGet.setANDLogicOperator(true);
 		sqlQueryObjectGet.setSelectDistinct(true);
-sqlQueryObjectGet.addWhereCondition(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true)+"=?");
+		sqlQueryObjectGet.addWhereCondition(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().ID_TRANSAZIONE,true)+"=?");
 		sqlQueryObjectGet.addWhereCondition(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().TIPO_MESSAGGIO,true)+"=?");
+		if(id.getServizioApplicativoErogatore() == null) {
+			sqlQueryObjectGet.addWhereIsNotNullCondition(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE,true));
+		}
+		else {
+			sqlQueryObjectGet.addWhereCondition(this.getDumpMessaggioFieldConverter().toColumn(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE,true)+"=?");
+		}
 		
 		// Recupero _dumpMessaggio
-		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_dumpMessaggio = new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] { 
-				new JDBCObject(id.getIdTransazione(), String.class),
-				new JDBCObject(id.get_value_tipoMessaggio(), String.class),
-		};
+		List<org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject> searchParams_dumpMessaggio_list = new ArrayList<>();
+		searchParams_dumpMessaggio_list.add(new JDBCObject(id.getIdTransazione(), String.class));
+		searchParams_dumpMessaggio_list.add(new JDBCObject(id.get_value_tipoMessaggio(), String.class));
+		if(id.getServizioApplicativoErogatore() != null) {
+			searchParams_dumpMessaggio_list.add(new JDBCObject(id.getServizioApplicativoErogatore(), String.class));
+		}
+		org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [] searchParams_dumpMessaggio = searchParams_dumpMessaggio_list.toArray(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject [1]);
+
 		Long id_dumpMessaggio = null;
 		try{
 			id_dumpMessaggio = (Long) jdbcUtilities.executeQuerySingleResult(sqlQueryObjectGet.createSQLQuery(), jdbcProperties.isShowSql(),

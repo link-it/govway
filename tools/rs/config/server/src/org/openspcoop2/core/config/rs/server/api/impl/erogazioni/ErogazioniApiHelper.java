@@ -696,6 +696,7 @@ public class ErogazioniApiHelper {
         		switch (autenticazionePrincipal) {
 				case CONTAINER:
 				case INDIRIZZO_IP:
+				case INDIRIZZO_IP_X_FORWARDED_FOR:
 					break;
         		case HEADER:
 					if(authConfig.getNome()==null) {

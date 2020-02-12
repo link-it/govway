@@ -66,6 +66,8 @@ public class FiltroRicercaDiagnostici implements Serializable{
     
     protected Hashtable<String, String> properties;
 
+    protected Boolean checkApplicativoIsNull;
+	protected String applicativo;
 
     
  
@@ -194,6 +196,22 @@ public class FiltroRicercaDiagnostici implements Serializable{
 		this.messaggioCercatoInternamenteTestoDiagnostico = messaggioCercatoInternamenteTestoDiagnostico;
 	}
 	
+    public Boolean getCheckApplicativoIsNull() {
+		return this.checkApplicativoIsNull;
+	}
+
+	public void setCheckApplicativoIsNull(Boolean checkApplicativoIsNull) {
+		this.checkApplicativoIsNull = checkApplicativoIsNull;
+	}
+
+	public String getApplicativo() {
+		return this.applicativo;
+	}
+
+	public void setApplicativo(String applicativo) {
+		this.applicativo = applicativo;
+	}
+	
 	@Override
 	public String toString() {
 		
@@ -208,7 +226,9 @@ public class FiltroRicercaDiagnostici implements Serializable{
 				" idFunzione [{8}]"+
 				" severita [{9}]"+
 				" codice [{10}]"+
-				" idTransazione [{11}]";
+				" idTransazione [{11}]"+
+				" applicativo [{12}]"+
+				" checkApplicativoIsNull [{13}]";
 		
 		return MessageFormat.format(pattern, 
 				this.idBustaRichiesta!=null ? this.idBustaRichiesta : "not set",
@@ -222,7 +242,9 @@ public class FiltroRicercaDiagnostici implements Serializable{
 				this.idFunzione!=null ? this.idFunzione : "not set",
 				this.severita!=null ? this.severita : "not set",
 				this.codice!=null ? this.codice : "not set",
-				this.idTransazione!=null ? this.idTransazione : "not set"
+				this.idTransazione!=null ? this.idTransazione : "not set",
+				this.applicativo!=null ? this.applicativo : "not set",
+				this.checkApplicativoIsNull!=null ? this.checkApplicativoIsNull : "not set"
 				);
 	}
 

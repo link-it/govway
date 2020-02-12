@@ -63,6 +63,7 @@ public class BrowserFilter implements Filter {
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 	
 	private static Map<BrowserFamily, Double> mappaAbilitazioneGraficiSVG;
+	private static Map<BrowserFamily, Double> mappaAbilitazioneVistaTransazioniCustom;
 
 	// configurazione filtro
 	@SuppressWarnings("unused")
@@ -89,6 +90,15 @@ public class BrowserFilter implements Filter {
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.IE, 9D);
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.OPERA, 10.1D);
 		mappaAbilitazioneGraficiSVG.put(BrowserFamily.SAFARI, 3.2D);
+		
+		if(mappaAbilitazioneVistaTransazioniCustom == null)
+			mappaAbilitazioneVistaTransazioniCustom = new HashMap<BrowserInfo.BrowserFamily, Double>();
+
+		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.CHROME, 29D);
+		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.FIREFOX, 28D);
+		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.IE, 11D);
+		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.OPERA, 12.1D);
+		mappaAbilitazioneVistaTransazioniCustom.put(BrowserFamily.SAFARI, 9D);
 	}
 
 	public static boolean disabilitaGraficiSVG(BrowserInfo browserInfo){
@@ -105,6 +115,22 @@ public class BrowserFilter implements Filter {
 		}
 
 		return disabilita;
+	}
+	
+	public static boolean abilitaVisualizzazioneTransazioniCustom(BrowserInfo browserInfo){
+		boolean abilita = false;
+
+		if(mappaAbilitazioneVistaTransazioniCustom == null)
+			loadMappaBrowser();
+
+		if(browserInfo != null){
+			Double versione = mappaAbilitazioneVistaTransazioniCustom.get(browserInfo.getBrowserFamily());
+
+			if(versione != null && browserInfo.getVersion() != null && browserInfo.getVersion().doubleValue() >= versione.doubleValue())
+				abilita = true;
+		}
+
+		return abilita;
 	}
 
 

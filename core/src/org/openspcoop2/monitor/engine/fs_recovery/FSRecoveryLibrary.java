@@ -99,6 +99,11 @@ public class FSRecoveryLibrary {
 				File dirDumpDLQ = new File(dirDump,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
 				checkDir(dirDumpDLQ, true, true);
 				
+				File dirTransazioniApplicativoServer = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE_APPLICATIVO_SERVER);
+				checkDir(dirTransazioniApplicativoServer, true, false);
+				File dirTransazioniApplicativoServerDLQ = new File(dirTransazioniApplicativoServer,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
+				checkDir(dirTransazioniApplicativoServerDLQ, true, true);
+				
 				File dirTransazioni = new File(dir,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_TRANSAZIONE);
 				checkDir(dirTransazioni, true, false);
 				File dirTransazioniDLQ = new File(dirTransazioni,Costanti.DIRECTORY_FILE_SYSTEM_REPOSITORY_DLQ);
@@ -109,6 +114,7 @@ public class FSRecoveryLibrary {
 						dirDiagnostici,dirDiagnosticiDLQ,
 						dirTracce,dirTracceDLQ,
 						dirDump,dirDumpDLQ,
+						dirTransazioniApplicativoServer, dirTransazioniApplicativoServerDLQ,
 						dirTransazioni,dirTransazioniDLQ,
 						config.getTentativi());
 				fs.process(connection);

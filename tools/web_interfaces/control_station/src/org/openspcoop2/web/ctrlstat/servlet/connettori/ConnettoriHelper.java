@@ -544,7 +544,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
-			String protocollo, boolean forceHttps, boolean forceHttpsClient) throws Exception {
+			String protocollo, boolean forceHttps, boolean forceHttpsClient,
+			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
 		return addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, prefix, url, nome, tipo, user,
 				password, initcont, urlpgk, provurl, connfact, sendas,
 				objectName,tipoOperazione, httpsurl, httpstipologia, httpshostverify,
@@ -563,7 +564,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 				responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 				autenticazioneToken, tokenPolicy,
 				listExtendedConnettore, forceEnabled,
-				protocollo, forceHttps, forceHttpsClient);
+				protocollo, forceHttps, forceHttpsClient,visualizzaSezioneSAServer, servizioApplicativoServerEnabled, servizioApplicativoServer, listaSAServer);
 	}
 
 	// Controlla i dati del connettore custom
@@ -1703,7 +1704,8 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
 			List<ExtendedConnettore> listExtendedConnettore, boolean forceEnabled,
-			String protocollo, boolean forceHttps, boolean forceHttpsClient) throws Exception {
+			String protocollo, boolean forceHttps, boolean forceHttpsClient,
+			boolean visualizzaSezioneSAServer, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer, String[] listaSAServer) throws Exception {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -1750,693 +1752,735 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 		}
 		
-
-		/** VISUALIZZAZIONE HTTP ONLY MODE */
-
-		if (TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
-			
-			boolean configurazioneNonVisualizzabile = false;
-			
+		if(this.isModalitaAvanzata() && visualizzaSezioneSAServer && (listaSAServer != null && listaSAServer.length > 0)) {
 			DataElement de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO);
-
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
-			if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
-					!TipiConnettore.HTTPS.toString().equals(endpointtype) &&
-					(
-							!TipiConnettore.DISABILITATO.toString().equals(endpointtype)
-							|| 
-							(TipiConnettore.DISABILITATO.toString().equals(endpointtype) && forceEnabled)
-					)){
-				de.setLabel(null);
-				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
-				de.setType(DataElementType.TEXT);
-				configurazioneNonVisualizzabile = true;
-				this.pd.disableEditMode();
-				this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(servizioApplicativoServerEnabled);
+			de.setPostBack(true);
+			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+			if(servizioApplicativoServerEnabled) {
+				de.setSelected(servizioApplicativoServer);
+				de.setValues(listaSAServer);
+				de.setType(DataElementType.SELECT);
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(servizioApplicativoServer);
 			}
-			else if( (  (AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS.equals(objectName) && TipoOperazione.CHANGE.equals(tipoOperazione))
-					|| 
-					(AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI.equals(objectName) && TipoOperazione.CHANGE.equals(tipoOperazione))
-					)
-					&& StatiAccordo.finale.toString().equals(stato) && this.isShowGestioneWorkflowStatoDocumenti() ){
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_ENABLED);
-				}
-				else{
+			dati.addElement(de);
+			
+			if(servizioApplicativoServerEnabled) {
+				dati = this.addEndPointToDatiAsHidden(dati, endpointtype, url, nome, tipo, user, password, initcont, urlpgk, provurl, connfact, sendas, objectName, tipoOperazione, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, httpsKeyAlias, httpsTrustStoreCRLs, tipoconn, servletChiamante, elem1, elem2, elem3, elem4, elem5, elem6, elem7, stato, proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword, tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop, requestOutputFileName, requestOutputFileNameHeaders, requestOutputParentDirCreateIfNotExists, requestOutputOverwriteIfExists, responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
+			}
+		}
+		
+		if(!servizioApplicativoServerEnabled) {
+	
+			/** VISUALIZZAZIONE HTTP ONLY MODE */
+	
+			if (TipologiaConnettori.TIPOLOGIA_CONNETTORI_HTTP.equals(tipologiaConnettori)) {
+				
+				boolean configurazioneNonVisualizzabile = false;
+				
+				DataElement de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_ABILITATO);
+	
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_CHECK);
+				if(!TipiConnettore.HTTP.toString().equals(endpointtype) &&
+						!TipiConnettore.HTTPS.toString().equals(endpointtype) &&
+						(
+								!TipiConnettore.DISABILITATO.toString().equals(endpointtype)
+								|| 
+								(TipiConnettore.DISABILITATO.toString().equals(endpointtype) && forceEnabled)
+						)){
 					de.setLabel(null);
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
 					de.setType(DataElementType.TEXT);
-					de.setValue(TipiConnettore.DISABILITATO.toString());
+					configurazioneNonVisualizzabile = true;
+					this.pd.disableEditMode();
+					this.pd.setMessage(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_LONG_MESSAGE, Costanti.MESSAGE_TYPE_INFO);
 				}
-			}else{
-				if(forceEnabled) {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_ENABLED);
-				}
-				else {
-					de.setType(DataElementType.CHECKBOX);
+				else if( (  (AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS.equals(objectName) && TipoOperazione.CHANGE.equals(tipoOperazione))
+						|| 
+						(AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS_FRUITORI.equals(objectName) && TipoOperazione.CHANGE.equals(tipoOperazione))
+						)
+						&& StatiAccordo.finale.toString().equals(stato) && this.isShowGestioneWorkflowStatoDocumenti() ){
 					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-						de.setSelected(true);
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_ENABLED);
 					}
-				}
-				de.setPostBack(true);
-				//				de.setOnClick("AbilitaEndPointHTTP(\"" + tipoOp + "\")");
-			}
-			dati.addElement(de);
-			
-			
-			de = new DataElement();
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
-				de.setValue(TipiConnettore.HTTP.toString());
-			}
-			else if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de.setValue(TipiConnettore.HTTPS.toString());
-			} 
-			else {
-				de.setValue(TipiConnettore.DISABILITATO.toString());
-			}
-			de.setType(DataElementType.HIDDEN);
-			dati.addElement(de);
-
-			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-//			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
-//				de.setType(DataElementType.CHECKBOX);
-//				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-//					de.setSelected(true);
-//				}
-//			}
-//			else{
-			de.setType(DataElementType.HIDDEN);
-			//}
-			if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-				de.setValue("true");
-			}
-			else{
-				de.setValue("false");
-			}
-			dati.addElement(de);
-			
-			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-			String tmpUrl = url;
-			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					if(this.isProfiloModIPA(protocollo)) {
-						tmpUrl =TipiConnettore.HTTPS.toString()+"://";
+					else{
+						de.setLabel(null);
+						de.setType(DataElementType.TEXT);
+						de.setValue(TipiConnettore.DISABILITATO.toString());
+					}
+				}else{
+					if(forceEnabled) {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_ENABLED);
 					}
 					else {
-						tmpUrl =endpointtype+"://";
+						de.setType(DataElementType.CHECKBOX);
+						if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+							de.setSelected(true);
+						}
+					}
+					de.setPostBack(true);
+					//				de.setOnClick("AbilitaEndPointHTTP(\"" + tipoOp + "\")");
+				}
+				dati.addElement(de);
+				
+				
+				de = new DataElement();
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString())) {
+					de.setValue(TipiConnettore.HTTP.toString());
+				}
+				else if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					de.setValue(TipiConnettore.HTTPS.toString());
+				} 
+				else {
+					de.setValue(TipiConnettore.DISABILITATO.toString());
+				}
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+	
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+	//			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+	//				de.setType(DataElementType.CHECKBOX);
+	//				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+	//					de.setSelected(true);
+	//				}
+	//			}
+	//			else{
+				de.setType(DataElementType.HIDDEN);
+				//}
+				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+					de.setValue("true");
+				}
+				else{
+					de.setValue("false");
+				}
+				dati.addElement(de);
+				
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+				String tmpUrl = url;
+				if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
+					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+						if(this.isProfiloModIPA(protocollo)) {
+							tmpUrl =TipiConnettore.HTTPS.toString()+"://";
+						}
+						else {
+							tmpUrl =endpointtype+"://";
+						}
 					}
 				}
-			}
-			de.setValue(tmpUrl);
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				if ( !this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
-					de.setType(DataElementType.TEXT_AREA);
-					de.setRequired(true);
-				} else {
-					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+				de.setValue(tmpUrl);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					if ( !this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
+						de.setType(DataElementType.TEXT_AREA);
+						de.setRequired(true);
+					} else {
+						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					}
+					de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
+				}else{
+					de.setType(DataElementType.HIDDEN);
 				}
-				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
-			}else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			de.setSize(this.getSize());
-			dati.addElement(de);
-			
-//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-//				de = new DataElement();
-//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
-//				de.setValue(tmpUrl);
-//				de.setType(DataElementType.HIDDEN);
-//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-//				dati.addElement(de);
-//			}
-			
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
+				de.setSize(this.getSize());
+				dati.addElement(de);
 				
-				boolean showAutenticazioneHttpBasic = true;
-				if(autenticazioneToken) {
-					showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
-				}
+	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+	//				de = new DataElement();
+	//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+	//				de.setValue(tmpUrl);
+	//				de.setType(DataElementType.HIDDEN);
+	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+	//				dati.addElement(de);
+	//			}
 				
-//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
-//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				if(showAutenticazioneHttpBasic) {
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					
+					boolean showAutenticazioneHttpBasic = true;
+					if(autenticazioneToken) {
+						showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+					}
+					
+	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
+	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+					if(showAutenticazioneHttpBasic) {
+						de.setType(DataElementType.CHECKBOX);
+						if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+							de.setSelected(true);
+						}
+						de.setPostBack(true);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					dati.addElement(de);		
+					//}
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
 					de.setType(DataElementType.CHECKBOX);
-					if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+					de.setSelected(autenticazioneToken);
+					de.setPostBack(true);
+					dati.addElement(de);	
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
+					de.setType(DataElementType.CHECKBOX);
+					if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
 						de.setSelected(true);
 					}
 					de.setPostBack(true);
-				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_DISABLED);
-				}
-				dati.addElement(de);		
-				//}
+					dati.addElement(de);
+					
+					// Proxy
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
+					dati.addElement(de);
+					
+					// TempiRisposta
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
+					dati.addElement(de);
+					
+				}	
 				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(autenticazioneToken);
-				de.setPostBack(true);
-				dati.addElement(de);	
+				// Extended
+				if(configurazioneNonVisualizzabile==false) {
+					if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+						ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
+					}
+				}
 				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTPS);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTPS);
-				de.setType(DataElementType.CHECKBOX);
+				// opzioni avanzate
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					if (this.isModalitaAvanzata()) {
+						de.setType(DataElementType.CHECKBOX);
+						de.setValue(opzioniAvanzate);
+						if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					de.setPostBack(true);
+					dati.addElement(de);
+				}
+				
+				// Http Autenticazione
+				if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+					this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
+							servletChiamante,true,endpointtype,true,false, prefix, true);
+				}
+				
+				// Token Autenticazione
+				if (autenticazioneToken) {
+					this.addTokenPolicy(dati, tokenPolicy);
+				}
+				
+				
+				// Https
 				if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					de.setSelected(true);
+					ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
+							httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
+							httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							stato, 
+							this.core, this, this.getSize(), false, prefix,
+							forceHttpsClient);
 				}
-				de.setPostBack(true);
-				dati.addElement(de);
 				
 				// Proxy
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
-					de.setSelected(true);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+						this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+					}
 				}
-				de.setPostBack(true);
-				dati.addElement(de);
 				
 				// TempiRisposta
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-					de.setSelected(true);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+						this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
+					}
 				}
+				
+				// Extended
+				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+					ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
+				}
+				
+				// Opzioni Avanzate
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
+				}
+				
+			} else {
+	
+				/** VISUALIZZAZIONE COMPLETA CONNETTORI MODE */
+	
+				List<String> connettoriList = Connettori.getList();
+				if(forceEnabled) {
+					int indexDisabled = -1;
+					for (int i = 0; i < connettoriList.size(); i++) {
+						if(TipiConnettore.DISABILITATO.getNome().equals(connettoriList.get(i))) {
+							indexDisabled = i;
+							break;
+						}
+					}
+					if(indexDisabled>=0) {
+						connettoriList.remove(indexDisabled);
+					}
+				}
+				int sizeEP = connettoriList.size();
+				if (!connettoriList.contains(TipiConnettore.HTTPS.toString()))
+					sizeEP++;
+				if (confPers &&
+						TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
+					sizeEP++;
+				String[] tipoEP = new String[sizeEP];
+				connettoriList.toArray(tipoEP);
+				int newCount = connettoriList.size();
+				if (!connettoriList.contains(TipiConnettore.HTTPS.toString())) {
+					tipoEP[newCount] = TipiConnettore.HTTPS.toString();
+					newCount++;
+				}
+				if (confPers &&
+						TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
+					tipoEP[newCount] = TipiConnettore.CUSTOM.toString();
+				//String[] tipoEP = { TipiConnettore.DISABILITATO.toString(), TipiConnettore.HTTP.toString(), TipiConnettore.JMS.toString(), TipiConnettore.NULL.toString(), TipiConnettore.NULL_ECHO.toString() };
+	
+				DataElement de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+				de.setType(DataElementType.SELECT);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
+				if(soloConnettoriHttp) {
+					List<String> connettoriListHttp = new ArrayList<>();
+					connettoriListHttp.add(TipiConnettore.HTTP.toString());
+					connettoriListHttp.add(TipiConnettore.HTTPS.toString());
+					de.setValues(connettoriListHttp);
+				}
+				else {
+					de.setValues(tipoEP);
+				}
+				de.setSelected(endpointtype);
+				//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
 				de.setPostBack(true);
 				dati.addElement(de);
+	
 				
-			}	
-			
-			// Extended
-			if(configurazioneNonVisualizzabile==false) {
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+				if (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()))
+					de.setType(DataElementType.HIDDEN);
+				else{
+					de.setType(DataElementType.TEXT_EDIT);
+					de.setRequired(true);
+				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
+				de.setValue(tipoconn);
+				dati.addElement(de);
+				
+				
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
+				if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+						de.setSelected(true);
+					}
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+				}
+				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
+					de.setValue("true");
+				}
+				else{
+					de.setValue("false");
+				}
+				dati.addElement(de);	
+				
+				
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
+				String tmpUrl = url;
+				if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
+					if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+						if(this.isProfiloModIPA(protocollo)) {
+							tmpUrl =TipiConnettore.HTTPS.toString()+"://";
+						}
+						else {
+							tmpUrl =endpointtype+"://";
+						}
+					}
+				}
+				de.setValue(tmpUrl);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
+						de.setType(DataElementType.TEXT_AREA);
+						de.setRequired(true);
+					} else {
+						de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+					}
+					de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
+				}
+				else{
+					de.setType(DataElementType.HIDDEN);
+				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
+				de.setSize(this.getSize());
+				dati.addElement(de);
+				
+	//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+	//				de = new DataElement();
+	//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
+	//				de.setValue(tmpUrl);
+	//				de.setType(DataElementType.HIDDEN);
+	//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
+	//				dati.addElement(de);
+	//			}
+	
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+	//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
+	//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
+								
+					boolean showAutenticazioneHttpBasic = true;
+					if(autenticazioneToken) {
+						showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
+					}
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
+					if(showAutenticazioneHttpBasic) {
+						de.setType(DataElementType.CHECKBOX);
+						if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+							de.setSelected(true);
+						}
+						de.setPostBack(true);
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
+					}
+					dati.addElement(de);		
+					//}
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(autenticazioneToken);
+					de.setPostBack(true);
+					dati.addElement(de);
+					
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
+					dati.addElement(de);
+					
+					// TempiRisposta
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
+					de.setType(DataElementType.CHECKBOX);
+					if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+						de.setSelected(true);
+					}
+					de.setPostBack(true);
+					dati.addElement(de);
+				}
+				
+				// Extended
 				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
 					ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
 				}
-			}
-			
-			// opzioni avanzate
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				if (this.isModalitaAvanzata()) {
-					de.setType(DataElementType.CHECKBOX);
-					de.setValue(opzioniAvanzate);
-					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
-						de.setSelected(true);
-					}
-				}else{
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_DISABLED);
-				}
-				de.setPostBack(true);
-				dati.addElement(de);
-			}
-			
-			// Http Autenticazione
-			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
-						servletChiamante,true,endpointtype,true,false, prefix, true);
-			}
-			
-			// Token Autenticazione
-			if (autenticazioneToken) {
-				this.addTokenPolicy(dati, tokenPolicy);
-			}
-			
-			
-			// Https
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, 
-						httpspwd, httpsalgoritmo, httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, 
-						httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
-						httpsKeyAlias, httpsTrustStoreCRLs,
-						stato, 
-						this.core, this, this.getSize(), false, prefix,
-						forceHttpsClient);
-			}
-			
-			// Proxy
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
-					this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
-				}
-			}
-			
-			// TempiRisposta
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-					this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
-				}
-			}
-			
-			// Extended
-			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
-				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
-			}
-			
-			// Opzioni Avanzate
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
-			}
-			
-		} else {
-
-			/** VISUALIZZAZIONE COMPLETA CONNETTORI MODE */
-
-			List<String> connettoriList = Connettori.getList();
-			if(forceEnabled) {
-				int indexDisabled = -1;
-				for (int i = 0; i < connettoriList.size(); i++) {
-					if(TipiConnettore.DISABILITATO.getNome().equals(connettoriList.get(i))) {
-						indexDisabled = i;
-						break;
-					}
-				}
-				if(indexDisabled>=0) {
-					connettoriList.remove(indexDisabled);
-				}
-			}
-			int sizeEP = connettoriList.size();
-			if (!connettoriList.contains(TipiConnettore.HTTPS.toString()))
-				sizeEP++;
-			if (confPers &&
-					TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
-				sizeEP++;
-			String[] tipoEP = new String[sizeEP];
-			connettoriList.toArray(tipoEP);
-			int newCount = connettoriList.size();
-			if (!connettoriList.contains(TipiConnettore.HTTPS.toString())) {
-				tipoEP[newCount] = TipiConnettore.HTTPS.toString();
-				newCount++;
-			}
-			if (confPers &&
-					TipologiaConnettori.TIPOLOGIA_CONNETTORI_ALL.equals(tipologiaConnettori))
-				tipoEP[newCount] = TipiConnettore.CUSTOM.toString();
-			//String[] tipoEP = { TipiConnettore.DISABILITATO.toString(), TipiConnettore.HTTP.toString(), TipiConnettore.JMS.toString(), TipiConnettore.NULL.toString(), TipiConnettore.NULL_ECHO.toString() };
-
-			DataElement de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			de.setType(DataElementType.SELECT);
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE);
-			if(soloConnettoriHttp) {
-				List<String> connettoriListHttp = new ArrayList<>();
-				connettoriListHttp.add(TipiConnettore.HTTP.toString());
-				connettoriListHttp.add(TipiConnettore.HTTPS.toString());
-				de.setValues(connettoriListHttp);
-			}
-			else {
-				de.setValues(tipoEP);
-			}
-			de.setSelected(endpointtype);
-			//		    de.setOnChange("CambiaEndPoint('" + tipoOp + "')");
-			de.setPostBack(true);
-			dati.addElement(de);
-
-			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			if (endpointtype == null || !endpointtype.equals(TipiConnettore.CUSTOM.toString()))
-				de.setType(DataElementType.HIDDEN);
-			else{
-				de.setType(DataElementType.TEXT_EDIT);
-				de.setRequired(true);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO);
-			de.setValue(tipoconn);
-			dati.addElement(de);
-			
-			
-			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_DEBUG);
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_DEBUG);
-			if(this.core.isShowDebugOptionConnettore() && !TipiConnettore.DISABILITATO.toString().equals(endpointtype)){
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-					de.setSelected(true);
-				}
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			if ( ServletUtils.isCheckBoxEnabled(connettoreDebug)) {
-				de.setValue("true");
-			}
-			else{
-				de.setValue("false");
-			}
-			dati.addElement(de);	
-			
-			
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL);
-			String tmpUrl = url;
-			if(url==null || "".equals(url) || "http://".equals(url) || "https://".equals(url) ){
-				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-					if(this.isProfiloModIPA(protocollo)) {
-						tmpUrl =TipiConnettore.HTTPS.toString()+"://";
-					}
-					else {
-						tmpUrl =endpointtype+"://";
-					}
-				}
-			}
-			de.setValue(tmpUrl);
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				if (!this.isShowGestioneWorkflowStatoDocumenti() || !StatiAccordo.finale.toString().equals(stato)) {
-					de.setType(DataElementType.TEXT_AREA);
-					de.setRequired(true);
-				} else {
-					de.setType(DataElementType.TEXT_AREA_NO_EDIT);
-				}
-				de.setRows(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL_SIZE);
-			}
-			else{
-				de.setType(DataElementType.HIDDEN);
-			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_URL);
-			de.setSize(this.getSize());
-			dati.addElement(de);
-			
-//			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-//				de = new DataElement();
-//				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL);
-//				de.setValue(tmpUrl);
-//				de.setType(DataElementType.HIDDEN);
-//				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_HTTPS_URL);
-//				dati.addElement(de);
-//			}
-
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-//				if(!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT.equals(servletChiamante) &&
-//						!ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA.equals(servletChiamante) ){
-							
-				boolean showAutenticazioneHttpBasic = true;
-				if(autenticazioneToken) {
-					showAutenticazioneHttpBasic = !isTokenPolicyMode_useAuthorizationHeader(tokenPolicy);
-				}
 				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_HTTP);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
-				if(showAutenticazioneHttpBasic) {
-					de.setType(DataElementType.CHECKBOX);
-					if ( ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-						de.setSelected(true);
+				// opzioni avanzate
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					de = new DataElement();
+					de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
+					if (this.isModalitaAvanzata()) {
+						de.setType(DataElementType.CHECKBOX);
+						de.setValue(opzioniAvanzate);
+						if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
+							de.setSelected(true);
+						}
+					}else{
+						de.setType(DataElementType.HIDDEN);
+						de.setValue(Costanti.CHECK_BOX_DISABLED);
 					}
 					de.setPostBack(true);
+					dati.addElement(de);
 				}
-				else {
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_DISABLED);
-				}
-				dati.addElement(de);		
-				//}
 				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_BEARER);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TOKEN_POLICY_STATO);
-				de.setType(DataElementType.CHECKBOX);
-				de.setSelected(autenticazioneToken);
-				de.setPostBack(true);
-				dati.addElement(de);
-				
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE_PROXY);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_PROXY_ENABLED);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
-					de.setSelected(true);
+				// Autenticazione http
+				if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
+					this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
+							servletChiamante,true,endpointtype,true,false, prefix, true);
 				}
-				de.setPostBack(true);
-				dati.addElement(de);
+				
+				// Token Autenticazione
+				if (autenticazioneToken) {
+					this.addTokenPolicy(dati, tokenPolicy);
+				}
+				
+				// Custom
+				if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
+						!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
+						!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD) &&
+						(isConnettoreCustomUltimaImmagineSalvata!=null && isConnettoreCustomUltimaImmagineSalvata)) {
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
+					int numProp = 0;
+					try {
+						if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
+							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem2),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem4));
+							AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
+							org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
+							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+								for (int i = 0; i < connettore.sizePropertyList(); i++) {
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+										numProp++;
+									}
+								}
+								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+							}
+						}
+						if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
+							List<Parameter> lstParams = new ArrayList<>();
+							
+							String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+							if(accessoDaAPSParametro != null)
+								lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+							
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1));
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2));
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
+							lstParams.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, elem4));
+							
+							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+							
+							
+							int idServizioFruitoreInt = Integer.parseInt(elem2);
+							Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
+							org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
+							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+								for (int i = 0; i < connettore.sizePropertyList(); i++) {
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+										numProp++;
+									}
+								}
+								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+							}
+						}
+						if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
+								servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
+							int idSilInt = Integer.parseInt(elem2);
+							ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
+							Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+							List<Parameter> lstParams = new ArrayList<>();
+							
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1));
+							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2));
+							if(elem3 != null)
+								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
+							if(elem3 != null)
+								lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem4));
+							lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
+							
+							String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+							if(accessoDaAPSParametro != null)
+								lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
+	
+							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
+							
+							if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
+								InvocazioneServizio is = sa.getInvocazioneServizio();
+								Connettore connettore = is.getConnettore();
+								if(connettore.getCustom()==null || !connettore.getCustom()){
+									// è cambiato il tipo
+									de.setType(DataElementType.HIDDEN);
+								}
+								if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
+									for (int i = 0; i < connettore.sizePropertyList(); i++) {
+										if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+												connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+											numProp++;
+										}
+									}
+									// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+								}
+							} else {
+								RispostaAsincrona ra = sa.getRispostaAsincrona();
+								Connettore connettore = ra.getConnettore();
+								if(connettore.getCustom()==null || !connettore.getCustom()){
+									// è cambiato il tipo
+									de.setType(DataElementType.HIDDEN);
+								}
+								if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
+									for (int i = 0; i < connettore.sizePropertyList(); i++) {
+										if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+												connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+											numProp++;
+										}
+									}
+									// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+								}
+							}
+						}
+						if (servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
+							de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, elem2),
+									new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO, elem3));
+							int idInt = Integer.parseInt(elem1);
+							SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
+							Soggetto ss = scs.getSoggettoReg();
+							org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
+							if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
+								for (int i = 0; i < connettore.sizePropertyList(); i++) {
+									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
+											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
+										numProp++;
+									}
+								}
+								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
+							}
+						}
+					} catch (Exception ex) {
+						this.log.error("Exception: " + ex.getMessage(), ex);
+					}
+					de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA+"("+numProp+")");
+					dati.addElement(de);
+				}
+				
+				// Https
+				if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
+							httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
+							httpsKeyAlias, httpsTrustStoreCRLs,
+							stato,
+							this.core, this, this.getSize(), false, prefix,
+							forceHttpsClient);
+				}
+	
+				// Jms
+				if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
+					ConnettoreJMSUtils.addJMSDati(dati, nome, tipo, user, password, initcont, urlpgk, 
+							provurl, connfact, sendas, objectName, tipoOperazione, stato,
+							this.core, this, this.getSize());
+				}
+				
+				// FileSystem
+				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
+					ConnettoreFileUtils.addFileDati(dati, this.getSize(),
+							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
+							);
+				}
+				
+				// Proxy
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
+						this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+					}
+				}
 				
 				// TempiRisposta
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_REDEFINE);
-				de.setType(DataElementType.CHECKBOX);
-				if ( ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-					de.setSelected(true);
-				}
-				de.setPostBack(true);
-				dati.addElement(de);
-			}
-			
-			// Extended
-			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
-				ServletExtendedConnettoreUtils.addToDatiEnabled(dati, listExtendedConnettore);
-			}
-			
-			// opzioni avanzate
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				de = new DataElement();
-				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_OPZIONI_AVANZATE);
-				if (this.isModalitaAvanzata()) {
-					de.setType(DataElementType.CHECKBOX);
-					de.setValue(opzioniAvanzate);
-					if ( ServletUtils.isCheckBoxEnabled(opzioniAvanzate)) {
-						de.setSelected(true);
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
+						this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
 					}
-				}else{
-					de.setType(DataElementType.HIDDEN);
-					de.setValue(Costanti.CHECK_BOX_DISABLED);
 				}
-				de.setPostBack(true);
-				dati.addElement(de);
-			}
-			
-			// Autenticazione http
-			if (ServletUtils.isCheckBoxEnabled(autenticazioneHttp)) {
-				this.addCredenzialiToDati(dati, CostantiConfigurazione.CREDENZIALE_BASIC.getValue(), user, password, password, null,
-						servletChiamante,true,endpointtype,true,false, prefix, true);
-			}
-			
-			// Token Autenticazione
-			if (autenticazioneToken) {
-				this.addTokenPolicy(dati, tokenPolicy);
-			}
-			
-			// Custom
-			if (endpointtype != null && endpointtype.equals(TipiConnettore.CUSTOM.toString()) &&
-					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_ADD) &&
-					!servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_ADD) &&
-					(isConnettoreCustomUltimaImmagineSalvata!=null && isConnettoreCustomUltimaImmagineSalvata)) {
-				de = new DataElement();
-				de.setType(DataElementType.LINK);
-				de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_PROPRIETA);
-				int numProp = 0;
-				try {
-					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_CHANGE)) {
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO, elem2),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SERVIZIO, elem3),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_VERSIONE_SERVIZIO, elem4));
-						AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Long.parseLong(elem1));
-						org.openspcoop2.core.registry.Connettore connettore = asps.getConfigurazioneServizio().getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
-									numProp++;
-								}
-							}
-							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
-						}
-					}
-					if (servletChiamante.equals(AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_FRUITORI_CHANGE)) {
-						List<Parameter> lstParams = new ArrayList<>();
-						
-						String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-						if(accessoDaAPSParametro != null)
-							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
-						
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1));
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_MY_ID, elem2));
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SOGGETTO_EROGATORE, elem3));
-						lstParams.add(new Parameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_FRUITORE_VIEW_CONNETTORE_MAPPING_AZIONE_ID_PORTA, elem4));
-						
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
-						
-						
-						int idServizioFruitoreInt = Integer.parseInt(elem2);
-						Fruitore servFru = this.apsCore.getServizioFruitore(idServizioFruitoreInt);
-						org.openspcoop2.core.registry.Connettore connettore = servFru.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
-									numProp++;
-								}
-							}
-							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
-						}
-					}
-					if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT) ||
-							servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA)) {
-						int idSilInt = Integer.parseInt(elem2);
-						ServizioApplicativo sa = this.saCore.getServizioApplicativo(idSilInt);
-						Soggetto soggetto = this.soggettiCore.getSoggettoRegistro(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
-						List<Parameter> lstParams = new ArrayList<>();
-						
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante));
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SERVIZIO_APPLICATIVO, elem1));
-						lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_SERVIZIO_APPLICATIVO, elem2));
-						if(elem3 != null)
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem3));
-						if(elem3 != null)
-							lstParams.add(new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID_PORTA, elem4));
-						lstParams.add(new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER, soggetto.getId()+""));
-						
-						String accessoDaAPSParametro = this.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
-						if(accessoDaAPSParametro != null)
-							lstParams.add(new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro));
-
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST, lstParams.toArray(new Parameter[lstParams.size()]));
-						
-						if (servletChiamante.equals(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT)) {
-							InvocazioneServizio is = sa.getInvocazioneServizio();
-							Connettore connettore = is.getConnettore();
-							if(connettore.getCustom()==null || !connettore.getCustom()){
-								// è cambiato il tipo
-								de.setType(DataElementType.HIDDEN);
-							}
-							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
-										numProp++;
-									}
-								}
-								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
-							}
-						} else {
-							RispostaAsincrona ra = sa.getRispostaAsincrona();
-							Connettore connettore = ra.getConnettore();
-							if(connettore.getCustom()==null || !connettore.getCustom()){
-								// è cambiato il tipo
-								de.setType(DataElementType.HIDDEN);
-							}
-							if (connettore != null && connettore.getCustom()!=null && connettore.getCustom()){
-								for (int i = 0; i < connettore.sizePropertyList(); i++) {
-									if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-											connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
-										numProp++;
-									}
-								}
-								// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
-							}
-						}
-					}
-					if (servletChiamante.equals(SoggettiCostanti.SERVLET_NAME_SOGGETTI_ENDPOINT)) {
-						de.setUrl(ConnettoriCostanti.SERVLET_NAME_CONNETTORI_CUSTOM_PROPERTIES_LIST,
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_SERVLET, servletChiamante),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_ID, elem1),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_NOME_SOGGETTO, elem2),
-								new Parameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_CUSTOM_TIPO_SOGGETTO, elem3));
-						int idInt = Integer.parseInt(elem1);
-						SoggettoCtrlStat scs = this.soggettiCore.getSoggettoCtrlStat(idInt);
-						Soggetto ss = scs.getSoggettoReg();
-						org.openspcoop2.core.registry.Connettore connettore = ss.getConnettore();
-						if (connettore != null && (connettore.getCustom()!=null && connettore.getCustom()) ){
-							for (int i = 0; i < connettore.sizePropertyList(); i++) {
-								if(CostantiDB.CONNETTORE_DEBUG.equals(connettore.getProperty(i).getNome())==false  &&
-										connettore.getProperty(i).getNome().startsWith(CostantiConnettori.CONNETTORE_EXTENDED_PREFIX)==false){
-									numProp++;
-								}
-							}
-							// Non devo contare la proprietà debug: numProp = connettore.sizePropertyList();
-						}
-					}
-				} catch (Exception ex) {
-					this.log.error("Exception: " + ex.getMessage(), ex);
+				
+				// Extended
+				if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
+					ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
 				}
-				de.setValue(ConnettoriCostanti.LABEL_CONNETTORE_PROPRIETA+"("+numProp+")");
-				dati.addElement(de);
-			}
-			
-			// Https
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				ConnettoreHTTPSUtils.addHTTPSDati(dati, httpsurl, httpstipologia, httpshostverify, httpspath, httpstipo, httpspwd, httpsalgoritmo, 
-						httpsstato, httpskeystore, httpspwdprivatekeytrust, httpspathkey, httpstipokey, httpspwdkey, httpspwdprivatekey, httpsalgoritmokey, 
-						httpsKeyAlias, httpsTrustStoreCRLs,
-						stato,
-						this.core, this, this.getSize(), false, prefix,
-						forceHttpsClient);
-			}
-
-			// Jms
-			if (endpointtype.equals(TipiConnettore.JMS.getNome())) {
-				ConnettoreJMSUtils.addJMSDati(dati, nome, tipo, user, password, initcont, urlpgk, 
-						provurl, connfact, sendas, objectName, tipoOperazione, stato,
-						this.core, this, this.getSize());
-			}
-			
-			// FileSystem
-			if (endpointtype.equals(TipiConnettore.FILE.toString())) {
-				ConnettoreFileUtils.addFileDati(dati, this.getSize(),
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
-						);
-			}
-			
-			// Proxy
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				if (ServletUtils.isCheckBoxEnabled(proxyEnabled)) {
-					this.addProxyToDati(dati, proxyHost, proxyPort, proxyUsername, proxyPassword);
+				
+				// Opzioni Avanzate
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
+					this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
 				}
+	
 			}
-			
-			// TempiRisposta
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				if (ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)) {
-					this.addTempiRispostaToDati(dati, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta);
-				}
-			}
-			
-			// Extended
-			if(listExtendedConnettore!=null && listExtendedConnettore.size()>0){
-				ServletExtendedConnettoreUtils.addToDatiExtendedInfo(dati, listExtendedConnettore);
-			}
-			
-			// Opzioni Avanzate
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) || endpointtype.equals(TipiConnettore.HTTPS.toString())){
-				this.addOpzioniAvanzateHttpToDati(dati, opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop);
-			}
-
 		}
-
 
 		return dati;
 	}
 	
-
+	public Vector<DataElement> addEndPointSAServerToDatiAsHidden(Vector<DataElement> dati, boolean servizioApplicativoServerEnabled, String servizioApplicativoServer){
+		DataElement de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+		de.setValue(servizioApplicativoServerEnabled + "");
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+		de.setValue(servizioApplicativoServer);
+		dati.addElement(de);
+		
+		return dati;
+	}
 
 	public Vector<DataElement> addEndPointToDatiAsHidden(Vector<DataElement> dati,
 			String endpointtype, String url, String nome, String tipo,
@@ -2455,8 +2499,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String tempiRisposta_enabled, String tempiRisposta_connectionTimeout, String tempiRisposta_readTimeout, String tempiRisposta_tempoMedioRisposta,
 			String opzioniAvanzate, String transfer_mode, String transfer_mode_chunk_size, String redirect_mode, String redirect_max_hop,
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
-			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime
-			) {
+			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime) {
 
 
 		Boolean confPers = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_GESTIONE_CONFIGURAZIONI_PERSONALIZZATE);
@@ -2747,6 +2790,10 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String responseInputWaitTime = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
 			
 			
+			String servizioApplicativoServerEnabledS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean servizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(servizioApplicativoServerEnabledS);
+			String servizioApplicativoServer = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+			
 			return endPointCheckData(protocollo, servizioApplicativo, endpointtype, url, nome, tipo, user,
 					password, initcont, urlpgk, provurl, connfact, sendas,
 					httpsurl, httpstipologia, httpshostverify,
@@ -2762,7 +2809,7 @@ public class ConnettoriHelper extends ConsoleHelper {
 					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken, token_policy,
-					listExtendedConnettore);
+					listExtendedConnettore,servizioApplicativoServerEnabled, servizioApplicativoServer);
 			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -2789,707 +2836,714 @@ public class ConnettoriHelper extends ConsoleHelper {
 			String requestOutputFileName,String requestOutputFileNameHeaders,String requestOutputParentDirCreateIfNotExists,String requestOutputOverwriteIfExists,
 			String responseInputMode, String responseInputFileName, String responseInputFileNameHeaders, String responseInputDeleteAfterRead, String responseInputWaitTime,
 			boolean autenticazioneToken, String tokenPolicy,
-			List<ExtendedConnettore> listExtendedConnettore)
+			List<ExtendedConnettore> listExtendedConnettore,boolean servizioApplicativoServerEnabled, String servizioApplicativoServer)
 					throws Exception {
 		try{
-			
-			if (url == null)
-				url = "";
-			if (nome == null)
-				nome = "";
-			if (tipo == null)
-				tipo = "";
-			if (user == null)
-				user = "";
-			if (password == null)
-				password = "";
-			if (initcont == null)
-				initcont = "";
-			if (urlpgk == null)
-				urlpgk = "";
-			if (provurl == null)
-				provurl = "";
-			if (connfact == null)
-				connfact = "";
-			if (sendas == null)
-				sendas = "";
-			if (httpsurl == null)
-				httpsurl = "";
-			if (httpstipologia == null)
-				httpstipologia = "";
-			if (httpspath == null)
-				httpspath = "";
-			if (httpstipo == null)
-				httpstipo = "";
-			if (httpspwd == null)
-				httpspwd = "";
-			if (httpsalgoritmo == null)
-				httpsalgoritmo = "";
-			if (httpskeystore == null)
-				httpskeystore = "";
-			if (httpspwdprivatekeytrust == null)
-				httpspwdprivatekeytrust = "";
-			if (httpspathkey == null)
-				httpspathkey = "";
-			if (httpstipokey == null)
-				httpstipokey = "";
-			if (httpspwdkey == null)
-				httpspwdkey = "";
-			if (httpspwdprivatekey == null)
-				httpspwdprivatekey = "";
-			if (httpsalgoritmokey == null)
-				httpsalgoritmokey = "";
-			if (httpsKeyAlias == null)
-				httpsKeyAlias = "";
-			if (httpsTrustStoreCRLs == null)
-				httpsTrustStoreCRLs = "";
-			if (tipoconn == null)
-				tipoconn = "";	
-			if (proxy_enabled == null)
-				proxy_enabled = "";
-			if (proxy_hostname == null)
-				proxy_hostname = "";
-			if (proxy_port == null)
-				proxy_port = "";
-			if (proxy_username == null)
-				proxy_username = "";
-			if (proxy_password == null)
-				proxy_password = "";
-			if (tempiRisposta_enabled == null)
-				tempiRisposta_enabled = "";
-			if (tempiRisposta_connectionTimeout == null)
-				tempiRisposta_connectionTimeout = "";
-			if (tempiRisposta_readTimeout == null)
-				tempiRisposta_readTimeout = "";
-			if (tempiRisposta_tempoMedioRisposta == null)
-				tempiRisposta_tempoMedioRisposta = "";
-			if (transfer_mode == null)
-				transfer_mode = "";
-			if (transfer_mode_chunk_size == null)
-				transfer_mode_chunk_size = "";
-			if (redirect_mode == null)
-				redirect_mode = "";
-			if (redirect_max_hop == null)
-				redirect_max_hop = "";			
-			if (requestOutputFileName == null)
-				requestOutputFileName = "";
-			if (requestOutputFileNameHeaders == null)
-				requestOutputFileNameHeaders = "";
-			if (responseInputFileName == null)
-				responseInputFileName = "";
-			if (responseInputFileNameHeaders == null)
-				responseInputFileNameHeaders = "";
-			if (responseInputWaitTime == null)
-				responseInputWaitTime = "";
-			
-			// Controllo che non ci siano spazi nei campi di testo
-			if (
-					(nome.indexOf(" ") != -1) ||
-					(user.indexOf(" ") != -1) || 
-					(password.indexOf(" ") != -1) || 
-					(initcont.indexOf(" ") != -1) || 
-					(urlpgk.indexOf(" ") != -1) || 
-					(provurl.indexOf(" ") != -1) || 
-					(connfact.indexOf(" ") != -1) ||
-					(httpspath.indexOf(" ") != -1) ||
-					(httpspwd.indexOf(" ") != -1) ||
-					(httpsalgoritmo.indexOf(" ") != -1) ||
-					(httpskeystore.indexOf(" ") != -1) ||
-					(httpspwdprivatekeytrust.indexOf(" ") != -1) ||
-					(httpspathkey.indexOf(" ") != -1) ||
-					(httpspwdkey.indexOf(" ") != -1) ||
-					(httpspwdprivatekey.indexOf(" ") != -1) ||
-					(httpsalgoritmokey.indexOf(" ") != -1) ||
-					(httpsKeyAlias.indexOf(" ") != -1) ||
-					(tipoconn.indexOf(" ") != -1) ||
-					(proxy_hostname.indexOf(" ") != -1) ||
-					(proxy_port.indexOf(" ") != -1) ||
-					(proxy_username.indexOf(" ") != -1) ||
-					(proxy_password.indexOf(" ") != -1) ||
-					(tempiRisposta_connectionTimeout.indexOf(" ") != -1) ||
-					(tempiRisposta_readTimeout.indexOf(" ") != -1) ||
-					(tempiRisposta_tempoMedioRisposta.indexOf(" ") != -1) ||
-					(transfer_mode.indexOf(" ") != -1) ||
-					(transfer_mode_chunk_size.indexOf(" ") != -1) ||
-					(redirect_mode.indexOf(" ") != -1) ||
-					(redirect_max_hop.indexOf(" ") != -1) ||
-					(requestOutputFileName.indexOf(" ") != -1) ||
-					(requestOutputFileNameHeaders.indexOf(" ") != -1) ||
-					(responseInputFileName.indexOf(" ") != -1) ||
-					(responseInputFileNameHeaders.indexOf(" ") != -1) ||
-					(responseInputWaitTime.indexOf(" ") != -1) 
-					) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
-				return false;
-			}
-
-			if(url.startsWith(" ") || url.endsWith(" ")) {
-				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
-				return false;
-			}
-			if(httpsurl.startsWith(" ") || httpsurl.endsWith(" ")) {
-				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
-				return false;
-			}
-			if(url.indexOf(" ") != -1) {
-				int indexOfSpace = url.indexOf(" ");
-				int indexOfParameterSeparator = url.indexOf("?");
-				if(indexOfParameterSeparator<=0) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
-					return false;
-				}
-				else if(indexOfSpace<indexOfParameterSeparator) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
-					return false;
-				}
-			}
-			if(httpsurl.indexOf(" ") != -1) {
-				int indexOfSpace = httpsurl.indexOf(" ");
-				int indexOfParameterSeparator = httpsurl.indexOf("?");
-				if(indexOfParameterSeparator<=0) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
-					return false;
-				}
-				else if(indexOfSpace<indexOfParameterSeparator) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
-					return false;
-				}
-			}
-			
-			if(ServletUtils.isCheckBoxEnabled(proxy_enabled)){
+			if(!servizioApplicativoServerEnabled) {	
+				if (url == null)
+					url = "";
+				if (nome == null)
+					nome = "";
+				if (tipo == null)
+					tipo = "";
+				if (user == null)
+					user = "";
+				if (password == null)
+					password = "";
+				if (initcont == null)
+					initcont = "";
+				if (urlpgk == null)
+					urlpgk = "";
+				if (provurl == null)
+					provurl = "";
+				if (connfact == null)
+					connfact = "";
+				if (sendas == null)
+					sendas = "";
+				if (httpsurl == null)
+					httpsurl = "";
+				if (httpstipologia == null)
+					httpstipologia = "";
+				if (httpspath == null)
+					httpspath = "";
+				if (httpstipo == null)
+					httpstipo = "";
+				if (httpspwd == null)
+					httpspwd = "";
+				if (httpsalgoritmo == null)
+					httpsalgoritmo = "";
+				if (httpskeystore == null)
+					httpskeystore = "";
+				if (httpspwdprivatekeytrust == null)
+					httpspwdprivatekeytrust = "";
+				if (httpspathkey == null)
+					httpspathkey = "";
+				if (httpstipokey == null)
+					httpstipokey = "";
+				if (httpspwdkey == null)
+					httpspwdkey = "";
+				if (httpspwdprivatekey == null)
+					httpspwdprivatekey = "";
+				if (httpsalgoritmokey == null)
+					httpsalgoritmokey = "";
+				if (httpsKeyAlias == null)
+					httpsKeyAlias = "";
+				if (httpsTrustStoreCRLs == null)
+					httpsTrustStoreCRLs = "";
+				if (tipoconn == null)
+					tipoconn = "";	
+				if (proxy_enabled == null)
+					proxy_enabled = "";
+				if (proxy_hostname == null)
+					proxy_hostname = "";
+				if (proxy_port == null)
+					proxy_port = "";
+				if (proxy_username == null)
+					proxy_username = "";
+				if (proxy_password == null)
+					proxy_password = "";
+				if (tempiRisposta_enabled == null)
+					tempiRisposta_enabled = "";
+				if (tempiRisposta_connectionTimeout == null)
+					tempiRisposta_connectionTimeout = "";
+				if (tempiRisposta_readTimeout == null)
+					tempiRisposta_readTimeout = "";
+				if (tempiRisposta_tempoMedioRisposta == null)
+					tempiRisposta_tempoMedioRisposta = "";
+				if (transfer_mode == null)
+					transfer_mode = "";
+				if (transfer_mode_chunk_size == null)
+					transfer_mode_chunk_size = "";
+				if (redirect_mode == null)
+					redirect_mode = "";
+				if (redirect_max_hop == null)
+					redirect_max_hop = "";			
+				if (requestOutputFileName == null)
+					requestOutputFileName = "";
+				if (requestOutputFileNameHeaders == null)
+					requestOutputFileNameHeaders = "";
+				if (responseInputFileName == null)
+					responseInputFileName = "";
+				if (responseInputFileNameHeaders == null)
+					responseInputFileNameHeaders = "";
+				if (responseInputWaitTime == null)
+					responseInputWaitTime = "";
 				
-				if (proxy_hostname == null || "".equals(proxy_hostname)) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" obbligatorio se si seleziona la comunicazione tramite Proxy");
+				// Controllo che non ci siano spazi nei campi di testo
+				if (
+						(nome.indexOf(" ") != -1) ||
+						(user.indexOf(" ") != -1) || 
+						(password.indexOf(" ") != -1) || 
+						(initcont.indexOf(" ") != -1) || 
+						(urlpgk.indexOf(" ") != -1) || 
+						(provurl.indexOf(" ") != -1) || 
+						(connfact.indexOf(" ") != -1) ||
+						(httpspath.indexOf(" ") != -1) ||
+						(httpspwd.indexOf(" ") != -1) ||
+						(httpsalgoritmo.indexOf(" ") != -1) ||
+						(httpskeystore.indexOf(" ") != -1) ||
+						(httpspwdprivatekeytrust.indexOf(" ") != -1) ||
+						(httpspathkey.indexOf(" ") != -1) ||
+						(httpspwdkey.indexOf(" ") != -1) ||
+						(httpspwdprivatekey.indexOf(" ") != -1) ||
+						(httpsalgoritmokey.indexOf(" ") != -1) ||
+						(httpsKeyAlias.indexOf(" ") != -1) ||
+						(tipoconn.indexOf(" ") != -1) ||
+						(proxy_hostname.indexOf(" ") != -1) ||
+						(proxy_port.indexOf(" ") != -1) ||
+						(proxy_username.indexOf(" ") != -1) ||
+						(proxy_password.indexOf(" ") != -1) ||
+						(tempiRisposta_connectionTimeout.indexOf(" ") != -1) ||
+						(tempiRisposta_readTimeout.indexOf(" ") != -1) ||
+						(tempiRisposta_tempoMedioRisposta.indexOf(" ") != -1) ||
+						(transfer_mode.indexOf(" ") != -1) ||
+						(transfer_mode_chunk_size.indexOf(" ") != -1) ||
+						(redirect_mode.indexOf(" ") != -1) ||
+						(redirect_max_hop.indexOf(" ") != -1) ||
+						(requestOutputFileName.indexOf(" ") != -1) ||
+						(requestOutputFileNameHeaders.indexOf(" ") != -1) ||
+						(responseInputFileName.indexOf(" ") != -1) ||
+						(responseInputFileNameHeaders.indexOf(" ") != -1) ||
+						(responseInputWaitTime.indexOf(" ") != -1) 
+						) {
+					this.pd.setMessage("Non inserire spazi nei campi di testo");
 					return false;
 				}
-				if (proxy_port == null || "".equals(proxy_port)) {
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" obbligatorio se si seleziona la comunicazione tramite Proxy");
+	
+				if(url.startsWith(" ") || url.endsWith(" ")) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
 					return false;
 				}
-				int value = -1;
-				try{
-					value = Integer.parseInt(proxy_port);
-					if(value<1 || value>65535){
-						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un intero compreso tra 1 e  65.535");
+				if(httpsurl.startsWith(" ") || httpsurl.endsWith(" ")) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non deve iniziare o terminare con uno spazio");
+					return false;
+				}
+				if(url.indexOf(" ") != -1) {
+					int indexOfSpace = url.indexOf(" ");
+					int indexOfParameterSeparator = url.indexOf("?");
+					if(indexOfParameterSeparator<=0) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
 						return false;
 					}
-				}catch(Exception e){
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un numero intero: "+e.getMessage());
-					return false;
-				}
-				
-				try{
-					new InetSocketAddress(proxy_hostname,value);
-				}catch(Exception e){
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" e "+
-							ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicati per il Proxy non sono corretti: "+e.getMessage());
-					return false;
-				}
-				
-				// Check lunghezza
-				if(this.checkLength255(proxy_hostname, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME)==false) {
-					return false;
-				}
-				if(proxy_username!=null && !"".equals(proxy_username)) {
-					if(this.checkLength255(proxy_username, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME)==false) {
+					else if(indexOfSpace<indexOfParameterSeparator) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
 						return false;
 					}
 				}
-				if(proxy_password!=null && !"".equals(proxy_password)) {
-					if(this.checkLength255(proxy_password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)==false) {
+				if(httpsurl.indexOf(" ") != -1) {
+					int indexOfSpace = httpsurl.indexOf(" ");
+					int indexOfParameterSeparator = httpsurl.indexOf("?");
+					if(indexOfParameterSeparator<=0) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" non può contenere degli spazi");
+						return false;
+					}
+					else if(indexOfSpace<indexOfParameterSeparator) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL+" può contenere degli spazi solamente nei parametri");
 						return false;
 					}
 				}
-			}
-			
-			if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
 				
-				try{
-					int v = Integer.parseInt(tempiRisposta_connectionTimeout);
-					if(v<=0) {
-						throw new Exception("fornire un valore maggiore di zero");
-					}
-				}catch(Exception e){
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT+" indicato nella sezione '"+
-							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
-					return false;
-				}
-				
-				try{
-					int v = Integer.parseInt(tempiRisposta_readTimeout);
-					if(v<=0) {
-						throw new Exception("fornire un valore maggiore di zero");
-					}
-				}catch(Exception e){
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT+" indicato nella sezione '"+
-							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
-					return false;
-				}
-				
-				try{
-					int v = Integer.parseInt(tempiRisposta_tempoMedioRisposta);
-					if(v<=0) {
-						throw new Exception("fornire un valore maggiore di zero");
-					}
-				}catch(Exception e){
-					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA+" indicato nella sezione '"+
-							ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
-					return false;
-				}
-				
-			}
-			
-			if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
-				
-				if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
-					if(transfer_mode_chunk_size!=null && !"".equals(transfer_mode_chunk_size)){
-						int value = -1;
-						try{
-							value = Integer.parseInt(transfer_mode_chunk_size);
-							if(value<1){
-								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
-										"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero maggiore di zero.");
-								return false;
-							}
-						}catch(Exception e){
-							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
-									"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero intero: "+e.getMessage());
-							return false;
-						}
-					}
-				}
-				
-				if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
-					if(redirect_max_hop!=null && !"".equals(redirect_max_hop)){
-						int value = -1;
-						try{
-							value = Integer.parseInt(redirect_max_hop);
-							if(value<1){
-								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
-										"' deve essere un numero maggiore di zero.");
-								return false;
-							}
-						}catch(Exception e){
-							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
-									"' deve essere un numero intero: "+e.getMessage());
-							return false;
-						}
-					}
-				}
-				
-				
-			}
-			
-			if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
-				if (user == null || "".equals(user)) {
-					this.pd.setMessage("Username obbligatoria per l'autenticazione http");
-					return false;
-				}
-				if (password == null || "".equals(password)) {
-					this.pd.setMessage("Password obbligatoria per l'autenticazione http");
-					return false;
-				}
-				if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)==false) {
-					return false;
-				}
-				if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)==false) {
-					return false;
-				}
-			}
-
-			if(autenticazioneToken) {
-				if (tokenPolicy == null || "".equals(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
-					this.pd.setMessage("Policy obbligatoria per l'autenticazione basata su token");
-					return false;
-				}
-				
-				List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
-				List<String> policyValues = new ArrayList<>();
-				for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
-					GenericProperties genericProperties = gestorePolicyTokenList.get(i);
-					policyValues.add(genericProperties.getNome());
-				}
-				
-				if(!policyValues.contains(tokenPolicy)) {
-					this.pd.setMessage("Policy indicata per l'autenticazione basata su token, non esiste");
-					return false;
-				}
-			}
-			
-			// Controllo che i campi "select" abbiano uno dei valori ammessi
-			if (!Connettori.contains(endpointtype) && !endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
-				this.pd.setMessage("Tipo Connettore dev'essere uno tra : " + Connettori.getList());
-				return false;
-			}
-
-			List<String> tipologie = null;
-			try{
-				tipologie = SSLUtilities.getSSLSupportedProtocols();
-			}catch(Exception e){
-				ControlStationCore.logError(e.getMessage(), e);
-				tipologie = SSLUtilities.getAllSslProtocol();
-			}
-			if(!tipologie.contains(SSLConstants.PROTOCOL_TLS)){
-				tipologie.add(SSLConstants.PROTOCOL_TLS); // retrocompatibilita'
-			}
-			if(!tipologie.contains(SSLConstants.PROTOCOL_SSL)){
-				tipologie.add(SSLConstants.PROTOCOL_SSL); // retrocompatibilita'
-			}
-			if (!httpstipologia.equals("") &&
-					!tipologie.contains(httpstipologia)) {
-				this.pd.setMessage("Il campo Tipologia può assumere uno tra i seguenti valori: "+tipologie);
-				return false;
-			}
-
-			if (!httpstipo.equals("") &&
-					!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-				this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-				return false;
-			}
-			if (!httpstipokey.equals("") &&
-					!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
-				this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
-				return false;
-			}
-
-			// Controllo campi obbligatori per il tipo di connettore custom
-			if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn == null || "".equals(tipoconn))) {
-				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore custom");
-				return false;
-			}
-			if (endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
-				if(this.checkLength255(tipoconn, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO)==false) {
-					return false;
-				}
-			}
-
-			// Controllo campi obbligatori per il tipo di connettore http
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) && (url == null || "".equals(url))) {
-				this.pd.setMessage("Url obbligatoria per il tipo di connettore http");
-				return false;
-			}
-
-			// Se il tipo di connettore è custom, tipoconn non può essere
-			if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn.equals(TipiConnettore.HTTP.toString()) || tipoconn.equals(TipiConnettore.HTTPS.toString()) || tipoconn.equals(TipiConnettore.JMS.toString()) || tipoconn.equals(TipiConnettore.NULL.toString()) || tipoconn.equals(TipiConnettore.NULLECHO.toString()) || tipoconn.equals(TipiConnettore.DISABILITATO.toString()) )) {
-				this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" non può assumere i valori: disabilitato,http,https,jms,null,nullEcho");
-				return false;
-			}
-
-			// Se e' stata specificata la url, dev'essere valida
-			if (endpointtype.equals(TipiConnettore.HTTP.toString()) && !url.equals("") ){
-				try{
-					org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
-				}catch(Exception e){
-					this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
-					return false;
-				}
-				if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
-					return false;
-				}
-				if(this.isProfiloModIPA(protocollo) && !servizioApplicativo) {
-					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
-						this.pd.setMessage("Il profilo richiede una url con prefisso https://");
+				if(ServletUtils.isCheckBoxEnabled(proxy_enabled)){
+					
+					if (proxy_hostname == null || "".equals(proxy_hostname)) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" obbligatorio se si seleziona la comunicazione tramite Proxy");
 						return false;
 					}
-				}
-			}
-
-			// Controllo campi obbligatori per il tipo di connettore jms
-			if (endpointtype.equals(TipiConnettore.JMS.toString())) {
-				if (nome == null || "".equals(nome)) {
-					this.pd.setMessage("Nome della coda/topic obbligatorio per il tipo di connettore jms");
-					return false;
-				}
-				if (tipo == null || "".equals(tipo)) {
-					this.pd.setMessage("Tipo di coda obbligatorio per il tipo di connettore jms");
-					return false;
-				}
-				if (sendas == null || "".equals(sendas)) {
-					this.pd.setMessage("Tipo di messaggio (SendAs) obbligatorio per il tipo di connettore jms");
-					return false;
-				}
-				if (connfact == null || "".equals(connfact)) {
-					this.pd.setMessage("Connection Factory obbligatoria per il tipo di connettore jms");
-					return false;
-				}
-				
-				if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA)==false) {
-					return false;
-				}
-				if(this.checkLength255(connfact, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY)==false) {
-					return false;
-				}
-				if(user!=null && !"".equals(user)) {
-					if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME)==false) {
+					if (proxy_port == null || "".equals(proxy_port)) {
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" obbligatorio se si seleziona la comunicazione tramite Proxy");
 						return false;
 					}
-				}
-				if(password!=null && !"".equals(password)) {
-					if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD)==false) {
-						return false;
-					}
-				}
-				if(initcont!=null && !"".equals(initcont)) {
-					if(this.checkLength255(initcont, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX)==false) {
-						return false;
-					}
-				}
-				if(urlpgk!=null && !"".equals(urlpgk)) {
-					if(this.checkLength255(urlpgk, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG)==false) {
-						return false;
-					}
-				}
-				if(provurl!=null && !"".equals(provurl)) {
-					if(this.checkLength255(provurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL)==false) {
-						return false;
-					}
-				}
-			}
-
-			if (endpointtype.equals(TipiConnettore.JMS.toString()) && !Utilities.contains(tipo, ConnettoriCostanti.TIPI_CODE_JMS)) {
-				this.pd.setMessage("Tipo Jms dev'essere: "+Utilities.toString(ConnettoriCostanti.TIPI_CODE_JMS, ","));
-				return false;
-			}
-			if (endpointtype.equals(TipiConnettore.JMS.toString()) && !Utilities.contains(sendas, ConnettoriCostanti.TIPO_SEND_AS) ) {
-				this.pd.setMessage("Send As dev'essere: "+Utilities.toString(ConnettoriCostanti.TIPO_SEND_AS, ","));
-				return false;
-			}
-
-			// Controllo campi obbligatori per il tipo di connettore https
-			if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
-				if ("".equals(httpsurl)) {
-					this.pd.setMessage("Url obbligatorio per il tipo di connettore https");
-					return false;
-				}else{
+					int value = -1;
 					try{
-						org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(httpsurl);
+						value = Integer.parseInt(proxy_port);
+						if(value<1 || value>65535){
+							this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un intero compreso tra 1 e  65.535");
+							return false;
+						}
+					}catch(Exception e){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicata per il Proxy deve essere un numero intero: "+e.getMessage());
+						return false;
+					}
+					
+					try{
+						new InetSocketAddress(proxy_hostname,value);
+					}catch(Exception e){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME+" e "+
+								ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PORT+" indicati per il Proxy non sono corretti: "+e.getMessage());
+						return false;
+					}
+					
+					// Check lunghezza
+					if(this.checkLength255(proxy_hostname, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_HOSTNAME)==false) {
+						return false;
+					}
+					if(proxy_username!=null && !"".equals(proxy_username)) {
+						if(this.checkLength255(proxy_username, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_USERNAME)==false) {
+							return false;
+						}
+					}
+					if(proxy_password!=null && !"".equals(proxy_password)) {
+						if(this.checkLength255(proxy_password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_PROXY_PASSWORD)==false) {
+							return false;
+						}
+					}
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(tempiRisposta_enabled)){
+					
+					try{
+						int v = Integer.parseInt(tempiRisposta_connectionTimeout);
+						if(v<=0) {
+							throw new Exception("fornire un valore maggiore di zero");
+						}
+					}catch(Exception e){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_CONNECTION_TIMEOUT+" indicato nella sezione '"+
+								ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
+						return false;
+					}
+					
+					try{
+						int v = Integer.parseInt(tempiRisposta_readTimeout);
+						if(v<=0) {
+							throw new Exception("fornire un valore maggiore di zero");
+						}
+					}catch(Exception e){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_READ_TIMEOUT+" indicato nella sezione '"+
+								ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
+						return false;
+					}
+					
+					try{
+						int v = Integer.parseInt(tempiRisposta_tempoMedioRisposta);
+						if(v<=0) {
+							throw new Exception("fornire un valore maggiore di zero");
+						}
+					}catch(Exception e){
+						this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TEMPI_RISPOSTA_TEMPO_MEDIO_RISPOSTA+" indicato nella sezione '"+
+								ConnettoriCostanti.LABEL_CONNETTORE_TEMPI_RISPOSTA+"' deve essere un numero intero maggiore di zero");
+						return false;
+					}
+					
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(opzioniAvanzate)){
+					
+					if(TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome().equals(transfer_mode)){
+						if(transfer_mode_chunk_size!=null && !"".equals(transfer_mode_chunk_size)){
+							int value = -1;
+							try{
+								value = Integer.parseInt(transfer_mode_chunk_size);
+								if(value<1){
+									this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
+											"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero maggiore di zero.");
+									return false;
+								}
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_TRANSFER_CHUNK_SIZE+
+										"' indicato per la modalità "+TransferLengthModes.TRANSFER_ENCODING_CHUNKED.getNome()+" deve essere un numero intero: "+e.getMessage());
+								return false;
+							}
+						}
+					}
+					
+					if(CostantiConfigurazione.ABILITATO.getValue().equals(redirect_mode)){
+						if(redirect_max_hop!=null && !"".equals(redirect_max_hop)){
+							int value = -1;
+							try{
+								value = Integer.parseInt(redirect_max_hop);
+								if(value<1){
+									this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
+											"' deve essere un numero maggiore di zero.");
+									return false;
+								}
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_OPZIONI_AVANZATE_REDIRECT_MAX_HOP+
+										"' deve essere un numero intero: "+e.getMessage());
+								return false;
+							}
+						}
+					}
+					
+					
+				}
+				
+				if(ServletUtils.isCheckBoxEnabled(autenticazioneHttp)){
+					if (user == null || "".equals(user)) {
+						this.pd.setMessage("Username obbligatoria per l'autenticazione http");
+						return false;
+					}
+					if (password == null || "".equals(password)) {
+						this.pd.setMessage("Password obbligatoria per l'autenticazione http");
+						return false;
+					}
+					if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME)==false) {
+						return false;
+					}
+					if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD)==false) {
+						return false;
+					}
+				}
+	
+				if(autenticazioneToken) {
+					if (tokenPolicy == null || "".equals(tokenPolicy) || CostantiControlStation.DEFAULT_VALUE_NON_SELEZIONATO.equals(tokenPolicy)) {
+						this.pd.setMessage("Policy obbligatoria per l'autenticazione basata su token");
+						return false;
+					}
+					
+					List<GenericProperties> gestorePolicyTokenList = this.confCore.gestorePolicyTokenList(null, ConfigurazioneCostanti.DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_GESTORE_POLICY_TOKEN_TIPOLOGIA_RETRIEVE_POLICY_TOKEN, null);
+					List<String> policyValues = new ArrayList<>();
+					for (int i = 0; i < gestorePolicyTokenList.size(); i++) {
+						GenericProperties genericProperties = gestorePolicyTokenList.get(i);
+						policyValues.add(genericProperties.getNome());
+					}
+					
+					if(!policyValues.contains(tokenPolicy)) {
+						this.pd.setMessage("Policy indicata per l'autenticazione basata su token, non esiste");
+						return false;
+					}
+				}
+				
+				// Controllo che i campi "select" abbiano uno dei valori ammessi
+				if (!Connettori.contains(endpointtype) && !endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
+					this.pd.setMessage("Tipo Connettore dev'essere uno tra : " + Connettori.getList());
+					return false;
+				}
+	
+				List<String> tipologie = null;
+				try{
+					tipologie = SSLUtilities.getSSLSupportedProtocols();
+				}catch(Exception e){
+					ControlStationCore.logError(e.getMessage(), e);
+					tipologie = SSLUtilities.getAllSslProtocol();
+				}
+				if(!tipologie.contains(SSLConstants.PROTOCOL_TLS)){
+					tipologie.add(SSLConstants.PROTOCOL_TLS); // retrocompatibilita'
+				}
+				if(!tipologie.contains(SSLConstants.PROTOCOL_SSL)){
+					tipologie.add(SSLConstants.PROTOCOL_SSL); // retrocompatibilita'
+				}
+				if (!httpstipologia.equals("") &&
+						!tipologie.contains(httpstipologia)) {
+					this.pd.setMessage("Il campo Tipologia può assumere uno tra i seguenti valori: "+tipologie);
+					return false;
+				}
+	
+				if (!httpstipo.equals("") &&
+						!Utilities.contains(httpstipo, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
+					this.pd.setMessage("Il campo Tipo per l'Autenticazione Server può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
+					return false;
+				}
+				if (!httpstipokey.equals("") &&
+						!Utilities.contains(httpstipokey, ConnettoriCostanti.TIPOLOGIE_KEYSTORE)) {
+					this.pd.setMessage("Il campo Tipo per l'Autenticazione Client può assumere uno tra i seguenti valori: "+Utilities.toString(ConnettoriCostanti.TIPOLOGIE_KEYSTORE, ","));
+					return false;
+				}
+	
+				// Controllo campi obbligatori per il tipo di connettore custom
+				if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn == null || "".equals(tipoconn))) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" obbligatorio per il tipo di connettore custom");
+					return false;
+				}
+				if (endpointtype.equals(TipiConnettore.CUSTOM.toString())) {
+					if(this.checkLength255(tipoconn, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO)==false) {
+						return false;
+					}
+				}
+	
+				// Controllo campi obbligatori per il tipo di connettore http
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) && (url == null || "".equals(url))) {
+					this.pd.setMessage("Url obbligatoria per il tipo di connettore http");
+					return false;
+				}
+	
+				// Se il tipo di connettore è custom, tipoconn non può essere
+				if (endpointtype.equals(TipiConnettore.CUSTOM.toString()) && (tipoconn.equals(TipiConnettore.HTTP.toString()) || tipoconn.equals(TipiConnettore.HTTPS.toString()) || tipoconn.equals(TipiConnettore.JMS.toString()) || tipoconn.equals(TipiConnettore.NULL.toString()) || tipoconn.equals(TipiConnettore.NULLECHO.toString()) || tipoconn.equals(TipiConnettore.DISABILITATO.toString()) )) {
+					this.pd.setMessage(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO+" non può assumere i valori: disabilitato,http,https,jms,null,nullEcho");
+					return false;
+				}
+	
+				// Se e' stata specificata la url, dev'essere valida
+				if (endpointtype.equals(TipiConnettore.HTTP.toString()) && !url.equals("") ){
+					try{
+						org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(url);
 					}catch(Exception e){
 						this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 						return false;
 					}
-				}
-				if(this.checkLength255(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
-					return false;
-				}
-				
-				if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
-					if(this.isProfiloModIPA(protocollo)) {
-						this.pd.setMessage("Il profilo richiede una url con prefisso https://");
+					if(this.checkLength255(url, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_URL)==false) {
 						return false;
 					}
-					else {
-						this.pd.setMessage("Url deve possedere il prefisso https://");
-						return false;
-					}
-				}
-				
-				if ("".equals(httpspath)) {
-					this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Server");
-					return false;
-				}else{
-					try{
-						File f = new File(httpspath);
-						f.getAbsolutePath();
-					}catch(Exception e){
-						this.pd.setMessage("Il campo 'Path', obbligatorio per l'Autenticazione Server, non è correttamente definito: "+e.getMessage());
-						return false;
-					}
-				}
-				if(this.checkLength255(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
-					return false;
-				}
-				
-				if ("".equals(httpspwd)) {
-					this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
-					return false;
-				}
-				if(this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)==false) {
-					return false;
-				}
-				
-				if ("".equals(httpsalgoritmo)) {
-					this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Server");
-					return false;
-				}
-				if(this.checkLength255(httpsalgoritmo, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)==false) {
-					return false;
-				}
-				
-				if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
-					httpsTrustStoreCRLs = httpsTrustStoreCRLs.trim();
-					String [] tmp = httpsTrustStoreCRLs.split(",");
-					if(tmp!=null && tmp.length>0) {
-						for (String crl : tmp) {
-							if(crl!=null) {
-								crl = crl.trim();
-								if(!"".equals(crl) && crl.contains(" ")) {
-									this.pd.setMessage("I path inseriti nel campo '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL+"' non devono contenere spazi");
-									return false;
-								}
-							}
+					if(this.isProfiloModIPA(protocollo) && !servizioApplicativo) {
+						if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
+							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
+							return false;
 						}
+					}
+				}
+	
+				// Controllo campi obbligatori per il tipo di connettore jms
+				if (endpointtype.equals(TipiConnettore.JMS.toString())) {
+					if (nome == null || "".equals(nome)) {
+						this.pd.setMessage("Nome della coda/topic obbligatorio per il tipo di connettore jms");
+						return false;
+					}
+					if (tipo == null || "".equals(tipo)) {
+						this.pd.setMessage("Tipo di coda obbligatorio per il tipo di connettore jms");
+						return false;
+					}
+					if (sendas == null || "".equals(sendas)) {
+						this.pd.setMessage("Tipo di messaggio (SendAs) obbligatorio per il tipo di connettore jms");
+						return false;
+					}
+					if (connfact == null || "".equals(connfact)) {
+						this.pd.setMessage("Connection Factory obbligatoria per il tipo di connettore jms");
+						return false;
 					}
 					
-				}
-				
-				if (httpsstato) {
-					if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
-						if ("".equals(httpspwdprivatekeytrust)) {
-							this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
-							return false;
-						}
-						if(this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
-							return false;
-						}
-						
-						if ("".equals(httpsalgoritmokey)) {
-							this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio in caso di Autenticazione Client abilitata");
-							return false;
-						}
-						if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
-							return false;
-						}
-						
-					} else {
-						if ("".equals(httpspathkey)) {
-							this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
-							return false;
-						}else{
-							try{
-								File f = new File(httpspathkey);
-								f.getAbsolutePath();
-							}catch(Exception e){
-								this.pd.setMessage("Il campo 'Path', obbligatorio per l'Autenticazione Client in caso di dati di accesso al KeyStore ridefiniti, non è correttamente definito: "+e.getMessage());
-								return false;
-							}
-						}
-						if(this.checkLength255(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
-							return false;
-						}
-						
-						if ("".equals(httpspwdkey)) {
-							this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
-							return false;
-						}
-						if(this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)==false) {
-							return false;
-						}
-						
-						if ("".equals(httpspwdprivatekey)) {
-							this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
-							return false;
-						}
-						if(this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
-							return false;
-						}
-						
-						if ("".equals(httpsalgoritmokey)) {
-							this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
-							return false;
-						}
-						if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
-							return false;
-						}
-					}
-				}
-			}
-			
-			// Controllo campi obbligatori per il tipo di connettore file
-			if (endpointtype.equals(TipiConnettore.FILE.toString())) {
-				
-				if ("".equals(requestOutputFileName)) {
-					this.pd.setMessage("'"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
-							ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") obbligatorio per il tipo di connettore file");
-					return false;
-				}else{
-					try{
-						DynamicStringReplace.validate(requestOutputFileName, false);
-					}catch(Exception e){
-						this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
-								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+					if(this.checkLength255(nome, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_NOME_CODA)==false) {
 						return false;
 					}
+					if(this.checkLength255(connfact, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_CONNECTION_FACTORY)==false) {
+						return false;
+					}
+					if(user!=null && !"".equals(user)) {
+						if(this.checkLength255(user, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_USERNAME)==false) {
+							return false;
+						}
+					}
+					if(password!=null && !"".equals(password)) {
+						if(this.checkLength255(password, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PASSWORD)==false) {
+							return false;
+						}
+					}
+					if(initcont!=null && !"".equals(initcont)) {
+						if(this.checkLength255(initcont, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_INIT_CTX)==false) {
+							return false;
+						}
+					}
+					if(urlpgk!=null && !"".equals(urlpgk)) {
+						if(this.checkLength255(urlpgk, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_URL_PKG)==false) {
+							return false;
+						}
+					}
+					if(provurl!=null && !"".equals(provurl)) {
+						if(this.checkLength255(provurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_JMS_PROVIDER_URL)==false) {
+							return false;
+						}
+					}
 				}
-				if(this.checkLength255(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
+	
+				if (endpointtype.equals(TipiConnettore.JMS.toString()) && !Utilities.contains(tipo, ConnettoriCostanti.TIPI_CODE_JMS)) {
+					this.pd.setMessage("Tipo Jms dev'essere: "+Utilities.toString(ConnettoriCostanti.TIPI_CODE_JMS, ","));
 					return false;
 				}
-				
-				if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
-					try{
-						DynamicStringReplace.validate(requestOutputFileNameHeaders, false);
-					}catch(Exception e){
-						this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
-								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
-						return false;
-					}
-					if(this.checkLength255(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
-						return false;
-					}
+				if (endpointtype.equals(TipiConnettore.JMS.toString()) && !Utilities.contains(sendas, ConnettoriCostanti.TIPO_SEND_AS) ) {
+					this.pd.setMessage("Send As dev'essere: "+Utilities.toString(ConnettoriCostanti.TIPO_SEND_AS, ","));
+					return false;
 				}
-				
-				if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
-					
-					if ("".equals(responseInputFileName)) {
-						this.pd.setMessage("'"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
-								ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") obbligatorio per il tipo di connettore file");
+	
+				// Controllo campi obbligatori per il tipo di connettore https
+				if (endpointtype.equals(TipiConnettore.HTTPS.toString())) {
+					if ("".equals(httpsurl)) {
+						this.pd.setMessage("Url obbligatorio per il tipo di connettore https");
 						return false;
 					}else{
 						try{
-							DynamicStringReplace.validate(responseInputFileName, false);
+							org.openspcoop2.utils.regexp.RegExpUtilities.validateUrl(httpsurl);
 						}catch(Exception e){
-							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
-									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
+							this.pd.setMessage("Url non correttamente formata: "+e.getMessage());
 							return false;
 						}
 					}
-					if(this.checkLength255(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
+					if(this.checkLength255(httpsurl, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_URL)==false) {
 						return false;
 					}
 					
-					if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
-						try{
-							DynamicStringReplace.validate(responseInputFileNameHeaders, false);
-						}catch(Exception e){
-							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
-									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
+					if(!httpsurl.toLowerCase().trim().startsWith("https://")) {
+						if(this.isProfiloModIPA(protocollo)) {
+							this.pd.setMessage("Il profilo richiede una url con prefisso https://");
 							return false;
 						}
-						if(this.checkLength255(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
+						else {
+							this.pd.setMessage("Url deve possedere il prefisso https://");
 							return false;
 						}
 					}
 					
-					if(responseInputWaitTime!=null && !"".equals(responseInputWaitTime)){
-						int value = -1;
+					if ("".equals(httpspath)) {
+						this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Server");
+						return false;
+					}else{
 						try{
-							value = Integer.parseInt(responseInputWaitTime);
-							if(value<1){
-								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME+
-										"' ("+
-									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") deve essere un numero maggiore di zero.");
+							File f = new File(httpspath);
+							f.getAbsolutePath();
+						}catch(Exception e){
+							this.pd.setMessage("Il campo 'Path', obbligatorio per l'Autenticazione Server, non è correttamente definito: "+e.getMessage());
+							return false;
+						}
+					}
+					if(this.checkLength255(httpspath, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_LOCATION)==false) {
+						return false;
+					}
+					
+					if ("".equals(httpspwd)) {
+						this.pd.setMessage("La password del TrustStore è necessaria per l'Autenticazione Server");
+						return false;
+					}
+					if(this.checkLength255(httpspwd, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_PASSWORD)==false) {
+						return false;
+					}
+					
+					if ("".equals(httpsalgoritmo)) {
+						this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Server");
+						return false;
+					}
+					if(this.checkLength255(httpsalgoritmo, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_MANAGEMENT_ALGORITM)==false) {
+						return false;
+					}
+					
+					if(httpsTrustStoreCRLs!=null && !"".equals(httpsTrustStoreCRLs)) {
+						httpsTrustStoreCRLs = httpsTrustStoreCRLs.trim();
+						String [] tmp = httpsTrustStoreCRLs.split(",");
+						if(tmp!=null && tmp.length>0) {
+							for (String crl : tmp) {
+								if(crl!=null) {
+									crl = crl.trim();
+									if(!"".equals(crl) && crl.contains(" ")) {
+										this.pd.setMessage("I path inseriti nel campo '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_TRUST_STORE_CRL+"' non devono contenere spazi");
+										return false;
+									}
+								}
+							}
+						}
+						
+					}
+					
+					if (httpsstato) {
+						if (ConnettoriCostanti.DEFAULT_CONNETTORE_HTTPS_KEYSTORE_CLIENT_AUTH_MODE_DEFAULT.equals(httpskeystore)) {
+							if ("".equals(httpspwdprivatekeytrust)) {
+								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
 								return false;
 							}
+							if(this.checkLength255(httpspwdprivatekeytrust, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
+								return false;
+							}
+							
+							if ("".equals(httpsalgoritmokey)) {
+								this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio in caso di Autenticazione Client abilitata");
+								return false;
+							}
+							if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
+								return false;
+							}
+							
+						} else {
+							if ("".equals(httpspathkey)) {
+								this.pd.setMessage("Il campo 'Path' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
+								return false;
+							}else{
+								try{
+									File f = new File(httpspathkey);
+									f.getAbsolutePath();
+								}catch(Exception e){
+									this.pd.setMessage("Il campo 'Path', obbligatorio per l'Autenticazione Client in caso di dati di accesso al KeyStore ridefiniti, non è correttamente definito: "+e.getMessage());
+									return false;
+								}
+							}
+							if(this.checkLength255(httpspathkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_LOCATION)==false) {
+								return false;
+							}
+							
+							if ("".equals(httpspwdkey)) {
+								this.pd.setMessage("La password del KeyStore è necessaria per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
+								return false;
+							}
+							if(this.checkLength255(httpspwdkey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_STORE_PASSWORD)==false) {
+								return false;
+							}
+							
+							if ("".equals(httpspwdprivatekey)) {
+								this.pd.setMessage("La password della chiave privata è necessaria in caso di Autenticazione Client abilitata");
+								return false;
+							}
+							if(this.checkLength255(httpspwdprivatekey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_PASSWORD_PRIVATE_KEY_KEYSTORE)==false) {
+								return false;
+							}
+							
+							if ("".equals(httpsalgoritmokey)) {
+								this.pd.setMessage("Il campo 'Algoritmo' è obbligatorio per l'Autenticazione Client, in caso di dati di accesso al KeyStore ridefiniti");
+								return false;
+							}
+							if(this.checkLength255(httpsalgoritmokey, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_HTTPS_KEY_MANAGEMENT_ALGORITM)==false) {
+								return false;
+							}
+						}
+					}
+				}
+				
+				// Controllo campi obbligatori per il tipo di connettore file
+				if (endpointtype.equals(TipiConnettore.FILE.toString())) {
+					
+					if ("".equals(requestOutputFileName)) {
+						this.pd.setMessage("'"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
+								ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") obbligatorio per il tipo di connettore file");
+						return false;
+					}else{
+						try{
+							DynamicStringReplace.validate(requestOutputFileName, false);
 						}catch(Exception e){
-							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME+
-									"' ("+
-								ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") deve essere un numero intero: "+e.getMessage());
+							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME+"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+							return false;
+						}
+					}
+					if(this.checkLength255(requestOutputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME)==false) {
+						return false;
+					}
+					
+					if(requestOutputFileNameHeaders!=null && !"".equals(requestOutputFileNameHeaders)){
+						try{
+							DynamicStringReplace.validate(requestOutputFileNameHeaders, false);
+						}catch(Exception e){
+							this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS+"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_REQUEST_OUTPUT+") non risulta corretto: "+e.getMessage());
+							return false;
+						}
+						if(this.checkLength255(requestOutputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_REQUEST_OUTPUT_FILE_NAME_HEADERS)==false) {
 							return false;
 						}
 					}
 					
+					if(CostantiConfigurazione.ABILITATO.getValue().equals(responseInputMode)){
+						
+						if ("".equals(responseInputFileName)) {
+							this.pd.setMessage("'"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") obbligatorio per il tipo di connettore file");
+							return false;
+						}else{
+							try{
+								DynamicStringReplace.validate(responseInputFileName, false);
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME+"' ("+
+										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
+								return false;
+							}
+						}
+						if(this.checkLength255(responseInputFileName, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME)==false) {
+							return false;
+						}
+						
+						if(responseInputFileNameHeaders!=null && !"".equals(responseInputFileNameHeaders)){
+							try{
+								DynamicStringReplace.validate(responseInputFileNameHeaders, false);
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS+"' ("+
+										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") non risulta corretto: "+e.getMessage());
+								return false;
+							}
+							if(this.checkLength255(responseInputFileNameHeaders, ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS)==false) {
+								return false;
+							}
+						}
+						
+						if(responseInputWaitTime!=null && !"".equals(responseInputWaitTime)){
+							int value = -1;
+							try{
+								value = Integer.parseInt(responseInputWaitTime);
+								if(value<1){
+									this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME+
+											"' ("+
+										ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") deve essere un numero maggiore di zero.");
+									return false;
+								}
+							}catch(Exception e){
+								this.pd.setMessage("Il valore indicato nel parametro '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME+
+										"' ("+
+									ConnettoriCostanti.LABEL_CONNETTORE_RESPONSE_INPUT+") deve essere un numero intero: "+e.getMessage());
+								return false;
+							}
+						}
+						
+					}
+				}
+				
+				
+				try{
+					ServletExtendedConnettoreUtils.checkInfo(listExtendedConnettore);
+				}catch(Exception e){
+					this.pd.setMessage(e.getMessage());
+					return false;
+				}
+				
+			} else {
+				if(StringUtils.isBlank(servizioApplicativoServer)) { 
+					this.pd.setMessage("Il campo '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER
+							+ "' &egrave; quando si abilita il campo '"+ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER+"'.");
+					return false;
 				}
 			}
 			
-			
-			try{
-				ServletExtendedConnettoreUtils.checkInfo(listExtendedConnettore);
-			}catch(Exception e){
-				this.pd.setMessage(e.getMessage());
-				return false;
-			}
-			
-			return true;
-			
+			return true;			
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
 			throw new Exception(e);
@@ -4211,6 +4265,28 @@ public class ConnettoriHelper extends ConsoleHelper {
 		}
 		
 		return true;
+	}
+	
+	public String getTooltipConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			sbCon.append(ConnettoriCostanti.LABEL_SERVER);
+			sbCon.append(": ");
+			sbCon.append(sa.getNome());
+			sbCon.append(CostantiControlStation.TOOLTIP_BREAK_LINE);
+		}
+		sbCon.append(this.getLabelConnettore(is));
+		return sbCon.toString();
+	}
+	
+	public String getLabelConnettore(ServizioApplicativo sa, org.openspcoop2.core.config.InvocazioneServizio is) {
+		StringBuilder sbCon = new StringBuilder();
+		if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+			//sbCon.append(sa.getNome());
+			//sbCon.append(" ");
+		}
+		sbCon.append(this.getLabelConnettore(is));
+		return sbCon.toString();
 	}
 	
 	public String getLabelConnettore(org.openspcoop2.core.config.InvocazioneServizio is) {

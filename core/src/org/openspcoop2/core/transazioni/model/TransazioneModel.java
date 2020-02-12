@@ -44,6 +44,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.STATO = new Field("stato",java.lang.String.class,"transazione",Transazione.class);
 		this.RUOLO_TRANSAZIONE = new Field("ruolo-transazione",int.class,"transazione",Transazione.class);
 		this.ESITO = new Field("esito",int.class,"transazione",Transazione.class);
+		this.ESITO_SINCRONO = new Field("esito-sincrono",int.class,"transazione",Transazione.class);
+		this.CONSEGNE_MULTIPLE_IN_CORSO = new Field("consegne-multiple-in-corso",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new Field("esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_RICHIESTA = new Field("tipo-richiesta",java.lang.String.class,"transazione",Transazione.class);
@@ -132,6 +134,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.TIPO_API = new Field("tipo-api",int.class,"transazione",Transazione.class);
 		this.GRUPPI = new Field("gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new Field("dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
+		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new Field("transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new Field("transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
 	}
@@ -144,6 +147,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.STATO = new ComplexField(father,"stato",java.lang.String.class,"transazione",Transazione.class);
 		this.RUOLO_TRANSAZIONE = new ComplexField(father,"ruolo-transazione",int.class,"transazione",Transazione.class);
 		this.ESITO = new ComplexField(father,"esito",int.class,"transazione",Transazione.class);
+		this.ESITO_SINCRONO = new ComplexField(father,"esito-sincrono",int.class,"transazione",Transazione.class);
+		this.CONSEGNE_MULTIPLE_IN_CORSO = new ComplexField(father,"consegne-multiple-in-corso",int.class,"transazione",Transazione.class);
 		this.ESITO_CONTESTO = new ComplexField(father,"esito-contesto",java.lang.String.class,"transazione",Transazione.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"transazione",Transazione.class);
 		this.TIPO_RICHIESTA = new ComplexField(father,"tipo-richiesta",java.lang.String.class,"transazione",Transazione.class);
@@ -232,6 +237,7 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 		this.TIPO_API = new ComplexField(father,"tipo-api",int.class,"transazione",Transazione.class);
 		this.GRUPPI = new ComplexField(father,"gruppi",java.lang.String.class,"transazione",Transazione.class);
 		this.DUMP_MESSAGGIO = new org.openspcoop2.core.transazioni.model.DumpMessaggioModel(new ComplexField(father,"dump-messaggio",org.openspcoop2.core.transazioni.DumpMessaggio.class,"transazione",Transazione.class));
+		this.TRANSAZIONE_APPLICATIVO_SERVER = new org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel(new ComplexField(father,"transazione-applicativo-server",org.openspcoop2.core.transazioni.TransazioneApplicativoServer.class,"transazione",Transazione.class));
 		this.TRANSAZIONE_EXTENDED_INFO = new org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel(new ComplexField(father,"transazione-extended-info",org.openspcoop2.core.transazioni.TransazioneExtendedInfo.class,"transazione",Transazione.class));
 	
 	}
@@ -245,6 +251,10 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField RUOLO_TRANSAZIONE = null;
 	 
 	public IField ESITO = null;
+	 
+	public IField ESITO_SINCRONO = null;
+	 
+	public IField CONSEGNE_MULTIPLE_IN_CORSO = null;
 	 
 	public IField ESITO_CONTESTO = null;
 	 
@@ -421,6 +431,8 @@ public class TransazioneModel extends AbstractModel<Transazione> {
 	public IField GRUPPI = null;
 	 
 	public org.openspcoop2.core.transazioni.model.DumpMessaggioModel DUMP_MESSAGGIO = null;
+	 
+	public org.openspcoop2.core.transazioni.model.TransazioneApplicativoServerModel TRANSAZIONE_APPLICATIVO_SERVER = null;
 	 
 	public org.openspcoop2.core.transazioni.model.TransazioneExtendedInfoModel TRANSAZIONE_EXTENDED_INFO = null;
 	 

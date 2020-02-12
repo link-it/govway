@@ -27,7 +27,7 @@
 			<a4j:region id="regionPoll"  >
 				<a4j:form id="formPoll" prependId="false">	
 					<h:inputHidden value="true" id="usaSVG"/> 			
-					<a4j:jsFunction id="pollFn" name="poll" reRender="dtTblLive,filtraLive" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
+					<a4j:jsFunction id="pollFn" name="poll" limitToList="true" data="#{summaryBean.dataLive}" oncomplete="updateChart(data)"/> 
 					<script type="text/javascript">
 						var cdifp = #{summaryBean.intervalloRefresh};
 						var t;

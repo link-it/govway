@@ -54,10 +54,13 @@ import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchEvent
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchGruppo;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchToken;
 import org.openspcoop2.core.transazioni.utils.credenziali.CredenzialeSearchTrasporto;
+import org.openspcoop2.generic_project.beans.Function;
+import org.openspcoop2.generic_project.beans.FunctionField;
 import org.openspcoop2.generic_project.beans.IField;
 import org.openspcoop2.generic_project.beans.NonNegativeNumber;
 import org.openspcoop2.generic_project.beans.UnixTimestampIntervalField;
 import org.openspcoop2.generic_project.dao.IDBServiceUtilities;
+import org.openspcoop2.generic_project.dao.jdbc.utils.JDBCUtilities;
 import org.openspcoop2.generic_project.exception.ExpressionException;
 import org.openspcoop2.generic_project.exception.ExpressionNotImplementedException;
 import org.openspcoop2.generic_project.exception.MultipleResultException;
@@ -107,6 +110,7 @@ import org.openspcoop2.web.monitor.core.datamodel.ResLive;
 import org.openspcoop2.web.monitor.core.dynamic.DynamicComponentUtils;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.ParseUtility;
+import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniDM;
@@ -479,7 +483,13 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -519,7 +529,14 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -619,7 +636,14 @@ public class TransazioniService implements ITransazioniService {
 			List<Transazione> list = this.transazioniSearchDAO.findAll(pagExpr);
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
+					this.normalizeInfoTransazioniFromCredenzialiMittenteGruppi(bean, transazione);
+					
 					listaBean.add(bean);
 				}
 		} catch (Exception e) {
@@ -677,7 +701,12 @@ public class TransazioniService implements ITransazioniService {
 
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+					
+					// Integrazione dei dati delle credenziali
+					bean.normalizeRichiedenteInfo(transazione, bean, this);
+					bean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
+					
 					listaBean.add(bean);
 				}
 
@@ -793,10 +822,11 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			Transazione t = this.transazioniSearchDAO.find(expr);
-			TransazioneBean transazioneBean = new TransazioneBean(t);
+			TransazioneBean transazioneBean = new TransazioneBean(t, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 			
 			// Integrazione dei dati delle credenziali
 			this.normalizeInfoTransazioniFromCredenzialiMittente(transazioneBean, t);
+			transazioneBean.normalizeOperazioneInfo(this.utilsServiceManager, this.log);
 						
 			return transazioneBean; 
 		} catch (NotFoundException nre) {
@@ -828,6 +858,7 @@ public class TransazioniService implements ITransazioniService {
 			try {
 				CredenzialeMittente credenzialeMittente = ((JDBCCredenzialeMittenteServiceSearch)this.credenzialiMittenteDAO).get(Long.parseLong(trasportoMittente));
 				transazioneBean.setTrasportoMittenteLabel(credenzialeMittente.getCredenziale()); 
+				transazioneBean.setTipoTrasportoMittenteLabel(credenzialeMittente.getTipo());
 			} catch(NumberFormatException e) {
 				// informazione non valida
 				transazioneBean.setTrasportoMittenteLabel(Costanti.LABEL_INFORMAZIONE_NON_DISPONIBILE); 
@@ -840,7 +871,21 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	public void normalizeInfoTransazioniFromCredenzialiMittenteToken(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
-			
+	
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
+	
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(transazioneBean, t);
+		
+		normalizeInfoTransazioniFromCredenzialiMittenteTokenMail(transazioneBean, t);
+		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+		
 		// Token Issuer
 		String tokenIssuer = t.getTokenIssuer();
 		if(StringUtils.isNotEmpty(tokenIssuer)) {
@@ -856,6 +901,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Client ID
 		String tokenClientID = t.getTokenClientId();
 		if(StringUtils.isNotEmpty(tokenClientID)) {
@@ -871,6 +920,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Subject
 		String tokenSubject = t.getTokenSubject();
 		if(StringUtils.isNotEmpty(tokenSubject)) {
@@ -886,6 +939,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Username
 		String tokenUsername = t.getTokenUsername();
 		if(StringUtils.isNotEmpty(tokenUsername)) {
@@ -901,6 +958,10 @@ public class TransazioniService implements ITransazioniService {
 			}
 		}
 		
+	}
+	
+	public void normalizeInfoTransazioniFromCredenzialiMittenteTokenMail(TransazioneBean transazioneBean, Transazione t) throws ServiceException, MultipleResultException, NotImplementedException {
+				
 		// Token Mail
 		String tokenMail = t.getTokenMail();
 		if(StringUtils.isNotEmpty(tokenMail)) {
@@ -959,10 +1020,12 @@ public class TransazioniService implements ITransazioniService {
 
 	private static long virtualIdRequest = -999l;
 	private static long virtualIdResponse = -888l;
-	private DumpMessaggio createVirtualMessageWithSdk(String idTransazione, TipoMessaggio tipoMessaggio) throws Exception{
+	private DumpMessaggio createVirtualMessageWithSdk(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception{
 		DumpMessaggio msg = new DumpMessaggio();
 		msg.setTipoMessaggio(tipoMessaggio);
 		msg.setIdTransazione(idTransazione);
+		msg.setServizioApplicativoErogatore(saErogatore);
+		msg.setDataConsegnaErogatore(dataConsegnaErogatore);
 		if(TipoMessaggio.RICHIESTA_INGRESSO.equals(tipoMessaggio) || TipoMessaggio.RICHIESTA_USCITA.equals(tipoMessaggio)){
 			msg.setId(TransazioniService.virtualIdRequest); // id virtuale
 		}
@@ -1038,14 +1101,123 @@ public class TransazioniService implements ITransazioniService {
 	}
 	
 	@Override
-	public DumpMessaggio getDumpMessaggio(String idTransazione, TipoMessaggio tipoMessaggio) throws Exception {
+	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore){
+		try {
+			this.log.debug("Count numero consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			expr.addGroupBy(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE);
+
+			NonNegativeNumber nnn = this.dumpMessaggioSearchDAO.count(expr);
+			if(nnn != null)
+			return (int) nnn.longValue();
+
+		} catch (Exception e) {
+			this.log.error("Impossibile Count numero consegne con idTransazione: "+ idTransazione + "e SA Erogatore: " + saErogatore , e);
+//			throw new Exception("Impossibile Count numero consegne con idTransazione: "	+ idTransazione + "e SA Erogatore: " + saErogatore, e);
+		}
+		
+		return 0;
+	}
+	
+	@Override
+	public List<DumpMessaggioBean> listDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore, int start, int limit) {
+		List<DumpMessaggioBean> lista = new ArrayList<DumpMessaggioBean>();
+		try {
+			this.log.debug("Find All + Limit numero consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			expr.addGroupBy(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE);
+			
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO
+					.toPaginatedExpression(expr);
+
+			pagExpr.offset(start).limit(limit);
+			
+			pagExpr.addOrder(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, SortOrder.DESC);
+
+			FunctionField fCount = new FunctionField(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, Function.COUNT, "numeroConsegnePerData");
+			List<Map<String,Object>> groupBy = this.dumpMessaggioSearchDAO.groupBy(pagExpr, fCount);
+			
+			this.log.debug("Trovate ["+groupBy.size()+"] consegne [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "]");
+			for (Map<String, Object> row : groupBy) {
+				Date data = (Date) row.get(JDBCUtilities.getAlias(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE));
+				
+				DumpMessaggioBean bean = new DumpMessaggioBean();
+				bean.setDataConsegnaErogatore(data);
+				bean.setIdTransazione(idTransazione);
+				bean.setServizioApplicativoErogatore(saErogatore);
+				
+				lista.add(bean);
+			}
+			
+			for (DumpMessaggioBean dumpMessaggio : lista) {
+				expr = this.dumpMessaggioSearchDAO.newExpression();
+				expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, dumpMessaggio.getIdTransazione());
+				if(dumpMessaggio.getServizioApplicativoErogatore() == null) {
+					expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+				} else {
+					expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, dumpMessaggio.getServizioApplicativoErogatore());
+				}
+				
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dumpMessaggio.getDataConsegnaErogatore());
+				
+				pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+				
+				pagExpr.addOrder(DumpMessaggio.model().TIPO_MESSAGGIO, SortOrder.ASC);
+				
+				List<Object> select = this.dumpMessaggioSearchDAO.select(pagExpr, DumpMessaggio.model().TIPO_MESSAGGIO);
+				
+				for (Object object : select) {
+					dumpMessaggio.getTipiMessaggio().add(TipoMessaggio.toEnumConstant((String) object));
+				}
+				this.log.debug("Trovati ["+dumpMessaggio.getTipiMessaggio().size()+"] Tipi Dump ["+dumpMessaggio.getTipiMessaggio()+"] per la consegna [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ DATA_CONSEGNA_EROGATORE: "	+ dumpMessaggio.getDataConsegnaErogatore() + "] ");
+				
+			}
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}		
+		return lista;
+	}
+	
+	@Override
+	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception {
 
 		try {
-			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
+			this.log.debug("Get Dump Messaggio [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
 			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
 			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
 
 			DumpMessaggio mes = this.dumpMessaggioSearchDAO.find(expr);
 			this.updateMessageWithSdk(mes);
@@ -1054,21 +1226,21 @@ public class TransazioniService implements ITransazioniService {
 		} catch (NotFoundException nre) {
 			
 			// provo a vedere se esiste virtualmente grazie all'SDK
-			DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+			DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 			if(mes!=null){
 				return mes;
 			}
 			
 			// ignore
 		} catch (Exception e) {
-			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + " e tipo: "	+ tipoMessaggio.toString(), e);
-			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + " e tipo: " + tipoMessaggio.toString(), e);
+			this.log.error("Impossibile recuperare DumpMessaggio con idTransazione: "+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: "	+ tipoMessaggio.toString(), e);
+			throw new Exception("Impossibile recuperare DumpMessaggio con idTransazione: "	+ idTransazione + ", SA Erogatore: " + saErogatore + " e tipo: " + tipoMessaggio.toString(), e);
 		}
 		return null;
 	}
 
 	@Override
-	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 
@@ -1099,7 +1271,7 @@ public class TransazioniService implements ITransazioniService {
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
-				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 				if(mes!=null){
 					return mes.getAllegatoList();
 				}
@@ -1129,7 +1301,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 		
 	@Override
-	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,	TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpContenuto> getContenutiSpecifici(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 		try {
 
 			this.log.debug("Get Contenuti specifici [idDump: "	+ idDump + "]");
@@ -1164,7 +1336,7 @@ public class TransazioniService implements ITransazioniService {
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
-				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 				if(mes!=null){
 					return mes.getContenutoList();
 				}
@@ -1182,17 +1354,12 @@ public class TransazioniService implements ITransazioniService {
 
 		return new ArrayList<DumpContenuto>();
 	}
-
+	
 	@Override
-	public boolean hasInfoDumpAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio) {
-
+	public Date getDataConsegnaErogatore(String idTransazione, String saErogatore, Date dataAccettazione) {
 		try {
 
-			this.log
-			.info("Has Info Dump Available [id transazione: "
-					+ idTransazione + "],[ tipomessaggio: "
-					+ tipoMessaggio.toString() + "]");
+			this.log.info("Get data ultima consegna [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + dataAccettazione + "]");
 			// Long l =
 			// (Long)this.em.createQuery("select count(d) from DumpMessaggio d where d.idTransazione=:idTransazione and d.tipoMessaggio=:tipoMessaggio
 			//AND ( (d.envelope is not null) OR (EXISTS (select id FROM DumpAllegato da WHERE da.dumpMessaggio.id=d.id)) OR (EXISTS (select id FROM DumpContenuto dc WHERE dc.dumpMessaggio.id=d.id)) ) ")
@@ -1201,10 +1368,21 @@ public class TransazioniService implements ITransazioniService {
 			// .getSingleResult();
 
 			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
-			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO,
-					TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
-			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE,
-					idTransazione);
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataAccettazione != null) {
+				expr.greaterThan(DumpMessaggio.model().DUMP_TIMESTAMP, dataAccettazione);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
 			//			IExpression orExpr = this.dumpMessaggioSearchDAO.newExpression();
 
 			//			orExpr.isNotNull(DumpMessaggio.model().ENVELOPE);
@@ -1215,7 +1393,82 @@ public class TransazioniService implements ITransazioniService {
 			//
 			//			expr.and(orExpr);
 
-			DumpMessaggio msg = this.dumpMessaggioSearchDAO.find(expr);
+			
+			
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+			
+			// cerco solo un risultato
+			pagExpr.offset(0).limit(1);
+			
+			List<Object> select = this.dumpMessaggioSearchDAO.select(pagExpr, DumpMessaggio.model().DATA_CONSEGNA_EROGATORE);
+			
+			if(select == null || select.isEmpty())
+				return null;
+						
+			Object obj = select.get(0);
+			
+			if(obj instanceof Date)
+				return (Date) obj;
+		}  catch (NotFoundException e) {
+			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: "+ dataAccettazione + "]");
+		}catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+
+		return null;
+	}
+	
+	@Override
+	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
+
+		try {
+
+			this.log.info("Has Info Dump Available [id transazione: " + idTransazione + "],[SA Erogatore: " + saErogatore + "],[ dataAccettazione: " + tipoMessaggio.toString() + "]");
+			// Long l =
+			// (Long)this.em.createQuery("select count(d) from DumpMessaggio d where d.idTransazione=:idTransazione and d.tipoMessaggio=:tipoMessaggio
+			//AND ( (d.envelope is not null) OR (EXISTS (select id FROM DumpAllegato da WHERE da.dumpMessaggio.id=d.id)) OR (EXISTS (select id FROM DumpContenuto dc WHERE dc.dumpMessaggio.id=d.id)) ) ")
+			// .setParameter("idTransazione", idTransazione)
+			// .setParameter("tipoMessaggio", tipoMessaggio)
+			// .getSingleResult();
+
+			IExpression expr = this.dumpMessaggioSearchDAO.newExpression();
+			expr.equals(DumpMessaggio.model().TIPO_MESSAGGIO, TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
+			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE, idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
+			//			IExpression orExpr = this.dumpMessaggioSearchDAO.newExpression();
+
+			//			orExpr.isNotNull(DumpMessaggio.model().ENVELOPE);
+			//			
+			//					
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().ALLEGATO.ID_ALLEGATO);
+			//			orExpr.or().isNotEmpty(DumpMessaggio.model().CONTENUTO.NOME);
+			//
+			//			expr.and(orExpr);
+
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+			
+			// cerco solo un risultato
+			pagExpr.offset(0).limit(1);
+
+			List<DumpMessaggio> findAll = this.dumpMessaggioSearchDAO.findAll(pagExpr);
+			
+			if(findAll == null || findAll.isEmpty())
+				throw new NotFoundException("Nessun messaggio trovato");
+						
+			DumpMessaggio msg = findAll.get(0);
 
 			this.updateMessageWithSdk(msg);
 			
@@ -1224,9 +1477,6 @@ public class TransazioniService implements ITransazioniService {
 			}
 
 			//			NonNegativeNumber nnn = this.dumpMessaggioSearchDAO.count(expr);
-
-
-
 
 			// (Long) this.em
 			// .createQuery(
@@ -1242,17 +1492,17 @@ public class TransazioniService implements ITransazioniService {
 			//			return (nnn != null && nnn.longValue() > 0);
 
 		}  catch (NotFoundException e) {
-			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+			this.log.debug("non sono state trovate informazioni Dump per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
-				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 				if(mes!=null){
 					return mes.getBody() != null || mes.sizeAllegatoList() > 0 || mes.sizeContenutoList() > 0;
 				}
 			}catch (Exception eVirtual) {
 				this.log.error(
-						"Errore durante la costruzione virtuale del messaggio (hasInfoDumpAvailable) [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+						"Errore durante la costruzione virtuale del messaggio (hasInfoDumpAvailable) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
 			}
 			
 		}catch (Exception e) {
@@ -1261,12 +1511,12 @@ public class TransazioniService implements ITransazioniService {
 
 		return false;
 	}
-
+	
 	@Override
-	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, TipoMessaggio tipoMessaggio) {
+	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) {
 
 		this.log
-		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
+		.info("Has Info Header Trasporto Available [id transazione: "	+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "	+ tipoMessaggio.toString() + "]");
 		try {
 
 			// Long l =
@@ -1283,8 +1533,31 @@ public class TransazioniService implements ITransazioniService {
 					TipoMessaggio.toEnumConstant(tipoMessaggio.toString()));
 			expr.and().equals(DumpMessaggio.model().ID_TRANSAZIONE,
 					idTransazione);
+			
+			if(saErogatore == null) {
+				expr.isNull(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE);
+			} else {
+				expr.equals(DumpMessaggio.model().SERVIZIO_APPLICATIVO_EROGATORE, saErogatore);
+			}
+			
+			if(dataConsegnaErogatore != null) {
+				expr.equals(DumpMessaggio.model().DATA_CONSEGNA_EROGATORE, dataConsegnaErogatore);
+			}
+			
+			// piu' recenti in cima?
+			expr.addOrder(DumpMessaggio.model().DUMP_TIMESTAMP, SortOrder.DESC);
+			
+			IPaginatedExpression pagExpr = this.dumpMessaggioSearchDAO.toPaginatedExpression(expr);
+			
+			// cerco solo un risultato
+			pagExpr.offset(0).limit(1);
 
-			DumpMessaggio msg = this.dumpMessaggioSearchDAO.find(expr);
+			List<DumpMessaggio> findAll = this.dumpMessaggioSearchDAO.findAll(pagExpr);
+			
+			if(findAll == null || findAll.isEmpty())
+				throw new NotFoundException("Nessun messaggio trovato");
+						
+			DumpMessaggio msg = findAll.get(0);
 
 			this.updateMessageWithSdk(msg);
 			
@@ -1315,17 +1588,17 @@ public class TransazioniService implements ITransazioniService {
 			// return (l != null && l > 0);
 
 		}  catch (NotFoundException e) {
-			this.log.debug("non sono state trovate informazioni sull'Header Trasporto per [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
+			this.log.debug("non sono state trovate informazioni sull'Header Trasporto per [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]");
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
-				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 				if(mes!=null){
 					return mes.sizeHeaderTrasportoList() > 0;
 				}
 			}catch (Exception eVirtual) {
 				this.log.error(
-						"Errore durante la costruzione virtuale del messaggio (hasInfoHeaderTrasportoAvailable) [id transazione: "+ idTransazione + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
+						"Errore durante la costruzione virtuale del messaggio (hasInfoHeaderTrasportoAvailable) [id transazione: "+ idTransazione + "],[SA Erogatore: " + saErogatore + "],[ tipomessaggio: "+ tipoMessaggio.toString() + "]", eVirtual);
 			}
 			
 		}catch (Exception e) {
@@ -1336,7 +1609,7 @@ public class TransazioniService implements ITransazioniService {
 	}
 
 	@Override
-	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, TipoMessaggio tipoMessaggio, Long idDump) {
+	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio, Long idDump) {
 
 		try {
 
@@ -1369,7 +1642,7 @@ public class TransazioniService implements ITransazioniService {
 			
 			try{
 				// provo a vedere se esiste virtualmente grazie all'SDK
-				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, tipoMessaggio);
+				DumpMessaggio mes = createVirtualMessageWithSdk(idTransazione, saErogatore, dataConsegnaErogatore, tipoMessaggio);
 				if(mes!=null){
 					return mes.getHeaderTrasportoList();
 				}
@@ -1448,7 +1721,7 @@ public class TransazioniService implements ITransazioniService {
 
 			if(list!= null && list.size() > 0)
 				for (Transazione transazione : list) {
-					TransazioneBean bean = new TransazioneBean(transazione);
+					TransazioneBean bean = new TransazioneBean(transazione, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 					listaBean.add(bean);
 				}
 
@@ -1516,7 +1789,7 @@ public class TransazioniService implements ITransazioniService {
 				}
 			}
 			
-			return new TransazioneBean(this.transazioniSearchDAO.find(expr));
+			return new TransazioneBean(this.transazioniSearchDAO.find(expr), this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
 
 		} catch (Exception e) {
 			this.log.error(e.getMessage(), e);
@@ -2263,6 +2536,7 @@ public class TransazioniService implements ITransazioniService {
 				this.searchForm.getEsitoDettaglio(),
 				this.searchForm.getEsitoDettaglioPersonalizzato(),
 				this.searchForm.getEsitoContesto(),
+				this.searchForm.isEscludiRichiesteScartate(),
 				Transazione.model().ESITO, Transazione.model().ESITO_CONTESTO,
 				this.transazioniSearchDAO.newExpression());
 		

@@ -144,6 +144,8 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			ServiziApplicativiHelper saHelper = new ServiziApplicativiHelper(request, pd, session);
 			
+			boolean isApplicativiServerEnabled = saCore.isApplicativiServerEnabled(saHelper);
+			
 			// prelevo il flag che mi dice da quale pagina ho acceduto la sezione
 			Integer parentSA = ServletUtils.getIntegerAttributeFromSession(ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT, session);
 			if(parentSA == null) parentSA = ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_NONE;
@@ -154,6 +156,22 @@ public final class ServiziApplicativiAdd extends Action {
 			String ruoloFruitore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
 			String ruoloErogatore = null; //saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
 			String ruoloSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RUOLO_SA);
+			String tipoSA = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
+			
+			boolean useAsClient = false;
+			
+			if(isApplicativiServerEnabled) {
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA)) {
+					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
+				}
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+					ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+					
+					String tmp = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					useAsClient = ServletUtils.isCheckBoxEnabled(tmp);
+				}
+			}
+			
 			if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE.equals(ruoloSA)){
 				ruoloFruitore = TipologiaFruizione.NORMALE.getValue();
 				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
@@ -178,6 +196,8 @@ public final class ServiziApplicativiAdd extends Action {
 //			else{
 //				ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 //			}
+			
+			
 			
 			String nome = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 			String provider = saHelper.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER);
@@ -298,7 +318,7 @@ public final class ServiziApplicativiAdd extends Action {
 			
 			// jms
 			String nomeCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_NOME_CODA);
-			String tipo = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
+			String tipoCodaJMS = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_TIPO_CODA);
 			String initcont = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_INIT_CTX);
 			String urlpgk = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_URL_PKG);
 			String provurl = saHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_JMS_PROVIDER_URL);
@@ -367,6 +387,33 @@ public final class ServiziApplicativiAdd extends Action {
 			if(postBackElementName != null ){
 				if(!useIdSogg && postBackElementName.equalsIgnoreCase(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO)) {
 					provider = null;
+				}
+				
+				if(postBackElementName.equalsIgnoreCase(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA)){
+					if(isApplicativiServerEnabled) {
+						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+							tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+							ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE;
+						}
+						if(tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT)) {
+							tipoauthSA = saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+							ruoloSA = ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE;
+						}
+					
+						if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE.equals(ruoloSA)){
+							ruoloFruitore = TipologiaFruizione.NORMALE.getValue();
+							ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
+						}
+						else if(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE.equals(ruoloSA)){
+							ruoloErogatore = TipologiaErogazione.TRASPARENTE.getValue();
+							ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
+						}
+						else{
+							ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
+							ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
+						}
+					
+					}
 				}
 				
 				// tipo autenticazione
@@ -668,6 +715,13 @@ public final class ServiziApplicativiAdd extends Action {
 					ruoloErogatore = TipologiaErogazione.DISABILITATO.getValue();
 				}
 				
+				if(tipoSA == null) {
+					if(isApplicativiServerEnabled)
+						tipoSA = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+					else
+						tipoSA = "";
+				}
+				
 				if(tempiRisposta_connectionTimeout==null || "".equals(tempiRisposta_connectionTimeout) 
 						|| 
 						tempiRisposta_readTimeout==null || "".equals(tempiRisposta_readTimeout) 
@@ -708,7 +762,7 @@ public final class ServiziApplicativiAdd extends Action {
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
-						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipo,
+						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipoCodaJMS,
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
@@ -730,7 +784,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy);
+						autenticazioneToken,token_policy, tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -816,7 +870,7 @@ public final class ServiziApplicativiAdd extends Action {
 						ruoloFruitore,ruoloErogatore,
 						sbustamento, sbustamentoInformazioniProtocolloRichiesta, getmsg,
 						invrifRichiesta, risprif,
-						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipo,
+						endpointtype, autenticazioneHttp, url, nomeCodaJMS, tipoCodaJMS,
 						user, password, initcont, urlpgk,
 						provurl, connfact, sendas, 
 						httpsurl, httpstipologia, httpshostverify,
@@ -838,7 +892,7 @@ public final class ServiziApplicativiAdd extends Action {
 						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
 						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
 						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuerSA,tipoCredenzialiSSLWizardStep,
-						autenticazioneToken,token_policy);
+						autenticazioneToken,token_policy, tipoSA, useAsClient);
 
 				// aggiunta campi custom
 				dati = saHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -853,6 +907,9 @@ public final class ServiziApplicativiAdd extends Action {
 			// Inserisco il servizioApplicativo nel db
 			try {
 				// con.setAutoCommit(false);
+				if(isApplicativiServerEnabled && tipoSA.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER)) {
+					tipoauthSA = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+				}
 
 				int idProv = Integer.parseInt(provider);
 
@@ -901,6 +958,12 @@ public final class ServiziApplicativiAdd extends Action {
 				sa.setTipologiaFruizione(ruoloFruitore);
 				sa.setTipologiaErogazione(ruoloErogatore);
 				
+				if("".equals(tipoSA))
+					tipoSA = null;
+				
+				sa.setTipo(tipoSA);
+				sa.setUseAsClient(useAsClient);
+				
 				if(saCore.isRegistroServiziLocale()){
 					sa.setIdSoggetto(soggettoRegistro.getId());
 					sa.setNomeSoggettoProprietario(soggettoRegistro.getNome());
@@ -921,8 +984,13 @@ public final class ServiziApplicativiAdd extends Action {
 
 				// *** Invocazione servizio ***
 				InvocazioneServizio invServizio = new InvocazioneServizio();
-				if(interfacciaAvanzata || 
-						TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore)){
+				
+				boolean connettoreDisabilitato = (interfacciaAvanzata || TipologiaErogazione.DISABILITATO.getValue().equals(ruoloErogatore));
+				if(isApplicativiServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+					connettoreDisabilitato = false; 
+				}
+				
+				if(connettoreDisabilitato){ // && (StringUtils.isEmpty(tipoSA) || ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA))
 					invServizio.setAutenticazione(InvocazioneServizioTipoAutenticazione.NONE);
 					invServizio.setCredenziali(credenzialiInvocazione);
 					invServizio.setGetMessage(CostantiConfigurazione.DISABILITATO);
@@ -976,7 +1044,7 @@ public final class ServiziApplicativiAdd extends Action {
 							!connis.getTipo().equals(TipiConnettore.FILE.toString()))
 						oldConnT = TipiConnettore.CUSTOM.toString();
 					saHelper.fillConnettore(connis, connettoreDebug, endpointtype, oldConnT, tipoconn, url,
-							nomeCodaJMS, tipo, user, password,
+							nomeCodaJMS, tipoCodaJMS, user, password,
 							initcont, urlpgk, provurl, connfact,
 							sendas, httpsurl, httpstipologia,
 							httpshostverify, httpspath, httpstipo,
@@ -1037,7 +1105,7 @@ public final class ServiziApplicativiAdd extends Action {
 				
 				invocazionePorta.addCredenziali(credenziali);
 				
-				if(interfacciaAvanzata) {
+				if(interfacciaAvanzata && !isApplicativiServerEnabled) {
 					if(credenziali.getTipo()!=null){
 						sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
 					}

@@ -139,6 +139,9 @@ public class StatsSearchForm extends BaseSearchForm{
 		return this.dataFineDellaRicerca;
 	}
 
+	public List<SelectItem> getEsitiDettaglio() {
+		return super.getEsitiDettaglio(true);
+	}
 	
 	@Override
 	protected String eseguiFiltra() {

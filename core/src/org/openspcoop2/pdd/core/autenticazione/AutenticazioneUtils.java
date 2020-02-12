@@ -59,6 +59,7 @@ public class AutenticazioneUtils {
 			switch (tipoAutenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 			case URL:
 			case TOKEN:
 				break;

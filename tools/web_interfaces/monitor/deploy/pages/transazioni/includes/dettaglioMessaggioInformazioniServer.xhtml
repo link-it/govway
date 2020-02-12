@@ -1,0 +1,35 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniServer">
+   		<a4j:form id="res" rendered="#{true}" prependId="false">	
+			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == false}">
+				<ui:include src="/transazioni/includes/tabellaTransazioniApplicativoServer.xhtml">
+					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="targetBean" />
+					<ui:param value="#{nomeTab}" name="nomeTab" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="mBean" />
+					<ui:param value="#{dettagliBean}" name="dettagliBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean.selectedIds[item]}" name="selectionMapTarget" />
+				</ui:include>
+			</c:if>
+			<c:if test="#{searchFormTransazioni.visualizzaConsegneMultipleCustomEnabled == true}">
+				<ui:include src="/transazioni/includes/tabellaTransazioniApplicativoServerCustom.xhtml">
+					<ui:param value="#{transazioniApplicativoServerDM}" name="value" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="targetBean" />
+					<ui:param value="#{nomeTab}" name="nomeTab" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean}" name="mBean" />
+					<ui:param value="#{dettagliBean}" name="dettagliBean" />
+					<ui:param value="#{dettagliTransazioneApplicativoServerBean.selectedIds[item]}" name="selectionMapTarget" />
+				</ui:include>
+			</c:if>
+		</a4j:form>
+    </a4j:outputPanel>
+</ui:composition>

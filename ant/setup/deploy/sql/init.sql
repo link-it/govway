@@ -63,6 +63,12 @@ UPDATE configurazione set keystore_algoritmocache='lru';
 UPDATE configurazione set keystore_lifecache='7200';
 UPDATE configurazione set keystore_crl_lifecache='1800';
 
+-- Configurazione Cache Consegna Applicativi
+UPDATE configurazione set consegna_statocache='abilitato';
+UPDATE configurazione set consegna_dimensionecache='10000';
+UPDATE configurazione set consegna_algoritmocache='lru';
+UPDATE configurazione set consegna_lifecache='-1';
+
 -- Configurazione CORS
 UPDATE configurazione set cors_stato='abilitato';
 UPDATE configurazione set cors_tipo='gateway';

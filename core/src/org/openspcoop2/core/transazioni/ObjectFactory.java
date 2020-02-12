@@ -101,10 +101,24 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransazioneApplicativoServer }
+     */
+    public TransazioneApplicativoServer createTransazioneApplicativoServer() {
+        return new TransazioneApplicativoServer();
+    }
+
+    /**
      * Create an instance of {@link DumpHeaderTrasporto }
      */
     public DumpHeaderTrasporto createDumpHeaderTrasporto() {
         return new DumpHeaderTrasporto();
+    }
+
+    /**
+     * Create an instance of {@link IdTransazioneApplicativoServer }
+     */
+    public IdTransazioneApplicativoServer createIdTransazioneApplicativoServer() {
+        return new IdTransazioneApplicativoServer();
     }
 
     /**

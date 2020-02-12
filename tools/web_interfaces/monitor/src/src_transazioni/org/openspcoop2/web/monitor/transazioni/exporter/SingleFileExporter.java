@@ -637,7 +637,7 @@ public class SingleFileExporter implements IExporter{
 
 		DumpMessaggio dump=null;
 		try {
-			dump = service.getDumpMessaggio(t.getIdTransazione(), tipo);
+			dump = service.getDumpMessaggio(t.getIdTransazione(), null, null, tipo);
 		} catch (Exception e) {
 			String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
 			msg+=" Non sono riuscito a recuperare il messaggio di dump ("+e.getMessage()+")";
@@ -746,7 +746,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			
 			//header trasporto
-			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(headers.size()>0){
 				try{
 					String name = "headers.";
@@ -769,7 +769,7 @@ public class SingleFileExporter implements IExporter{
 
 			}
 			//contenuti
-			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(contenuti.size()>0){
 				try{
 					String name = "contents.";
@@ -793,7 +793,7 @@ public class SingleFileExporter implements IExporter{
 
 			}
 			//allegati
-			List<DumpAllegato> allegati = service.getAllegatiMessaggio(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpAllegato> allegati = service.getAllegatiMessaggio(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(),  dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(allegati.size()>0){
 				try{
 					for (int i = 0; i < allegati.size(); i++) {

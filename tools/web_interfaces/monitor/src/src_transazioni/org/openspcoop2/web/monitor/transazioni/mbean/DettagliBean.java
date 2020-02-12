@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -32,7 +33,12 @@ import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
+import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.transazioni.Transazione;
+import org.openspcoop2.core.transazioni.constants.PddRuolo;
+import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
+import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
+import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -46,15 +52,9 @@ import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.apache.commons.lang.StringUtils;
-import org.openspcoop2.core.transazioni.Transazione;
-import org.openspcoop2.core.transazioni.constants.PddRuolo;
-import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
-import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
-import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utils;
 import org.openspcoop2.web.monitor.core.dao.IService;
-import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.mbean.PdDBaseBean;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
@@ -64,6 +64,7 @@ import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 import org.openspcoop2.web.monitor.transazioni.exporter.CostantiExport;
 import org.openspcoop2.web.monitor.transazioni.exporter.SingleFileExporter;
+import org.slf4j.Logger;
 
 /**
  * DettagliBean
@@ -90,6 +91,11 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 
 	private transient ITracciaDriver driver;
 	private transient ITransazioniService transazioniService;
+	
+	private boolean visualizzaIdCluster = false;
+	
+	private String selectedTab = null;
+	private DiagnosticiBean diagnosticiBean;
 
 	private TracciaBean tracciaRichiesta;
 	private TracciaBean tracciaRisposta;
@@ -159,6 +165,8 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		try {
 
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DettagliBean.log);
+			List<String> govwayMonitorare = govwayMonitorProperties.getListaPdDMonitorate_StatusPdD();
+			this.setVisualizzaIdCluster(govwayMonitorare!=null && govwayMonitorare.size()>1);
 
 			this.driver  = govwayMonitorProperties.getDriverTracciamento();
 			
@@ -616,7 +624,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasDump(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, tipo);
+		return this.transazioniService.hasInfoDumpAvailable(this.idTransazione, null, null, tipo);
 	}
 
 	public boolean getHasHeaderTrasportoRichiestaIngresso() {
@@ -676,7 +684,7 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 	}
 
 	private boolean getHasHeaderTrasporto(TipoMessaggio tipo) {
-		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, tipo);
+		return this.transazioniService.hasInfoHeaderTrasportoAvailable(this.idTransazione, null, null, tipo);
 	}
 
 	public void visualizzaRichiestaListener(ActionEvent ae) {
@@ -1049,5 +1057,37 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		}
 
 		return null;
+	}
+	
+    public String getSelectedTab() {
+        return this.selectedTab;
+	}
+	
+	public void setSelectedTab(String selectedTab) {
+	        this.selectedTab = selectedTab;
+	}
+	
+	public DiagnosticiBean getDiagnosticiBean() {
+		this.diagnosticiBean  = new DiagnosticiBean();
+		this.diagnosticiBean.setIdEgov(this.idEgov);
+		this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
+		this.diagnosticiBean.setIdTransazione(this.idTransazione);
+		if(this.dettaglio != null)
+			this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
+		this.diagnosticiBean.setNomeServizioApplicativo(null);
+		this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
+		
+		return this.diagnosticiBean;
+	}
+	public void setDiagnosticiBean(DiagnosticiBean diagnosticiBean) {
+		this.diagnosticiBean = diagnosticiBean;
+	}
+
+	public boolean isVisualizzaIdCluster() {
+		return this.visualizzaIdCluster;
+	}
+
+	public void setVisualizzaIdCluster(boolean visualizzaIdCluster) {
+		this.visualizzaIdCluster = visualizzaIdCluster;
 	}
 }

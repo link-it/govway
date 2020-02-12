@@ -20,6 +20,8 @@
 
 package org.openspcoop2.pdd.mdb;
 
+import java.util.Date;
+
 /**
  * 
  * Incapsula l'esito dell'invocazione del metodo OnMessage delle Librerie 
@@ -42,20 +44,18 @@ public class EsitoLib {
 	private boolean esitoInvocazione = false;
 
 	private boolean erroreProcessamentoMessaggioAggiornato = false;
-	private boolean dataRispedizioneAggiornata = false;
-
+	private Date dataRispedizioneAggiornata;
 
 	public EsitoLib(){
 		setEsitoInvocazione(false);
 	}
 	
 	
-	
-	public boolean isDataRispedizioneAggiornata() {
+	public Date getDataRispedizioneAggiornata() {
 		return this.dataRispedizioneAggiornata;
 	}
-
-	public void setDataRispedizioneAggiornata(boolean dataRispedizioneAggiornata) {
+	
+	public void setDataRispedizioneAggiornata(Date dataRispedizioneAggiornata) {
 		this.dataRispedizioneAggiornata = dataRispedizioneAggiornata;
 	}
 	

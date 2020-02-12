@@ -95,6 +95,7 @@ public class SearchFormUtilities {
 		String tipoSoggettoLocale = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
 		String nomeSoggettoLocale = soggetto!=null ? soggetto : this.serverProperties.getSoggettoDefault(protocollo);
 		searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 		searchForm.saveProtocollo();
 	}
 	

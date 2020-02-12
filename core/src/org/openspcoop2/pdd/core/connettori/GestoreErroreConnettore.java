@@ -23,7 +23,9 @@
 package org.openspcoop2.pdd.core.connettori;
 
 import java.sql.Timestamp;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
@@ -33,6 +35,8 @@ import org.openspcoop2.core.config.GestioneErroreCodiceTrasporto;
 import org.openspcoop2.core.config.GestioneErroreSoapFault;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -42,6 +46,13 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.MessaggiFaultErroreCooperazione;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.properties.PropertiesUtilities;
+import org.openspcoop2.utils.regexp.RegExpNotFoundException;
+import org.openspcoop2.utils.regexp.RegularExpressionEngine;
+import org.openspcoop2.utils.rest.problem.JsonDeserializer;
+import org.openspcoop2.utils.rest.problem.ProblemConstants;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.slf4j.Logger;
 
 
@@ -62,7 +73,9 @@ public class GestoreErroreConnettore {
 	private String errore;
 	/** Eventuale FAULT interpretato */
 	private SOAPFault fault;
-	
+	/** Eventuale Problem interpretato */
+	private ProblemRFC7807 problem;
+
 	/** Logger utilizzato per debug. */
 	private static Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 
@@ -74,19 +87,19 @@ public class GestoreErroreConnettore {
 
 
 	public static GestioneErrore getGestioneErroreDefaultComponenteIntegrazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
-		
+
 		String protocol = protocolFactory.getProtocol();
-		
+
 		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
 		}else{
-			
+
 			synchronized (gestioneErroreDefaultComponenteIntegrazioneMap) {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.containsKey(protocol)){
 					return GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.get(protocol);
 				}
-				
+
 				GestioneErrore gestione = new GestioneErrore();
 				// default si rispedisce
 				gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
@@ -105,17 +118,17 @@ public class GestoreErroreConnettore {
 					codiceTrasporto.setValoreMassimo(399);
 				}
 				gestione.addCodiceTrasporto(codiceTrasporto);
-	
-	
+
+
 				// Qualsiasi fault si accetta, senza effettuare un re-invio. 
 				GestioneErroreSoapFault faultAccetta = new GestioneErroreSoapFault();
 				faultAccetta.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
 				gestione.addSoapFault(faultAccetta);
-				
-				
+
+
 				GestoreErroreConnettore.gestioneErroreDefaultComponenteIntegrazioneMap.put(protocol, gestione);
 				return gestione;
-				
+
 			}
 		}
 	}
@@ -123,17 +136,17 @@ public class GestoreErroreConnettore {
 	public static GestioneErrore getGestioneErroreDefaultComponenteCooperazione(IProtocolFactory<?> protocolFactory, ServiceBinding serviceBinding) {
 
 		String protocol = protocolFactory.getProtocol();
-				
+
 		if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
 			return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
 		}else{
-			
+
 			synchronized (gestioneErroreDefaultComponenteCooperazioneMap) {
 
 				if(GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.containsKey(protocol)){
 					return GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.get(protocol);
 				}
-				
+
 				GestioneErrore gestione = new GestioneErrore();
 				// default si rispedisce
 				gestione.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
@@ -154,11 +167,11 @@ public class GestoreErroreConnettore {
 					codiceTrasporto.setValoreMassimo(299);
 				}
 				gestione.addCodiceTrasporto(codiceTrasporto);
-	
-	
+
+
 				// Per qualsiasi fault si effettua una rispedizione, a meno di fault
 				// integrati in buste errore:
-	
+
 				// BUSTE ERRORE DI VALIDAZIONE
 				// SoapActor == null
 				// SoapFaultCode == soap:Client
@@ -170,7 +183,7 @@ public class GestoreErroreConnettore {
 				}catch(Exception e) {
 					log.error(e.getMessage(),e);
 				}
-	
+
 				if(trasl!=null) {
 					// per gestire actor Client senza soap:
 					GestioneErroreSoapFault faultClient = new GestioneErroreSoapFault();
@@ -179,17 +192,17 @@ public class GestoreErroreConnettore {
 					faultClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
 					gestione.addSoapFault(faultClient);
 					// per gestire actor Client con soap:
-	//				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
-	//				faultSoapClient.setFaultCode("soap:Client");
-	//				faultSoapClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
-	//				faultSoapClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
-	//				gestione.addSoapFault(faultSoapClient);
-	
+					//				GestioneErroreSoapFault faultSoapClient = new GestioneErroreSoapFault();
+					//				faultSoapClient.setFaultCode("soap:Client");
+					//				faultSoapClient.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE));
+					//				faultSoapClient.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_ACCETTA_MSG);
+					//				gestione.addSoapFault(faultSoapClient);
+
 					// BUSTE ERRORE DI PROCESSAMENTO
 					// SoapActor == null
 					// SoapFaultCode == soap:Server
 					// SoapFaultString contain "*_300 - Errore nel processamento del messaggio"
-		
+
 					// per gestire actor Server senza soap:
 					GestioneErroreSoapFault faultServer = new GestioneErroreSoapFault();
 					faultServer.setFaultCode("Server");
@@ -197,16 +210,16 @@ public class GestoreErroreConnettore {
 					faultServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
 					gestione.addSoapFault(faultServer);
 					// per gestire actor Server con soap:
-	//				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
-	//				faultSoapServer.setFaultCode("soap:Server");
-	//				faultSoapServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
-	//				faultSoapServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
-	//				gestione.addSoapFault(faultSoapServer);
+					//				GestioneErroreSoapFault faultSoapServer = new GestioneErroreSoapFault();
+					//				faultSoapServer.setFaultCode("soap:Server");
+					//				faultSoapServer.setFaultString(trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO));
+					//				faultSoapServer.setComportamento(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG);
+					//				gestione.addSoapFault(faultSoapServer);
 				}
-				
+
 				GestoreErroreConnettore.gestioneErroreDefaultComponenteCooperazioneMap.put(protocol, gestione);
 				return gestione;
-				
+
 			}
 		}
 	}
@@ -227,7 +240,7 @@ public class GestoreErroreConnettore {
 	 * @return true se la consegna e' stata effettuata con successo, false altrimenti.
 	 */
 	public boolean verificaConsegna(GestioneErrore gestioneErrore,String msgErroreConnettore,Exception eccezioneErroreConnettore,
-			long codiceTrasporto,OpenSPCoop2Message messageResponse) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{
+			long codiceTrasporto,OpenSPCoop2Message messageResponse) throws GestoreMessaggiException,javax.xml.soap.SOAPException,UtilsException{	
 
 		// ESITO CONNETTORE:
 		// Se ho un errore sul connettore:
@@ -261,7 +274,7 @@ public class GestoreErroreConnettore {
 		// La data di rispedizione sara' rimpiazzata con una vera data se serve.
 		java.util.Date now = DateManager.getDate();
 		this.dataRispedizione = new Timestamp(now.getTime());
-		
+
 
 		//	ESITO CONNETTORE:
 		if(msgErroreConnettore!=null){
@@ -285,7 +298,7 @@ public class GestoreErroreConnettore {
 
 		// ESITO SOAP FAULT:
 		SOAPBody body = null;
-		
+
 		if(messageResponse!=null && (messageResponse instanceof OpenSPCoop2SoapMessage) ){
 			try{
 				body = messageResponse.castAsSoap().getSOAPBody();
@@ -310,22 +323,73 @@ public class GestoreErroreConnettore {
 					else{
 						codice = this.fault.getFaultCode();
 					}
-					if(gestore.getFaultCode().equalsIgnoreCase(codice) == false)
-						match = false; // non ha il codice definito
+
+					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
+
+						// provo a verificare con regular expr
+
+						boolean matchRegExpr = false;
+						try {
+							matchRegExpr = RegularExpressionEngine.isMatch(codice, gestore.getFaultCode());
+						}catch(RegExpNotFoundException notFound) {}
+						catch(Exception e)	{
+							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per fault code '"+codice+"' fallita: "+e.getMessage());
+						}
+
+						if(!matchRegExpr) {
+							match = false; // non ha il codice definito
+						}
+					}
+
 				}
 				if(gestore.getFaultActor()!=null){
-					if(gestore.getFaultActor().equalsIgnoreCase(this.fault.getFaultActor()) == false)
-						match = false; // non ha l'actor definito
+
+					String actor = this.fault.getFaultActor();
+
+					if( gestore.getFaultActor().equalsIgnoreCase(actor) == false) {
+
+						// provo a verificare con regular expr
+
+						boolean matchRegExpr = false;
+						try {
+							matchRegExpr = RegularExpressionEngine.isMatch(actor, gestore.getFaultActor());
+						}catch(RegExpNotFoundException notFound) {}
+						catch(Exception e)	{
+							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultActor()+"' per fault actor '"+actor+"' fallita: "+e.getMessage());
+						}
+
+						if(!matchRegExpr) {
+							match = false; // non ha l'actor definito
+						}
+					}
+
 				}
 				if(gestore.getFaultString()!=null){
-					if( (this.fault.getFaultString()==null) ||
-						   (
-							 (this.fault.getFaultString().contains(gestore.getFaultString()) == false) &&
-							 (this.fault.getFaultString().contains(gestore.getFaultString().toLowerCase()) == false) &&
-							 (this.fault.getFaultString().contains(gestore.getFaultString().toUpperCase()) == false)
-						   )
-						)
-						match = false; // non ha il fault string definito
+
+					String faultString = this.fault.getFaultString();
+
+					if( (faultString==null) ||
+							(
+									(faultString.contains(gestore.getFaultString()) == false) &&
+									(faultString.contains(gestore.getFaultString().toLowerCase()) == false) &&
+									(faultString.contains(gestore.getFaultString().toUpperCase()) == false)
+									)
+							) {
+
+						// provo a verificare con regular expr
+
+						boolean matchRegExpr = false;
+						try {
+							matchRegExpr = RegularExpressionEngine.isMatch(faultString, gestore.getFaultString());
+						}catch(RegExpNotFoundException notFound) {}
+						catch(Exception e)	{
+							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultString()+"' per fault string '"+faultString+"' fallita: "+e.getMessage());
+						}
+
+						if(!matchRegExpr) {
+							match = false; // non ha il fault string definito
+						}
+					}			
 				}
 
 				if( match ){
@@ -360,6 +424,283 @@ public class GestoreErroreConnettore {
 				}
 			}
 		}
+
+
+
+		// ESITO PROBLEM DETAIL
+		ProblemRFC7807 problem = null;
+
+		if(messageResponse!=null) {
+			if(messageResponse instanceof OpenSPCoop2RestJsonMessage ){
+				try{
+					OpenSPCoop2RestJsonMessage msg = messageResponse.castAsRestJson();
+					if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+						JsonDeserializer deserializer = new JsonDeserializer();
+						problem = deserializer.fromString(msg.getContent());
+					}
+				}catch(Exception e){
+					throw new GestoreMessaggiException(e.getMessage(),e);
+				}
+			}
+			else if(messageResponse instanceof OpenSPCoop2RestXmlMessage ){
+				try{
+					OpenSPCoop2RestXmlMessage msg = messageResponse.castAsRestXml();
+					if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+						XmlDeserializer deserializer = new XmlDeserializer();
+						problem = deserializer.fromNode(msg.getContent());
+					}
+				}catch(Exception e){
+					throw new GestoreMessaggiException(e.getMessage(),e);
+				}
+			}
+		}
+
+		if(problem!=null){
+			this.problem = problem;
+			for(int i=0; i<gestioneErrore.sizeSoapFaultList();i++){
+				GestioneErroreSoapFault gestore = gestioneErrore.getSoapFault(i);
+				boolean match = true;
+
+				if(gestore.getFaultCode()!=null){ // status in problem
+					String codice = problem.getStatus()+"";
+
+					if( gestore.getFaultCode().equalsIgnoreCase(codice) == false) {
+
+						// provo a verificare con regular expr
+
+						boolean matchRegExpr = false;
+						try {
+							matchRegExpr = RegularExpressionEngine.isMatch(codice, gestore.getFaultCode());
+						}catch(RegExpNotFoundException notFound) {}
+						catch(Exception e)	{
+							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultCode()+"' per problem status '"+codice+"' fallita: "+e.getMessage());
+						}
+
+						if(!matchRegExpr) {
+							match = false; // non ha il codice definito
+						}
+					}
+
+				}
+
+				if(gestore.getFaultActor()!=null){ // type in problem
+					String actor = problem.getType();
+
+					if( gestore.getFaultActor().equalsIgnoreCase(actor) == false) {
+
+						// provo a verificare con regular expr
+
+						boolean matchRegExpr = false;
+						try {
+							matchRegExpr = RegularExpressionEngine.isMatch(actor, gestore.getFaultActor());
+						}catch(RegExpNotFoundException notFound) {}
+						catch(Exception e)	{
+							GestoreErroreConnettore.log.error("Verifica espressione regolare '"+gestore.getFaultActor()+"' per problem type '"+actor+"' fallita: "+e.getMessage());
+						}
+
+						if(!matchRegExpr) {
+							match = false; // non ha l'actor definito
+						}
+					}
+
+				}
+
+				if(gestore.getFaultString()!=null) { // claims
+
+					Properties properties = PropertiesUtilities.convertTextToProperties(gestore.getFaultString());
+					if(properties!=null && properties.size()>0) {
+
+						Enumeration<?> en = properties.keys();
+						while (en.hasMoreElements()) {
+							String key = (String) en.nextElement();
+							String value = properties.getProperty(key);
+
+							if(ProblemConstants.CLAIM_TYPE.equals(key)) {
+								if(problem.getType()==null || "".equals(problem.getType())) {
+									match = false; 
+									break;
+								}
+								else {
+									if( problem.getType().equalsIgnoreCase(value) == false) {
+										// provo a verificare con regular expr
+										boolean matchRegExpr = false;
+										try {
+											matchRegExpr = RegularExpressionEngine.isMatch(problem.getType(), value);
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem type '"+problem.getType()+"' fallita: "+e.getMessage());
+										}
+										if(!matchRegExpr) {
+											match = false; // non ha il valore definito
+											break;
+										}
+									}
+								}
+							}
+
+							else if(ProblemConstants.CLAIM_TITLE.equals(key)) {
+								if(problem.getTitle()==null || "".equals(problem.getTitle())) {
+									match = false; 
+									break;
+								}
+								else {
+									if( problem.getTitle().equalsIgnoreCase(value) == false) {
+										// provo a verificare con regular expr
+										boolean matchRegExpr = false;
+										try {
+											matchRegExpr = RegularExpressionEngine.isMatch(problem.getTitle(), value);
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem title '"+problem.getTitle()+"' fallita: "+e.getMessage());
+										}
+										if(!matchRegExpr) {
+											match = false; // non ha il valore definito
+											break;
+										}
+									}
+								}
+							}
+
+							else if(ProblemConstants.CLAIM_STATUS.equals(key)) {
+								if(problem.getStatus()==null) {
+									match = false; 
+									break;
+								}
+								else {
+									if( problem.getStatus().toString().equalsIgnoreCase(value) == false) {
+										// provo a verificare con regular expr
+										boolean matchRegExpr = false;
+										try {
+											matchRegExpr = RegularExpressionEngine.isMatch(problem.getStatus().toString(), value);
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem status '"+problem.getStatus().toString()+"' fallita: "+e.getMessage());
+										}
+										if(!matchRegExpr) {
+											match = false; // non ha il valore definito
+											break;
+										}
+									}
+								}
+							}
+
+							else if(ProblemConstants.CLAIM_DETAIL.equals(key)) {
+								if(problem.getDetail()==null || "".equals(problem.getDetail())) {
+									match = false; 
+									break;
+								}
+								else {
+									if( problem.getDetail().equalsIgnoreCase(value) == false) {
+										// provo a verificare con regular expr
+										boolean matchRegExpr = false;
+										try {
+											matchRegExpr = RegularExpressionEngine.isMatch(problem.getDetail(), value);
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem detail '"+problem.getDetail()+"' fallita: "+e.getMessage());
+										}
+										if(!matchRegExpr) {
+											match = false; // non ha il valore definito
+											break;
+										}
+									}
+								}
+							}
+
+							else if(ProblemConstants.CLAIM_INSTANCE.equals(key)) {
+								if(problem.getInstance()==null || "".equals(problem.getInstance())) {
+									match = false; 
+									break;
+								}
+								else {
+									if( problem.getInstance().equalsIgnoreCase(value) == false) {
+										// provo a verificare con regular expr
+										boolean matchRegExpr = false;
+										try {
+											matchRegExpr = RegularExpressionEngine.isMatch(problem.getInstance(), value);
+										}catch(RegExpNotFoundException notFound) {}
+										catch(Exception e)	{
+											GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem instance '"+problem.getInstance()+"' fallita: "+e.getMessage());
+										}
+										if(!matchRegExpr) {
+											match = false; // non ha il valore definito
+											break;
+										}
+									}
+								}
+							}
+
+							else {
+
+								if(problem.getCustom()==null || problem.getCustom().isEmpty() || !problem.getCustom().containsKey(key)) {
+									match = false; 
+									break;
+								}
+								else {
+									Object valoreClaim = problem.getCustom().get(key);
+									if(valoreClaim==null) {
+										match = false; 
+										break;
+									}
+									else {
+										String v = valoreClaim.toString();
+										if( v.equalsIgnoreCase(value) == false) {
+											// provo a verificare con regular expr
+											boolean matchRegExpr = false;
+											try {
+												matchRegExpr = RegularExpressionEngine.isMatch(v, value);
+											}catch(RegExpNotFoundException notFound) {}
+											catch(Exception e)	{
+												GestoreErroreConnettore.log.error("Verifica espressione regolare '"+value+"' per problem '"+key+"' '"+v+"' fallita: "+e.getMessage());
+											}
+											if(!matchRegExpr) {
+												match = false; // non ha il valore definito
+												break;
+											}
+										}
+									}
+								}
+
+							}
+						}
+
+					}
+				}
+
+				if( match ){
+					if(CostantiConfigurazione.GESTIONE_ERRORE_RISPEDISCI_MSG.equals(gestore.getComportamento())){
+						try{
+							this.errore = "errore applicativo, "+problem.getRaw();
+						}catch(Exception e){
+							this.errore = "errore applicativo (Problem Detail RFC 7807)";
+							GestoreErroreConnettore.log.error("Serializzazione Problem Detail RFC 7807 non riuscita: "+e.getMessage(),e);
+						}
+						this.riconsegna = true;
+						if(gestore.getCadenzaRispedizione()!=null){
+							try{
+								int cadenzaRispedizione = Integer.parseInt(gestore.getCadenzaRispedizione());
+								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
+							}catch(Exception e)	{
+								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato (problem detail): "+e.getMessage());
+							}
+						}else if(gestioneErrore.getCadenzaRispedizione()!=null){
+							try{
+								int cadenzaRispedizione = Integer.parseInt(gestioneErrore.getCadenzaRispedizione());
+								this.dataRispedizione = new java.sql.Timestamp(now.getTime()+(cadenzaRispedizione*60*1000));
+							}catch(Exception e)	{
+								GestoreErroreConnettore.log.error("Intervallo di rispedizione non impostato: "+e.getMessage());
+							}
+						}
+						return false;
+					}else{
+						this.riconsegna = false;
+						return true;
+					}	
+				}
+
+			}
+		}
+
 
 
 		// ESITO CODICE TRASPORTO:
@@ -474,7 +815,12 @@ public class GestoreErroreConnettore {
 		return this.fault;
 	}
 
-
+	/**
+	 * @return the problem
+	 */
+	public ProblemRFC7807 getProblem() {
+		return this.problem;
+	}
 
 
 

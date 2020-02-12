@@ -178,6 +178,7 @@ public class Costanti {
 	public final static String LABEL_MONITOR_BUTTON_FILTRA = "Filtra";
 	public final static String LABEL_MONITOR_BUTTON_RIPULISCI = "Ripulisci";
 	public final static String LABEL_MONITOR_BUTTON_GENERA = "Genera";
+	public final static String LABEL_MONITOR_BUTTON_CHIUDI = "Chiudi";
 	
 	public final static String TOOLTIP_MONITOR_BUTTON_GENERA_PWD = "Genera Password";
 		
@@ -221,7 +222,7 @@ public class Costanti {
 	
 	public final static String MESSAGE_TYPE_ERROR_TITLE = "Messaggio di Errore";
 	public final static String MESSAGE_TYPE_INFO_TITLE = "Messaggio Informativo";
-	public final static String MESSAGE_TYPE_CONFIRM_TITLE = "Conferma Azione";
+	public final static String MESSAGE_TYPE_CONFIRM_TITLE = "Conferma Operazione";
 	
 	/** CLASSI DEFAULT CSS ELEMENTI INPUT */
 	public final static String INPUT_LONG_CSS_CLASS = "inputLinkLong";

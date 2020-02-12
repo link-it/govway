@@ -979,6 +979,14 @@ public class JDBCTransazioneServiceSearch implements ITransazioneServiceSearch, 
 	}
 	
 
+	public void disableSelectForUpdate() throws ServiceException,NotImplementedException {
+		this.jdbcSqlObjectFactory.setSelectForUpdate(false);
+	}
+
+	public void enableSelectForUpdate() throws ServiceException,NotImplementedException {
+		this.jdbcSqlObjectFactory.setSelectForUpdate(true);
+	}
+	
 	
 	@Override
 	public List<List<Object>> nativeQuery(String sql,List<Class<?>> returnClassTypes,Object ... param) throws ServiceException,NotFoundException,NotImplementedException{

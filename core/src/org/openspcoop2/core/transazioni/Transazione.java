@@ -42,6 +42,8 @@ import java.util.List;
  * 			&lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="ruolo-transazione" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="esito" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="esito-sincrono" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
+ * 			&lt;element name="consegne-multiple-in-corso" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="esito-contesto" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
  * 			&lt;element name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
@@ -129,7 +131,8 @@ import java.util.List;
  * 			&lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="tipo-api" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1"/>
  * 			&lt;element name="gruppi" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="2"/>
+ * 			&lt;element name="dump-messaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" minOccurs="0" maxOccurs="unbounded"/>
+ * 			&lt;element name="transazione-applicativo-server" type="{http://www.openspcoop2.org/core/transazioni}transazione-applicativo-server" minOccurs="0" maxOccurs="unbounded"/>
  * 			&lt;element name="transazione-extended-info" type="{http://www.openspcoop2.org/core/transazioni}transazione-extended-info" minOccurs="0" maxOccurs="unbounded"/>
  * 		&lt;/sequence>
  * &lt;/complexType>
@@ -148,6 +151,8 @@ import java.util.List;
   	"stato",
   	"ruoloTransazione",
   	"esito",
+  	"esitoSincrono",
+  	"consegneMultipleInCorso",
   	"esitoContesto",
   	"protocollo",
   	"tipoRichiesta",
@@ -236,6 +241,7 @@ import java.util.List;
   	"tipoApi",
   	"gruppi",
   	"dumpMessaggio",
+  	"transazioneApplicativoServer",
   	"transazioneExtendedInfo"
   }
 )
@@ -290,6 +296,22 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setEsito(int esito) {
     this.esito = esito;
+  }
+
+  public int getEsitoSincrono() {
+    return this.esitoSincrono;
+  }
+
+  public void setEsitoSincrono(int esitoSincrono) {
+    this.esitoSincrono = esitoSincrono;
+  }
+
+  public int getConsegneMultipleInCorso() {
+    return this.consegneMultipleInCorso;
+  }
+
+  public void setConsegneMultipleInCorso(int consegneMultipleInCorso) {
+    this.consegneMultipleInCorso = consegneMultipleInCorso;
   }
 
   public java.lang.String getEsitoContesto() {
@@ -1024,6 +1046,30 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
     return this.dumpMessaggio.size();
   }
 
+  public void addTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+    this.transazioneApplicativoServer.add(transazioneApplicativoServer);
+  }
+
+  public TransazioneApplicativoServer getTransazioneApplicativoServer(int index) {
+    return this.transazioneApplicativoServer.get( index );
+  }
+
+  public TransazioneApplicativoServer removeTransazioneApplicativoServer(int index) {
+    return this.transazioneApplicativoServer.remove( index );
+  }
+
+  public List<TransazioneApplicativoServer> getTransazioneApplicativoServerList() {
+    return this.transazioneApplicativoServer;
+  }
+
+  public void setTransazioneApplicativoServerList(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
+    this.transazioneApplicativoServer=transazioneApplicativoServer;
+  }
+
+  public int sizeTransazioneApplicativoServerList() {
+    return this.transazioneApplicativoServer.size();
+  }
+
   public void addTransazioneExtendedInfo(TransazioneExtendedInfo transazioneExtendedInfo) {
     this.transazioneExtendedInfo.add(transazioneExtendedInfo);
   }
@@ -1082,6 +1128,14 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="int")
   @XmlElement(name="esito",required=false,nillable=false)
   protected int esito;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="esito-sincrono",required=false,nillable=false)
+  protected int esitoSincrono;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="int")
+  @XmlElement(name="consegne-multiple-in-corso",required=false,nillable=false)
+  protected int consegneMultipleInCorso;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlElement(name="esito-contesto",required=false,nillable=false)
@@ -1469,6 +1523,36 @@ public class Transazione extends org.openspcoop2.utils.beans.BaseBean implements
   @Deprecated
   public int sizeDumpMessaggio() {
   	return this.dumpMessaggio.size();
+  }
+
+  @XmlElement(name="transazione-applicativo-server",required=true,nillable=false)
+  protected List<TransazioneApplicativoServer> transazioneApplicativoServer = new ArrayList<TransazioneApplicativoServer>();
+
+  /**
+   * @deprecated Use method getTransazioneApplicativoServerList
+   * @return List<TransazioneApplicativoServer>
+  */
+  @Deprecated
+  public List<TransazioneApplicativoServer> getTransazioneApplicativoServer() {
+  	return this.transazioneApplicativoServer;
+  }
+
+  /**
+   * @deprecated Use method setTransazioneApplicativoServerList
+   * @param transazioneApplicativoServer List<TransazioneApplicativoServer>
+  */
+  @Deprecated
+  public void setTransazioneApplicativoServer(List<TransazioneApplicativoServer> transazioneApplicativoServer) {
+  	this.transazioneApplicativoServer=transazioneApplicativoServer;
+  }
+
+  /**
+   * @deprecated Use method sizeTransazioneApplicativoServerList
+   * @return lunghezza della lista
+  */
+  @Deprecated
+  public int sizeTransazioneApplicativoServer() {
+  	return this.transazioneApplicativoServer.size();
   }
 
   @XmlElement(name="transazione-extended-info",required=true,nillable=false)

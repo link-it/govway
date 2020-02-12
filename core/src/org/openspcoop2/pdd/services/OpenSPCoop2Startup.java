@@ -92,6 +92,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
@@ -216,6 +217,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Timer per la gestione di riconsegna ContenutiApplicativi */
 	private TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativi;
+	public static TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativiRef;
 	
 	/** Gestore risorse JMX */
 	private GestoreRisorseJMX gestoreRisorseJMX = null;
@@ -1276,6 +1278,70 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Inizializzazione Cache per Consegna Applicativi --------------*/
+			// Viene fatta prima, perchè questi valori vengono letti dalle inforamzioni JMX sotto.
+			try{
+				org.openspcoop2.core.config.Cache consegnaApplicativiCacheConfig = configurazionePdDManager.getConfigurazioneConsegnaApplicativiCache();
+				if(consegnaApplicativiCacheConfig!=null){
+					
+					int dimensioneCache = -1;
+					if(consegnaApplicativiCacheConfig.getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(consegnaApplicativiCacheConfig.getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di response caching");
+						}
+					}
+					
+					String algoritmo = null;
+					if(consegnaApplicativiCacheConfig.getAlgoritmo()!=null){
+						algoritmo = consegnaApplicativiCacheConfig.getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(consegnaApplicativiCacheConfig.getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(consegnaApplicativiCacheConfig.getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di response caching");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(consegnaApplicativiCacheConfig.getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(consegnaApplicativiCacheConfig.getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di response caching");
+						}
+					}
+
+					GestoreLoadBalancerCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreLoadBalancerCaching.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Consegna Applicativi Cache");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			/* ----------- Inizializzazione Gestore Risorse JMX (le risorse jmx vengono registrate in seguito) ------------ */
 			try{
@@ -1744,6 +1810,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
 				FileSystemSerializer fs = FileSystemSerializer.getInstance();
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirTransazioneApplicativoServer().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDiagnostici().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirTracce().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDump().getAbsolutePath(), configMkdir);
@@ -1955,6 +2022,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - keystore salvate in cache");
 				}
+				// MBean GestioneConsegnaApplicativi
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConsegnaApplicativi();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - gestione consegna applicativi");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -2056,6 +2129,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_keystoreCaching.setStatoCache(infoKeystoreCaching.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_keystoreCaching);
+			
+			org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi infoGestoreConsegnaApplicativi = new org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_LOAD_BALANCER, infoGestoreConsegnaApplicativi.isCacheAbilitata());
+			if(infoGestoreConsegnaApplicativi.isCacheAbilitata()){
+				informazioniStatoPortaCache_gestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreConsegnaApplicativi);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
@@ -2458,6 +2538,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					try{
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi = new TimerConsegnaContenutiApplicativiThread();
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi.start();
+						OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRef = OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
 					}

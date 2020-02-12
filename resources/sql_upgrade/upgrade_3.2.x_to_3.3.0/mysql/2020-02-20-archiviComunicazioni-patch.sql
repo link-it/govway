@@ -1,0 +1,1 @@
+../../../../core/deploy/sql/patch/mysql/archiviComunicazioni/2020-02-20-patch.sql

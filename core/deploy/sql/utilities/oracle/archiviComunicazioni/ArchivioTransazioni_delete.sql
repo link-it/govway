@@ -6,5 +6,6 @@ DELETE FROM dump_multipart_header;
 DELETE FROM dump_messaggi;
 DELETE FROM transazioni_export;
 DELETE FROM transazioni_info;
+DELETE FROM transazioni_sa;
 DELETE FROM transazioni;
 DELETE FROM credenziale_mittente;

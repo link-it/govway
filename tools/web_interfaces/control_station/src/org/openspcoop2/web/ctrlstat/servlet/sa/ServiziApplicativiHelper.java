@@ -46,17 +46,22 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
+import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
+import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -122,88 +127,95 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String password = this.getParameter(ConnettoriCostanti.PARAMETRO_INVOCAZIONE_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 			// String confpw = this.getParameter("confpw");
 			
-			// Campi obbligatori
-			if (tipoauth.equals("")) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo");
-				return false;
-			}
-			if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && (utente.equals("") || password.equals("") /*
-			 * ||
-			 * confpw
-			 * .
-			 * equals
-			 * (
-			 * ""
-			 * )
-			 */)) {
-				String tmpElenco = "";
-				if (utente.equals("")) {
-					tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
+			String servizioApplicativoServerEnabledS = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean servizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(servizioApplicativoServerEnabledS);
+//			String servizioApplicativoServer = this.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ID_APPLICATIVO_SERVER);
+			
+			if(!servizioApplicativoServerEnabled) {		
+			
+				// Campi obbligatori
+				if (tipoauth.equals("")) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare il Tipo");
+					return false;
 				}
-				if (password.equals("")) {
-					if (tmpElenco.equals("")) {
-						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
-					} else {
-						tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && (utente.equals("") || password.equals("") /*
+				 * ||
+				 * confpw
+				 * .
+				 * equals
+				 * (
+				 * ""
+				 * )
+				 */)) {
+					String tmpElenco = "";
+					if (utente.equals("")) {
+						tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME;
 					}
-				}
-				/*
-				 * if (confpw.equals("")) { if (tmpElenco.equals("")) { tmpElenco =
-				 * "Conferma password"; } else { tmpElenco = tmpElenco + ", Conferma
-				 * password"; } }
-				 */
-				this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
-				return false;
-			}
-
-			// Controllo che non ci siano spazi nei campi di testo
-			if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
-				this.pd.setMessage("Non inserire spazi nei campi di testo");
-				return false;
-			}
-
-			// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
-			if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
-				this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
-				return false;
-			}
-			if (getmsg!=null && getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) ){
-				if(getmsgUsername==null || "".equals(getmsgUsername)) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+					if (password.equals("")) {
+						if (tmpElenco.equals("")) {
+							tmpElenco = ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+						} else {
+							tmpElenco = tmpElenco + ", "+ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD;
+						}
+					}
+					/*
+					 * if (confpw.equals("")) { if (tmpElenco.equals("")) { tmpElenco =
+					 * "Conferma password"; } else { tmpElenco = tmpElenco + ", Conferma
+					 * password"; } }
+					 */
+					this.pd.setMessage("Dati incompleti. E' necessario indicare: " + tmpElenco);
 					return false;
 				}
-				if(getmsgPassword==null || "".equals(getmsgPassword)) {
-					this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
-					return false;
-				}
-				if (((getmsgUsername.indexOf(" ") != -1) || (getmsgPassword.indexOf(" ") != -1))) {
+	
+				// Controllo che non ci siano spazi nei campi di testo
+				if (tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && ((utente.indexOf(" ") != -1) || (password.indexOf(" ") != -1))) {
 					this.pd.setMessage("Non inserire spazi nei campi di testo");
 					return false;
 				}
-			}
-			if (!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && 
-					!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_SSL.toString()) && 
-					!tipoauth.equals("nessuna")) {
-				this.pd.setMessage("Tipo Autenticazione dev'essere "+CostantiConfigurazione.CREDENZIALE_BASIC.toString()+", "
-						+ ""+CostantiConfigurazione.CREDENZIALE_SSL.toString()+" o nessuna");
-				return false;
-			}
-			if (!sbustamento.equals(CostantiConfigurazione.ABILITATO.toString()) && !sbustamento.equals(CostantiConfigurazione.DISABILITATO.toString())) {
-				this.pd.setMessage("Sbustamento SOAP dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
-				return false;
-			}
-			if (!sbustamentoInformazioniProtocolloRichiesta.equals(CostantiConfigurazione.ABILITATO.toString()) && !sbustamentoInformazioniProtocolloRichiesta.equals(CostantiConfigurazione.DISABILITATO.toString())) {
-				this.pd.setMessage("Sbustamento Informazioni del Protocollo dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
-				return false;
-			}
+	
+				// Controllo che i campi DataElementType.SELECT abbiano uno dei valori ammessi
+				if (!getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) && !getmsg.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+					this.pd.setMessage("Servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"' dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+					return false;
+				}
+				if (getmsg!=null && getmsg.equals(CostantiConfigurazione.ABILITATO.toString()) ){
+					if(getmsgUsername==null || "".equals(getmsgUsername)) {
+						this.pd.setMessage("Dati incompleti. E' necessario indicare 'Username' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						return false;
+					}
+					if(getmsgPassword==null || "".equals(getmsgPassword)) {
+						this.pd.setMessage("Dati incompleti. E' necessario indicare 'Password' per il servizio '"+ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX+"'");
+						return false;
+					}
+					if (((getmsgUsername.indexOf(" ") != -1) || (getmsgPassword.indexOf(" ") != -1))) {
+						this.pd.setMessage("Non inserire spazi nei campi di testo");
+						return false;
+					}
+				}
+				if (!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_BASIC.toString()) && 
+						!tipoauth.equals(CostantiConfigurazione.CREDENZIALE_SSL.toString()) && 
+						!tipoauth.equals("nessuna")) {
+					this.pd.setMessage("Tipo Autenticazione dev'essere "+CostantiConfigurazione.CREDENZIALE_BASIC.toString()+", "
+							+ ""+CostantiConfigurazione.CREDENZIALE_SSL.toString()+" o nessuna");
+					return false;
+				}
+				if (!sbustamento.equals(CostantiConfigurazione.ABILITATO.toString()) && !sbustamento.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+					this.pd.setMessage("Sbustamento SOAP dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+					return false;
+				}
+				if (!sbustamentoInformazioniProtocolloRichiesta.equals(CostantiConfigurazione.ABILITATO.toString()) && !sbustamentoInformazioniProtocolloRichiesta.equals(CostantiConfigurazione.DISABILITATO.toString())) {
+					this.pd.setMessage("Sbustamento Informazioni del Protocollo dev'essere "+CostantiConfigurazione.ABILITATO+" o "+CostantiConfigurazione.DISABILITATO);
+					return false;
+				}
+	
+	
+				// Controllo che le password corrispondano
+				/*
+				 * if (tipoauth.equals("basic") && !password.equals(confpw)) {
+				 * this.pd.setMessage("Le password non corrispondono"); return false; }
+				 */
 
-
-			// Controllo che le password corrispondano
-			/*
-			 * if (tipoauth.equals("basic") && !password.equals(confpw)) {
-			 * this.pd.setMessage("Le password non corrispondono"); return false; }
-			 */
-
+			}
 			if (!this.endPointCheckData(protocollo, true, listExtendedConnettore)) {
 				return false;
 			}
@@ -223,7 +235,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String ruoloFruitore, String ruoloErogatore,
 			String sbustamento, String sbustamentoInformazioniProtocolloRichiesta, String getmsg,
 			String invrifRichiesta, String risprif,
-			String endpointtype, String autenticazioneHttp, String url, String nomeCodaJMS, String tipo,
+			String endpointtype, String autenticazioneHttp, String url, String nomeCodaJMS, String tipoCodaJMS,
 			String userRichiesta, String passwordRichiesta, String initcont, String urlpgk,
 			String provurl, String connfact, String sendas,  
 			String httpsurl, String httpstipologia, boolean httpshostverify,
@@ -247,7 +259,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
 			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
 			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato,
-			boolean autenticazioneToken, String tokenPolicy) throws Exception {
+			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -486,7 +498,36 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME);
 		dati.addElement(de);
 
-
+		boolean applicativiServerEnabled = this.saCore.isApplicativiServerEnabled(this);
+		
+		// Tipo SA
+		de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
+		de.setSize(this.getSize());
+		if(applicativiServerEnabled) {
+			if(tipoOperazione.equals(TipoOperazione.ADD)) {
+				de.setSelected(tipoSA);
+				de.setType(DataElementType.SELECT);
+				de.setLabels(ServiziApplicativiCostanti.LABELS_SERVIZI_APPLICATIVI_TIPO);
+				de.setValues(ServiziApplicativiCostanti.VALUES_SERVIZI_APPLICATIVI_TIPO);
+				de.setPostBack(true);
+			} else {
+				de.setValue(tipoSA);
+				de.setType(DataElementType.HIDDEN);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_TIPO);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA+"__LABEL");
+				de.setType(DataElementType.TEXT);
+				de.setValue(this.getTipo(tipoSA));
+			}
+		} else {
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(tipoSA);
+		}
+		dati.addElement(de);
 		
 		
 		if (!this.isModalitaCompleta()) {
@@ -522,18 +563,28 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			de.setType(DataElementType.HIDDEN);
 			
 			if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-				de.setLabel(null);
-				de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
-				de.setType(DataElementType.TEXT);
-				de.setPostBack(false);
-				
-				configurazioneStandardNonApplicabile = true;
+				if(!applicativiServerEnabled) {
+					de.setLabel(null);
+					de.setValue(CostantiControlStation.LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE);
+					de.setType(DataElementType.TEXT);
+					de.setPostBack(false);
+					
+					configurazioneStandardNonApplicabile = true;
+				}
 			}
 			else if(!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore)){
 				de.setValue(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_FRUITORE);
-				if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
-					tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-				} 
+				if(!applicativiServerEnabled) {
+					if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
+						tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+					} 
+				} else {
+					if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA)) {
+						if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
+							tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+						} 
+					}
+				}
 			}
 			else if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
 				de.setValue(ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_RUOLO_EROGATORE);
@@ -579,22 +630,37 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		}// fine !modalitàCompleta
 		
 		
+		boolean showFruitore = false;
+		boolean showErogatore = false;
+		
+		boolean connettoreErogatoreForceEnabled = false;
+		if(applicativiServerEnabled) {
+			showFruitore = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA);
+			showErogatore = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA);
+			
+			if(!this.isModalitaStandard() && getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+				connettoreErogatoreForceEnabled = false;
+			}
+			else {
+				connettoreErogatoreForceEnabled = true;
+				if(TipiConnettore.DISABILITATO.getNome().equals(endpointtype)) {
+					endpointtype = TipiConnettore.HTTP.getNome();
+				}
+			}
+		}
+		else {
+			showFruitore = !TipologiaFruizione.DISABILITATO.equals(ruoloFruitore);
+			showErogatore = this.isModalitaStandard() && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore);
+		}
 		
 		
 		
-
 		
-		
-		
-		
-		
-
 		
 		
 		// ************ FRUITORE ********************
 		
-		if (this.isModalitaCompleta() || 
-				!TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) ) {
+		if (this.isModalitaCompleta() ||  showFruitore) {
 				
 //			if(this.isModalitaStandard()){
 //				de = new DataElement();
@@ -943,66 +1009,75 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		
 		// ************ EROGATORE ********************
 		
-		if(this.isModalitaStandard()){
+		if(showErogatore){
 			
-			if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-						
-				this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
-						getmsg,invrif,risprif,nomeProtocollo,false,true, true,
-						parentSA,null,null);
-				
-				if(TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
-						CostantiConfigurazione.ABILITATO.equals(getmsg)){
-					
-					if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
-						tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
-					} 
-						
-					// Credenziali di accesso
-					if (utente == null) {
-						utente = "";
-					}
-					if (password == null) {
-						password = "";
-					}
-					if (subject == null) {
-						subject = "";
-					}
-					if (principal == null) {
-						principal = "";
-					}
-					dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true,
-							tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
-							tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
-							tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
-							tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
-							tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato);
-					
-				}
-				
-				dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
-						url, nomeCodaJMS,
-						tipo, userRichiesta, passwordRichiesta, initcont, urlpgk, provurl,
-						connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
-						httpshostverify, httpspath, httpstipo, httpspwd,
-						httpsalgoritmo, httpsstato, httpskeystore,
-						httpspwdprivatekeytrust, httpspathkey,
-						httpstipokey, httpspwdkey, 
-						httpspwdprivatekey,	httpsalgoritmokey, 
-						httpsKeyAlias, httpsTrustStoreCRLs,
-						tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
-						nome, id, null, null, null, null,
-						null, null, true,
-						isConnettoreCustomUltimaImmagineSalvata, 
-						proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
-						tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
-						opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
-						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
-						autenticazioneToken, tokenPolicy,
-						listExtendedConnettore, false,
-						nomeProtocollo, false, false);
+			boolean servizioApplicativoServerEnabled = false;
+			
+			if (utente == null) {
+				utente = "";
 			}
+			if (password == null) {
+				password = "";
+			}
+					
+			this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
+					getmsg, utente, password, true, invrif,risprif,nomeProtocollo,false,true, true,
+					parentSA,null,null,servizioApplicativoServerEnabled,
+					tipoSA, useAsClient);
+			
+			if(!applicativiServerEnabled && TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
+					CostantiConfigurazione.ABILITATO.equals(getmsg)){
+				
+				if(tipoauth==null || tipoauth.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)){
+					tipoauth = this.saCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
+				} 
+					
+				// Credenziali di accesso
+//				if (utente == null) {
+//					utente = "";
+//				}
+//				if (password == null) {
+//					password = "";
+//				}
+				if (subject == null) {
+					subject = "";
+				}
+				if (principal == null) {
+					principal = "";
+				}
+				dati = this.addCredenzialiToDati(dati, tipoauth, utente, password, subject, principal, servlet, true, null, false, true, null, true,
+						tipoCredenzialiSSLSorgente, tipoCredenzialiSSLTipoArchivio, tipoCredenzialiSSLFileCertificato, tipoCredenzialiSSLFileCertificatoPassword, listaAliasEstrattiCertificato, 
+						tipoCredenzialiSSLAliasCertificato, tipoCredenzialiSSLAliasCertificatoSubject, tipoCredenzialiSSLAliasCertificatoIssuer,
+						tipoCredenzialiSSLAliasCertificatoType, tipoCredenzialiSSLAliasCertificatoVersion, tipoCredenzialiSSLAliasCertificatoSerialNumber, 
+						tipoCredenzialiSSLAliasCertificatoSelfSigned, tipoCredenzialiSSLAliasCertificatoNotBefore, tipoCredenzialiSSLAliasCertificatoNotAfter, 
+						tipoCredenzialiSSLVerificaTuttiICampi, tipoCredenzialiSSLConfigurazioneManualeSelfSigned, issuer, tipoCredenzialiSSLStatoElaborazioneCertificato);
+				
+			}
+			
+			dati = this.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, "",//ServiziApplicativiCostanti.LABEL_EROGATORE+" ",
+					url, nomeCodaJMS,
+					tipoCodaJMS, userRichiesta, passwordRichiesta, initcont, urlpgk, provurl,
+					connfact, sendas, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI, TipoOperazione.CHANGE, httpsurl, httpstipologia,
+					httpshostverify, httpspath, httpstipo, httpspwd,
+					httpsalgoritmo, httpsstato, httpskeystore,
+					httpspwdprivatekeytrust, httpspathkey,
+					httpstipokey, httpspwdkey, 
+					httpspwdprivatekey,	httpsalgoritmokey, 
+					httpsKeyAlias, httpsTrustStoreCRLs,
+					tipoconn, ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,
+					nome, id, null, null, null, null,
+					null, null, true,
+					isConnettoreCustomUltimaImmagineSalvata, 
+					proxyEnabled, proxyHost, proxyPort, proxyUsername, proxyPassword,
+					tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
+					opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
+					requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
+					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
+					autenticazioneToken, tokenPolicy,
+					listExtendedConnettore, connettoreErogatoreForceEnabled,
+					nomeProtocollo, false, false
+					, false, servizioApplicativoServerEnabled, null, null
+					);
 		}
 		
 		
@@ -1025,6 +1100,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			ServizioApplicativo saOld)
 			throws Exception {
 		try {
+			
+			String tipoSA = this.getParameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_TIPO_SA);
+			boolean isApplicativiServerEnabled = this.saCore.isApplicativiServerEnabled(this);
 			
 			if(ruoloFruitore==null){
 				ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -1515,12 +1593,15 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			} 
 
 			// erogatore
-			if(this.isModalitaStandard()){
-				if(!TipologiaErogazione.DISABILITATO.equals(ruoloErogatore)){
-					boolean isOk = this.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
-					if (!isOk) {
-						return false;
-					}
+			boolean validaEndPoint = this.isModalitaStandard() && !TipologiaErogazione.DISABILITATO.equals(ruoloErogatore);
+			if(isApplicativiServerEnabled) {
+				validaEndPoint = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA);
+			}
+			
+			if(validaEndPoint){
+				boolean isOk = this.servizioApplicativoEndPointCheckData(protocollo, listExtendedConnettore);
+				if (!isOk) {
+					return false;
 				}
 			}
 			
@@ -1556,6 +1637,32 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	private void addFilterTipoServizioApplicativo(String tipoSA, boolean postBack) throws Exception{
+		try {
+			String [] tmp_labels = ServiziApplicativiCostanti.LABELS_SERVIZI_APPLICATIVI_TIPO;
+			String [] tmp_values = ServiziApplicativiCostanti.VALUES_SERVIZI_APPLICATIVI_TIPO;
+			
+			String [] values = new String[tmp_values.length + 1];
+			String [] labels = new String[tmp_labels.length + 1];
+			labels[0] = ServiziApplicativiCostanti.LABEL_PARAMETRO_FILTRO_RUOLO_QUALSIASI;
+			values[0] = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI;
+			for (int i =0; i < tmp_labels.length ; i ++) {
+				labels[i+1] = tmp_labels[i];
+				values[i+1] = tmp_values[i];
+			}
+			
+			String selectedValue = tipoSA != null ? tipoSA : ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_QUALSIASI;
+			
+			String label = ServiziApplicativiCostanti.LABEL_TIPO;
+
+			this.pd.addFilter(Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, label, selectedValue, values, labels, postBack, this.getSize());
+			
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
 
 
 
@@ -1577,7 +1684,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			}else 
 				ServletUtils.addListElementIntoSession(this.session, ServiziApplicativiCostanti.OBJECT_NAME_SERVIZI_APPLICATIVI);
 
-			@SuppressWarnings("unused")
 			Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 
 			@SuppressWarnings("unused")
@@ -1624,6 +1730,11 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if(this.isModalitaCompleta()) {
 				String filterRuoloSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO);
 				this.addFilterRuoloServizioApplicativo(filterRuoloSA,false);
+			}
+			
+			if(this.core.isApplicativiServerEnabled(this)) {
+				String filterTipoSA = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO);
+				this.addFilterTipoServizioApplicativo(filterTipoSA,false);
 			}
 			
 			String filterRuolo = SearchUtils.getFilter(ricerca, idLista, Filtri.FILTRO_RUOLO);
@@ -1713,6 +1824,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			if( showProtocolli ) {
 				labels.add(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_PROTOCOLLO_COMPACT);
 			}
+			if(this.core.isApplicativiServerEnabled(this)) {
+				labels.add(ServiziApplicativiCostanti.LABEL_TIPO);
+			}
 			if(!this.isModalitaCompleta()) {
 				labels.add(RuoliCostanti.LABEL_RUOLI);
 			}
@@ -1789,28 +1903,47 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 							pddEsterna = true;
 						}
 					}
+					
+					// Tipo
+					boolean isServer = false;
+					if(this.core.isApplicativiServerEnabled(this)) {
+						de = new DataElement();
+						isServer = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo());
+						String tipoLabel = this.getTipo(sa);
+						if(sa.isUseAsClient()) {
+							isServer = false;
+							tipoLabel = tipoLabel+" / "+ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+						}
+						de.setValue(tipoLabel);
+						e.addElement(de);
+					}
 
 					if(!this.isModalitaCompleta()) {
 						de = new DataElement();
-						if(useIdSogg){
-							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+						if(isServer) {
+							de.setValue("-");
 						}
-						else{
-							de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
-									new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+						else {
+							if(useIdSogg){
+								de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""),
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_PROVIDER,sa.getIdSoggetto()+""));
+							}
+							else{
+								de.setUrl(ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_RUOLI_LIST,
+										new Parameter(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO,sa.getId()+""));
+							}
+							if (contaListe) {
+								// BugFix OP-674
+								//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
+								Search searchForCount = new Search(true,1);
+								this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
+								//int numRuoli = lista1.size();
+								int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
+								ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
+							} else
+								ServletUtils.setDataElementVisualizzaLabel(de);
 						}
-						if (contaListe) {
-							// BugFix OP-674
-							//List<String> lista1 = this.saCore.servizioApplicativoRuoliList(sa.getId(),new Search(true));
-							Search searchForCount = new Search(true,1);
-							this.saCore.servizioApplicativoRuoliList(sa.getId(),searchForCount);
-							//int numRuoli = lista1.size();
-							int numRuoli = searchForCount.getNumEntries(Liste.SERVIZIO_APPLICATIVO_RUOLI);
-							ServletUtils.setDataElementVisualizzaLabel(de,(long)numRuoli);
-						} else
-							ServletUtils.setDataElementVisualizzaLabel(de);
 						e.addElement(de);
 					}
 					
@@ -1943,6 +2076,22 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 	}
+	
+	private String getTipo(ServizioApplicativo sa){
+		return getTipo(sa.getTipo());
+	}
+	
+	private String getTipo(String tipo){
+		if(tipo == null)
+			return ServiziApplicativiCostanti.SERVIZI_APPLICATIVI_TIPO_NON_CONFIGURATO;
+		
+		if(tipo.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT))
+			return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_CLIENT;
+		else if(tipo.equals(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER))
+			return ServiziApplicativiCostanti.LABEL_SERVIZI_APPLICATIVI_TIPO_SERVER;
+		
+		return tipo;
+	}
 
 	
 	private String getTipologia(ServizioApplicativo sa){
@@ -2009,22 +2158,34 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
-			String accessoDaAPSParametro) throws Exception{
+			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled,
+			String tipoSA, boolean useAsClient) throws Exception{
 		this.addEndPointToDati(dati, 
 				idsil, nomeservizioApplicativo, sbustamento, sbustamentoInformazioniProtocolloRichiesta, 
 				getmsg, null, null, true, 
 				invrif, risprif, nomeProtocollo, showName, 
 				isInvocazioneServizio, showTitleTrattamentoMessaggio, 
 				parentSA, serviceBinding, 
-				accessoDaAPSParametro);
+				accessoDaAPSParametro, servizioApplicativoServerEnabled,
+				tipoSA, useAsClient);
 	}
+	
 	public void addEndPointToDati(Vector<DataElement> dati,
 			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
 			String getmsg,String usernameGetMsg, String passwordGetMsg,boolean gestioneCredenzialiGetMsg,
 			String invrif,String risprif, String nomeProtocollo, boolean showName,
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
-			String accessoDaAPSParametro) throws Exception{
+			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled, 
+			String tipoSA, boolean useAsClient) throws Exception{
+		
+		if(servizioApplicativoServerEnabled) {
+			this.addEndPointToDatiAsHidden(dati, idsil, nomeservizioApplicativo, sbustamento,
+					sbustamentoInformazioniProtocolloRichiesta, getmsg, usernameGetMsg, passwordGetMsg, 
+					gestioneCredenzialiGetMsg, invrif, risprif, nomeProtocollo, showName, isInvocazioneServizio, 
+					showTitleTrattamentoMessaggio, parentSA, serviceBinding, accessoDaAPSParametro, servizioApplicativoServerEnabled);
+			return;
+		}
 
 		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
 		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
@@ -2065,179 +2226,419 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			dati.addElement(de);
 		}
 		
-		boolean sbustamentoSoapEnabled = !this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP));
-		boolean sbustamentoProtocolloEnabled = !this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo();
 		
-		//controllo aggiunta sezione trattamento messaggio appare se c'e' almeno un elemento sui 4 previsti che puo' essere visualizzato.
-		showTitleTrattamentoMessaggio = showTitleTrattamentoMessaggio && (
-				sbustamentoSoapEnabled ||
-				sbustamentoProtocolloEnabled || 
-				this.isModalitaCompleta()			
-				);
-		
-		if(showTitleTrattamentoMessaggio){
+			boolean sbustamentoSoapEnabled = !this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP));
+			boolean sbustamentoProtocolloEnabled = !this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo();
+			
+			//controllo aggiunta sezione trattamento messaggio appare se c'e' almeno un elemento sui 4 previsti che puo' essere visualizzato.
+			showTitleTrattamentoMessaggio = showTitleTrattamentoMessaggio && (
+					sbustamentoSoapEnabled ||
+					sbustamentoProtocolloEnabled || 
+					this.isModalitaCompleta()			
+					);
+			
+			if(showTitleTrattamentoMessaggio){
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
+			
+			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
-			de.setType(DataElementType.TITLE);
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+			if(sbustamentoSoapEnabled) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoSbustamentoSOAP);
+				if(sbustamento==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(sbustamento);
+				}
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				if(sbustamento==null){
+					de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setValue(sbustamento);
+				}
+			}
+			
 			dati.addElement(de);
-		}
-		
-		String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
-		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
-		if(sbustamentoSoapEnabled) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoSbustamentoSOAP);
-			if(sbustamento==null){
-				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
-			}else{
-				de.setSelected(sbustamento);
-			}
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			if(sbustamento==null){
-				de.setValue(CostantiConfigurazione.DISABILITATO.toString());
-			}else{
-				de.setValue(sbustamento);
-			}
-		}
-		
-		dati.addElement(de);
-
-		String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
-		de = new DataElement();
-		if(nomeProtocollo!=null && !"".equals(nomeProtocollo)){
-			de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
-		}else{
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
-		}
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
-		if(sbustamentoProtocolloEnabled) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoSbustamentoInformazioniProtocollo);
-			if(sbustamentoInformazioniProtocolloRichiesta==null){
-				de.setSelected(CostantiConfigurazione.ABILITATO.toString());
-			}else{
-				de.setSelected(sbustamentoInformazioniProtocolloRichiesta);
-			}
-		}
-		else {
-			de.setType(DataElementType.HIDDEN);
-			if(sbustamentoInformazioniProtocolloRichiesta==null){
-				de.setValue(CostantiConfigurazione.ABILITATO.toString());
-			}else{
-				de.setValue(sbustamentoInformazioniProtocolloRichiesta);
-			}
-		}
-		dati.addElement(de);
-
-		if (!this.isModalitaCompleta()) {
+	
+			String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
 			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
-			de.setValue(invrif);
-			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
-			de.setType(DataElementType.HIDDEN);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
-			de.setValue(risprif);
-			dati.addElement(de);
-		} else {
-			String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
-			de.setType(DataElementType.SELECT);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
-			de.setValues(tipoInvRif);
-			if(invrif==null){
-				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+			if(nomeProtocollo!=null && !"".equals(nomeProtocollo)){
+				de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
 			}else{
-				de.setSelected(invrif);
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
 			}
-			dati.addElement(de);
-
-			String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
-			de.setType(DataElementType.SELECT);
-			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
-			de.setValues(tipoRispRif);
-			if(risprif==null){
-				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
-			}else{
-				de.setSelected(risprif);
-			}
-			dati.addElement(de);
-		}
-		
-		
-		boolean integrationManagerEnabled = !this.isModalitaStandard() && this.core.isIntegrationManagerEnabled();
-		
-		if(integrationManagerEnabled) {
-			de = new DataElement();
-			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
-			de.setType(DataElementType.TITLE);
-			dati.addElement(de);
-		}
-		
-		String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
-		de = new DataElement();
-		de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
-		
-		if(integrationManagerEnabled) {
-			de.setType(DataElementType.SELECT);
-			de.setValues(tipoGM);
-			if(getmsg==null){
-				de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
-			}else{
-				de.setSelected(getmsg);
-			}
-			de.setPostBack(true);
-		} else {
-			de.setType(DataElementType.HIDDEN);
-			if(getmsg==null){
-				de.setValue(CostantiConfigurazione.DISABILITATO.toString());
-			}else{
-				de.setValue(getmsg);
-			}
-		}
-		dati.addElement(de);
-		
-		if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
-			if(!this.isModalitaStandard()) {
-				de.setType(DataElementType.TEXT_EDIT);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
+			if(sbustamentoProtocolloEnabled) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoSbustamentoInformazioniProtocollo);
+				if(sbustamentoInformazioniProtocolloRichiesta==null){
+					de.setSelected(CostantiConfigurazione.ABILITATO.toString());
+				}else{
+					de.setSelected(sbustamentoInformazioniProtocolloRichiesta);
+				}
 			}
 			else {
 				de.setType(DataElementType.HIDDEN);
+				if(sbustamentoInformazioniProtocolloRichiesta==null){
+					de.setValue(CostantiConfigurazione.ABILITATO.toString());
+				}else{
+					de.setValue(sbustamentoInformazioniProtocolloRichiesta);
+				}
 			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
-			de.setSize(this.getSize());
-			de.setRequired(true);
 			dati.addElement(de);
-
-			de = new DataElement();
-			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
-			if(!this.isModalitaStandard()) {
-				de.setType(DataElementType.TEXT_EDIT);
-			}
-			else {
+	
+			if (!this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
 				de.setType(DataElementType.HIDDEN);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
+				de.setValue(invrif);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setValue(risprif);
+				dati.addElement(de);
+			} else {
+				String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setType(DataElementType.SELECT);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
+				de.setValues(tipoInvRif);
+				if(invrif==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(invrif);
+				}
+				dati.addElement(de);
+	
+				String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setType(DataElementType.SELECT);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setValues(tipoRispRif);
+				if(risprif==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(risprif);
+				}
+				dati.addElement(de);
 			}
-			de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
-			de.setSize(this.getSize());
-			de.setRequired(true);
+			
+			
+			boolean integrationManagerEnabled = !this.isModalitaStandard() && this.core.isIntegrationManagerEnabled();
+			
+			if(integrationManagerEnabled) {
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+			}
+			
+			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			
+			if(integrationManagerEnabled) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(tipoGM);
+				if(getmsg==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(getmsg);
+				}
+				de.setPostBack(true);
+			} else {
+				de.setType(DataElementType.HIDDEN);
+				if(getmsg==null){
+					de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setValue(getmsg);
+				}
+			}
+			dati.addElement(de);
+			
+			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
+				if(!this.isModalitaStandard()) {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+				if(!this.isModalitaStandard()) {
+					de.setType(DataElementType.TEXT_EDIT);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setSize(this.getSize());
+				de.setRequired(true);
+				dati.addElement(de);
+				
+				if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)) {
+					de = new DataElement();
+					de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_UTILIZZABILE_COME_CLIENT);
+					de.setType(DataElementType.CHECKBOX);
+					de.setSelected(useAsClient);
+					dati.addElement(de);
+				}
+			}
+			
+	}
+	
+	public void addEndPointToDatiAsHidden(Vector<DataElement> dati,
+			String idsil,String nomeservizioApplicativo,String sbustamento,String sbustamentoInformazioniProtocolloRichiesta,
+			String getmsg,String usernameGetMsg, String passwordGetMsg,boolean gestioneCredenzialiGetMsg,
+			String invrif,String risprif, String nomeProtocollo, boolean showName,
+			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
+			Integer parentSA, ServiceBinding serviceBinding,
+			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled) throws Exception{
+
+		IProtocolFactory<?> protocolFactory = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(nomeProtocollo);
+		IProtocolConfiguration config = protocolFactory.createProtocolConfiguration();
+		
+		DataElement de = new DataElement();
+		de.setLabel(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+		de.setValue(idsil);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_ID_SERVIZIO_APPLICATIVO);
+		dati.addElement(de);
+
+		if(accessoDaAPSParametro!=null && !"".equals(accessoDaAPSParametro)) {
+			de = new DataElement();
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(accessoDaAPSParametro);
+			de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
 			dati.addElement(de);
 		}
 		
+		boolean showFromConfigurazione = false;
+		if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+			showFromConfigurazione = true;
+		}
+		
+		if(showName && !showFromConfigurazione){
+			
+//			de = new DataElement();
+//			de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_APPLICATIVO);
+//			de.setType(DataElementType.TITLE);
+//			dati.addElement(de);
+			
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_NOME);
+			de.setValue(nomeservizioApplicativo);
+			de.setType(DataElementType.HIDDEN);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_NOME_SERVIZIO_APPLICATIVO);
+			de.setSize(this.getSize());
+			dati.addElement(de);
+		}
+		
+			boolean sbustamentoSoapEnabled = !this.isModalitaStandard() && (serviceBinding == null || serviceBinding.equals(ServiceBinding.SOAP));
+			boolean sbustamentoProtocolloEnabled = !this.isModalitaStandard() &&  config.isSupportoSbustamentoProtocollo();
+			
+			//controllo aggiunta sezione trattamento messaggio appare se c'e' almeno un elemento sui 4 previsti che puo' essere visualizzato.
+			showTitleTrattamentoMessaggio = showTitleTrattamentoMessaggio && (
+					sbustamentoSoapEnabled ||
+					sbustamentoProtocolloEnabled || 
+					this.isModalitaCompleta()			
+					);
+			
+//			if(showTitleTrattamentoMessaggio){
+//				de = new DataElement();
+//				de.setLabel(ServiziApplicativiCostanti.LABEL_TRATTAMENTO_MESSAGGIO);
+//				de.setType(DataElementType.TITLE);
+//				dati.addElement(de);
+//			}
+			
+//			String[] tipoSbustamentoSOAP = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_SOAP);
+//			if(sbustamentoSoapEnabled) {
+//				de.setType(DataElementType.SELECT);
+//				de.setValues(tipoSbustamentoSOAP);
+//				if(sbustamento==null){
+//					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+//				}else{
+//					de.setSelected(sbustamento);
+//				}
+//			} else {
+				de.setType(DataElementType.HIDDEN);
+				if(sbustamento==null){
+					de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setValue(sbustamento);
+				}
+//			}
+			
+			dati.addElement(de);
+	
+//			String[] tipoSbustamentoInformazioniProtocollo = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+			de = new DataElement();
+//			if(nomeProtocollo!=null && !"".equals(nomeProtocollo)){
+//				de.setLabel(ServiziApplicativiCostanti.getLabelSbustamentoProtocollo(nomeProtocollo));
+//			}else{
+//				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_INFO_PROTOCOLLO);
+//			}
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_SBUSTAMENTO_INFO_PROTOCOLLO_RICHIESTA);
+//			if(sbustamentoProtocolloEnabled) {
+//				de.setType(DataElementType.SELECT);
+//				de.setValues(tipoSbustamentoInformazioniProtocollo);
+//				if(sbustamentoInformazioniProtocolloRichiesta==null){
+//					de.setSelected(CostantiConfigurazione.ABILITATO.toString());
+//				}else{
+//					de.setSelected(sbustamentoInformazioniProtocolloRichiesta);
+//				}
+//			}
+//			else {
+				de.setType(DataElementType.HIDDEN);
+				if(sbustamentoInformazioniProtocolloRichiesta==null){
+					de.setValue(CostantiConfigurazione.ABILITATO.toString());
+				}else{
+					de.setValue(sbustamentoInformazioniProtocolloRichiesta);
+				}
+//			}
+			dati.addElement(de);
+	
+//			if (!this.isModalitaCompleta()) {
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
+				if(invrif==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(invrif);
+				}
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				de.setType(DataElementType.HIDDEN);
+				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+				if(risprif==null){
+					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setSelected(risprif);
+				}
+				dati.addElement(de);
+//			} else {
+//				String[] tipoInvRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+//				de = new DataElement();
+//				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO);
+//				de.setType(DataElementType.SELECT);
+//				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_INVIO_PER_RIFERIMENTO_RICHIESTA);
+//				de.setValues(tipoInvRif);
+//				if(invrif==null){
+//					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+//				}else{
+//					de.setSelected(invrif);
+//				}
+//				dati.addElement(de);
+//	
+//				String[] tipoRispRif = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+//				de = new DataElement();
+//				de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+//				de.setType(DataElementType.SELECT);
+//				de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_PER_RIFERIMENTO);
+//				de.setValues(tipoRispRif);
+//				if(risprif==null){
+//					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+//				}else{
+//					de.setSelected(risprif);
+//				}
+//				dati.addElement(de);
+//			}
+			
+			
+//			boolean integrationManagerEnabled = !this.isModalitaStandard() && this.core.isIntegrationManagerEnabled();
+			
+//			if(integrationManagerEnabled) {
+//				de = new DataElement();
+//				de.setLabel(ServiziApplicativiCostanti.LABEL_SERVIZIO_MESSAGE_BOX);
+//				de.setType(DataElementType.TITLE);
+//				dati.addElement(de);
+//			}
+			
+//			String[] tipoGM = { CostantiConfigurazione.ABILITATO.toString(), CostantiConfigurazione.DISABILITATO.toString() };
+			de = new DataElement();
+			de.setLabel(ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			de.setName(ServiziApplicativiCostanti.PARAMETRO_SERVIZI_APPLICATIVI_MESSAGE_BOX);
+			
+//			if(integrationManagerEnabled) {
+//				de.setType(DataElementType.SELECT);
+//				de.setValues(tipoGM);
+//				if(getmsg==null){
+//					de.setSelected(CostantiConfigurazione.DISABILITATO.toString());
+//				}else{
+//					de.setSelected(getmsg);
+//				}
+//				de.setPostBack(true);
+//			} else {
+				de.setType(DataElementType.HIDDEN);
+				if(getmsg==null){
+					de.setValue(CostantiConfigurazione.DISABILITATO.toString());
+				}else{
+					de.setValue(getmsg);
+				}
+//			}
+			dati.addElement(de);
+			
+			if(gestioneCredenzialiGetMsg && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
+//				if(!this.isModalitaStandard()) {
+//					de.setType(DataElementType.TEXT_EDIT);
+//				}
+//				else {
+					de.setType(DataElementType.HIDDEN);
+//				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
+				de.setSize(this.getSize());
+//				de.setRequired(true);
+				dati.addElement(de);
+	
+				de = new DataElement();
+				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
+//				if(!this.isModalitaStandard()) {
+//					de.setType(DataElementType.TEXT_EDIT);
+//				}
+//				else {
+					de.setType(DataElementType.HIDDEN);
+//				}
+				de.setName(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
+				de.setSize(this.getSize());
+//				de.setRequired(true);
+				dati.addElement(de);
+			}
+			
 	}
 
 
@@ -2482,5 +2883,109 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 		return lstParam;
 	}
 	
-	
+	public void impostaSADefaultAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(String idAsps, PortaApplicativa pa, ServizioApplicativo sa, List<Object> oggettiDaAggiornare) throws DriverConfigurazioneException, Exception,
+			DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneNotFound {
+		// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+		MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		if(mappingErogazionePortaApplicativa.isDefault()) {
+			String nomeSA = sa.getNome();
+			String tipoSA = sa.getTipo();
+			String servizioApplicativoDefault = pa.getServizioApplicativoDefault();
+			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+			// lettura delle configurazioni associate
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				// scarto il default
+				if(!mappinErogazione.isDefault()) { 
+					PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+					
+					// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+					if((portaApplicativaTmp.getServizioApplicativoDefault() != null && servizioApplicativoDefault != null &&
+							portaApplicativaTmp.getServizioApplicativoDefault().equals(servizioApplicativoDefault) ) ){ 
+						 
+						// prelevo l'associazione con il vecchio servizio applicativo
+						PortaApplicativaServizioApplicativo paSAtmpInner = null;
+						for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+							if(paSAInner.getNome().equals(nomeSA)) {
+								paSAtmpInner = paSAInner;
+								break;
+							}
+						}
+
+						if(paSAtmpInner!= null) {
+							// se ho modificato il server che sto utilizzando lo rimuovo
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA)){
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+							} 
+						}
+
+						// nuovo SA da aggiungere
+						
+						PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+						paSAInner.setNome(servizioApplicativoDefault);
+						portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+						portaApplicativaTmp.setServizioApplicativoDefault(null);
+						oggettiDaAggiornare.add(portaApplicativaTmp);
+					 }
+					
+				}
+			}
+		}
+	}
+
+	public void impostaSAServerAlleConfigurazioniCheUsanoConnettoreDelMappingDiDefault(String idAsps, String nuovoSAServer, PortaApplicativa pa, ServizioApplicativo sa,
+			List<Object> oggettiDaAggiornare)
+			throws DriverConfigurazioneException, Exception, DriverRegistroServiziNotFound,
+			DriverRegistroServiziException, DriverConfigurazioneNotFound {
+		// se ho modificato un mapping di default aggiorno le porte che hanno il utilizzano la configurazione di default 
+		MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = this.porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+		if(mappingErogazionePortaApplicativa.isDefault()) {
+			String servizioApplicativoDefault = pa.getServizioApplicativoDefault();
+			List<MappingErogazionePortaApplicativa> listaMappingErogazionePortaApplicativa = new ArrayList<>();
+			// lettura delle configurazioni associate
+			AccordoServizioParteSpecifica asps = this.apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+			IDServizio idServizio = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps);
+			listaMappingErogazionePortaApplicativa = this.apsCore.mappingServiziPorteAppList(idServizio,asps.getId(), null);
+			for(MappingErogazionePortaApplicativa mappinErogazione : listaMappingErogazionePortaApplicativa) {
+				// scarto il default
+				if(!mappinErogazione.isDefault()) { 
+					PortaApplicativa portaApplicativaTmp = this.porteApplicativeCore.getPortaApplicativa(mappinErogazione.getIdPortaApplicativa());
+					
+					// la porta e' da aggiorare se e' default oppure ridefinita e il SA originale e' lo stesso
+					if((portaApplicativaTmp.getServizioApplicativoDefault() == null && servizioApplicativoDefault == null) ||
+					(portaApplicativaTmp.getServizioApplicativoDefault() != null && servizioApplicativoDefault != null &&
+							portaApplicativaTmp.getServizioApplicativoDefault().equals(servizioApplicativoDefault) ) ){ 
+						 
+						// prelevo l'associazione con il vecchio servizio applicativo
+						PortaApplicativaServizioApplicativo paSAtmpInner = null;
+						for (PortaApplicativaServizioApplicativo paSAInner : portaApplicativaTmp.getServizioApplicativoList()) {
+							if(paSAInner.getNome().equals(sa.getNome())) {
+								paSAtmpInner = paSAInner;
+								break;
+							}
+						}
+
+						if(paSAtmpInner!= null) {
+							// se ho modificato il server che sto utilizzando lo rimuovo
+							if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner); 	
+							} else {
+								// SA di default da conservare
+								portaApplicativaTmp.getServizioApplicativoList().remove(paSAtmpInner);
+								portaApplicativaTmp.setServizioApplicativoDefault(sa.getNome());
+							}
+						}
+
+						// nuovo SA da aggiungere
+						PortaApplicativaServizioApplicativo paSAInner = new PortaApplicativaServizioApplicativo();
+						paSAInner.setNome(nuovoSAServer);
+						portaApplicativaTmp.getServizioApplicativoList().add(paSAInner);
+						oggettiDaAggiornare.add(portaApplicativaTmp);
+					 }
+				}
+			}
+		}
+	}
 }

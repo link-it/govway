@@ -22,6 +22,8 @@ package org.openspcoop2.pdd.core.behaviour;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openspcoop2.core.id.IDServizioApplicativo;
+
 /**
  * Behaviour
  *
@@ -32,7 +34,17 @@ import java.util.List;
 public class Behaviour {
 
 	private BehaviourResponseTo responseTo = new BehaviourResponseTo();
+	private IDServizioApplicativo applicativeSyncResponder;
 	private List<BehaviourForwardTo> forwardTo = new ArrayList<BehaviourForwardTo>();
+	
+	private BehaviourLoadBalancer loadBalancer;
+	
+	public BehaviourLoadBalancer getLoadBalancer() {
+		return this.loadBalancer;
+	}
+	public void setLoadBalancer(BehaviourLoadBalancer loadBalancer) {
+		this.loadBalancer = loadBalancer;
+	}
 	
 	public boolean isResponseTo() {
 		return this.responseTo!=null && this.responseTo.isResponseTo();
@@ -50,5 +62,13 @@ public class Behaviour {
 	public void setForwardTo(List<BehaviourForwardTo> forwardTo) {
 		this.forwardTo = forwardTo;
 	}
+	
+	public IDServizioApplicativo getApplicativeSyncResponder() {
+		return this.applicativeSyncResponder;
+	}
+	public void setApplicativeSyncResponder(IDServizioApplicativo applicativeSyncResponder) {
+		this.applicativeSyncResponder = applicativeSyncResponder;
+	}
+	
 	
 }

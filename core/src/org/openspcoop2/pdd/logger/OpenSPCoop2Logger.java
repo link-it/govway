@@ -147,6 +147,12 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per le statistiche */
 	protected static Logger loggerOpenSPCoopStatisticheSql = null;
 	protected static Logger loggerOpenSPCoopStatisticheSqlError = null;
+	/**  Logger log4j utilizzato per consegna contenuti */
+	protected static Logger loggerOpenSPCoopConsegnaContenuti = null;
+	protected static Logger loggerOpenSPCoopConsegnaContenutiError = null;
+	/**  Logger log4j utilizzato per consegna contenuti */
+	protected static Logger loggerOpenSPCoopConsegnaContenutiSql = null;
+	protected static Logger loggerOpenSPCoopConsegnaContenutiSqlError = null;
 	/** Appender personalizzati per i messaggi diagnostici di OpenSPCoop */
 	public static List<IDiagnosticProducer> loggerMsgDiagnosticoOpenSPCoopAppender = new ArrayList<IDiagnosticProducer>(); 
 	public static List<String> tipoMsgDiagnosticoOpenSPCoopAppender = new ArrayList<String>();
@@ -531,6 +537,26 @@ public class OpenSPCoop2Logger {
 			if(OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError==null)
 				throw new Exception("Logger govway.statistiche.generazione.sql.error non trovato");
 			
+			// CONSEGNA_CONTENUTI LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti = LoggerWrapperFactory.getLogger("govway.consegna_messaggi");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti==null)
+				throw new Exception("Logger govway.consegna_messaggi non trovato");
+			
+			// CONSEGNA_CONTENUTI LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiError = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiError==null)
+				throw new Exception("Logger govway.consegna_messaggi.error non trovato");
+			
+			// CONSEGNA_CONTENUTI SQL LOG
+			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSql = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.sql");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSql==null)
+				throw new Exception("Logger govway.consegna_messaggi.sql non trovato");
+			
+			// CONSEGNA_CONTENUTI SQL LOG (ERROR)
+			OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError = LoggerWrapperFactory.getLogger("govway.consegna_messaggi.sql.error");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError==null)
+				throw new Exception("Logger govway.consegna_messaggi.sql.error non trovato");
+
 			// CONSOLE
 			OpenSPCoop2Logger.loggerOpenSPCoopConsole.info("Sistema di logging correttamente inizializzato.");
 			
@@ -923,7 +949,7 @@ public class OpenSPCoop2Logger {
 				showMsg.append(" SA:"+servizioApplicativo);
 			}
 		}
-		if( fruitore!=null ){
+		if( fruitore!=null && fruitore.getNome()!=null ){
 			showMsg.append(" FR:");
 			String fruitoreLabel = fruitore.toString();
 			if(formatValues) {
@@ -1104,6 +1130,24 @@ public class OpenSPCoop2Logger {
 		}
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopStatisticheSqlError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopConsegnaContenuti(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenuti;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiError;
+		}
+	}
+	
+	public static Logger getLoggerOpenSPCoopConsegnaContenutiSql(boolean debug) {
+		if(debug) {
+			return OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSql;
+		}
+		else {
+			return OpenSPCoop2Logger.loggerOpenSPCoopConsegnaContenutiSqlError;
 		}
 	}
 	

@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
@@ -98,6 +99,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
@@ -218,7 +220,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			ProtocolProperties protocolProperties, ConsoleOperationType consoleOperationType,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer) throws Exception {
 		
 		List<Object> listaOggettiDaCreare = new ArrayList<Object>();
 		if(!alreadyExists) {
@@ -239,7 +241,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					gestioneTokenPolicy,  gestioneTokenOpzionale,
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenForward,
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
-					apsCore, apsHelper);
+					apsCore, apsHelper, nomeSAServer);
 					
 		}
 		
@@ -294,7 +296,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String gestioneTokenPolicy,  String gestioneTokenOpzionale,  
 			String gestioneTokenValidazioneInput, String gestioneTokenIntrospection, String gestioneTokenUserInfo, String gestioneTokenForward,
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
-			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, ErogazioniHelper apsHelper, String nomeSAServer) throws Exception {
 		
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			
@@ -371,6 +373,13 @@ public class AccordiServizioParteSpecificaUtilities {
 			sa.setInvocazioneServizio(invServizio);
 			
 			listaOggettiDaCreare.add(sa);
+			
+		}
+		
+		// Scelto un servizio applicativo server, creo il servizio di default e poi associo quello server
+		if(StringUtils.isNotEmpty(nomeSAServer)) {
+			portaApplicativa.setServizioApplicativoDefault(nomeServizioApplicativoErogatore);
+			nomeServizioApplicativoErogatore = nomeSAServer;
 		}
 			
 		porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
@@ -1122,6 +1131,16 @@ public class AccordiServizioParteSpecificaUtilities {
 					// cancellazione della porta
 					listaOggettiDaEliminare.add(paGenerataAutomcaticamente);
 					
+					// cancellazione eventuale applicativo di default
+					if(paGenerataAutomcaticamente.getServizioApplicativoDefault() != null) {
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setIdSoggettoProprietario(soggettoErogatore);
+						idSA.setNome(paGenerataAutomcaticamente.getServizioApplicativoDefault());
+						ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
+						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
+							listaOggettiDaEliminare.add(saGeneratoAutomaticamente);	
+					}
+					
 					// cancellazione degli applicativi generati automaticamente
 					for (PortaApplicativaServizioApplicativo paSA : paGenerataAutomcaticamente.getServizioApplicativoList()) {
 						if(paSA.getNome().equals(paGenerataAutomcaticamente.getNome())) {
@@ -1129,7 +1148,9 @@ public class AccordiServizioParteSpecificaUtilities {
 							idSA.setIdSoggettoProprietario(soggettoErogatore);
 							idSA.setNome(paSA.getNome());
 							ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
-							listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+							
+							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
+								listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
 						}
 					}
 				}
@@ -1243,13 +1264,26 @@ public class AccordiServizioParteSpecificaUtilities {
 			// cancello la porta associata
 			listaOggettiDaEliminare.add(tmpPA);
 			
+			// cancellazione eventuale applicativo di default
+			if(tmpPA.getServizioApplicativoDefault() != null) {
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
+				idSA.setNome(tmpPA.getServizioApplicativoDefault());
+				ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
+				if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
+					listaOggettiDaEliminare.add(saGeneratoAutomaticamente);	
+			}
+			
 			for (PortaApplicativaServizioApplicativo paSA : tmpPA.getServizioApplicativoList()) {
 				if(paSA.getNome().equals(tmpPA.getNome())) {
 					IDServizioApplicativo idSA = new IDServizioApplicativo();
 					idSA.setIdSoggettoProprietario(new IDSoggetto(tmpPA.getTipoSoggettoProprietario(), tmpPA.getNomeSoggettoProprietario()));
 					idSA.setNome(paSA.getNome());
 					ServizioApplicativo saGeneratoAutomaticamente = saCore.getServizioApplicativo(idSA);
-					listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
+					
+					// elimino solo i SA non server
+					if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saGeneratoAutomaticamente.getTipo()))
+						listaOggettiDaEliminare.add(saGeneratoAutomaticamente);
 				}
 			}
 			
@@ -1371,6 +1405,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		
 		List<MappingErogazionePortaApplicativa> listaMappingErogazione = apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
 		MappingErogazionePortaApplicativa mappingSelezionato = null, mappingDefault = null;
+		boolean paMappingSelezionatoMulti=false;
 		
 		String mappingLabel = "";
 		String[] listaMappingLabels = null;
@@ -1393,9 +1428,11 @@ public class AccordiServizioParteSpecificaUtilities {
 				mappingSelezionato = mappingDefault;
 			}
 
+			PortaApplicativa paMappingTmp = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+			paMappingSelezionatoMulti = paMappingTmp.getBehaviour() != null;
+			
 			if(!mappingSelezionato.isDefault()) {
-				PortaApplicativa paMapping = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
-				mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMapping,Integer.MAX_VALUE);
+				mappingLabel = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(null,null,paMappingTmp,Integer.MAX_VALUE);
 			}
 			
 			listaMappingLabels = new String[listaMappingErogazioneSize];
@@ -1436,7 +1473,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		}
 		
 		nomeNuovaConfigurazione = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_MAPPING_EROGAZIONE_PA_AZIONE_SPECIFIC_PREFIX + ( ++ idxConfigurazione);
-
+		
 		AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = new AccordiServizioParteSpecificaPorteApplicativeMappingInfo();
 		mappingInfo.setListaMappingErogazione(listaMappingErogazione);
 		mappingInfo.setMappingSelezionato(mappingSelezionato);
@@ -1446,6 +1483,7 @@ public class AccordiServizioParteSpecificaUtilities {
 		mappingInfo.setListaMappingValues(listaMappingValues);
 		mappingInfo.setAzioniOccupate(azioniOccupate);
 		mappingInfo.setNomeNuovaConfigurazione(nomeNuovaConfigurazione);
+		mappingInfo.setPaMappingSelezionatoMulti(paMappingSelezionatoMulti);
 		
 		return mappingInfo;
 	}
@@ -1484,7 +1522,7 @@ public class AccordiServizioParteSpecificaUtilities {
 			String autenticazioneTokenIssuer, String autenticazioneTokenClientId, String autenticazioneTokenSubject, String autenticazioneTokenUsername, String autenticazioneTokenEMail,
 			AccordoServizioParteSpecifica asps, 
 			String protocollo, String userLogin,
-			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper) throws Exception {
+			AccordiServizioParteSpecificaCore apsCore, AccordiServizioParteSpecificaHelper apsHelper, String nomeSAServer) throws Exception {
 	
 		PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(apsCore);
 		AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
@@ -1555,8 +1593,10 @@ public class AccordiServizioParteSpecificaUtilities {
 		boolean addSpecSicurezza = false;
 		
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
+			// nuova porta applicativa
 						
-			String nomeServizioApplicativoErogatore = portaApplicativaDefault.getServizioApplicativo(0).getNome();
+			String nomeServizioApplicativoErogatore = portaApplicativa.getServizioApplicativo(0).getNome();
+//			String nomeServizioApplicativoDefault = portaApplicativa.getServizioApplicativoDefault();
 			
 			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
 								
@@ -1603,6 +1643,12 @@ public class AccordiServizioParteSpecificaUtilities {
 				listaOggettiDaCreare.add(sa);
 			}
 			
+			// Scelto un servizio applicativo server, creo il servizio di default e poi associo quello server
+			if(StringUtils.isNotEmpty(nomeSAServer)) {
+				portaApplicativa.setServizioApplicativoDefault(nomeServizioApplicativoErogatore);
+				nomeServizioApplicativoErogatore = nomeSAServer;
+			}
+			
 			IDSoggetto idSoggettoAutenticatoErogazione = null;
 			if(erogazioneSoggettoAutenticato != null && !"".equals(erogazioneSoggettoAutenticato) && !"-".equals(erogazioneSoggettoAutenticato)) {
 				String [] splitSoggetto = erogazioneSoggettoAutenticato.split("/");
@@ -1616,6 +1662,8 @@ public class AccordiServizioParteSpecificaUtilities {
 					}
 				}
 			}
+			
+			
 			
 			porteApplicativeCore.configureControlloAccessiPortaApplicativa(portaApplicativa,
 					erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
@@ -1631,6 +1679,7 @@ public class AccordiServizioParteSpecificaUtilities {
 					autorizzazione_tokenOptions);
 		}
 		else {
+			// clona porta applicativa
 			
 			portaApplicativa.getServizioApplicativoList().clear();
 			
@@ -1657,11 +1706,15 @@ public class AccordiServizioParteSpecificaUtilities {
 			
 			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore) || (connettorePDClonato!=null)) {
 				PortaApplicativa portaApplicativaSelezionata = porteApplicativeCore.getPortaApplicativa(mappingSelezionato.getIdPortaApplicativa());
+				
+				// porta applicativa clonata, ridefinisco solo il connettore default e non gli eventuali server
 				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaSelezionata.getServizioApplicativoList()) {
 					IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
 					idServizioApplicativoDefault.setNome(paSADefault.getNome());
 					idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaSelezionata.getTipoSoggettoProprietario(), portaApplicativaSelezionata.getNomeSoggettoProprietario()));
 					ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
+					
+					// clona e modifica connettore
 					ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
 					sa.setNome(portaApplicativa.getNome());
 					if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {
@@ -1697,21 +1750,112 @@ public class AccordiServizioParteSpecificaUtilities {
 					else {
 						sa.getInvocazioneServizio().setConnettore(connettorePDClonato);
 					}
+					sa.setTipo(null);
+					
+					listaOggettiDaCreare.add(sa);
+					
 					PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
 					paSa.setNome(sa.getNome());
 					portaApplicativa.getServizioApplicativoList().add(paSa);
-					listaOggettiDaCreare.add(sa);
+				}
+					
+				// controllo se ho ridefinito un connettore e il mapping clonato aveva un SA di tipo Server
+				if(portaApplicativaSelezionata.getServizioApplicativoDefault() != null) {
+					// 1. ho selezionato un server differente
+					if(StringUtils.isNotEmpty(nomeSAServer)) {
+						
+						PortaApplicativaServizioApplicativo paSAtmp = null;
+						for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativa.getServizioApplicativoList()) {
+							if(paSADefault.getNome().equals(portaApplicativa.getNome())) {
+								paSAtmp = paSADefault;
+								break;
+							}
+						}
+						if(paSAtmp!= null) {
+							portaApplicativa.getServizioApplicativoList().remove(paSAtmp); 	
+							portaApplicativa.setServizioApplicativoDefault(paSAtmp.getNome());
+						}
+						
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(nomeSAServer);
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+						
+					}else {
+						// 	oppure ho ridefinito un connettore non server
+						PortaApplicativaServizioApplicativo paSAtmp = null;
+						for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativa.getServizioApplicativoList()) {
+							if(paSADefault.getNome().equals(portaApplicativa.getNome())) {
+								paSAtmp = paSADefault;
+								break;
+							}
+						}
+						if(paSAtmp!= null) {
+							portaApplicativa.getServizioApplicativoList().remove(paSAtmp); 	
+						}
+						
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(portaApplicativa.getNome());
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+						portaApplicativa.setServizioApplicativoDefault(null);
+					}
+				}else {
+					if(StringUtils.isNotEmpty(nomeSAServer)) {
+						// aggiorno il default
+						PortaApplicativaServizioApplicativo paSAtmp = null;
+						for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativa.getServizioApplicativoList()) {
+							if(paSADefault.getNome().equals(portaApplicativa.getNome())) {
+								paSAtmp = paSADefault;
+								break;
+							}
+						}
+						
+						if(paSAtmp!= null) {
+							// SA di default da conservare
+							portaApplicativa.getServizioApplicativoList().remove(paSAtmp);
+							portaApplicativa.setServizioApplicativoDefault(paSAtmp.getNome());
+							
+							// nuovo SA da aggiungere
+							PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+							paSa.setNome(nomeSAServer);
+							portaApplicativa.getServizioApplicativoList().add(paSa);
+						}
+					}
 				}
 			}
 			else {
-				
-				// assegno sempre il connettore della pa di default in caso di eredita'
-				for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
-					PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
-					paSa.setNome(paSADefault.getNome());
-					portaApplicativa.getServizioApplicativoList().add(paSa);
+				// se ho clonato una porta applicativa multi connettore devo clonare tutti i conettori associati
+				if(portaApplicativaDaCopiare.getBehaviour() != null) {
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDaCopiare.getServizioApplicativoList()) {
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setDatiConnettore(paSADefault.getDatiConnettore());
+						paSa.setNome(paSADefault.getNome());
+						
+						IDServizioApplicativo idServizioApplicativoDefault = new IDServizioApplicativo();
+						idServizioApplicativoDefault.setNome(paSADefault.getNome());
+						idServizioApplicativoDefault.setIdSoggettoProprietario(new IDSoggetto(portaApplicativaDaCopiare.getTipoSoggettoProprietario(), portaApplicativaDaCopiare.getNomeSoggettoProprietario()));
+						ServizioApplicativo saDefault = saCore.getServizioApplicativo(idServizioApplicativoDefault);
+						if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(saDefault.getTipo())) {
+							ServizioApplicativo sa = (ServizioApplicativo) saDefault.clone();
+							sa.setNome(portaApplicativa.getNome());
+							if(!apsHelper.isConnettoreDefault(paSa)) {
+								String nuovoNomeSA = portaApplicativa.getNome() + PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_SAX_PREFIX + 
+										apsHelper.getIdxNuovoConnettoreMultiplo(portaApplicativa);
+								sa.setNome(nuovoNomeSA);
+							} 
+							paSa.setNome(sa.getNome());
+							
+							listaOggettiDaCreare.add(sa);
+						} 
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+					}
+				} else {
+					// assegno sempre il connettore della pa di default in caso di eredita'
+					for (PortaApplicativaServizioApplicativo paSADefault : portaApplicativaDefault.getServizioApplicativoList()) {
+						PortaApplicativaServizioApplicativo paSa = new PortaApplicativaServizioApplicativo();
+						paSa.setNome(paSADefault.getNome());
+						portaApplicativa.getServizioApplicativoList().add(paSa);
+					}
 				}
-				
 			}
 		}
 		

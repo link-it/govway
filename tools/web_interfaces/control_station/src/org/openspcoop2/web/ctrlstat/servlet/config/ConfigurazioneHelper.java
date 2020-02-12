@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.commons.Liste;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.commons.SearchUtils;
 import org.openspcoop2.core.config.AccessoRegistro;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
@@ -281,7 +282,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		DataElement de = new DataElement();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_STATO_CACHE);
 		de.setName(nomeParametroStatoCache);
-		if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
+		if(view && 
+				!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione) &&
+				!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 			de.setType(DataElementType.SELECT);
 			de.setValues(tipoStatoCache);
 			de.setSelected(statocache);
@@ -340,7 +343,9 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			if(value>0){
 				de.setValue(value+"");
 			}
-			if(view && !ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione)){
+			if(view && 
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_RISPOSTE.equals(intestazioneSezione) &&
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
 				//de.setRequired(true);
 			}
@@ -354,7 +359,8 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_IDLE_CACHE);
 			de.setValue(idlecache);
-			if(view){
+			if(view &&
+					!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI.equals(intestazioneSezione)){
 				de.setType(DataElementType.TEXT_EDIT);
 				if(!ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_CACHE_KEYSTORE.equals(intestazioneSezione)){
 					de.setNote(ConfigurazioneCostanti.LABEL_CACHE_SECONDS_NOTE);
@@ -2258,6 +2264,10 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				return false;
 			}
 			
+			if(this.datiGestoreConsegnaApplicativiCheckDataCache()==false){
+				return false;
+			}
+			
 			// validazione URL Invocazione
 			if(!this.checkDataURLInvocazione()) {
 				return false;
@@ -2376,6 +2386,24 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			}
 			
 			return true;
+
+		} catch (Exception e) {
+			this.log.error("Exception: " + e.getMessage(), e);
+			throw new Exception(e);
+		}
+	}
+	
+	public boolean datiGestoreConsegnaApplicativiCheckDataCache() throws Exception {
+
+		try{
+
+			String statocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_STATO_CACHE_KEYSTORE);
+			String dimensionecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_KEYSTORE);
+			String algoritmocache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_KEYSTORE);
+			String idlecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_KEYSTORE);
+			String lifecache = this.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_KEYSTORE);
+
+			return checkDatiCache(CostantiPdD.JMX_LOAD_BALANCER, statocache, dimensionecache, algoritmocache, idlecache, lifecache);
 
 		} catch (Exception e) {
 			this.log.error("Exception: " + e.getMessage(), e);
@@ -3903,7 +3931,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setType(DataElementType.SELECT);
 		de.setValues(tipoDump);
 		de.setSelected(dumpApplicativo);
-		de.setPostBack(true);
+		de.setPostBack_viaPOST(true);
 		dati.addElement(de);
 		
 		if(dumpApplicativo.equals(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO)) {
@@ -5782,6 +5810,56 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		de.setRows(6);
 		de.setCols(80);
 		dati.addElement(de);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_THREADS);
+		de.setType(DataElementType.TITLE);
+		dati.addElement(de);
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA);
+		de.setType(DataElementType.SUBTITLE);
+		dati.addElement(de);
+		
+		stato = null;
+		try{
+			stato = this.confCore.invokeJMXMethod(gestoreRisorseJMX, alias,this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+					this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
+			if(this.isErroreHttp(stato, "stato del thread pool per la consegna agli applicativi")){
+				// e' un errore
+				stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+			}
+		}catch(Exception e){
+			this.log.error("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+			stato = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
+		de = newDataElementStyleRuntime();
+		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_STATO);
+		if(stato!=null){
+			stato = StringEscapeUtils.escapeHtml(stato);
+		}
+		de.setValue(stato);
+		de.setLabelAffiancata(false);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI);
+		de.setSize(this.getSize());
+		de.setRows(6);
+		de.setCols(80);
+		dati.addElement(de);
+		
+		
+		
 		
 
 		return dati;
@@ -13311,6 +13389,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					}
 					else {
 						de.setValues(TipoFiltroApplicativo.toStringArray());
+						de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
 						de.setSelected(policy.getFiltro().getInformazioneApplicativaTipo());
 						de.setType(DataElementType.SELECT);
 						de.setPostBack_viaPOST(true);
@@ -13754,6 +13833,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
 					de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO);
 					de.setValues(TipoFiltroApplicativo.toStringArray());
+					de.setLabels(ConfigurazioneCostanti.LABEL_RATE_LIMITING_FILTRO_APPLICATIVO);
 					de.setSelected(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setValue(policy.getGroupBy().getInformazioneApplicativaTipo());
 					de.setType(DataElementType.SELECT);
@@ -13810,20 +13890,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		switch (tipo) {
 		case HEADER_BASED:
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		case FORM_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME;
+			return ModalitaIdentificazione.FORM_BASED.getLabelParametro();
 		case CONTENT_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH;
+			return ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 		case URLBASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
+			return ModalitaIdentificazione.URL_BASED.getLabelParametro();
 		case SOAPACTION_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION;
+			return ModalitaIdentificazione.SOAP_ACTION_BASED.getLabelParametro();
 		case INDIRIZZO_IP:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP;
+			return ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabelParametro();
 		case INDIRIZZO_IP_FORWARDED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
+			return ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabelParametro();
 		case PLUGIN_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM;
+			return ModalitaIdentificazione.PLUGIN_BASED.getLabelParametro();
 		}
 		return null;
 	}
@@ -13835,20 +13916,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		switch (tipo) {
 		case HEADER_BASED:
+			return ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
 		case FORM_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_NOME;
+			return ModalitaIdentificazione.FORM_BASED.getLabelParametro();
 		case CONTENT_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_XPATH;
+			return ModalitaIdentificazione.CONTENT_BASED.getLabelParametro();
 		case URLBASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE;
+			return ModalitaIdentificazione.URL_BASED.getLabelParametro();
 		case SOAPACTION_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_SOAP_ACTION;
+			return ModalitaIdentificazione.SOAP_ACTION_BASED.getLabelParametro();
 		case INDIRIZZO_IP:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP;
+			return ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabelParametro();
 		case INDIRIZZO_IP_FORWARDED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED;
+			return ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabelParametro();
 		case PLUGIN_BASED:
-			return ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_CUSTOM;
+			return ModalitaIdentificazione.PLUGIN_BASED.getLabelParametro();
 		}
 		return null;
 	}
@@ -14202,31 +14284,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO+": "+filtro.getInformazioneApplicativaTipo());
 				
 				bf.append("<br/>");
-				TipoFiltroApplicativo tipoFiltroApplicativo = TipoFiltroApplicativo.toEnumConstant(filtro.getInformazioneApplicativaTipo(), true);
-				switch (tipoFiltroApplicativo) {
-				case HEADER_BASED:
-				case FORM_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case URLBASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case CONTENT_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case SOAPACTION_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case INDIRIZZO_IP:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case INDIRIZZO_IP_FORWARDED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				case PLUGIN_BASED:
-					bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM+": "+filtro.getInformazioneApplicativaNome());
-					break;
-				}
+				bf.append(getLabelTipoInformazioneApplicativaFiltro(filtro.getInformazioneApplicativaTipo())).append(": ").append(filtro.getInformazioneApplicativaNome());
 				
 				bf.append("<br/>");
 				bf.append(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE+": "+filtro.getInformazioneApplicativaValore());

@@ -1,0 +1,106 @@
+<ui:composition template="/templates/defaultTemplate.xhtml" 
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+    xmlns:c="http://java.sun.com/jstl/core"
+    xmlns:link="http://www.link.it">
+    <f:loadBundle var="msg" basename="messages" />
+	<ui:define name="navbar">
+			<ul>
+				<li>
+					<a4j:htmlCommandLink action="transazioniStart" value="#{msg['menu.monitoraggio.storico']}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16" rendered="#{searchFormTransazioni.periodo != 'Live'}"/></li>
+				<li>
+					<a4j:htmlCommandLink action="transazioniList" value="#{searchFormTransazioni.tipoStoricoLabel}" rendered="#{searchFormTransazioni.periodo != 'Live'}"/>
+					<a4j:htmlCommandLink action="transazioniList" value="Visualizza Transazioni (Live)" rendered="#{searchFormTransazioni.periodo eq 'Live'}">
+						<f:setPropertyActionListener value="#{true}" target="#{searchFormTransazioni.sessioneLiveValida}" />
+					</a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li>
+					<a4j:htmlCommandLink id="dettagliTransazione" action="dettagliMessaggio" value="Dettagli Transazione">
+						<f:setPropertyActionListener value="#{dettagliBean.idEgov}" target="#{dettagliBean.idEgov}"/>
+						<f:setPropertyActionListener value="#{dettagliBean.identificativoPorta}" target="#{dettagliBean.identificativoPorta}"/>
+						<f:setPropertyActionListener value="#{dettagliBean.isRisposta}" target="#{dettagliBean.isRisposta}"/>
+						<f:setPropertyActionListener value="#{dettagliBean.selectedTab}" target="#{dettagliBean.selectedTab}"/>
+					</a4j:htmlCommandLink>
+				</li>
+				<li><h:graphicImage value="/images/tema_link/next_white.png" width="16" height="16"/></li>
+				<li><h:outputText styleClass="ultimo-path" id="dettaglio" value="Dettagli Transazione Applicativo Server" /></li>
+			</ul>
+	</ui:define>
+	
+	<ui:define name="body">
+		<a4j:loadScript src="resource://jquery.js"/>
+		<script type="text/javascript">
+			 jQuery(document).ready(function() {
+				checkBrowser();
+			 });
+		</script>
+		<a4j:keepAlive beanName="dettagliBean" />
+		<a4j:keepAlive beanName="dettagliTransazioneApplicativoServerBean" />
+		
+		<rich:panel id="panelDettaglioTransazioneApplicativoServer" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio}">
+			<f:facet name="header">
+				<h:outputText id="outDettagli" value="Dettagli Transazione Applicativo Server" />
+			</f:facet>
+			<rich:tabPanel switchType="ajax" selectedTab="#{dettagliTransazioneApplicativoServerBean.selectedTab}">
+				<rich:tab name="infoGenerali">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabInfoGen" value="Informazioni Generali" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerInformazioniGenerali.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="consegnaTrasparente" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.consegnaTrasparente}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabConsTrasp" value="Informazioni Consegna" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerConsegnaTrasparente.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="consegnaTrasparenteUltimoErrore" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaTabUltimaConsegnaErrore}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabConsTraspUltimoErrore" value="Informazioni Ultima Consegna in Errore" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerUltimaConsegnaErrore.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="consegnaTrasparenteMessaggiDiagnostici" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.consegnaTrasparente}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabConsTraspDiag" value="Diagnostici Consegna" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerMessaggiDiagnostici.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="consegnaTrasparenteContenutiConsegna" 
+				    rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.consegnaTrasparente and dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 1}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabConsTraspContenutiConsegna" value="Contenuti Consegna" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerContenutiConsegna.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="informazioniIM" 
+				    rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.consegnaIntegrationManager}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabConsIM" value="Informazioni Integration Manager" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerInformazioniIM.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+			    <rich:tab name="informazioniAvanzate" rendered="#{true}">
+					<f:facet name="label">
+						<h:outputText id="outTitleTabAvanzate" value="Informazioni Avanzate" />
+				    </f:facet>
+				    <ui:include src="/transazioni/includes/dettaglioTransazioneApplicativoServerInformazioniAvanzate.xhtml" >
+				    </ui:include>
+			    </rich:tab>
+		    </rich:tabPanel>
+		 </rich:panel>
+	</ui:define>
+</ui:composition>

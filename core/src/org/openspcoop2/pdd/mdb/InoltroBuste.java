@@ -54,6 +54,7 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
@@ -164,6 +165,7 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -1906,7 +1908,8 @@ public class InoltroBuste extends GenericLib{
 			java.sql.Timestamp dataRiconsegna = null;
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
-			SOAPFault fault = null;
+			SOAPFault soapFault = null;
+			ProblemRFC7807 restProblem = null;
 			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
@@ -2036,6 +2039,9 @@ public class InoltroBuste extends GenericLib{
 				}
 				if(idAccordoServizio!=null){
 					protocolContext.setIdAccordo(idAccordoServizio);
+				}
+				else if(idServizio!=null && idServizio.getUriAccordoServizioParteComune()!=null){
+					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordoServizioParteComune()));
 				}
 				if(bustaRichiesta!=null){
 					protocolContext.setProfiloCollaborazione(bustaRichiesta.getProfiloDiCollaborazione(),bustaRichiesta.getProfiloDiCollaborazioneValue());
@@ -2313,7 +2319,8 @@ public class InoltroBuste extends GenericLib{
 						}
 					}
 					// raccolta risultati del connettore
-					fault = gestoreErrore.getFault();
+					soapFault = gestoreErrore.getFault();
+					restProblem = gestoreErrore.getProblem();
 					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
 					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
@@ -2447,7 +2454,9 @@ public class InoltroBuste extends GenericLib{
 					
 					// prima emetto diagnostico di fine connettore
 					StringBuilder bfMsgErroreSituazioneAnomale = new StringBuilder();
-					EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
+					EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, 
+							soapFault, restProblem, 
+							traduttore, msgDiag, motivoErroreConsegna, 
 							responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 							functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
 					if(esitoTraccia!=null) {
@@ -2740,7 +2749,9 @@ public class InoltroBuste extends GenericLib{
 			if(invokerNonSupportato==false){// && errorConsegna==false){
 
 				StringBuilder bfMsgErroreSituazioneAnomale = new StringBuilder();
-				EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, fault, traduttore, msgDiag, motivoErroreConsegna, 
+				EsitoElaborazioneMessaggioTracciato esitoTraccia = gestioneTracciamentoFineConnettore(errorConsegna, 
+						soapFault, restProblem,
+						traduttore, msgDiag, motivoErroreConsegna, 
 						responseMessage, isBlockedTransaction_responseMessageWithTransportCodeError,
 						functionAsRouter, sendRispostaApplicativa, bfMsgErroreSituazioneAnomale);
 				if(esitoTraccia!=null) {
@@ -3346,9 +3357,14 @@ public class InoltroBuste extends GenericLib{
 					}
 				}else{
 					//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
-					if( fault!=null && faultLogged==false ){
-						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
+					if( soapFault!=null && faultLogged==false ){
+						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
 						msgDiag.logPersonalizzato("ricezioneSoapFault");
+						faultLogged = true;
+					}
+					else if( restProblem!=null && faultLogged==false ){
+						msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+						msgDiag.logPersonalizzato("ricezioneRestProblem");
 						faultLogged = true;
 					}
 					if(sendRispostaApplicativa){
@@ -3982,7 +3998,7 @@ public class InoltroBuste extends GenericLib{
 
 					// Aggiungo ErroreApplicativo come details se non sono router.
 					if(functionAsRouter==false){
-						if(fault!=null){
+						if(soapFault!=null){
 							if (!isMessaggioErroreProtocollo) {
 								if(enrichSoapFaultApplicativo){
 									this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(responseMessage.getMessageType()).
@@ -4139,9 +4155,14 @@ public class InoltroBuste extends GenericLib{
 
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			//	Effettuo log dell'eventuale fault (registro anche i fault spcoop, potrebbero contenere dei details aggiunti da una PdD.)
-			if( fault!=null && faultLogged==false ){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
+			if( soapFault!=null && faultLogged==false ){
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
+				faultLogged = true;
+			}
+			else if( restProblem!=null && faultLogged==false ){
+				msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+				msgDiag.logPersonalizzato("ricezioneRestProblem");
 				faultLogged = true;
 			}
 
@@ -4651,8 +4672,8 @@ public class InoltroBuste extends GenericLib{
 				if(functionAsRouter){
 					msgDiag.mediumDebug("Gestione punto 4 (SoapFault senza una busta associata) [router] ...");
 
-					if(fault!=null){
-						if(enrichSoapFaultPdD){
+					if(soapFault!=null || restProblem!=null){
+						if(soapFault!=null && enrichSoapFaultPdD){
 							this.generatoreErrore.getErroreApplicativoBuilderForAddDetailInSoapFault(responseMessage.getMessageType()).
 								insertRoutingErrorInSOAPFault(identitaPdD,InoltroBuste.ID_MODULO,
 									msgDiag.getMessaggio_replaceKeywords("ricezioneSoapFault"), responseMessage);
@@ -4698,7 +4719,7 @@ public class InoltroBuste extends GenericLib{
 						msgResponse.deleteMessageFromFileSystem(); // elimino eventuale risposta salvata su fileSystem
 					}
 					boolean fineGestione = true;
-					if(fault==null){
+					if(soapFault==null && restProblem==null){
 						
 						if(Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(richiestaDelegata.getScenario())){
 							// Altrimenti entro qua per via del sendRispostaApplicativa=true a caso del oneway stateless
@@ -4899,7 +4920,9 @@ public class InoltroBuste extends GenericLib{
 		}
 	}
 	
-	private EsitoElaborazioneMessaggioTracciato gestioneTracciamentoFineConnettore(boolean errorConsegna, SOAPFault fault, org.openspcoop2.protocol.sdk.config.ITraduttore traduttore,
+	private EsitoElaborazioneMessaggioTracciato gestioneTracciamentoFineConnettore(boolean errorConsegna, 
+			SOAPFault soapfault, ProblemRFC7807 restProblem,
+			org.openspcoop2.protocol.sdk.config.ITraduttore traduttore,
 			MsgDiagnostico msgDiag, String motivoErroreConsegna, OpenSPCoop2Message responseMessage,
 			boolean isBlockedTransaction_responseMessageWithTransportCodeError,
 			boolean functionAsRouter, boolean sendRispostaApplicativa,
@@ -4919,9 +4942,9 @@ public class InoltroBuste extends GenericLib{
 		if(errorConsegna){
 			// Una busta contiene per forza di cose un SOAPFault
 			// Una busta la si riconosce dal motivo di errore.
-			if(fault!=null && fault.getFaultString()!=null && 
-					(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE)) || fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO)))){
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
+			if(soapfault!=null && soapfault.getFaultString()!=null && 
+					(soapfault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE)) || soapfault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO)))){
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, soapfault.getFaultString());
 				msgDiag.logPersonalizzato("inoltroConErrore");
 			}else{
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, motivoErroreConsegna);
@@ -4943,9 +4966,9 @@ public class InoltroBuste extends GenericLib{
 				}
 			}
 		}else{	
-			if(fault!=null && fault.getFaultString()!=null && 
-					(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
-				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, fault.getFaultString());
+			if(soapfault!=null && soapfault.getFaultString()!=null && 
+					(soapfault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
+				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_CONSEGNA, soapfault.getFaultString());
 				msgDiag.logPersonalizzato("inoltroConErrore");
 			}
 			else{
@@ -4960,14 +4983,14 @@ public class InoltroBuste extends GenericLib{
 		//       - messaggio protocollo con fault applicativo
 		//       - FaultServer
 		if( (errorConsegna==false) || (functionAsRouter) || (sendRispostaApplicativa) || 
-				( fault!=null) ){
+				( soapfault!=null) ){
 			msgDiag.mediumDebug("Tracciamento della richiesta...");
 			EsitoElaborazioneMessaggioTracciato esitoTraccia = null;
 			if(errorConsegna){
 				esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
 			}else{
-				if(fault!=null && fault.getFaultString()!=null && 
-						(fault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
+				if(soapfault!=null && soapfault.getFaultString()!=null && 
+						(soapfault.getFaultString().equals(traduttore.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE))) ){
 					esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneConErrore(msgDiag.getMessaggio_replaceKeywords("inoltroConErrore"));
 				}else{
 					esitoTraccia = EsitoElaborazioneMessaggioTracciato.getEsitoElaborazioneMessaggioInviato();

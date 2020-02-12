@@ -28,14 +28,18 @@ import java.util.Enumeration;
 import java.util.List;
 
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.GestoreCorrelazioneApplicativa;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
 import org.openspcoop2.pdd.core.JMSReceiver;
+import org.openspcoop2.pdd.core.MessaggioServizioApplicativo;
 import org.openspcoop2.pdd.core.connettori.IConnettore;
 import org.openspcoop2.pdd.core.connettori.RepositoryConnettori;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.logger.MsgDiagnostico;
 import org.openspcoop2.pdd.services.OpenSPCoop2Startup;
 import org.openspcoop2.pdd.services.core.RicezioneBuste;
@@ -396,6 +400,31 @@ public class TimerGestoreMessaggiLib  {
 									}
 								}
 
+								// aggiorno eventuali destinatari nella transazione prima di eliminare il messaggio
+								try {
+									List<MessaggioServizioApplicativo> listMsgServiziApplicativi = gestoreMsg.readInfoDestinatari(this.logQuery, this.logTimer);
+									if(listMsgServiziApplicativi!=null && !listMsgServiziApplicativi.isEmpty()) {
+										
+										for (MessaggioServizioApplicativo messaggioServizioApplicativo : listMsgServiziApplicativi) {
+											TransazioneApplicativoServer transazioneApplicativoServer = new TransazioneApplicativoServer();
+											transazioneApplicativoServer.setIdTransazione(messaggioServizioApplicativo.getIdTransazione());
+											transazioneApplicativoServer.setServizioApplicativoErogatore(messaggioServizioApplicativo.getServizioApplicativo());
+											transazioneApplicativoServer.setDataMessaggioScaduto(DateManager.getDate());
+											transazioneApplicativoServer.setProtocollo(this.propertiesReader.getDefaultProtocolName()); // non è importante per impostare la scadenza
+											IDPortaApplicativa idPA = new IDPortaApplicativa();
+											idPA.setNome(messaggioServizioApplicativo.getNomePorta());
+											try {
+												GestoreConsegnaMultipla.getInstance().safeUpdateMessaggioScaduto(transazioneApplicativoServer, idPA);
+											}catch(Throwable t) {
+												this.logTimer.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+											}
+										}
+									}
+								}catch(Throwable t) {
+									this.logTimer.error("Errore durante l'aggiornamento dello stato degli applicativi nelle transazioni: "+t.getMessage(),t);
+								}
+								
+								// Eliminazione effettiva
 								((StateMessage)openspcoopstate.getStatoRichiesta()).executePreparedStatement();
 								//	eliminazione messaggio
 								gestoreMsg.deleteMessageWithoutLock();

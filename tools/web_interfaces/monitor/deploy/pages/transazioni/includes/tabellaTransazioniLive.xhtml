@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+	xmlns:c="http://java.sun.com/jstl/core">
+	<f:loadBundle var="msg" basename="messages" />
+	
+	
+	<script type="text/javascript">
+	//<![CDATA[
+		visualizzaMessaggioNoData('dtTblLive', 'dtTblLive');
+		
+	   function checkCountNumeroRisultati(tid){
+			return jQuery("table [id$='"+tid+"'] tbody[id$='tb']").children().length > 0;
+		};
+	
+		function visualizzaMessaggioNoData(containerId, tid){
+			var risultatiPresenti = checkCountNumeroRisultati(tid);
+			if(!risultatiPresenti) {
+				jQuery("table [id$='"+tid+"']").hide();
+				jQuery("div [id$='"+containerId+"_nodata']").show();
+			} else {
+				jQuery("table [id$='"+tid+"']").show();
+				jQuery("div [id$='"+containerId+"_nodata']").hide();
+			}
+		};
+	   
+	 //]]>	
+	</script>
+	
+	<a4j:outputPanel id="dtTblLive_nodata" layout="block" style="display: none;" styleClass="tableNoData">
+		<a4j:outputPanel layout="block" styleClass="buttonrow">
+			<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
+		</a4j:outputPanel>
+	</a4j:outputPanel>
+	<rich:dataTable id="dtTblLive" rowClasses="even,odd" value="#{value}" var="item" width="100%" >
+		<rich:column id="colEsitoImg" style="text-align: center;">
+			<script type="text/javascript">
+				//<![CDATA[
+				   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+				   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+				   
+				   jQuery("th[id$='colRuoloTransazioneImgheader']").css('padding','8px');
+				   jQuery("th[id$='colRuoloTransazioneImgheader']").css('width','16px');
+				 //]]>	
+			</script>
+			<f:facet name="header">
+				<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
+			</f:facet>
+			<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.esitoOk}">
+				<rich:toolTip for="outEsitoImgOk">
+					<h:outputText value="#{item.esitoLabel}" />
+				</rich:toolTip>
+			</h:graphicImage>
+			<h:graphicImage id="outEsitoImgFaultApplicativo" value="/images/tema_link/alert_yellow.png" rendered="#{item.esitoFaultApplicativo}">
+				<rich:toolTip for="outEsitoImgFaultApplicativo">
+					<h:outputText value="#{item.esitoLabel}" />
+				</rich:toolTip>
+			</h:graphicImage>
+			<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.esitoKo}">
+				<rich:toolTip for="outEsitoImgKo">
+					<h:outputText value="#{item.esitoLabel}" />
+				</rich:toolTip>
+			</h:graphicImage>
+			<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{!item.esitoOk and !item.esitoFaultApplicativo and !item.esitoKo}"/>
+		</rich:column>
+		<rich:column id="colRuoloTransazioneImg" sortable="false" label="Ruolo Transazione (Immagine)" style="text-align: center;">
+			<f:facet name="header">
+				<i class="material-icons md-24">swap_horiz</i>
+			</f:facet>
+			<a4j:outputPanel id="imgRuoloTransazione">
+				<i class="material-icons md-16">#{item.pddRuoloImage}</i>
+			</a4j:outputPanel>
+			<rich:toolTip for="imgRuoloTransazione" value="#{item.pddRuoloToolTip}" />
+		</rich:column>
+		<rich:column id="colDataRichLive">
+			<f:facet name="header">
+				<h:outputText id="outDataRichLive1" value="Data Richiesta" />
+			</f:facet>
+			<a4j:htmlCommandLink id="details-iconLink" styleClass="icon-details" action="dettagliMessaggio">
+				<f:setPropertyActionListener value="#{item.idMessaggioRichiesta}" target="#{targetBean.idEgov}"/>
+				<f:setPropertyActionListener value="#{item.idTransazione}" target="#{targetBean.idTransazione}"/>
+				<f:setPropertyActionListener value="#{item.pddCodice}" target="#{targetBean.identificativoPorta}"/>
+				<h:outputText id="outDataRichLive2" value="#{item.dataIngressoRichiesta}">
+					<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss"
+						timeZone="Europe/Rome" />
+				</h:outputText>
+				<f:setPropertyActionListener value="infoGenerali" target="#{targetBean.selectedTab}"/>
+			</a4j:htmlCommandLink>
+		</rich:column>
+		<rich:column id="colProtocollo" rendered="#{searchFormTransazioni.showListaProtocolli}">
+			<f:facet name="header">
+				<h:outputText id="outProtocollo1" value="#{applicationBean.labelProfiloCompact}" />
+			</f:facet>
+			<h:outputText id="outProtocollo2" value="#{item.protocolloLabel}" />
+			<rich:toolTip for="outProtocollo2" value="#{item.protocolloLabel}" />
+		</rich:column>
+		<rich:column id="colServLive">
+			<f:facet name="header">
+				<h:outputText id="outServLive1" value="#{msg['commons.servizio.label']}" />
+			</f:facet>
+			<h:outputText id="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+			<rich:toolTip for="outServLive2" value="#{item.labelAPIConErogatore}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+			<h:outputText id="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+			<rich:toolTip for="outServLive3" value="[IM] #{item.servizioApplicativoErogatore}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+		</rich:column>
+		<rich:column id="colAzioneLive">
+			<f:facet name="header">
+				<h:outputText id="outAzioneLive1" value="Operazione" />
+			</f:facet>
+			<h:outputText id="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+			<rich:toolTip for="outAzioneLive2" value="#{item.labelOperazioneConGestioneNonPresenza}" rendered="#{item.pddRuolo!='INTEGRATION_MANAGER'}"/>
+			<h:outputText id="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+			<rich:toolTip for="outAzioneLive3" value="[IM] #{item.operazioneIm}" rendered="#{item.pddRuolo=='INTEGRATION_MANAGER'}"/>
+		</rich:column>
+		<rich:column id="colFruitoreLive">
+			<f:facet name="header">
+				<h:outputText id="outFruitoreLive1" value="Mittente" />
+			</f:facet>
+			<h:outputText id="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+			<rich:toolTip for="outServizioApplicativoFruitore" value="#{item.labelRichiedenteConFruitore}" rendered="#{not empty item.labelRichiedenteConFruitore}"/>
+			<h:graphicImage id="outServizioApplicativoFruitoreAnonimo" value="/images/tema_link/anonymous.png" rendered="#{empty item.labelRichiedenteConFruitore}">
+				<rich:toolTip for="outServizioApplicativoFruitoreAnonimo">
+					<h:outputText value="Richiesta Anonima" />
+				</rich:toolTip>
+			</h:graphicImage>
+		</rich:column>
+		<rich:column id="colEsitoLive">
+			<f:facet name="header">
+				<h:outputText id="outEsitoLive1" value="Esito" />
+			</f:facet>
+			<h:outputText id="outEsitoLive2" value="#{item.esitoLabelSyntetic}" />
+			<rich:toolTip for="outEsitoLive2">
+				<h:outputText value="#{item.esitoLabelDescription}" />
+			</rich:toolTip>
+		</rich:column>
+	</rich:dataTable>
+</ui:composition>

@@ -29,9 +29,9 @@ import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
+import org.openspcoop2.utils.rest.problem.ProblemConstants;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.rest.problem.XmlDeserializer;
-import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
 import org.testng.Assert;
 import org.testng.Reporter;
@@ -198,7 +198,7 @@ public class ProblemUtilities {
 			Assert.assertTrue(problemNode!=null);
 			xml = XMLUtils.DEFAULT.toString(problemNode);
 			Reporter.log("Namespace Problem ("+problemNode.getNamespaceURI()+"): "+xml);
-			Assert.assertTrue(XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI()));
+			Assert.assertTrue(ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI()));
 			
 			XmlDeserializer deserializer = new XmlDeserializer();
 			ProblemRFC7807 problemRFC7807 = deserializer.fromNode(problemNode);

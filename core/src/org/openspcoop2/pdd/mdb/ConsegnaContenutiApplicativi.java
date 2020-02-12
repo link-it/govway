@@ -56,6 +56,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
@@ -89,6 +90,7 @@ import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativi;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiException;
 import org.openspcoop2.pdd.core.ValidatoreMessaggiApplicativiRest;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToConfiguration;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoadBalancer;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBase;
 import org.openspcoop2.pdd.core.connettori.ConnettoreBaseHTTP;
 import org.openspcoop2.pdd.core.connettori.ConnettoreMsg;
@@ -111,6 +113,7 @@ import org.openspcoop2.pdd.core.state.OpenSPCoopStateException;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateful;
 import org.openspcoop2.pdd.core.state.OpenSPCoopStateless;
 import org.openspcoop2.pdd.core.token.TokenForward;
+import org.openspcoop2.pdd.core.transazioni.GestoreConsegnaMultipla;
 import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.core.trasformazioni.GestoreTrasformazioni;
@@ -145,6 +148,8 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.problem.ProblemConstants;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
@@ -297,12 +302,111 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 	public EsitoLib _onMessage(IOpenSPCoopState openspcoopstate,
 			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
 			MsgDiagnostico msgDiag) throws OpenSPCoopStateException {
+		
+		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
+		IDPortaApplicativa idApplicativa = null;
+		if(consegnaContenutiApplicativiMsg.getRichiestaApplicativa()!=null) {
+			idApplicativa = consegnaContenutiApplicativiMsg.getRichiestaApplicativa().getIdPortaApplicativa();
+		}
+		
+		// Costruisco eventuale oggetto TransazioneServerApplicativo
+		TransazioneApplicativoServer transazioneApplicativoServer = null;
+		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
+		if(behaviourConsegna!=null && behaviourConsegna.getIdTransazioneApplicativoServer()!=null) {
+			transazioneApplicativoServer = new TransazioneApplicativoServer();
+			transazioneApplicativoServer.setIdTransazione(behaviourConsegna.getIdTransazioneApplicativoServer().getIdTransazione());
+			transazioneApplicativoServer.setServizioApplicativoErogatore(behaviourConsegna.getIdTransazioneApplicativoServer().getServizioApplicativoErogatore());
+			transazioneApplicativoServer.setConnettoreNome(behaviourConsegna.getIdTransazioneApplicativoServer().getConnettoreNome());
+			transazioneApplicativoServer.setDataRegistrazione(DateManager.getDate());
+			String protocol = (String) consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME);
+			transazioneApplicativoServer.setProtocollo(protocol);
+			transazioneApplicativoServer.setDataAccettazioneRichiesta(DateManager.getDate());
+			transazioneApplicativoServer.setIdentificativoMessaggio(consegnaContenutiApplicativiMsg.getBusta().getID());
+			
+			msgDiag.setTransazioneApplicativoServer(transazioneApplicativoServer, idApplicativa);
+		}
+		BehaviourLoadBalancer loadBalancer = null;
+		if(consegnaContenutiApplicativiMsg!=null && consegnaContenutiApplicativiMsg.getLoadBalancer()!=null) {
+			loadBalancer = consegnaContenutiApplicativiMsg.getLoadBalancer();
+		}
+		
+		EsitoLib esitoLib = null;
+		try {
+			if(loadBalancer!=null) {
+				try {
+					loadBalancer.getLoadBalancerPool().addActiveConnection(loadBalancer.getConnectorName());
+				}catch(Throwable t) {
+					String prefix = "";
+					if(transazioneApplicativoServer!=null) {
+						prefix = "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] " ;
+					}
+					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
+				}
+			}
+			esitoLib = this.engine_onMessage(openspcoopstate, registroServiziManager, configurazionePdDManager, msgDiag, transazioneApplicativoServer);
+		}finally {
+			if(loadBalancer!=null) {
+				try {
+					loadBalancer.getLoadBalancerPool().removeActiveConnection(loadBalancer.getConnectorName());
+				}catch(Throwable t) {
+					String prefix = "";
+					if(transazioneApplicativoServer!=null) {
+						prefix = "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] " ;
+					}
+					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
+				}
+			}
+		}
+				
+		if(transazioneApplicativoServer!=null) {
+			
+			if(EsitoLib.OK != esitoLib.getStatoInvocazione()) {
+				if(esitoLib.getMotivazioneErroreNonGestito()!=null && !"".equals(esitoLib.getMotivazioneErroreNonGestito())) {
+					transazioneApplicativoServer.setUltimoErrore(esitoLib.getMotivazioneErroreNonGestito());
+				}
+				else if(esitoLib.getErroreNonGestito()!=null) {
+					Throwable e = Utilities.getInnerNotEmptyMessageException(esitoLib.getErroreNonGestito());
+					if(e!=null) {
+						transazioneApplicativoServer.setUltimoErrore(e.getMessage());
+					}
+					else {
+						transazioneApplicativoServer.setUltimoErrore(esitoLib.getErroreNonGestito().toString());
+					}
+				}
+				else {
+					transazioneApplicativoServer.setUltimoErrore("Errore Generico durante il processamento del messaggio");
+				}
+			}
+			
+			try {
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa);
+			}catch(Throwable t) {
+				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
+			}
+		}
+		
+		return esitoLib;
+	}
+	
+	private EsitoLib engine_onMessage(IOpenSPCoopState openspcoopstate,
+			RegistroServiziManager registroServiziManager,ConfigurazionePdDManager configurazionePdDManager, 
+			MsgDiagnostico msgDiag,
+			TransazioneApplicativoServer transazioneApplicativoServer) throws OpenSPCoopStateException {
 
-
+		Date dataConsegna = DateManager.getDate();
+		
 		EsitoLib esito = new EsitoLib();
 		ConsegnaContenutiApplicativiMessage consegnaContenutiApplicativiMsg = (ConsegnaContenutiApplicativiMessage) openspcoopstate.getMessageLib();
 		
-		String idMessaggioPreBehaviour = consegnaContenutiApplicativiMsg.getIdMessaggioPreBehaviour();
+		ConsegnaContenutiApplicativiBehaviourMessage behaviourConsegna = consegnaContenutiApplicativiMsg.getBehaviour();
+		String idMessaggioPreBehaviour = null;
+		BehaviourForwardToConfiguration behaviourForwardToConfiguration = null;
+		GestioneErrore gestioneErroreBehaviour = null;
+		if(behaviourConsegna!=null) {
+			idMessaggioPreBehaviour = behaviourConsegna.getIdMessaggioPreBehaviour();
+			behaviourForwardToConfiguration = behaviourConsegna.getBehaviourForwardToConfiguration();
+			gestioneErroreBehaviour = behaviourConsegna.getGestioneErrore();
+		}
 		
 		/* PddContext */
 		PdDContext pddContext = consegnaContenutiApplicativiMsg.getPddContext();
@@ -1006,6 +1110,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		ConnettoreMsg connettoreMsg = null;
 		boolean consegnaPerRiferimento = false;
 		boolean rispostaPerRiferimento = false;
+		boolean integrationManager = false;
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
 		if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
 				Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
@@ -1018,6 +1123,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
@@ -1041,6 +1148,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.consegnaRispostaAsincronaConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo) [AsincronoAsimmetricoPolling]...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaPerRiferimento) [AsincronoAsimmetricoPolling]...");
@@ -1061,6 +1170,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(connettoreMsg!=null){
 					connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
 				}
+				msgDiag.mediumDebug("Inizializzo contesto per la gestione (consegnaRispostaAsincronaConGetMessage) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+				integrationManager = configurazionePdDManager.invocazioneServizioConGetMessage(sa);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (getTipoValidazioneContenutoApplicativo)...");
 				validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pa,implementazionePdDMittente);
 				msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
@@ -1088,6 +1199,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		connettoreMsg.setGestioneManifest(gestioneManifest);
 		connettoreMsg.setProprietaManifestAttachments(proprietaManifestAttachments);
 		connettoreMsg.setLocalForward(localForward);
+		if(transazioneApplicativoServer!=null) {
+			transazioneApplicativoServer.setConsegnaIntegrationManager(integrationManager);
+			connettoreMsg.setTransazioneApplicativoServer(transazioneApplicativoServer);
+			connettoreMsg.setIdPortaApplicativa(idPA);
+			connettoreMsg.setDataConsegnaTransazioneApplicativoServer(dataConsegna);
+		}
 
 		// Identificativo di una risposta.
 		String idMessageResponse = null;
@@ -1207,6 +1324,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		// Punto di inizio per la transazione.
 		IConnettore connectorSenderForDisconnect = null;
 		String location = "";
+		OpenSPCoop2Message consegnaMessageTrasformato = null;
 		try{	    
 
 
@@ -1412,7 +1530,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------ Trasformazione Richiesta  -------------- */
 			
 			GestoreTrasformazioni gestoreTrasformazioni = null;
-			OpenSPCoop2Message consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
+			consegnaMessageTrasformato = consegnaMessagePrimaTrasformazione;
 			if(trasformazioni!=null) {
 				try {
 					gestoreTrasformazioni = new GestoreTrasformazioni(this.log, msgDiag, idServizio, soggettoFruitore, servizioApplicativoFruitore, 
@@ -1532,7 +1650,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			java.sql.Timestamp dataRiconsegna = null;
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
-			SOAPFault fault = null;
+			SOAPFault soapFault = null;
+			ProblemRFC7807 restProblem = null;
 			OpenSPCoop2MessageFactory faultMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
@@ -1608,7 +1727,6 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 
 			// behaviourForwardToConfiguration
-			BehaviourForwardToConfiguration behaviourForwardToConfiguration = consegnaContenutiApplicativiMsg.getBehaviourForwardToConfiguration();
 			if(behaviourForwardToConfiguration!=null){
 				if(behaviourForwardToConfiguration.getSbustamentoInformazioniProtocollo()!=null){
 					if(org.openspcoop2.pdd.core.behaviour.StatoFunzionalita.ABILITATA.equals(behaviourForwardToConfiguration.getSbustamentoInformazioniProtocollo())){
@@ -1630,42 +1748,47 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			// GestioneErrore
 			GestioneErrore gestioneConsegnaConnettore = null;
-			if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
-					Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
-				try{
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
-				}
-
-
+			if(gestioneErroreBehaviour!=null) {
+				gestioneConsegnaConnettore = gestioneErroreBehaviour;
 			}
-			else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
-				try{
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
+			else {
+				if(Costanti.SCENARIO_CONSEGNA_CONTENUTI_APPLICATIVI.equals(scenarioCooperazione) ||
+						Costanti.SCENARIO_ASINCRONO_SIMMETRICO_CONSEGNA_RISPOSTA.equals(scenarioCooperazione) ){
+					try{
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [ConsegnaContenuti/AsincronoSimmetricoRisposta]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "ConsegnaAsincrona.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("[ConsegnaAsincrona] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
+	
+	
 				}
-			}else{
-				try{
-					gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
-					msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
-				}catch(Exception e){
-					msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
-					ejbUtils.rollbackMessage("Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
-					esito.setEsitoInvocazione(false); 
-					esito.setStatoInvocazioneErroreNonGestito(e);
-					return esito;
+				else if(Costanti.SCENARIO_ASINCRONO_ASIMMETRICO_POLLING.equals(scenarioCooperazione)){
+					try{
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (getGestioneErroreConnettore_RispostaAsincrona) [AsincronoAsimmetricoPolling]...");
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_RispostaAsincrona(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "AsincronoSimmetricoPolling.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("[AsincronoSimmetricoPolling] Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
+				}else{
+					try{
+						gestioneConsegnaConnettore = configurazionePdDManager.getGestioneErroreConnettore_InvocazioneServizio(protocolFactory, consegnaMessageTrasformato.getServiceBinding(), sa);
+						msgDiag.mediumDebug("Inizializzo contesto per la gestione (invocazioneServizioPerRiferimento)...");
+					}catch(Exception e){
+						msgDiag.logErroreGenerico(e, "InvocazioneServizio.getDatiConsegna(sa:"+servizioApplicativo+")");
+						ejbUtils.rollbackMessage("Connettore per consegna applicativa non definito:"+e.getMessage(),servizioApplicativo, esito);
+						esito.setEsitoInvocazione(false); 
+						esito.setStatoInvocazioneErroreNonGestito(e);
+						return esito;
+					}
 				}
 			}
 			if(gestioneConsegnaConnettore==null){
@@ -1703,6 +1826,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				// Informazioni messaggio
 				outRequestContext.setMessaggio(consegnaMessageTrasformato);
 				
+				// TransazioneApplicativoServer
+				outRequestContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
+				
 				// Contesto
 				ProtocolContext protocolContext = new ProtocolContext();
 				protocolContext.setIdRichiesta(idMessaggioConsegna);
@@ -1726,7 +1852,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				if(idAccordoServizio!=null){
 					protocolContext.setIdAccordo(idAccordoServizio);
 				}
-				else if(idServizio.getUriAccordoServizioParteComune()!=null){
+				else if(idServizio!=null && idServizio.getUriAccordoServizioParteComune()!=null){
 					protocolContext.setIdAccordo(IDAccordoFactory.getInstance().getIDAccordoFromUri(idServizio.getUriAccordoServizioParteComune()));
 				}
 				String profiloCollorazioneValue = null;
@@ -1865,6 +1991,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 					openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 					dumpConfig);
+			if(transazioneApplicativoServer!=null) {
+				dumpApplicativoRichiesta.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
+			}
 			dumpApplicativoRichiesta.dumpRichiestaUscita(consegnaMessageTrasformato, outRequestContext.getConnettore());
 
 			
@@ -1978,8 +2107,12 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE, errorConsegna);
 						}
 					}
+					if(transazioneApplicativoServer!=null) {
+						transazioneApplicativoServer.setConsegnaTerminata(!errorConsegna);
+					}
 					// raccolta risultati del connettore
-					fault = gestoreErrore.getFault();
+					soapFault = gestoreErrore.getFault();
+					restProblem = gestoreErrore.getProblem();
 					faultMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 					codiceRitornato = connectorSender.getCodiceTrasporto();
 					transportResponseContext = new TransportResponseContext(connectorSender.getHeaderTrasporto(), 
@@ -2082,6 +2215,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 								dumpConfig);
+						if(transazioneApplicativoServer!=null) {
+							dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
+						}
 						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
 						if(infoConnettoreUscita!=null){
 							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
@@ -2202,6 +2338,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					if(responseMessage!=null){
 						inResponseContext.setMessaggio(responseMessage);				
 					}
+					
+					// TransazioneApplicativoServer
+					inResponseContext.setTransazioneApplicativoServer(transazioneApplicativoServer);
 					
 					// Informazioni sulla consegna
 					inResponseContext.setErroreConsegna(motivoErroreConsegna);
@@ -2352,6 +2491,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 							openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 							dumpConfig);
+					if(transazioneApplicativoServer!=null) {
+						dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
+					}
 					dumpApplicativo.dumpRispostaIngresso(responseMessage, inResponseContext.getConnettore(), inResponseContext.getPropertiesRispostaTrasporto());
 				}
 				
@@ -2407,15 +2549,25 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			else if(errorConsegna){
 						
 				// Effettuo log dell'eventuale fault
-				if(fault!=null && 
+				if(soapFault!=null && 
 						( 
 						  (motivoErroreConsegna==null) ||
 						  (!motivoErroreConsegna.toLowerCase().contains("faultCode") && !motivoErroreConsegna.toLowerCase().contains("faultActor") && !motivoErroreConsegna.toLowerCase().contains("faultString"))
 					    ) 
 					){
 					// Se non l'ho gia indicato nel motivo di errore, registro il fault
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
+				}
+				else if(restProblem!=null && 
+						( 
+						  (motivoErroreConsegna==null) ||
+						  (!motivoErroreConsegna.toLowerCase().contains(ProblemConstants.CLAIM_TYPE))
+					    ) 
+					){
+					// Se non l'ho gia indicato nel motivo di errore, registro il fault
+					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+					msgDiag.logPersonalizzato("ricezioneRestProblem");
 				}
 				else{
 					
@@ -2578,9 +2730,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			msgDiag.mediumDebug("Registrazione eventuale fault...");
 			// Effettuo log del fault
-			if(fault!=null){
-				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, fault));
+			if(soapFault!=null){
+				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultMessageFactory, soapFault));
 				msgDiag.logPersonalizzato("ricezioneSoapFault");
+			}
+			else if(restProblem!=null){
+				// Se non l'ho gia indicato nel motivo di errore, registro il fault
+				msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblem.getRaw());
+				msgDiag.logPersonalizzato("ricezioneRestProblem");
 			}
 			
 			if(existsModuloInAttesaRispostaApplicativa){
@@ -2630,7 +2787,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 					if( returnProtocolReply == false){
 
-						if(fault!=null){
+						if(soapFault!=null || restProblem!=null){
 							// Devo ritornare il SoapFault
 							msgDiag.mediumDebug("Invio messaggio di fault a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.sendSOAPFault(richiestaApplicativa.getIdModuloInAttesa(),responseMessage);
@@ -2646,7 +2803,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					else{
 
 						// Invio risposta immediata in seguito alla richiesta ricevuta
-						if(fault!=null){
+						if(soapFault!=null || restProblem!=null){
 							// Devo ritornare il SoapFault
 							msgDiag.mediumDebug("Invio messaggio di fault a Ricezione/Consegna ContenutiApplicativi...");
 							msgResponse = ejbUtils.sendSOAPFault(richiestaApplicativa.getIdModuloInAttesa(),responseMessage);
@@ -3173,7 +3330,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						
 						if( richiestaApplicativa!=null && Costanti.SCENARIO_ONEWAY_INVOCAZIONE_SERVIZIO.equals(richiestaApplicativa.getScenario()) ){
 							// Per avere esattamente il solito comportamento dello scenario con protocollo.
-							if(fault==null){
+							if(soapFault==null && restProblem==null){
 								// devo 'ignorare' la risposta anche se presente, essendo un profilo oneway.
 								if(responseMessage!=null){
 									if(ServiceBinding.SOAP.equals(responseMessage.getServiceBinding())){
@@ -3395,6 +3552,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			openspcoopstate.releaseResource();
 			return esito;
 		}finally{
+			try {
+				if(transazioneApplicativoServer!=null) {
+					if(consegnaMessageTrasformato!=null) {
+						transazioneApplicativoServer.setRichiestaUscitaBytes(consegnaMessageTrasformato.getOutgoingMessageContentLength());
+					}
+					if(responseMessage!=null) {
+						transazioneApplicativoServer.setRispostaIngressoBytes(responseMessage.getIncomingMessageContentLength());
+					}
+				}
+			}catch(Throwable t) {
+				this.log.error("Errore durante la lettura delle dimensioni dei messaggi: "+t.getMessage(),t);
+			}
 			try{
 				if(connectorSenderForDisconnect!=null)
 					connectorSenderForDisconnect.disconnect();

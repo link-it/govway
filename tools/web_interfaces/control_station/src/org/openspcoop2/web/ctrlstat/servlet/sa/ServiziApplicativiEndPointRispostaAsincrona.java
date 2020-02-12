@@ -254,6 +254,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 			//}
 			
+			boolean erogazioneServizioApplicativoServerEnabled = false;
+			
 			// Preparo il menu
 			saHelper.makeMenu();
 			
@@ -699,7 +701,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -725,7 +728,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
+						nomeProtocollo, false, false
+						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
@@ -754,7 +759,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -780,7 +786,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
+						nomeProtocollo, false, false
+						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
