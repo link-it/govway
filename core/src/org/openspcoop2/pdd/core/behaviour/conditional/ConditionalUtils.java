@@ -21,7 +21,7 @@ package org.openspcoop2.pdd.core.behaviour.conditional;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -226,7 +226,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					Map<String, Object> dynamicMap = new Hashtable<String, Object>();
+					Map<String, Object> dynamicMap = new HashMap<String, Object>();
 					ErrorHandler errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
@@ -244,7 +244,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					dynamicMap = new Hashtable<String, Object>();
+					dynamicMap = new HashMap<String, Object>();
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
@@ -266,7 +266,7 @@ public class ConditionalUtils  {
 						pattern = "";
 					}
 					msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern);
-					dynamicMap = new Hashtable<String, Object>();
+					dynamicMap = new HashMap<String, Object>();
 					errorHandler = new ErrorHandler();
 					DynamicUtils.fillDynamicMapRequest(log, dynamicMap, pddContext, urlInvocazione,
 							message,
