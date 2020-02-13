@@ -1325,6 +1325,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 				switch (config.getTipo()) {
 				case CONTAINER:
 				case IP_ADDRESS:
+				case IP_ADDRESS_FORWARDED_FOR:
 					break;
 				case HEADER_BASED: {
 					Optional<Proprieta> prop = pa.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();

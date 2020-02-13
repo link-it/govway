@@ -595,7 +595,9 @@ public class ErogazioniApiHelper {
         		null,		// tipoFruitore 
         		null,	// nomeFruitore
         		autenticazioneToken, 
-        		tokenPolicy
+        		tokenPolicy,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1139,7 +1141,9 @@ public class ErogazioniApiHelper {
         		evalnull( () -> fruitore.get().getTipo() ),		// tipoFruitore 
         		evalnull( () -> fruitore.get().getNome() ),			// nomeFruitore
         		autenticazioneToken,
-        		tokenPolicy
+        		tokenPolicy,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1246,7 +1250,9 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputWaitTime,
 				autenticazioneToken,
 				tokenPolicy,
-				listExtendedConnettore
+				listExtendedConnettore,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
 			);
 	}
 		
@@ -1592,7 +1598,8 @@ public class ErogazioniApiHelper {
 				new ProtocolProperties(), // this.protocolProperties, 
 				ConsoleOperationType.ADD, 
 				env.apsCore, 
-				env.erogazioniHelper
+				env.erogazioniHelper,
+        		null // nomeSAServer TODO quando si aggiunge applicativo server
 			);
 
 		

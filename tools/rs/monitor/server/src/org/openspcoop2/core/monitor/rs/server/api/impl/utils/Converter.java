@@ -144,26 +144,26 @@ public class Converter {
 
 		CredenzialiMittente credenzialiMittente = convertToCredenzialiMittente(transazioneDB);		
 		
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), TipoMessaggio.RICHIESTA_INGRESSO)) {
-			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), TipoMessaggio.RICHIESTA_INGRESSO);
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), TipoMessaggio.RICHIESTA_USCITA)) {
-			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), TipoMessaggio.RICHIESTA_USCITA);
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_USCITA);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), TipoMessaggio.RISPOSTA_INGRESSO)) {
-			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), TipoMessaggio.RISPOSTA_INGRESSO);
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_INGRESSO);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}
 		}
-		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), TipoMessaggio.RISPOSTA_USCITA)) {
-			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), TipoMessaggio.RISPOSTA_USCITA);
+		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA)) {
+			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RISPOSTA_USCITA);
 			if(dumpMessaggio!=null) {
 				transazioneDB.addDumpMessaggio(dumpMessaggio);
 			}

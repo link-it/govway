@@ -39,7 +39,6 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.core.ControlStationLogger;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.core.Utilities;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
@@ -117,7 +116,7 @@ public final class PorteApplicativeAzioneDel extends Action {
 			String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());
 			
 			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, 
-					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, azioni, userLogin,ControlStationLogger.getPddConsoleCoreLogger());
+					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, azioni, userLogin);
 
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {

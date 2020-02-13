@@ -1174,6 +1174,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				switch (config.getTipo()) {
 				case CONTAINER:
 				case IP_ADDRESS:
+				case IP_ADDRESS_FORWARDED_FOR:
 					break;
 				case HEADER_BASED: {
 					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();

@@ -31,6 +31,7 @@ CONTAINER("container"),
   FORM_BASED("form-based"),
   URL_BASED("url-based"),
   IP_ADDRESS("ip-address"),
+  IP_ADDRESS_FORWARDED_FOR("ip-address-forwarded-for"),
   TOKEN("token");
 
   private String value;

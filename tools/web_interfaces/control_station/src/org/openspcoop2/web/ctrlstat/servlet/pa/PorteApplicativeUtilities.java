@@ -26,7 +26,6 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
-import org.slf4j.Logger;
 
 
 /**
@@ -40,7 +39,7 @@ import org.slf4j.Logger;
 public class PorteApplicativeUtilities {
 
 	public static void deletePortaApplicativaAzioni(PortaApplicativa pa, PorteApplicativeCore porteApplicativeCore, PorteApplicativeHelper porteApplicativeHelper, 
-			StringBuilder inUsoMessage, String newLine, List<String> azioni, String userLogin, Logger log) throws Exception {
+			StringBuilder inUsoMessage, String newLine, List<String> azioni, String userLogin) throws Exception {
 	
 		ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 		StringBuilder bfTrasformazioni = new StringBuilder();

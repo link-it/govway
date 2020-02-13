@@ -8596,6 +8596,7 @@ components:
       - "form-based"
       - "url-based"
       - "ip-address"
+      - "ip-address-forwarded-for"
       - "token"
     TipoAutenticazionePrincipalToken:
       type: "string"

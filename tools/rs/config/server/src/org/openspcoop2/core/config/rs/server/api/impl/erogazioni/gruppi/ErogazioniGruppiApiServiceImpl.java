@@ -320,7 +320,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					env.tipo_protocollo, 
 					env.userLogin,
 					env.apsCore,
-					env.apsHelper
+					env.apsHelper,
+	        		null // nomeSAServer TODO quando si aggiunge applicativo server
 				);
 
 		        
@@ -411,7 +412,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			if ( BaseHelper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
 				StringBuilder inUsoMessage = new StringBuilder();
 				
-				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
+				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, "\n",
+						new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
