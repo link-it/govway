@@ -4889,7 +4889,7 @@ public class OpenSPCoop2Properties {
 				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.timer.consegnaContenutiApplicativi.presaInConsegna.maxLife' non impostata, viene utilizzato il default="+CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE+", errore:"+e.getMessage(),e);
 				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = CostantiPdD.TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE;
 			}  
-			if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife!=null && OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_lockMaxLife>0) {
+			if(OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife!=null && OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife>0) {
 				// trasformo in millisecondi l'informazione fornita in secondi
 				OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife = OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativi_presaInConsegnaMaxLife *1000;
 			}
