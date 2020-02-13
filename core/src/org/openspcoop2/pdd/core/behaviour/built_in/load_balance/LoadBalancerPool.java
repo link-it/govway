@@ -48,7 +48,7 @@ public class LoadBalancerPool implements Serializable{
 	@Override
 	public String toString() {
 		synchronized (this.semaphore) {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append("Connectors: ").append(this.connectorMap.size());
 			bf.append("\nTotal Weight: ").append(this.totalWeight);
 			bf.append("\nPosition: ").append(this.position);

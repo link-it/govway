@@ -4530,7 +4530,7 @@ public class GestoreMessaggi  {
 
 				// Query per Ricerca messaggi eliminati (proprietario:EliminatoreMesaggi)
 				if(Configurazione.getSqlQueryObjectType()==null){
-					StringBuffer query = new StringBuffer();
+					StringBuilder query = new StringBuilder();
 					query.append("SELECT "+GestoreMessaggi.MESSAGGI+".ID_MESSAGGIO as idmess, ");
 					query.append(" "+GestoreMessaggi.MESSAGGI+".id_transazione as idtransazione, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SERVIZIO_APPLICATIVO as sa, ");

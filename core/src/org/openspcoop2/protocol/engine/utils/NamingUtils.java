@@ -306,7 +306,7 @@ public class NamingUtils {
 		if(servizio.contains(" ")) {
 			String [] split = servizio.split(" ");
 			if(split!=null && split.length==2) {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append(split[0]);
 				bf.append(LABEL_DOMINIO);
 				bf.append(erogatore);
@@ -315,7 +315,7 @@ public class NamingUtils {
 				return bf.toString();
 			}
 			else {
-				StringBuffer bf = new StringBuffer();
+				StringBuilder bf = new StringBuilder();
 				bf.append(servizio);
 				bf.append(LABEL_DOMINIO);
 				bf.append(erogatore);	
@@ -323,7 +323,7 @@ public class NamingUtils {
 			}
 		}
 		else {
-			StringBuffer bf = new StringBuffer();
+			StringBuilder bf = new StringBuilder();
 			bf.append(servizio);
 			bf.append(LABEL_DOMINIO);
 			bf.append(erogatore);	

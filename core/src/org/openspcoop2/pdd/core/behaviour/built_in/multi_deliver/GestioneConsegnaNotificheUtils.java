@@ -268,7 +268,7 @@ public class GestioneConsegnaNotificheUtils  {
 	
 	public static String toString(ConfigurazioneGestioneConsegnaNotifiche config, boolean soap) throws BehaviourException {
 		
-		StringBuffer bf = new StringBuffer("Consegna completata con codice");
+		StringBuilder bf = new StringBuilder("Consegna completata con codice");
 		
 		boolean first = true;
 		

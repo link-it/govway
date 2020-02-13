@@ -5208,7 +5208,7 @@ public class DriverConfigurazioneDB_LIB {
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
 						if(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) {
-							StringBuffer bf = new StringBuffer();
+							StringBuilder bf = new StringBuilder();
 							for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
 								if(k>0) {
 									bf.append(",");
@@ -6236,7 +6236,7 @@ public class DriverConfigurazioneDB_LIB {
 					String filtri = null; 
 					if(servizioApplicativo.getDatiConnettore()!=null) {
 						if(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) {
-							StringBuffer bf = new StringBuffer();
+							StringBuilder bf = new StringBuilder();
 							for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
 								if(k>0) {
 									bf.append(",");

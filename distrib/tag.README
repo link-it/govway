@@ -21,7 +21,7 @@ Per creare una tag version:
 
 7. Inserire la corretta versione (con suffisso rc o beta se serve) nei files doc resources/doc/src/manuali/conf.py e resources/doc/src/releaseNotes/conf.py
 
-8. Eseguire i test di verifica JavaDoc, GPL e XSD.
+8. Eseguire i test di verifica JavaDoc, GPL, XSD e StringBuffer.
 
 9. Sistemare file distrib/distrib.sh indicando la corretta versione compresa di suffissi 'rc' o 'beta'
 
@@ -81,4 +81,6 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-10. Creazione versione tag
+13. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki
+
+14. Creazione versione tag

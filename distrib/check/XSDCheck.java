@@ -55,22 +55,22 @@ public class XSDCheck {
 			= new javax.xml.transform.stream.StreamSource(new FileInputStream(srcSchemi+"/config.xsd"));	
 			javax.xml.transform.stream.StreamSource streamSourceRegistro 
 			= new javax.xml.transform.stream.StreamSource(new FileInputStream(srcSchemi+"/registroServizi.xsd"));
-		
+
 			// Creo schema
 			javax.xml.validation.SchemaFactory factory = 
-				javax.xml.validation.SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
+					javax.xml.validation.SchemaFactory.newInstance(javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI);
 			schemaConfigurazione = factory.newSchema(streamSourceConfig);
 			schemaRegistro = factory.newSchema(streamSourceRegistro);
-			
+
 			checkXSD(new File(dir));
 
 			if(fileNonValidi.size()>0){
-				
+
 				for(int i=0; i<fileNonValidi.size(); i++){
-					
+
 					System.out.println("\nIl file "+fileNonValidi.get(i)+" non ha superato la validazione xsd: \n"+dichiarazioneAssente.get(i)+"\n");
 				}
-				
+
 				System.exit(2);
 			}
 
@@ -89,7 +89,7 @@ public class XSDCheck {
 				if(f.getName().endsWith(".xml") && !f.getName().endsWith("-ds.xml")) {
 
 					try{
-					
+
 						if(f.getName().startsWith("config")){
 							//System.out.println("validate CONFIGURAZIONE");
 							javax.xml.validation.Validator validator  = schemaConfigurazione.newValidator();
@@ -99,27 +99,27 @@ public class XSDCheck {
 							javax.xml.validation.Validator validator  = schemaRegistro.newValidator();
 							validator.validate(new javax.xml.transform.stream.StreamSource(f)); 
 						}else if(f.getName().startsWith("autorizzazioneBusteEGov")){
-                                                        //System.out.println("validate REGISTRO");
-                                                        javax.xml.validation.Validator validator  = schemaRegistro.newValidator();
+							//System.out.println("validate REGISTRO");
+							javax.xml.validation.Validator validator  = schemaRegistro.newValidator();
 							validator.validate(new javax.xml.transform.stream.StreamSource(f));
-                                                }
+						}
 					}catch(Exception ex) {
-                                                 boolean gestioneErrore = true;
+						boolean gestioneErrore = true;
 
-                                                // Gestione eccezioni
-                                                if(f.getName().startsWith("config")){
-                                                   if(f.getName().endsWith("configurazioneSoggetti.xml") ||
-                                                      f.getName().endsWith("configurazioneDefault.xml") ||
-                                                      f.getName().endsWith("configurazioneDump.xml") ||
-                                                      f.getName().endsWith("configurazioneNewConnectionForResponse.xml") ){
-                                                      gestioneErrore = false;
-                                                   }
-                                                }
+						// Gestione eccezioni
+						if(f.getName().startsWith("config")){
+							if(f.getName().endsWith("configurazioneSoggetti.xml") ||
+									f.getName().endsWith("configurazioneDefault.xml") ||
+									f.getName().endsWith("configurazioneDump.xml") ||
+									f.getName().endsWith("configurazioneNewConnectionForResponse.xml") ){
+								gestioneErrore = false;
+							}
+						}
 
 						if(gestioneErrore){
 							fileNonValidi.add(f.getAbsolutePath());
 							dichiarazioneAssente.add(ex.getMessage());		
-                                                }
+						}
 					}
 				}   
 			}else{

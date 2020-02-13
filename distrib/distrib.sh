@@ -168,20 +168,21 @@ then
 	infoPrintln "Checkout delle librerie completato"
 fi
 
-#3 controlla i sorgenti (gpl/copyright/javadoc)
+#3 controlla i sorgenti (gpl/copyright/javadoc/stringBuffer)
 if [ $# -eq 0 ] ; then
     if [ "$SKIP_CHECKS" == "true" ]
     then
-	    warningPrintln "Verifiche (GPL/JavaDoc) sui sorgenti non eseguite su richiesta utente."
+	    warningPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti non eseguite su richiesta utente."
     else
-	    infoPrintln "Verifiche (GPL/JavaDoc) sui sorgenti ..."
+	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti ..."
 	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
 	    ERROROUTPUT=
-	    for check in GPLCheck JavaDocCheck #XSDCheck
+	    for check in GPLCheck JavaDocCheck StringBufferCheck #XSDCheck
 	    do
 		    [ $check == "XSDCheck" ] && PARAM=core/src/schemi/
 		    [ $check == "JavaDocCheck" ] && PARAM=true
 		    [ $check == "GPLCheck" ] && PARAM=
+		    [ $check == "StringBufferCheck" ] && PARAM=
 		    debugPrintln "Esecuzione check $check con parametri [${WORKING_COPY} , $PARAM]"
 		    OUTPUTCHECK=$(java -cp ${CHECKS_WORKING_COPY} $check ${WORKING_COPY} $PARAM 2>&1)
 		    if [ $? -ne 0 ] 
@@ -193,7 +194,7 @@ if [ $# -eq 0 ] ; then
 		    fi
 	    done
 	    popd >> ${LOG_FILE} 2>&1
-	    infoPrintln "Verifiche (GPL/JavaDoc) sui sorgenti terminata correttamente"
+	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti terminata correttamente"
     fi
     [ -n "${ERROROUTPUT}" ] && exit 2
 fi

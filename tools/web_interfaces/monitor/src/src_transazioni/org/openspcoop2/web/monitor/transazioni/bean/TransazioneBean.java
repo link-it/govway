@@ -710,7 +710,7 @@ public class TransazioneBean extends Transazione{
 							cnList = l.get("cN");
 						}						
 						if(cnList!=null && cnList.size()>0) {
-							StringBuffer bfList = new StringBuffer();
+							StringBuilder bfList = new StringBuilder();
 							for (String s : cnList) {
 								if(bfList.length()>0) {
 									bfList.append(", ");
@@ -741,7 +741,7 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getLabelRichiedenteConFruitore() throws Exception {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		String richiedente = getRichiedente();
 		if(StringUtils.isNotEmpty(richiedente)) {
@@ -774,7 +774,7 @@ public class TransazioneBean extends Transazione{
 	}
 	
 	public String getLabelAPIConErogatore() throws Exception {
-		StringBuffer bf = new StringBuffer();
+		StringBuilder bf = new StringBuilder();
 		
 		String api = getServizio();
 		if(StringUtils.isNotEmpty(api)) {
@@ -799,7 +799,7 @@ public class TransazioneBean extends Transazione{
 			
 			if(addErogatore) {
 				
-				bf = new StringBuffer();
+				bf = new StringBuilder();
 				bf.append(NamingUtils.getLabelServizioConDominioErogatore(api, sErogatore));
 				
 			}
@@ -857,7 +857,7 @@ public class TransazioneBean extends Transazione{
 						String method = (String) map.get(Resource.model().HTTP_METHOD.getFieldName());
 						String path = (String) map.get(Resource.model().PATH.getFieldName());
 						//System.out.println("LETTO ["+method+"] ["+path+"]");
-						StringBuffer bf = new StringBuffer();
+						StringBuilder bf = new StringBuilder();
 						if(!CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(method)) {
 							bf.append(method);
 							bf.append(" ");

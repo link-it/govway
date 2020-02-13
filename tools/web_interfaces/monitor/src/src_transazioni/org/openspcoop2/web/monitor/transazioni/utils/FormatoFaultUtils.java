@@ -39,8 +39,8 @@ public class FormatoFaultUtils {
 	public static String getFaultPretty(String fault, String formatoFault){
 		String toRet = null;
 		if(fault !=null) {
-			StringBuilder contenutoDocumentoStringBuffer = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuffer, true);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuilder, true);
 			if(errore!= null)
 				return "";
 
@@ -82,8 +82,8 @@ public class FormatoFaultUtils {
 		if(fault == null)
 			return false;
 
-		StringBuilder contenutoDocumentoStringBuffer = new StringBuilder();
-		String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuffer, false);
+		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+		String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuilder, false);
 		if(errore!= null)
 			return false;
 
@@ -119,8 +119,8 @@ public class FormatoFaultUtils {
 
 	public static String getErroreVisualizzaFault(String fault){
 		if(fault!=null) {
-			StringBuilder contenutoDocumentoStringBuffer = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuffer, false);
+			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
+			String errore = Utils.getTestoVisualizzabile(fault.getBytes(),contenutoDocumentoStringBuilder, false);
 			return errore;
 		}
 

@@ -271,7 +271,7 @@ public class MultiDeliverUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto2xx_codes()!=null && !configurazione.getGestioneTrasporto2xx_codes().isEmpty()) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (Integer code : configurazione.getGestioneTrasporto2xx_codes()) {
 						if(bf.length()>0) {
 							bf.append(",");
@@ -313,7 +313,7 @@ public class MultiDeliverUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto3xx_codes()!=null && !configurazione.getGestioneTrasporto3xx_codes().isEmpty()) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (Integer code : configurazione.getGestioneTrasporto3xx_codes()) {
 						if(bf.length()>0) {
 							bf.append(",");
@@ -355,7 +355,7 @@ public class MultiDeliverUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto4xx_codes()!=null && !configurazione.getGestioneTrasporto4xx_codes().isEmpty()) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (Integer code : configurazione.getGestioneTrasporto4xx_codes()) {
 						if(bf.length()>0) {
 							bf.append(",");
@@ -397,7 +397,7 @@ public class MultiDeliverUtils  {
 				break;
 			case CODICI_CONSEGNA_COMPLETATA:
 				if(configurazione.getGestioneTrasporto5xx_codes()!=null && !configurazione.getGestioneTrasporto5xx_codes().isEmpty()) {
-					StringBuffer bf = new StringBuffer();
+					StringBuilder bf = new StringBuilder();
 					for (Integer code : configurazione.getGestioneTrasporto5xx_codes()) {
 						if(bf.length()>0) {
 							bf.append(",");
