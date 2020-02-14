@@ -92,7 +92,11 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly10" text="WildFly 10-17"/>
+		<option value="wildfly14" text="WildFly 14-17"/>
+		<!--
+			Deprecati: 10, 11, 12, 13
+			<option value="wildfly10" text="WildFly 10-17"/>
+		-->
 		<!--
 			Deprecati
 			<option value="wildfly9" text="WildFly 9"/>
@@ -107,11 +111,12 @@
 		-->
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
-		<option value="tomcat7" text="Apache Tomcat 7"/>
-            	<!-- 
+            	<option value="tomcat9" text="Apache Tomcat 9"/>
+		<!-- 
 			Deprecati
-			<option value="tomcat6" text="Apache Tomcat 6"/>
+			<option value="tomcat8" text="Apache Tomcat 8-9"/>
+			<option value="tomcat7" text="Apache Tomcat 7"/>
+            		<option value="tomcat6" text="Apache Tomcat 6"/>
 			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
         </large-select>
@@ -152,7 +157,11 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly10" text="WildFly 10-17"/>
+		<option value="wildfly14" text="WildFly 14-17"/>
+		<!--
+			Deprecati: 10, 11, 12, 13
+			<option value="wildfly10" text="WildFly 10-17"/>
+		-->
 		<!--
 			Deprecati
 			<option value="wildfly9" text="WildFly 9"/>
@@ -166,11 +175,12 @@
 	    		<option value="jboss4" text="JBoss 4"/>
 		-->
            
-		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
-		<option value="tomcat7" text="Apache Tomcat 7"/>
+		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
+		<option value="tomcat9" text="Apache Tomcat 9"/> 
             	<!-- 
 			Deprecati
+		    	<option value="tomcat8" text="Apache Tomcat 8-9"/>
+			<option value="tomcat7" text="Apache Tomcat 7"/>
 			<option value="tomcat6" text="Apache Tomcat 6"/>
 			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
