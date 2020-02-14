@@ -97,10 +97,10 @@ public enum TipoProfiloCollaborazione implements IEnumeration , Serializable , C
   	public String toString(boolean reportHTML,List<String> fieldsNotIncluded){
   		return toString();
   	}
-  	public String diff(Object object,StringBuilder bf,boolean reportHTML){
+  	public String diff(Object object,StringBuffer bf,boolean reportHTML){
 		return bf.toString();
 	}
-	public String diff(Object object,StringBuilder bf,boolean reportHTML,List<String> fieldsNotIncluded){
+	public String diff(Object object,StringBuffer bf,boolean reportHTML,List<String> fieldsNotIncluded){
 		return bf.toString();
 	}
 	

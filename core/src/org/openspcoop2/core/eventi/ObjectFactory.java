@@ -52,17 +52,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DatiEventoGenerico }
-     */
-    public DatiEventoGenerico createDatiEventoGenerico() {
-        return new DatiEventoGenerico();
-    }
-
-    /**
      * Create an instance of {@link Evento }
      */
     public Evento createEvento() {
         return new Evento();
+    }
+
+    /**
+     * Create an instance of {@link DatiEventoGenerico }
+     */
+    public DatiEventoGenerico createDatiEventoGenerico() {
+        return new DatiEventoGenerico();
     }
 
 

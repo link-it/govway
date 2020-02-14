@@ -35,17 +35,17 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dump-allegato">
- * 		&lt;sequence>
- * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allegato" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/transazioni}dump-header-allegato" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dump-allegato"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allegato" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/transazioni}dump-header-allegato" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -188,7 +188,7 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getHeaderList
-   * @return List<DumpHeaderAllegato>
+   * @return List&lt;DumpHeaderAllegato&gt;
   */
   @Deprecated
   public List<DumpHeaderAllegato> getHeader() {
@@ -197,7 +197,7 @@ public class DumpAllegato extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setHeaderList
-   * @param header List<DumpHeaderAllegato>
+   * @param header List&lt;DumpHeaderAllegato&gt;
   */
   @Deprecated
   public void setHeader(List<DumpHeaderAllegato> header) {

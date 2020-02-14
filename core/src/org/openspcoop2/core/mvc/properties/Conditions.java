@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="conditions">
- * 		&lt;sequence>
- * 			&lt;element name="condition" type="{http://www.openspcoop2.org/core/mvc/properties}condition" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="conditions"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="condition" type="{http://www.openspcoop2.org/core/mvc/properties}condition" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -120,7 +120,7 @@ public class Conditions extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getConditionList
-   * @return List<Condition>
+   * @return List&lt;Condition&gt;
   */
   @Deprecated
   public List<Condition> getCondition() {
@@ -129,7 +129,7 @@ public class Conditions extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setConditionList
-   * @param condition List<Condition>
+   * @param condition List&lt;Condition&gt;
   */
   @Deprecated
   public void setCondition(List<Condition> condition) {

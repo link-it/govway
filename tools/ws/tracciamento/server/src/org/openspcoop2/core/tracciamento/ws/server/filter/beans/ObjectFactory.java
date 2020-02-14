@@ -42,31 +42,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Busta }
-     */
-    public Busta createBusta() {
-        return new Busta();
-    }
-    
-    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
         return new DominioSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link Protocollo }
-     */
-    public Protocollo createProtocollo() {
-        return new Protocollo();
-    }
-    
-    /**
-     * Create an instance of {@link Dominio }
-     */
-    public Dominio createDominio() {
-        return new Dominio();
     }
     
     /**
@@ -77,10 +56,10 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link Soggetto }
+     * Create an instance of {@link Dominio }
      */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
+    public Dominio createDominio() {
+        return new Dominio();
     }
     
     /**
@@ -91,10 +70,31 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+    
+    /**
+     * Create an instance of {@link Busta }
+     */
+    public Busta createBusta() {
+        return new Busta();
+    }
+    
+    /**
      * Create an instance of {@link ProfiloCollaborazione }
      */
     public ProfiloCollaborazione createProfiloCollaborazione() {
         return new ProfiloCollaborazione();
+    }
+    
+    /**
+     * Create an instance of {@link Protocollo }
+     */
+    public Protocollo createProtocollo() {
+        return new Protocollo();
     }
     
 

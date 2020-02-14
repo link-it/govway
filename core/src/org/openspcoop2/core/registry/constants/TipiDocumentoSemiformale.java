@@ -25,7 +25,7 @@ package org.openspcoop2.core.registry.constants;
 /**
  *
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

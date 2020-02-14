@@ -37,12 +37,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="autorizzazione-ruoli">
- * 		&lt;sequence>
- * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/config}ruolo" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="match" type="{http://www.openspcoop2.org/core/config}RuoloTipoMatch" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="autorizzazione-ruoli"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/config}ruolo" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="match" type="{http://www.openspcoop2.org/core/config}RuoloTipoMatch" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -134,7 +134,7 @@ public class AutorizzazioneRuoli extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getRuoloList
-   * @return List<Ruolo>
+   * @return List&lt;Ruolo&gt;
   */
   @Deprecated
   public List<Ruolo> getRuolo() {
@@ -143,7 +143,7 @@ public class AutorizzazioneRuoli extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setRuoloList
-   * @param ruolo List<Ruolo>
+   * @param ruolo List&lt;Ruolo&gt;
   */
   @Deprecated
   public void setRuolo(List<Ruolo> ruolo) {

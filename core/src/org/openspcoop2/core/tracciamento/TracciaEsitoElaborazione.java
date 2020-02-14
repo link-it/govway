@@ -35,12 +35,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="traccia-esito-elaborazione">
- * 		&lt;sequence>
- * 			&lt;element name="dettaglio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoEsitoElaborazione" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="traccia-esito-elaborazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="dettaglio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoEsitoElaborazione" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

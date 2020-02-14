@@ -37,13 +37,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="stato-servizi-pdd-porta-applicativa">
- * 		&lt;sequence>
- * 			&lt;element name="filtro-abilitazione" type="{http://www.openspcoop2.org/core/config}tipo-filtro-abilitazione-servizi" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="filtro-disabilitazione" type="{http://www.openspcoop2.org/core/config}tipo-filtro-abilitazione-servizi" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="stato-servizi-pdd-porta-applicativa"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="filtro-abilitazione" type="{http://www.openspcoop2.org/core/config}tipo-filtro-abilitazione-servizi" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="filtro-disabilitazione" type="{http://www.openspcoop2.org/core/config}tipo-filtro-abilitazione-servizi" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -160,7 +160,7 @@ public class StatoServiziPddPortaApplicativa extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method getFiltroAbilitazioneList
-   * @return List<TipoFiltroAbilitazioneServizi>
+   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
   */
   @Deprecated
   public List<TipoFiltroAbilitazioneServizi> getFiltroAbilitazione() {
@@ -169,7 +169,7 @@ public class StatoServiziPddPortaApplicativa extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method setFiltroAbilitazioneList
-   * @param filtroAbilitazione List<TipoFiltroAbilitazioneServizi>
+   * @param filtroAbilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
   */
   @Deprecated
   public void setFiltroAbilitazione(List<TipoFiltroAbilitazioneServizi> filtroAbilitazione) {
@@ -190,7 +190,7 @@ public class StatoServiziPddPortaApplicativa extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method getFiltroDisabilitazioneList
-   * @return List<TipoFiltroAbilitazioneServizi>
+   * @return List&lt;TipoFiltroAbilitazioneServizi&gt;
   */
   @Deprecated
   public List<TipoFiltroAbilitazioneServizi> getFiltroDisabilitazione() {
@@ -199,7 +199,7 @@ public class StatoServiziPddPortaApplicativa extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method setFiltroDisabilitazioneList
-   * @param filtroDisabilitazione List<TipoFiltroAbilitazioneServizi>
+   * @param filtroDisabilitazione List&lt;TipoFiltroAbilitazioneServizi&gt;
   */
   @Deprecated
   public void setFiltroDisabilitazione(List<TipoFiltroAbilitazioneServizi> filtroDisabilitazione) {

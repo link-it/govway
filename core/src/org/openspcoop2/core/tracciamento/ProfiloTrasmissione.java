@@ -34,13 +34,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="profilo-trasmissione">
- * 		&lt;sequence>
- * 			&lt;element name="inoltro" type="{http://www.openspcoop2.org/core/tracciamento}inoltro" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="conferma-ricezione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="sequenza" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="profilo-trasmissione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="inoltro" type="{http://www.openspcoop2.org/core/tracciamento}inoltro" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="conferma-ricezione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="sequenza" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

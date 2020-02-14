@@ -25,11 +25,11 @@ package org.openspcoop2.core.config.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="existsResponse">
- *     &lt;sequence>
- *         &lt;element name="exists" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="existsResponse"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="exists" type="{http://www.w3.org/2001/XMLSchema}boolean" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

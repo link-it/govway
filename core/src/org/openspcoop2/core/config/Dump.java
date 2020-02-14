@@ -37,15 +37,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dump">
- * 		&lt;sequence>
- * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="dump-binario-porta-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="dump-binario-porta-applicativa" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="dump"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="dump-binario-porta-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="dump-binario-porta-applicativa" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -189,7 +189,7 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getOpenspcoopAppenderList
-   * @return List<OpenspcoopAppender>
+   * @return List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public List<OpenspcoopAppender> getOpenspcoopAppender() {
@@ -198,7 +198,7 @@ public class Dump extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List<OpenspcoopAppender>
+   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {

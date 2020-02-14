@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statistica-mensile">
- * 		&lt;sequence>
- * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="statistica-mensile-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statistica-mensile"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="statistica-mensile-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -136,7 +136,7 @@ public class StatisticaMensile extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getStatisticaMensileContenutiList
-   * @return List<StatisticaContenuti>
+   * @return List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public List<StatisticaContenuti> getStatisticaMensileContenuti() {
@@ -145,7 +145,7 @@ public class StatisticaMensile extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setStatisticaMensileContenutiList
-   * @param statisticaMensileContenuti List<StatisticaContenuti>
+   * @param statisticaMensileContenuti List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public void setStatisticaMensileContenuti(List<StatisticaContenuti> statisticaMensileContenuti) {

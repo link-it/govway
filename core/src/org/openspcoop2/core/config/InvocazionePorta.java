@@ -37,15 +37,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="invocazione-porta">
- * 		&lt;sequence>
- * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config}credenziali" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}servizio-applicativo-ruoli" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}invocazione-porta-gestione-errore" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="invocazione-porta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="credenziali" type="{http://www.openspcoop2.org/core/config}credenziali" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}servizio-applicativo-ruoli" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}invocazione-porta-gestione-errore" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="invio-per-riferimento" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="sbustamento-informazioni-protocollo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -175,7 +175,7 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getCredenzialiList
-   * @return List<Credenziali>
+   * @return List&lt;Credenziali&gt;
   */
   @Deprecated
   public List<Credenziali> getCredenziali() {
@@ -184,7 +184,7 @@ public class InvocazionePorta extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setCredenzialiList
-   * @param credenziali List<Credenziali>
+   * @param credenziali List&lt;Credenziali&gt;
   */
   @Deprecated
   public void setCredenziali(List<Credenziali> credenziali) {

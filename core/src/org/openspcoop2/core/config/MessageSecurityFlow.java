@@ -37,13 +37,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="message-security-flow">
- * 		&lt;sequence>
- * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/config}message-security-flow-parameter" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="apply-to-mtom" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="mode" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="default"/>
- * &lt;/complexType>
+ * &lt;complexType name="message-security-flow"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/config}message-security-flow-parameter" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="apply-to-mtom" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="mode" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="default"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -143,7 +143,7 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getParameterList
-   * @return List<MessageSecurityFlowParameter>
+   * @return List&lt;MessageSecurityFlowParameter&gt;
   */
   @Deprecated
   public List<MessageSecurityFlowParameter> getParameter() {
@@ -152,7 +152,7 @@ public class MessageSecurityFlow extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setParameterList
-   * @param parameter List<MessageSecurityFlowParameter>
+   * @param parameter List&lt;MessageSecurityFlowParameter&gt;
   */
   @Deprecated
   public void setParameter(List<MessageSecurityFlowParameter> parameter) {

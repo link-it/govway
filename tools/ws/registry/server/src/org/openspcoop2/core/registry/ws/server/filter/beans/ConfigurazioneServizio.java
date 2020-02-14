@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-servizio">
- *     &lt;sequence>
- *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry/management}connettore" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-servizio"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry/management}connettore" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

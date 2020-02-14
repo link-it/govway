@@ -1,8 +1,8 @@
 /*
- * GovWay - A customizable API Gateway
+ * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -25,11 +25,11 @@ package org.openspcoop2.core.transazioni.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="findAll">
- *     &lt;sequence>
- *         &lt;element name="filter" type="{http://www.openspcoop2.org/core/transazioni}search-filter-transazione-applicativo-server" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="findAll"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="filter" type="{http://www.openspcoop2.org/core/transazioni}search-filter-transazione-applicativo-server" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

@@ -34,25 +34,25 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="item">
- * 		&lt;sequence>
- * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/core/mvc/properties}conditions" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="values" type="{http://www.openspcoop2.org/core/mvc/properties}itemValues" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/mvc/properties}property" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/core/mvc/properties}itemType" use="required"/>
- * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="note" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="reloadOnChange" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="defaultSelected" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
- * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="item"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/core/mvc/properties}conditions" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="values" type="{http://www.openspcoop2.org/core/mvc/properties}itemValues" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/mvc/properties}property" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/core/mvc/properties}itemType" use="required"/&gt;
+ * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="note" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="reloadOnChange" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="defaultSelected" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/&gt;
+ * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="min" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="max" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="validation" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

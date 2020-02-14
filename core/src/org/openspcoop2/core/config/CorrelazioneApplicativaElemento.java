@@ -36,13 +36,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="correlazione-applicativa-elemento">
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}CorrelazioneApplicativaRichiestaIdentificazione" use="optional" default="contentBased"/>
- * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="identificazione-fallita" type="{http://www.openspcoop2.org/core/config}CorrelazioneApplicativaGestioneIdentificazioneFallita" use="optional" default="blocca"/>
- * 		&lt;attribute name="riuso-identificativo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="correlazione-applicativa-elemento"&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}CorrelazioneApplicativaRichiestaIdentificazione" use="optional" default="contentBased"/&gt;
+ * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="identificazione-fallita" type="{http://www.openspcoop2.org/core/config}CorrelazioneApplicativaGestioneIdentificazioneFallita" use="optional" default="blocca"/&gt;
+ * 		&lt;attribute name="riuso-identificativo" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

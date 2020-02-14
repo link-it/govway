@@ -43,7 +43,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 /**
  * Funzioni di utilita utilizzate dai driver
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

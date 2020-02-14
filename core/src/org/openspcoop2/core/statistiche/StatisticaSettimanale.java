@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statistica-settimanale">
- * 		&lt;sequence>
- * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="statistica-settimanale-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statistica-settimanale"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="statistica-settimanale-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -136,7 +136,7 @@ public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBean 
 
   /**
    * @deprecated Use method getStatisticaSettimanaleContenutiList
-   * @return List<StatisticaContenuti>
+   * @return List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public List<StatisticaContenuti> getStatisticaSettimanaleContenuti() {
@@ -145,7 +145,7 @@ public class StatisticaSettimanale extends org.openspcoop2.utils.beans.BaseBean 
 
   /**
    * @deprecated Use method setStatisticaSettimanaleContenutiList
-   * @param statisticaSettimanaleContenuti List<StatisticaContenuti>
+   * @param statisticaSettimanaleContenuti List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public void setStatisticaSettimanaleContenuti(List<StatisticaContenuti> statisticaSettimanaleContenuti) {

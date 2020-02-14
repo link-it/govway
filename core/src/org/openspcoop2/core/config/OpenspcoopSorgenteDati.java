@@ -36,14 +36,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="openspcoop-sorgente-dati">
- * 		&lt;sequence>
- * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/config}Property" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="nome-jndi" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="tipo-database" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="openspcoop-sorgente-dati"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/config}Property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="nome-jndi" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="tipo-database" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -139,7 +139,7 @@ public class OpenspcoopSorgenteDati extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method getPropertyList
-   * @return List<Property>
+   * @return List&lt;Property&gt;
   */
   @Deprecated
   public List<Property> getProperty() {
@@ -148,7 +148,7 @@ public class OpenspcoopSorgenteDati extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method setPropertyList
-   * @param property List<Property>
+   * @param property List&lt;Property&gt;
   */
   @Deprecated
   public void setProperty(List<Property> property) {

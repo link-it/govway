@@ -33,16 +33,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="protocol-property">
- * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="number-value" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="boolean-value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="file" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="byte-file" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="tipo-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="id-proprietario" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="protocol-property"&gt;
+ * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="number-value" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="boolean-value" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="file" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="byte-file" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="tipo-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="id-proprietario" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -35,37 +35,37 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione">
- * 		&lt;sequence>
- * 			&lt;element name="routing-table" type="{http://www.openspcoop2.org/core/config}routing-table" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-registro" type="{http://www.openspcoop2.org/core/config}accesso-registro" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="accesso-dati-consegna-applicativi" type="{http://www.openspcoop2.org/core/config}accesso-dati-consegna-applicativi" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="url-invocazione" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="attachments" type="{http://www.openspcoop2.org/core/config}attachments" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="risposte" type="{http://www.openspcoop2.org/core/config}risposte" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="inoltro-buste-non-riscontrate" type="{http://www.openspcoop2.org/core/config}inoltro-buste-non-riscontrate" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="messaggi-diagnostici" type="{http://www.openspcoop2.org/core/config}messaggi-diagnostici" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}tracciamento" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="transazioni" type="{http://www.openspcoop2.org/core/config}transazioni" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}configurazione-gestione-errore" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}integration-manager" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="system-properties" type="{http://www.openspcoop2.org/core/config}system-properties" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="routing-table" type="{http://www.openspcoop2.org/core/config}routing-table" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-registro" type="{http://www.openspcoop2.org/core/config}accesso-registro" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-configurazione" type="{http://www.openspcoop2.org/core/config}accesso-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-autorizzazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autorizzazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-autenticazione" type="{http://www.openspcoop2.org/core/config}accesso-dati-autenticazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-gestione-token" type="{http://www.openspcoop2.org/core/config}accesso-dati-gestione-token" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-keystore" type="{http://www.openspcoop2.org/core/config}accesso-dati-keystore" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="accesso-dati-consegna-applicativi" type="{http://www.openspcoop2.org/core/config}accesso-dati-consegna-applicativi" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="multitenant" type="{http://www.openspcoop2.org/core/config}configurazione-multitenant" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="url-invocazione" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="validazione-buste" type="{http://www.openspcoop2.org/core/config}validazione-buste" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="indirizzo-risposta" type="{http://www.openspcoop2.org/core/config}indirizzo-risposta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="attachments" type="{http://www.openspcoop2.org/core/config}attachments" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="risposte" type="{http://www.openspcoop2.org/core/config}risposte" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="inoltro-buste-non-riscontrate" type="{http://www.openspcoop2.org/core/config}inoltro-buste-non-riscontrate" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="messaggi-diagnostici" type="{http://www.openspcoop2.org/core/config}messaggi-diagnostici" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}tracciamento" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="transazioni" type="{http://www.openspcoop2.org/core/config}transazioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gestione-errore" type="{http://www.openspcoop2.org/core/config}configurazione-gestione-errore" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}integration-manager" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="stato-servizi-pdd" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="system-properties" type="{http://www.openspcoop2.org/core/config}system-properties" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="generic-properties" type="{http://www.openspcoop2.org/core/config}generic-properties" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-generale" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -407,7 +407,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getExtendedInfoList
-   * @return List<Object>
+   * @return List&lt;Object&gt;
   */
   @Deprecated
   public List<Object> getExtendedInfo() {
@@ -416,7 +416,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setExtendedInfoList
-   * @param extendedInfo List<Object>
+   * @param extendedInfo List&lt;Object&gt;
   */
   @Deprecated
   public void setExtendedInfo(List<Object> extendedInfo) {
@@ -509,7 +509,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getGenericPropertiesList
-   * @return List<GenericProperties>
+   * @return List&lt;GenericProperties&gt;
   */
   @Deprecated
   public List<GenericProperties> getGenericProperties() {
@@ -518,7 +518,7 @@ public class Configurazione extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setGenericPropertiesList
-   * @param genericProperties List<GenericProperties>
+   * @param genericProperties List&lt;GenericProperties&gt;
   */
   @Deprecated
   public void setGenericProperties(List<GenericProperties> genericProperties) {

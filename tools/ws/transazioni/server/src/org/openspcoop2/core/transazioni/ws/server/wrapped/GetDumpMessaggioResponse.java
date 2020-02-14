@@ -25,11 +25,11 @@ package org.openspcoop2.core.transazioni.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="getResponse">
- *     &lt;sequence>
- *         &lt;element name="dumpMessaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="getResponse"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="dumpMessaggio" type="{http://www.openspcoop2.org/core/transazioni}dump-messaggio" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

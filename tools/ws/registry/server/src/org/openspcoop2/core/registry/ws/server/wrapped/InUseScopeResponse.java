@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="inUseResponse">
- *     &lt;sequence>
- *         &lt;element name="useInfo" type="{http://www.openspcoop2.org/core/registry}in-use-scope" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="inUseResponse"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="useInfo" type="{http://www.openspcoop2.org/core/registry}in-use-scope" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

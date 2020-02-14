@@ -39,28 +39,28 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="resource">
- * 		&lt;sequence>
- * 			&lt;element name="request" type="{http://www.openspcoop2.org/core/registry}resource-request" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="response" type="{http://www.openspcoop2.org/core/registry}resource-response" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="prof-azione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="path" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="method" type="{http://www.openspcoop2.org/core/registry}HttpMethod" use="optional"/>
- * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
- * 		&lt;attribute name="request-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
- * 		&lt;attribute name="response-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
- * 		&lt;attribute name="filtro-duplicati" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="conferma-ricezione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="id-riferimento-richiesta" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="resource"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="request" type="{http://www.openspcoop2.org/core/registry}resource-request" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="response" type="{http://www.openspcoop2.org/core/registry}resource-response" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="prof-azione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="path" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="method" type="{http://www.openspcoop2.org/core/registry}HttpMethod" use="optional"/&gt;
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/&gt;
+ * 		&lt;attribute name="request-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/&gt;
+ * 		&lt;attribute name="response-message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/&gt;
+ * 		&lt;attribute name="filtro-duplicati" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="conferma-ricezione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="id-riferimento-richiesta" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -397,7 +397,7 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getResponseList
-   * @return List<ResourceResponse>
+   * @return List&lt;ResourceResponse&gt;
   */
   @Deprecated
   public List<ResourceResponse> getResponse() {
@@ -406,7 +406,7 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setResponseList
-   * @param response List<ResourceResponse>
+   * @param response List&lt;ResourceResponse&gt;
   */
   @Deprecated
   public void setResponse(List<ResourceResponse> response) {
@@ -427,7 +427,7 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getProtocolPropertyList
-   * @return List<ProtocolProperty>
+   * @return List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public List<ProtocolProperty> getProtocolProperty() {
@@ -436,7 +436,7 @@ public class Resource extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List<ProtocolProperty>
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {

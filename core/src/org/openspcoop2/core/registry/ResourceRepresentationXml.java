@@ -34,11 +34,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="resource-representation-xml">
- * 		&lt;attribute name="xml-type" type="{http://www.openspcoop2.org/core/registry}RepresentationXmlType" use="required"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="namespace" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="resource-representation-xml"&gt;
+ * 		&lt;attribute name="xml-type" type="{http://www.openspcoop2.org/core/registry}RepresentationXmlType" use="required"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="namespace" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

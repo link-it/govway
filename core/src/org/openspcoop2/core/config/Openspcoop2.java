@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="openspcoop2">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}soggetto" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}configurazione" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="openspcoop2"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}soggetto" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}configurazione" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -121,7 +121,7 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<Soggetto>
+   * @return List&lt;Soggetto&gt;
   */
   @Deprecated
   public List<Soggetto> getSoggetto() {
@@ -130,7 +130,7 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<Soggetto>
+   * @param soggetto List&lt;Soggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<Soggetto> soggetto) {

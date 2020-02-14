@@ -1,8 +1,8 @@
 /*
- * GovWay - A customizable API Gateway
+ * GovWay - A customizable API Gateway 
  * https://govway.org
  * 
- * Copyright (c) 2005-2020 Link.it srl (https://link.it). 
+ * Copyright (c) 2005-2020 Link.it srl (https://link.it).
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 3, as published by
@@ -37,16 +37,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-servizio-applicativo-connettore">
- * 		&lt;sequence>
- * 			&lt;element name="filtro" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="notifica" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="porta-applicativa-servizio-applicativo-connettore"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="filtro" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="notifica" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -192,7 +192,7 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   /**
    * @deprecated Use method getFiltroList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getFiltro() {
@@ -201,7 +201,7 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   /**
    * @deprecated Use method setFiltroList
-   * @param filtro List<java.lang.String>
+   * @param filtro List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setFiltro(List<java.lang.String> filtro) {
@@ -222,7 +222,7 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -231,7 +231,7 @@ public class PortaApplicativaServizioApplicativoConnettore extends org.openspcoo
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

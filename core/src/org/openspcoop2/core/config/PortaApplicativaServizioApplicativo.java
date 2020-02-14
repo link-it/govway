@@ -34,13 +34,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-servizio-applicativo">
- * 		&lt;sequence>
- * 			&lt;element name="dati-connettore" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="id-servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="porta-applicativa-servizio-applicativo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="dati-connettore" type="{http://www.openspcoop2.org/core/config}porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="id-servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

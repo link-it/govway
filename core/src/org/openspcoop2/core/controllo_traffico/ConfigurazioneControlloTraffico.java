@@ -33,17 +33,17 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-controllo-traffico">
- * 		&lt;sequence>
- * 			&lt;element name="controllo-max-threads-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/>
- * 			&lt;element name="controllo-max-threads-warning-only" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="controllo-max-threads-soglia" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="controllo-max-threads-tipo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1" default="fault"/>
- * 			&lt;element name="controllo-max-threads-tipo-errore-includi-descrizione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/>
- * 			&lt;element name="controllo-congestione-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="controllo-congestione-threshold" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-controllo-traffico"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="controllo-max-threads-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/&gt;
+ * 			&lt;element name="controllo-max-threads-warning-only" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="controllo-max-threads-soglia" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="controllo-max-threads-tipo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1" default="fault"/&gt;
+ * 			&lt;element name="controllo-max-threads-tipo-errore-includi-descrizione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/&gt;
+ * 			&lt;element name="controllo-congestione-enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="controllo-congestione-threshold" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

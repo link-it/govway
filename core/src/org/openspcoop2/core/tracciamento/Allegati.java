@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="allegati">
- * 		&lt;sequence>
- * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/tracciamento}allegato" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="allegati"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/tracciamento}allegato" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class Allegati extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getAllegatoList
-   * @return List<Allegato>
+   * @return List&lt;Allegato&gt;
   */
   @Deprecated
   public List<Allegato> getAllegato() {
@@ -120,7 +120,7 @@ public class Allegati extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setAllegatoList
-   * @param allegato List<Allegato>
+   * @param allegato List&lt;Allegato&gt;
   */
   @Deprecated
   public void setAllegato(List<Allegato> allegato) {

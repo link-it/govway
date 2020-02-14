@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-autorizzazione-servizi-applicativi">
- * 		&lt;sequence>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-servizio-applicativo" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="porta-applicativa-autorizzazione-servizi-applicativi"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-servizio-applicativo" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class PortaApplicativaAutorizzazioneServiziApplicativi extends org.opensp
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<PortaApplicativaAutorizzazioneServizioApplicativo>
+   * @return List&lt;PortaApplicativaAutorizzazioneServizioApplicativo&gt;
   */
   @Deprecated
   public List<PortaApplicativaAutorizzazioneServizioApplicativo> getServizioApplicativo() {
@@ -120,7 +120,7 @@ public class PortaApplicativaAutorizzazioneServiziApplicativi extends org.opensp
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<PortaApplicativaAutorizzazioneServizioApplicativo>
+   * @param servizioApplicativo List&lt;PortaApplicativaAutorizzazioneServizioApplicativo&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<PortaApplicativaAutorizzazioneServizioApplicativo> servizioApplicativo) {

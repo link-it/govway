@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="itemValues">
- * 		&lt;sequence>
- * 			&lt;element name="value" type="{http://www.openspcoop2.org/core/mvc/properties}itemValue" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="itemValues"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="value" type="{http://www.openspcoop2.org/core/mvc/properties}itemValue" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ItemValues extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getValueList
-   * @return List<ItemValue>
+   * @return List&lt;ItemValue&gt;
   */
   @Deprecated
   public List<ItemValue> getValue() {
@@ -102,7 +102,7 @@ public class ItemValues extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setValueList
-   * @param value List<ItemValue>
+   * @param value List&lt;ItemValue&gt;
   */
   @Deprecated
   public void setValue(List<ItemValue> value) {

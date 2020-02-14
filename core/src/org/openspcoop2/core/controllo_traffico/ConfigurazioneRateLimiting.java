@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-rate-limiting">
- * 		&lt;sequence>
- * 			&lt;element name="tipo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1" default="fault"/>
- * 			&lt;element name="tipo-errore-includi-descrizione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-rate-limiting"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tipo-errore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1" default="fault"/&gt;
+ * 			&lt;element name="tipo-errore-includi-descrizione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="true"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

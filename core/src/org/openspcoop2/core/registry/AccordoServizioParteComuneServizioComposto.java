@@ -36,14 +36,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-servizio-parte-comune-servizio-composto">
- * 		&lt;sequence>
- * 			&lt;element name="servizio-componente" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune-servizio-composto-servizio-componente" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="specifica-coordinamento" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="id-accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-servizio-parte-comune-servizio-composto"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="servizio-componente" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune-servizio-composto-servizio-componente" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="specifica-coordinamento" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="id-accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -156,7 +156,7 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
 
   /**
    * @deprecated Use method getServizioComponenteList
-   * @return List<AccordoServizioParteComuneServizioCompostoServizioComponente>
+   * @return List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
   */
   @Deprecated
   public List<AccordoServizioParteComuneServizioCompostoServizioComponente> getServizioComponente() {
@@ -165,7 +165,7 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
 
   /**
    * @deprecated Use method setServizioComponenteList
-   * @param servizioComponente List<AccordoServizioParteComuneServizioCompostoServizioComponente>
+   * @param servizioComponente List&lt;AccordoServizioParteComuneServizioCompostoServizioComponente&gt;
   */
   @Deprecated
   public void setServizioComponente(List<AccordoServizioParteComuneServizioCompostoServizioComponente> servizioComponente) {
@@ -186,7 +186,7 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
 
   /**
    * @deprecated Use method getSpecificaCoordinamentoList
-   * @return List<Documento>
+   * @return List&lt;Documento&gt;
   */
   @Deprecated
   public List<Documento> getSpecificaCoordinamento() {
@@ -195,7 +195,7 @@ public class AccordoServizioParteComuneServizioComposto extends org.openspcoop2.
 
   /**
    * @deprecated Use method setSpecificaCoordinamentoList
-   * @param specificaCoordinamento List<Documento>
+   * @param specificaCoordinamento List&lt;Documento&gt;
   */
   @Deprecated
   public void setSpecificaCoordinamento(List<Documento> specificaCoordinamento) {

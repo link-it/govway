@@ -34,12 +34,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-servizio-applicativo">
- * 		&lt;sequence>
- * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/config}id-soggetto" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="id-servizio-applicativo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/core/config}id-soggetto" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-servizio-parte-comune-gruppo">
- * 		&lt;sequence>
- * 			&lt;element name="id-gruppo" type="{http://www.openspcoop2.org/core/commons/search}id-gruppo" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="id-accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/commons/search}id-accordo-servizio-parte-comune" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-servizio-parte-comune-gruppo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-gruppo" type="{http://www.openspcoop2.org/core/commons/search}id-gruppo" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/commons/search}id-accordo-servizio-parte-comune" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="correlazione-applicativa-risposta">
- * 		&lt;sequence>
- * 			&lt;element name="elemento" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta-elemento" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="correlazione-applicativa-risposta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="elemento" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta-elemento" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class CorrelazioneApplicativaRisposta extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method getElementoList
-   * @return List<CorrelazioneApplicativaRispostaElemento>
+   * @return List&lt;CorrelazioneApplicativaRispostaElemento&gt;
   */
   @Deprecated
   public List<CorrelazioneApplicativaRispostaElemento> getElemento() {
@@ -120,7 +120,7 @@ public class CorrelazioneApplicativaRisposta extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method setElementoList
-   * @param elemento List<CorrelazioneApplicativaRispostaElemento>
+   * @param elemento List&lt;CorrelazioneApplicativaRispostaElemento&gt;
   */
   @Deprecated
   public void setElemento(List<CorrelazioneApplicativaRispostaElemento> elemento) {

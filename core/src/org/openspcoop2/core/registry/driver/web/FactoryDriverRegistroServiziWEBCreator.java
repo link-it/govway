@@ -31,7 +31,7 @@ import org.openspcoop2.core.commons.IDriverWS;
 /**
  *
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

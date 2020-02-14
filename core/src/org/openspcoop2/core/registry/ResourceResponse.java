@@ -36,15 +36,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="resource-response">
- * 		&lt;sequence>
- * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/registry}resource-parameter" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="representation" type="{http://www.openspcoop2.org/core/registry}resource-representation" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="id-resource" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="resource-response"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/registry}resource-parameter" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="representation" type="{http://www.openspcoop2.org/core/registry}resource-representation" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="id-resource" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="status" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -165,7 +165,7 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getParameterList
-   * @return List<ResourceParameter>
+   * @return List&lt;ResourceParameter&gt;
   */
   @Deprecated
   public List<ResourceParameter> getParameter() {
@@ -174,7 +174,7 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setParameterList
-   * @param parameter List<ResourceParameter>
+   * @param parameter List&lt;ResourceParameter&gt;
   */
   @Deprecated
   public void setParameter(List<ResourceParameter> parameter) {
@@ -195,7 +195,7 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getRepresentationList
-   * @return List<ResourceRepresentation>
+   * @return List&lt;ResourceRepresentation&gt;
   */
   @Deprecated
   public List<ResourceRepresentation> getRepresentation() {
@@ -204,7 +204,7 @@ public class ResourceResponse extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setRepresentationList
-   * @param representation List<ResourceRepresentation>
+   * @param representation List&lt;ResourceRepresentation&gt;
   */
   @Deprecated
   public void setRepresentation(List<ResourceRepresentation> representation) {

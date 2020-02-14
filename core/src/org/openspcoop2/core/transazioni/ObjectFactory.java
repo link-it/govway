@@ -52,6 +52,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link DumpContenuto }
+     */
+    public DumpContenuto createDumpContenuto() {
+        return new DumpContenuto();
+    }
+
+    /**
+     * Create an instance of {@link Transazione }
+     */
+    public Transazione createTransazione() {
+        return new Transazione();
+    }
+
+    /**
      * Create an instance of {@link DumpMultipartHeader }
      */
     public DumpMultipartHeader createDumpMultipartHeader() {
@@ -59,10 +73,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DumpContenuto }
+     * Create an instance of {@link DumpMessaggio }
      */
-    public DumpContenuto createDumpContenuto() {
-        return new DumpContenuto();
+    public DumpMessaggio createDumpMessaggio() {
+        return new DumpMessaggio();
+    }
+
+    /**
+     * Create an instance of {@link DumpAllegato }
+     */
+    public DumpAllegato createDumpAllegato() {
+        return new DumpAllegato();
+    }
+
+    /**
+     * Create an instance of {@link IdCredenzialeMittente }
+     */
+    public IdCredenzialeMittente createIdCredenzialeMittente() {
+        return new IdCredenzialeMittente();
+    }
+
+    /**
+     * Create an instance of {@link TransazioneExport }
+     */
+    public TransazioneExport createTransazioneExport() {
+        return new TransazioneExport();
+    }
+
+    /**
+     * Create an instance of {@link DumpHeaderTrasporto }
+     */
+    public DumpHeaderTrasporto createDumpHeaderTrasporto() {
+        return new DumpHeaderTrasporto();
+    }
+
+    /**
+     * Create an instance of {@link TransazioneApplicativoServer }
+     */
+    public TransazioneApplicativoServer createTransazioneApplicativoServer() {
+        return new TransazioneApplicativoServer();
     }
 
     /**
@@ -80,38 +129,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DumpAllegato }
+     * Create an instance of {@link CredenzialeMittente }
      */
-    public DumpAllegato createDumpAllegato() {
-        return new DumpAllegato();
-    }
-
-    /**
-     * Create an instance of {@link DumpMessaggio }
-     */
-    public DumpMessaggio createDumpMessaggio() {
-        return new DumpMessaggio();
-    }
-
-    /**
-     * Create an instance of {@link TransazioneExtendedInfo }
-     */
-    public TransazioneExtendedInfo createTransazioneExtendedInfo() {
-        return new TransazioneExtendedInfo();
-    }
-
-    /**
-     * Create an instance of {@link TransazioneApplicativoServer }
-     */
-    public TransazioneApplicativoServer createTransazioneApplicativoServer() {
-        return new TransazioneApplicativoServer();
-    }
-
-    /**
-     * Create an instance of {@link DumpHeaderTrasporto }
-     */
-    public DumpHeaderTrasporto createDumpHeaderTrasporto() {
-        return new DumpHeaderTrasporto();
+    public CredenzialeMittente createCredenzialeMittente() {
+        return new CredenzialeMittente();
     }
 
     /**
@@ -122,38 +143,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link TransazioneExtendedInfo }
+     */
+    public TransazioneExtendedInfo createTransazioneExtendedInfo() {
+        return new TransazioneExtendedInfo();
+    }
+
+    /**
      * Create an instance of {@link DumpHeaderAllegato }
      */
     public DumpHeaderAllegato createDumpHeaderAllegato() {
         return new DumpHeaderAllegato();
-    }
-
-    /**
-     * Create an instance of {@link TransazioneExport }
-     */
-    public TransazioneExport createTransazioneExport() {
-        return new TransazioneExport();
-    }
-
-    /**
-     * Create an instance of {@link IdCredenzialeMittente }
-     */
-    public IdCredenzialeMittente createIdCredenzialeMittente() {
-        return new IdCredenzialeMittente();
-    }
-
-    /**
-     * Create an instance of {@link CredenzialeMittente }
-     */
-    public CredenzialeMittente createCredenzialeMittente() {
-        return new CredenzialeMittente();
-    }
-
-    /**
-     * Create an instance of {@link Transazione }
-     */
-    public Transazione createTransazione() {
-        return new Transazione();
     }
 
 

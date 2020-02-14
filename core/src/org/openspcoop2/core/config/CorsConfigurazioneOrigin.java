@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="cors-configurazione-origin">
- * 		&lt;sequence>
- * 			&lt;element name="origin" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="cors-configurazione-origin"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="origin" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -112,7 +112,7 @@ public class CorsConfigurazioneOrigin extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method getOriginList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getOrigin() {
@@ -121,7 +121,7 @@ public class CorsConfigurazioneOrigin extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method setOriginList
-   * @param origin List<java.lang.String>
+   * @param origin List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setOrigin(List<java.lang.String> origin) {

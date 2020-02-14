@@ -33,29 +33,29 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="busta">
- * 		&lt;sequence>
- * 			&lt;element name="mittente" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="destinatario" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-collaborazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-correlato" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="riferimento-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="scadenza" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="profilo-trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-trasmissione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="digest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="trasmissioni" type="{http://www.openspcoop2.org/core/tracciamento}trasmissioni" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="riscontri" type="{http://www.openspcoop2.org/core/tracciamento}riscontri" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="eccezioni" type="{http://www.openspcoop2.org/core/tracciamento}eccezioni" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/core/tracciamento}protocollo" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="busta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mittente" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="destinatario" type="{http://www.openspcoop2.org/core/tracciamento}soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-collaborazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-correlato" type="{http://www.openspcoop2.org/core/tracciamento}servizio" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="riferimento-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="ora-registrazione" type="{http://www.openspcoop2.org/core/tracciamento}data" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="scadenza" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="profilo-trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}profilo-trasmissione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="digest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="trasmissioni" type="{http://www.openspcoop2.org/core/tracciamento}trasmissioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="riscontri" type="{http://www.openspcoop2.org/core/tracciamento}riscontri" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="eccezioni" type="{http://www.openspcoop2.org/core/tracciamento}eccezioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/core/tracciamento}protocollo" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

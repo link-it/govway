@@ -42,31 +42,73 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link MtomProcessor }
+     * Create an instance of {@link PortaApplicativaServizio }
      */
-    public MtomProcessor createMtomProcessor() {
-        return new MtomProcessor();
+    public PortaApplicativaServizio createPortaApplicativaServizio() {
+        return new PortaApplicativaServizio();
     }
     
     /**
-     * Create an instance of {@link Connettore }
+     * Create an instance of {@link PortaApplicativaAzione }
      */
-    public Connettore createConnettore() {
-        return new Connettore();
+    public PortaApplicativaAzione createPortaApplicativaAzione() {
+        return new PortaApplicativaAzione();
     }
     
     /**
-     * Create an instance of {@link GestioneToken }
+     * Create an instance of {@link PortaDelegataLocalForward }
      */
-    public GestioneToken createGestioneToken() {
-        return new GestioneToken();
+    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
+        return new PortaDelegataLocalForward();
     }
     
     /**
-     * Create an instance of {@link PortaDelegataServizio }
+     * Create an instance of {@link ValidazioneContenutiApplicativi }
      */
-    public PortaDelegataServizio createPortaDelegataServizio() {
-        return new PortaDelegataServizio();
+    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
+        return new ValidazioneContenutiApplicativi();
+    }
+    
+    /**
+     * Create an instance of {@link AutorizzazioneScope }
+     */
+    public AutorizzazioneScope createAutorizzazioneScope() {
+        return new AutorizzazioneScope();
+    }
+    
+    /**
+     * Create an instance of {@link MtomProcessorFlow }
+     */
+    public MtomProcessorFlow createMtomProcessorFlow() {
+        return new MtomProcessorFlow();
+    }
+    
+    /**
+     * Create an instance of {@link GestioneTokenAutenticazione }
+     */
+    public GestioneTokenAutenticazione createGestioneTokenAutenticazione() {
+        return new GestioneTokenAutenticazione();
+    }
+    
+    /**
+     * Create an instance of {@link InvocazionePortaGestioneErrore }
+     */
+    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
+        return new InvocazionePortaGestioneErrore();
+    }
+    
+    /**
+     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
+     */
+    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
+        return new PortaApplicativaSoggettoVirtuale();
+    }
+    
+    /**
+     * Create an instance of {@link PortaDelegataSoggettoErogatore }
+     */
+    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
+        return new PortaDelegataSoggettoErogatore();
     }
     
     /**
@@ -84,66 +126,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link InvocazionePorta }
+     * Create an instance of {@link AutorizzazioneRuoli }
      */
-    public InvocazionePorta createInvocazionePorta() {
-        return new InvocazionePorta();
+    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
+        return new AutorizzazioneRuoli();
     }
     
     /**
-     * Create an instance of {@link InvocazionePortaGestioneErrore }
+     * Create an instance of {@link Connettore }
      */
-    public InvocazionePortaGestioneErrore createInvocazionePortaGestioneErrore() {
-        return new InvocazionePortaGestioneErrore();
-    }
-    
-    /**
-     * Create an instance of {@link ValidazioneContenutiApplicativi }
-     */
-    public ValidazioneContenutiApplicativi createValidazioneContenutiApplicativi() {
-        return new ValidazioneContenutiApplicativi();
-    }
-    
-    /**
-     * Create an instance of {@link InvocazioneCredenziali }
-     */
-    public InvocazioneCredenziali createInvocazioneCredenziali() {
-        return new InvocazioneCredenziali();
-    }
-    
-    /**
-     * Create an instance of {@link PortaDelegataLocalForward }
-     */
-    public PortaDelegataLocalForward createPortaDelegataLocalForward() {
-        return new PortaDelegataLocalForward();
-    }
-    
-    /**
-     * Create an instance of {@link PortaApplicativaAzione }
-     */
-    public PortaApplicativaAzione createPortaApplicativaAzione() {
-        return new PortaApplicativaAzione();
-    }
-    
-    /**
-     * Create an instance of {@link MtomProcessorFlow }
-     */
-    public MtomProcessorFlow createMtomProcessorFlow() {
-        return new MtomProcessorFlow();
-    }
-    
-    /**
-     * Create an instance of {@link AutorizzazioneScope }
-     */
-    public AutorizzazioneScope createAutorizzazioneScope() {
-        return new AutorizzazioneScope();
-    }
-    
-    /**
-     * Create an instance of {@link GestioneTokenAutenticazione }
-     */
-    public GestioneTokenAutenticazione createGestioneTokenAutenticazione() {
-        return new GestioneTokenAutenticazione();
+    public Connettore createConnettore() {
+        return new Connettore();
     }
     
     /**
@@ -154,31 +147,38 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link PortaApplicativaServizio }
+     * Create an instance of {@link InvocazioneCredenziali }
      */
-    public PortaApplicativaServizio createPortaApplicativaServizio() {
-        return new PortaApplicativaServizio();
+    public InvocazioneCredenziali createInvocazioneCredenziali() {
+        return new InvocazioneCredenziali();
     }
     
     /**
-     * Create an instance of {@link PortaApplicativaSoggettoVirtuale }
+     * Create an instance of {@link GestioneToken }
      */
-    public PortaApplicativaSoggettoVirtuale createPortaApplicativaSoggettoVirtuale() {
-        return new PortaApplicativaSoggettoVirtuale();
+    public GestioneToken createGestioneToken() {
+        return new GestioneToken();
     }
     
     /**
-     * Create an instance of {@link AutorizzazioneRuoli }
+     * Create an instance of {@link InvocazionePorta }
      */
-    public AutorizzazioneRuoli createAutorizzazioneRuoli() {
-        return new AutorizzazioneRuoli();
+    public InvocazionePorta createInvocazionePorta() {
+        return new InvocazionePorta();
     }
     
     /**
-     * Create an instance of {@link PortaDelegataSoggettoErogatore }
+     * Create an instance of {@link MtomProcessor }
      */
-    public PortaDelegataSoggettoErogatore createPortaDelegataSoggettoErogatore() {
-        return new PortaDelegataSoggettoErogatore();
+    public MtomProcessor createMtomProcessor() {
+        return new MtomProcessor();
+    }
+    
+    /**
+     * Create an instance of {@link PortaDelegataServizio }
+     */
+    public PortaDelegataServizio createPortaDelegataServizio() {
+        return new PortaDelegataServizio();
     }
     
 

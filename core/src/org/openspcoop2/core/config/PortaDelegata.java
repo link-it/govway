@@ -38,56 +38,56 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-delegata">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config}porta-delegata-soggetto-erogatore" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta-autenticazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta-autorizzazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta-autorizzazione-contenuto" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="correlazione-applicativa" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="correlazione-applicativa-risposta" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}porta-tracciamento" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="id-port-type" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="stato-message-security" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/>
- * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/>
- * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="integrazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="allega-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/>
- * 		&lt;attribute name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="options" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="porta-delegata"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto-erogatore" type="{http://www.openspcoop2.org/core/config}porta-delegata-soggetto-erogatore" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/config}porta-delegata-azione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta-autenticazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-autorizzazione" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta-autorizzazione-contenuto" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="xacml-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}porta-delegata-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="ruoli" type="{http://www.openspcoop2.org/core/config}autorizzazione-ruoli" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}autorizzazione-scope" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gestione-token" type="{http://www.openspcoop2.org/core/config}gestione-token" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="local-forward" type="{http://www.openspcoop2.org/core/config}porta-delegata-local-forward" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/config}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="mtom-processor" type="{http://www.openspcoop2.org/core/config}mtom-processor" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="message-security" type="{http://www.openspcoop2.org/core/config}message-security" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="validazione-contenuti-applicativi" type="{http://www.openspcoop2.org/core/config}validazione-contenuti-applicativi" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="correlazione-applicativa" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="correlazione-applicativa-risposta" type="{http://www.openspcoop2.org/core/config}correlazione-applicativa-risposta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dump" type="{http://www.openspcoop2.org/core/config}dump-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tracciamento" type="{http://www.openspcoop2.org/core/config}porta-tracciamento" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gestione-cors" type="{http://www.openspcoop2.org/core/config}cors-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="response-caching" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="trasformazioni" type="{http://www.openspcoop2.org/core/config}trasformazioni" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="id-accordo" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="id-port-type" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="tipo-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome-soggetto-proprietario" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="stato-message-security" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="autenticazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="ssl"/&gt;
+ * 		&lt;attribute name="autenticazione-opzionale" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="autorizzazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="authenticated"/&gt;
+ * 		&lt;attribute name="autorizzazione-contenuto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="ricevuta-asincrona-simmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="ricevuta-asincrona-asimmetrica" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="integrazione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="allega-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="scarta-body" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="gestione-manifest" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="stateless" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional"/&gt;
+ * 		&lt;attribute name="ricerca-porta-azione-delegata" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="options" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -760,7 +760,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getExtendedInfoList
-   * @return List<Object>
+   * @return List&lt;Object&gt;
   */
   @Deprecated
   public List<Object> getExtendedInfo() {
@@ -769,7 +769,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setExtendedInfoList
-   * @param extendedInfo List<Object>
+   * @param extendedInfo List&lt;Object&gt;
   */
   @Deprecated
   public void setExtendedInfo(List<Object> extendedInfo) {
@@ -799,7 +799,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getProprietaAutenticazioneList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprietaAutenticazione() {
@@ -808,7 +808,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setProprietaAutenticazioneList
-   * @param proprietaAutenticazione List<Proprieta>
+   * @param proprietaAutenticazione List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprietaAutenticazione(List<Proprieta> proprietaAutenticazione) {
@@ -829,7 +829,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getProprietaAutorizzazioneList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprietaAutorizzazione() {
@@ -838,7 +838,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setProprietaAutorizzazioneList
-   * @param proprietaAutorizzazione List<Proprieta>
+   * @param proprietaAutorizzazione List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprietaAutorizzazione(List<Proprieta> proprietaAutorizzazione) {
@@ -859,7 +859,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getProprietaAutorizzazioneContenutoList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprietaAutorizzazioneContenuto() {
@@ -868,7 +868,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setProprietaAutorizzazioneContenutoList
-   * @param proprietaAutorizzazioneContenuto List<Proprieta>
+   * @param proprietaAutorizzazioneContenuto List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprietaAutorizzazioneContenuto(List<Proprieta> proprietaAutorizzazioneContenuto) {
@@ -893,7 +893,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<PortaDelegataServizioApplicativo>
+   * @return List&lt;PortaDelegataServizioApplicativo&gt;
   */
   @Deprecated
   public List<PortaDelegataServizioApplicativo> getServizioApplicativo() {
@@ -902,7 +902,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<PortaDelegataServizioApplicativo>
+   * @param servizioApplicativo List&lt;PortaDelegataServizioApplicativo&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<PortaDelegataServizioApplicativo> servizioApplicativo) {
@@ -935,7 +935,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -944,7 +944,7 @@ public class PortaDelegata extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

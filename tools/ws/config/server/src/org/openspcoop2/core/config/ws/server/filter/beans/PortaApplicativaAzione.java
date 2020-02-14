@@ -25,15 +25,15 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-azione">
- *     &lt;sequence>
- *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" minOccurs="0" maxOccurs="1" default="(PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString("static")" />
- *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="porta-applicativa-azione"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaApplicativaAzioneIdentificazione" minOccurs="0" maxOccurs="1" default="(PortaApplicativaAzioneIdentificazione) PortaApplicativaAzioneIdentificazione.toEnumConstantFromString("static")" /&gt;
+ *         &lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

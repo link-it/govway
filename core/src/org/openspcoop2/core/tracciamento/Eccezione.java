@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eccezione">
- * 		&lt;sequence>
- * 			&lt;element name="codice" type="{http://www.openspcoop2.org/core/tracciamento}CodiceEccezione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="contesto-codifica" type="{http://www.openspcoop2.org/core/tracciamento}ContestoCodificaEccezione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="rilevanza" type="{http://www.openspcoop2.org/core/tracciamento}RilevanzaEccezione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="modulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="eccezione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="codice" type="{http://www.openspcoop2.org/core/tracciamento}CodiceEccezione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="contesto-codifica" type="{http://www.openspcoop2.org/core/tracciamento}ContestoCodificaEccezione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="rilevanza" type="{http://www.openspcoop2.org/core/tracciamento}RilevanzaEccezione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="modulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

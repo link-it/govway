@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statistica-oraria">
- * 		&lt;sequence>
- * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="statistica-oraria-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statistica-oraria"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="statistica-base" type="{http://www.openspcoop2.org/core/statistiche}statistica" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="statistica-oraria-contenuti" type="{http://www.openspcoop2.org/core/statistiche}statistica-contenuti" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -136,7 +136,7 @@ public class StatisticaOraria extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getStatisticaOrariaContenutiList
-   * @return List<StatisticaContenuti>
+   * @return List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public List<StatisticaContenuti> getStatisticaOrariaContenuti() {
@@ -145,7 +145,7 @@ public class StatisticaOraria extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setStatisticaOrariaContenutiList
-   * @param statisticaOrariaContenuti List<StatisticaContenuti>
+   * @param statisticaOrariaContenuti List&lt;StatisticaContenuti&gt;
   */
   @Deprecated
   public void setStatisticaOrariaContenuti(List<StatisticaContenuti> statisticaOrariaContenuti) {

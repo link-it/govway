@@ -25,12 +25,12 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="autorizzazione-scope">
- *     &lt;sequence>
- *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" />
- *         &lt;element name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="autorizzazione-scope"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" default="(StatoFunzionalita) StatoFunzionalita.toEnumConstantFromString("disabilitato")" /&gt;
+ *         &lt;element name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

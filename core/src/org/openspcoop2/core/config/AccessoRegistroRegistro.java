@@ -35,14 +35,14 @@ import java.util.Hashtable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accesso-registro-registro">
- * 		&lt;attribute name="tipo-database" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}RegistroTipo" use="optional" default="xml"/>
- * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="accesso-registro-registro"&gt;
+ * 		&lt;attribute name="tipo-database" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}RegistroTipo" use="optional" default="xml"/&gt;
+ * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -169,7 +169,7 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getGenericPropertiesMap
-   * @return Hashtable<java.lang.String,String>
+   * @return Hashtable&lt;java.lang.String,String&gt;
   */
   @Deprecated
   public Hashtable<java.lang.String,String> getGenericProperties() {
@@ -178,7 +178,7 @@ public class AccessoRegistroRegistro extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setGenericPropertiesMap
-   * @param genericProperties Hashtable<java.lang.String,String>
+   * @param genericProperties Hashtable&lt;java.lang.String,String&gt;
   */
   @Deprecated
   public void setGenericProperties(Hashtable<java.lang.String,String> genericProperties) {

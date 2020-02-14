@@ -36,24 +36,24 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="fruitore">
- * 		&lt;sequence>
- * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="id-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="fruitore"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="byte-wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="id-soggetto" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="id-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="wsdl-implementativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="wsdl-implementativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -265,7 +265,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getServizioApplicativo() {
@@ -274,7 +274,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<java.lang.String>
+   * @param servizioApplicativo List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<java.lang.String> servizioApplicativo) {
@@ -298,7 +298,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getConfigurazioneAzioneList
-   * @return List<ConfigurazioneServizioAzione>
+   * @return List&lt;ConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
@@ -307,7 +307,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setConfigurazioneAzioneList
-   * @param configurazioneAzione List<ConfigurazioneServizioAzione>
+   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {
@@ -328,7 +328,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getProtocolPropertyList
-   * @return List<ProtocolProperty>
+   * @return List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public List<ProtocolProperty> getProtocolProperty() {
@@ -337,7 +337,7 @@ public class Fruitore extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List<ProtocolProperty>
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {

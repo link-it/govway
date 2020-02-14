@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasformazioni">
- * 		&lt;sequence>
- * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}trasformazione-regola" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="trasformazioni"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}trasformazione-regola" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class Trasformazioni extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getRegolaList
-   * @return List<TrasformazioneRegola>
+   * @return List&lt;TrasformazioneRegola&gt;
   */
   @Deprecated
   public List<TrasformazioneRegola> getRegola() {
@@ -120,7 +120,7 @@ public class Trasformazioni extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setRegolaList
-   * @param regola List<TrasformazioneRegola>
+   * @param regola List&lt;TrasformazioneRegola&gt;
   */
   @Deprecated
   public void setRegola(List<TrasformazioneRegola> regola) {

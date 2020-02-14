@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="findAllResponse">
- *     &lt;sequence>
- *         &lt;element name="findReturn" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" maxOccurs="unbounded" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="findAllResponse"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="findReturn" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" maxOccurs="unbounded" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

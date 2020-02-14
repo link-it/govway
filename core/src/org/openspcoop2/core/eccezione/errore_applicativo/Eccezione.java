@@ -34,13 +34,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eccezione">
- * 		&lt;sequence>
- * 			&lt;element name="code" type="{http://govway.org/integration/fault}CodiceEccezione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="type" type="{http://govway.org/integration/fault}TipoEccezione" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="eccezione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="code" type="{http://govway.org/integration/fault}CodiceEccezione" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="type" type="{http://govway.org/integration/fault}TipoEccezione" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

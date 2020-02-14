@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eccezioni">
- * 		&lt;sequence>
- * 			&lt;element name="eccezione" type="{http://www.openspcoop2.org/core/tracciamento}eccezione" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="eccezioni"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="eccezione" type="{http://www.openspcoop2.org/core/tracciamento}eccezione" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getEccezioneList
-   * @return List<Eccezione>
+   * @return List&lt;Eccezione&gt;
   */
   @Deprecated
   public List<Eccezione> getEccezione() {
@@ -120,7 +120,7 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setEccezioneList
-   * @param eccezione List<Eccezione>
+   * @param eccezione List&lt;Eccezione&gt;
   */
   @Deprecated
   public void setEccezione(List<Eccezione> eccezione) {

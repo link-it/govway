@@ -25,11 +25,11 @@ package org.openspcoop2.core.transazioni.ws.server.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="wrapperIdTransazione">
- *     &lt;sequence>
- *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="wrapperIdTransazione"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="id" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="create">
- *     &lt;sequence>
- *         &lt;element name="obj" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="create"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="obj" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

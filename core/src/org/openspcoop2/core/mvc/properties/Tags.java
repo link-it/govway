@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tags">
- * 		&lt;sequence>
- * 			&lt;element name="tag" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="tags"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tag" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -121,7 +121,7 @@ public class Tags extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getTagList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getTag() {
@@ -130,7 +130,7 @@ public class Tags extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setTagList
-   * @param tag List<java.lang.String>
+   * @param tag List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setTag(List<java.lang.String> tag) {

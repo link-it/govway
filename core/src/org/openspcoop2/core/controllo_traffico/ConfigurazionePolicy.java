@@ -40,36 +40,36 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-policy">
- * 		&lt;sequence>
- * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="built-in" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risorsa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="simultanee" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="valore-tipo-banda" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-banda" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="valore-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-applicabilita" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-applicabilita" minOccurs="1" maxOccurs="1" default="sempre"/>
- * 			&lt;element name="applicabilita-con-congestione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="applicabilita-degrado-prestazionale" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="degrado-avg-time-modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="degrado-avg-time-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="applicabilita-stato-allarme" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 			&lt;element name="allarme-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allarme-stato" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allarme-not-stato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-policy"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-policy" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="built-in" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risorsa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="simultanee" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="valore" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="valore-tipo-banda" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-banda" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="valore-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-applicabilita" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-applicabilita" minOccurs="1" maxOccurs="1" default="sempre"/&gt;
+ * 			&lt;element name="applicabilita-con-congestione" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="applicabilita-degrado-prestazionale" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="degrado-avg-time-modalita-controllo" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-controllo-periodo" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-realtime" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-realtime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="degrado-avg-time-tipo-intervallo-osservazione-statistico" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-periodo-statistico" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="degrado-avg-time-intervallo-osservazione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="degrado-avg-time-finestra-osservazione" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-finestra" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="degrado-avg-time-tipo-latenza" type="{http://www.openspcoop2.org/core/controllo_traffico}tipo-latenza" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="applicabilita-stato-allarme" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 			&lt;element name="allarme-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allarme-stato" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allarme-not-stato" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="1" maxOccurs="1" default="false"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

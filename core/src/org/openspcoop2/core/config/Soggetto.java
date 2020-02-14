@@ -37,24 +37,24 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="soggetto">
- * 		&lt;sequence>
- * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/core/config}porta-delegata" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/core/config}porta-applicativa" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/config}connettore" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="dominio-default" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="soggetto"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/core/config}porta-delegata" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/core/config}porta-applicativa" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/config}connettore" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="identificativo-porta" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="dominio-default" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="router" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="pd-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="pa-url-prefix-rewriter" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -312,7 +312,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getPortaDelegataList
-   * @return List<PortaDelegata>
+   * @return List&lt;PortaDelegata&gt;
   */
   @Deprecated
   public List<PortaDelegata> getPortaDelegata() {
@@ -321,7 +321,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setPortaDelegataList
-   * @param portaDelegata List<PortaDelegata>
+   * @param portaDelegata List&lt;PortaDelegata&gt;
   */
   @Deprecated
   public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
@@ -342,7 +342,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getPortaApplicativaList
-   * @return List<PortaApplicativa>
+   * @return List&lt;PortaApplicativa&gt;
   */
   @Deprecated
   public List<PortaApplicativa> getPortaApplicativa() {
@@ -351,7 +351,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setPortaApplicativaList
-   * @param portaApplicativa List<PortaApplicativa>
+   * @param portaApplicativa List&lt;PortaApplicativa&gt;
   */
   @Deprecated
   public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {
@@ -372,7 +372,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<ServizioApplicativo>
+   * @return List&lt;ServizioApplicativo&gt;
   */
   @Deprecated
   public List<ServizioApplicativo> getServizioApplicativo() {
@@ -381,7 +381,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<ServizioApplicativo>
+   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
@@ -402,7 +402,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getConnettoreList
-   * @return List<Connettore>
+   * @return List&lt;Connettore&gt;
   */
   @Deprecated
   public List<Connettore> getConnettore() {
@@ -411,7 +411,7 @@ public class Soggetto extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setConnettoreList
-   * @param connettore List<Connettore>
+   * @param connettore List&lt;Connettore&gt;
   */
   @Deprecated
   public void setConnettore(List<Connettore> connettore) {

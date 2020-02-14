@@ -36,13 +36,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="routing-table">
- * 		&lt;sequence>
- * 			&lt;element name="destinazione" type="{http://www.openspcoop2.org/core/config}routing-table-destinazione" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="default" type="{http://www.openspcoop2.org/core/config}routing-table-default" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="abilitata" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="routing-table"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="destinazione" type="{http://www.openspcoop2.org/core/config}routing-table-destinazione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="default" type="{http://www.openspcoop2.org/core/config}routing-table-default" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="abilitata" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -131,7 +131,7 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getDestinazioneList
-   * @return List<RoutingTableDestinazione>
+   * @return List&lt;RoutingTableDestinazione&gt;
   */
   @Deprecated
   public List<RoutingTableDestinazione> getDestinazione() {
@@ -140,7 +140,7 @@ public class RoutingTable extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setDestinazioneList
-   * @param destinazione List<RoutingTableDestinazione>
+   * @param destinazione List&lt;RoutingTableDestinazione&gt;
   */
   @Deprecated
   public void setDestinazione(List<RoutingTableDestinazione> destinazione) {

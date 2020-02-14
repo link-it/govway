@@ -42,27 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link IdSoggetto }
-     */
-    public IdSoggetto createIdSoggetto() {
-        return new IdSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link CredenzialiSoggetto }
-     */
-    public CredenzialiSoggetto createCredenzialiSoggetto() {
-        return new CredenzialiSoggetto();
-    }
-    
-    /**
-     * Create an instance of {@link Connettore }
-     */
-    public Connettore createConnettore() {
-        return new Connettore();
-    }
-    
-    /**
      * Create an instance of {@link AccordoServizioParteComuneServizioComposto }
      */
     public AccordoServizioParteComuneServizioComposto createAccordoServizioParteComuneServizioComposto() {
@@ -74,6 +53,27 @@ public class ObjectFactory {
      */
     public ConfigurazioneServizio createConfigurazioneServizio() {
         return new ConfigurazioneServizio();
+    }
+    
+    /**
+     * Create an instance of {@link IdSoggetto }
+     */
+    public IdSoggetto createIdSoggetto() {
+        return new IdSoggetto();
+    }
+    
+    /**
+     * Create an instance of {@link Connettore }
+     */
+    public Connettore createConnettore() {
+        return new Connettore();
+    }
+    
+    /**
+     * Create an instance of {@link CredenzialiSoggetto }
+     */
+    public CredenzialiSoggetto createCredenzialiSoggetto() {
+        return new CredenzialiSoggetto();
     }
     
 

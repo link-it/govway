@@ -42,13 +42,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchFilterTransazione }
-     */
-    public SearchFilterTransazione createSearchFilterTransazione() {
-        return new SearchFilterTransazione();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterDumpMessaggio }
      */
     public SearchFilterDumpMessaggio createSearchFilterDumpMessaggio() {
@@ -60,6 +53,13 @@ public class ObjectFactory {
      */
     public SearchFilterTransazioneApplicativoServer createSearchFilterTransazioneApplicativoServer() {
         return new SearchFilterTransazioneApplicativoServer();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterTransazione }
+     */
+    public SearchFilterTransazione createSearchFilterTransazione() {
+        return new SearchFilterTransazione();
     }
     
 

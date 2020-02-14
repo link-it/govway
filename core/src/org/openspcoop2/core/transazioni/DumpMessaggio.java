@@ -36,34 +36,34 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dump-messaggio">
- * 		&lt;sequence>
- * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="data-consegna-erogatore" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="multipart-header" type="{http://www.openspcoop2.org/core/transazioni}dump-multipart-header" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="body" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="header-trasporto" type="{http://www.openspcoop2.org/core/transazioni}dump-header-trasporto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/transazioni}dump-allegato" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="contenuto" type="{http://www.openspcoop2.org/core/transazioni}dump-contenuto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="post-process-header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="post-process-filename" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="post-process-content" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="post-process-config-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="post-process-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="post-processed" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="1"/>
- * 			&lt;element name="multipart-header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dump-messaggio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="protocollo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-consegna-erogatore" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="formato-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="multipart-content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="multipart-content-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="multipart-content-location" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="multipart-header" type="{http://www.openspcoop2.org/core/transazioni}dump-multipart-header" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="body" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="header-trasporto" type="{http://www.openspcoop2.org/core/transazioni}dump-header-trasporto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/transazioni}dump-allegato" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="contenuto" type="{http://www.openspcoop2.org/core/transazioni}dump-contenuto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="dump-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-process-header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-process-filename" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-process-content" type="{http://www.w3.org/2001/XMLSchema}hexBinary" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-process-config-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-process-timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="post-processed" type="{http://www.w3.org/2001/XMLSchema}int" minOccurs="0" maxOccurs="1" default="1"/&gt;
+ * 			&lt;element name="multipart-header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="header-ext" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -457,7 +457,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getMultipartHeaderList
-   * @return List<DumpMultipartHeader>
+   * @return List&lt;DumpMultipartHeader&gt;
   */
   @Deprecated
   public List<DumpMultipartHeader> getMultipartHeader() {
@@ -466,7 +466,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setMultipartHeaderList
-   * @param multipartHeader List<DumpMultipartHeader>
+   * @param multipartHeader List&lt;DumpMultipartHeader&gt;
   */
   @Deprecated
   public void setMultipartHeader(List<DumpMultipartHeader> multipartHeader) {
@@ -492,7 +492,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getHeaderTrasportoList
-   * @return List<DumpHeaderTrasporto>
+   * @return List&lt;DumpHeaderTrasporto&gt;
   */
   @Deprecated
   public List<DumpHeaderTrasporto> getHeaderTrasporto() {
@@ -501,7 +501,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setHeaderTrasportoList
-   * @param headerTrasporto List<DumpHeaderTrasporto>
+   * @param headerTrasporto List&lt;DumpHeaderTrasporto&gt;
   */
   @Deprecated
   public void setHeaderTrasporto(List<DumpHeaderTrasporto> headerTrasporto) {
@@ -522,7 +522,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getAllegatoList
-   * @return List<DumpAllegato>
+   * @return List&lt;DumpAllegato&gt;
   */
   @Deprecated
   public List<DumpAllegato> getAllegato() {
@@ -531,7 +531,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setAllegatoList
-   * @param allegato List<DumpAllegato>
+   * @param allegato List&lt;DumpAllegato&gt;
   */
   @Deprecated
   public void setAllegato(List<DumpAllegato> allegato) {
@@ -552,7 +552,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getContenutoList
-   * @return List<DumpContenuto>
+   * @return List&lt;DumpContenuto&gt;
   */
   @Deprecated
   public List<DumpContenuto> getContenuto() {
@@ -561,7 +561,7 @@ public class DumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setContenutoList
-   * @param contenuto List<DumpContenuto>
+   * @param contenuto List&lt;DumpContenuto&gt;
   */
   @Deprecated
   public void setContenuto(List<DumpContenuto> contenuto) {

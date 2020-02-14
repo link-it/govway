@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dettaglio-routing">
- * 		&lt;sequence>
- * 			&lt;element name="domain" type="{http://govway.org/integration/fault/router_details}dominio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="detail" type="{http://govway.org/integration/fault/router_details}dettaglio" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dettaglio-routing"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="domain" type="{http://govway.org/integration/fault/router_details}dominio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="detail" type="{http://govway.org/integration/fault/router_details}dettaglio" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -25,11 +25,11 @@ package org.openspcoop2.core.tracciamento.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="findAllIdsResponse">
- *     &lt;sequence>
- *         &lt;element name="itemsFound" type="{http://www.openspcoop2.org/core/tracciamento}traccia" maxOccurs="unbounded" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="findAllIdsResponse"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="itemsFound" type="{http://www.openspcoop2.org/core/tracciamento}traccia" maxOccurs="unbounded" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

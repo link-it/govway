@@ -1503,7 +1503,7 @@ public class UDDILib
 
 	/**
 	 * Il metodo si occupa di aggiungere nel registro una nuova BusinessEntity 
-	 * con tipo di identificativo <var>tipo</var> e codice identificativo <var>codice</>.
+	 * con tipo di identificativo 'tipo' e codice identificativo 'codice'.
 	 * 	
 	 * @param idSogg del Soggetto.
 	 * @return la BusinessEntity inserita, se l'inserimento ha successo
