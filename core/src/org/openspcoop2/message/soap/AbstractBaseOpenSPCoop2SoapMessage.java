@@ -41,7 +41,7 @@ import org.openspcoop2.message.soap.mtom.MtomXomReference;
 /**
  * AbstractBaseOpenSPCoop2SoapMessage_impl
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

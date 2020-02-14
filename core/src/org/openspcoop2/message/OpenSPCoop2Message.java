@@ -39,8 +39,8 @@ import org.w3c.dom.Node;
 /**
  * Interfaccia del messaggio OpenSPCoop
  *
- * @author Lorenzo Nardi <nardi@link.it>
- * @author Andrea Poli <apoli@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

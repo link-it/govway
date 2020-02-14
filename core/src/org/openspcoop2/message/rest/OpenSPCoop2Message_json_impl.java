@@ -36,7 +36,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi json
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

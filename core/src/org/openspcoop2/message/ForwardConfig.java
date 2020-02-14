@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * ForwardHeaderConfig
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

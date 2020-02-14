@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
  * del messaggio XML, fornisce alcuni metodi di utilita' per facilitare
  * un eventuale cambio di implementazione
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

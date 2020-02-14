@@ -26,7 +26,7 @@ import org.w3c.dom.Element;
 /**
  * OpenSPCoop2RestXmlMessage
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

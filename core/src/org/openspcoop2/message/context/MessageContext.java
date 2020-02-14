@@ -34,20 +34,20 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="message-context">
- * 		&lt;sequence>
- * 			&lt;element name="transport-request-context" type="{http://www.openspcoop2.org/message/context}transport-request-context" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="transport-response-context" type="{http://www.openspcoop2.org/message/context}transport-response-context" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="forced-response" type="{http://www.openspcoop2.org/message/context}forced-response" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="serialized-context" type="{http://www.openspcoop2.org/message/context}serialized-context" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-type-parameters" type="{http://www.openspcoop2.org/message/context}content-type-parameters" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-length" type="{http://www.openspcoop2.org/message/context}content-length" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="soap" type="{http://www.openspcoop2.org/message/context}soap" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="message-type" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="message-role" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="protocol" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="message-context"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="transport-request-context" type="{http://www.openspcoop2.org/message/context}transport-request-context" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="transport-response-context" type="{http://www.openspcoop2.org/message/context}transport-response-context" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="forced-response" type="{http://www.openspcoop2.org/message/context}forced-response" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="serialized-context" type="{http://www.openspcoop2.org/message/context}serialized-context" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-type-parameters" type="{http://www.openspcoop2.org/message/context}content-type-parameters" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-length" type="{http://www.openspcoop2.org/message/context}content-length" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soap" type="{http://www.openspcoop2.org/message/context}soap" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="message-type" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="message-role" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="protocol" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

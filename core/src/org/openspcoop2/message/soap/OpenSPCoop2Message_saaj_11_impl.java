@@ -38,7 +38,7 @@ import com.sun.xml.messaging.saaj.packaging.mime.internet.ContentType;
 /**
  * Implementazione dell'OpenSPCoop2Message
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

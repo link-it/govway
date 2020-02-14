@@ -37,7 +37,7 @@ import org.xml.sax.InputSource;
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi xml
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

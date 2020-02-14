@@ -25,7 +25,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 /**
  * Classe che rappresenta un elemento 
  * 
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
