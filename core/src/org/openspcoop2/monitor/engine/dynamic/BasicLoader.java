@@ -30,6 +30,7 @@ import org.openspcoop2.monitor.sdk.plugins.IStatisticProcessing;
 import java.util.List;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
 /**
@@ -70,7 +71,7 @@ public class BasicLoader implements IDynamicLoader{
 	@Override
 	public Object newInstance() throws SearchException{
 		try{
-			return this.c.newInstance();
+			return Utilities.newInstance(this.c);
 		}catch (Exception e) {
 			throw new SearchException(e.getMessage(),e);
 		}
@@ -80,7 +81,7 @@ public class BasicLoader implements IDynamicLoader{
 	public List<Parameter<?>> getParameters(Context context) throws SearchException{
 		try{
 			
-			Object obj = this.c.newInstance();
+			Object obj = Utilities.newInstance(this.c);
 
 			if(obj instanceof ISearchProcessing){				
 				return ((ISearchProcessing) obj).getParameters(context);
@@ -109,7 +110,7 @@ public class BasicLoader implements IDynamicLoader{
 	@Override
 	public void updateRendering(Parameter<?> parameter, Context context) throws SearchException{
 		try{
-			Object obj = this.c.newInstance();
+			Object obj = Utilities.newInstance(this.c);
 
 			if(obj instanceof ISearchProcessing){				
 				((ISearchProcessing) obj).updateRendering(parameter, context);
@@ -137,7 +138,7 @@ public class BasicLoader implements IDynamicLoader{
 	@Override
 	public void valueSelectedListener(Parameter<?> parameter, Context context) {
 		try{
-			Object obj = this.c.newInstance();
+			Object obj = Utilities.newInstance(this.c);
 
 			if(obj instanceof ISearchProcessing){
 				((ISearchProcessing) obj).onChangeValue(parameter, context);
@@ -164,7 +165,7 @@ public class BasicLoader implements IDynamicLoader{
 	public List<StatisticType> getEnabledStatisticType(Context context)
 			throws SearchException {
 		try{
-			Object obj = this.c.newInstance();
+			Object obj = Utilities.newInstance(this.c);
 
 			if(obj instanceof IStatisticProcessing){
 				return ((IStatisticProcessing) obj).getEnabledStatisticType();

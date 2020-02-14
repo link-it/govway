@@ -30,7 +30,6 @@ import org.openspcoop2.security.SecurityException;
 import org.openspcoop2.security.message.IMessageSecurityContext;
 import org.openspcoop2.security.message.MessageSecurityContext;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
-import org.openspcoop2.security.message.signature.SunAttachmentContentTransform;
 import org.openspcoop2.security.message.signature.XMLSecAttachmentContentTransform;
 
 /**
@@ -61,17 +60,16 @@ public class MessageSecurityContext_soapbox implements IMessageSecurityContext{
 	    		throw new SecurityException(e.getMessage(),e);
 	    	}
 				
-			try{ 		
-				com.sun.org.apache.xml.internal.security.Init.init();
-				//com.sun.org.apache.xml.internal.security.transforms.Transform.init(); // Metodo che non serve ed in java 1.7 non è più disponibile.
+			try{ 
+				System.out.println("LA INIT NON C'ERA, SE FUNZIONA TESTSUTE SECURITY E SOAPBOX POI LEVARE QUESTA STAMPA");
+				//org.apache.xml.security.Init.init();
 			}catch(Throwable e){
-	    		wssContext.getLog().error("Inizializzazione com.sun.org.apache.xml.internal.security non riuscita: "+e.getMessage(),e);
+	    		wssContext.getLog().error("Inizializzazione org.apache.xml.security non riuscita: "+e.getMessage(),e);
 	    		throw new SecurityException(e.getMessage(),e);
 	    	}
 			
 			// Li registro entrambi in modo da poter switchare tra le implementazioni
 			try{ 
-//				if(wssContext.isUseXMLSec()){
 				try{
 					wssContext.getLog().info("Transformer registrato: ["+XMLSecAttachmentContentTransform.class.getName()+"]");
 					Transform.register(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI, XMLSecAttachmentContentTransform.class.getName());
@@ -83,20 +81,6 @@ public class MessageSecurityContext_soapbox implements IMessageSecurityContext{
 		    		wssContext.getLog().error("Registrazione org.apache.xml.security.transforms.Transform non riuscita: "+e.getMessage(),e);
 		    		throw new SecurityException(e.getMessage(),e);
 		    	}
-//				}else{
-				try{
-					wssContext.getLog().info("Transformer registrato: ["+SunAttachmentContentTransform.class.getName()+"]");
-					com.sun.org.apache.xml.internal.security.transforms.Transform.register(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI, 
-							SunAttachmentContentTransform.class.getName());
-				}catch(com.sun.org.apache.xml.internal.security.exceptions.AlgorithmAlreadyRegisteredException e){
-					// Succede in caso di hot redeploy
-					wssContext.getLog().debug("Registrazione com.sun.org.apache.xml.internal.security.transforms.Transform non riuscita, classe gia registrata: "+e.getMessage());
-				}
-				catch(Throwable e){
-		    		wssContext.getLog().error("Registrazione com.sun.org.apache.xml.internal.security.transforms.Transform non riuscita: "+e.getMessage(),e);
-		    		throw new SecurityException(e.getMessage(),e);
-		    	}
-//				}
 			}
 			catch(SecurityException e){
 				throw e;

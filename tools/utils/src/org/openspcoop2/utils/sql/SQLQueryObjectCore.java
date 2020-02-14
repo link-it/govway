@@ -1269,7 +1269,7 @@ public abstract class SQLQueryObjectCore implements ISQLQueryObject{
 	
 	/**
 	 * Aggiunge una condizione di ricerca (e associa un operatore logico, se le condizioni di ricerca sono piu' di una)
-	 * es: SELECT * from tabella WHERE (field <> '')
+	 * es: SELECT * from tabella WHERE (field &lt;&gt; '')
 	 * 
 	 * @param field Field da verificare
 	 */

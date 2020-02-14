@@ -89,7 +89,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 			ServletUtils.addListElementIntoSession(this.session, ApiCostanti.OBJECT_NAME_APC_API,
 					new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_TIPO_ACCORDO, tipoAccordo));
 			
-			ServletUtils.setObjectIntoSession(this.session, new Boolean(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+			ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 			
 			this.pd.setCustomListViewName(ApiCostanti.APC_API_NOME_VISTA_CUSTOM_LISTA_API);
 			
@@ -363,7 +363,7 @@ public class ApiHelper extends AccordiServizioParteComuneHelper {
 		String tipoProtocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 		String labelASTitle = this.getLabelIdAccordo(tipoProtocollo, idAccordoOLD);
 		
-		ServletUtils.setObjectIntoSession(this.session, new Boolean(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
+		ServletUtils.setObjectIntoSession(this.session, Boolean.valueOf(true), ApiCostanti.SESSION_ATTRIBUTE_VISTA_APC_API);
 		
 		// setto la barra del titolo
 		List<Parameter> lstParm = new ArrayList<Parameter>();

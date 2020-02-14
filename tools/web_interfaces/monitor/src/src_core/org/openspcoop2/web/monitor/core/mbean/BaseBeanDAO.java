@@ -21,7 +21,7 @@ package org.openspcoop2.web.monitor.core.mbean;
 
 import org.openspcoop2.generic_project.dao.IServiceWithId;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.web.monitor.core.core.Utils;
 
 import java.io.Serializable;
@@ -72,7 +72,7 @@ public abstract class BaseBeanDAO<T,K, ServiceType extends IServiceWithId<T, K>>
 		if(this.selectedElement==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.selectedElement = ((Class<T>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.selectedElement = Utilities.newInstance((Class<T>)parameterizedType.getActualTypeArguments()[0]);
 			}catch (Exception e) {
 				BaseBeanDAO.log.error("errore cercando di istanziare il selectedElement ", e);
 			}

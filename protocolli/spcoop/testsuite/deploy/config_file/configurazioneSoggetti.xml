@@ -9691,55 +9691,6 @@
         </porta-delegata>
         
         
-        <!-- WSSecurity (SoapBox) Firmata con Attachments (SignatureEngine definito impostato a 'sun') -->
-        <porta-delegata
-            nome="SOAPBOX_FirmataAttachments_SignatureEngineSun"
-            autenticazione="none" autorizzazione="none" integrazione="trasporto,urlBased,soap"
-            stateless="abilitato" gestione-manifest="disabilitato">
-            <soggetto-erogatore tipo="spc" nome="SoggettoEsempioSoapBoxErogatore" />
-            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun" />
-            <message-security>
-                <request-flow>
-                    <parameter nome="action" valore="Signature"/>
-                    <parameter nome="actor"
-                        valore="openspcoop"/>
-                    <parameter nome="mustUnderstand" valore="true"/>
-                    <parameter nome="securityEngine" valore="soapbox"/>
-                    <parameter nome="isBSPCompliant" valore="true"/>
-                    <!-- signature -->
-                    <parameter nome="signatureEngine" valore="sun"/>
-                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/soapbox_pd_signature_keystore.properties"/>
-                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/soapbox_pd_signature_truststore.properties"/>
-                    <parameter nome="signatureUser" valore="pd"/>
-                    <parameter nome="signatureParts"
-                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
-                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
-                    <parameter nome="signatureDigestAlgorithm"
-                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
-                    <parameter nome="signatureC14nAlgorithm"
-                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
-                    <parameter nome="signatureAlgorithm"
-                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-                </request-flow>
-                <response-flow>
-                    <parameter nome="action" valore="Signature"/>
-                    <parameter nome="actor"
-                        valore="openspcoop"/>
-                    <parameter nome="mustUnderstand" valore="true"/>
-                    <parameter nome="securityEngine" valore="soapbox"/>
-                    <parameter nome="isBSPCompliant" valore="true"/>
-                    <!-- signature -->
-                    <parameter nome="signatureEngine" valore="sun"/>
-                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/soapbox_pd_signature_keystore.properties"/>
-                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/soapbox_pd_signature_truststore.properties"/>
-                    <parameter nome="signatureUser" valore="pd"/>
-                    <parameter nome="signatureParts"
-                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
-                </response-flow>
-            </message-security>
-        </porta-delegata>
-        
         <!-- WSSecurity (SoapBox) Firmata con Attachments (SignatureEngine definito impostato a 'xmlSec') -->
         <porta-delegata
             nome="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec"
@@ -10244,56 +10195,7 @@
             </message-security>
         </porta-applicativa>
         
-        <!-- WSSecurity (SoapBox) Firmata con Attachments (Signature engine impostato a 'sun') -->
-        <porta-applicativa nome="SOAPBOX_FirmataAttachments_SignatureEngineSun" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
-            <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />
-            <azione nome="WSSSoapBoxFirmataAttachmentsSignatureEngineSun"/>
-            <servizio-applicativo nome="govwayTestSuite" /> 
-            <soggetti>
-		<soggetto tipo="spc" nome="SoggettoEsempioSoapBoxFruitore"/>
-	    </soggetti> 
-            <message-security>
-                <request-flow>
-                    <parameter nome="action" valore="Signature"/>
-                    <parameter nome="actor"
-                        valore="openspcoop"/>
-                    <parameter nome="mustUnderstand" valore="true"/>
-                    <parameter nome="securityEngine" valore="soapbox"/>
-                    <parameter nome="isBSPCompliant" valore="true"/>
-                    <!-- signature -->
-                    <parameter nome="signatureEngine" valore="sun"/>
-                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/soapbox_pd_signature_keystore.properties"/>
-                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/soapbox_pa_signature_truststore.properties"/>
-                    <parameter nome="signatureUser" valore="pd"/>
-                    <parameter nome="signatureParts"
-                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
-                </request-flow>
-                <response-flow>
-                    <parameter nome="action" valore="Signature"/>
-                    <parameter nome="actor"
-                        valore="openspcoop"/>
-                    <parameter nome="mustUnderstand" valore="true"/>
-                    <parameter nome="securityEngine" valore="soapbox"/>
-                    <parameter nome="isBSPCompliant" valore="true"/>
-                    <!-- signature -->
-                    <parameter nome="signatureEngine" valore="sun"/>
-                    <parameter nome="signatureMultiPropFile" valore="/etc/govway/properties/soapbox_pa_signature_keystore.properties"/>
-                    <parameter nome="signatureTrustStorePropFile" valore="/etc/govway/properties/soapbox_pa_signature_truststore.properties"/>
-                    <parameter nome="signatureUser" valore="pa"/>
-                    <parameter nome="signatureParts"
-                        valore="{Element}{http://www.cnipa.it/schemas/2003/eGovIT/Busta1_0/}Intestazione;{Content}{http://schemas.xmlsoap.org/soap/envelope/}Body;{Content}{Attach}{*}" />
-                    
-                    <parameter nome="signatureKeyIdentifier" valore="DirectReference"/>
-                    <parameter nome="signatureDigestAlgorithm"
-                        valore="http://www.w3.org/2000/09/xmldsig#sha1"/>
-                    <parameter nome="signatureC14nAlgorithm"
-                        valore="http://www.w3.org/2001/10/xml-exc-c14n#"/>
-                    <parameter nome="signatureAlgorithm"
-                        valore="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
-                </response-flow>
-            </message-security>
-        </porta-applicativa>
-        
+ 
         <!-- WSSecurity (SoapBox) Firmata con Attachments (Signature engine impostato a 'xmlSec') -->
         <porta-applicativa nome="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec" autenticazione="none" stateless="abilitato" gestione-manifest="disabilitato">
             <servizio tipo="spc" nome="RichiestaStatoAvanzamento" />

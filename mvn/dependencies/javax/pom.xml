@@ -30,6 +30,7 @@
 		<javax.el.version>1.0</javax.el.version>
 		<javax.annotation.version>1.2</javax.annotation.version>
 		<javax.validation.version>2.0.1.Final</javax.validation.version>
+		<javax.rmi-corba.version>8.1.4.Final</javax.rmi-corba.version>
 
 	</properties>
 
@@ -171,6 +172,17 @@
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
 			<version>${javax.validation.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.openjdk-orb</groupId>
+			<artifactId>openjdk-orb</artifactId>
+			<version>${javax.rmi-corba.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

@@ -204,7 +204,6 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);
-				signMsgProc.setUseXMLSec(messageSecurityContext.isUseXMLSec());
 			}
 			
 			

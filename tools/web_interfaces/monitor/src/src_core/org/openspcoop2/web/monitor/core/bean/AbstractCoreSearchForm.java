@@ -19,11 +19,12 @@
  */
 package org.openspcoop2.web.monitor.core.bean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 
 /**
  * AbstractCoreSearchForm
@@ -186,16 +187,7 @@ public abstract class AbstractCoreSearchForm {
 	
 	
 	public List<SelectItem> getListaNumeroRisultati(){
-		List<SelectItem> lst = new ArrayList<>();
-		
-		lst.add(new SelectItem(new Integer(25), "25 Entries"));  
-		lst.add(new SelectItem(new Integer(75), "75 Entries"));
-		lst.add(new SelectItem(new Integer(125), "125 Entries"));
-		lst.add(new SelectItem(new Integer(250), "250 Entries"));
-		lst.add(new SelectItem(new Integer(500), "500 Entries"));
-		lst.add(new SelectItem(new Integer(1000), "1000 Entries"));
-		
-		return lst;
+		return Costanti.SELECT_ITEM_ENTRIES;
 	}
 	
 	public void limitSelected(ActionEvent ae) {

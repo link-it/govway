@@ -19,6 +19,11 @@
  */
 package org.openspcoop2.web.monitor.core.constants;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.model.SelectItem;
+
 /**
  * Costanti
  * 
@@ -81,7 +86,15 @@ public class Costanti {
 
 	public final static String LABEL_OPENSPCOOP2_WEB = "https://govway.org";
 	
-	
+	public final static List<SelectItem> SELECT_ITEM_ENTRIES = new ArrayList<>();
+	static {
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(25), "25 Entries"));  
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(75), "75 Entries"));
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(125), "125 Entries"));
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(250), "250 Entries"));
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(500), "500 Entries"));
+		SELECT_ITEM_ENTRIES.add(new SelectItem(Integer.valueOf(1000), "1000 Entries"));
+	}
 	
 	/* costanti properties file messages_it.properties*/ 
 	

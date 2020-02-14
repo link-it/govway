@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.core.dynamic;
 import java.lang.reflect.InvocationTargetException;
 
 import org.apache.commons.lang.reflect.ConstructorUtils;
+import org.openspcoop2.utils.Utilities;
 
 /**
  * ObjectConstructor
@@ -38,7 +39,7 @@ public class ObjectConstructor {
 	}
 	public Object instance(Class<?> classObject, Object ... params) throws InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 		if(params==null || params.length<=0) {
-			return classObject.newInstance();
+			return Utilities.newInstance_throwInstantiationException(classObject);
 		}
 		else {
 			return ConstructorUtils.invokeConstructor(classObject, params);

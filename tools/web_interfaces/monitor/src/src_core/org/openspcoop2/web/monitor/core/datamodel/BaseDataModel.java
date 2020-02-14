@@ -19,14 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.datamodel;
 
-import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
-import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-
-import org.openspcoop2.web.monitor.core.dao.IService;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,6 +31,11 @@ import javax.faces.model.SelectItem;
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SerializableDataModel;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
+import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.dao.IService;
 import org.slf4j.Logger;
 
 /**
@@ -291,15 +289,6 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 	public void rowsToDisplaySelected(ActionEvent ae) {}
     
 	public List<SelectItem> getListaNumeroRisultati(){
-		List<SelectItem> lst = new ArrayList<>();
-		
-		lst.add(new SelectItem(new Integer(25), "25 Entries"));  
-		lst.add(new SelectItem(new Integer(75), "75 Entries"));
-		lst.add(new SelectItem(new Integer(125), "125 Entries"));
-		lst.add(new SelectItem(new Integer(250), "250 Entries"));
-		lst.add(new SelectItem(new Integer(500), "500 Entries"));
-		lst.add(new SelectItem(new Integer(1000), "1000 Entries"));
-		
-		return lst;
+		return Costanti.SELECT_ITEM_ENTRIES;
 	}
 }

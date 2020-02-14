@@ -223,7 +223,7 @@ public abstract class BaseForm implements Form {
 					// controllo che il field implementi l'interfaccia FormField
 					if(FormField.class.isAssignableFrom(fieldClazz)){
 						//prelevo accessibilita field
-						boolean accessible = field.isAccessible();
+						boolean accessible = field.canAccess(this);
 						field.setAccessible(true);
 						FormField<?> formField = (FormField<?>) field.get(this);
 						// ripristino accessibilita

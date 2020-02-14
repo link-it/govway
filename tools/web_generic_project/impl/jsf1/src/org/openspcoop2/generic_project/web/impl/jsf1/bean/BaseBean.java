@@ -151,7 +151,7 @@ public abstract class BaseBean<DTOType, KeyType>  implements IViewBean<DTOType, 
 					// controllo che il field implementi l'interfaccia OutputField
 					if(OutputField.class.isAssignableFrom(fieldClazz)){
 						//prelevo accessibilita field
-						boolean accessible = field.isAccessible();
+						boolean accessible = field.canAccess(this);
 						field.setAccessible(true);
 						OutputField<?> outputField = (OutputField<?>) field.get(this);
 						// ripristino accessibilita

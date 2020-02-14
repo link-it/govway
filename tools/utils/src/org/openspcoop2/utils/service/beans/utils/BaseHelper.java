@@ -41,6 +41,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.cxf.jaxrs.validation.JAXRSParameterNameProvider;
 import org.apache.cxf.validation.ValidationConfiguration;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -180,7 +181,7 @@ public class BaseHelper {
 	public static final <T> T fromMap(Map<String,Object> mapObject, Class<T> toClass) throws InstantiationException, IllegalAccessException {
 		if (mapObject == null) return null;
 		
-		T ret = toClass.newInstance();
+		T ret = Utilities.newInstance_throwInstantiationException(toClass);
 		fillFromMap(mapObject, ret);
 	
 		return ret;
@@ -214,7 +215,7 @@ public class BaseHelper {
 	}
 	
 	/**
-	 * Questa funzione completa la deserializzazione di un oggetto jaxrs che arriva nella Api come una LinkedHashMap<String, String | LinkedHashMap<String, etc..>>
+	 * Questa funzione completa la deserializzazione di un oggetto jaxrs che arriva nella Api come una LinkedHashMap&lt;String, String | LinkedHashMap&lt;String, etc..&gt;&gt;
 	 * 
 	 * Da notare che questo metodo sebbene generico per i fini di govway, non è da considerare un metodo valido di deserializzazione da una linkedHashmap, rappresentazione
 	 * di un json, in un oggetto destinazione.
@@ -354,7 +355,7 @@ public class BaseHelper {
 		Optional<T> ret = deserializeOptional(o, dest);
 		if (!ret.isPresent() || (ret.isPresent() && ret.get() == null)) {
 			try {
-				return dest.newInstance();
+				return Utilities.newInstance(dest);
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

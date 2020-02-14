@@ -25,7 +25,7 @@ import java.util.Map;
 /**
 * MapEntry
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

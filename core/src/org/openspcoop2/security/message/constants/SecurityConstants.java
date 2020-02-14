@@ -92,8 +92,11 @@ public class SecurityConstants {
 	
 	public static final String NORMALIZE_TO_SAAJ_IMPL = "normalizeToSaajImpl";
 	
+	@Deprecated
 	public static final String SIGNATURE_ENGINE = "signatureEngine";
+	@Deprecated
 	public static final String SIGNATURE_ENGINE_SUN = "sun";
+	@Deprecated
 	public static final String SIGNATURE_ENGINE_XMLSEC = "xmlSec";
 
 	public static QName QNAME_WSS_ELEMENT_SECURITY = new QName("http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd","Security");

@@ -30,7 +30,7 @@ import javax.servlet.ServletResponse;
 /**
 * IFilter
 *
-* @author Giuliano Pintori <pintori@link.it>
+* @author Giuliano Pintori (pintori@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */

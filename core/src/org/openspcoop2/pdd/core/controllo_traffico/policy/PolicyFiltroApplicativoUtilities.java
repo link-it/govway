@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -137,7 +138,7 @@ public class PolicyFiltroApplicativoUtilities {
 			}
 			try{
 				Class<?> classPlugin = Class.forName(className);
-				Object o = classPlugin.newInstance();
+				Object o = Utilities.newInstance(classPlugin);
 				if(o instanceof IRateLimiting){
 					
 					Dati datiRichiesta = new Dati();

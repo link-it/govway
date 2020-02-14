@@ -37,10 +37,10 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.slf4j.Logger;
-
 import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.slf4j.Logger;
 
 /**
  * BaseDataModelWithSearchForm
@@ -543,14 +543,6 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 			}
 		}
 				
-		List<SelectItem> lst = new ArrayList<>();
-		lst.add(new SelectItem(new Integer(25), "25 Entries"));  
-		lst.add(new SelectItem(new Integer(75), "75 Entries"));
-		lst.add(new SelectItem(new Integer(125), "125 Entries"));
-		lst.add(new SelectItem(new Integer(250), "250 Entries"));
-		lst.add(new SelectItem(new Integer(500), "500 Entries"));
-		lst.add(new SelectItem(new Integer(1000), "1000 Entries"));
-		
-		return lst;
+		return Costanti.SELECT_ITEM_ENTRIES;
 	}
 }

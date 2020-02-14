@@ -86,7 +86,7 @@ public class VersionUtilities {
 	private static IVersionInfo _instance(String className) throws UtilsException {
 		if(className!=null && !StringUtils.isEmpty(className)) {
 			try {
-				return  (IVersionInfo) Class.forName(className).newInstance();
+				return  (IVersionInfo) Utilities.newInstance(className);
 			}catch(Exception e) {
 				throw new UtilsException(e.getMessage(), e);
 			}

@@ -796,8 +796,8 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		
 		schemaTypeRestriction.setMultipleOf(schema.getMultipleOf());
 
-		schemaTypeRestriction.setMinLength(schema.getMinLength()!=null ? new Long(schema.getMinLength()) : null);
-		schemaTypeRestriction.setMaxLength(schema.getMaxLength()!=null ? new Long(schema.getMaxLength()) : null);
+		schemaTypeRestriction.setMinLength(schema.getMinLength()!=null ? Long.valueOf(schema.getMinLength()) : null);
+		schemaTypeRestriction.setMaxLength(schema.getMaxLength()!=null ? Long.valueOf(schema.getMaxLength()) : null);
 	
 		schemaTypeRestriction.setPattern(schema.getPattern());
 

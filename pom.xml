@@ -13,20 +13,19 @@
 		<maven-clean-plugin>3.1.0</maven-clean-plugin>
 		<maven-dependency-plugin>3.1.1</maven-dependency-plugin>
 		<exec-maven-plugin>1.6.0</exec-maven-plugin>
-		<com-sun-tools>1.5.0</com-sun-tools>
-		<ant.version>1.9.8</ant.version>
+		<ant.version>1.10.6</ant.version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
 		<!-- govway version -->
-		<govway.version>3.2.2</govway.version>
+		<govway.version>3.3.0</govway.version>
 
 		<!-- compile config -->
 		<compile>compile</compile> <!-- compile phase, use 'none' for disable -->
 		
 		<!-- owasp config -->
 		<owasp>verify</owasp> <!-- owasp phase, use 'none' for disable -->
-		<owasp.plugin.version>5.2.2</owasp.plugin.version>
+		<owasp.plugin.version>5.3.0</owasp.plugin.version>
 		<owasp.plugin.failBuildOnAnyVulnerability>true</owasp.plugin.failBuildOnAnyVulnerability>
 		<owasp.ossindex.prevents429.sleep>5</owasp.ossindex.prevents429.sleep> <!-- https://github.com/sonatype/ossindex-maven/issues/17 -->
 

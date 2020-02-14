@@ -216,6 +216,21 @@ public class JavaDocCheck {
                         dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" presente con un valore non risolto dal commit svn: ["+JavaDocCheck.AUTORE_VALORE3+"]");
                     }
 					 */
+					if(byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_CHECK)>0){
+						int indexOf = byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_CHECK);
+						while (indexOf>0) {
+							int indexOfACapo = byteInputBuffer.toString().indexOf("\n", indexOf);
+							if(indexOfACapo>0) {
+								String s =  byteInputBuffer.toString().substring(indexOf,indexOfACapo);
+								//System.out.println("LINE ["+s+"]");
+								if(s.contains("<") || s.contains(">")) {
+									fileNonValidi.add(f.getAbsolutePath());
+									dichiarazioneAssente.add("dichiarazione "+JavaDocCheck.AUTORE_CHECK+" contiene i caratteri '<' o '>' non permessi in java 11: '"+s+"'");		
+								}
+							}
+							indexOf = byteInputBuffer.toString().indexOf(JavaDocCheck.AUTORE_CHECK, indexOf+JavaDocCheck.AUTORE_CHECK.length());
+						}
+					}
 
 
 					// ***** versione ****

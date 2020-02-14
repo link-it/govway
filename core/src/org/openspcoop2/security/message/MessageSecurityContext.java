@@ -127,14 +127,6 @@ public abstract class MessageSecurityContext{
 		return this.pddErogatore;
 	}
 	
-	private boolean useXMLSec = true;
-	public boolean isUseXMLSec() {
-		return this.useXMLSec;
-	}
-	public void setUseXMLSec(boolean useXMLSec) {
-		this.useXMLSec = useXMLSec;
-	}
-	
 	private List<Reference> references;
 	public List<Reference> getReferences() {
 		return this.references;
@@ -563,10 +555,10 @@ public abstract class MessageSecurityContext{
     
     
     /** SignatureEngine */
-    private void readSignatureEngine(boolean incoming) throws SecurityException{
+    @SuppressWarnings("deprecation")
+	private void readSignatureEngine(boolean incoming) throws SecurityException{
     	try{
     		
-    		this.useXMLSec = true; // default
     		String engineProperty = null;
     		if(incoming){
     			engineProperty = (String) this.incomingProperties.get(SecurityConstants.SIGNATURE_ENGINE);
@@ -576,10 +568,10 @@ public abstract class MessageSecurityContext{
     		if(engineProperty!=null){
     			engineProperty = engineProperty.trim();
     			if(SecurityConstants.SIGNATURE_ENGINE_SUN.equalsIgnoreCase(engineProperty)){
-    				this.useXMLSec = false;
+    				throw new SecurityException("Funzionalità non supportata in java 11");
     			}
     			else if(SecurityConstants.SIGNATURE_ENGINE_XMLSEC.equalsIgnoreCase(engineProperty)){
-    				this.useXMLSec = true;
+    				// nop
     			}
     			else{
     				throw new SecurityException("Signature engine impostato ["+engineProperty+"] non supportato");

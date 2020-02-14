@@ -39,7 +39,7 @@ import javax.xml.bind.Unmarshaller;
 /**
 * Utility per la gestione di xml tramite Jaxb
 *
-* @author Poli Andrea <apoli@link.it>
+* @author Poli Andrea (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

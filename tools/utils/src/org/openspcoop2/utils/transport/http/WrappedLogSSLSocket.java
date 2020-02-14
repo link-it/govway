@@ -200,15 +200,6 @@ public class WrappedLogSSLSocket extends SSLSocket {
 				}catch(Exception e) {
 					this.sb.append("\nPeerCertificates: "+e.getMessage());
 				}
-				try {
-					if(event.getPeerCertificateChain()!=null && event.getPeerCertificateChain().length>0) {
-						this.sb.append("\nPeerCertificateChain: "+event.getPeerCertificateChain().length);
-						this.sb.append("\n");
-						print(event.getPeerCertificateChain(), "PeerCertificateChain");
-					}
-				}catch(Exception e) {
-					this.sb.append("\nPeerCertificateChain: "+e.getMessage());
-				}
 				
 			}
 			
@@ -229,11 +220,6 @@ public class WrappedLogSSLSocket extends SSLSocket {
 					this.sb.append("#### Certificate["+tipo+"-"+j+"]\n");
 					this.sb.append("Certificate["+tipo+"-"+j+"] non è X509");
 				}
-			}
-		}
-		private void print(javax.security.cert.X509Certificate [] certs, String tipo) {
-			for (int j = 0; j < certs.length; j++) {
-				CertificateUtils.printCertificate_javax(this.sb, certs[j], tipo+"-"+j, true);
 			}
 		}
    	

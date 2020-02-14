@@ -366,8 +366,6 @@ public class CostantiTestSuite {
 	/** Porte Delegate per WS-Security: SOAPBOX_FirmataAttachments */
 	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS="SOAPBOX_FirmataAttachments";
 
-	/** Porte Delegate per WS-Security: SOAPBOX_FirmataAttachments_SignatureEngineSun */
-	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS_ENGINE_SUN="SOAPBOX_FirmataAttachments_SignatureEngineSun";
 	/** Porte Delegate per WS-Security: SOAPBOX_FirmataAttachments SignatureEngineXmlSec */
 	public static final String PORTA_DELEGATA_WSS_SOAPBOX_SIGNATURE_ATTACHMENTS_ENGINE_XMLSEC="SOAPBOX_FirmataAttachments_SignatureEngineXmlSec";
 	

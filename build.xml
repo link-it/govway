@@ -281,6 +281,7 @@
 			<include name="faces/*"/>
 			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
+			<include name="jax/jaxws*"/>
 			<include name="javax/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>

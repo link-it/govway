@@ -151,66 +151,6 @@ public class CertificateUtils {
 	
 	
 	
-	public static void printCertificate_javax(StringBuilder bf,List<javax.security.cert.X509Certificate> certs){
-		printCertificate_javax(bf, certs, false);
-	}
-	public static void printCertificate_javax(StringBuilder bf,List<javax.security.cert.X509Certificate> certs, boolean addPrefix){
-		if(certs.size()>0) {
-			javax.security.cert.X509Certificate[] certsArray = certs.toArray(new javax.security.cert.X509Certificate[1]);
-			printCertificate_javax(bf, certsArray, addPrefix);
-		}
-		else {
-			bf.append("X509Certificates: "+0+"\n");
-		}
-	}
-	
-	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate[] certs){
-		printCertificate_javax(bf, certs, false);
-	}
-	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate[] certs, boolean addPrefix){
-		bf.append("X509Certificates: "+certs.length+"\n");
-		for (int i = 0; i < certs.length; i++) {
-			javax.security.cert.X509Certificate cert = certs[i];
-			printCertificate_javax(bf, cert, i+"", addPrefix);
-		}
-	}
-	
-	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate cert, String name){
-		printCertificate_javax(bf, cert, name, false);
-	}
-	public static void printCertificate_javax(StringBuilder bf,javax.security.cert.X509Certificate cert, String name, boolean addPrefix){
-		String prefix = "";
-		if(addPrefix) {
-			prefix = "Cert["+name+"].";
-		}
-		bf.append("#### X509Certificate["+name+"]\n");
-		bf.append("\t"+prefix+"toString()="+cert.toString()+"\n");
-		bf.append("\t"+prefix+"getVersion()="+cert.getVersion()+"\n");
-		
-		if(cert.getIssuerDN()!=null){
-			bf.append("\t"+prefix+"cert.getIssuerDN().toString()="+cert.getIssuerDN().toString()+"\n");
-			bf.append("\t"+prefix+"cert.getIssuerDN().getName()="+cert.getIssuerDN().getName()+"\n");
-		}
-		else{
-			bf.append("\t"+prefix+"cert.getIssuerDN() is null"+"\n");
-		}
-
-		if(cert.getSubjectDN()!=null){
-			bf.append("\t"+prefix+"getSubjectDN().toString()="+cert.getSubjectDN().toString()+"\n");
-			bf.append("\t"+prefix+"getSubjectDN().getName()="+cert.getSubjectDN().getName()+"\n");
-		}
-		else{
-			bf.append("\t"+prefix+"cert.getSubjectDN() is null"+"\n");
-		}
-		
-		bf.append("\t"+prefix+"getSerialNumber()="+cert.getSerialNumber()+"\n");
-		bf.append("\t"+prefix+"getNotAfter()="+cert.getNotAfter()+"\n");
-		bf.append("\t"+prefix+"getNotBefore()="+cert.getNotBefore()+"\n");
-		
-	}
-	
-	
-	
 	
 	/* UTILITY SSL */
 	

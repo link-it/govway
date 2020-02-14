@@ -802,7 +802,7 @@ public class TransazioniService implements ITransazioniService {
 			this.log.error(e.getMessage(), e);
 		}
 
-		return new ResLive(new Long("0"), new Long("0"), new Long("0"));
+		return new ResLive(Long.valueOf("0"), Long.valueOf("0"), Long.valueOf("0"));
 	}
 
 	@Override
@@ -1963,7 +1963,7 @@ public class TransazioniService implements ITransazioniService {
 			this.log.error(e.getMessage(), e);
 		}
 
-		return new ResLive(new Long("0"), new Long("0"), new Long("0"));
+		return new ResLive(Long.valueOf("0"), Long.valueOf("0"), Long.valueOf("0"));
 
 		// if (idPorta != null && idPorta.size() > 0) {
 		// pezzoIdPorta

@@ -284,7 +284,7 @@ IStatisticaPersonalizzataService {
 
 				NonNegativeNumber nnn = this.statisticaSearchDAO.count(expr);
 
-				return new Long(nnn.longValue()).intValue();
+				return Long.valueOf(nnn.longValue()).intValue();
 			}
 
 		} catch (Exception e) {

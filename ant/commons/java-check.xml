@@ -25,18 +25,19 @@
 				<matches string="${ant.version}" pattern=".*1\.6\..*"/>
 				<matches string="${ant.version}" pattern=".*1\.7\..*"/>
 				<matches string="${ant.version}" pattern=".*1\.8\..*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.0.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.1.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.2.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.3.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.4.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.5.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.6.*"/>
-				<matches string="${ant.version}" pattern=".*1\.9\.7.*"/>
+				<matches string="${ant.version}" pattern=".*1\.9\..*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.0.*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.1.*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.2.*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.3.*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.4.*"/>
+				<matches string="${ant.version}" pattern=".*1\.10\.5.*"/>
 			</or>
 			<then>
 				<echo message="Ant version: ${ant.version}"/>
-				<fail message="E' richiesta una versione di apache-ant 1.9.8 o superiore"/>
+				<fail message="E' richiesta una versione di apache-ant 1.10.6 o superiore"/>
+				<!-- da 1.10.2 viene fornita la versione corretta di java -->
+				<!-- da 1.10.6 sparisce il seguente errore, se esato con java 11: [taskdef] WARNING: sun.reflect.Reflection.getCallerClass is not supported. This will impact performance. -->
 			</then>
 		</if>
 		<if>
@@ -52,11 +53,14 @@
 		     		<equals arg1="${ant.java.version}" arg2="1.5" />
 				<equals arg1="${ant.java.version}" arg2="1.6" />
 				<equals arg1="${ant.java.version}" arg2="1.7" />
+				<equals arg1="${ant.java.version}" arg2="1.8" />
+				<equals arg1="${ant.java.version}" arg2="9" />
+				<equals arg1="${ant.java.version}" arg2="10" />
 			</or>
 			<then>
 				<echo message="Java home: ${java_home}"/>
 				<echo message="Java version: ${ant.java.version}"/>
-				<fail message="E' richiesta una versione di java 8 o superiore"/>
+				<fail message="E' richiesta una versione di java 11 o superiore"/>
 			</then>
 		</if>
 	</target>

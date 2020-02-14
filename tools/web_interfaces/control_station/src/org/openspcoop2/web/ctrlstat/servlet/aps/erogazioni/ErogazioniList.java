@@ -69,7 +69,7 @@ public final class ErogazioniList extends Action {
 		GeneralData gd = generalHelper.initGeneralData(request);
 
 		try {
-			ServletUtils.setObjectIntoSession(session, new Boolean(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
+			ServletUtils.setObjectIntoSession(session, Boolean.valueOf(true), ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI); 
 			
 			// ctrlstatHelper ch = new ctrlstatHelper (request, pd, con, session);
 			ErogazioniHelper erogazioniHelper = new ErogazioniHelper(request, pd, session);

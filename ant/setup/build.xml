@@ -265,10 +265,13 @@
 		     		<equals arg1="${ant.java.version}" arg2="1.5" />
 				<equals arg1="${ant.java.version}" arg2="1.6" />
 				<equals arg1="${ant.java.version}" arg2="1.7" />
+				<equals arg1="${ant.java.version}" arg2="1.8" />
+				<equals arg1="${ant.java.version}" arg2="9" />
+				<equals arg1="${ant.java.version}" arg2="10" />
 			</or>
 			<then>
 				<echo message="Java version: ${ant.java.version}"/>
-				<fail message="E' richiesta una versione di java 8 o superiore (trovata versione: ${ant.java.version})"/>
+				<fail message="E' richiesta una versione di java 11 o superiore"/>
 			</then>
 		</if>
 		

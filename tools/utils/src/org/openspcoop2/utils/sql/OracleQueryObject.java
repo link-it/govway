@@ -908,7 +908,7 @@ public class OracleQueryObject extends SQLQueryObjectCore{
 	 * UNION [ALL]
 	 * (  SELECT fields... FROM tabella WHERE conditions  )
 	 * )
-	 * WHERE ROWNUM<=LIMIT+OFFSET AND ROWNUM>OFFSET
+	 * WHERE ROWNUM&lt;=LIMIT+OFFSET AND ROWNUM&gt;OFFSET
 	 * ORDER BY gdo,tipo_fruitore,fruitore,tipo_erogatore,erogatore,tipo_servizio,servizio DESC  
 	 * 
 	 * 

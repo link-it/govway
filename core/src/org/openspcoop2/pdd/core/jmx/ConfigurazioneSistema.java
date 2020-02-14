@@ -767,7 +767,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		bf.append("\n");
 		bf.append(provider.getName());
 		bf.append("\n");	
-		bf.append("Versione: v").append(provider.getVersion()).append(" ");
+		bf.append("Versione: v").append(provider.getVersionStr()).append(" ");
 		bf.append(provider.getInfo());
 		bf.append("\n");
 		try{

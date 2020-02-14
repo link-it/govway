@@ -46,7 +46,7 @@ import org.xml.sax.InputSource;
 /**
  * Classe utilizzabile per ricerche effettuate tramite espressioni XQuery
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

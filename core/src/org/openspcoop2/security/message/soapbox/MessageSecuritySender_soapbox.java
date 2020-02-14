@@ -217,8 +217,6 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);
-				signMsgProc.setUseXMLSec(messageSecurityContext.isUseXMLSec());
-
 
 				// encryptionParts
 				Object signatureParts =  messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PARTS);
