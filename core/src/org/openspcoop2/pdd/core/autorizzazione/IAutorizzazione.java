@@ -28,7 +28,7 @@ import org.openspcoop2.pdd.core.ICore;
 /**
  * Interfaccia che definisce un processo di autorizzazione
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

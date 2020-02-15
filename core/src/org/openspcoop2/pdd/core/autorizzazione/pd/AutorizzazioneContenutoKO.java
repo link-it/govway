@@ -32,7 +32,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 /**
  * Esempio di AutorizzazioneContenutoKO
  *
- * @author Andrea Poli <apoli@link.oit>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

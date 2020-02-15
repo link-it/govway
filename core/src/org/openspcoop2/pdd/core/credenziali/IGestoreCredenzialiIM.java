@@ -26,7 +26,7 @@ import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
 /**
  * Interfaccia che definisce il gestore delle credenziali per il servizio di IntegrationManager
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

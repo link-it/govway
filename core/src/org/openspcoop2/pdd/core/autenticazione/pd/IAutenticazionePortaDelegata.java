@@ -28,7 +28,7 @@ import org.openspcoop2.pdd.core.autenticazione.IAutenticazione;
 /**
  * Interfaccia che definisce un processo di autenticazione per servizi applicativi che invocano porte delegate.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

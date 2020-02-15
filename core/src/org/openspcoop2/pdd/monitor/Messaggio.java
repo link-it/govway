@@ -34,16 +34,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="messaggio">
- * 		&lt;sequence>
- * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/pdd/monitor}dettaglio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="busta-info" type="{http://www.openspcoop2.org/pdd/monitor}busta" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="id-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ora-attuale" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="stato" type="{http://www.openspcoop2.org/pdd/monitor}StatoMessaggio" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="messaggio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="dettaglio" type="{http://www.openspcoop2.org/pdd/monitor}dettaglio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="busta-info" type="{http://www.openspcoop2.org/pdd/monitor}busta" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ora-attuale" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="stato" type="{http://www.openspcoop2.org/pdd/monitor}StatoMessaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

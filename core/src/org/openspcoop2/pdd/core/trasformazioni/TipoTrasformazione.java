@@ -31,7 +31,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 /**
  * Tipi di Trasformazione
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

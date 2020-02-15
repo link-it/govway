@@ -30,7 +30,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 /**
  * AutenticazioneUtils
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -25,7 +25,7 @@ package org.openspcoop2.pdd.core.autenticazione.pd;
 /**
  * Classe che implementa una autenticazione BASIC.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

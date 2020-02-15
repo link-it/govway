@@ -33,7 +33,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 /**
  * Classe che implementa una autorizzazione basata sui servizi applicativi autenticati.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 /**
  * Classe che implementa una autorizzazione basata sui ruoli
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

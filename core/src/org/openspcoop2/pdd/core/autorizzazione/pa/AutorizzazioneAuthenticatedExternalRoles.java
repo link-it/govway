@@ -27,7 +27,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 /**
  * Classe che implementa una autorizzazione basata sui ruoli
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

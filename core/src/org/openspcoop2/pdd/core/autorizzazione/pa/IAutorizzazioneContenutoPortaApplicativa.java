@@ -29,7 +29,7 @@ import org.openspcoop2.pdd.core.autorizzazione.IAutorizzazioneContenuto;
 /**
  * Interfaccia che definisce un processo di autorizzazione per servizi applicativi che invocano richieste delegate.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

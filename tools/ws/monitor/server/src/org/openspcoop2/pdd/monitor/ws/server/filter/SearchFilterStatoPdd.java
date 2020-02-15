@@ -25,14 +25,14 @@ package org.openspcoop2.pdd.monitor.ws.server.filter;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="search-filter-stato-pdd">
- *     &lt;sequence>
- *         &lt;element name="filtro" type="{http://www.openspcoop2.org/pdd/monitor/management}filtro" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" />
- *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="search-filter-stato-pdd"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="filtro" type="{http://www.openspcoop2.org/pdd/monitor/management}filtro" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="orCondition" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" default="Boolean.valueOf("false")" /&gt;
+ *         &lt;element name="limit" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="offset" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 
