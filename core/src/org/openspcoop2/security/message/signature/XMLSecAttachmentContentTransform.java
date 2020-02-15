@@ -44,7 +44,7 @@ import com.sun.xml.wss.impl.c14n.CanonicalizerFactory;
 /**
  * XMLSecAttachmentContentTransform
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

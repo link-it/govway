@@ -26,7 +26,7 @@ package org.openspcoop2.security.message.authorization;
 /**
  * Interfaccia Authorization
  *
- * @author Montebove Luciano <L.Montebove@finsiel.it>
+ * @author Montebove Luciano (L.Montebove@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

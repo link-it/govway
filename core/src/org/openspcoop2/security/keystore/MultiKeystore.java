@@ -37,7 +37,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 /**
  * MultiKeystore
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

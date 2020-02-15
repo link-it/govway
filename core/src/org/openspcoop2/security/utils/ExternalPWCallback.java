@@ -39,7 +39,7 @@ import org.openspcoop2.utils.properties.PropertiesReader;
 /**
  * Gestore delle password dei certificati scambiati con wssecurity. Le password vengono mantenute in un file di proprietà
  * 	
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

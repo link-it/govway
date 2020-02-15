@@ -72,7 +72,7 @@ import org.openspcoop2.utils.id.IDUtilities;
 /**
  * Classe per la gestione della WS-Security (WSDoAllReceiver).
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

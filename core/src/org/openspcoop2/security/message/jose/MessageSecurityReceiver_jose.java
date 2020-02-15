@@ -58,7 +58,7 @@ import org.openspcoop2.utils.security.JsonVerifySignature;
 /**
  * Classe per la gestione della WS-Security (WSDoAllReceiver).
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

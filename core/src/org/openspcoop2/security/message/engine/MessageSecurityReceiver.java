@@ -34,8 +34,8 @@ import org.openspcoop2.security.message.SubErrorCodeSecurity;
 /**
  * Classe per la gestione della Sicurezza (role:Receiver)
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
- * @author Montebove Luciano <L.Montebove@finsiel.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
+ * @author Montebove Luciano (L.Montebove@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

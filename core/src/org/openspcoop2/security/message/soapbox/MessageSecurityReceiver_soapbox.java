@@ -64,8 +64,8 @@ import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 /**
  * WSSContext_soapbox
  *
- * @author Andrea Poli <apoli@link.it>
- * @author Giovanni Bussu <bussu@link.it>
+ * @author Andrea Poli (apoli@link.it)
+ * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

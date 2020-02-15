@@ -105,7 +105,7 @@ import com.sun.xml.wss.swa.MimeConstants;
 /**
  * EncryptPartialMessageProcessor
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

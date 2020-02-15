@@ -34,7 +34,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 /**
  * Classe per la gestione della Sicurezza (role:Sender)
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -79,7 +79,7 @@ import org.xml.sax.SAXException;
 /**
  * Implementazione dell'interfaccia Authorization basata su token SAML
  *
- * @author Bussu Giovanni <bussu@link.it>
+ * @author Bussu Giovanni (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

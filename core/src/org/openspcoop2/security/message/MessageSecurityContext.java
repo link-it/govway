@@ -73,7 +73,7 @@ import org.slf4j.Logger;
 /**
  * Classe di base per la gestione della sicurezza
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

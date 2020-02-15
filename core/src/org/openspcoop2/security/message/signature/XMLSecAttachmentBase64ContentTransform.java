@@ -31,7 +31,7 @@ import org.apache.xml.security.transforms.implementations.TransformBase64Decode;
 /**
  * XMLSecAttachmentBase64ContentTransform
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
