@@ -34,7 +34,7 @@ import org.w3c.dom.Element;
 /**
  * XMLDiagnosticoBuilder
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

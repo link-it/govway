@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ServiceTypes">
- * 		&lt;sequence>
- * 			&lt;element name="type" type="{http://www.openspcoop2.org/protocol/manifest}ServiceType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ServiceTypes"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="type" type="{http://www.openspcoop2.org/protocol/manifest}ServiceType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ServiceTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getTypeList
-   * @return List<ServiceType>
+   * @return List&lt;ServiceType&gt;
   */
   @Deprecated
   public List<ServiceType> getType() {
@@ -102,7 +102,7 @@ public class ServiceTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setTypeList
-   * @param type List<ServiceType>
+   * @param type List&lt;ServiceType&gt;
   */
   @Deprecated
   public void setType(List<ServiceType> type) {

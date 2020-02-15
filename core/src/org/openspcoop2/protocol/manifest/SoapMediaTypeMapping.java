@@ -33,14 +33,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SoapMediaTypeMapping">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}SoapMessageType" use="required"/>
- * 				&lt;attribute name="regExpr" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="SoapMediaTypeMapping"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ * 				&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}SoapMessageType" use="required"/&gt;
+ * 				&lt;attribute name="regExpr" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

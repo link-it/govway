@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiServizio">
- * 		&lt;sequence>
- * 			&lt;element name="endpoint" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/protocol/abstraction}TipologiaServizio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="fruitori" type="{http://www.openspcoop2.org/protocol/abstraction}Fruitori" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiServizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="endpoint" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipologia-servizio" type="{http://www.openspcoop2.org/protocol/abstraction}TipologiaServizio" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="fruitori" type="{http://www.openspcoop2.org/protocol/abstraction}Fruitori" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

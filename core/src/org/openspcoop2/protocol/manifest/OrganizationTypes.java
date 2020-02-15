@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="OrganizationTypes">
- * 		&lt;sequence>
- * 			&lt;element name="type" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="OrganizationTypes"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="type" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class OrganizationTypes extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getTypeList
-   * @return List<OrganizationType>
+   * @return List&lt;OrganizationType&gt;
   */
   @Deprecated
   public List<OrganizationType> getType() {
@@ -102,7 +102,7 @@ public class OrganizationTypes extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setTypeList
-   * @param type List<OrganizationType>
+   * @param type List&lt;OrganizationType&gt;
   */
   @Deprecated
   public void setType(List<OrganizationType> type) {

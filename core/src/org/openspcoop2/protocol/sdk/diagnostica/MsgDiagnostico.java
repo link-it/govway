@@ -38,8 +38,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 /**
  * Bean Contenente le informazioni relative ai messaggi diagnostici
  * 
- * @author Stefano Corallo <corallo@link.it>
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

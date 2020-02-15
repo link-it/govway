@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Description">
- * 		&lt;sequence>
- * 			&lt;element name="item" type="{http://www.openspcoop2.org/protocol/information_missing}DescriptionType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="Description"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="item" type="{http://www.openspcoop2.org/protocol/information_missing}DescriptionType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Description extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getItemList
-   * @return List<DescriptionType>
+   * @return List&lt;DescriptionType&gt;
   */
   @Deprecated
   public List<DescriptionType> getItem() {
@@ -102,7 +102,7 @@ public class Description extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setItemList
-   * @param item List<DescriptionType>
+   * @param item List&lt;DescriptionType&gt;
   */
   @Deprecated
   public void setItem(List<DescriptionType> item) {

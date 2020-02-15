@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.manifest.constants;
 /**
  *
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

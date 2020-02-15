@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SoapHeaderBypassMustUnderstand">
- * 		&lt;sequence>
- * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/manifest}SoapHeaderBypassMustUnderstandHeader" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SoapHeaderBypassMustUnderstand"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/protocol/manifest}SoapHeaderBypassMustUnderstandHeader" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SoapHeaderBypassMustUnderstand extends org.openspcoop2.utils.beans.
 
   /**
    * @deprecated Use method getHeaderList
-   * @return List<SoapHeaderBypassMustUnderstandHeader>
+   * @return List&lt;SoapHeaderBypassMustUnderstandHeader&gt;
   */
   @Deprecated
   public List<SoapHeaderBypassMustUnderstandHeader> getHeader() {
@@ -102,7 +102,7 @@ public class SoapHeaderBypassMustUnderstand extends org.openspcoop2.utils.beans.
 
   /**
    * @deprecated Use method setHeaderList
-   * @param header List<SoapHeaderBypassMustUnderstandHeader>
+   * @param header List&lt;SoapHeaderBypassMustUnderstandHeader&gt;
   */
   @Deprecated
   public void setHeader(List<SoapHeaderBypassMustUnderstandHeader> header) {

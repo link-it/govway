@@ -34,13 +34,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SoapMediaTypeCollection">
- * 		&lt;sequence>
- * 			&lt;element name="mediaType" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeMapping" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="undefined" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SoapMediaTypeCollection"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mediaType" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeMapping" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="undefined" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -113,7 +113,7 @@ public class SoapMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getMediaTypeList
-   * @return List<SoapMediaTypeMapping>
+   * @return List&lt;SoapMediaTypeMapping&gt;
   */
   @Deprecated
   public List<SoapMediaTypeMapping> getMediaType() {
@@ -122,7 +122,7 @@ public class SoapMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setMediaTypeList
-   * @param mediaType List<SoapMediaTypeMapping>
+   * @param mediaType List&lt;SoapMediaTypeMapping&gt;
   */
   @Deprecated
   public void setMediaType(List<SoapMediaTypeMapping> mediaType) {

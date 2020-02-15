@@ -34,10 +34,10 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="EmptySubContextMapping">
- * 		&lt;attribute name="function" type="{http://www.openspcoop2.org/protocol/manifest}FunctionType" use="optional"/>
- * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}MessageType" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="EmptySubContextMapping"&gt;
+ * 		&lt;attribute name="function" type="{http://www.openspcoop2.org/protocol/manifest}FunctionType" use="optional"/&gt;
+ * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}MessageType" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -99,7 +99,7 @@ public interface IStatisticFilter extends IFilter {
 
 	/**
 	 * Create an expression of inequality
-	 * Example:  (field <> value)
+	 * Example:  (field &lt;&gt; value)
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -122,7 +122,7 @@ public interface IStatisticFilter extends IFilter {
 	/**
 	 * Create an expression of inequality to each resource in the collection of the keys of the Map
 	 * Use the conjunction "AND" for all expressions
-	 * Example:  ( field[0]<>values[0] AND field[1]<>values[1] ..... AND field[N]<>values[N] )
+	 * Example:  ( field[0]&lt;&gt;values[0] AND field[1]&lt;&gt;values[1] ..... AND field[N]&lt;&gt;values[N] )
 	 * 
 	 * @param propertyNameValues Map that contains identifiers and their values
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -133,8 +133,8 @@ public interface IStatisticFilter extends IFilter {
 	
 	/**
 	 * Create an expression of equality to each resource in the collection of the keys of the Map
-	 * Use the conjunction defined by <var>andConjunction</var> for all expressions
-	 * Example:  ( field[0]=values[0] <var>andConjunction</var> field[1]=values[1] ..... <var>andConjunction</var> field[N]=values[N] )
+	 * Use the conjunction defined by 'andConjunction' for all expressions
+	 * Example:  ( field[0]=values[0] 'andConjunction' field[1]=values[1] ..... 'andConjunction' field[N]=values[N] )
 	 * 
 	 * @param propertyNameValues Map that contains identifiers and their values
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -144,8 +144,8 @@ public interface IStatisticFilter extends IFilter {
 
 	/**
 	 * Create an expression of inequality to each resource in the collection of the keys of the Map
-	 * Use the conjunction defined by <var>andConjunction</var> for all expressions
-	 * Example:  ( field[0]<>values[0] <var>andConjunction</var> field[1]<>values[1] ..... <var>andConjunction</var> field[N]<>values[N] )
+	 * Use the conjunction defined by 'andConjunction' for all expressions
+	 * Example:  ( field[0]&lt;&gt;values[0] 'andConjunction' field[1]&lt;&gt;values[1] ..... 'andConjunction' field[N]&lt;&gt;values[N] )
 	 * 
 	 * @param propertyNameValues Map that contains identifiers and their values
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -156,7 +156,7 @@ public interface IStatisticFilter extends IFilter {
 
 	/**
 	 * Create an expression "greaterThan"
-	 * Example:  (field > value)
+	 * Example:  (field &gt; value)
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -168,7 +168,7 @@ public interface IStatisticFilter extends IFilter {
 	
 	/**
 	 * Create an expression "greaterEquals"
-	 * Example:  (field >= value)
+	 * Example:  (field &gt;= value)
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -180,7 +180,7 @@ public interface IStatisticFilter extends IFilter {
 	
 	/**
 	 * Create an expression "lessThan"
-	 * Example:  (field < value)
+	 * Example:  (field &lt; value)
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -192,7 +192,7 @@ public interface IStatisticFilter extends IFilter {
 	
 	/**
 	 * Create an expression "lessEquals"
-	 * Example:  (field <= value)
+	 * Example:  (field &lt;= value)
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -244,7 +244,7 @@ public interface IStatisticFilter extends IFilter {
 	
 	/**
 	 * Create an expression "is not empty"
-	 * Example:  ( field <> '' )
+	 * Example:  ( field &lt;&gt; '' )
 	 * 
 	 * @param resourceID Resource identifier
 	 * @return the instance of itself enriched with expression that represents the constraint
@@ -296,10 +296,10 @@ public interface IStatisticFilter extends IFilter {
 	/**
 	 * Create an expression "like"
 	 * Example:  
-	 * 	 LikeMode.ANYWHERE -> ( field like '%value%' )
-	 *   LikeMode.EXACT -> ( field like 'value' )
-	 *   LikeMode.END -> ( field like '%value' )
-	 *   LikeMode.START -> ( field like 'value%' )
+	 * 	 LikeMode.ANYWHERE -&gt; ( field like '%value%' )
+	 *   LikeMode.EXACT -&gt; ( field like 'value' )
+	 *   LikeMode.END -&gt; ( field like '%value' )
+	 *   LikeMode.START -&gt; ( field like 'value%' )
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -323,10 +323,10 @@ public interface IStatisticFilter extends IFilter {
 	/**
 	 * Create an expression "like" case-insensitive
 	 * Example:  
-	 *   LikeMode.ANYWHERE -> ( toLower(field) like '%toLower(value)%' )
-	 *   LikeMode.EXACT -> ( toLower(field) like 'toLower(value)' )
-	 *   LikeMode.END -> ( toLower(field) like '%toLower(value)' )
-	 *   LikeMode.START -> ( toLower(field) like 'toLower(value)%' )
+	 *   LikeMode.ANYWHERE -&gt; ( toLower(field) like '%toLower(value)%' )
+	 *   LikeMode.EXACT -&gt; ( toLower(field) like 'toLower(value)' )
+	 *   LikeMode.END -&gt; ( toLower(field) like '%toLower(value)' )
+	 *   LikeMode.START -&gt; ( toLower(field) like 'toLower(value)%' )
 	 * 
 	 * @param resourceID Resource identifier
 	 * @param value Value
@@ -345,7 +345,7 @@ public interface IStatisticFilter extends IFilter {
 	/* ************ IN *********** */
 	
 	/**
-	 * Create an expression "in" verifying that the value of <var>field</var> is one of those given in the param <var>values</var>
+	 * Create an expression "in" verifying that the value of 'field' is one of those given in the param 'values'
 	 * Example:  ( field IN ('values[0]', 'values[1]', ... ,'values[n]')  )
 	 * 
 	 * @param resourceID Resource identifier
@@ -357,7 +357,7 @@ public interface IStatisticFilter extends IFilter {
 	throws SearchException;
 		
 	/**
-	 * Create an expression "in" verifying that the value of <var>field</var> is one of those given in the param <var>values</var>
+	 * Create an expression "in" verifying that the value of 'field' is one of those given in the param 'values'
 	 * Example:  ( field IN ('values[0]', 'values[1]', ... ,'values[n]')  )
 	 * 
 	 * @param resourceID Resource identifier
@@ -378,8 +378,8 @@ public interface IStatisticFilter extends IFilter {
 	 *  Adds to the expression in the conjunction "AND" of the espressions given as a parameters
 	 *  Example: ( exp1 AND exp2  )
 	 *  
-	 * @param exp1 Filter combined in AND with <var>exp1</var>
-	 * @param exp2 Filter combined in AND with <var>exp2</var>
+	 * @param exp1 Filter combined in AND with 'exp1'
+	 * @param exp2 Filter combined in AND with 'exp2'
 	 * @return the instance of itself enriched with expression that represents the constraint
 	 * @throws SearchException
 	 */
@@ -401,8 +401,8 @@ public interface IStatisticFilter extends IFilter {
 	 *  Adds to the expression in the conjunction "OR" of the espressions given as a parameters
 	 *  Example: ( exp1 OR exp2  )
 	 *  
-	 * @param exp1 Filter combined in OR with <var>exp1</var>
-	 * @param exp2 Filter combined in OR with <var>exp2</var>
+	 * @param exp1 Filter combined in OR with 'exp1'
+	 * @param exp2 Filter combined in OR with 'exp2'
 	 * @return the instance of itself enriched with expression that represents the constraint
 	 * @throws SearchException
 	 */

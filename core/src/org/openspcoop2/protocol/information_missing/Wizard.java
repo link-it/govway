@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Wizard">
- * 		&lt;sequence>
- * 			&lt;element name="requisiti" type="{http://www.openspcoop2.org/protocol/information_missing}Requisiti" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="step" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
- * 		&lt;attribute name="step-in-delete" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/>
- * 		&lt;attribute name="intestazione-originale" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Wizard"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="requisiti" type="{http://www.openspcoop2.org/protocol/information_missing}Requisiti" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="step" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/&gt;
+ * 		&lt;attribute name="step-in-delete" type="{http://www.w3.org/2001/XMLSchema}int" use="optional"/&gt;
+ * 		&lt;attribute name="intestazione-originale" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

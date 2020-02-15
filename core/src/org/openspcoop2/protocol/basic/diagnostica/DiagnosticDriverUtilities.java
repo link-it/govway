@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 /**
  * DriverMsgDiagnosticiUtilities
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

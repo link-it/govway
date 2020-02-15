@@ -33,17 +33,17 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Organization">
- * 		&lt;sequence>
- * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="inboundApplicativeAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="Organization"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="types" type="{http://www.openspcoop2.org/protocol/manifest}OrganizationTypes" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="authentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="inboundApplicativeAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="inboundOrganizationAuthorizationWithoutAuthentication" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="codeDomain" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="codeIPA" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="replyToAddress" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

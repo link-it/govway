@@ -32,15 +32,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="openspcoop2">
- * 		&lt;sequence>
- * 			&lt;element name="protocol" type="{http://www.openspcoop2.org/protocol/manifest}protocol" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="binding" type="{http://www.openspcoop2.org/protocol/manifest}binding" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="web" type="{http://www.openspcoop2.org/protocol/manifest}web" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="registry" type="{http://www.openspcoop2.org/protocol/manifest}registry" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="urlMapping" type="{http://www.openspcoop2.org/protocol/manifest}urlMapping" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="openspcoop2"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="protocol" type="{http://www.openspcoop2.org/protocol/manifest}protocol" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="binding" type="{http://www.openspcoop2.org/protocol/manifest}binding" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="web" type="{http://www.openspcoop2.org/protocol/manifest}web" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="registry" type="{http://www.openspcoop2.org/protocol/manifest}registry" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="urlMapping" type="{http://www.openspcoop2.org/protocol/manifest}urlMapping" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

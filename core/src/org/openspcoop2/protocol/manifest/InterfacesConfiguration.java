@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="InterfacesConfiguration">
- * 		&lt;sequence>
- * 			&lt;element name="specification" type="{http://www.openspcoop2.org/protocol/manifest}InterfaceConfiguration" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="InterfacesConfiguration"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="specification" type="{http://www.openspcoop2.org/protocol/manifest}InterfaceConfiguration" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class InterfacesConfiguration extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getSpecificationList
-   * @return List<InterfaceConfiguration>
+   * @return List&lt;InterfaceConfiguration&gt;
   */
   @Deprecated
   public List<InterfaceConfiguration> getSpecification() {
@@ -102,7 +102,7 @@ public class InterfacesConfiguration extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setSpecificationList
-   * @param specification List<InterfaceConfiguration>
+   * @param specification List&lt;InterfaceConfiguration&gt;
   */
   @Deprecated
   public void setSpecification(List<InterfaceConfiguration> specification) {

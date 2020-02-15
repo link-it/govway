@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="InterfaceConfiguration">
- * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/protocol/manifest}InterfaceType" use="required"/>
- * 		&lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="conversations" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="implementation" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="InterfaceConfiguration"&gt;
+ * 		&lt;attribute name="type" type="{http://www.openspcoop2.org/protocol/manifest}InterfaceType" use="required"/&gt;
+ * 		&lt;attribute name="schema" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="conversations" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="implementation" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

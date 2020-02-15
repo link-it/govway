@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CollaborationProfile">
- * 		&lt;attribute name="oneway" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="inputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="asyncInputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="polledInputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="CollaborationProfile"&gt;
+ * 		&lt;attribute name="oneway" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="inputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="asyncInputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="polledInputOutput" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

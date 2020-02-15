@@ -34,13 +34,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="binding">
- * 		&lt;sequence>
- * 			&lt;element name="soap" type="{http://www.openspcoop2.org/protocol/manifest}SoapConfiguration" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="rest" type="{http://www.openspcoop2.org/protocol/manifest}RestConfiguration" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="binding"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soap" type="{http://www.openspcoop2.org/protocol/manifest}SoapConfiguration" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="rest" type="{http://www.openspcoop2.org/protocol/manifest}RestConfiguration" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

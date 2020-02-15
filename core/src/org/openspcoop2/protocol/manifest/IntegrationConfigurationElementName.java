@@ -33,11 +33,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfigurationElementName">
- * 		&lt;attribute name="prefix" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="actor" type="{http://www.openspcoop2.org/protocol/manifest}ActorType" use="optional"/>
- * 		&lt;attribute name="suffix" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfigurationElementName"&gt;
+ * 		&lt;attribute name="prefix" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="actor" type="{http://www.openspcoop2.org/protocol/manifest}ActorType" use="optional"/&gt;
+ * 		&lt;attribute name="suffix" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

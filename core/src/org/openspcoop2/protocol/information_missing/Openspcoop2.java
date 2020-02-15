@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="openspcoop2">
- * 		&lt;sequence>
- * 			&lt;element name="wizard" type="{http://www.openspcoop2.org/protocol/information_missing}Wizard" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="operazione" type="{http://www.openspcoop2.org/protocol/information_missing}operazione" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="openspcoop2"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="wizard" type="{http://www.openspcoop2.org/protocol/information_missing}Wizard" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="operazione" type="{http://www.openspcoop2.org/protocol/information_missing}operazione" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -118,7 +118,7 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getOperazioneList
-   * @return List<Operazione>
+   * @return List&lt;Operazione&gt;
   */
   @Deprecated
   public List<Operazione> getOperazione() {
@@ -127,7 +127,7 @@ public class Openspcoop2 extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setOperazioneList
-   * @param operazione List<Operazione>
+   * @param operazione List&lt;Operazione&gt;
   */
   @Deprecated
   public void setOperazione(List<Operazione> operazione) {

@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RiferimentoAccordoServizioParteComune">
- * 		&lt;sequence>
- * 			&lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="id-accordo" type="{http://www.openspcoop2.org/protocol/abstraction}IdentificatoreAccordo" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="RiferimentoAccordoServizioParteComune"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="uri" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-accordo" type="{http://www.openspcoop2.org/protocol/abstraction}IdentificatoreAccordo" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

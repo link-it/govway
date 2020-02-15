@@ -27,8 +27,8 @@ import java.io.Serializable;
 /**
  * Oggetto contenente informazioni per la ricerca di diagnostici
  * 
- * @author Stefano Corallo <corallo@link.it>
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

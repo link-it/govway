@@ -27,7 +27,7 @@ import java.io.Serializable;
 /**
  * Bean Contenente le informazioni per il root element di elementi xml
  * 
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

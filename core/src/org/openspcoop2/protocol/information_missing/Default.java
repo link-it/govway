@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Default">
- * 		&lt;sequence>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ProprietaDefault" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Default"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ProprietaDefault" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -103,7 +103,7 @@ public class Default extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<ProprietaDefault>
+   * @return List&lt;ProprietaDefault&gt;
   */
   @Deprecated
   public List<ProprietaDefault> getProprieta() {
@@ -112,7 +112,7 @@ public class Default extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<ProprietaDefault>
+   * @param proprieta List&lt;ProprietaDefault&gt;
   */
   @Deprecated
   public void setProprieta(List<ProprietaDefault> proprieta) {

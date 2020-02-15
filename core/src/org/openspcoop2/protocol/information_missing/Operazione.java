@@ -34,20 +34,20 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="operazione">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/protocol/information_missing}Soggetto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="input" type="{http://www.openspcoop2.org/protocol/information_missing}Input" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/protocol/information_missing}ServizioApplicativo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="accordo-cooperazione" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoCooperazione" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteComune" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteSpecifica" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="accordo-servizio-composto" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteComune" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/protocol/information_missing}Fruitore" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/protocol/information_missing}PortaDelegata" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/protocol/information_missing}PortaApplicativa" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="operazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/protocol/information_missing}Soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="input" type="{http://www.openspcoop2.org/protocol/information_missing}Input" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/protocol/information_missing}ServizioApplicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-cooperazione" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoCooperazione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteComune" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteSpecifica" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-servizio-composto" type="{http://www.openspcoop2.org/protocol/information_missing}AccordoServizioParteComune" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/protocol/information_missing}Fruitore" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/protocol/information_missing}PortaDelegata" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/protocol/information_missing}PortaApplicativa" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -327,7 +327,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<Soggetto>
+   * @return List&lt;Soggetto&gt;
   */
   @Deprecated
   public List<Soggetto> getSoggetto() {
@@ -336,7 +336,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<Soggetto>
+   * @param soggetto List&lt;Soggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<Soggetto> soggetto) {
@@ -357,7 +357,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getInputList
-   * @return List<Input>
+   * @return List&lt;Input&gt;
   */
   @Deprecated
   public List<Input> getInput() {
@@ -366,7 +366,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setInputList
-   * @param input List<Input>
+   * @param input List&lt;Input&gt;
   */
   @Deprecated
   public void setInput(List<Input> input) {
@@ -387,7 +387,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<ServizioApplicativo>
+   * @return List&lt;ServizioApplicativo&gt;
   */
   @Deprecated
   public List<ServizioApplicativo> getServizioApplicativo() {
@@ -396,7 +396,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<ServizioApplicativo>
+   * @param servizioApplicativo List&lt;ServizioApplicativo&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<ServizioApplicativo> servizioApplicativo) {
@@ -417,7 +417,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getAccordoCooperazioneList
-   * @return List<AccordoCooperazione>
+   * @return List&lt;AccordoCooperazione&gt;
   */
   @Deprecated
   public List<AccordoCooperazione> getAccordoCooperazione() {
@@ -426,7 +426,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setAccordoCooperazioneList
-   * @param accordoCooperazione List<AccordoCooperazione>
+   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
   */
   @Deprecated
   public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
@@ -447,7 +447,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getAccordoServizioParteComuneList
-   * @return List<AccordoServizioParteComune>
+   * @return List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
@@ -456,7 +456,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setAccordoServizioParteComuneList
-   * @param accordoServizioParteComune List<AccordoServizioParteComune>
+   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
@@ -477,7 +477,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getAccordoServizioParteSpecificaList
-   * @return List<AccordoServizioParteSpecifica>
+   * @return List&lt;AccordoServizioParteSpecifica&gt;
   */
   @Deprecated
   public List<AccordoServizioParteSpecifica> getAccordoServizioParteSpecifica() {
@@ -486,7 +486,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setAccordoServizioParteSpecificaList
-   * @param accordoServizioParteSpecifica List<AccordoServizioParteSpecifica>
+   * @param accordoServizioParteSpecifica List&lt;AccordoServizioParteSpecifica&gt;
   */
   @Deprecated
   public void setAccordoServizioParteSpecifica(List<AccordoServizioParteSpecifica> accordoServizioParteSpecifica) {
@@ -507,7 +507,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getAccordoServizioCompostoList
-   * @return List<AccordoServizioParteComune>
+   * @return List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public List<AccordoServizioParteComune> getAccordoServizioComposto() {
@@ -516,7 +516,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setAccordoServizioCompostoList
-   * @param accordoServizioComposto List<AccordoServizioParteComune>
+   * @param accordoServizioComposto List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public void setAccordoServizioComposto(List<AccordoServizioParteComune> accordoServizioComposto) {
@@ -537,7 +537,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getFruitoreList
-   * @return List<Fruitore>
+   * @return List&lt;Fruitore&gt;
   */
   @Deprecated
   public List<Fruitore> getFruitore() {
@@ -546,7 +546,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setFruitoreList
-   * @param fruitore List<Fruitore>
+   * @param fruitore List&lt;Fruitore&gt;
   */
   @Deprecated
   public void setFruitore(List<Fruitore> fruitore) {
@@ -567,7 +567,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getPortaDelegataList
-   * @return List<PortaDelegata>
+   * @return List&lt;PortaDelegata&gt;
   */
   @Deprecated
   public List<PortaDelegata> getPortaDelegata() {
@@ -576,7 +576,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setPortaDelegataList
-   * @param portaDelegata List<PortaDelegata>
+   * @param portaDelegata List&lt;PortaDelegata&gt;
   */
   @Deprecated
   public void setPortaDelegata(List<PortaDelegata> portaDelegata) {
@@ -597,7 +597,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getPortaApplicativaList
-   * @return List<PortaApplicativa>
+   * @return List&lt;PortaApplicativa&gt;
   */
   @Deprecated
   public List<PortaApplicativa> getPortaApplicativa() {
@@ -606,7 +606,7 @@ public class Operazione extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setPortaApplicativaList
-   * @param portaApplicativa List<PortaApplicativa>
+   * @param portaApplicativa List&lt;PortaApplicativa&gt;
   */
   @Deprecated
   public void setPortaApplicativa(List<PortaApplicativa> portaApplicativa) {

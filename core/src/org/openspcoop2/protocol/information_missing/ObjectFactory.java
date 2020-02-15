@@ -55,20 +55,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ProprietaRequisitoInput }
-     */
-    public ProprietaRequisitoInput createProprietaRequisitoInput() {
-        return new ProprietaRequisitoInput();
-    }
-
-    /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
      * Create an instance of {@link AccordoCooperazione }
      */
     public AccordoCooperazione createAccordoCooperazione() {
@@ -76,17 +62,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RequisitoProtocollo }
+     * Create an instance of {@link ReplaceMatchType }
      */
-    public RequisitoProtocollo createRequisitoProtocollo() {
-        return new RequisitoProtocollo();
-    }
-
-    /**
-     * Create an instance of {@link Operazione }
-     */
-    public Operazione createOperazione() {
-        return new Operazione();
+    public ReplaceMatchType createReplaceMatchType() {
+        return new ReplaceMatchType();
     }
 
     /**
@@ -97,24 +76,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link PortaApplicativa }
+     * Create an instance of {@link ServizioApplicativo }
      */
-    public PortaApplicativa createPortaApplicativa() {
-        return new PortaApplicativa();
-    }
-
-    /**
-     * Create an instance of {@link RequisitoInput }
-     */
-    public RequisitoInput createRequisitoInput() {
-        return new RequisitoInput();
-    }
-
-    /**
-     * Create an instance of {@link ReplaceFruitoreMatchType }
-     */
-    public ReplaceFruitoreMatchType createReplaceFruitoreMatchType() {
-        return new ReplaceFruitoreMatchType();
+    public ServizioApplicativo createServizioApplicativo() {
+        return new ServizioApplicativo();
     }
 
     /**
@@ -125,13 +90,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Wizard }
-     */
-    public Wizard createWizard() {
-        return new Wizard();
-    }
-
-    /**
      * Create an instance of {@link AccordoServizioParteSpecifica }
      */
     public AccordoServizioParteSpecifica createAccordoServizioParteSpecifica() {
@@ -139,31 +97,45 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Openspcoop2 }
+     */
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
+    }
+
+    /**
+     * Create an instance of {@link Proprieta }
+     */
+    public Proprieta createProprieta() {
+        return new Proprieta();
+    }
+
+    /**
+     * Create an instance of {@link DescriptionType }
+     */
+    public DescriptionType createDescriptionType() {
+        return new DescriptionType();
+    }
+
+    /**
+     * Create an instance of {@link Soggetto }
+     */
+    public Soggetto createSoggetto() {
+        return new Soggetto();
+    }
+
+    /**
+     * Create an instance of {@link RequisitoProtocollo }
+     */
+    public RequisitoProtocollo createRequisitoProtocollo() {
+        return new RequisitoProtocollo();
+    }
+
+    /**
      * Create an instance of {@link PortaDelegata }
      */
     public PortaDelegata createPortaDelegata() {
         return new PortaDelegata();
-    }
-
-    /**
-     * Create an instance of {@link ServizioApplicativo }
-     */
-    public ServizioApplicativo createServizioApplicativo() {
-        return new ServizioApplicativo();
-    }
-
-    /**
-     * Create an instance of {@link ProprietaDefault }
-     */
-    public ProprietaDefault createProprietaDefault() {
-        return new ProprietaDefault();
-    }
-
-    /**
-     * Create an instance of {@link Fruitore }
-     */
-    public Fruitore createFruitore() {
-        return new Fruitore();
     }
 
     /**
@@ -188,24 +160,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DescriptionType }
+     * Create an instance of {@link ProprietaDefault }
      */
-    public DescriptionType createDescriptionType() {
-        return new DescriptionType();
-    }
-
-    /**
-     * Create an instance of {@link Soggetto }
-     */
-    public Soggetto createSoggetto() {
-        return new Soggetto();
-    }
-
-    /**
-     * Create an instance of {@link ConditionType }
-     */
-    public ConditionType createConditionType() {
-        return new ConditionType();
+    public ProprietaDefault createProprietaDefault() {
+        return new ProprietaDefault();
     }
 
     /**
@@ -216,6 +174,20 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link PortaApplicativa }
+     */
+    public PortaApplicativa createPortaApplicativa() {
+        return new PortaApplicativa();
+    }
+
+    /**
+     * Create an instance of {@link ReplaceFruitoreMatchType }
+     */
+    public ReplaceFruitoreMatchType createReplaceFruitoreMatchType() {
+        return new ReplaceFruitoreMatchType();
+    }
+
+    /**
      * Create an instance of {@link ReplaceMatchFieldType }
      */
     public ReplaceMatchFieldType createReplaceMatchFieldType() {
@@ -223,17 +195,45 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ReplaceMatchType }
+     * Create an instance of {@link Operazione }
      */
-    public ReplaceMatchType createReplaceMatchType() {
-        return new ReplaceMatchType();
+    public Operazione createOperazione() {
+        return new Operazione();
     }
 
     /**
-     * Create an instance of {@link Openspcoop2 }
+     * Create an instance of {@link RequisitoInput }
      */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
+    public RequisitoInput createRequisitoInput() {
+        return new RequisitoInput();
+    }
+
+    /**
+     * Create an instance of {@link ProprietaRequisitoInput }
+     */
+    public ProprietaRequisitoInput createProprietaRequisitoInput() {
+        return new ProprietaRequisitoInput();
+    }
+
+    /**
+     * Create an instance of {@link ConditionType }
+     */
+    public ConditionType createConditionType() {
+        return new ConditionType();
+    }
+
+    /**
+     * Create an instance of {@link Fruitore }
+     */
+    public Fruitore createFruitore() {
+        return new Fruitore();
+    }
+
+    /**
+     * Create an instance of {@link Wizard }
+     */
+    public Wizard createWizard() {
+        return new Wizard();
     }
 
     private final static QName _AccordoServizioComposto = new QName("http://www.openspcoop2.org/protocol/information_missing", "accordo-servizio-composto");

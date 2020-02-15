@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Requisiti">
- * 		&lt;sequence>
- * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="input" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoInput" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="Requisiti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="protocollo" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoProtocollo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="input" type="{http://www.openspcoop2.org/protocol/information_missing}RequisitoInput" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -103,7 +103,7 @@ public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getProtocolloList
-   * @return List<RequisitoProtocollo>
+   * @return List&lt;RequisitoProtocollo&gt;
   */
   @Deprecated
   public List<RequisitoProtocollo> getProtocollo() {
@@ -112,7 +112,7 @@ public class Requisiti extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setProtocolloList
-   * @param protocollo List<RequisitoProtocollo>
+   * @param protocollo List&lt;RequisitoProtocollo&gt;
   */
   @Deprecated
   public void setProtocollo(List<RequisitoProtocollo> protocollo) {

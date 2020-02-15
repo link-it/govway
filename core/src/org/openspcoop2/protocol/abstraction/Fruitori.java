@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Fruitori">
- * 		&lt;sequence>
- * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/protocol/abstraction}Soggetto" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="Fruitori"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="fruitore" type="{http://www.openspcoop2.org/protocol/abstraction}Soggetto" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Fruitori extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getFruitoreList
-   * @return List<Soggetto>
+   * @return List&lt;Soggetto&gt;
   */
   @Deprecated
   public List<Soggetto> getFruitore() {
@@ -102,7 +102,7 @@ public class Fruitori extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setFruitoreList
-   * @param fruitore List<Soggetto>
+   * @param fruitore List&lt;Soggetto&gt;
   */
   @Deprecated
   public void setFruitore(List<Soggetto> fruitore) {

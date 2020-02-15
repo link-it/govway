@@ -287,8 +287,8 @@ public interface IProtocolManager extends IComponentFactory {
      * Il carico http di risposta per un profilo oneway (e per asincroni in modalita asincrona) non dovrebbe contenere alcun messaggio applicativo,
      * come viene descritto dalla specifica.
  	 * Alcuni framework SOAP, invece, tendono a ritornare come messaggi di risposta a invocazioni di operation che non prevedono un output:
- 	 * - SoapEnvelope con SoapBody empty (es. <soapenv:Body />)
- 	 * - SoapEnvelope contenente msg applicativi con root element vuoto (es. <soapenv:Body><operationResponse/></soapenv:Body>)
+ 	 * - SoapEnvelope con SoapBody empty (es. &lt;soapenv:Body /&gt;)
+ 	 * - SoapEnvelope contenente msg applicativi con root element vuoto (es.  &lt;soapenv:Body &tt; &lt;operationResponse/ &gt; &lt;/soapenv:Body &gt;)
  	 * - ....
  	 * La seguente opzione permette di forzare un carico http vuoto, nei casi sopra descritti,
  	 * per la risposta generata dalla PdD in seguito alla gestione dei profili oneway (e asincroni in modalita asincrona)

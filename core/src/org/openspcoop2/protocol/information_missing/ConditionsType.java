@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ConditionsType">
- * 		&lt;sequence>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="ConditionsType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -120,7 +120,7 @@ public class ConditionsType extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<ConditionType>
+   * @return List&lt;ConditionType&gt;
   */
   @Deprecated
   public List<ConditionType> getProprieta() {
@@ -129,7 +129,7 @@ public class ConditionsType extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<ConditionType>
+   * @param proprieta List&lt;ConditionType&gt;
   */
   @Deprecated
   public void setProprieta(List<ConditionType> proprieta) {

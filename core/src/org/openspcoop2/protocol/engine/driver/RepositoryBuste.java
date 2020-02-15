@@ -163,7 +163,7 @@ public class RepositoryBuste  {
 	 *
 	 * @param busta Contiene le informazioni su di una busta in uscita (tipo {@link org.openspcoop2.protocol.sdk.Busta})
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
-	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se contenente errori di validazione.
 	 *
 	 */
 	public void registraBustaIntoOutBox(Busta busta,List<Eccezione> errors,long scadenza) throws ProtocolException{
@@ -259,7 +259,7 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di aggiornare i dati di una busta in uscita precedentemente inviata.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in entrata (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
@@ -348,7 +348,7 @@ public class RepositoryBuste  {
 	 * {@link org.openspcoop2.protocol.sdk.Eccezione} avvenuti durante la validazione di una busta.
 	 *
 	 * @param id identificativo della busta da ritornare.
-	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se e' presente la busta richiesta.
 	 *
 	 */
 	public List<Eccezione> getErrorsFromOutBox(String id, IProtocolFactory<?> protocolFactory) throws ProtocolException{
@@ -481,7 +481,7 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di registrare una busta in uscita con errori.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in uscita (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
@@ -578,7 +578,7 @@ public class RepositoryBuste  {
 	 * Metodo che si occupa di aggiornare i dati di una busta in entrata precedentemente inviata.
 	 *
 	 * @param busta Contiene le informazioni su di una busta in entrata (tipo {@link org.openspcoop2.protocol.sdk.Busta})
-	 * @param errors un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se contenente errori di validazione.
+	 * @param errors un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se contenente errori di validazione.
 	 * @param scadenza Scadenza Scadenza associata ad una busta, se non possiede essa stessa una scadenza
 	 *
 	 */
@@ -667,7 +667,7 @@ public class RepositoryBuste  {
 	 * {@link org.openspcoop2.protocol.sdk.Eccezione} avvenuti durante la validazione di una busta.
 	 *
 	 * @param id identificativo della busta da ritornare.
-	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se e' presente la busta richiesta.
 	 *
 	 */
 	public List<Eccezione> getErrorsFromInBox(String id) throws ProtocolException{
@@ -2289,7 +2289,7 @@ public class RepositoryBuste  {
 	 *
 	 * @param id identificativo della busta da ritornare.
 	 * @param tipoBusta Indicazione sul tipo di busta inviata/ricevuta
-	 * @return un oggetto List<{@link org.openspcoop2.protocol.sdk.Eccezione}> se e' presente la busta richiesta.
+	 * @return un oggetto List&lt;{@link org.openspcoop2.protocol.sdk.Eccezione}&gt; se e' presente la busta richiesta.
 	 *
 	 */
 	private List<Eccezione> getErrors(String id,String tipoBusta) throws ProtocolException{
