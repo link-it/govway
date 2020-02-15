@@ -31,7 +31,7 @@ import org.openspcoop2.web.lib.queue.costanti.Costanti;
 /**
 * BackwardCompatibilityInstanceProperties
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

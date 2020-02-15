@@ -44,144 +44,144 @@ import javax.xml.datatype.XMLGregorianCalendar;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="transazione_type">
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}ruolo_type" minOccurs="0"/>
- *         &lt;element name="esito" minOccurs="0">
- *           &lt;complexType>
- *             &lt;simpleContent>
- *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *                 &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}integer" />
- *               &lt;/extension>
- *             &lt;/simpleContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="contesto" minOccurs="0">
- *           &lt;complexType>
- *             &lt;simpleContent>
- *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
- *                 &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" />
- *               &lt;/extension>
- *             &lt;/simpleContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}protocollo_type" minOccurs="0"/>
- *         &lt;element name="tempi-attraversamento" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="richiesta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="risposta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
- *                 &lt;attribute name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}long" />
- *                 &lt;attribute name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}long" />
- *                 &lt;attribute name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}long" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="dimensione-messaggi" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" />
- *                 &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" />
- *                 &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" />
- *                 &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="dominio" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="soggetto" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}soggetto_type" minOccurs="0"/>
- *                   &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}tipo_porta_type" minOccurs="0"/>
- *                   &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="diagnostica" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="messaggi-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="messaggi-info-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="traccia-richiesta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="traccia-risposta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;/sequence>
- *                 &lt;attribute name="messaggi" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
- *                 &lt;attribute name="traccia-richiesta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
- *                 &lt;attribute name="traccia-risposta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="correlazione-applicativa" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;sequence>
- *                   &lt;element name="id-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                   &lt;element name="id-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *                 &lt;/sequence>
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="integration-manager" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}string" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="dati-integrazione" minOccurs="0">
- *           &lt;complexType>
- *             &lt;complexContent>
- *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *                 &lt;attribute name="indirizzo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="indirizzo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="credenziali" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="connettore" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="url-invocazione" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="indirizzo-client" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="x-forwarded-for" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="identificativo-autenticato" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="token-clientId" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" />
- *                 &lt;attribute name="token-eMail" type="{http://www.w3.org/2001/XMLSchema}string" />
- *               &lt;/restriction>
- *             &lt;/complexContent>
- *           &lt;/complexType>
- *         &lt;/element>
- *         &lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="uuid" type="{http://www.w3.org/2001/XMLSchema}string" />
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType name="transazione_type"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="stato" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}ruolo_type" minOccurs="0"/&gt;
+ *         &lt;element name="esito" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;simpleContent&gt;
+ *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;string"&gt;
+ *                 &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}integer" /&gt;
+ *               &lt;/extension&gt;
+ *             &lt;/simpleContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="contesto" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;simpleContent&gt;
+ *               &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;string"&gt;
+ *                 &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *               &lt;/extension&gt;
+ *             &lt;/simpleContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="protocollo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}protocollo_type" minOccurs="0"/&gt;
+ *         &lt;element name="tempi-attraversamento" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;attribute name="richiesta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="risposta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+ *                 &lt;attribute name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *                 &lt;attribute name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *                 &lt;attribute name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="dimensione-messaggi" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *                 &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *                 &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *                 &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="dominio" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="soggetto" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}soggetto_type" minOccurs="0"/&gt;
+ *                   &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}tipo_porta_type" minOccurs="0"/&gt;
+ *                   &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="diagnostica" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="messaggi-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                   &lt;element name="messaggi-info-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                   &lt;element name="traccia-richiesta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                   &lt;element name="traccia-risposta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;/sequence&gt;
+ *                 &lt;attribute name="messaggi" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+ *                 &lt;attribute name="traccia-richiesta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+ *                 &lt;attribute name="traccia-risposta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="correlazione-applicativa" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;sequence&gt;
+ *                   &lt;element name="id-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                   &lt;element name="id-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *                 &lt;/sequence&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="servizio-applicativo-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *         &lt;element name="integration-manager" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="dati-integrazione" minOccurs="0"&gt;
+ *           &lt;complexType&gt;
+ *             &lt;complexContent&gt;
+ *               &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *                 &lt;attribute name="indirizzo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="indirizzo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="credenziali" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="connettore" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="url-invocazione" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="indirizzo-client" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="x-forwarded-for" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="identificativo-autenticato" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="token-clientId" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *                 &lt;attribute name="token-eMail" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *               &lt;/restriction&gt;
+ *             &lt;/complexContent&gt;
+ *           &lt;/complexType&gt;
+ *         &lt;/element&gt;
+ *         &lt;element name="eventi-gestione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="uuid" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @author Pintori Giuliano (pintori@link.it)
@@ -633,13 +633,13 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;simpleContent>
-     *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
-     *       &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *     &lt;/extension>
-     *   &lt;/simpleContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;simpleContent&gt;
+     *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;string"&gt;
+     *       &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *     &lt;/extension&gt;
+     *   &lt;/simpleContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -712,16 +712,16 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="id-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="id-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="id-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="id-risposta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -795,29 +795,29 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="indirizzo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="indirizzo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="credenziali" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="connettore" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="url-invocazione" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="indirizzo-client" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="x-forwarded-for" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="identificativo-autenticato" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="token-clientId" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *       &lt;attribute name="token-eMail" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;attribute name="indirizzo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="indirizzo-risposta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="nome-porta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="credenziali" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="connettore" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="url-invocazione" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="tipo-richiesta" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="codice-risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="codice-risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="indirizzo-client" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="x-forwarded-for" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="identificativo-autenticato" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="token-issuer" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="token-clientId" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="token-subject" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="token-username" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *       &lt;attribute name="token-eMail" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1278,21 +1278,21 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="messaggi-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="messaggi-info-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="traccia-richiesta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *         &lt;element name="traccia-risposta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *       &lt;/sequence>
-     *       &lt;attribute name="messaggi" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
-     *       &lt;attribute name="traccia-richiesta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
-     *       &lt;attribute name="traccia-risposta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="messaggi-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="messaggi-info-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="traccia-richiesta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *         &lt;element name="traccia-risposta-errore-serializzazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *       &lt;/sequence&gt;
+     *       &lt;attribute name="messaggi" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+     *       &lt;attribute name="traccia-richiesta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+     *       &lt;attribute name="traccia-risposta" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}diagnostica_serialization_type" /&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1498,16 +1498,16 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *       &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *       &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *       &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *       &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *       &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *       &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1630,17 +1630,17 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;sequence>
-     *         &lt;element name="soggetto" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}soggetto_type" minOccurs="0"/>
-     *         &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}tipo_porta_type" minOccurs="0"/>
-     *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
-     *       &lt;/sequence>
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;sequence&gt;
+     *         &lt;element name="soggetto" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}soggetto_type" minOccurs="0"/&gt;
+     *         &lt;element name="ruolo" type="{http://www.openspcoop2.org/web/monitor/transazioni/core/manifest}tipo_porta_type" minOccurs="0"/&gt;
+     *         &lt;element name="cluster-id" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/&gt;
+     *       &lt;/sequence&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1742,13 +1742,13 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;simpleContent>
-     *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema>string">
-     *       &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}integer" />
-     *     &lt;/extension>
-     *   &lt;/simpleContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;simpleContent&gt;
+     *     &lt;extension base="&lt;http://www.w3.org/2001/XMLSchema&gt;string"&gt;
+     *       &lt;attribute name="codice" type="{http://www.w3.org/2001/XMLSchema}integer" /&gt;
+     *     &lt;/extension&gt;
+     *   &lt;/simpleContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1821,13 +1821,13 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}string" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 
@@ -1872,21 +1872,21 @@ public class TransazioneType {
      * <p>The following schema fragment specifies the expected content contained within this class.
      * 
      * <pre>
-     * &lt;complexType>
-     *   &lt;complexContent>
-     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
-     *       &lt;attribute name="richiesta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="risposta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" />
-     *       &lt;attribute name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *       &lt;attribute name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *       &lt;attribute name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}long" />
-     *     &lt;/restriction>
-     *   &lt;/complexContent>
-     * &lt;/complexType>
+     * &lt;complexType&gt;
+     *   &lt;complexContent&gt;
+     *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+     *       &lt;attribute name="richiesta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="richiesta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="richiesta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="risposta-accettazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="risposta-ingresso" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="risposta-uscita" type="{http://www.w3.org/2001/XMLSchema}dateTime" /&gt;
+     *       &lt;attribute name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *       &lt;attribute name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *       &lt;attribute name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}long" /&gt;
+     *     &lt;/restriction&gt;
+     *   &lt;/complexContent&gt;
+     * &lt;/complexType&gt;
      * </pre>
      * 
      * 

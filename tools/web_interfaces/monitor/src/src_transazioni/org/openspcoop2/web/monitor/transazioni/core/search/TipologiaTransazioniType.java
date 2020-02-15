@@ -38,13 +38,13 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="tipologia-transazioni_type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="ProxyTrasparente/IntegrationManager"/>
- *     &lt;enumeration value="ProxyTrasparente"/>
- *     &lt;enumeration value="IntegrationManager"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="tipologia-transazioni_type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="ProxyTrasparente/IntegrationManager"/&gt;
+ *     &lt;enumeration value="ProxyTrasparente"/&gt;
+ *     &lt;enumeration value="IntegrationManager"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  * @author Pintori Giuliano (pintori@link.it)

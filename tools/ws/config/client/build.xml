@@ -49,6 +49,8 @@
             <include name="shared/*"/>
             <include name="spring/*"/>
 			<include name="log/*"/>
+			<include name="jax/jaxws*"/>
+			<include name="jax/jaxb*"/>
 		</fileset>
 	</path>
 	<path id="classpath_dist" >

@@ -38,23 +38,23 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="operation">
- * 		&lt;sequence>
- * 			&lt;element name="object_details" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="binary" type="{http://www.openspcoop2.org/web/lib/audit/log}binary" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/web/lib/audit/log}tipologia" use="required"/>
- * 		&lt;attribute name="tipo-oggetto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="object-id" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="object-old-id" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="utente" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/web/lib/audit/log}stato" use="required"/>
- * 		&lt;attribute name="object_class" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="error" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="time-request" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/>
- * 		&lt;attribute name="time-execute" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/>
- * 		&lt;attribute name="interface-msg" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="operation"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="object_details" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="binary" type="{http://www.openspcoop2.org/web/lib/audit/log}binary" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/web/lib/audit/log}tipologia" use="required"/&gt;
+ * 		&lt;attribute name="tipo-oggetto" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="object-id" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="object-old-id" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="utente" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/web/lib/audit/log}stato" use="required"/&gt;
+ * 		&lt;attribute name="object_class" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="error" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="time-request" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/&gt;
+ * 		&lt;attribute name="time-execute" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/&gt;
+ * 		&lt;attribute name="interface-msg" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -263,7 +263,7 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getBinaryList
-   * @return List<Binary>
+   * @return List&lt;Binary&gt;
   */
   @Deprecated
   public List<Binary> getBinary() {
@@ -272,7 +272,7 @@ public class Operation extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setBinaryList
-   * @param binary List<Binary>
+   * @param binary List&lt;Binary&gt;
   */
   @Deprecated
   public void setBinary(List<Binary> binary) {

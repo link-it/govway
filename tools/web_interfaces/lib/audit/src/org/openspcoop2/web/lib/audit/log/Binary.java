@@ -33,11 +33,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="binary">
- * 		&lt;attribute name="binary-id" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="checksum" type="{http://www.w3.org/2001/XMLSchema}long" use="required"/>
- * 		&lt;attribute name="id-operation" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="binary"&gt;
+ * 		&lt;attribute name="binary-id" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="checksum" type="{http://www.w3.org/2001/XMLSchema}long" use="required"/&gt;
+ * 		&lt;attribute name="id-operation" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

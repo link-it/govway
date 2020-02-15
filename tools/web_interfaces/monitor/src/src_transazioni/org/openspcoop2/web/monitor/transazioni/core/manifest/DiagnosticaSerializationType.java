@@ -38,14 +38,14 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="diagnostica_serialization_type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="Standard"/>
- *     &lt;enumeration value="Optimized"/>
- *     &lt;enumeration value="OptimizedError"/>
- *     &lt;enumeration value="OptimizedNotFound"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="diagnostica_serialization_type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="Standard"/&gt;
+ *     &lt;enumeration value="Optimized"/&gt;
+ *     &lt;enumeration value="OptimizedError"/&gt;
+ *     &lt;enumeration value="OptimizedNotFound"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  * @author Pintori Giuliano (pintori@link.it)
