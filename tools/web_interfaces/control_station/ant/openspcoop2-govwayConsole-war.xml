@@ -381,7 +381,7 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.jar}"/>
+				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
 				<include name="xmlsec-2.1.2.jar"/>

@@ -42,7 +42,7 @@
 	
 	<!-- Jar dipendenti dall'A.S. -->
 	<var name="commons_logging_jar" value="" />
-	<var name="javax.jms-api-2.0.jar" value="" />
+	<var name="javax.jms-api-2.0.1.jar" value="" />
 	<var name="xerces_jar" value=""/>
 	<var name="xml_apis_jar" value=""/>
 	<var name="xalan_jar" value="" />
@@ -69,7 +69,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="javax.jms-api-2.0.jar" value="javax.jms-api-2.0.jar" />
+			<var name="javax.jms-api-2.0.1.jar" value="javax.jms-api-2.0.1.jar" />
 		</then>
 	</if>
 	<!-- xalan -->

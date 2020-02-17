@@ -175,7 +175,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
-				<include name="javax.jms-api-2.0.jar"/> <!-- (non necessario in A.S.) -->
+				<include name="javax.jms-api-2.0.1.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="ejb-api-3.0.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="jta-1.1.jar"/> <!-- (non necessario in A.S.) -->
 			</lib>

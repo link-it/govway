@@ -82,15 +82,15 @@
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jaxb-annotations-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jsonSchema-2.10.2.jar"/>
 	<!-- javax -->
-	<archive path="/op2_3.3.dev/lib/javax/javax.annotation-api-1.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/javax/javax.annotation-api-1.3.2.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/el-api-1.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/javax/javax.xml.registry-api-1.0.4.jar"/>
+        <archive path="/op2_3.3.dev/lib/javax/javax.xml.registry-api-1.0.8.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/jta-1.1.jar"/>
-        <archive path="/op2_3.3.dev/lib/javax/javax.servlet-api-3.1.0.jar"/>
-        <archive path="/op2_3.3.dev/lib/javax/javax.security.jacc-api-1.4.jar"/>
-        <archive path="/op2_3.3.dev/lib/javax/javax.resource-api-1.7.jar"/>
+        <archive path="/op2_3.3.dev/lib/javax/javax.servlet-api-4.0.1.jar"/>
+        <archive path="/op2_3.3.dev/lib/javax/javax.security.jacc-api-1.6.jar"/>
+        <archive path="/op2_3.3.dev/lib/javax/javax.resource-api-1.7.1.jar"/>
         <!-- <archive path="/op2_3.3.dev/lib/javax/javax.management-1.0-gov4j.jar"/>  The package javax.management is accessible from more than one module: <unnamed>, javax.management --> -->
-        <archive path="/op2_3.3.dev/lib/javax/javax.jms-api-2.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/javax/javax.jms-api-2.0.1.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/deployment-api-1.2-rev-1.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/ejb-api-3.0.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/persistence-api-1.0.2.jar"/>

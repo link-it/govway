@@ -74,7 +74,7 @@
 		<fileset dir="${required_lib}/cxf" includes="xmlschema-core-2.2.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="xml-resolver-1.2.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="jakarta.ws.rs-api-2.1.6.jar"/>
-		<fileset dir="${required_lib}/javax" includes="javax.servlet-api-3.1.0.jar"/>
+		<fileset dir="${required_lib}/javax" includes="javax.servlet-api-4.0.1.jar"/>
 		<fileset dir="${required_lib}/saaj" includes="*.jar"/>
 		<fileset dir="${required_lib}/jax" includes="*.jar"/>
 		<fileset dir="${required_lib}/commons" includes="commons-collections-3.2.2.jar"/>

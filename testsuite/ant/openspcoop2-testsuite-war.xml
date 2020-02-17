@@ -146,7 +146,7 @@
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.jar}"/>
+				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/stub/axis14">
 				<include name="openspcoop2_integrationManagerStub_axis14.jar"/>
