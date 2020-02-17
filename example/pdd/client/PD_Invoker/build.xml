@@ -58,7 +58,7 @@
    </path>
    <path id="classpath_run">
 		<fileset dir="${required_lib}" includes="axis14/axis-1.4-gov4j-1.jar"/>
-		<fileset dir="${required_lib}" includes="commons/commons-codec-1.11.jar"/>
+		<fileset dir="${required_lib}" includes="commons/commons-codec-1.14.jar"/>
 		<fileset dir="${utils_dist}"/>
    </path>
 

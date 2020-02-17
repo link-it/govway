@@ -44,7 +44,7 @@
 		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.0.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xml-apis-1.4.01.jar"/>
 		<pathelement path="${openspcoop2_lib}/javax/javax.servlet-api-3.1.0.jar"/>
-		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.11.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.14.jar"/>
 		<fileset dir="${openspcoop2_lib}/saaj" >
 			<include name="*.jar"/>
 		</fileset>

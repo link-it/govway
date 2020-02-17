@@ -143,7 +143,7 @@
 				<include name="openspcoop2_management_registro_search_stub.jar" />
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.11.jar"/>
+				<include name="commons-codec-1.14.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-lang-2.6.jar"/>
@@ -151,9 +151,9 @@
 				<include name="commons-net-3.6.jar"/>
 				<include name="commons-io-2.6.jar"/> <!-- (non necessario in A.S.) -->
 				<include name="commons-validator-1.6.jar"/>
-				<include name="commons-beanutils-1.9.3.jar"/> <!--jmx mini console -->
-				<include name="commons-lang3-3.8.jar"/>
-				<include name="commons-compress-1.19.jar"/>
+				<include name="commons-beanutils-1.9.4.jar"/> <!--jmx mini console -->
+				<include name="commons-lang3-3.9.jar"/>
+				<include name="commons-compress-1.20.jar"/>
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
