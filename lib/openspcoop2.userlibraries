@@ -68,19 +68,19 @@
 	<archive path="/op2_3.3.dev/lib/httpcore/apache-mime4j-core-0.8.3.jar"/>
 	<archive path="/op2_3.3.dev/lib/httpcore/apache-mime4j-dom-0.8.3.jar"/>
 	<!-- jackson -->
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-annotations-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-core-2.9.10.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-annotations-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-core-2.10.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/jackson/jackson-coreutils-1.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-databind-2.9.10.1.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-xml-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-yaml-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-datatype-joda-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-base-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-json-provider-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-xml-provider-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-yaml-provider-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jaxb-annotations-2.9.10.jar"/>
-	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jsonSchema-2.9.10.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-databind-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-xml-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-dataformat-yaml-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-datatype-joda-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-base-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-json-provider-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-xml-provider-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-jaxrs-yaml-provider-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jaxb-annotations-2.10.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/jackson/jackson-module-jsonSchema-2.10.2.jar"/>
 	<!-- javax -->
 	<archive path="/op2_3.3.dev/lib/javax/javax.annotation-api-1.2.jar"/>
         <archive path="/op2_3.3.dev/lib/javax/el-api-1.0.jar"/>
