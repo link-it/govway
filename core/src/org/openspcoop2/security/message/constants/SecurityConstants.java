@@ -24,7 +24,7 @@ import java.util.Hashtable;
 
 import javax.xml.namespace.QName;
 
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.apache.wss4j.common.ConfigurationConstants;
 import org.apache.wss4j.common.WSS4JConstants;
 import org.apache.wss4j.dom.handler.WSHandlerConstants;
@@ -294,10 +294,10 @@ public class SecurityConstants {
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_PASSWORD = "joseUseHeaders.truststore.password";
     public static final String JOSE_USE_HEADERS_TRUSTSTORE_CRL =  "joseUseHeaders.truststore.crl";
     
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
-    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  JoseConstants.RSSEC_KEY_STORE+".ssl.crl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_TYPE = RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_FILE = RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_PASSWORD = RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+    public static final String JOSE_USE_HEADERS_TRUSTSTORE_SSL_CRL =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.crl";
     
     public static final String JOSE_USE_HEADERS_KEYSTORE_TYPE = "joseUseHeaders.keystore.type";
     public static final String JOSE_USE_HEADERS_KEYSTORE_FILE = "joseUseHeaders.keystore.file";

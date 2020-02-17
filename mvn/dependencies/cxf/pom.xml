@@ -17,14 +17,14 @@
 
 		<jar.group.name>cxf</jar.group.name>
 		
-		<asm.version>5.2</asm.version>
-		<cxf.version>3.2.6</cxf.version>
-		<cxf.gov4j.version>3.2.6-gov4j-1</cxf.gov4j.version>
-		<javax.ws.rs.api.cxf.version>2.1</javax.ws.rs.api.cxf.version>
-		<stax2.api.version>4.1</stax2.api.version>
-		<woodstock.core.version>5.1.0</woodstock.core.version>
+		<asm.version>7.1</asm.version>
+		<cxf.version>3.3.5</cxf.version>
+		<cxf.gov4j.version>3.3.5-gov4j-1</cxf.gov4j.version>
+		<javax.ws.rs.api.cxf.version>2.1.6</javax.ws.rs.api.cxf.version>
+		<stax2.api.version>4.2</stax2.api.version>
+		<woodstock.core.version>5.3.0</woodstock.core.version>
 		<xml.resolver.version>1.2</xml.resolver.version>
-		<xmlschema.core.version>2.2.3</xmlschema.core.version>
+		<xmlschema.core.version>2.2.5</xmlschema.core.version>
 
 	</properties>
 
@@ -308,8 +308,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>javax.ws.rs</groupId>
-			<artifactId>javax.ws.rs-api</artifactId>
+			<groupId>jakarta.ws.rs</groupId>
+    			<artifactId>jakarta.ws.rs-api</artifactId>
 			<version>${javax.ws.rs.api.cxf.version}</version>
 			<exclusions>
 				<exclusion>

@@ -34,7 +34,6 @@ import java.util.Properties;
 
 import javax.crypto.SecretKey;
 
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwa.KeyAlgorithm;
 import org.apache.cxf.rs.security.jose.jwe.JweCompactConsumer;
 import org.apache.cxf.rs.security.jose.jwe.JweDecryptionOutput;
@@ -45,6 +44,7 @@ import org.apache.cxf.rs.security.jose.jwe.JweUtils;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -369,7 +369,7 @@ public class JsonDecrypt {
 			Properties pNew = new Properties();
 			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
-			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
+			pNew.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
 			provider = loadProviderFromProperties(pNew, jweHeaders.getContentEncryptionAlgorithm());
 		}
 		
@@ -433,7 +433,7 @@ public class JsonDecrypt {
 				try {
 					byte [] cer = null;
 					if(this.properties!=null) {
-						this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, path);
+						this.properties.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, path);
 						cer = JsonUtils.readKeystoreFromURI(this.properties);
 					}
 					else {

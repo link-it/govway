@@ -260,9 +260,9 @@
 			<then>
 				<var name="govwayConsoleRemota_security_neethi" value="neethi-3.1.1.jar" />
 				<var name="govwayConsoleRemota_httpcore" value="*.jar" />
-				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.2.3.jar" />
-				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-5.1.0.jar" />
-				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.1.jar" />
+				<var name="govwayConsoleRemota_cxf_xmlschema-core" value="xmlschema-core-2.2.5.jar" />
+				<var name="govwayConsoleRemota_cxf_woodstox-core-asl" value="woodstox-core-5.3.0.jar" />
+				<var name="govwayConsoleRemota_cxf_stax2-api" value="stax2-api-4.2.jar" />
 				<if>
 					<matches string="${as}" pattern="wildfly.*"/>
 					<then>
@@ -360,7 +360,7 @@
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />
 				<include name="cxf-rt-*.jar" />
-				<include name="javax.ws.rs-api-2.1.jar" />
+				<include name="jakarta.ws.rs-api-2.1.6.jar" />
 				<include name="${geronimo_jaxws_spec_jar}" />
 				<include name="${govwayConsoleRemota_cxf_xmlschema-core}" />
 				<include name="${govwayConsoleRemota_cxf_woodstox-core-asl}" />
