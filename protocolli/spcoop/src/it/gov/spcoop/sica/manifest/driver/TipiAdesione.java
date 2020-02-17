@@ -23,7 +23,7 @@ package it.gov.spcoop.sica.manifest.driver;
 /**
  *
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

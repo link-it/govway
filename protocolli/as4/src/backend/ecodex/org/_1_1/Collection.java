@@ -32,21 +32,21 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="collection">
- * 		&lt;sequence>
- * 			&lt;element name="FaultDetail" type="{http://org.ecodex.backend/1_1/}FaultDetail" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="retrieveMessageRequest" type="{http://org.ecodex.backend/1_1/}retrieveMessageRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="retrieveMessageResponse" type="{http://org.ecodex.backend/1_1/}retrieveMessageResponse" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="listPendingMessagesResponse" type="{http://org.ecodex.backend/1_1/}listPendingMessagesResponse" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="messageErrorsRequest" type="{http://org.ecodex.backend/1_1/}messageErrorsRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="messageStatusRequest" type="{http://org.ecodex.backend/1_1/}messageStatusRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="submitRequest" type="{http://org.ecodex.backend/1_1/}submitRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="submitResponse" type="{http://org.ecodex.backend/1_1/}submitResponse" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="getStatusRequest" type="{http://org.ecodex.backend/1_1/}getStatusRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="getErrorsRequest" type="{http://org.ecodex.backend/1_1/}getErrorsRequest" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="getMessageErrorsResponse" type="{http://org.ecodex.backend/1_1/}errorResultImplArray" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="collection"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="FaultDetail" type="{http://org.ecodex.backend/1_1/}FaultDetail" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="retrieveMessageRequest" type="{http://org.ecodex.backend/1_1/}retrieveMessageRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="retrieveMessageResponse" type="{http://org.ecodex.backend/1_1/}retrieveMessageResponse" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="listPendingMessagesResponse" type="{http://org.ecodex.backend/1_1/}listPendingMessagesResponse" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="messageErrorsRequest" type="{http://org.ecodex.backend/1_1/}messageErrorsRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="messageStatusRequest" type="{http://org.ecodex.backend/1_1/}messageStatusRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="submitRequest" type="{http://org.ecodex.backend/1_1/}submitRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="submitResponse" type="{http://org.ecodex.backend/1_1/}submitResponse" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="getStatusRequest" type="{http://org.ecodex.backend/1_1/}getStatusRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="getErrorsRequest" type="{http://org.ecodex.backend/1_1/}getErrorsRequest" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="getMessageErrorsResponse" type="{http://org.ecodex.backend/1_1/}errorResultImplArray" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

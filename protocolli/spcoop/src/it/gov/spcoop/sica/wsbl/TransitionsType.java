@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="transitionsType">
- * 		&lt;sequence>
- * 			&lt;element name="transition" type="{http://spcoop.gov.it/sica/wsbl}transitionType" minOccurs="2" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="transitionsType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="transition" type="{http://spcoop.gov.it/sica/wsbl}transitionType" minOccurs="2" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getTransitionList
-   * @return List<TransitionType>
+   * @return List&lt;TransitionType&gt;
   */
   @Deprecated
   public List<TransitionType> getTransition() {
@@ -102,7 +102,7 @@ public class TransitionsType extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setTransitionList
-   * @param transition List<TransitionType>
+   * @param transition List&lt;TransitionType&gt;
   */
   @Deprecated
   public void setTransition(List<TransitionType> transition) {

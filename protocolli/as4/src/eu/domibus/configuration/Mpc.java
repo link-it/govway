@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="mpc">
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="retention_downloaded" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
- * 		&lt;attribute name="retention_undownloaded" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
- * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="qualifiedName" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="mpc"&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="retention_downloaded" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/&gt;
+ * 		&lt;attribute name="retention_undownloaded" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/&gt;
+ * 		&lt;attribute name="default" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="enabled" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="qualifiedName" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

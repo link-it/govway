@@ -32,16 +32,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CedentePrestatoreType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiAnagrafici" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiAnagraficiCedenteType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Sede" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IndirizzoType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="StabileOrganizzazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IndirizzoType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="IscrizioneREA" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IscrizioneREAType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Contatti" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}ContattiType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="RiferimentoAmministrazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="CedentePrestatoreType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiAnagrafici" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DatiAnagraficiCedenteType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Sede" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IndirizzoType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="StabileOrganizzazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IndirizzoType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="IscrizioneREA" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}IscrizioneREAType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Contatti" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}ContattiType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="RiferimentoAmministrazione" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

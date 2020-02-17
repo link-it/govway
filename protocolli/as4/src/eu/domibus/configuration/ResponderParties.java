@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="responderParties">
- * 		&lt;sequence>
- * 			&lt;element name="responderParty" type="{http://www.domibus.eu/configuration}responderParty" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="responderParties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="responderParty" type="{http://www.domibus.eu/configuration}responderParty" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ResponderParties extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getResponderPartyList
-   * @return List<ResponderParty>
+   * @return List&lt;ResponderParty&gt;
   */
   @Deprecated
   public List<ResponderParty> getResponderParty() {
@@ -102,7 +102,7 @@ public class ResponderParties extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setResponderPartyList
-   * @param responderParty List<ResponderParty>
+   * @param responderParty List&lt;ResponderParty&gt;
   */
   @Deprecated
   public void setResponderParty(List<ResponderParty> responderParty) {

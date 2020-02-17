@@ -76,7 +76,7 @@ import org.openspcoop2.ValidazioneContenutiWS.Service.types.RichiestaAggiornamen
 /**
  * Client
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

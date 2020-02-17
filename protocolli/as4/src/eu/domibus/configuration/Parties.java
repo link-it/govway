@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="parties">
- * 		&lt;sequence>
- * 			&lt;element name="partyIdTypes" type="{http://www.domibus.eu/configuration}partyIdTypes" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="party" type="{http://www.domibus.eu/configuration}party" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="parties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="partyIdTypes" type="{http://www.domibus.eu/configuration}partyIdTypes" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="party" type="{http://www.domibus.eu/configuration}party" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -106,7 +106,7 @@ public class Parties extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getPartyList
-   * @return List<Party>
+   * @return List&lt;Party&gt;
   */
   @Deprecated
   public List<Party> getParty() {
@@ -115,7 +115,7 @@ public class Parties extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setPartyList
-   * @param party List<Party>
+   * @param party List&lt;Party&gt;
   */
   @Deprecated
   public void setParty(List<Party> party) {

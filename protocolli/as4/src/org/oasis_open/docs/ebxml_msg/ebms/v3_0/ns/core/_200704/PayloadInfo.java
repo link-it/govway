@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PayloadInfo">
- * 		&lt;sequence>
- * 			&lt;element name="PartInfo" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartInfo" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="PayloadInfo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="PartInfo" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartInfo" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class PayloadInfo extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getPartInfoList
-   * @return List<PartInfo>
+   * @return List&lt;PartInfo&gt;
   */
   @Deprecated
   public List<PartInfo> getPartInfo() {
@@ -102,7 +102,7 @@ public class PayloadInfo extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setPartInfoList
-   * @param partInfo List<PartInfo>
+   * @param partInfo List&lt;PartInfo&gt;
   */
   @Deprecated
   public void setPartInfo(List<PartInfo> partInfo) {

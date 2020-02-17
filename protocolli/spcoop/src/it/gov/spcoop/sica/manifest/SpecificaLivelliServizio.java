@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaLivelliServizio">
- * 		&lt;sequence>
- * 			&lt;element name="documentoLivelloServizio" type="{http://spcoop.gov.it/sica/manifest}DocumentoLivelloServizio" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaLivelliServizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="documentoLivelloServizio" type="{http://spcoop.gov.it/sica/manifest}DocumentoLivelloServizio" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SpecificaLivelliServizio extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method getDocumentoLivelloServizioList
-   * @return List<DocumentoLivelloServizio>
+   * @return List&lt;DocumentoLivelloServizio&gt;
   */
   @Deprecated
   public List<DocumentoLivelloServizio> getDocumentoLivelloServizio() {
@@ -102,7 +102,7 @@ public class SpecificaLivelliServizio extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method setDocumentoLivelloServizioList
-   * @param documentoLivelloServizio List<DocumentoLivelloServizio>
+   * @param documentoLivelloServizio List&lt;DocumentoLivelloServizio&gt;
   */
   @Deprecated
   public void setDocumentoLivelloServizio(List<DocumentoLivelloServizio> documentoLivelloServizio) {

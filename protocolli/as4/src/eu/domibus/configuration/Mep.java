@@ -32,11 +32,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="mep">
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/>
- * 		&lt;attribute name="legs" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/>
- * &lt;/complexType>
+ * &lt;complexType name="mep"&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="value" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/&gt;
+ * 		&lt;attribute name="legs" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

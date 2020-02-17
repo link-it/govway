@@ -39,6 +39,7 @@
 			<include name="cxf/*"/>
 			<include name="saaj/*"/>
 			<include name="jax/jaxb*"/>
+			<include name="jax/jaxws*"/>
 			<include name="javax/*"/>
 			<include name="log/*"/>
 			<include name="security/*"/>

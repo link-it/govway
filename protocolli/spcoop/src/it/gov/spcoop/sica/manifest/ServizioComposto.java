@@ -33,25 +33,25 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="servizioComposto">
- * 		&lt;sequence>
- * 			&lt;element name="descrizione" type="{http://spcoop.gov.it/sica/manifest}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaSemiformale" type="{http://spcoop.gov.it/sica/manifest}SpecificaSemiformale" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allegati" type="{http://spcoop.gov.it/sica/manifest}ElencoAllegati" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="specificaInterfaccia" type="{http://spcoop.gov.it/sica/manifest}SpecificaInterfaccia" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaConversazione" type="{http://spcoop.gov.it/sica/manifest}SpecificaConversazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="riferimentoAccordoCooperazione" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="serviziComponenti" type="{http://spcoop.gov.it/sica/manifest}ElencoServiziComponenti" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaCoordinamento" type="{http://spcoop.gov.it/sica/manifest}SpecificaCoordinamento" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/>
- * 		&lt;attribute name="versione" type="{http://spcoop.gov.it/sica/manifest}string" use="optional"/>
- * 		&lt;attribute name="dataCreazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/>
- * 		&lt;attribute name="dataPubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="firmato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="riservato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="pubblicatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="servizioComposto"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="descrizione" type="{http://spcoop.gov.it/sica/manifest}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaSemiformale" type="{http://spcoop.gov.it/sica/manifest}SpecificaSemiformale" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allegati" type="{http://spcoop.gov.it/sica/manifest}ElencoAllegati" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaInterfaccia" type="{http://spcoop.gov.it/sica/manifest}SpecificaInterfaccia" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaConversazione" type="{http://spcoop.gov.it/sica/manifest}SpecificaConversazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="riferimentoAccordoCooperazione" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="serviziComponenti" type="{http://spcoop.gov.it/sica/manifest}ElencoServiziComponenti" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaCoordinamento" type="{http://spcoop.gov.it/sica/manifest}SpecificaCoordinamento" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/&gt;
+ * 		&lt;attribute name="versione" type="{http://spcoop.gov.it/sica/manifest}string" use="optional"/&gt;
+ * 		&lt;attribute name="dataCreazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/&gt;
+ * 		&lt;attribute name="dataPubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="firmato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="riservato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="pubblicatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

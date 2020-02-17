@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="egovDecllElement">
- * 		&lt;sequence>
- * 			&lt;element name="e-govVersion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="rifDefinizioneInterfaccia" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="operationList" type="{http://www.cnipa.it/collProfiles}operationListType" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="egovDecllElement"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="e-govVersion" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="rifDefinizioneInterfaccia" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="operationList" type="{http://www.cnipa.it/collProfiles}operationListType" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

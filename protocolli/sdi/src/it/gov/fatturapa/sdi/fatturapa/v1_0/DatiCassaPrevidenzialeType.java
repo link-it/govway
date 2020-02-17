@@ -35,18 +35,18 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiCassaPrevidenzialeType">
- * 		&lt;sequence>
- * 			&lt;element name="TipoCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoCassaType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="AlCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ImportoContributoCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ImponibileCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="AliquotaIVA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Ritenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RitenutaType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Natura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}NaturaType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiCassaPrevidenzialeType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="TipoCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoCassaType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="AlCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ImportoContributoCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ImponibileCassa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="AliquotaIVA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Ritenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RitenutaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Natura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}NaturaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -35,7 +35,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 /**
 * BackwardCompatibilityProperties
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

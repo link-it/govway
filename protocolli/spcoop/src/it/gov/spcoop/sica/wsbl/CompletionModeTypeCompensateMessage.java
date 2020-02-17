@@ -33,10 +33,10 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="completionModeTypeCompensateMessage">
- * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
- * 		&lt;attribute name="type" type="{http://spcoop.gov.it/sica/wsbl}messageOrientationType" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="completionModeTypeCompensateMessage"&gt;
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/&gt;
+ * 		&lt;attribute name="type" type="{http://spcoop.gov.it/sica/wsbl}messageOrientationType" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

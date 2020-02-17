@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DocumentoInterfaccia">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="tipo" type="{http://spcoop.gov.it/sica/manifest}TipoDocumentoInterfaccia" use="optional" default="WSDL"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="DocumentoInterfaccia"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ * 				&lt;attribute name="tipo" type="{http://spcoop.gov.it/sica/manifest}TipoDocumentoInterfaccia" use="optional" default="WSDL"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

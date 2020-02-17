@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="messagesTypes">
- * 		&lt;sequence>
- * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}message" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="messagesTypes"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}message" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getMessageList
-   * @return List<Message>
+   * @return List&lt;Message&gt;
   */
   @Deprecated
   public List<Message> getMessage() {
@@ -102,7 +102,7 @@ public class MessagesTypes extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setMessageList
-   * @param message List<Message>
+   * @param message List&lt;Message&gt;
   */
   @Deprecated
   public void setMessage(List<Message> message) {

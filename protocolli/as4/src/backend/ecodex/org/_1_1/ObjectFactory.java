@@ -55,31 +55,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetStatusRequest }
+     * Create an instance of {@link SubmitResponse }
      */
-    public GetStatusRequest createGetStatusRequest() {
-        return new GetStatusRequest();
+    public SubmitResponse createSubmitResponse() {
+        return new SubmitResponse();
     }
 
     /**
-     * Create an instance of {@link RetrieveMessageRequest }
+     * Create an instance of {@link MessageErrorsRequest }
      */
-    public RetrieveMessageRequest createRetrieveMessageRequest() {
-        return new RetrieveMessageRequest();
-    }
-
-    /**
-     * Create an instance of {@link ErrorResultImplArray }
-     */
-    public ErrorResultImplArray createErrorResultImplArray() {
-        return new ErrorResultImplArray();
-    }
-
-    /**
-     * Create an instance of {@link FaultDetail }
-     */
-    public FaultDetail createFaultDetail() {
-        return new FaultDetail();
+    public MessageErrorsRequest createMessageErrorsRequest() {
+        return new MessageErrorsRequest();
     }
 
     /**
@@ -90,6 +76,27 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link FaultDetail }
+     */
+    public FaultDetail createFaultDetail() {
+        return new FaultDetail();
+    }
+
+    /**
+     * Create an instance of {@link ListPendingMessagesResponse }
+     */
+    public ListPendingMessagesResponse createListPendingMessagesResponse() {
+        return new ListPendingMessagesResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetStatusRequest }
+     */
+    public GetStatusRequest createGetStatusRequest() {
+        return new GetStatusRequest();
+    }
+
+    /**
      * Create an instance of {@link SubmitRequest }
      */
     public SubmitRequest createSubmitRequest() {
@@ -97,10 +104,38 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link ErrorResultImpl }
+     */
+    public ErrorResultImpl createErrorResultImpl() {
+        return new ErrorResultImpl();
+    }
+
+    /**
+     * Create an instance of {@link ErrorResultImplArray }
+     */
+    public ErrorResultImplArray createErrorResultImplArray() {
+        return new ErrorResultImplArray();
+    }
+
+    /**
+     * Create an instance of {@link StatusRequest }
+     */
+    public StatusRequest createStatusRequest() {
+        return new StatusRequest();
+    }
+
+    /**
      * Create an instance of {@link Collection }
      */
     public Collection createCollection() {
         return new Collection();
+    }
+
+    /**
+     * Create an instance of {@link PayloadURLType }
+     */
+    public PayloadURLType createPayloadURLType() {
+        return new PayloadURLType();
     }
 
     /**
@@ -118,48 +153,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ErrorResultImpl }
-     */
-    public ErrorResultImpl createErrorResultImpl() {
-        return new ErrorResultImpl();
-    }
-
-    /**
-     * Create an instance of {@link StatusRequest }
-     */
-    public StatusRequest createStatusRequest() {
-        return new StatusRequest();
-    }
-
-    /**
-     * Create an instance of {@link SubmitResponse }
-     */
-    public SubmitResponse createSubmitResponse() {
-        return new SubmitResponse();
-    }
-
-    /**
-     * Create an instance of {@link RetrieveMessageResponse }
-     */
-    public RetrieveMessageResponse createRetrieveMessageResponse() {
-        return new RetrieveMessageResponse();
-    }
-
-    /**
-     * Create an instance of {@link MessageErrorsRequest }
-     */
-    public MessageErrorsRequest createMessageErrorsRequest() {
-        return new MessageErrorsRequest();
-    }
-
-    /**
-     * Create an instance of {@link PayloadURLType }
-     */
-    public PayloadURLType createPayloadURLType() {
-        return new PayloadURLType();
-    }
-
-    /**
      * Create an instance of {@link MessageStatusRequest }
      */
     public MessageStatusRequest createMessageStatusRequest() {
@@ -167,10 +160,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListPendingMessagesResponse }
+     * Create an instance of {@link RetrieveMessageRequest }
      */
-    public ListPendingMessagesResponse createListPendingMessagesResponse() {
-        return new ListPendingMessagesResponse();
+    public RetrieveMessageRequest createRetrieveMessageRequest() {
+        return new RetrieveMessageRequest();
+    }
+
+    /**
+     * Create an instance of {@link RetrieveMessageResponse }
+     */
+    public RetrieveMessageResponse createRetrieveMessageResponse() {
+        return new RetrieveMessageResponse();
     }
 
     private final static QName _GetMessageErrorsResponse = new QName("http://org.ecodex.backend/1_1/", "getMessageErrorsResponse");

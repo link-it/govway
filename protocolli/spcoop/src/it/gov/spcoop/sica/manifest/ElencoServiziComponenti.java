@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ElencoServiziComponenti">
- * 		&lt;sequence>
- * 			&lt;element name="servizioComponente" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ElencoServiziComponenti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="servizioComponente" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -94,7 +94,7 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getServizioComponenteList
-   * @return List<java.net.URI>
+   * @return List&lt;java.net.URI&gt;
   */
   @Deprecated
   public List<java.net.URI> getServizioComponente() {
@@ -103,7 +103,7 @@ public class ElencoServiziComponenti extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setServizioComponenteList
-   * @param servizioComponente List<java.net.URI>
+   * @param servizioComponente List&lt;java.net.URI&gt;
   */
   @Deprecated
   public void setServizioComponente(List<java.net.URI> servizioComponente) {

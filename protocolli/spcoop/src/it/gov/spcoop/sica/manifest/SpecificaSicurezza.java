@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaSicurezza">
- * 		&lt;sequence>
- * 			&lt;element name="documentoSicurezza" type="{http://spcoop.gov.it/sica/manifest}DocumentoSicurezza" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaSicurezza"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="documentoSicurezza" type="{http://spcoop.gov.it/sica/manifest}DocumentoSicurezza" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SpecificaSicurezza extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method getDocumentoSicurezzaList
-   * @return List<DocumentoSicurezza>
+   * @return List&lt;DocumentoSicurezza&gt;
   */
   @Deprecated
   public List<DocumentoSicurezza> getDocumentoSicurezza() {
@@ -102,7 +102,7 @@ public class SpecificaSicurezza extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setDocumentoSicurezzaList
-   * @param documentoSicurezza List<DocumentoSicurezza>
+   * @param documentoSicurezza List&lt;DocumentoSicurezza&gt;
   */
   @Deprecated
   public void setDocumentoSicurezza(List<DocumentoSicurezza> documentoSicurezza) {

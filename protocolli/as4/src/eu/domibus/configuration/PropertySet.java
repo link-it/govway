@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="propertySet">
- * 		&lt;sequence>
- * 			&lt;element name="propertyRef" type="{http://www.domibus.eu/configuration}propertyRef" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="propertySet"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="propertyRef" type="{http://www.domibus.eu/configuration}propertyRef" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -103,7 +103,7 @@ public class PropertySet extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getPropertyRefList
-   * @return List<PropertyRef>
+   * @return List&lt;PropertyRef&gt;
   */
   @Deprecated
   public List<PropertyRef> getPropertyRef() {
@@ -112,7 +112,7 @@ public class PropertySet extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setPropertyRefList
-   * @param propertyRef List<PropertyRef>
+   * @param propertyRef List&lt;PropertyRef&gt;
   */
   @Deprecated
   public void setPropertyRef(List<PropertyRef> propertyRef) {

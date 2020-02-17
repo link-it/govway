@@ -63,9 +63,9 @@ import org.w3c.dom.NodeList;
 /**
  * Classe per la gestione della WS-Security (WSDoAllReceiver).
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
- * @author Montebove Luciano <L.Montebove@finsiel.it>
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
+ * @author Montebove Luciano (L.Montebove@finsiel.it)
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

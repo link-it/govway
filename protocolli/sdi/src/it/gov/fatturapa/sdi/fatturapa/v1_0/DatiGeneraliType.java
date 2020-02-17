@@ -34,21 +34,21 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiGeneraliType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiGeneraliDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiGeneraliDocumentoType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DatiOrdineAcquisto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiContratto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiConvenzione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiRicezione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiFattureCollegate" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiSAL" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiSALType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiDDT" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDDTType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiTrasportoType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="NormaDiRiferimento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="FatturaPrincipale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}FatturaPrincipaleType" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiGeneraliType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiGeneraliDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiGeneraliDocumentoType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiOrdineAcquisto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiContratto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiConvenzione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiRicezione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiFattureCollegate" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDocumentiCorrelatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiSAL" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiSALType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiDDT" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiDDTType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiTrasportoType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="NormaDiRiferimento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="FatturaPrincipale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}FatturaPrincipaleType" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -292,7 +292,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiOrdineAcquistoList
-   * @return List<DatiDocumentiCorrelatiType>
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public List<DatiDocumentiCorrelatiType> getDatiOrdineAcquisto() {
@@ -301,7 +301,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiOrdineAcquistoList
-   * @param datiOrdineAcquisto List<DatiDocumentiCorrelatiType>
+   * @param datiOrdineAcquisto List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public void setDatiOrdineAcquisto(List<DatiDocumentiCorrelatiType> datiOrdineAcquisto) {
@@ -322,7 +322,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiContrattoList
-   * @return List<DatiDocumentiCorrelatiType>
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public List<DatiDocumentiCorrelatiType> getDatiContratto() {
@@ -331,7 +331,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiContrattoList
-   * @param datiContratto List<DatiDocumentiCorrelatiType>
+   * @param datiContratto List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public void setDatiContratto(List<DatiDocumentiCorrelatiType> datiContratto) {
@@ -352,7 +352,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiConvenzioneList
-   * @return List<DatiDocumentiCorrelatiType>
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public List<DatiDocumentiCorrelatiType> getDatiConvenzione() {
@@ -361,7 +361,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiConvenzioneList
-   * @param datiConvenzione List<DatiDocumentiCorrelatiType>
+   * @param datiConvenzione List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public void setDatiConvenzione(List<DatiDocumentiCorrelatiType> datiConvenzione) {
@@ -382,7 +382,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiRicezioneList
-   * @return List<DatiDocumentiCorrelatiType>
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public List<DatiDocumentiCorrelatiType> getDatiRicezione() {
@@ -391,7 +391,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiRicezioneList
-   * @param datiRicezione List<DatiDocumentiCorrelatiType>
+   * @param datiRicezione List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public void setDatiRicezione(List<DatiDocumentiCorrelatiType> datiRicezione) {
@@ -412,7 +412,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiFattureCollegateList
-   * @return List<DatiDocumentiCorrelatiType>
+   * @return List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public List<DatiDocumentiCorrelatiType> getDatiFattureCollegate() {
@@ -421,7 +421,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiFattureCollegateList
-   * @param datiFattureCollegate List<DatiDocumentiCorrelatiType>
+   * @param datiFattureCollegate List&lt;DatiDocumentiCorrelatiType&gt;
   */
   @Deprecated
   public void setDatiFattureCollegate(List<DatiDocumentiCorrelatiType> datiFattureCollegate) {
@@ -442,7 +442,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiSALList
-   * @return List<DatiSALType>
+   * @return List&lt;DatiSALType&gt;
   */
   @Deprecated
   public List<DatiSALType> getDatiSAL() {
@@ -451,7 +451,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiSALList
-   * @param datiSAL List<DatiSALType>
+   * @param datiSAL List&lt;DatiSALType&gt;
   */
   @Deprecated
   public void setDatiSAL(List<DatiSALType> datiSAL) {
@@ -472,7 +472,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getDatiDDTList
-   * @return List<DatiDDTType>
+   * @return List&lt;DatiDDTType&gt;
   */
   @Deprecated
   public List<DatiDDTType> getDatiDDT() {
@@ -481,7 +481,7 @@ public class DatiGeneraliType extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setDatiDDTList
-   * @param datiDDT List<DatiDDTType>
+   * @param datiDDT List&lt;DatiDDTType&gt;
   */
   @Deprecated
   public void setDatiDDT(List<DatiDDTType> datiDDT) {

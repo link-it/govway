@@ -31,12 +31,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="null">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="null"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

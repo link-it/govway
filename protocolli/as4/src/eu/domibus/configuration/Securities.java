@@ -32,11 +32,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="securities">
- * 		&lt;sequence>
- * 			&lt;element name="security" type="{http://www.domibus.eu/configuration}security" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="securities"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="security" type="{http://www.domibus.eu/configuration}security" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

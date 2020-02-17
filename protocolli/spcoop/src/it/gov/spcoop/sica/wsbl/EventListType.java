@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eventListType">
- * 		&lt;sequence>
- * 			&lt;element name="event" type="{http://spcoop.gov.it/sica/wsbl}eventType" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="eventListType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="event" type="{http://spcoop.gov.it/sica/wsbl}eventType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class EventListType extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getEventList
-   * @return List<EventType>
+   * @return List&lt;EventType&gt;
   */
   @Deprecated
   public List<EventType> getEvent() {
@@ -102,7 +102,7 @@ public class EventListType extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setEventList
-   * @param event List<EventType>
+   * @param event List&lt;EventType&gt;
   */
   @Deprecated
   public void setEvent(List<EventType> event) {

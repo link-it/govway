@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="temporalConditionType">
- * 		&lt;sequence>
- * 			&lt;element name="predicate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="boolop" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="data" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="temporalConditionType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="predicate" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="boolop" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="data" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="description" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

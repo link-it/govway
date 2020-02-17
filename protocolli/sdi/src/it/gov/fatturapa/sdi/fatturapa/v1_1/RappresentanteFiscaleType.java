@@ -32,11 +32,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RappresentanteFiscaleType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiAnagrafici" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiRappresentanteType" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="RappresentanteFiscaleType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiAnagrafici" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiRappresentanteType" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

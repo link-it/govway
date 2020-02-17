@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="mpcs">
- * 		&lt;sequence>
- * 			&lt;element name="mpc" type="{http://www.domibus.eu/configuration}mpc" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="mpcs"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mpc" type="{http://www.domibus.eu/configuration}mpc" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Mpcs extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getMpcList
-   * @return List<Mpc>
+   * @return List&lt;Mpc&gt;
   */
   @Deprecated
   public List<Mpc> getMpc() {
@@ -102,7 +102,7 @@ public class Mpcs extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setMpcList
-   * @param mpc List<Mpc>
+   * @param mpc List&lt;Mpc&gt;
   */
   @Deprecated
   public void setMpc(List<Mpc> mpc) {

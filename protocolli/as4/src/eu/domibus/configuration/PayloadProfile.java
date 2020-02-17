@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="payloadProfile">
- * 		&lt;sequence>
- * 			&lt;element name="attachment" type="{http://www.domibus.eu/configuration}attachment" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="maxSize" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="payloadProfile"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="attachment" type="{http://www.domibus.eu/configuration}attachment" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="maxSize" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -112,7 +112,7 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getAttachmentList
-   * @return List<Attachment>
+   * @return List&lt;Attachment&gt;
   */
   @Deprecated
   public List<Attachment> getAttachment() {
@@ -121,7 +121,7 @@ public class PayloadProfile extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setAttachmentList
-   * @param attachment List<Attachment>
+   * @param attachment List&lt;Attachment&gt;
   */
   @Deprecated
   public void setAttachment(List<Attachment> attachment) {

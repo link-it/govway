@@ -32,15 +32,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="payload">
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="cid" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="mimeType" type="{http://www.domibus.eu/configuration}string" use="optional"/>
- * 		&lt;attribute name="inBody" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="schemaFile" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="optional"/>
- * 		&lt;attribute name="maxSize" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="payload"&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="cid" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="mimeType" type="{http://www.domibus.eu/configuration}string" use="optional"/&gt;
+ * 		&lt;attribute name="inBody" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="schemaFile" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="optional"/&gt;
+ * 		&lt;attribute name="maxSize" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

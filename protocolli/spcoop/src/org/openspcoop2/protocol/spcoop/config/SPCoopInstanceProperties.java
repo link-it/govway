@@ -31,7 +31,7 @@ import org.openspcoop2.utils.properties.InstanceProperties;
 /**
 * SPCoopInstanceProperties
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

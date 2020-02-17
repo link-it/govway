@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configuration">
- * 		&lt;sequence>
- * 			&lt;element name="mpcs" type="{http://www.domibus.eu/configuration}mpcs" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="businessProcesses" type="{http://www.domibus.eu/configuration}businessProcesses" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="party" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="configuration"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mpcs" type="{http://www.domibus.eu/configuration}mpcs" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="businessProcesses" type="{http://www.domibus.eu/configuration}businessProcesses" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="party" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

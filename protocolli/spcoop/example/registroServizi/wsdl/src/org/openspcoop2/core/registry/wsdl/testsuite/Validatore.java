@@ -54,8 +54,8 @@ import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 *
 import org.openspcoop2.utils.wsdl.DefinitionWrapper;
 *
-* @author Lorenzo Nardi <nardi@link.it>
-* @author Andrea Poli <apoli@link.it>
+* @author Lorenzo Nardi (nardi@link.it)
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

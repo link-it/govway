@@ -33,22 +33,22 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordoCooperazione">
- * 		&lt;sequence>
- * 			&lt;element name="descrizione" type="{http://spcoop.gov.it/sica/manifest}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaSemiformale" type="{http://spcoop.gov.it/sica/manifest}SpecificaSemiformale" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allegati" type="{http://spcoop.gov.it/sica/manifest}ElencoAllegati" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="elencoPartecipanti" type="{http://spcoop.gov.it/sica/manifest}ElencoPartecipanti" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="serviziComposti" type="{http://spcoop.gov.it/sica/manifest}ElencoServiziComposti" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/>
- * 		&lt;attribute name="versione" type="{http://spcoop.gov.it/sica/manifest}string" use="optional"/>
- * 		&lt;attribute name="dataCreazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/>
- * 		&lt;attribute name="dataPubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="firmato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="riservato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="coordinatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="accordoCooperazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="descrizione" type="{http://spcoop.gov.it/sica/manifest}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaSemiformale" type="{http://spcoop.gov.it/sica/manifest}SpecificaSemiformale" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allegati" type="{http://spcoop.gov.it/sica/manifest}ElencoAllegati" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="elencoPartecipanti" type="{http://spcoop.gov.it/sica/manifest}ElencoPartecipanti" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="serviziComposti" type="{http://spcoop.gov.it/sica/manifest}ElencoServiziComposti" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://spcoop.gov.it/sica/manifest}string" use="required"/&gt;
+ * 		&lt;attribute name="versione" type="{http://spcoop.gov.it/sica/manifest}string" use="optional"/&gt;
+ * 		&lt;attribute name="dataCreazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="required"/&gt;
+ * 		&lt;attribute name="dataPubblicazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="firmato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="riservato" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="coordinatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

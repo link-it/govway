@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaCoordinamento">
- * 		&lt;sequence>
- * 			&lt;element name="documentoCoordinamento" type="{http://spcoop.gov.it/sica/manifest}DocumentoCoordinamento" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaCoordinamento"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="documentoCoordinamento" type="{http://spcoop.gov.it/sica/manifest}DocumentoCoordinamento" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SpecificaCoordinamento extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method getDocumentoCoordinamentoList
-   * @return List<DocumentoCoordinamento>
+   * @return List&lt;DocumentoCoordinamento&gt;
   */
   @Deprecated
   public List<DocumentoCoordinamento> getDocumentoCoordinamento() {
@@ -102,7 +102,7 @@ public class SpecificaCoordinamento extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method setDocumentoCoordinamentoList
-   * @param documentoCoordinamento List<DocumentoCoordinamento>
+   * @param documentoCoordinamento List&lt;DocumentoCoordinamento&gt;
   */
   @Deprecated
   public void setDocumentoCoordinamento(List<DocumentoCoordinamento> documentoCoordinamento) {

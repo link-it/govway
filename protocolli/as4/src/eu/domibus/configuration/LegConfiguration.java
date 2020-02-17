@@ -32,19 +32,19 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="legConfiguration">
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="service" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="action" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="security" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="defaultMpc" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="receptionAwareness" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="reliability" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="propertySet" type="{http://www.domibus.eu/configuration}string" use="optional"/>
- * 		&lt;attribute name="payloadProfile" type="{http://www.domibus.eu/configuration}string" use="optional"/>
- * 		&lt;attribute name="errorHandling" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="compressPayloads" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="legConfiguration"&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="service" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="action" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="security" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="defaultMpc" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="receptionAwareness" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="reliability" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="propertySet" type="{http://www.domibus.eu/configuration}string" use="optional"/&gt;
+ * 		&lt;attribute name="payloadProfile" type="{http://www.domibus.eu/configuration}string" use="optional"/&gt;
+ * 		&lt;attribute name="errorHandling" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="compressPayloads" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

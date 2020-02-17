@@ -30,7 +30,7 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
 /**
  * Libreria per handler testsuite
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

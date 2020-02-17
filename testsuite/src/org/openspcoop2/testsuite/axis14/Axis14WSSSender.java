@@ -31,7 +31,7 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 /**
  * Classe per la gestione della WS-Security (WSDoAllSender).
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

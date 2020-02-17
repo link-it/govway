@@ -32,16 +32,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CedentePrestatoreType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiAnagrafici" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiCedenteType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Sede" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="StabileOrganizzazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="IscrizioneREA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IscrizioneREAType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Contatti" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}ContattiType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="CedentePrestatoreType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiAnagrafici" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiCedenteType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Sede" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="StabileOrganizzazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="IscrizioneREA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IscrizioneREAType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Contatti" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}ContattiType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

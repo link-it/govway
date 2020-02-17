@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="errorHandling">
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="errorAsResponse" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="businessErrorNotifyProducer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="businessErrorNotifyConsumer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="deliveryFailureNotifyProducer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="errorHandling"&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="errorAsResponse" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="businessErrorNotifyProducer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="businessErrorNotifyConsumer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="deliveryFailureNotifyProducer" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -36,22 +36,22 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiGeneraliDocumentoType">
- * 		&lt;sequence>
- * 			&lt;element name="TipoDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoDocumentoType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Divisa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Data" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Numero" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DatiRitenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiRitenutaType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DatiBollo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiBolloType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DatiCassaPrevidenziale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiCassaPrevidenzialeType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="ScontoMaggiorazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}ScontoMaggiorazioneType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="ImportoTotaleDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Arrotondamento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Causale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Art73" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}Art73Type" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiGeneraliDocumentoType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="TipoDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoDocumentoType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Divisa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Data" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Numero" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiRitenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiRitenutaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiBollo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiBolloType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiCassaPrevidenziale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiCassaPrevidenzialeType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="ScontoMaggiorazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}ScontoMaggiorazioneType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="ImportoTotaleDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Arrotondamento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Causale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Art73" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}Art73Type" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -283,7 +283,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getDatiCassaPrevidenzialeList
-   * @return List<DatiCassaPrevidenzialeType>
+   * @return List&lt;DatiCassaPrevidenzialeType&gt;
   */
   @Deprecated
   public List<DatiCassaPrevidenzialeType> getDatiCassaPrevidenziale() {
@@ -292,7 +292,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setDatiCassaPrevidenzialeList
-   * @param datiCassaPrevidenziale List<DatiCassaPrevidenzialeType>
+   * @param datiCassaPrevidenziale List&lt;DatiCassaPrevidenzialeType&gt;
   */
   @Deprecated
   public void setDatiCassaPrevidenziale(List<DatiCassaPrevidenzialeType> datiCassaPrevidenziale) {
@@ -313,7 +313,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getScontoMaggiorazioneList
-   * @return List<ScontoMaggiorazioneType>
+   * @return List&lt;ScontoMaggiorazioneType&gt;
   */
   @Deprecated
   public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
@@ -322,7 +322,7 @@ public class DatiGeneraliDocumentoType extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setScontoMaggiorazioneList
-   * @param scontoMaggiorazione List<ScontoMaggiorazioneType>
+   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
   */
   @Deprecated
   public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {

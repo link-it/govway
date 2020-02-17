@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="LargePayloadType">
- * 		&lt;sequence>
- * 			&lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="payloadId" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/>
- * 		&lt;attribute name="contentType" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="LargePayloadType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="value" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="payloadId" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/&gt;
+ * 		&lt;attribute name="contentType" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

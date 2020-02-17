@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="MessageProperties">
- * 		&lt;sequence>
- * 			&lt;element name="Property" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Property" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="MessageProperties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Property" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Property" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class MessageProperties extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getPropertyList
-   * @return List<Property>
+   * @return List&lt;Property&gt;
   */
   @Deprecated
   public List<Property> getProperty() {
@@ -102,7 +102,7 @@ public class MessageProperties extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setPropertyList
-   * @param property List<Property>
+   * @param property List&lt;Property&gt;
   */
   @Deprecated
   public void setProperty(List<Property> property) {

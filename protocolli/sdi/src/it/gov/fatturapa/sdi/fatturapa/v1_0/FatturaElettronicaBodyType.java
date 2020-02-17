@@ -34,15 +34,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FatturaElettronicaBodyType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiGenerali" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiGeneraliType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DatiBeniServizi" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiBeniServiziType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DatiVeicoli" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiVeicoliType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DatiPagamento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiPagamentoType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="Allegati" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}AllegatiType" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="FatturaElettronicaBodyType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiGenerali" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiGeneraliType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiBeniServizi" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiBeniServiziType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiVeicoli" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiVeicoliType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DatiPagamento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiPagamentoType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="Allegati" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}AllegatiType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -158,7 +158,7 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getDatiPagamentoList
-   * @return List<DatiPagamentoType>
+   * @return List&lt;DatiPagamentoType&gt;
   */
   @Deprecated
   public List<DatiPagamentoType> getDatiPagamento() {
@@ -167,7 +167,7 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setDatiPagamentoList
-   * @param datiPagamento List<DatiPagamentoType>
+   * @param datiPagamento List&lt;DatiPagamentoType&gt;
   */
   @Deprecated
   public void setDatiPagamento(List<DatiPagamentoType> datiPagamento) {
@@ -188,7 +188,7 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getAllegatiList
-   * @return List<AllegatiType>
+   * @return List&lt;AllegatiType&gt;
   */
   @Deprecated
   public List<AllegatiType> getAllegati() {
@@ -197,7 +197,7 @@ public class FatturaElettronicaBodyType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setAllegatiList
-   * @param allegati List<AllegatiType>
+   * @param allegati List&lt;AllegatiType&gt;
   */
   @Deprecated
   public void setAllegati(List<AllegatiType> allegati) {

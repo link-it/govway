@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaPortiAccesso">
- * 		&lt;sequence>
- * 			&lt;element name="portiAccessoFruitore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="portiAccessoErogatore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaPortiAccesso"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="portiAccessoFruitore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="portiAccessoErogatore" type="{http://spcoop.gov.it/sica/manifest}DocumentoInterfaccia" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

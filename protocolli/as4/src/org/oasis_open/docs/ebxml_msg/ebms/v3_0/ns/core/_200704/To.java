@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="To">
- * 		&lt;sequence>
- * 			&lt;element name="PartyId" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartyId" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="Role" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="To"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="PartyId" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartyId" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="Role" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -103,7 +103,7 @@ public class To extends org.openspcoop2.utils.beans.BaseBean implements Serializ
 
   /**
    * @deprecated Use method getPartyIdList
-   * @return List<PartyId>
+   * @return List&lt;PartyId&gt;
   */
   @Deprecated
   public List<PartyId> getPartyId() {
@@ -112,7 +112,7 @@ public class To extends org.openspcoop2.utils.beans.BaseBean implements Serializ
 
   /**
    * @deprecated Use method setPartyIdList
-   * @param partyId List<PartyId>
+   * @param partyId List&lt;PartyId&gt;
   */
   @Deprecated
   public void setPartyId(List<PartyId> partyId) {

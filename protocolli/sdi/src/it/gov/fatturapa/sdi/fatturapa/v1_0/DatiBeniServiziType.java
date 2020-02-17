@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiBeniServiziType">
- * 		&lt;sequence>
- * 			&lt;element name="DettaglioLinee" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DettaglioLineeType" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="DatiRiepilogo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiRiepilogoType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiBeniServiziType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DettaglioLinee" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DettaglioLineeType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="DatiRiepilogo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiRiepilogoType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getDettaglioLineeList
-   * @return List<DettaglioLineeType>
+   * @return List&lt;DettaglioLineeType&gt;
   */
   @Deprecated
   public List<DettaglioLineeType> getDettaglioLinee() {
@@ -128,7 +128,7 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setDettaglioLineeList
-   * @param dettaglioLinee List<DettaglioLineeType>
+   * @param dettaglioLinee List&lt;DettaglioLineeType&gt;
   */
   @Deprecated
   public void setDettaglioLinee(List<DettaglioLineeType> dettaglioLinee) {
@@ -149,7 +149,7 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getDatiRiepilogoList
-   * @return List<DatiRiepilogoType>
+   * @return List&lt;DatiRiepilogoType&gt;
   */
   @Deprecated
   public List<DatiRiepilogoType> getDatiRiepilogo() {
@@ -158,7 +158,7 @@ public class DatiBeniServiziType extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setDatiRiepilogoList
-   * @param datiRiepilogo List<DatiRiepilogoType>
+   * @param datiRiepilogo List&lt;DatiRiepilogoType&gt;
   */
   @Deprecated
   public void setDatiRiepilogo(List<DatiRiepilogoType> datiRiepilogo) {

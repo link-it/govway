@@ -32,11 +32,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Schema">
- * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/>
- * 		&lt;attribute name="version" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" use="optional"/>
- * 		&lt;attribute name="namespace" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Schema"&gt;
+ * 		&lt;attribute name="location" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/&gt;
+ * 		&lt;attribute name="version" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" use="optional"/&gt;
+ * 		&lt;attribute name="namespace" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

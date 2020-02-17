@@ -276,15 +276,15 @@ public class MTOMUtilities {
         		Reporter.log("Exception ["+e.getClass().getName()+"]");
 				Assert.assertTrue(e instanceof javax.xml.ws.soap.SOAPFaultException);
 				javax.xml.ws.soap.SOAPFaultException fault = (javax.xml.ws.soap.SOAPFaultException) e;
-				Reporter.log("FaultCode ["+fault.getFault().getFaultCodeAsName().getLocalName()+"]");
+				Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
 				String sub = null;
-				if(soap11==false){
+				/*if(soap11==false){
 					if(fault.getFault().getFaultSubcodes().hasNext()){
 						javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getFault().getFaultSubcodes().next();
 						sub = q.getLocalPart();
 						Reporter.log("SubFaultCode ["+sub+"]");
 					}
-				}
+				}*/
 				Reporter.log("FaultString ["+fault.getFault().getFaultString()+"]");
 				Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
 				if(portaDelegata){

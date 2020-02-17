@@ -33,19 +33,19 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="process">
- * 		&lt;sequence>
- * 			&lt;element name="initiatorParties" type="{http://www.domibus.eu/configuration}initiatorParties" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="responderParties" type="{http://www.domibus.eu/configuration}responderParties" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="legs" type="{http://www.domibus.eu/configuration}legs" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="responderRole" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="agreement" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="binding" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="mep" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="initiatorRole" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="process"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="initiatorParties" type="{http://www.domibus.eu/configuration}initiatorParties" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="responderParties" type="{http://www.domibus.eu/configuration}responderParties" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="legs" type="{http://www.domibus.eu/configuration}legs" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="responderRole" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="agreement" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="binding" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="mep" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="initiatorRole" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

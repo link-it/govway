@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="MessaggioDiErroreApplicativo">
- * 		&lt;sequence>
- * 			&lt;element name="OraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="IdentificativoPorta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="IdentificativoFunzione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Eccezione" type="{http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/}Eccezione" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="MessaggioDiErroreApplicativo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="OraRegistrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="IdentificativoPorta" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="IdentificativoFunzione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Eccezione" type="{http://www.cnipa.it/schemas/2003/eGovIT/Exception1_0/}Eccezione" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

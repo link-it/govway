@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="meps">
- * 		&lt;sequence>
- * 			&lt;element name="mep" type="{http://www.domibus.eu/configuration}mep" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="binding" type="{http://www.domibus.eu/configuration}binding" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="meps"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mep" type="{http://www.domibus.eu/configuration}mep" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="binding" type="{http://www.domibus.eu/configuration}binding" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getMepList
-   * @return List<Mep>
+   * @return List&lt;Mep&gt;
   */
   @Deprecated
   public List<Mep> getMep() {
@@ -128,7 +128,7 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setMepList
-   * @param mep List<Mep>
+   * @param mep List&lt;Mep&gt;
   */
   @Deprecated
   public void setMep(List<Mep> mep) {
@@ -149,7 +149,7 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getBindingList
-   * @return List<Binding>
+   * @return List&lt;Binding&gt;
   */
   @Deprecated
   public List<Binding> getBinding() {
@@ -158,7 +158,7 @@ public class Meps extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setBindingList
-   * @param binding List<Binding>
+   * @param binding List&lt;Binding&gt;
   */
   @Deprecated
   public void setBinding(List<Binding> binding) {

@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiTrasmissioneType">
- * 		&lt;sequence>
- * 			&lt;element name="IdTrasmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IdFiscaleType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ProgressivoInvio" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="FormatoTrasmissione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FormatoTrasmissioneType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="CodiceDestinatario" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ContattiTrasmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}ContattiTrasmittenteType" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiTrasmissioneType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="IdTrasmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IdFiscaleType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ProgressivoInvio" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="FormatoTrasmissione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FormatoTrasmissioneType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="CodiceDestinatario" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ContattiTrasmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}ContattiTrasmittenteType" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

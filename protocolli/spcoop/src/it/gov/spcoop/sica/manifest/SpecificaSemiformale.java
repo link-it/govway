@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaSemiformale">
- * 		&lt;sequence>
- * 			&lt;element name="documentoSemiformale" type="{http://spcoop.gov.it/sica/manifest}DocumentoSemiformale" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaSemiformale"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="documentoSemiformale" type="{http://spcoop.gov.it/sica/manifest}DocumentoSemiformale" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SpecificaSemiformale extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method getDocumentoSemiformaleList
-   * @return List<DocumentoSemiformale>
+   * @return List&lt;DocumentoSemiformale&gt;
   */
   @Deprecated
   public List<DocumentoSemiformale> getDocumentoSemiformale() {
@@ -102,7 +102,7 @@ public class SpecificaSemiformale extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method setDocumentoSemiformaleList
-   * @param documentoSemiformale List<DocumentoSemiformale>
+   * @param documentoSemiformale List&lt;DocumentoSemiformale&gt;
   */
   @Deprecated
   public void setDocumentoSemiformale(List<DocumentoSemiformale> documentoSemiformale) {

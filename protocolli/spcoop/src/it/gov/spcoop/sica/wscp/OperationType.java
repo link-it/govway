@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="operationType">
- * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/>
- * 		&lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/>
- * 		&lt;attribute name="profiloDiCollaborazione" type="{http://spcoop.gov.it/sica/wscp}profiloDiCollaborazioneType" use="required"/>
- * 		&lt;attribute name="servizioCorrelato" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/>
- * 		&lt;attribute name="operazioneCorrelata" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="operationType"&gt;
+ * 		&lt;attribute name="servizio" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/&gt;
+ * 		&lt;attribute name="operazione" type="{http://www.w3.org/2001/XMLSchema}QName" use="required"/&gt;
+ * 		&lt;attribute name="profiloDiCollaborazione" type="{http://spcoop.gov.it/sica/wscp}profiloDiCollaborazioneType" use="required"/&gt;
+ * 		&lt;attribute name="servizioCorrelato" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/&gt;
+ * 		&lt;attribute name="operazioneCorrelata" type="{http://www.w3.org/2001/XMLSchema}QName" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

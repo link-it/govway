@@ -33,16 +33,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FatturaElettronicaHeaderType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiTrasmissione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiTrasmissioneType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="CedentePrestatore" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CedentePrestatoreType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="RappresentanteFiscale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RappresentanteFiscaleType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CessionarioCommittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CessionarioCommittenteType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="TerzoIntermediarioOSoggettoEmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TerzoIntermediarioSoggettoEmittenteType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="SoggettoEmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}SoggettoEmittenteType" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="FatturaElettronicaHeaderType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiTrasmissione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}DatiTrasmissioneType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="CedentePrestatore" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CedentePrestatoreType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="RappresentanteFiscale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RappresentanteFiscaleType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CessionarioCommittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CessionarioCommittenteType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="TerzoIntermediarioOSoggettoEmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TerzoIntermediarioSoggettoEmittenteType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="SoggettoEmittente" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}SoggettoEmittenteType" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

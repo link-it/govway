@@ -40,7 +40,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 /**
  * Classe di base per la gestione del WS-Security.
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

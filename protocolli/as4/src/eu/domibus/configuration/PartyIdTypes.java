@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="partyIdTypes">
- * 		&lt;sequence>
- * 			&lt;element name="partyIdType" type="{http://www.domibus.eu/configuration}partyIdType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="partyIdTypes"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="partyIdType" type="{http://www.domibus.eu/configuration}partyIdType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class PartyIdTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getPartyIdTypeList
-   * @return List<PartyIdType>
+   * @return List&lt;PartyIdType&gt;
   */
   @Deprecated
   public List<PartyIdType> getPartyIdType() {
@@ -102,7 +102,7 @@ public class PartyIdTypes extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setPartyIdTypeList
-   * @param partyIdType List<PartyIdType>
+   * @param partyIdType List&lt;PartyIdType&gt;
   */
   @Deprecated
   public void setPartyIdType(List<PartyIdType> partyIdType) {

@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="services">
- * 		&lt;sequence>
- * 			&lt;element name="service" type="{http://www.domibus.eu/configuration}service" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="services"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="service" type="{http://www.domibus.eu/configuration}service" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Services extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getServiceList
-   * @return List<Service>
+   * @return List&lt;Service&gt;
   */
   @Deprecated
   public List<Service> getService() {
@@ -102,7 +102,7 @@ public class Services extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setServiceList
-   * @param service List<Service>
+   * @param service List&lt;Service&gt;
   */
   @Deprecated
   public void setService(List<Service> service) {

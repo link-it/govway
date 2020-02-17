@@ -39,7 +39,7 @@ import org.openspcoop2.utils.date.DateUtils;
 /**
  * Libreria per handler testsuite
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

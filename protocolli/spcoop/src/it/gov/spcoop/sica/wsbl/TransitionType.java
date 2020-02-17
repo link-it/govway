@@ -34,18 +34,18 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="transitionType">
- * 		&lt;sequence>
- * 			&lt;element name="activationMode" type="{http://spcoop.gov.it/sica/wsbl}activationType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="completionMode" type="{http://spcoop.gov.it/sica/wsbl}completionModeType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="guard" type="{http://spcoop.gov.it/sica/wsbl}guardType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="events" type="{http://spcoop.gov.it/sica/wsbl}eventListType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="temporalCondition" type="{http://spcoop.gov.it/sica/wsbl}temporalConditionType" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
- * 		&lt;attribute name="source" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
- * 		&lt;attribute name="target" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="transitionType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="activationMode" type="{http://spcoop.gov.it/sica/wsbl}activationType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="completionMode" type="{http://spcoop.gov.it/sica/wsbl}completionModeType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="guard" type="{http://spcoop.gov.it/sica/wsbl}guardType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="events" type="{http://spcoop.gov.it/sica/wsbl}eventListType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="temporalCondition" type="{http://spcoop.gov.it/sica/wsbl}temporalConditionType" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/&gt;
+ * 		&lt;attribute name="source" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/&gt;
+ * 		&lt;attribute name="target" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

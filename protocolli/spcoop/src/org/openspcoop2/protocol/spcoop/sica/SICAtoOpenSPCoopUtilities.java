@@ -89,7 +89,7 @@ import it.gov.spcoop.sica.manifest.driver.TipiDocumentoSicurezza;
 /**
 * Utilities di conversione da oggetto OpenSPCoop a oggetti SICA  e viceversa
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */
