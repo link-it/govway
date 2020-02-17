@@ -16,7 +16,7 @@
 			<exclude name="**/saaj/*"/>
 			<exclude name="**/jax/*"/>
 		</fileset>
-		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.3.0.1-gov4j.jar" />
+		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.3.1.jar" />
 		<fileset dir="${openspcoop2.dist}" >
 			<include name="openspcoop2_utils*.jar"/>
 		</fileset>

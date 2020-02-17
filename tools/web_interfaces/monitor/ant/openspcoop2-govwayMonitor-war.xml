@@ -191,8 +191,8 @@
 			<lib dir="${required_lib_govwayMonitor}/jax">
 				<include name="jaxws-*.jar" />
 				<include name="${jaxp_ri_jar}" />
-				<include name="jaxb-core-2.3.0.1-gov4j.jar" /> <!-- serve al wadl -->
-				<include name="jaxb-xjc-2.3.0.1-gov4j.jar" /> <!-- serve al wadl -->
+				<include name="jaxb-core-2.3.0.1.jar" /> <!-- serve al wadl -->
+				<include name="jaxb-xjc-2.3.2.jar" /> <!-- serve al wadl -->
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>

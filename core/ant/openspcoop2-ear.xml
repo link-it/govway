@@ -29,11 +29,11 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-core-3.3.5-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-bindings-soap-3.3.5.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/cxf-rt-ws-security-3.3.5.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.0.1-gov4j.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1-gov4j.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.0.1-gov4j.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.0.1-gov4j.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.0.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-api-2.3.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-core-2.3.0.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2-gov4j-2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.3.1.jar"/>
@@ -581,7 +581,7 @@
 				<equals arg1="${as}" arg2="jboss6"/>
 			</or>
 			<then>
-				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.0.1-gov4j.jar"/>
+				<var name="jaxb_xjc_jar" value="jaxb-xjc-2.3.2.jar"/>
 			</then>
 		</if>
 		<!-- jaxp_ri -->
@@ -832,7 +832,7 @@
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/jax">
 				<include name="jaxb*.jar"/>
-				<include name="jaxws-api-2.3.0.2.jar"/>
+				<include name="jaxws-api-2.3.1.jar"/>
 				<exclude name="${jaxb_xjc_jar}"/>
 				<include name="${jaxp_ri_jar}"/>
 			</zipfileset>
