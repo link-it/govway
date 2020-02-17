@@ -134,12 +134,12 @@
 	<archive path="/op2_3.3.dev/lib/log/log4j-slf4j-impl-2.13.0.jar"/>
 	<archive path="/op2_3.3.dev/lib/log/log4j-jcl-2.13.0.jar"/>
 	<!-- lucene -->
-        <archive path="/op2_3.3.dev/lib/lucene/lucene-core-7.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/lucene/lucene-analyzers-common-7.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/lucene/lucene-codecs-7.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/lucene/lucene-misc-7.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/lucene/lucene-queries-7.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/lucene/lucene-suggest-7.4.0.jar"/>
+        <archive path="/op2_3.3.dev/lib/lucene/lucene-core-8.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/lucene/lucene-analyzers-common-8.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/lucene/lucene-codecs-8.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/lucene/lucene-misc-8.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/lucene/lucene-queries-8.4.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/lucene/lucene-suggest-8.4.1.jar"/>
 	<!-- opensaml -->
         <archive path="/op2_3.3.dev/lib/opensaml/opensaml-core-3.3.1.jar"/>
         <archive path="/op2_3.3.dev/lib/opensaml/opensaml-messaging-api-3.3.1.jar"/>

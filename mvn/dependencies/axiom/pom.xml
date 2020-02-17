@@ -16,7 +16,7 @@
 	<properties>
 		<jar.group.name>axiom</jar.group.name>
 		
-		<apache-mime4j-core.version>0.8.2</apache-mime4j-core.version>
+		<apache-mime4j-core.version>0.8.3</apache-mime4j-core.version>
 		<axiom.version>1.2.13</axiom.version>
 		<axiom.gov4j.version>1.2.13-gov4j-2</axiom.gov4j.version>
 
