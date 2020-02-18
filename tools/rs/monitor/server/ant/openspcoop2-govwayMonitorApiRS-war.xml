@@ -148,11 +148,11 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/reports">
-				<include name="dynamicreports-core-6.0.0.jar"/>
-				<include name="itext-2.1.7.js6.jar"/>
-				<include name="jcommon-1.0.23.jar"/>
-				<include name="jasperreports-6.7.1.jar"/>
-				<include name="poi-3.17.jar"/>
+				<include name="dynamicreports-core-6.1.0.jar"/>
+				<include name="itext-2.1.7.js7.jar"/>
+				<include name="jcommon-1.0.24.jar"/>
+				<include name="jasperreports-6.11.0.jar"/>
+				<include name="poi-4.1.2.jar"/>
 				<include name="${ecj_jar}"/>
 			</lib>
 			<classes dir="${build_govwayMonitorApiRS}/properties">

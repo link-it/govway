@@ -6,12 +6,12 @@ PropertyConfigurator
 #####################################
 # Costanti #########################
 #####################################
-TRUNK_VERSION=3.2
+TRUNK_VERSION=3.3
 TAG_PDD_VERSION_PRODUCT="3"
-TAG_PDD_VERSION_MAJOR="2"
+TAG_PDD_VERSION_MAJOR="3"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
-TAG_PDD_MINOR_VERSION=2
-TAG_PDD_PATCHLEVEL=
+TAG_PDD_MINOR_VERSION=0
+TAG_PDD_PATCHLEVEL=b1
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
 

@@ -13,6 +13,7 @@ Per creare una tag version:
    - Se sono state introdotte nuove variabili nel setup, gestirle all'interno del file ant/setup/ant/sqlInstallerProps-build.xml nel task '_sql_settings_installer_properties'
 
 4. Inserire la versione corretta nel pom.xml presente nella root, all'interno della proprietà '<govway.version>XXX/govway.version>'
+   NOTA: usare eventuale patch level
 
 5. Verificare di avere l'ultima versione presente nella directory resources/sql_upgrade (con almeno il file info-patch.sql)
 5b. Verificare di inserire anche in resources/properties_upgrade un aggiornamento. Anche se non vi sono state modifiche creare una directory vuota con un file README che riporta "modifiche non esistenti" o qualcosa di simile.

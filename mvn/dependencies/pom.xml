@@ -43,7 +43,6 @@
 		<module>log</module>
 		<module>lucene</module>
 		<module>opensaml</module>
-		<module>proguard</module>
 		<module>reports</module>
 		<module>saaj</module>
 		<module>security</module>
