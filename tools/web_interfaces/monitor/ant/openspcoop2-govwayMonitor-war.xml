@@ -203,9 +203,9 @@
 				<include name="${el-api-1.0.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="xmlsec-2.1.2.jar"/>
+				<include name="xmlsec-2.1.4.jar"/>
 				<include name="neethi-3.1.1.jar" />
-				<include name="bcprov-ext-jdk15on-1.60.jar" />
+				<include name="bcprov-ext-jdk15on-1.64.jar" />
 			</lib>
 			<lib dir="${required_lib}/json">
 				<include name="*.jar"/>

@@ -133,7 +133,7 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.60.jar"/>
+				<include name="bcprov-ext-jdk15on-1.64.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
