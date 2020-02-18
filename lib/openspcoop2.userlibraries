@@ -170,10 +170,10 @@
 	<archive path="/op2_3.3.dev/lib/reports/poi-4.1.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/reports/jdtcore-3.2.0.v_658.jar"/>
 	<!-- saaj -->
-	<archive path="/op2_3.3.dev/lib/saaj/javax.xml.soap-api-1.3.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.3.28.jar"/>
-	<archive path="/op2_3.3.dev/lib/saaj/stax-ex-1.7.8.jar"/>
-	<archive path="/op2_3.3.dev/lib/saaj/mimepull-1.9.7.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/javax.xml.soap-api-1.4.0.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.5.1.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/stax-ex-1.8.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/mimepull-1.9.12.jar"/>
 	<!-- security -->
         <archive path="/op2_3.3.dev/lib/security/xmlsec-2.1.2.jar"/>
         <archive path="/op2_3.3.dev/lib/security/neethi-3.1.1.jar"/>
@@ -257,13 +257,13 @@
 	<archive path="/op2_3.3.dev/lib/wadl/wadl-xslt-1.1.6.jar"/>
 	<archive path="/op2_3.3.dev/lib/wadl/localizer-1.0.jar"/>
 	<!-- wss4j -->
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-bindings-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-integration-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-policy-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.2.2.jar"/>
-	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.2.2.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-bindings-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-integration-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-policy-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-common-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-dom-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-policy-stax-2.2.4.jar"/>
+	<archive path="/op2_3.3.dev/lib/wss4j/wss4j-ws-security-stax-2.2.4.jar"/>
     </library>
     <library name="openspcoop2_3.3_lib_axiom" systemlibrary="false">
 	<archive path="/op2_3.3.dev/lib/axiom/apache-mime4j-core-0.8.3.jar"/>

@@ -58,7 +58,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
 			<include name="**/*.jar"/>
-			<exclude name="saajjavax.xml.soap-api-1.3.8.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
+			<exclude name="saajjavax.xml.soap-api-1.4.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="deploy/lib" >
 			<include name="*.jar"/>
@@ -152,7 +152,7 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
-			<exclude name="javax.xml.soap-api-1.3.8.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
+			<exclude name="javax.xml.soap-api-1.4.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<!-- Non funziona MTOM <fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>

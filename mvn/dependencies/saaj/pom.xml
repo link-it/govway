@@ -17,10 +17,10 @@
 
 		<jar.group.name>saaj</jar.group.name>
 		
-		<mimepull.version>1.9.7</mimepull.version>
-		<saaj-api.version>1.3.8</saaj-api.version>
-		<saaj-impl.version>1.3.28</saaj-impl.version>
-		<stax-ex.version>1.7.8</stax-ex.version>
+		<mimepull.version>1.9.12</mimepull.version>
+		<saaj-api.version>1.4.0</saaj-api.version>
+		<saaj-impl.version>1.5.1</saaj-impl.version>
+		<stax-ex.version>1.8.2</stax-ex.version>
 
 	</properties>
 
