@@ -17,11 +17,11 @@
 
 		<jar.group.name>swagger</jar.group.name>
 		
-		<swagger-ui.version>3.18.2</swagger-ui.version>
-		<swagger.v3.version>2.0.3</swagger.v3.version>
-		<swagger.parser.v3.version>2.0.2</swagger.parser.v3.version>
-		<swagger.version>1.5.21</swagger.version>
-		<swagger.parser.version>1.0.37</swagger.parser.version>
+		<swagger-ui.version>3.25.0</swagger-ui.version>
+		<swagger.v3.version>2.1.1</swagger.v3.version>
+		<swagger.parser.v3.version>2.0.17</swagger.parser.v3.version>
+		<swagger.version>1.6.0</swagger.version>
+		<swagger.parser.version>1.0.49</swagger.parser.version>
 
 	</properties>
 
