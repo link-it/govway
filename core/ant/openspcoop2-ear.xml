@@ -34,7 +34,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-impl-2.3.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxb-xjc-2.3.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/jaxws-api-2.3.1.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2-gov4j-2.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/commons-jcs-core-2.2.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/neethi-3.1.1.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-core-3.4.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-messaging-api-3.4.3.jar"/>
@@ -56,7 +56,7 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-api-3.4.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/opensaml-xmlsec-impl-3.4.3.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/java-support-7.5.0.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.1.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/saaj-impl-1.5.1-gov4j-1.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/stax-ex-1.8.2.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/mimepull-1.9.12.jar"/>
 		<var name="tmp" value="${tmp} ${tmp_prefix}/spring-aop-5.1.6.RELEASE.jar"/>
@@ -85,8 +85,8 @@
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-policy-stax-2.2.4.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/wss4j-ws-security-stax-2.2.4.jar"/>	
 		<var name="tmp" value="${tmp} ${tmp_prefix}/woodstox-core-5.3.0.jar"/>	
-		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.10.jar"/>
-		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-26.0-jre.jar"/>	
+		<var name="tmp" value="${tmp} ${tmp_prefix}/joda-time-2.10.5.jar"/>
+		<var name="tmp" value="${tmp} ${tmp_prefix}/guava-28.2-jre.jar"/>	
 		<var name="manifest.classpath.3parti" value="${tmp}" />
 		<!-- <echo message="3PARTI: ${manifest.classpath.3parti}"/> -->
 		
@@ -522,7 +522,7 @@
 				<matches string="${as}" pattern="wildfly18"/>
 			</or>
 			<then>
-				<unzip src="${required_lib}/shared/mailapi-1.6.2.jar" dest="${build}/tmp/mailapi"/>
+				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build}/tmp/mailapi"/>
 				<concat destfile="${build}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 				           files="mailcap"/>
@@ -798,23 +798,23 @@
 				<include name="*.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/shared">
-				<include name="commons-jcs-core-2.2-gov4j-2.jar"/>
+				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
 				<include name="wsdl4j-1.6.3.jar"/>
 				<include name="uddi4j-2.0.5.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>				
-				<include name="velocity-1.7.jar"/>
-				<include name="urlrewritefilter-4.0.3.jar"/>
+				<include name="velocity-*.jar"/>
+				<include name="urlrewritefilter-4.0.4.jar"/>
 				<include name="${concurrent_jar}"/>
 				<include name="ezmorph-1.0.6.jar" /> <!--jmx mini console -->
 				<include name="xom-1.2.11.jar" /> <!--jmx mini console -->
-				<include name="joda-time-2.10.jar" />
-				<include name="guava-26.0-jre.jar"/>
-				<include name="java-uuid-generator-3.1.5.jar"/>
-				<include name="freemarker-2.3.28.jar"/>
-				<include name="snakeyaml-1.22.jar"/>
+				<include name="joda-time-2.10.5.jar" />
+				<include name="guava-28.2-jre.jar"/>
+				<include name="java-uuid-generator-3.3.0.jar"/>
+				<include name="freemarker-2.3.29.jar"/>
+				<include name="snakeyaml-1.25.jar"/>
 			</zipfileset>
 			<zipfileset prefix="lib" dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>

@@ -57,7 +57,7 @@
 		<fileset dir="${dist_spcoop}" includes="*.jar"/>
 		<fileset dir="${required_lib}/log" includes="*.jar"/>
 		<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
-		<fileset dir="${required_lib}/shared" includes="velocity-1.7.jar"/>
+		<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.2.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-validator-3.3.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-core-3.3.5.jar"/>
 		<fileset dir="${required_lib}/cxf" includes="cxf-tools-wsdlto-frontend-jaxws-3.3.5.jar"/>

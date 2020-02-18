@@ -38,8 +38,8 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/log" includes="*.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.2.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/activation-1.1.1.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.4.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/jakarta.activation-1.2.1.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.0.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xml-apis-1.4.01.jar"/>

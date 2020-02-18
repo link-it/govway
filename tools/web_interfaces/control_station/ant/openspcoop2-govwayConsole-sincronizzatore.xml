@@ -41,8 +41,8 @@
 		<pathelement path="${required_lib_govwayConsole}/shared/xercesImpl-2.12.0.jar" />
 		<pathelement path="${required_lib_govwayConsole}/shared/wsdl4j-1.6.3.jar" />
 		<pathelement path="${required_lib_govwayConsole}/shared/uddi4j-2.0.5.jar" />
-		<pathelement path="${required_lib_govwayConsole}/shared/mailapi-1.6.2.jar" />
-		<pathelement path="${required_lib_govwayConsole}/shared/activation-1.1.1.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/mailapi-1.6.4.jar" />
+		<pathelement path="${required_lib_govwayConsole}/shared/jakarta.activation-1.2.1.jar" />
 	</path>
 	
 	

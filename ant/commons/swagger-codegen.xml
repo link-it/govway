@@ -402,8 +402,8 @@ public class @CLASS_NAME@</replacevalue>
 				<fileset dir="${required_lib}/jackson" includes="*.jar"/>
 				<fileset dir="${required_lib}/jax" includes="jaxb*.jar"/>
 				<fileset dir="${required_lib}/javax" includes="validation-api-2.0.1.Final.jar"/>
-				<fileset dir="${required_lib}/shared" includes="activation-1.1.1.jar"/>
-				<fileset dir="${required_lib}/shared" includes="velocity-1.7.jar"/>
+				<fileset dir="${required_lib}/shared" includes="jakarta.activation-1.2.1.jar"/>
+				<fileset dir="${required_lib}/shared" includes="velocity-engine-core-2.2.jar"/>
 				<fileset dir="${required_lib}/shared" includes="wsdl4j-1.6.3.jar"/>
 				<fileset dir="${required_lib}/security" includes="neethi-3.1.1.jar"/>
 				<fileset dir="${required_lib}/swagger" includes="*.jar"/>

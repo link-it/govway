@@ -19,7 +19,7 @@
 		
 		<mimepull.version>1.9.12</mimepull.version>
 		<saaj-api.version>1.4.0</saaj-api.version>
-		<saaj-impl.version>1.5.1</saaj-impl.version>
+		<saaj-impl.gov4j.version>1.5.1-gov4j-1</saaj-impl.gov4j.version>
 		<stax-ex.version>1.8.2</stax-ex.version>
 
 	</properties>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
-			<version>${saaj-impl.version}</version>
+			<version>${saaj-impl.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

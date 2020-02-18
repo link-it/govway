@@ -277,7 +277,7 @@
 		<if>
 			<matches string="${as}" pattern="tomcat.*"/>
 			<then>
-				<unzip src="${required_lib}/shared/mailapi-1.6.2.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
+				<unzip src="${required_lib}/shared/mailapi-1.6.4.jar" dest="${build_govwayConsole}/tmp/mailapi"/>
 				<concat destfile="${build_govwayConsole}/tmp/mailapi/META-INF/mailcap" append="yes">
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
@@ -353,9 +353,9 @@
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>	
 				<include name="xmlunit-1.6.jar" />
-				<include name="snakeyaml-1.22.jar" />
-				<include name="freemarker-2.3.28.jar" />
-				<include name="joda-time-2.10.jar" />
+				<include name="snakeyaml-1.25.jar" />
+				<include name="freemarker-2.3.29.jar" />
+				<include name="joda-time-2.10.5.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />

@@ -34,7 +34,7 @@
 			<fileset dir="${openspcoop2.lib}" includes="log/*"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-collections-*.jar"/>
 			<fileset dir="${openspcoop2.lib}" includes="commons/commons-lang-2.6.jar"/>
-			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.10.jar"/>
+			<fileset dir="${openspcoop2.lib}" includes="shared/joda-time-2.10.5.jar"/>
 		</copy>
 
 		<mkdir dir="${distrib_batchStatistiche}/jdbc"/>
