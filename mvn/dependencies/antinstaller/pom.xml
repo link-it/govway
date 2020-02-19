@@ -17,7 +17,7 @@
 
 		<jar.group.name>antinstaller</jar.group.name>
 		
-		<jgoodies.version>1.2.2</jgoodies.version>
+		<jgoodies.gov4j.version>1.2.2-gov4j-1</jgoodies.gov4j.version>
 		<antinstaller.version>0.8b</antinstaller.version>
 
 		<ant.version>1.10.6</ant.version>
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>org.tp23.antinstaller</groupId>
 			<artifactId>jgoodies-edited</artifactId>
-			<version>${jgoodies.version}</version>
+			<version>${jgoodies.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
