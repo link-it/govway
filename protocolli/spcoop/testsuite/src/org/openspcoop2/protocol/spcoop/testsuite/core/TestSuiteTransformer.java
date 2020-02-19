@@ -73,7 +73,8 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 		if(testMethod!=null){
 			
 			if(org.openspcoop2.protocol.spcoop.testsuite.units.messaggi_malformati.SOAPMessageScorretti.class.getName().equals(testMethod.getDeclaringClass().getName())){
-				annotation.setSequential(true);
+				//annotation.setSequential(true);
+				annotation.setSingleThreaded(true);
 			}
 			
 			String methodName = testMethod.getName();
@@ -89,10 +90,13 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			   "stopServerRicezioneRispostaAsincronaSimmetrica_modalitaSincrona_Stateful".equals(methodName)==false ){
 					annotation.setInvocationCount(Utilities.testSuiteProperties.getWorkerNumber());
 					annotation.setThreadPoolSize(Utilities.testSuiteProperties.getPoolSize());
-					if(TestSuiteTransformer.sequentialForced)
-						annotation.setSequential(true);
-					else
-						annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+					if(TestSuiteTransformer.sequentialForced) {
+						//annotation.setSequential(true);
+						annotation.setSingleThreaded(true);
+					}else {
+						//annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+						annotation.setSingleThreaded(Utilities.testSuiteProperties.sequentialTests());
+					}
 			}
 		}
 	}

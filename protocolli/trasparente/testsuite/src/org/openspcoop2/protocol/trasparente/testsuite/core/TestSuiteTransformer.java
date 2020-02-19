@@ -75,10 +75,13 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			String methodName = testMethod.getName();
 			annotation.setInvocationCount(Utilities.testSuiteProperties.getWorkerNumber());
 			annotation.setThreadPoolSize(Utilities.testSuiteProperties.getPoolSize());
-			if(TestSuiteTransformer.sequentialForced)
-				annotation.setSequential(true);
-			else
-				annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+			if(TestSuiteTransformer.sequentialForced) {
+				//annotation.setSequential(true);
+				annotation.setSingleThreaded(true);
+			}else {
+				//annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+				annotation.setSingleThreaded(Utilities.testSuiteProperties.sequentialTests());
+			}
 		}
 	}
 	

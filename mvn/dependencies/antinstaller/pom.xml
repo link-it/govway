@@ -20,7 +20,7 @@
 		<jgoodies.version>1.2.2</jgoodies.version>
 		<antinstaller.version>0.8b</antinstaller.version>
 
-		<ant.version>1.9.8</ant.version>
+		<ant.version>1.10.6</ant.version>
 		<jakarta.regexp.version>1.5</jakarta.regexp.version>
 
 	</properties>

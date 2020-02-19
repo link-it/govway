@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TimeZone;
 
-import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -124,13 +123,13 @@ public abstract class AbstractBasicAuthenticationEntryPoint extends BasicAuthent
 	protected abstract void addCustomHeaders(javax.servlet.http.HttpServletResponse httpResponse);
 	
 	@Override
-	public void commence(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException authException) throws IOException, ServletException {
+	public void commence(final HttpServletRequest request, final HttpServletResponse response, final AuthenticationException authException)  {
 		this.addCustomHeaders(response);
 		this.fillResponse(authException, response);
 	}
 
 	@Override
-	public void afterPropertiesSet() throws Exception {
+	public void afterPropertiesSet() {
 		setRealmName(this.realname);
 		super.afterPropertiesSet();
 	}
