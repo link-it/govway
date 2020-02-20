@@ -1595,7 +1595,8 @@ public class AccordiServizioParteSpecificaUtilities {
 		if(!modeCreazione.equals(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MODO_CREAZIONE_EREDITA)) {
 			// nuova porta applicativa
 						
-			String nomeServizioApplicativoErogatore = portaApplicativa.getServizioApplicativo(0).getNome();
+			//String nomeServizioApplicativoErogatore = portaApplicativa.getServizioApplicativo(0).getNome();
+			String nomeServizioApplicativoErogatore = portaApplicativaDefault.getServizioApplicativo(0).getNome();
 //			String nomeServizioApplicativoDefault = portaApplicativa.getServizioApplicativoDefault();
 			
 			if(ServletUtils.isCheckBoxEnabled(modeCreazioneConnettore)) {

@@ -102,7 +102,7 @@ public class ContextFeature extends AbstractFeature {
 			}
 			dumpConfig.setRole(Role.SERVER);
 			dumpFeature.setDumpConfig(dumpConfig);
-			dumpFeature.initialize(provider,bus);
+			dumpFeature.doInitializeProvider(provider,bus);
 		}
 
 	}

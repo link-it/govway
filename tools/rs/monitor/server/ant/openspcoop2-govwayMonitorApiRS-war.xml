@@ -142,6 +142,7 @@
                                 <include name="richfaces-impl-3.3.4.Final-gov4j-1.jar" />
 				<include name="jsf-facelets-1.1.15.jar" />
 				<include name="jsf-impl-1.2_15-06.jar" />
+				<include name="jsf-api-1.2_15-06.jar" />
 				<include name="${jsf-api-1.2_15-06_jar}"/>
                         </lib>
 			<lib dir="${required_lib}/json">

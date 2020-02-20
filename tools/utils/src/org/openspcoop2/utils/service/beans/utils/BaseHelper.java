@@ -193,7 +193,7 @@ public class BaseHelper {
 	 */
 	public static final String jsonNameToUpperCC(String key) {
 		
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		
 		Matcher m = Pattern.compile("_(\\w)").matcher(key);
 		

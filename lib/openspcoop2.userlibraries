@@ -38,6 +38,7 @@
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-json-basic-3.3.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-security-jose-3.3.5-gov4j-1.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-security-jose-jaxrs-3.3.5.jar"/>
+	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-service-description-common-openapi-3.3.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-service-description-openapi-v3-3.3.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-rs-service-description-swagger-ui-3.3.5.jar"/>
 	<archive path="/op2_3.3.dev/lib/cxf/cxf-rt-wsdl-3.3.5.jar"/>
