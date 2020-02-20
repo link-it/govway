@@ -1,8 +1,0 @@
-		<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
-        <module>
-                <web>
-                        <web-uri>OpenSPCoopV1BackwardCompatibility.war</web-uri>
-                        <context-root>openspcoop</context-root>
-                </web>
-        </module>
-        <!-- End MODULE OpenSPCoopV1BackwardCompatibility -->

@@ -3,7 +3,6 @@
 	<classpathentry kind="src" path="core/src"/>
 	<classpathentry kind="src" path="core/deploy/deploy_web/web_app/WEB-INF"/>
 	<classpathentry kind="src" path="protocolli/spcoop/src"/>
-	<classpathentry excluding="*/web.xml" kind="src" path="protocolli/spcoop/tools/backward_compatibility/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/oneway/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/sincrono/src"/>
 	<classpathentry kind="src" path="protocolli/spcoop/example/tutorial/asincronoSimmetrico/src"/>

@@ -93,9 +93,8 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly14" text="WildFly 14-17"/>
 		<!--
-			Deprecati: 10, 11, 12, 13
+			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
 			<option value="wildfly10" text="WildFly 10-17"/>
 		-->
 		<!--
@@ -158,9 +157,8 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly14" text="WildFly 14-17"/>
 		<!--
-			Deprecati: 10, 11, 12, 13
+			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17
 			<option value="wildfly10" text="WildFly 10-17"/>
 		-->
 		<!--
@@ -498,11 +496,6 @@
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
         
-        <!--
-        <comment displayText=""/>
-         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
-         -->
-
     </page>
 
     <page name="profili_aggiornamento" type="input" displayText="Profili di Interoperabilità"
@@ -533,11 +526,6 @@
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
         
-        <!--
-        <comment displayText=""/>
-         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
-         -->
-
     </page>
     
     <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}!=tomcat5) AND (${antinstaller_as}!=tomcat6) AND (${antinstaller_as}!=tomcat7) AND (${antinstaller_as}!=tomcat8) AND (${antinstaller_as}!=tomcat9)">
@@ -655,27 +643,7 @@
 
     </page>
 
-<!--
-    <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
-        
-         <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
-
-    </page>
-
-    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_backward_compatibility}=true) AND (${antinstaller_as}=tomcat5) OR (${antinstaller_as}=tomcat6) OR (${antinstaller_as}=tomcat7) OR (${antinstaller_as}=tomcat8) OR (${antinstaller_as}=tomcat9) ">
-
-	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat"/> 
-	<comment displayText="   impedisce l'attivazione delle interfacce di compatibilità."/>
-	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
-	<comment displayText="   o procedere con opzione di compatibilità disabilitata"/>
-
-	<comment displayText=""/>
-	<checkbox defaultValue="false" property="antinstaller_backward_compatibility" force="true" displayText="Compatibilità interfacce OpenSPCoop-v1"/>
-
-    </page>
--->
-
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_finished"/>
 
 </installer>

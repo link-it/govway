@@ -65,20 +65,6 @@
 	</if>
 	<import file="${protocolli.spcoop.dir}/build.xml" />
 	
-	<!-- Protocollo SPCoop (Backward Compatibility) -->
-	<property name="protocolli.spcoop.backwardCompatibility.dir" location="${rootDir}/protocolli/spcoop/tools/backward_compatibility" />
-	<available file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" property="spcoop-backwardCompatibility_localenv.present"/>
-	<if>
-		<not>
-			<equals arg1="${spcoop-backwardCompatibility_localenv.present}" arg2="true"/>
-		</not>
-		<then>
-			<copy file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml.template" tofile="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml"/>
-			<replace file="${protocolli.spcoop.backwardCompatibility.dir}/local_env.xml" token="jboss/wildfly/tomcat" value="${as}"/>
-		</then>
-	</if>
-	<import file="${protocolli.spcoop.backwardCompatibility.dir}/build.xml" />
-	
 	<!-- Protocollo ProxyTrasparente -->
 	<property name="protocolli.trasparente.dir" location="${rootDir}/protocolli/trasparente" />
 	<available file="${protocolli.trasparente.dir}/local_env.xml" property="trasparente_localenv.present"/>
@@ -347,15 +333,6 @@
 			<param name="as" value="${as}"/>
 			<param name="rootDir" value="${rootDir}"/>
 			<param name="src_spcoop" value="${protocolli.spcoop.dir}/src"/>
-			<param name="debug" value="${debug}"/>
-			<param name="buildAsRelease" value="true"/>
-			<param name="buildAPI" value="false"/>
-		</antcall>
-		
-		<antcall target="compile_backwardCompatibility" >
-			<param name="as" value="${as}"/>
-			<param name="rootDir" value="${rootDir}"/>
-			<param name="src_backwardCompatibility" value="${protocolli.spcoop.backwardCompatibility.dir}/src"/>
 			<param name="debug" value="${debug}"/>
 			<param name="buildAsRelease" value="true"/>
 			<param name="buildAPI" value="false"/>

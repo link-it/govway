@@ -22,7 +22,6 @@ MODIPA_PROTOCOL=${ROOT}/protocolli/modipa
 SPCOOP_PROTOCOL=${ROOT}/protocolli/spcoop
 AS4_PROTOCOL=${ROOT}/protocolli/as4
 SDI_PROTOCOL=${ROOT}/protocolli/sdi
-SPCOOP_BACKWARD_COMPATIBILITY=${ROOT}/protocolli/spcoop/tools/backward_compatibility
 RS_CONFIG=${ROOT}/tools/rs/config/server
 RS_MONITOR=${ROOT}/tools/rs/monitor/server
 BATCH_STATISTICHE=${ROOT}/tools/batch/statistiche
@@ -104,12 +103,6 @@ fi
 if [ ! -f ${SDI_PROTOCOL}/local_env.xml  ]
 then
         cp ${SDI_PROTOCOL}/local_env.xml.template ${SDI_PROTOCOL}/local_env.xml
-fi
-
-# Modulo di BackwardCompatibility SPCoop
-if [ ! -f ${SPCOOP_BACKWARD_COMPATIBILITY}/local_env.xml  ]
-then
-        cp ${SPCOOP_BACKWARD_COMPATIBILITY}/local_env.xml.template ${SPCOOP_BACKWARD_COMPATIBILITY}/local_env.xml
 fi
 
 # RS Api Config
