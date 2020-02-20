@@ -3,29 +3,27 @@
                 <!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
                 <exclude-subsystems>
                         <subsystem name="webservices" />
-                         <subsystem name="weld" />
+                        <subsystem name="jaxrs" />
+			<!-- Start SenzaModulo JSF -->
+			<subsystem name="jsf" />
+			<!-- End SenzaModulo JSF -->
+			<!-- se si elimina, spuntano i warning <subsystem name="weld" /> -->
                 </exclude-subsystems>   
                 <exclusions>
-                	<module name="com.sun.jsf-impl"/>
-                	<module name="javax.faces.api"/>
-                        <module name="org.apache.cxf" />
-                        <module name="org.springframework.spring" />
-			<module name="org.slf4j" />
+                	<module name="org.slf4j" />
                         <module name="org.apache.log4j" />
 			<module name="org.apache.commons.logging"/>
-                        <module name="org.jboss.as.webservices" />
+                        <!-- non caricato in wf18 e java 11
+			<module name="com.sun.jsf-impl"/>
+                	<module name="org.jboss.as.webservices" />
+                        <module name="org.apache.cxf" />
+                        <module name="org.springframework.spring" />
+			<module name="javax.faces.api"/>
                         <module name="org.jboss.ws" />
                         <module name="org.jboss.ws.*" />
-			<!-- Start SenzaModulo JSF -->
-			<module name="org.jboss.as.jsf-injection"/>
-			<module name="org.jboss.as.jsf-injection" slot="mojarra-1.2_15"/>
-			<!-- End SenzaModulo JSF -->
+			-->
                 </exclusions>
                 <dependencies>
-			<!-- Start SenzaModulo JSF -->
-                        <module name="org.jboss.as.web-common" />
-                        <module name="org.jboss.weld.core" />
-			<!-- End SenzaModulo JSF -->
 			<!-- Start Modulo JSF
 			<module name="com.sun.jsf-impl" slot="mojarra-1.2_15" />
 			<module name="javax.faces.api" slot="mojarra-1.2_15" />

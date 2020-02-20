@@ -165,6 +165,7 @@
 				<include name="freemarker-2.3.29.jar" />
 				<include name="jakarta.activation-1.2.1.jar" />
 				<include name="joda-time-2.10.5.jar" />
+				<include name="reactive-streams-1.0.3.jar" />
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/cxf">
 				<include name="cxf-core-*.jar" />
