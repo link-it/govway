@@ -9,10 +9,15 @@
 			Utile per keystore di tipo P12 per non far scaturire un errore simile al seguente:
 			Message-Security(Sender): Security processing failed. ; error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC
 		-->
-        <resources>
-        	<resource-root path="lib/bcprov-ext-jdk15on-1.64.jar" use-physical-code-source="true"/>
-        </resources>
+		<resources>
+			<resource-root path="lib/bcprov-ext-jdk15on-1.64.jar" use-physical-code-source="true"/>
+		</resources>
 		<!-- Exclusions allow you to prevent the server from automatically adding some dependencies     -->
+		<exclude-subsystems>
+			<subsystem name="webservices" />
+			<subsystem name="jaxrs" />
+			<subsystem name="jsf" />
+		</exclude-subsystems>
 		<exclusions>
 			<module name="org.slf4j" />
 			<module name="org.apache.log4j" />
@@ -23,7 +28,6 @@
 			<module name="com.fasterxml.jackson.core.jackson-databind" />
 			<module name="com.fasterxml.jackson.jaxrs.jackson-jaxrs-json-provider" />
 			-->
-			<module name="org.jboss.resteasy.resteasy-jackson2-provider" />
 
 			<module name="sun.jdk" />
    		</exclusions>

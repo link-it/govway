@@ -43,6 +43,9 @@
                 <fileset dir="${required_lib}/shared" >
                         <include name="snakeyaml-1.25.jar"/>
                 </fileset>
+                <fileset dir="${required_lib}/cxf" >
+                        <include name="asm-7.1.jar"/>
+                </fileset>
 	</path> 
 
 	<property name="src_testsuite" location="src" />
@@ -84,7 +87,12 @@
 			<then>
 				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
 
+					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+
+					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
+					     (file:.../lib/json/accessors-smart-1.2.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+					<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 					<classpath refid="karate_testsuite" />
 					<classpath location="${build_testsuite}" />
@@ -104,7 +112,13 @@
 				<junit printsummary="yes" haltonfailure="${haltOnFailure}" showoutput="${showOutput}">
 
 					<jvmarg value="-Dkarate.options=${build_testsuite}/${karate.options}"/>
+
+					<!-- Per non far comparire il Warning: Nashorn engine is planned to be removed from a future JDK release -->
 					<jvmarg value="-Dnashorn.args=--no-deprecation-warning"/>
+
+					<!-- Per non far comparire il WARNING: Illegal reflective access by net.minidev.asm.DynamicClassLoader 
+					     (file:.../lib/json/accessors-smart-1.2.jar) to method java.lang.ClassLoader.defineClass(java.lang.String,byte[],int,int) -->
+					<jvmarg value="-Djdk.module.illegalAccess=deny"/>
 
 					<classpath refid="karate_testsuite" />
 					<classpath location="${build_testsuite}" />

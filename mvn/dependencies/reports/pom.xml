@@ -25,10 +25,36 @@
 		<jdtcore.version>3.2.0.v_658</jdtcore.version>
 		<jfreechart.version>1.5.0</jfreechart.version>
 		<poi.version>4.1.2</poi.version>
+		<SparseBitSet.version>1.2</SparseBitSet.version>
+		<net.tascalate.javaflow.version>2.6.1</net.tascalate.javaflow.version>
 
 	</properties>
 
 	<dependencies>
+
+		<dependency>
+			<groupId>net.tascalate.javaflow</groupId>
+			<artifactId>net.tascalate.javaflow.api</artifactId>
+			<version>${net.tascalate.javaflow.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>SparseBitSet</artifactId>
+			<version>${SparseBitSet.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
 		<dependency>
 			<groupId>org.jfree</groupId>
@@ -81,6 +107,18 @@
 		<dependency>
 			<groupId>net.sf.jasperreports</groupId>
 			<artifactId>jasperreports</artifactId>
+			<version>${jasperreports.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jasperreports</groupId>
+			<artifactId>jasperreports-metadata</artifactId>
 			<version>${jasperreports.version}</version>
 			<exclusions>
 				<exclusion>

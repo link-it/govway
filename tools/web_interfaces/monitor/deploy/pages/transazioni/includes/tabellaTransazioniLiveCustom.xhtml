@@ -44,7 +44,7 @@
 			<h:outputText value="Trovati 0 Risultati" styleClass="tableNoData" />
 		</a4j:outputPanel>
 	</a4j:outputPanel>
-	<rich:dataTable id="dtTblLive" rowClasses="odd,odd" value="#{value}" var="item" width="100%" >
+	<rich:dataTable id="dtTblLive" rowClasses="odd,odd" value="#{value}" var="item" width="100%" onRowMouseOver="activeRow(this)" >
 		<rich:column id="colCustomContent" sortable="false" label="Transazione">
 			<f:facet name="header">
 				<h:outputText id="outCustomContent1" value="Transazione" />
