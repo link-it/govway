@@ -52,6 +52,7 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'
         - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'
       responses:
         200:
           description: ricerca completata con successo
@@ -141,6 +142,7 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'
         - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'
         - $ref: '#/components/parameters/id_correlazione_applicativa'
         - $ref: 'govway_core.yaml#/components/parameters/ricerca_esatta'
         - $ref: 'govway_core.yaml#/components/parameters/case_sensitive'          
@@ -388,7 +390,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -545,7 +548,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -624,7 +628,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -697,7 +702,8 @@ paths:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: 'govway_core.yaml#/components/parameters/tag'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -774,7 +780,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -853,7 +860,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -932,7 +940,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -1010,7 +1019,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -1088,7 +1098,8 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/azione'                     
-        - $ref: '#/components/parameters/esito_transazione'                     
+        - $ref: '#/components/parameters/esito_transazione'
+        - $ref: '#/components/parameters/escludi_scartate'                     
         - $ref: "#/components/parameters/formato_report"
         - $ref: "#/components/parameters/unita_tempo_report"
         - $ref: "#/components/parameters/tipo_report"
@@ -1459,11 +1470,18 @@ components:
       in: query
       name: esito
       description: >-
-        "Indica come sono state gestite le transazioni (ok: completate con
-        successo, error: fallite, fault: fault applicativo)" 
+        "Indica come sono state gestite le transazioni (ok, fallite, fallite_e_fault, errori_consegna, richieste_scartate)" 
       schema:
         $ref: '#/components/schemas/EsitoTransazioneSimpleSearchEnum'
       required: false
+      
+    escludi_scartate:
+      in: query
+      name: escludi_scartate
+      description: 'informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il parametro esito_transazione non sia fornito o assuma il valore fallite o fallite_e_fault'
+      schema:
+        type: boolean
+        default: true
 
     severita:
       in: query
@@ -2211,13 +2229,20 @@ components:
       properties:
         tipo:
           $ref: '#/components/schemas/EsitoTransazioneFullSearchEnum'
+        escludi_scartate:
+          type: boolean
+          default: true
+          description: 'informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault'
         dettaglio:
           discriminator:
-            propertyName: esito
+            propertyName: tipo
             mapping:
-              ok:             '#/components/schemas/DettaglioEsitoCode'
-              error:          '#/components/schemas/DettaglioEsitoCode'
-              error_or_fault: '#/components/schemas/DettaglioEsitoCode'
+              qualsiasi: '#/components/schemas/DettaglioEsitoCode'
+              ok: '#/components/schemas/DettaglioEsitoCode'
+              fallite: '#/components/schemas/DettaglioEsitoCode'
+              fallite_e_fault: '#/components/schemas/DettaglioEsitoCode'
+              errori_consegna: '#/components/schemas/DettaglioEsitoCode'
+              richieste_scartate: '#/components/schemas/DettaglioEsitoCode'
               personalizzato: '#/components/schemas/DettaglioEsitoList'
           oneOf: 
             - $ref: '#/components/schemas/DettaglioEsitoCode' 
@@ -2383,15 +2408,20 @@ components:
       enum:
         - ok
         - fault
-        - error
-        - error_or_fault
+        - fallite
+        - fallite_e_fault
+        - errori_consegna
+        - richieste_scartate
     EsitoTransazioneFullSearchEnum:
       type: string
       enum:
+        - qualsiasi
         - ok
         - fault
-        - error
-        - error_or_fault
+        - fallite
+        - fallite_e_fault
+        - errori_consegna
+        - richieste_scartate
         - personalizzato
  
     TipoFiltroMittenteFruizioneEnum:

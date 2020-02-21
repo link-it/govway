@@ -44,24 +44,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       responses:
-        200:
+        "200":
           description: "ricerca completata con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaTransazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -78,23 +79,23 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaIntervalloTemporale"
       responses:
-        200:
+        "200":
           description: "ricerca completata con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaTransazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -127,27 +128,28 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/id_correlazione_applicativa"
       - $ref: "#/components/parameters/ricerca_esatta"
       - $ref: "#/components/parameters/case_sensitive"
       responses:
-        200:
+        "200":
           description: "ricerca completata con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaTransazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -165,23 +167,23 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaIdApplicativo"
       responses:
-        200:
+        "200":
           description: "ricerca completata con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaTransazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -204,23 +206,23 @@ paths:
       - $ref: "#/components/parameters/tipo_messaggio"
       - $ref: "#/components/parameters/id_messaggio"
       responses:
-        200:
+        "200":
           description: "dettaglio transazione restituito correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaTransazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -237,23 +239,23 @@ paths:
       parameters:
       - $ref: "#/components/parameters/id_transazione"
       responses:
-        200:
+        "200":
           description: "dettaglio transazione restituito correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransazioneExt"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -277,23 +279,23 @@ paths:
       - $ref: "#/components/parameters/ricerca_esatta"
       - $ref: "#/components/parameters/case_sensitive"
       responses:
-        200:
+        "200":
           description: "Ricerca eventi completata con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaEventi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -308,23 +310,23 @@ paths:
       parameters:
       - $ref: "#/components/parameters/id_evento_path"
       responses:
-        200:
+        "200":
           description: "Recupero evento completato con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Evento"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -350,24 +352,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -385,19 +388,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaAndamentoTemporale"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -430,19 +433,19 @@ paths:
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -460,19 +463,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneEsiti"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -500,24 +503,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -535,19 +539,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneSoggettoRemoto"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -576,24 +580,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -611,19 +616,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneSoggettoLocale"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -646,24 +651,25 @@ paths:
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -681,19 +687,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApi"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -720,24 +726,25 @@ paths:
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -755,19 +762,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneAzione"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -796,24 +803,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -831,19 +839,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -872,24 +880,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -907,19 +916,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -947,25 +956,26 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       - $ref: "#/components/parameters/claim"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -982,19 +992,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneTokenInfo"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1022,24 +1032,25 @@ paths:
       - $ref: "#/components/parameters/versione_servizio"
       - $ref: "#/components/parameters/azione"
       - $ref: "#/components/parameters/esito_transazione"
+      - $ref: "#/components/parameters/escludi_scartate"
       - $ref: "#/components/parameters/formato_report"
       - $ref: "#/components/parameters/unita_tempo_report"
       - $ref: "#/components/parameters/tipo_report"
       - $ref: "#/components/parameters/tipo_informazione_report"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1055,19 +1066,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportStatistico"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1083,23 +1094,23 @@ paths:
         \ e un riepilogo del registro circa i soggetti e gli applicativi registrati."
       operationId: "getRiepologoConfigurazioni"
       responses:
-        200:
+        "200":
           description: "Riepilogo ottenuto con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Riepilogo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1121,23 +1132,23 @@ paths:
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
       responses:
-        200:
+        "200":
           description: "Informazioni sulla API ottenute con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/InfoImplementazioneApi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1157,23 +1168,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/limit"
       responses:
-        200:
+        "200":
           description: "Riepilogo ottenuto con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaRiepilogoApi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1195,19 +1206,19 @@ paths:
       - $ref: "#/components/parameters/tipo_servizio"
       - $ref: "#/components/parameters/versione_servizio"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportConfigurazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1224,19 +1235,19 @@ paths:
             schema:
               $ref: "#/components/schemas/RicercaConfigurazioneApi"
       responses:
-        200:
+        "200":
           $ref: "#/components/responses/200ReportConfigurazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1840,13 +1851,22 @@ components:
       properties:
         tipo:
           $ref: "#/components/schemas/EsitoTransazioneFullSearchEnum"
+        escludi_scartate:
+          type: "boolean"
+          description: "informazione utilizzata per escludere le richieste scartate;\
+            \ viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite,\
+            \ fallite_e_fault"
+          default: true
         dettaglio:
           discriminator:
-            propertyName: "esito"
+            propertyName: "tipo"
             mapping:
+              qualsiasi: "#/components/schemas/DettaglioEsitoCode"
               ok: "#/components/schemas/DettaglioEsitoCode"
-              error: "#/components/schemas/DettaglioEsitoCode"
-              error_or_fault: "#/components/schemas/DettaglioEsitoCode"
+              fallite: "#/components/schemas/DettaglioEsitoCode"
+              fallite_e_fault: "#/components/schemas/DettaglioEsitoCode"
+              errori_consegna: "#/components/schemas/DettaglioEsitoCode"
+              richieste_scartate: "#/components/schemas/DettaglioEsitoCode"
               personalizzato: "#/components/schemas/DettaglioEsitoList"
           oneOf:
           - $ref: "#/components/schemas/DettaglioEsitoCode"
@@ -2007,15 +2027,20 @@ components:
       enum:
       - "ok"
       - "fault"
-      - "error"
-      - "error_or_fault"
+      - "fallite"
+      - "fallite_e_fault"
+      - "errori_consegna"
+      - "richieste_scartate"
     EsitoTransazioneFullSearchEnum:
       type: "string"
       enum:
+      - "qualsiasi"
       - "ok"
       - "fault"
-      - "error"
-      - "error_or_fault"
+      - "fallite"
+      - "fallite_e_fault"
+      - "errori_consegna"
+      - "richieste_scartate"
       - "personalizzato"
     TipoFiltroMittenteFruizioneEnum:
       type: "string"
@@ -2064,12 +2089,12 @@ components:
     TipoReportEnum:
       type: "string"
       example: "Line"
+      default: "table"
       enum:
       - "line"
       - "pie"
       - "bar"
       - "table"
-      default: "table"
     FormatoReportEnum:
       type: "string"
       example: "csv"
@@ -2082,36 +2107,36 @@ components:
     UnitaTempoReportEnum:
       type: "string"
       example: "orario"
+      default: "giornaliero"
       enum:
       - "orario"
       - "giornaliero"
       - "settimanale"
       - "mensile"
-      default: "giornaliero"
     TipoInformazioneReportEnum:
       type: "string"
       example: "numero_transazioni"
+      default: "numero_transazioni"
       enum:
       - "numero_transazioni"
       - "occupazione_banda"
       - "tempo_medio_risposta"
-      default: "numero_transazioni"
     OccupazioneBandaEnum:
       type: "string"
       example: "banda_complessiva"
+      default: "banda_complessiva"
       enum:
       - "banda_complessiva"
       - "banda_interna"
       - "banda_esterna"
-      default: "banda_complessiva"
     TempoMedioRispostaEnum:
       type: "string"
       example: "latenza_totale"
+      default: "latenza_totale"
       enum:
       - "latenza_totale"
       - "latenza_servizio"
       - "latenza_gateway"
-      default: "latenza_totale"
     TransazioneExt:
       type: "object"
       allOf:
@@ -2508,13 +2533,13 @@ components:
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "ModIPA"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -2811,7 +2836,7 @@ components:
       - "fruizione"
       - "erogazione"
   responses:
-    200ReportStatistico:
+    "200ReportStatistico":
       description: "Report statistico generato correttamente"
       content:
         text/csv:
@@ -2834,26 +2859,26 @@ components:
           schema:
             type: "string"
             format: "byte"
-    200ReportConfigurazioni:
+    "200ReportConfigurazioni":
       description: "Report delle configurazioni generato correttamente"
       content:
         text/csv:
           schema:
             type: "string"
             format: "byte"
-    400BadRequest:
+    "400BadRequest":
       description: "Bad Request"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    404NotFound:
+    "404NotFound":
       description: "Not Found"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    429TooManyRequests:
+    "429TooManyRequests":
       description: "Too many requests"
       headers:
         Retry-After:
@@ -2868,7 +2893,7 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    503ServiceUnavailable:
+    "503ServiceUnavailable":
       description: "Service Unavailable"
       headers:
         Retry-After:
@@ -2883,25 +2908,25 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    401Unauthorized:
+    "401Unauthorized":
       description: "Non sono state fornite le credenziali necessarie"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    403Forbidden:
+    "403Forbidden":
       description: "Autorizzazione non concessa per l'operazione richiesta"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    409Conflict:
+    "409Conflict":
       description: "Conflict (L'entità che si vuole creare risulta già esistente)"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    201Created:
+    "201Created":
       description: "Resource created"
       headers:
         Location:
@@ -2984,11 +3009,21 @@ components:
     esito_transazione:
       name: "esito"
       in: "query"
-      description: "\"Indica come sono state gestite le transazioni (ok: completate\
-        \ con successo, error: fallite, fault: fault applicativo)\" "
+      description: "\"Indica come sono state gestite le transazioni (ok, fallite,\
+        \ fallite_e_fault, errori_consegna, richieste_scartate)\" "
       required: false
       schema:
         $ref: "#/components/schemas/EsitoTransazioneSimpleSearchEnum"
+    escludi_scartate:
+      name: "escludi_scartate"
+      in: "query"
+      description: "informazione utilizzata per escludere le richieste scartate; viene\
+        \ utilizzata solamente nel caso il parametro esito_transazione non sia fornito\
+        \ o assuma il valore fallite o fallite_e_fault"
+      required: false
+      schema:
+        type: "boolean"
+        default: true
     severita:
       name: "severita"
       in: "query"

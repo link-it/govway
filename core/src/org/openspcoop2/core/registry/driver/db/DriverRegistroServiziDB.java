@@ -1290,7 +1290,11 @@ IDriverWS ,IMonitoraggioRisorsa{
 			if(idAccordoLong<=0){
 				throw new DriverRegistroServiziNotFound("[DriverRegistroServiziDB::getAccordoServizioParteComuneSintetico] Accordo non trovato (id:"+idAccordo+")");
 			}
-		}catch (Exception se) {
+		}
+		catch (DriverRegistroServiziNotFound se) {
+			throw se;
+		}
+		catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getAccordoServizioParteComuneSintetico] Exception :" + se.getMessage(),se);
 		} finally {
 
@@ -22616,7 +22620,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return exist;
 	}
 
-	public Documento getDocumento(String nome, String tipo, String ruolo, long idProprietario,boolean readBytes,ProprietariDocumento tipoProprietario) throws DriverRegistroServiziException {
+	public Documento getDocumento(String nome, String tipo, String ruolo, long idProprietario,boolean readBytes,ProprietariDocumento tipoProprietario) throws DriverRegistroServiziException, DriverRegistroServiziNotFound {
 		String nomeMetodo = "getDocumento";
 
 		Connection con = null;
@@ -22640,9 +22644,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 				tipoProprietarioAsString = tipoProprietario.toString();
 			}
 			long idDoc = DBUtils.getIdDocumento(nome, tipo, ruolo, idProprietario,con,this.tipoDB,tipoProprietarioAsString);
+			if(idDoc <= 0 ) {
+				throw new DriverRegistroServiziNotFound("Documento richiesto non esistente (nome:"+nome+", tipo:"+tipo+", ruolo:"+ruolo+", idProprietario:"+idProprietario+", tipoProprietario:"+tipoProprietarioAsString+")");
+			}
 			return DriverRegistroServiziDB_LIB.getDocumento(idDoc, readBytes, con, this.tipoDB);
 
-		} catch (Exception se) {
+		} 
+		catch (DriverRegistroServiziNotFound se) {
+			throw se;
+		}
+		catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziException::" + nomeMetodo + "] Exception: " + se.getMessage(),se);
 		} finally {
 			try {

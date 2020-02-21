@@ -132,7 +132,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -188,8 +188,9 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			        
 			context.getLogger().info("Invocazione completata con successo");     
 		}
+		
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -244,7 +245,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -285,7 +286,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -379,7 +380,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
              
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {

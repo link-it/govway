@@ -871,7 +871,8 @@ public class TransazioneBean extends Transazione{
 				}
 				
 			}catch(Exception e) {
-				log.error("Normalizzazione operazione '"+op+"' per api '"+uriAPI+"' non riuscita: "+e.getMessage(),e);
+				// L'API puo non esistere piu se e' stata eliminata; non loggare come error
+				log.info("Normalizzazione operazione '"+op+"' per api '"+uriAPI+"' non riuscita: "+e.getMessage(),e);
 			}
 			
 		}

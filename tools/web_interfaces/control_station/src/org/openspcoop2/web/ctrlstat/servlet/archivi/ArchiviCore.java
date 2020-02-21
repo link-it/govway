@@ -366,6 +366,10 @@ public class ArchiviCore extends ControlStationCore {
 
 			return driver.getDriverRegistroServiziDB().getDocumento(nome,tipo,ruolo,idProprietario,readBytes,tipoProprietario);
 			
+		} catch (DriverRegistroServiziNotFound e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
+			throw e;
 		} catch (DriverRegistroServiziException e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw e;

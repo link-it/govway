@@ -28,6 +28,7 @@ import org.openspcoop2.core.commons.ISearch;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.id.IDScope;
 import org.openspcoop2.core.registry.Scope;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 
@@ -105,6 +106,10 @@ public class ScopeCore extends ControlStationCore {
 			IDScope idScope = new IDScope(nome);
 			return driver.getDriverRegistroServiziDB().getScope(idScope);
 
+		} catch (DriverRegistroServiziNotFound e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

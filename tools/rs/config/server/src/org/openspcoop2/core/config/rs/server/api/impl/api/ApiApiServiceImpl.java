@@ -211,7 +211,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getServletResponse().setStatus(201);
 			
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -282,7 +282,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getServletResponse().setStatus(201);
 			
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -364,7 +364,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getServletResponse().setStatus(201);
 			
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -438,7 +438,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getServletResponse().setStatus(201);
 			
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -503,7 +503,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getServletResponse().setStatus(201);
 			
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -544,7 +544,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().info("Invocazione completata con successo");
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -588,7 +588,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -656,7 +656,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().info("Invocazione completata con successo");
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -704,7 +704,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -752,7 +752,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -799,7 +799,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			return doc.getByteContenuto();
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -875,7 +875,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			
 			return spec;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -931,7 +931,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -982,7 +982,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1040,7 +1040,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1094,7 +1094,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1145,7 +1145,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1193,7 +1193,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1240,7 +1240,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1288,7 +1288,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1325,7 +1325,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1366,7 +1366,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1419,7 +1419,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1456,7 +1456,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1498,7 +1498,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1539,7 +1539,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1579,7 +1579,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1643,7 +1643,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1729,7 +1729,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			context.getLogger().info("Invocazione completata con successo");
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1841,7 +1841,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1937,7 +1937,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			env.apcCore.performUpdateOperation(env.userLogin, false, operazioniList.toArray());
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1994,7 +1994,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -2063,7 +2063,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -2120,7 +2120,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -2257,7 +2257,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			context.getLogger().info("Invocazione completata con successo");
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());

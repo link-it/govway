@@ -21,8 +21,6 @@
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 
-import static org.openspcoop2.utils.service.beans.utils.BaseHelper.deserialize;
-
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +32,9 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazione;
@@ -47,7 +47,6 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneToken
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdAutenticato;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
@@ -58,6 +57,7 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
+import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
@@ -93,7 +93,7 @@ public class TransazioniHelper {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il nome della API");
 			}
 						
-			if (erogatore == null || isEmpty(erogatore)) {
+			if (erogatore == null || TransazioniHelper.isEmpty(erogatore)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Filtro Api incompleto. Specificare il Soggetto Erogatore (Nelle fruizioni è il soggetto remoto)");
 			}
 			
@@ -129,7 +129,7 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		TransazioniHelper.overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 	}
 	
 	public static final void overrideFiltroQualsiasi(FiltroApiQualsiasi filtro, String azione,
@@ -137,7 +137,7 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		TransazioniHelper.overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
 		if (!StringUtils.isEmpty(filtro.getSoggettoRemoto()))
 			search.setTipoNomeTrafficoPerSoggetto(new IDSoggetto(env.soggetto.getTipo(), filtro.getSoggettoRemoto()).toString());	
 	}
@@ -160,7 +160,7 @@ public class TransazioniHelper {
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
-		overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
+		TransazioniHelper.overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_IDENTIFICATIVO_AUTENTICATO);
 		search.setAutenticazione(Enums.toTipoAutenticazione.get(filtro.getAutenticazione()).toString());
 	}
 	
@@ -168,7 +168,7 @@ public class TransazioniHelper {
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
-		overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
+		TransazioniHelper.overrideFiltroRicercaId(filtro, search, env, Costanti.VALUE_TIPO_RICONOSCIMENTO_INDIRIZZO_IP);
 		if(filtro.getTipo()!=null) {
 			search.setClientAddressMode(Enums.toTipoIndirizzzoIP.get(filtro.getTipo()));
 		}
@@ -180,8 +180,18 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		if (filtro != null && filtro.getTipo() != null) {
-			switch (filtro.getTipo()) {
+		if (filtro != null) {
+			
+			EsitoTransazioneFullSearchEnum tipo = (filtro.getTipo() != null) ? filtro.getTipo() : EsitoTransazioneFullSearchEnum.QUALSIASI;
+			
+			switch (tipo) {
+			case QUALSIASI:
+				search.setEsitoGruppo(EsitoUtils.ALL_VALUE);
+				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.isEscludiScartate()!=null) {
+					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
+				}
+				break;
 			case OK:
 				search.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
 				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
@@ -190,12 +200,26 @@ public class TransazioniHelper {
 				search.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
 				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
 				break;
-			case ERROR:
+			case FALLITE:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
 				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.isEscludiScartate()!=null) {
+					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
+				}
 				break;
-			case ERROR_OR_FAULT:
+			case FALLITE_E_FAULT:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
+				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.isEscludiScartate()!=null) {
+					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
+				}
+				break;
+			case ERRORI_CONSEGNA:
+				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE);
+				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				break;
+			case RICHIESTE_SCARTATE:
+				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE);
 				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
 				break;
 			case PERSONALIZZATO:
@@ -226,17 +250,17 @@ public class TransazioniHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			TransazioniHelper.overrideFiltroApiBase(BaseHelper.deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
 			break;
 		case FRUIZIONE:
-			overrideFiltroFruizione(deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			TransazioniHelper.overrideFiltroFruizione(BaseHelper.deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
 			break;
 		case QUALSIASI:
-			overrideFiltroQualsiasi(deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
+			TransazioniHelper.overrideFiltroQualsiasi(BaseHelper.deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
 			break;
 		}
 
-		overrideFiltroEsito(body.getEsito(), search, env);
+		TransazioniHelper.overrideFiltroEsito(body.getEsito(), search, env);
 		search.setEvento(body.getEvento());
 		search.setClusterId(body.getIdCluster());
 	}
@@ -251,7 +275,7 @@ public class TransazioniHelper {
 		final String tipo_soggetto = env.soggetto.getTipo();
 		switch (body.getTipo()) {
 		case FRUIZIONE: {
-			FiltroMittenteFruizione fMittente = deserialize(body.getMittente(),FiltroMittenteFruizione.class);
+			FiltroMittenteFruizione fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteFruizione.class);
 			if (fMittente == null)
 				break;
 
@@ -287,7 +311,7 @@ public class TransazioniHelper {
 		}
 
 		case EROGAZIONE: {
-			FiltroMittenteErogazione fMittente = deserialize(body.getMittente(),FiltroMittenteErogazione.class);
+			FiltroMittenteErogazione fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteErogazione.class);
 			
 			if (fMittente == null)
 				break;
@@ -333,7 +357,7 @@ public class TransazioniHelper {
 		}
 		
 		case QUALSIASI: {
-			FiltroMittenteQualsiasi fMittente = deserialize(body.getMittente(),FiltroMittenteQualsiasi.class);
+			FiltroMittenteQualsiasi fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteQualsiasi.class);
 			
 			if (fMittente == null)
 				break;
@@ -437,7 +461,7 @@ public class TransazioniHelper {
 		search.setCorrelazioneApplicativaMatchingType((BooleanUtils.isTrue(filtro.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 		search.setIdCorrelazioneApplicativa(filtro.getId());			
 		
-		ListaTransazioni ret = searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
+		ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);
 		return ret;
 	}
 	
@@ -450,6 +474,6 @@ public class TransazioniHelper {
 		TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
 		TransazioniHelper.overrideFiltroMittente(body, search, env);
 		
-		return searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);	
+		return TransazioniHelper.searchTransazioni(search, body.getOffset(), body.getLimit(), body.getSort(), env);	
 	}
 }

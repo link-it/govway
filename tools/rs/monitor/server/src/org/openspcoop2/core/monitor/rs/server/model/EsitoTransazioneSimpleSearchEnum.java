@@ -28,8 +28,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 public enum EsitoTransazioneSimpleSearchEnum {
 OK("ok"),
   FAULT("fault"),
-  ERROR("error"),
-  ERROR_OR_FAULT("error_or_fault");
+  FALLITE("fallite"),
+  FALLITE_E_FAULT("fallite_e_fault"),
+  ERRORI_CONSEGNA("errori_consegna"),
+  RICHIESTE_SCARTATE("richieste_scartate");
 
   private String value;
 

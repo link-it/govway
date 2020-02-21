@@ -139,7 +139,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -336,7 +336,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -390,7 +390,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -439,7 +439,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -501,7 +501,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -550,7 +550,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -608,7 +608,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {

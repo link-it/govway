@@ -94,6 +94,42 @@ public class ServiceLogger {
 		}
 	}
 	
+	public void error_except404(String message, Throwable t) {
+		this._error_except404(message, t, null);
+	}
+	public void error_except404(String message, Throwable t, Object ...params) {
+		this._error_except404(message, t, params);
+	}
+	private void _error_except404(String message, Throwable t, Object [] params) {
+		
+		boolean error = true;
+		if(t!=null && t instanceof javax.ws.rs.WebApplicationException) {
+			javax.ws.rs.WebApplicationException we = (javax.ws.rs.WebApplicationException) t;
+			if(we.getResponse()!=null && we.getResponse().getStatus()==404) {
+				error = false;
+			}
+		}
+		
+		String msgWithPrefix = this.appendPrefix(message);
+		if(params!=null && params.length>0) {
+			String msg = String.format(msgWithPrefix,params);
+			if(t!=null) {
+				if(error) this.log.error(msg,t); else this.log.debug(msg,t);
+			}
+			else {
+				if(error) this.log.error(msg); else this.log.debug(msg);
+			}
+		}
+		else {
+			if(t!=null) {
+				if(error) this.log.error(msgWithPrefix,t); else this.log.debug(msgWithPrefix,t);
+			}
+			else {
+				if(error) this.log.error(msgWithPrefix); else this.log.debug(msgWithPrefix,t);
+			}
+		}
+	}
+	
 	
 	public void warn(String message, Object ...params) {
 		this._warn(message, null, params);

@@ -142,7 +142,7 @@ public class Converter {
 			messaggiDiagnostici = govwayMonitorProperties.getDriverMsgDiagnostici(con,smp).getMessaggiDiagnostici(filter);
 		}catch(DriverMsgDiagnosticiNotFoundException notFound) {}
 
-		CredenzialiMittente credenzialiMittente = convertToCredenzialiMittente(transazioneDB);		
+		CredenzialiMittente credenzialiMittente = Converter.convertToCredenzialiMittente(transazioneDB);		
 		
 		if(transazioniService.hasInfoDumpAvailable(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO)) {
 			DumpMessaggio dumpMessaggio = transazioniService.getDumpMessaggio(transazioneDB.getIdTransazione(), null, null, TipoMessaggio.RICHIESTA_INGRESSO);
@@ -175,7 +175,7 @@ public class Converter {
 	
 	public static ItemTransazione toItemTransazione(TransazioneBean transazioneDB, Logger log)  throws Exception {
 	
-		CredenzialiMittente credenzialiMittente = convertToCredenzialiMittente(transazioneDB);		
+		CredenzialiMittente credenzialiMittente = Converter.convertToCredenzialiMittente(transazioneDB);		
 		
 		org.openspcoop2.pdd.logger.traccia.Converter converter = new org.openspcoop2.pdd.logger.traccia.Converter(log);
 		if(transazioneDB.getGruppiLabel()!=null && !"".equals(transazioneDB.getGruppiLabel())) {
@@ -373,7 +373,7 @@ public class Converter {
 	
 	public static IDServizio toIDServizio(TransazioneRuoloEnum tipo, ProfiloEnum profilo, String soggetto, 
 			String soggettoRemoto, String nomeServizio, String tipoServizio, Integer versioneServizio) throws Exception {
-		String protocollo = toProtocollo(profilo);
+		String protocollo = Converter.toProtocollo(profilo);
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String tipoSoggetto = protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
 		String tipoServizioEffettivo = tipoServizio !=null ? tipoServizio : protocolFactoryManager._getServiceTypes().get(protocollo).get(0);

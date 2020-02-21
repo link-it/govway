@@ -93,7 +93,13 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idServizioApplicativo);
 
-		} catch (Exception e) {
+		} 
+		catch (DriverConfigurazioneNotFound  e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] ExceptionNotFound :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
+		}
+		catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
