@@ -942,8 +942,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	public boolean isShowRichiesteScartate() {
 		if(EsitoUtils.ALL_VALUE == this.esitoGruppo ||
 				EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo ||
-				EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo ||
-				EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo){
+				EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo 
+				//||
+				//EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo
+				){
 			return true;
 		}
 		return false;
@@ -1787,7 +1789,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public String getSoggettoPddMonitor() {
-		if(this.soggettoPddMonitor == null)
+		return getSoggettoPddMonitor(true);
+	}
+	
+	public String getSoggettoPddMonitor(boolean checkLoginBean) {
+		if(this.soggettoPddMonitor == null && checkLoginBean)
 			return Utility.getLoginBean().getSoggettoPddMonitor();
 		
 		return this.soggettoPddMonitor;

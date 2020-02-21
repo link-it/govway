@@ -822,7 +822,7 @@ public class TransazioniService implements ITransazioniService {
 			}
 			
 			Transazione t = this.transazioniSearchDAO.find(expr);
-			TransazioneBean transazioneBean = new TransazioneBean(t, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor() : null);
+			TransazioneBean transazioneBean = new TransazioneBean(t, this.searchForm!=null ? this.searchForm.getSoggettoPddMonitor(false) : null);
 			
 			// Integrazione dei dati delle credenziali
 			this.normalizeInfoTransazioniFromCredenzialiMittente(transazioneBean, t);

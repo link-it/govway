@@ -335,7 +335,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 											<f:selectItems value="#{transazioniBean.exportDisponibili}" />
 										</h:selectOneMenu>
 									</link:prop>
-									<link:prop label="Colonne Esportate" required="true">
+									<link:prop label="#{msg['transazioni.export.tipoColonneEsportate']}" required="true">
 										<h:selectOneMenu rendered="true" value="#{transazioniBean.colonneEsportate}" style="width: 412px;" id="selectTipoColonne" styleClass="inputLink">
 											<f:selectItems value="#{transazioniBean.tipiColonneEsportate}" />
 											<a4j:support event="onchange" reRender="panelFormExportCsvContainer" actionListener="#{transazioniBean.tipoColonneSelected}" limitToList="true"/>

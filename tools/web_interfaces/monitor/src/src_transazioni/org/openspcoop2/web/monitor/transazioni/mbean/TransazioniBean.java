@@ -107,6 +107,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private List<GruppoStorico> tipiStorico;
 	private String tipoStorico;
 	
+	private boolean visualizzazioneStoricoTabellare = false;
 
 	public TransazioniBean(){
 		super();
@@ -119,6 +120,8 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			
 			this.applicationBean = new ApplicationBean();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
+			
+			this.visualizzazioneStoricoTabellare = !govwayMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
 			
 		}catch(Exception e){
 			TransazioniBean.log.error(e.getMessage(), e);
@@ -569,29 +572,44 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			}
 			
 		}else if(colonneEsportate.equals(CostantiExport.COLONNE_VALUE_VISUALIZZATE_NELLO_STORICO)){
-			try{
-				JSONObject json = JSONObject.fromObject(this.getTableState());
-				if(json != null){
-					// prelevo l'array dell'ordine delle colonne
-					JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
-					JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
-
-					for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
-						String key = jsonArrayColumnsOrder.getString(i);
-						int visibility = jsonObjectColumnsVisibility.getInt(key);
-						
-						if(isCsvColumnEnabled(key)==false){
-							visibility = -1;
-						}
-
-						// controllo che la colonna sia tra quelle previste e tra quelle visibili
-						if(ColonnaExportManager.getInstance().containsColonna(key) && visibility > 0){
-							colonneSelezionate.add(key);
+			if(this.visualizzazioneStoricoTabellare) {
+				try{
+					JSONObject json = JSONObject.fromObject(this.getTableState());
+					if(json != null){
+						// prelevo l'array dell'ordine delle colonne
+						JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
+						JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
+	
+						for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
+							String key = jsonArrayColumnsOrder.getString(i);
+							int visibility = jsonObjectColumnsVisibility.getInt(key);
+							
+							if(isCsvColumnEnabled(key)==false){
+								visibility = -1;
+							}
+	
+							// controllo che la colonna sia tra quelle previste e tra quelle visibili
+							if(ColonnaExportManager.getInstance().containsColonna(key) && visibility > 0){
+								colonneSelezionate.add(key);
+							}
 						}
 					}
+				}catch(Exception e){
+					TransazioniBean.log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
 				}
-			}catch(Exception e){
-				TransazioniBean.log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
+			}
+			else {
+				// inserisco tutte le chiavi della custom view
+				List<String> colonneSelezionateTmp = ColonnaExportManager.getInstance().getKeysColonneCustomView();
+				
+				for (String key : colonneSelezionateTmp) {
+					
+					if(isCsvColumnEnabled(key)==false){
+						continue;
+					}
+									
+					colonneSelezionate.add(key);
+				}
 			}
 		}else  { // personalizzato
 			if(this.getElencoColonneSelezionate() != null)
