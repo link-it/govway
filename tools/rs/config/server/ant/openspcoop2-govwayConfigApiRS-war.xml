@@ -128,7 +128,7 @@
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/saaj">
-				<include name="saaj-impl-1.5.1-gov4j-1.jar"/>
+				<include name="saaj-impl-1.5.1-gov4j-2.jar"/>
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/security">

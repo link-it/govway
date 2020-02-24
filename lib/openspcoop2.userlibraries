@@ -178,7 +178,7 @@
 	<archive path="/op2_3.3.dev/lib/reports/jdtcore-3.2.0.v_658.jar"/>
 	<!-- saaj -->
 	<archive path="/op2_3.3.dev/lib/saaj/javax.xml.soap-api-1.4.0.jar"/>
-	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.5.1-gov4j-1.jar"/>
+	<archive path="/op2_3.3.dev/lib/saaj/saaj-impl-1.5.1-gov4j-2.jar"/>
 	<archive path="/op2_3.3.dev/lib/saaj/stax-ex-1.8.2.jar"/>
 	<archive path="/op2_3.3.dev/lib/saaj/mimepull-1.9.12.jar"/>
 	<!-- security -->
