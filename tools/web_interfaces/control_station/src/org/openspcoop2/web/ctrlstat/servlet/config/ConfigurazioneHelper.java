@@ -4458,7 +4458,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
-		de.setValue(messageFactory);
+		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "<br/>") : messageFactory);
 		de.setType(DataElementType.TEXT);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
 		de.setSize(this.getSize());

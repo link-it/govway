@@ -42,6 +42,7 @@ import org.openspcoop2.pdd.core.credenziali.engine.GestoreCredenzialiEngine;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoException;
@@ -49,6 +50,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundExcep
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.json.JSONUtils;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
@@ -1072,11 +1074,26 @@ PdDBaseBean<Transazione, String, IService<TransazioneBean, Long>> {
 		this.diagnosticiBean.setIdEgov(this.idEgov);
 		this.diagnosticiBean.setIdentificativoPorta(this.identificativoPorta);
 		this.diagnosticiBean.setIdTransazione(this.idTransazione);
-		if(this.dettaglio != null)
-			this.diagnosticiBean.setProtocollo(this.dettaglio.getProtocollo()); 
-		this.diagnosticiBean.setNomeServizioApplicativo(null);
-		this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
 		
+		TransazioneBean trBean = this.getDettaglio();
+		if(trBean!=null) {
+			this.diagnosticiBean.setProtocollo(trBean.getProtocollo()); 
+			this.diagnosticiBean.setNomeServizioApplicativo(null);
+			
+			try {
+				EsitiProperties esitiProperties = EsitiProperties.getInstance(log, trBean.getProtocollo());
+				EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(trBean.getEsito());
+				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+					this.diagnosticiBean.setForceNomeServizioApplicativoNull(true);
+				}
+				else {
+					this.diagnosticiBean.setForceNomeServizioApplicativoNull(false);
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+				
 		return this.diagnosticiBean;
 	}
 	public void setDiagnosticiBean(DiagnosticiBean diagnosticiBean) {

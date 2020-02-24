@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.sdk.archive.ImportMode;
 import org.openspcoop2.protocol.sdk.archive.MapPlaceholder;
 import org.openspcoop2.utils.serialization.JavaDeserializer;
 import org.openspcoop2.utils.serialization.JavaSerializer;
+import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.dao.PdDControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.FileUploadForm;
 import org.openspcoop2.web.ctrlstat.servlet.ac.AccordiCooperazioneCore;
@@ -327,7 +328,8 @@ public class ImporterUtils {
 		try{
 			fout = new FileOutputStream(tmpF);
 			javaSerializer.writeObject(object, fout);
-		}finally{
+		}
+		finally{
 			try{
 				if(fout!=null){
 					fout.flush();
@@ -374,7 +376,7 @@ public class ImporterUtils {
 			FileUploadForm fileUpload = (FileUploadForm) form;
 			ff = fileUpload.getTheFile();
 		}
-		return ff;
+		return (ff!=null && !(ff instanceof SerialiableFormFile) ) ? new SerialiableFormFile(ff) : ff;
 	}
 
 	public File writeImportInformationMissingCollectionFile(String sessionId,ImportInformationMissingCollection importInformationMissingCollection) throws Exception{

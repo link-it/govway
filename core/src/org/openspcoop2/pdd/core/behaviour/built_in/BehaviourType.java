@@ -111,11 +111,11 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 	public static List<BehaviourType> getEnums(boolean soapOneway){
 		List<BehaviourType> l = new ArrayList<BehaviourType>();
 		l.add(BehaviourType.CONSEGNA_LOAD_BALANCE);
+		l.add(BehaviourType.CONSEGNA_CONDIZIONALE);
 		if(soapOneway) {
 			l.add(BehaviourType.CONSEGNA_MULTIPLA);
 		}
 		else {
-			l.add(BehaviourType.CONSEGNA_CONDIZIONALE);
 			l.add(BehaviourType.CONSEGNA_CON_NOTIFICHE);
 		}
 		l.add(BehaviourType.CUSTOM);

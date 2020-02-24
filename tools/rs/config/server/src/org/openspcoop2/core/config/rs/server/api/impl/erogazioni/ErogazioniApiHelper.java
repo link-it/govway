@@ -173,7 +173,6 @@ import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSicurezzaEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoValidazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TokenClaimEnum;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
-import org.openspcoop2.core.config.rs.server.utils.WrapperFormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -230,6 +229,7 @@ import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -1795,7 +1795,7 @@ public class ErogazioniApiHelper {
 
 		Documento documento = ErogazioniApiHelper.implAllegatoToDocumento(body, asps);
 		
-		WrapperFormFile filewrap = new WrapperFormFile(documento.getFile(), documento.getByteContenuto());
+		SerialiableFormFile filewrap = new SerialiableFormFile(documento.getFile(), documento.getByteContenuto());
 		env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, documento.getRuolo());			
 
 		boolean documentoUnivocoIndipendentementeTipo = true;
@@ -1866,7 +1866,7 @@ public class ErogazioniApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare il ruolo di un allegato");
 		}
 
-		WrapperFormFile filewrap = new WrapperFormFile(newDoc.getFile(), newDoc.getByteContenuto());
+		SerialiableFormFile filewrap = new SerialiableFormFile(newDoc.getFile(), newDoc.getByteContenuto());
 		env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, newDoc.getRuolo());
 		
 		if (!env.apsHelper.serviziAllegatiCheckData(TipoOperazione.CHANGE,filewrap,newDoc,env.protocolFactory)) {
