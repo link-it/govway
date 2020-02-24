@@ -67,131 +67,211 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 	
 	
 	
+	public ValidatoreXSD(Logger log, File... file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory, Logger log, File... file) throws Exception {
 		super(log, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, File file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory, Logger log, File file) throws Exception {
 		super(log, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, InputStream... inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, InputStream... inputStream)
 			throws Exception {
 		super(log, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, InputStream inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, InputStream inputStream) throws Exception {
 		super(log, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			File... file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			File... file) throws Exception {
 		super(log, lsResourceResolver, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			File file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			File file) throws Exception {
 		super(log, lsResourceResolver, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			InputStream... inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			InputStream... inputStream) throws Exception {
 		super(log, lsResourceResolver, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			InputStream inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			InputStream inputStream) throws Exception {
 		super(log, lsResourceResolver, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			Node... schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			Node... schema) throws Exception {
 		super(log, lsResourceResolver, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			Node schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			Node schema) throws Exception {
 		super(log, lsResourceResolver, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			Source... source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			Source... source) throws Exception {
 		super(log, lsResourceResolver, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			Source source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			Source source) throws Exception {
 		super(log, lsResourceResolver, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			String... url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			String... url) throws Exception {
 		super(log, lsResourceResolver, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, LSResourceResolver lsResourceResolver,
+			String url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, lsResourceResolver, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, LSResourceResolver lsResourceResolver,
 			String url) throws Exception {
 		super(log, lsResourceResolver, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, Node... schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, Node... schema) throws Exception {
 		super(log, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, Node schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, Node schema) throws Exception {
 		super(log, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, Source... source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, Source... source) throws Exception {
 		super(log, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, Source source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, Source source) throws Exception {
 		super(log, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, File... file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, File... file)
 			throws Exception {
 		super(log, schemaFactory, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, File file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, File file)
 			throws Exception {
 		super(log, schemaFactory, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, InputStream... inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			InputStream... inputStream) throws Exception {
 		super(log, schemaFactory, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, InputStream inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			InputStream inputStream) throws Exception {
 		super(log, schemaFactory, inputStream);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, File... file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, File... file)
 			throws Exception {
@@ -199,12 +279,20 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, File file) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, file);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, File file) throws Exception {
 		super(log, schemaFactory, lsResourceResolver, file);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, InputStream... inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, InputStream... inputStream)
 			throws Exception {
@@ -212,6 +300,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, InputStream inputStream) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, inputStream);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, InputStream inputStream)
 			throws Exception {
@@ -219,6 +311,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, Node... schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Node... schema)
 			throws Exception {
@@ -226,6 +322,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, Node schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Node schema)
 			throws Exception {
@@ -233,6 +333,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, Source... source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Source... source)
 			throws Exception {
@@ -240,6 +344,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, Source source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, Source source)
 			throws Exception {
@@ -247,6 +355,10 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, String... url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, String... url)
 			throws Exception {
@@ -254,58 +366,89 @@ public class ValidatoreXSD extends  org.openspcoop2.utils.xml.AbstractValidatore
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, 
+			LSResourceResolver lsResourceResolver, String url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, lsResourceResolver, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory,
 			LSResourceResolver lsResourceResolver, String url) throws Exception {
 		super(log, schemaFactory, lsResourceResolver, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, Node... schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, Node... schema)
 			throws Exception {
 		super(log, schemaFactory, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, Node schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, Node schema)
 			throws Exception {
 		super(log, schemaFactory, schema);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, Source... source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, Source... source)
 			throws Exception {
 		super(log, schemaFactory, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, Source source) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, source);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, Source source)
 			throws Exception {
 		super(log, schemaFactory, source);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, String... url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, String... url)
 			throws Exception {
 		super(log, schemaFactory, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String schemaFactory, String url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, schemaFactory, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String schemaFactory, String url)
 			throws Exception {
 		super(log, schemaFactory, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String... url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String... url) throws Exception {
 		super(log, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Logger log, String url) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), log, url);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Logger log, String url) throws Exception {
 		super(log, url);
 		this.messageFactory = messageFactory;
 	}
 
+	public ValidatoreXSD(Schema schema) throws Exception {
+		this(OpenSPCoop2MessageFactory.getDefaultMessageFactory(), schema);
+	}
 	public ValidatoreXSD(OpenSPCoop2MessageFactory messageFactory,Schema schema) throws Exception {
 		super(schema);
 		this.messageFactory = messageFactory;
