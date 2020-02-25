@@ -12,6 +12,7 @@ Vedere anche documento odt
 - Per console di monitoraggio:
   . Aggiunta possibilita' di selezionare il numero di risultati per pagina come nella GovwayConsole.
   . Aggiunto messaggio di info visualizzato al posto della tabella vuota quando le ricerche producono zero risultati.
+  . Modificata gestione esporta delle transazioni... dialog per scegliere cosa e come esportare.
 
 2019-02-05  Andrea Poli <apoli@link.it>
 
