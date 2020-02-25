@@ -208,47 +208,13 @@
 					</a4j:outputPanel>
 				</rich:column>
 				<ui:define name="buttons">
-					<h:panelGrid columns="3" >
-						<a4j:outputPanel styleClass="form-container" layout="block">
-							<h:selectManyCheckbox id="esportazioniChk" value="#{mBean.esportazioniSelezionate}" required="false" requiredMessage="E' necessario selezionare almeno un tipo di esportazione." styleClass="controlset">
-								<f:selectItem itemLabel="Tracce" itemValue="tracce"/>
-								<f:selectItem itemLabel="Diagnostici" itemValue="diagnostici"/>
-								<f:selectItem itemLabel="Contenuti" itemValue="contenuti"/>
-							</h:selectManyCheckbox>
-						</a4j:outputPanel>
-						<h:commandLink id="exportDiagnostici-iconLink" 
-										target="_blank" 
-										styleClass="icon-compress" 
-										action="#{mBean.exportSelected}" 
-										onclick="return checkSelection('msgDt','msgDt_checkSelection');">
-							<h:outputText value="Esporta" />
-						</h:commandLink>
-						<h:commandLink id="exportCsv-iconLink" styleClass="icon-csv" onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ if(checkExportContenutiSelection('msgDt')){ preparaFormModale(getSelectedRows('msgDt'),getExportContenutiSelection('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); }} return false;"  
-							 disabled="#{!mBean.exportCsvAbilitato}" >
-								<h:outputText value="Esporta CSV" />
+					<h:panelGrid columns="1" >
+						<h:commandLink id="exportCsv-iconLink" styleClass="icon-csv" 
+					onclick="if(checkSelection('msgDt','msgDt_checkSelection')){ preparaFormModale(getSelectedRows('msgDt')); Richfaces.showModalPanel('exportCsvModalPnl'); } return false;" >
+								<h:outputText value="Esporta" />
 						</h:commandLink>
 					</h:panelGrid>
 				</ui:define>	
 			</link:dataTableCheckboxOnRight>
-			
-			<rich:modalPanel id="csvCheckSelection" width="350" height="200">
-			   <f:facet name="header">
-			   	<h:outputText value="Selezione errata." />
-			   </f:facet>
-		   		<div class="form-container noborder">
-					<div class="buttonrowmodal">
-			      		<h:panelGrid columns="2">
-			         		<h:graphicImage value="/images/tema_link/alert_orange.png" />
-				 			<h:outputText value="I contenuti non sono esportabili nel formato CSV." style="font-weight: bold;" />
-			      		</h:panelGrid>
-			     	</div>
-		        	<div class="errorsSpacer"/>
-			        <div class="buttonrowmodal">
-			     		<input type="button" value="Chiudi" 
-							   onclick="Richfaces.hideModalPanel('csvCheckSelection');return false" />
-			        </div>
-				 </div>
-			</rich:modalPanel>
-			
 	</a4j:outputPanel>
 </ui:composition>

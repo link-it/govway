@@ -17,17 +17,17 @@ function fn() {
 
   var config = {
 
-      monitorCred: { username: 'operatore', password: '123456' },
+      monitorCred: { username: 'operatore', password: 'Password1!' },
       monitorUrl: govwayUrl + '/govwayAPIMonitor',
       govwayDbConfig: { 
         username: 'govway',
         password: 'govway',
-        url: 'jdbc:postgresql://localhost:5432/govway',
+        url: 'jdbc:postgresql://localhost:5432/govway_330',
         driverClassName: 'org.postgresql.Driver'
       },
-      configCred:  { username: 'amministratore', password: '123456'},
+      configCred:  { username: 'amministratore', password: 'Password1!'},
       configUrl: govwayUrl + '/govwayAPIConfig',
-      soggettoDefault: 'ENTE',
+      soggettoDefault: 'Ente',
 
       statsInterval: 16000
 

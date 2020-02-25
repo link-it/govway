@@ -48,10 +48,15 @@ public class CostantiExport {
 	
 	public static final String FORMATO_XLS_VALUE = "XLS";
 	public static final String FORMATO_CSV_VALUE = "CSV";
+	public static final String FORMATO_ZIP_VALUE = "ZIP";
 	
 	public static final String ESPORTAZIONI_VALUE_CONTENUTI = "contenuti";
 	public static final String ESPORTAZIONI_VALUE_DIAGNOSTICI = "diagnostici";
 	public static final String ESPORTAZIONI_VALUE_TRACCE = "tracce";
+	
+	public static final String ESPORTAZIONI_LABEL_CONTENUTI = "Contenuti";
+	public static final String ESPORTAZIONI_LABEL_DIAGNOSTICI = "Diagnostici";
+	public static final String ESPORTAZIONI_LABEL_TRACCE = "Tracce";
 	
 	public static final String COLONNE_VALUE_PERSONALIZZA = "Personalizza";
 	public static final String COLONNE_VALUE_TUTTE = "Tutte";
