@@ -828,6 +828,32 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
 	}
 	
+	/* Properties gestione finestra di export transazioni */
+	
+	public boolean isExportTransazioniZipTracceDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.tracce.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniZipDiagnosticiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.diagnostici.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniZipContenutiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.contenuti.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvTracceDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.tracce.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvDiagnosticiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.diagnostici.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.visualizzaCheckBoxSelezioneContenuti.enabled", true, true));
+	}
+	
 	/* Properties gestione della paginazione delle liste con le count */
 	
 	public boolean isAttivoUtilizzaCountStoricoTransazioni() throws Exception{
