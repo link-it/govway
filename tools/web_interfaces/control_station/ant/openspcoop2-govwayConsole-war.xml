@@ -282,7 +282,7 @@
 					<filelist dir="${data_content_handler_dir}"
 		                           files="mailcap"/>
 				</concat>
-				<jar jarfile="${build_govwayConsole}/tmp/mailapi-1.6.2.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
+				<jar jarfile="${build_govwayConsole}/tmp/mailapi-1.6.4.gw.jar" manifest="${build_govwayConsole}/tmp/mailapi/META-INF/MANIFEST.MF">
 					<zipfileset dir="${build_govwayConsole}/tmp/mailapi"/>
 				</jar>
 			</then>
@@ -357,6 +357,7 @@
 				<include name="freemarker-2.3.29.jar" />
 				<include name="joda-time-2.10.5.jar" />
 				<include name="reactive-streams-1.0.3.jar" />
+				<include name="${jakarta_activation_jar}"/>
 			</lib>
 			<lib dir="${required_lib_govwayConsole}/cxf">
 				<include name="cxf-core-*.jar" />
@@ -374,8 +375,7 @@
 			<lib dir="${required_lib_govwayConsole}/jax">
 				<include name="jaxws-*.jar" />
 				<include name="${jaxp_ri_jar}" />
-				<include name="jaxb-core-2.3.0.1.jar" /> <!-- serve al wadl -->
-				<include name="jaxb-xjc-2.3.2.jar" /> <!-- serve al wadl -->
+				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${required_lib}/log">
 				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
@@ -423,7 +423,7 @@
 			</lib>
 			<!-- Mail api esteso con activation data handler openspcoop -->
 			<lib dir="${build_govwayConsole}/tmp">
-				<include name="mailapi-1.6.2.gw.jar" />
+				<include name="mailapi-1.6.4.gw.jar" />
 			</lib>
 			<!-- Plugins -->
 			<lib dir="${plugins_govwayConsole}">

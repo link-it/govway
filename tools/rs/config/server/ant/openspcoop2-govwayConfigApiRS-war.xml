@@ -82,6 +82,7 @@
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="jaxws-*.jar"/>
 				<include name="${jaxp_ri_jar}"/>
+				<include name="jaxb-*.jar" />
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.1.1.jar"/>
@@ -102,7 +103,8 @@
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
-				<include name="${xalan_serializer_jar}"/>	
+				<include name="${xalan_serializer_jar}"/>
+				<include name="${jakarta_activation_jar}"/>	
 			</lib>
 			<lib dir="${openspcoop2.lib}/jackson">
 				<include name="*.jar"/>
@@ -129,6 +131,7 @@
 
 			<lib dir="${openspcoop2.lib}/saaj">
 				<include name="saaj-impl-1.5.1-gov4j-2.jar"/>
+				<include name="${javax_xml_soap-api_jar}"/>
 			</lib>
 
 			<lib dir="${openspcoop2.lib}/security">

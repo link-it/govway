@@ -665,7 +665,7 @@
 								</copy>
 								<copy todir="${tmp_archivi}/govway.ear/lib">
 								    <fileset dir="${deploy_sw}/jars">
-									<include name="mailapi-1.6.2.gw.jar"/>
+									<include name="mailapi-1.6.4.gw.jar"/>
 								    </fileset>
 								</copy>
 							</then>

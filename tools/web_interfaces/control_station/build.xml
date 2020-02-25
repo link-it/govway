@@ -138,6 +138,17 @@
 			<var name="geronimo_jaxws_spec_jar" value="DADEFINIREMEGLIOgeronimo-jaxws_2.2_spec-1.1.jar"/>
 		</then>
 	</if>
+	<!-- jakarta.activation -->
+	<var name="jakarta_activation_jar" value="" />
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jakarta_activation_jar" value="jakarta.activation-1.2.1.jar"/>
+		</then>
+	</if>
+
 	<!-- jboss_classloading -->
 	<if>
 		<or>
