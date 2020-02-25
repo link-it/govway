@@ -45,30 +45,50 @@ import org.testng.internal.annotations.IAnnotationTransformer;
 
 public class TestSuiteTransformer implements IAnnotationTransformer{
 
-	public static Boolean sequentialForced = false;
-	
+	@Override
+	public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod,
+			Class<?> occurringClazz) {
+		this._transform(annotation, testClass, testConstructor, testMethod);
+	}
+
 	@Override
 	public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){
+		this._transform(annotation, testClass, testConstructor, testMethod);
+	}
+	
+	public static Boolean sequentialForced = false;
+	
+	public static Boolean initializedSemaphore = true;
+	public static Boolean initialized = false;
+	
+	private void _transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){
 		
-		try{
-			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(TestSuiteTransformer.class));
-		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(), e);
+		synchronized(initializedSemaphore) {
+			if(initialized==false) {
+		
+				try{
+					DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(TestSuiteTransformer.class));
+				}catch(Exception e){
+					throw new RuntimeException(e.getMessage(), e);
+				}
+				
+				try{
+					ConfigurazionePdD config = new ConfigurazionePdD();
+					config.setLoader(new Loader());
+					LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_trasparente.log4j2.properties"));
+					Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
+					config.setLog(log);
+					ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
+				}catch(Exception e){
+					throw new RuntimeException(e.getMessage(),e);
+				}
+				
+				org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
+				org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
+				
+				initialized = true;
+			}
 		}
-		
-		try{
-			ConfigurazionePdD config = new ConfigurazionePdD();
-			config.setLoader(new Loader());
-			LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_trasparente.log4j2.properties"));
-			Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
-			config.setLog(log);
-			ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
-		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		
-		org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
-		org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
 		
 		if(testMethod!=null){
 			@SuppressWarnings("unused")

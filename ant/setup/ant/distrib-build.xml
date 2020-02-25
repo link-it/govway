@@ -781,7 +781,23 @@
 			</else>
 		</if>
 		
-		
+		<!-- ** correggo manifest in govway.jar (stateful) ** -->
+		<available file="${dist}/archivi/OpenSPCoop2/govway.jar" type="file" property="govway.jar.present"/>
+		<if>
+			<equals arg1="${govway.jar.present}" arg2="true"/>
+			<then>
+				<antcall target="-correctManifest">
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
+				</antcall>
+				<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
+				</antcall>
+			</then>
+		</if>
+	
+	
 		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
 		<if>
 			<istrue value="${antinstaller_rs_config}"/>

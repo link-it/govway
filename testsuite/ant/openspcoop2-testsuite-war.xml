@@ -123,6 +123,7 @@
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
+				<include name="joda-time-2.10.5.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
 				<include name="commons-codec-1.14.jar"/>
