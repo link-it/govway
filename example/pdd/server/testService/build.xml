@@ -144,7 +144,10 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${libs}/cxf">
-				<include name="*.jar"/>
+				<include name="cxf-core-*.jar" />
+				<include name="cxf-rt-*.jar" />
+				<exclude name="cxf-rt-transports-http-3.3.5.jar" /> <!-- warning su wildfly al deploy -->
+				<include name="jakarta.ws.rs-api-2.1.6.jar" />
 			</lib>
 			<lib dir="${libs}/saaj">
 				<include name="*.jar"/>

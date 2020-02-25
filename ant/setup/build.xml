@@ -173,7 +173,10 @@
 			
 	 -->
 
-	
+	<!-- Per agganciare loader valorizzare questa proprieta'
+	<var name="antinstaller_loader" value="true" />
+	-->	
+
 	<if>
 		<or>
 			<matches string="${antinstaller_as}" pattern="jboss.*"/>

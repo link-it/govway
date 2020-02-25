@@ -17,12 +17,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.core.config.rs.server.utils;
+package org.openspcoop2.web.ctrlstat.core;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 
 import org.apache.struts.upload.FormFile;
 import org.openspcoop2.utils.UtilsException;
@@ -36,16 +37,41 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
  * @version $Rev$, $Date$
  * 
  */
-public class WrapperFormFile implements FormFile {
+public class SerialiableFormFile implements FormFile, Serializable {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private String contentType;
 	private String fileName;
 	private byte[] content;
 	
-	public WrapperFormFile(String fileName, byte[] content) throws UtilsException {
+	public SerialiableFormFile(FormFile ff) throws UtilsException {
+		try {
+//			if(ff instanceof SerialiableFormFile) {
+//				SerialiableFormFile sff = (SerialiableFormFile) ff;
+//				this.contentType = sff.getContentType();
+//				this.fileName = sff.getFileName();
+//				this.content = sff.getFileData();
+//			}
+//			else {
+			this.contentType = ff.getContentType();
+			this.fileName = ff.getFileName();
+			this.content = ff.getFileData();
+			//ff.destroy();
+//			}
+		}catch(Exception e) {
+			throw new UtilsException(e.getMessage(),e);
+		}
+	}
+	
+	// Costruttori utilizzati in RS API
+	public SerialiableFormFile(String fileName, byte[] content) throws UtilsException {
 		this(getContentType(fileName),fileName,content);
 	}
-	public WrapperFormFile(String contentType, String fileName, byte[] content) {
+	public SerialiableFormFile(String contentType, String fileName, byte[] content) {
 		this.fileName = fileName;
 		this.content = content;
 		this.contentType = contentType;

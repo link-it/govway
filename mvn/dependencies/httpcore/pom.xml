@@ -21,7 +21,7 @@
 		<httpclient.version>4.5.11</httpclient.version>
 		<httpasyncclient.version>4.1.4</httpasyncclient.version>
 		<httpcore.version>4.4.13</httpcore.version>
-		<httpcore.gov4j.version>4.4.13-gov4j-1</httpcore.gov4j.version>
+		<httpcore.gov4j.version>4.4.13-gov4j-2</httpcore.gov4j.version>
 
 	</properties>
 
