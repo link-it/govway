@@ -134,12 +134,12 @@ public class ColonnaExportManager {
 		this._addColonna(CostantiExport.KEY_COL_X_FORWARDED_FOR, CostantiExport.LABEL_COL_X_FORWARDED_FOR, SHOW_IN_CUSTOM_VIEW);
 
 		
-		// AGGIUNTA TRACCE GESTITE DALL'UTENTE NELLA FORM NELLA PAGINA
-		this._addColonna(CostantiExport.KEY_COL_TRACCIA_RICHIESTA, CostantiExport.LABEL_COL_TRACCIA_RICHIESTA,true);
-		this._addColonna(CostantiExport.KEY_COL_TRACCIA_RISPOSTA, CostantiExport.LABEL_COL_TRACCIA_RISPOSTA,true);
-		
-		// AGGIUNTA DIAGNOSTICI GESTITA DALL'UTENTE NELLA FORM NELLA PAGINA
-		this._addColonna(CostantiExport.KEY_COL_DIAGNOSTICI, CostantiExport.LABEL_COL_DIAGNOSTICI,true);
+//		// AGGIUNTA TRACCE GESTITE DALL'UTENTE NELLA FORM NELLA PAGINA
+//		this._addColonna(CostantiExport.KEY_COL_TRACCIA_RICHIESTA, CostantiExport.LABEL_COL_TRACCIA_RICHIESTA,true);
+//		this._addColonna(CostantiExport.KEY_COL_TRACCIA_RISPOSTA, CostantiExport.LABEL_COL_TRACCIA_RISPOSTA,true);
+//		
+//		// AGGIUNTA DIAGNOSTICI GESTITA DALL'UTENTE NELLA FORM NELLA PAGINA
+//		this._addColonna(CostantiExport.KEY_COL_DIAGNOSTICI, CostantiExport.LABEL_COL_DIAGNOSTICI,true);
 		
 //		this._addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_LIST1, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_LIST1);
 //		this._addColonna(ColonnaExportCostanti.KEY_COL_DIAGNOSTICI_LIST2, ColonnaExportCostanti.LABEL_COL_DIAGNOSTICI_LIST2);
