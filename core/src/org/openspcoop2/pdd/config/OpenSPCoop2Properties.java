@@ -1354,6 +1354,7 @@ public class OpenSPCoop2Properties {
 			// Diagnostici
 			this.isRegistrazioneDiagnosticaFile_intestazione_formatValues();
 			this.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD();
+			this.isLoggerSaajDisabilitato();
 			
 			// Dump
 			this.isDumpAllAttachments();
@@ -13712,6 +13713,30 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.isRegistrazioneDiagnosticaFallita_BloccoServiziPdD;
+	}
+	
+	private static Boolean isLoggerSaajDisabilitato = null;
+	public boolean isLoggerSaajDisabilitato(){
+
+		if(OpenSPCoop2Properties.isLoggerSaajDisabilitato==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled"); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isLoggerSaajDisabilitato = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=true");
+					OpenSPCoop2Properties.isLoggerSaajDisabilitato = true;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.logger.com.sun.xml.messaging.saaj.disabled' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isLoggerSaajDisabilitato = true;
+			}
+		}
+
+		return OpenSPCoop2Properties.isLoggerSaajDisabilitato;
 	}
 	
 	

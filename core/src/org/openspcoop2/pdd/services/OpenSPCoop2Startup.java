@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -492,6 +493,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
 			
 			OpenSPCoop2Startup.initializeLog = true;
+			
+			if(propertiesReader.isLoggerSaajDisabilitato()) {
+				//java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.SOAP_DOMAIN
+				//																		"com.sun.xml.messaging.saaj.soap.LocalStrings");
+				java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN);
+				logSaaj.setLevel(Level.OFF);
+				logSaaj.severe("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato; questo messaggio non deve essere visualizzato");
+				logSaaj.severe("SAAJ0511.soap.cannot.create.envelope"); // serve per caricare il logger con il local string
+				OpenSPCoop2Startup.log.info("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
+			}
 
 			
 			
