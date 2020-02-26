@@ -67,7 +67,7 @@ public class CostantiErroriIntegrazione {
 	public final static String MSG_402_AUTENTICAZIONE_FALLITA_IDENTITA_SERVIZIO_APPLICATIVO_ERRATA = "Autenticazione fallita, L'identità del servizio applicativo fornita [SERVIZIO_APPLICATIVO] non esiste nella configurazione"; 
 	
 	/** String che contiene un codice di errore OpenSPCoop2: Pattern di ricerca PD non valido in msg*/
-	public final static String MSG_403_PD_PATTERN_AZIONE_NON_VALIDA = "Identificazione dinamica dell'azione associata alla porta delegata fallita";
+	public final static String MSG_403_PD_PATTERN_AZIONE_NON_VALIDA = "Identificazione dinamica dell'operazione fallita";
 	
 
 	/** String che contiene un codice di errore OpenSPCoop2: AutorizzazioneFallita in msg*/

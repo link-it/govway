@@ -147,6 +147,8 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>
+			<include name="jaxws-api-2.3.1.jar"/>
+			<include name="jaxws-jsr181-api-2.3.1.jar"/>
 		</fileset>
 
 	</path>
