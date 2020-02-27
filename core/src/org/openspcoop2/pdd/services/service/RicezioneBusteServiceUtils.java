@@ -96,10 +96,10 @@ public class RicezioneBusteServiceUtils {
 		try{
 			idPA = serviceIdentificationReader.findPortaApplicativa(protocolContext, true);
 		}catch(RegistryNotFound notFound){
-			if(pddContextNullable!=null) {
-				pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
-			}
 			if(bindingConfig.existsContextUrlMapping()==false){
+				if(pddContextNullable!=null) {
+					pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
+				}
 				logCore.error("Porta Applicativa non trovata: "+notFound.getMessage(),notFound);
 				msgDiag.addKeywordErroreProcessamento(notFound);
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");

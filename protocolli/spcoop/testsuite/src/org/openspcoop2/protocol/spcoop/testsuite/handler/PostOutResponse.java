@@ -90,7 +90,7 @@ public class PostOutResponse implements PostOutResponseHandler {
 				throw new HandlerException("Esito da verificare is null ???");
 			}
 			if(!context.getEsito().getName().equals(test.getEsito())){
-				throw new HandlerException("Esito della Porta di Dominio ["+context.getEsito().getName().name()+"] diverso da quello atteso per il test ["+test.getEsito().name()+"]");
+				throw new HandlerException("Esito della Porta di Dominio ["+context.getEsito().getName().name()+"] (code:"+context.getEsito().getCode()+") diverso da quello atteso per il test ["+test.getEsito().name()+"]");
 			}
 			
 			// Dimensioni
