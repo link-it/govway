@@ -1589,11 +1589,13 @@ public class GestoreMessaggi  {
 					// Costruzione Query
 					StringBuilder query = new StringBuilder();
 					query.append("UPDATE ");
-					if(servizioApplicativo==null)
+					if(servizioApplicativo==null) {
 						query.append(GestoreMessaggi.MESSAGGI);
-					else
+						query.append(" SET ERRORE_PROCESSAMENTO=? WHERE ID_MESSAGGIO = ?");
+					}else {
 						query.append(GestoreMessaggi.MSG_SERVIZI_APPLICATIVI);
-					query.append(" SET ERRORE_PROCESSAMENTO=?, ERRORE_PROCESSAMENTO_COMPACT=? WHERE ID_MESSAGGIO = ?");
+						query.append(" SET ERRORE_PROCESSAMENTO=?, ERRORE_PROCESSAMENTO_COMPACT=? WHERE ID_MESSAGGIO = ?");
+					}
 					if(servizioApplicativo!=null)
 						query.append(" AND SERVIZIO_APPLICATIVO=?");
 					else
@@ -1601,11 +1603,13 @@ public class GestoreMessaggi  {
 					pstmt = connectionDB.prepareStatement(query.toString());
 					int index = 1;
 					pstmt.setString(index++,prefix+motivoErrore);
-					if(motivoErrore!=null && motivoErrore.length()>=200) { // per evitare anche caratteri strani che occupano maggiore spazio
-						pstmt.setString(index++,motivoErrore.substring(0, 200)+" ...");
-					}
-					else {
-						pstmt.setString(index++,motivoErrore);
+					if(servizioApplicativo!=null) {
+						if(motivoErrore!=null && motivoErrore.length()>=200) { // per evitare anche caratteri strani che occupano maggiore spazio
+							pstmt.setString(index++,motivoErrore.substring(0, 200)+" ...");
+						}
+						else {
+							pstmt.setString(index++,motivoErrore);
+						}
 					}
 					pstmt.setString(index++,this.idBusta);
 					if(servizioApplicativo!=null)
