@@ -291,8 +291,10 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 		if(soapBody!=null && isMessaggioConAttachments && validazioneManifestAttachments){
 			try {	
 				// Validazione
+				
 				Element firstElement = OpenSPCoop2MessageFactory.getFirstChildElement(message.getFactory(), MessageType.SOAP_11, soapBody);
-				validatoreBustaSPCoop.valida(xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(message.getFactory(), firstElement, false))); 
+				//validatoreBustaSPCoop.valida(xmlUtils.newDocument(OpenSPCoop2MessageFactory.getAsByte(message.getFactory(), firstElement, false))); 
+				validatoreBustaSPCoop.valida(firstElement); 
 			} catch (SAXException e) {
 				// instance document is invalid!
 				Eccezione ecc = new Eccezione();
@@ -300,6 +302,7 @@ public class SPCoopValidazioneConSchema extends BasicStateComponentFactory imple
 				ecc.setCodiceEccezione(CodiceErroreCooperazione.FORMATO_CORPO_NON_CORRETTO);
 				ecc.setRilevanza(LivelloRilevanza.ERROR);
 				ecc.setDescrizione("ManifestAttachments: "+e.getMessage());
+				this.log.error("Validazione con schema xsd del manifest degli attachments fallita",e);
 				this.erroriValidazione.add(ecc);
 			}catch (Exception e) {
 				Eccezione ecc = new Eccezione();

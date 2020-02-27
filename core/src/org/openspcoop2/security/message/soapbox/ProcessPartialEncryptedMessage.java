@@ -84,6 +84,7 @@ import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.exceptions.Base64DecodingException;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.io.Base64Utilities;
@@ -242,10 +243,19 @@ public class ProcessPartialEncryptedMessage implements Processor {
                 //attachments
                 if(type.equals(WSSAttachmentsConstants.ATTACHMENT_COMPLETE_URI) || type.equals(WSSAttachmentsConstants.ATTACHMENT_CONTENT_ONLY_URI)) {
                 	try {
-                		Class<?> edhb = Class.forName(this.message.getEncryptedDataHeaderBlockClass()); 
+                		SOAPElement encDataSoapElement = null;
+                		if(encData instanceof SOAPElement) {
+                			encDataSoapElement = (SOAPElement) encData;
+                		}
+                		else {
+                			encDataSoapElement = MessageType.SOAP_11.equals(this.message.getMessageType()) ?
+                					this.message.getFactory().getSoapFactory11().createElement(encData) :
+                					this.message.getFactory().getSoapFactory12().createElement(encData);
+                		}
                 		
+                		Class<?> edhb = Class.forName(this.message.getEncryptedDataHeaderBlockClass()); 
                 		Constructor<?> constructor = edhb.getConstructor(SOAPElement.class);
-                		EncryptedDataHeaderBlock xencEncryptedData = (EncryptedDataHeaderBlock) constructor.newInstance((SOAPElement)encData);
+                		EncryptedDataHeaderBlock xencEncryptedData = (EncryptedDataHeaderBlock) constructor.newInstance(encDataSoapElement);
                 		
                 		String uri = xencEncryptedData.getCipherReference(false, null).getAttribute("URI");
                 		AttachmentPart part = (AttachmentPart) msgSecCtx.getProperty(uri.substring(4));

@@ -34,7 +34,6 @@ import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPException;
 
 import org.apache.wss4j.common.saml.builder.SAML2Constants;
-import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.herasaf.xacml.core.context.impl.DecisionType;
 import org.herasaf.xacml.core.context.impl.ResultType;
 import org.openspcoop2.core.id.IDServizio;
@@ -45,6 +44,7 @@ import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.MessageType;
+import org.openspcoop2.message.soap.WSSecurityUtils;
 import org.openspcoop2.message.xml.DynamicNamespaceContextFactory;
 import org.openspcoop2.message.xml.XPathExpressionEngine;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
@@ -248,7 +248,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	
 	    	SOAPElement security = null;
 	    	try{
-	    		security = (SOAPElement) WSSecurityUtil.getSecurityHeader(soapMessage.getSOAPPart(), actor);
+	    		security = (SOAPElement) WSSecurityUtils.getSecurityHeader(soapMessage.getSOAPPart(), soapMessage.getMessageType(), actor);
 	    	}catch(Exception e){
 	    		throw new SecurityException("Errore durante la ricerca dell'header WSSecurity (actor:"+actor+") "+e.getMessage(),e);
 	    	}

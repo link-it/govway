@@ -60,13 +60,12 @@ public class MessageSecurityContext_soapbox implements IMessageSecurityContext{
 	    		throw new SecurityException(e.getMessage(),e);
 	    	}
 				
-			try{ 
-				System.out.println("LA INIT NON C'ERA, SE FUNZIONA TESTSUTE SECURITY E SOAPBOX POI LEVARE QUESTA STAMPA");
-				//org.apache.xml.security.Init.init();
-			}catch(Throwable e){
-	    		wssContext.getLog().error("Inizializzazione org.apache.xml.security non riuscita: "+e.getMessage(),e);
-	    		throw new SecurityException(e.getMessage(),e);
-	    	}
+//			try{ 
+//				org.apache.xml.security.Init.init();
+//			}catch(Throwable e){
+//	    		wssContext.getLog().error("Inizializzazione org.apache.xml.security non riuscita: "+e.getMessage(),e);
+//	    		throw new SecurityException(e.getMessage(),e);
+//	    	}
 			
 			// Li registro entrambi in modo da poter switchare tra le implementazioni
 			try{ 

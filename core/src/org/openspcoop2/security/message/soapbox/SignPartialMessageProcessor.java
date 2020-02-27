@@ -245,7 +245,7 @@ public class SignPartialMessageProcessor implements Processor {
         
         // ** Firma degli attachments indicati **
         sigXMLSec.addResourceResolver(org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver.getInstance(this.message));
-        signAttachments(xmlUtils, this.signAttachments, signReq, sigXMLSec);
+        signAttachments(xmlUtils, this.signAttachments, signReq, sigXMLSec, doc);
         
         
         
@@ -306,11 +306,11 @@ public class SignPartialMessageProcessor implements Processor {
     
 
     
-    private SOAPElement convertToSoapElement(org.apache.xml.security.utils.ElementProxy proxy) {
+    private Element convertToSoapElement(org.apache.xml.security.utils.ElementProxy proxy) {
         org.w3c.dom.Element elem = proxy.getElement();
         if(elem instanceof SOAPElement)
-            return (SOAPElement)elem;
-        return (SOAPElement)proxy.getDocument().importNode(elem, true);
+            return elem;
+        return (Element) proxy.getDocument().importNode(elem, true);
     }
 
     
@@ -377,7 +377,8 @@ public class SignPartialMessageProcessor implements Processor {
 //    protected void signAttachments(List<AttachmentPart> part, SignatureRequest signReq, SignatureHeaderBlock signatureHeaderBlock) throws Exception {
     protected void signAttachments(AbstractXMLUtils xmlUtils,
     		List<AttachmentPart> part, SignatureRequest signReq,
-    		org.apache.xml.security.signature.XMLSignature sigXMLSec) {
+    		org.apache.xml.security.signature.XMLSignature sigXMLSec,
+    		Document d) {
 		
     	try {
     		// Specifica in Web Services Security SOAP Messages With Attachments (Swa) Profile 1.1
@@ -428,9 +429,10 @@ public class SignPartialMessageProcessor implements Processor {
 					uri = p.getContentLocation();
 				}
         		
-        			
+        		//Document d = this.message.getSOAPHeader().getOwnerDocument();
+        		
     			org.apache.xml.security.transforms.Transforms transforms = 
-        				new org.apache.xml.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
+        				new org.apache.xml.security.transforms.Transforms(d);
         		transforms.addTransform(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI);
         		
         		String contentType = p.getContentType();
@@ -440,7 +442,7 @@ public class SignPartialMessageProcessor implements Processor {
         				byte[]raw = p.getRawContentBytes();
         				Element signElement = xmlUtils.newElement(raw);
         				transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
-        						this.message.getSOAPHeader().getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
+        						d, CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
         			}
         		}
         		/*else{
@@ -454,7 +456,7 @@ public class SignPartialMessageProcessor implements Processor {
 //	        	byte[]raw = p.getRawContentBytes();
 //	        	String contentType = p.getContentType();
 //	        	com.sun.org.apache.xml.internal.security.transforms.Transforms transforms = 
-//        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
+//        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(d);
 //	        	
 //	        	// 1. MIME Part Canonicalize the content of the attachment, as appropriate to the MIME type of the part, as
 //	        	// outlined in section 4.4.2 Attachments of an XML content type require Exclusive XML Canonicalization
@@ -471,7 +473,7 @@ public class SignPartialMessageProcessor implements Processor {
 //	        		Canonicalizer canonicalizer = CanonicalizerFactory.getCanonicalizer(contentType);
 //	        		byte[] canonicalize = canonicalizer.canonicalize(raw);
 //	        		transforms = 
-//	        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
+//	        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(d);
 //	        		transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_BASE64_DECODE);
 //	        		transforms.addBase64Text(Base64.encode(canonicalize));
 //	        	}
