@@ -274,38 +274,27 @@ public class MTOMUtilities {
         }catch(Exception e){
         	if(invocazioneConErrore){
         		Reporter.log("Exception ["+e.getClass().getName()+"]");
-				Assert.assertTrue(e instanceof javax.xml.ws.soap.SOAPFaultException);
-				javax.xml.ws.soap.SOAPFaultException fault = (javax.xml.ws.soap.SOAPFaultException) e;
-				Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
-				String sub = null;
-				/*if(soap11==false){
-					if(fault.getFault().getFaultSubcodes().hasNext()){
-						javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getFault().getFaultSubcodes().next();
-						sub = q.getLocalPart();
-						Reporter.log("SubFaultCode ["+sub+"]");
+        		Throwable e2 = e.getCause();
+        		Reporter.log("Exception2 ["+e2.getClass().getName()+"]");
+				Assert.assertTrue((e instanceof javax.xml.ws.soap.SOAPFaultException) || (e2 instanceof org.apache.cxf.binding.soap.SoapFault));
+				if(e instanceof javax.xml.ws.soap.SOAPFaultException) {
+					javax.xml.ws.soap.SOAPFaultException fault = (javax.xml.ws.soap.SOAPFaultException) e;
+					Reporter.log("FaultCode ["+fault.getFault().getFaultCode()+"]");
+					String sub = null;
+					if(soap11==false){
+//						if(fault.getFault().getFaultSubcodes().hasNext()){
+//							javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getFault().getFaultSubcodes().next();
+//							sub = q.getLocalPart();
+//							Reporter.log("SubFaultCode ["+sub+"]");
+//						}
 					}
-				}*/
-				Reporter.log("FaultString ["+fault.getFault().getFaultString()+"]");
-				Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
-				if(portaDelegata){
-					String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
-					if(portaDelegata) {
-						prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
-					}
-					if(soap11){
-						Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), prefix+"500");
-					}
-					else{
-						Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
-						Assert.assertEquals(sub, prefix+"500");
-					}
-					Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
-					Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
-				}
-				else{
-					boolean problem = ProblemUtilities.existsProblem(fault.getFault().getDetail());
-					if(problem) {
+					Reporter.log("FaultString ["+fault.getFault().getFaultString()+"]");
+					Reporter.log("FaultActor ["+fault.getFault().getFaultActor()+"]");
+					if(portaDelegata){
 						String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
+						if(portaDelegata) {
+							prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+						}
 						if(soap11){
 							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), prefix+"500");
 						}
@@ -316,15 +305,84 @@ public class MTOMUtilities {
 						Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
 						Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
 					}
-					else {
+					else{
+						boolean problem = ProblemUtilities.existsProblem(fault.getFault().getDetail());
+						if(problem) {
+							String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
+							if(soap11){
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), prefix+"500");
+							}
+							else{
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
+								Assert.assertEquals(sub, prefix+"500");
+							}
+							Assert.assertEquals(fault.getFault().getFaultString(), "Sistema non disponibile");
+							Assert.assertEquals(fault.getFault().getFaultActor(), "http://govway.org/integration");
+						}
+						else {
+							if(soap11){
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Server");
+							}
+							else{
+								Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
+							}
+							Assert.assertEquals(fault.getFault().getFaultString(), "300 - Errore nel processamento del messaggio di cooperazione");
+							Assert.assertTrue(fault.getFault().getFaultActor()==null);
+						}
+					}
+				}
+				else {
+					org.apache.cxf.binding.soap.SoapFault fault = (org.apache.cxf.binding.soap.SoapFault) e2;
+					Reporter.log("FaultCode ["+fault.getFaultCode()+"]");
+					String sub = null;
+					if(soap11==false){
+						if(fault.getSubCode()!=null){
+							javax.xml.namespace.QName q = (javax.xml.namespace.QName)  fault.getSubCode();
+							sub = q.getLocalPart();
+							Reporter.log("SubFaultCode ["+sub+"]");
+						}
+					}
+					Reporter.log("FaultString ["+fault.getReason()+"]");
+					Reporter.log("FaultActor ["+fault.getRole()+"]");
+					if(portaDelegata){
+						String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
+						if(portaDelegata) {
+							prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE;
+						}
 						if(soap11){
-							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Server");
+							Assert.assertEquals(fault.getFaultCode().getLocalPart(), prefix+"500");
 						}
 						else{
-							Assert.assertEquals(fault.getFault().getFaultCodeAsName().getLocalName(), "Receiver");
+							Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
+							Assert.assertEquals(sub, prefix+"500");
 						}
-						Assert.assertEquals(fault.getFault().getFaultString(), "300 - Errore nel processamento del messaggio di cooperazione");
-						Assert.assertTrue(fault.getFault().getFaultActor()==null);
+						Assert.assertEquals(fault.getReason(), "Sistema non disponibile");
+						Assert.assertEquals(fault.getRole(), "http://govway.org/integration");
+					}
+					else{
+						boolean problem = ProblemUtilities.existsProblem(fault.getDetail());
+						if(problem) {
+							String prefix = org.openspcoop2.protocol.basic.Costanti.ERRORE_PROTOCOLLO_PREFIX_CODE;
+							if(soap11){
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), prefix+"500");
+							}
+							else{
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
+								Assert.assertEquals(sub, prefix+"500");
+							}
+							Assert.assertEquals(fault.getReason(), "Sistema non disponibile");
+							Assert.assertEquals(fault.getRole(), "http://govway.org/integration");
+						}
+						else {
+							if(soap11){
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Server");
+							}
+							else{
+								Assert.assertEquals(fault.getFaultCode().getLocalPart(), "Receiver");
+							}
+							Assert.assertEquals(fault.getReason(), "300 - Errore nel processamento del messaggio di cooperazione");
+							Assert.assertTrue(fault.getRole()==null);
+						}
 					}
 				}
 				

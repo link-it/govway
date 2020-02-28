@@ -19,6 +19,9 @@
  */
 package org.openspcoop2.protocol.trasparente.testsuite.units.soap.fault;
 
+import java.util.Date;
+
+import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.Porta;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaApplicativa;
 import org.openspcoop2.protocol.trasparente.testsuite.units.utils.PortaImpl;
@@ -26,6 +29,9 @@ import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
+import org.openspcoop2.utils.date.DateManager;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
@@ -37,6 +43,23 @@ import org.testng.annotations.Test;
  * @version $Rev$, $Date$
  */
 public class PortaApplicativaFault500 extends PortaImpl {
+	
+	
+	private Date dataAvvioGruppoTest = null;
+	
+	@BeforeClass
+	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
+		this.dataAvvioGruppoTest = DateManager.getDate();
+	} 	
+	
+	@AfterClass
+	public void testOpenspcoopCoreLog() throws Exception{
+		FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest);
+	} 
+
+	
+	
+	
 	/* TEST ONE WAY FAULT.500 */
 	
 	@Test(groups={PortaApplicativa.ID_GRUPPO,PortaApplicativa.ID_GRUPPO+"Fault500",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500",PortaApplicativa.ID_GRUPPO+".SOAP11",PortaApplicativa.ID_GRUPPO+".ONEWAY_FAULT.500.SOAP11.STATEFUL"})

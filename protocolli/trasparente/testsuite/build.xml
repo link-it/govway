@@ -155,9 +155,11 @@
 			<include name="*.jar"/>
 			<exclude name="javax.xml.soap-api-1.4.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
-		<!-- Non funziona MTOM <fileset dir="${openspcoop2_lib}/jax" >
+		<fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>
-		</fileset> -->
+			<include name="jaxws-api-2.3.1.jar"/>
+			<include name="jaxws-jsr181-api-2.3.1.jar"/>
+		</fileset>
 		<fileset dir="${openspcoop2_lib}/jetty" >
 			<include name="*.jar"/>
 		</fileset>

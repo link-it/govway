@@ -47,7 +47,6 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPathFactory;
@@ -662,7 +661,7 @@ public abstract class AbstractXMLUtils {
 
 	
 	private void writeNodeTo(Node node,OutputStream os,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException, XMLException{
-		Source source = new DOMSource(node);
+		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(os);
 		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
@@ -672,7 +671,7 @@ public abstract class AbstractXMLUtils {
 		os.flush();
 	}
 	private void writeNodeTo(Node node,Writer writer,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		Source source = new DOMSource(node);
+		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(writer);
 		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
@@ -682,7 +681,7 @@ public abstract class AbstractXMLUtils {
 		writer.flush();
 	}
 	private void writeNodeTo(Node node,File file,ErrorListener errorListener,boolean omitXMLDeclaration)throws TransformerException,IOException, XMLException{
-		Source source = new DOMSource(node);
+		Source source = new DOMSourceFix(node);
 		StreamResult result = new StreamResult(file);
 		Transformer transformer = getTransformerFactory().newTransformer();
 		if(omitXMLDeclaration)
