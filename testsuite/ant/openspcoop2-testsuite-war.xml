@@ -140,6 +140,7 @@
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jax">
+				<include name="${jaxb_jar}" />
 				<include name="${jaxp_ri_jar}" />
 			</lib>
 			<lib dir="${required_lib}/log">
