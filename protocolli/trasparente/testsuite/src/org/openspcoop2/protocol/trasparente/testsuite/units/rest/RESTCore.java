@@ -547,6 +547,10 @@ public class RESTCore {
 			// Raccolgo identificativo per verifica traccia
 			String idMessaggio = null;
 			if(!"preflight".equals(tipoTest)) {
+				if(httpResponse.getHeaders()!=null) {
+					Reporter.log("Headers: ("+httpResponse.getHeaders().keySet()+")");
+				}
+				Reporter.log("Leggo id da header ["+TestSuiteProperties.getInstance().getIdMessaggioTrasporto()+"]");
 				idMessaggio = httpResponse.getHeader(TestSuiteProperties.getInstance().getIdMessaggioTrasporto());
 				Assert.assertTrue(idMessaggio!=null);
 				Reporter.log("Ricevuto id ["+idMessaggio+"]");

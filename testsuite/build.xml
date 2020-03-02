@@ -49,6 +49,8 @@
 	<var name="xalan_serializer_jar" value="" />
 	<var name="jaxb_jar" value=""/>
 	<var name="jaxp_ri_jar" value=""/>
+	<var name="axis_saaj_jar" value=""/>
+	<var name="jackson_jar" value=""/>
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value=""/>
@@ -116,6 +118,25 @@
 		</or>
 		<then>
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
+		</then>
+	</if>
+	<!-- axis_saaj_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="axis_saaj_jar" value="axis-saaj-1.4.jar"/>
+		</then>
+	</if>
+	<!-- jackson_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jackson_jar" value="*.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->

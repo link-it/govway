@@ -627,7 +627,11 @@ public class ClientHttpGenerico extends ClientCore{
 																elementsW3C.add(nn);
 															}
 															else {
-																throw t;
+																// normalize per conflito di librerie axis - saaj
+																org.w3c.dom.Document d = XMLUtils.DEFAULT.newDocument();
+																n = d.importNode(n, true);
+																byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
+																elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
 															}
 														}
 													}
