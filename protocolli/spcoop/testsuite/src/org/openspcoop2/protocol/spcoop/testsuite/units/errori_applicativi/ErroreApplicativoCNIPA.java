@@ -185,7 +185,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
@@ -419,7 +427,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.DEFAULT.newElement(xmlErroreApplicativo), 
@@ -1818,7 +1834,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
@@ -2048,7 +2072,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
@@ -2282,7 +2314,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
@@ -2514,7 +2554,15 @@ public class ErroreApplicativoCNIPA {
 				Assert.assertTrue(msgRisposta.getSOAPBody()!=null);
 				Assert.assertTrue(msgRisposta.getSOAPBody().hasChildNodes());
 				
-				byte [] xmlErroreApplicativo =org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				byte [] xmlErroreApplicativo = null;
+				try {
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(msgRisposta.getSOAPBody().getFirstChild(),true);
+				}catch(Throwable t) {
+					// normalize per conflito di librerie axis - saaj
+					org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+					Node n = d.importNode(msgRisposta.getSOAPBody().getFirstChild(), true);
+					xmlErroreApplicativo = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toByteArray(n,true);
+				}
 				response = msgRisposta.getSOAPBody();
 				
 				Utilities.verificaErroreApplicativoCnipa(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).newElement(xmlErroreApplicativo), 
