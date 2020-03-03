@@ -155,34 +155,38 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-000:sezione', 'Informazioni DataSource');
 </concat>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-001:Driver JDBC:antinstaller_driver_jdbc', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-001:Driver JDBC ClassName:antinstaller_driver_jdbc_classname', '@VALORE@');
+</concat>
+		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_driver_jdbc_classname}"/>
+
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-002:Driver JDBC:antinstaller_driver_jdbc', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_driver_jdbc}"/>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-002:Hostname:antinstaller_dbhost', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-003:Hostname:antinstaller_dbhost', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbhost}"/>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-003:Porta:antinstaller_dbport', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-004:Porta:antinstaller_dbport', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbport}"/>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-004:Nome Database:antinstaller_dbname', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-005:Nome Database:antinstaller_dbname', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbname}"/>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-005:Username:antinstaller_dbusername', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-006:Username:antinstaller_dbusername', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbusername}"/>
 
-		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-006:Password:antinstaller_dbpassword', '@VALORE@');
+		<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-007:Password:antinstaller_dbpassword', '@VALORE@');
 </concat>
 		<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_dbpassword}"/>
 
 		<if>
 			<equals arg1="${antinstaller_tipo_database}" arg2="oracle"/>
 			<then>
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-007:Tipo Accesso:antinstaller_oracle_mode', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '004-008:Tipo Accesso:antinstaller_oracle_mode', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_oracle_mode}"/>
 			</then>
@@ -473,34 +477,38 @@ INSERT INTO generic_properties (nome, descrizione, tipologia, tipo) VALUES ('@ID
 				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-000:sezione', 'Configurazione Profilo eDelivery (3/3)');
 </concat>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-001:Driver JDBC:antinstaller_as4_driver_jdbc', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-001:Driver JDBC ClassName:antinstaller_as4_driver_jdbc_classname', '@VALORE@');
+</concat>
+				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_driver_jdbc_classname}"/>
+
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-002:Driver JDBC:antinstaller_as4_driver_jdbc', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_driver_jdbc}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-002:Hostname:antinstaller_as4_dbhost', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-003:Hostname:antinstaller_as4_dbhost', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_dbhost}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-003:Porta:antinstaller_as4_dbport', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-004:Porta:antinstaller_as4_dbport', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_dbport}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-004:Nome Database:antinstaller_as4_dbname', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-005:Nome Database:antinstaller_as4_dbname', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_dbname}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-005:Username:antinstaller_as4_dbusername', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-006:Username:antinstaller_as4_dbusername', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_dbusername}"/>
 
-				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-006:Password:antinstaller_as4_dbpassword', '@VALORE@');
+				<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-007:Password:antinstaller_as4_dbpassword', '@VALORE@');
 </concat>
 				<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_dbpassword}"/>
 
 				<if>
 					<equals arg1="${antinstaller_as4_tipo_database}" arg2="oracle"/>
 					<then>
-						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-007:Tipo Accesso:antinstaller_as4_oracle_mode', '@VALORE@');
+						<concat destfile="${tmp_sql}/InstallerProperties.sql" append="yes" >INSERT INTO generic_property (id_props, nome, valore) VALUES (@ID_PROPERTIES@, '014-008:Tipo Accesso:antinstaller_as4_oracle_mode', '@VALORE@');
 </concat>
 						<replace file="${fileSqlProps}" token="@VALORE@" value="${antinstaller_as4_oracle_mode}"/>
 					</then>

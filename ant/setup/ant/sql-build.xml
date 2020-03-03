@@ -55,7 +55,7 @@
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@DATABASE@"/>
-			<param name="value" value="${antinstaller_dbname}"/>
+			<param name="value" value="${sql_settings_dbname}"/>
 		</antcall>
 			
 	</target>
@@ -267,13 +267,22 @@ ALTER DATABASE @DATABASE@ SET READ_COMMITTED_SNAPSHOT ON;]]>
 	</target>
 
 	<target name="sql_split_ddl_dml">
+
+		<var name="sql_split_modalita_installazione" value="${antinstaller_modalita_installazione}"/>
+		<if>
+			<equals arg1="${forceNuovaInstallazione}" arg2="true"/>
+			<then>
+				<var name="sql_split_modalita_installazione" value="nuova"/>
+			</then>
+		</if>
+
 		<mkdir dir="${tmp_sql}/ORIG"/>
 		<move file="${tmp_sql}/${nomeFileDaSplittare}" todir="${tmp_sql}/ORIG"/>
 		<java classname="org.openspcoop2.core.commons.SQLScriptBuilder" fork="true" outputproperty="_output_sql_ddl">
 			<arg value="${tmp_sql}/ORIG" />
 			<arg value="${tmp_sql}" />
 			<arg value="${nomeFileDaSplittare}" />
-			<arg value="${antinstaller_modalita_installazione}" />
+			<arg value="${sql_split_modalita_installazione}" />
 			<arg value="${antinstaller_versione_precedente}" />
 			<arg value="${antinstaller_versione_attuale}" />
 			<arg value="${antinstaller_tipo_database}" />
