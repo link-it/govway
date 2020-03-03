@@ -280,7 +280,8 @@
             regex=".+"/>
         <hidden property="porta-db" value="1521"/>
         <hidden property="TABLESPACE" value="XE"/>
-        <hidden property="antinstaller_driver_jdbc" value="oracle.jdbc.OracleDriver"/>
+        <hidden property="antinstaller_driver_jdbc_classname" value="oracle.jdbc.OracleDriver"/>
+	<hidden property="antinstaller_driver_jdbc" value="NOME_DRIVER_JDBC.jar"/>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport"
             displayText="Porta"/>
 
@@ -300,30 +301,31 @@
     <page name="infoDB_notOracle" type="input" displayText="Informazioni DataSource" ifProperty="${antinstaller_tipo_database}!=oracle">
         <validated defaultValue="127.0.0.1" property="antinstaller_dbhost" displayText="Hostname"
             regex=".+"/>
+        <hidden property="antinstaller_driver_jdbc" value="NOME_DRIVER_JDBC.jar"/>
         <conditional ifProperty="${antinstaller_tipo_database}=postgresql">
             <hidden property="porta-db" value="5432"/>
             <hidden property="TABLESPACE" value="govway"/>
-            <hidden property="antinstaller_driver_jdbc" value="org.postgresql.Driver"/>
+            <hidden property="antinstaller_driver_jdbc_classname" value="org.postgresql.Driver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=mysql">
             <hidden property="porta-db" value="3306"/>
             <hidden property="TABLESPACE" value="govway"/>
-            <hidden property="antinstaller_driver_jdbc" value="com.mysql.jdbc.Driver"/>
+            <hidden property="antinstaller_driver_jdbc_classname" value="com.mysql.jdbc.Driver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=hsql">
             <hidden property="porta-db" value="9001"/>
             <hidden property="TABLESPACE" value="govway"/>
-            <hidden property="antinstaller_driver_jdbc" value="org.hsqldb.jdbcDriver"/>
+            <hidden property="antinstaller_driver_jdbc_classname" value="org.hsqldb.jdbcDriver"/>
         </conditional>
         <conditional ifProperty="${antinstaller_tipo_database}=sqlserver">
             <hidden property="porta-db" value="1433"/>
             <hidden property="TABLESPACE" value="govway"/>
-            <hidden property="antinstaller_driver_jdbc" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+            <hidden property="antinstaller_driver_jdbc_classname" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
         </conditional>
 		<conditional ifProperty="${antinstaller_tipo_database}=db2">
             <hidden property="porta-db" value="50000"/>
             <hidden property="TABLESPACE" value="govway"/>
-            <hidden property="antinstaller_driver_jdbc" value="com.ibm.db2.jcc.DB2Driver"/>
+            <hidden property="antinstaller_driver_jdbc_classname" value="com.ibm.db2.jcc.DB2Driver"/>
         </conditional>
         <validated defaultValue="${porta-db}" regex="^[0-9]{1,5}$" property="antinstaller_dbport"
             displayText="Porta"/>
@@ -605,7 +607,8 @@
             regex=".+"/>
         <hidden property="porta-db_as4" value="1521"/>
         <hidden property="TABLESPACE_as4" value="XE"/>
-        <hidden property="antinstaller_as4_driver_jdbc" value="oracle.jdbc.OracleDriver"/>
+        <hidden property="antinstaller_as4_driver_jdbc_classname" value="oracle.jdbc.OracleDriver"/>
+	<hidden property="antinstaller_as4_driver_jdbc" value="NOME_DRIVER_JDBC.jar"/>
         <validated defaultValue="${porta-db_as4}" regex="^[0-9]{1,5}$" property="antinstaller_as4_dbport"
             displayText="Porta"/>
 
@@ -629,7 +632,8 @@
         <conditional ifProperty="${antinstaller_as4_tipo_database}=mysql">
             <hidden property="porta-db_as4" value="3306"/>
             <hidden property="TABLESPACE_as4" value="domibus"/>
-            <hidden property="antinstaller_as4_driver_jdbc" value="com.mysql.jdbc.Driver"/>
+            <hidden property="antinstaller_as4_driver_jdbc_classname" value="com.mysql.jdbc.Driver"/>
+	    <hidden property="antinstaller_as4_driver_jdbc" value="NOME_DRIVER_JDBC.jar"/>
         </conditional>
         <validated defaultValue="${porta-db_as4}" regex="^[0-9]{1,5}$" property="antinstaller_as4_dbport"
             displayText="Porta"/>

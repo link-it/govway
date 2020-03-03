@@ -38,6 +38,7 @@
 	<property name="tmp_archivi" location="${build}/archivi" />
 	<property name="tmp_batch" location="${build}/batch" />
 	<property name="tmp_sql" location="${build}/sql" />
+	<property name="tmp_sql_completi" location="${build}/sql_completi" />
 	<property name="tmp_ds" location="${build}/ds" />
 	<property name="tmp_cfg" location="${build}/cfg" />
 	
@@ -92,7 +93,8 @@
 			antinstaller_stats_env=runtime/batch
 
 		Informazioni DataSource
-			antinstaller_driver_jdbc=org.postgresql.Driver
+			antinstaller_driver_jdbc_classname=org.postgresql.Driver
+			antinstaller_driver_jdbc=NOME_DRIVER_JDBC.jar
 			antinstaller_dbname=openspcoop
 			antinstaller_dbhost=127.0.0.1
 			antinstaller_dbport=5432
@@ -163,7 +165,8 @@
 			antinstaller_as4_jms_password=
 
 		Configurazione Profilo eDelivery (3/3)
-			antinstaller_as4_driver_jdbc=com.mysql.jdbc.Driver
+			antinstaller_as4_driver_jdbc_classname=com.mysql.jdbc.Driver
+			antinstaller_as4_driver_jdbc=NOME_DRIVER_JDBC.jar
 			antinstaller_as4_dbname=domibus
 			antinstaller_as4_dbhost=127.0.0.1
 			antinstaller_as4_dbport=3306
@@ -891,6 +894,17 @@
 				<antcall target="_setup_sql_nuova_installazione"/>
 			</then>
 			<else>
+				<!-- Genero comunque sql completi -->
+				<antcall target="_setup_sql_nuova_installazione">
+					<param name="sqlForceNuovaInstallazione" value="true"/>
+				</antcall>
+				<mkdir dir="${tmp_sql_completi}"/>
+				<move todir="${tmp_sql_completi}">
+					<fileset dir="${tmp_sql}">
+						<include name="*.sql"/>
+					</fileset>
+				</move>
+				
 				<antcall target="_setup_sql_aggiornamento"/>
 			</else>
 		</if>
@@ -908,6 +922,7 @@
 
 		<!-- *** Runtime *** -->
 		<var name="runtimeSqlScriptName" value="GovWay.sql"/>
+		<var name="runtimeSqlDbName" value="${antinstaller_dbname}"/>
 		<antcall target="_initSQL_${antinstaller_tipo_database}">
 			<param name="sqlFileOutput" value="${tmp_sql}/${runtimeSqlScriptName}"/>
 		</antcall>
@@ -921,10 +936,12 @@
 
 		<!-- *** Configurazione *** -->
 		<var name="configSqlScriptName" value="GovWay.sql"/>
+		<var name="configSqlDbName" value="${antinstaller_dbname}"/>
 		<if>
 			<equals arg1="${antinstaller_config_db}" arg2="config"/>
 			<then>
 				<var name="configSqlScriptName" value="GovWayConfigurazione.sql"/>
+				<var name="configSqlDbName" value="${antinstaller_dbname_config}"/>
 				<antcall target="_initSQL_${antinstaller_tipo_database}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${configSqlScriptName}"/>
 				</antcall>
@@ -1073,8 +1090,18 @@
 			
 		<!-- Imposto corretti valori per i datasource -->
 		<antcall target="sql_settings">
-		    <param name="file" value="${tmp_sql}/${configSqlScriptName}"/>
+		    <param name="file" value="${tmp_sql}/${runtimeSqlScriptName}"/>
+		    <param name="sql_settings_dbname" value="${runtimeSqlDbName}"/>
 		</antcall>
+		<if>
+			<equals arg1="${antinstaller_config_db}" arg2="config"/>
+			<then>
+				<antcall target="sql_settings">
+				    <param name="file" value="${tmp_sql}/${configSqlScriptName}"/>
+				    <param name="sql_settings_dbname" value="${configSqlDbName}"/>
+				</antcall>
+			</then>
+		</if>
 		
 		<!-- password cifrata per l'utenza govwayConsole -->
 		<java classname="org.openspcoop2.utils.crypt.Password" fork="true" outputproperty="antinstaller_pddconsole_password_md5">
@@ -1107,10 +1134,12 @@
 
 		<!-- *** Tracce *** -->
 		<var name="tracceSqlScriptName" value="GovWay.sql"/>
+		<var name="tracceSqlDbName" value="${antinstaller_dbname}"/>
 		<if>
 			<equals arg1="${antinstaller_log_db}" arg2="log"/>
 			<then>
 				<var name="tracceSqlScriptName" value="GovWayTracciamento.sql"/>
+				<var name="tracceSqlDbName" value="${antinstaller_dbname_log}"/>
 				<antcall target="_initSQL_${antinstaller_tipo_database}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${tracceSqlScriptName}"/>
 				</antcall>
@@ -1134,6 +1163,17 @@
 			</then>
 		</if>
 
+		<!-- Imposto corretti valori per i datasource -->
+		<if>
+			<equals arg1="${antinstaller_log_db}" arg2="log"/>
+			<then>
+				<antcall target="sql_settings">
+				    <param name="file" value="${tmp_sql}/${tracceSqlScriptName}"/>
+				    <param name="sql_settings_dbname" value="${tracceSqlDbName}"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- Imposto Indici Full se abilitati -->
 		<antcall target="sql_settings_index_transazioni">
 		    <param name="file" value="${tmp_sql}/${tracceSqlScriptName}"/>
@@ -1143,10 +1183,12 @@
 
 		<!-- *** Statistiche *** -->
 		<var name="statsSqlScriptName" value="GovWay.sql"/>
+		<var name="statsSqlDbName" value="${antinstaller_dbname}"/>
 		<if>
 			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
 			<then>
 				<var name="statsSqlScriptName" value="GovWayStatistiche.sql"/>
+				<var name="statsSqlDbName" value="${antinstaller_dbname_stats}"/>
 				<antcall target="_initSQL_${antinstaller_tipo_database}">
 					<param name="sqlFileOutput" value="${tmp_sql}/${statsSqlScriptName}"/>
 				</antcall>
@@ -1162,6 +1204,7 @@
 			<equals arg1="${antinstaller_stats_db}" arg2="log"/>
 			<then>
 				<var name="statsSqlScriptName" value="GovWayTracciamento.sql"/>
+				<var name="statsSqlDbName" value="${antinstaller_dbname_log}"/>
 				<concat destfile="${tmp_sql}/${statsSqlScriptName}" append="yes" >
 	       				<header filtering="no" trimleading="yes">
 </header>
@@ -1188,6 +1231,17 @@
 			</then>
 		</if>
 
+		<!-- Imposto corretti valori per i datasource -->
+		<if>
+			<equals arg1="${antinstaller_stats_db}" arg2="stats"/>
+			<then>
+				<antcall target="sql_settings">
+				    <param name="file" value="${tmp_sql}/${statsSqlScriptName}"/>
+				    <param name="sql_settings_dbname" value="${statsSqlDbName}"/>
+				</antcall>
+			</then>
+		</if>
+
 		<!-- Imposto Indici Full se abilitati -->
 		<antcall target="sql_settings_index_statistiche">
 		    <param name="file" value="${tmp_sql}/${statsSqlScriptName}"/>
@@ -1200,6 +1254,7 @@
 		<!-- Runtime -->
 		<antcall target="sql_split_ddl_dml">
 		    <param name="nomeFileDaSplittare" value="${runtimeSqlScriptName}"/>
+		    <param name="forceNuovaInstallazione" value="${sqlForceNuovaInstallazione}"/>
 		</antcall>
 
 		<!-- Configurazione -->
@@ -1208,6 +1263,7 @@
 			<then>
 				<antcall target="sql_split_ddl_dml">
 				    <param name="nomeFileDaSplittare" value="${configSqlScriptName}"/>
+				    <param name="forceNuovaInstallazione" value="${sqlForceNuovaInstallazione}"/>
 				</antcall>
 			</then>
 		</if>
@@ -1218,6 +1274,7 @@
 			<then>
 				<antcall target="sql_split_ddl_dml">
 				    <param name="nomeFileDaSplittare" value="${tracceSqlScriptName}"/>
+				    <param name="forceNuovaInstallazione" value="${sqlForceNuovaInstallazione}"/>
 				</antcall>
 			</then>
 		</if>
@@ -1228,6 +1285,7 @@
 			<then>
 				<antcall target="sql_split_ddl_dml">
 				    <param name="nomeFileDaSplittare" value="${statsSqlScriptName}"/>
+				    <param name="forceNuovaInstallazione" value="${sqlForceNuovaInstallazione}"/>
 				</antcall>
 			</then>
 		</if>

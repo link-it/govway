@@ -49,7 +49,7 @@
 		<antcall target="set_property">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="db.connection.driver"/>
-			<param name="value" value="${antinstaller_driver_jdbc}"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
 		</antcall>
 
 		<!-- Connection URL -->

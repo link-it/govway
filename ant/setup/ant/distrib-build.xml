@@ -358,19 +358,50 @@
 				</concat>
 			</else>
 		</if>
-						
+
+		<if>
+			<equals arg1="${antinstaller_modalita_installazione}" arg2="aggiornamento"/>
+			<then>
+				<mkdir dir="${dist}/sql/completi"/>
+				<copy todir="${dist}/sql/completi">
+					<fileset dir="${tmp_sql_completi}">
+						<include name="GovWay*.sql"/>
+					</fileset>
+				</copy>
+			</then>
+		</if>
+			
 		<mkdir dir="${dist}/sql/utilities"/>
 		<if>
 			<equals arg1="${antinstaller_modalita_installazione}" arg2="nuova"/>
 			<then>
-				<copy todir="${dist}/sql/utilities">
+				<mkdir dir="${dist}/sql/utilities/drop"/>
+				<copy todir="${dist}/sql/utilities/drop">
 					<fileset dir="${tmp_sql}">
 				    		<include name="govway-*drop.sql"/>
+					</fileset>
+				</copy>
+				<mkdir dir="${dist}/sql/utilities/delete"/>
+				<copy todir="${dist}/sql/utilities/delete">
+					<fileset dir="${tmp_sql}">
 						<include name="govway-*delete.sql"/>
 					</fileset>
 				</copy>
 			</then>
 			<else>
+				<mkdir dir="${dist}/sql/utilities/drop"/>
+				<copy todir="${dist}/sql/utilities/drop">
+					<fileset dir="${tmp_sql_completi}">
+				    		<include name="govway-*drop.sql"/>
+					</fileset>
+				</copy>
+				<mkdir dir="${dist}/sql/utilities/delete"/>
+				<copy todir="${dist}/sql/utilities/delete">
+					<fileset dir="${tmp_sql_completi}">
+						<include name="govway-*delete.sql"/>
+					</fileset>
+				</copy>
+
 				<mkdir dir="${dist}/sql/utilities/as"/>
 				<copy todir="${dist}/sql/utilities/as">
 					<fileset dir="${deploy_sql}/as">
@@ -443,6 +474,16 @@
 				    		<include name="**"/>
 					</fileset>
 				</copy>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/batch/crond/govway_batch.sh"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
+				<antcall target="replace_token">
+				    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
+					<param name="token" value="/var/govway/log"/>
+					<param name="value" value="${log_dir}"/>
+				</antcall>
 			</then>
 		</if>
 	</target>

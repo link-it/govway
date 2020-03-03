@@ -6,8 +6,53 @@
 	</description>
 
 	<import file="../../commons/utils.xml" />
+
+	<target name="ds_driver_jdbc_settings">
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="NOME_DRIVER_JDBC.jar"/>
+			<param name="value" value="${antinstaller_driver_jdbc}"/>
+		</antcall>
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="oracle.jdbc.OracleDriver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.mysql.jdbc.Driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.hsqldb.jdbcDriver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.ibm.db2.jcc.DB2Driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.postgresql.Driver"/>
+			<param name="value" value="${antinstaller_driver_jdbc_classname}"/>
+		</antcall>
+
+	</target>
 	
 	<target name="ds_settings">
+
+		<antcall target="ds_driver_jdbc_settings">
+		    <param name="file" value="${file}"/>
+		</antcall>
 		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
@@ -61,6 +106,10 @@
 
 	<target name="config_ds_settings">
 		
+		<antcall target="ds_driver_jdbc_settings">
+		    <param name="file" value="${file}"/>
+		</antcall>
+		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@DATABASE@"/>
@@ -112,6 +161,10 @@
 	</target>
 
 	<target name="log_ds_settings">
+		
+		<antcall target="ds_driver_jdbc_settings">
+		    <param name="file" value="${file}"/>
+		</antcall>
 		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
@@ -171,6 +224,10 @@
 
 	<target name="stats_ds_settings">
 		
+		<antcall target="ds_driver_jdbc_settings">
+		    <param name="file" value="${file}"/>
+		</antcall>
+		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
 			<param name="token" value="@DATABASE@"/>
@@ -227,7 +284,56 @@
 
 	</target>
 
+
+
+	<!-- AS4 -->
+
+	<target name="ds_as4_driver_jdbc_settings">
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="NOME_DRIVER_JDBC.jar"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc}"/>
+		</antcall>
+
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="oracle.jdbc.OracleDriver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.mysql.jdbc.Driver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.hsqldb.jdbcDriver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="com.ibm.db2.jcc.DB2Driver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+		<antcall target="replace_token">
+		    <param name="file" value="${file}"/>
+			<param name="token" value="org.postgresql.Driver"/>
+			<param name="value" value="${antinstaller_as4_driver_jdbc_classname}"/>
+		</antcall>
+
+	</target>
+
 	<target name="as4_ds_settings">
+		
+		<antcall target="ds_as4_driver_jdbc_settings">
+		    <param name="file" value="${file}"/>
+		</antcall>
 		
 		<antcall target="replace_token">
 		    <param name="file" value="${file}"/>
