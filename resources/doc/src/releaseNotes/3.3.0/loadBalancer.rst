@@ -1,7 +1,7 @@
 Nuova funzionalità di Load Balancer
 --------------------------------------------------------------
 
-Per le erogazioni di API è possibile definire connettori multipli allo scopo di ridirigere il traffico bilanciando il carico sui vari connettori.
+Per le erogazioni di API è possibile definire connettori multipli con finalità di bilanciamento delle richieste in arrivo.
 Vengono forniti differenti tipi di bilanciamento del carico:
 
 - *Round Robin*: le richieste vengono distribuite in ordine tra i connettori registrati;
@@ -12,12 +12,17 @@ Vengono forniti differenti tipi di bilanciamento del carico:
 
 - *Weight Random*: rispetto al Random si ha una distribuzione casuale che considerà però il peso associato ad ogni connettore;
 
-- *Source IP hash*: combina l'indirizzo IP del client e l'eventuale indirizzo IP portato in un header 'Forwarded-For' per generare una chiave hash che viene designata per un connettore specifico;
+- *Source IP hash*: combina l'indirizzo IP del client e l'eventuale indirizzo IP portato nell'header 'Forwarded-For' per generare una chiave hash che viene designata per un connettore specifico;
 
-- *Least Connections*: la richiesta viene indirizzata erso il connettore che ha il numero minimo di connessioni attive.
+- *Least Connections*: la richiesta viene indirizzata verso il connettore che ha il numero minimo di connessioni attive.
 
-In una configurazione di bilanciamento del carico è possibile abilitare una sessione sticky in modo che tutte le richieste che presentano lo stesso id di sessione vengano servite tramite lo stesso connettore.
-Se l'identificativo di sessione si riferisce ad una nuova sessione viene selezionato un connettore rispetto alla strategia indicata. L'identificativo di sessione è individuabile tramite una delle seguenti modalità configurabile insieme all'indicazione sulla durata della sessione in secondi.
+La configurazione permette anche di abilitare una sessione sticky in
+modo che tutte le richieste che presentano lo stesso id di sessione
+vengano servite tramite lo stesso connettore.  Se l'identificativo di
+sessione si riferisce ad una nuova sessione, viene selezionato un
+connettore rispetto alla strategia indicata. L'identificativo di
+sessione utilizzato è individuabile tramite una delle seguenti
+modalità:
 
 - *Cookie*: nome di un cookie;
 
@@ -39,5 +44,9 @@ Se l'identificativo di sessione si riferisce ad una nuova sessione viene selezio
 
 - *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template;
 
-In una configurazione di bilanciamento del carico è infine possibile attivare un 'Passive Health Check' che verifica la connettività verso i connettori configurati. Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool dei connettori utilizzabili per un intervallo di tempo configurabile.
+E' infine possibile attivare un 'Passive Health Check' che verifica la
+connettività verso i connettori configurati. Un utilizzo di un
+connettore che provoca un errore di connettività comporta la sua
+esclusione dal pool dei connettori utilizzabili per un intervallo di
+tempo configurabile.
 

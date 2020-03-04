@@ -1,8 +1,12 @@
 Nuova funzionalità di Consegna Condizionale
 --------------------------------------------------------------
 
-Per le erogazioni di API è possibile definire connettori multipli dai quali dovrà essere selezionato il connettore da utilizzare per soddisfare una richiesta.
-Ogni connettore all'interno del pool può essere identificato in base al nome o ad un filtro associato al connettore stesso. Il nome o il valore del filtro deve essere estratto dalla richiesta attraverso una delle seguenti modalità: 
+Per le erogazioni di API è possibile definire connettori diversi, selezionati dinamicamente al verificarsi di specifiche condizioni.
+
+Il connettore da utilizzare può essere selezionato in base al nome o a
+un filtro associato al connettore stesso. Il nome o il valore del
+filtro può essere estratto dalla richiesta attraverso una delle
+seguenti modalità:
 
 - *Header HTTP*: nome di un header http;
 
@@ -24,5 +28,8 @@ Ogni connettore all'interno del pool può essere identificato in base al nome o 
 
 - *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template;
 
-In una configurazione di consegna condizionale è infine possibile indicare se utilizzare uno specifico connettore o terminare la richiesta con errore nel caso in cui non si riesca ad identificare la condizione dalla richiesta o la condizione non permetta di identificare alcun connettore all'interno del pool.  
+E' infine possibile configurare l'erogazione per utilizzare uno
+specifico connettore di default nel caso la condizione non permetta di
+identificare alcun connettore all'interno del pool, o in alternativa
+per restituire un errore.
 
