@@ -28,7 +28,7 @@ seguenti modalità:
 
 - *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template;
 
-E' infine possibile configurare l'erogazione per utilizzare uno
+È infine possibile configurare l'erogazione per utilizzare uno
 specifico connettore di default nel caso la condizione non permetta di
 identificare alcun connettore all'interno del pool, o in alternativa
 per restituire un errore.

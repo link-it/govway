@@ -67,38 +67,42 @@ public class LoadBalancer {
 		throw new BehaviourException("Type '"+this.type+"' unknown");
 	}
 
-	private String getRoundRobin() {
-		Set<String> servers = this.pool.getConnectorNames();
+	private String getRoundRobin() throws BehaviourException {
+		Set<String> servers = this.pool.getConnectorNames(false); // il passive health check viene effettuato dentro il metodo nextPosition
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
-		String target = serverList.get(this.pool.getNextPosition(false));
+		int position = this.pool.getNextPosition(false);
+		String target = serverList.get(position);
 		return target;
 	}
-	private String getWeightRoundRobin() {
-		List<String> serverList = getWeightList();
-		String target = serverList.get(this.pool.getNextPosition(true));
+	private String getWeightRoundRobin() throws BehaviourException {
+		List<String> serverList = getWeightList(false); // il passive health check viene effettuato dentro il metodo nextPosition
+		int position = this.pool.getNextPosition(true);
+		String target = serverList.get(position);
 		return target;
 	}
 
 
-	private String getRandom() {
-		Set<String> servers = this.pool.getConnectorNames();
+	private String getRandom() throws BehaviourException {
+		Set<String> servers = this.pool.getConnectorNames(true);
+		if(servers.isEmpty()) {
+			throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
+		}
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		int randomIndex = new Random().nextInt(serverList.size());
 		String target = serverList.get(randomIndex);
 		return target;
 	}
-	private String getWeightRandom() {
-		List<String> serverList = getWeightList();
+	private String getWeightRandom() throws BehaviourException {
+		List<String> serverList = getWeightList(true);
 		Integer index = new Random().nextInt(serverList.size());
 		String target = serverList.get(index);
 		return target;
 	}
 
-	private String getIpSourceHash() {
-		
-		Object oIpAddressRemote = this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_REMOTE_ADDRESS);
+	public static String getIpSourceFromContet(PdDContext pddContext) {
+		Object oIpAddressRemote = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_REMOTE_ADDRESS);
 		String ipAddressRemote = null;
 		if(oIpAddressRemote!=null && (oIpAddressRemote instanceof String)){
 			ipAddressRemote = (String)oIpAddressRemote;
@@ -107,7 +111,7 @@ public class LoadBalancer {
 			ipAddressRemote = "127.0.0.1";
 		}
 		
-		Object oIpAddressTransport = this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_TRANSPORT_ADDRESS);
+		Object oIpAddressTransport = pddContext.getObject(org.openspcoop2.core.constants.Costanti.CLIENT_IP_TRANSPORT_ADDRESS);
 		String ipAddressTransport = null;
 		if(oIpAddressTransport!=null && (oIpAddressTransport instanceof String)){
 			ipAddressTransport = (String)oIpAddressTransport;
@@ -118,12 +122,49 @@ public class LoadBalancer {
 		
 		String clientIp = ipAddressRemote+" "+ipAddressTransport;
 		
-		Set<String> servers = this.pool.getConnectorNames();
+		return clientIp;
+	}
+	
+	private String getIpSourceHash() throws BehaviourException {
+		
+		String clientIp = getIpSourceFromContet(this.pddContext);
+		
+		Set<String> servers = this.pool.getConnectorNames(false);
 		List<String> serverList = new ArrayList<>();
 		serverList.addAll(servers);
 		String remoteId = clientIp;
 		Integer index = remoteId.hashCode() % serverList.size();
 		String target = serverList.get(index);
+		
+		if(this.pool.isPassiveHealthCheck()) {
+			
+			Set<String> setAfterPassiveHealthCheck = this.pool.getConnectorNames(true);
+			
+			// prima verifica
+			if(setAfterPassiveHealthCheck.contains(target)) {
+				return target;
+			}
+			
+			// controllo prossime posizioni fino a tornare a quella attuale
+			int nextPos = index.intValue()+1;
+			if(nextPos==serverList.size()) {
+				nextPos = 0;
+			}
+			while(nextPos!=index.intValue()) {
+				target = serverList.get(nextPos);
+				if(setAfterPassiveHealthCheck.contains(target)) {
+					return target;
+				}
+				nextPos++;
+				if(nextPos==serverList.size()) {
+					nextPos = 0;
+				}
+			}
+			
+			throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
+			
+		}
+		
 		return target;
 	}
 	
@@ -131,8 +172,11 @@ public class LoadBalancer {
 		return this.pool.getNextConnectorLeastConnections();
 	}
 
-	private List<String> getWeightList() {
-		Set<String> servers = this.pool.getConnectorNames();
+	private List<String> getWeightList(boolean passiveHealthCheck) throws BehaviourException {
+		Set<String> servers = this.pool.getConnectorNames(passiveHealthCheck);
+		if(servers.isEmpty()) {
+			throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
+		}
 		List<String> serverList = new ArrayList<>();    
 
 		Iterator<String> iterator = servers.iterator();

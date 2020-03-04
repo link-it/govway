@@ -44,7 +44,7 @@ modalità:
 
 - *Velocity Template*: l'identificativo di sessione è ottenuto tramite il processamento di un Velocity Template;
 
-E' infine possibile attivare un 'Passive Health Check' che verifica la
+È infine possibile attivare un 'Passive Health Check' che verifica la
 connettività verso i connettori configurati. Un utilizzo di un
 connettore che provoca un errore di connettività comporta la sua
 esclusione dal pool dei connettori utilizzabili per un intervallo di

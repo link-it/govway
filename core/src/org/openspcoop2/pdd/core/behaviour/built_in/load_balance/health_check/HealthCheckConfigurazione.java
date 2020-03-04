@@ -17,19 +17,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky;
+package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check;
 
 /**
- * Costanti
+ * HealthCheckConfigurazione
  *
  * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class StickyCostanti  {
-	
-	public static final String STICKY = "sticky";
-	public static final String STICKY_TIPO_SELETTORE = "sticky_selettore";
-	public static final String STICKY_PATTERN = "sticky_pattern";
-	public static final String STICKY_EXPIRE = "sticky_expire";
+public class HealthCheckConfigurazione {
+
+	private boolean passiveCheckEnabled = false;
+	private Integer passiveHealthCheck_excludeForSeconds = null; 
+
+	public boolean isPassiveCheckEnabled() {
+		return this.passiveCheckEnabled;
+	}
+
+	public void setPassiveCheckEnabled(boolean passiveCheckEnabled) {
+		this.passiveCheckEnabled = passiveCheckEnabled;
+	}
+
+	public Integer getPassiveHealthCheck_excludeForSeconds() {
+		return this.passiveHealthCheck_excludeForSeconds;
+	}
+
+	public void setPassiveHealthCheck_excludeForSeconds(Integer passiveHealthCheck_excludeForSeconds) {
+		this.passiveHealthCheck_excludeForSeconds = passiveHealthCheck_excludeForSeconds;
+	}
 }

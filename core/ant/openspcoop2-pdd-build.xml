@@ -134,6 +134,7 @@
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.load_balance" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky" />
+				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.conditional" />
 				<var name="packagesCompiled" value="${packagesCompiled},org.openspcoop2.pdd.core.behaviour.test" />

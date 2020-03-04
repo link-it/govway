@@ -91,6 +91,7 @@ import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckCostanti;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyTipoSelettore;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneGestioneConsegnaNotifiche;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.TipoGestioneNotificaFault;
@@ -6472,8 +6473,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			String identificazioneCondizionalePrefisso, String identificazioneCondizionaleSuffisso, boolean visualizzaLinkRegolePerAzioni, String servletRegolePerAzioni,  List<Parameter> listaParametriServletRegolePerAzioni,
 			int numeroRegolePerAzioni, boolean condizioneNonIdentificataAbortTransaction, String condizioneNonIdentificataDiagnostico, String condizioneNonIdentificataConnettore,
 			boolean connettoreNonTrovatoAbortTransaction, String connettoreNonTrovatoDiagnostico, String connettoreNonTrovatoConnettore,
-			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge
-			
+			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge,
+			boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds
 			) throws NotFoundException {
 		Boolean contaListe = ServletUtils.getContaListeFromSession(this.session);
 		
@@ -6598,6 +6599,22 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					de.setSelected(false);
 				}
 				dati.addElement(de);
+				
+				
+				// health check
+				
+				de = new DataElement();
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				de.setType(DataElementType.CHECKBOX);
+				de.setLabelRight(PorteApplicativeCostanti.LABEL_RIGHT_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				de.setSelected(passiveHealthCheck);
+				de.setPostBack(true);
+				DataElementInfo dInfoPassiveHealthCheck = new DataElementInfo(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				dInfoPassiveHealthCheck.setBody(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_INFO);
+				de.setInfo(dInfoPassiveHealthCheck);
+				dati.addElement(de);
+				
 			}  
 			
 			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
@@ -6807,6 +6824,34 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 				
 			}
 			
+			if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna) && passiveHealthCheck) {
+				
+				de = new DataElement();
+				de.setLabel(PorteApplicativeCostanti.LABEL_TITLE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+				de.setType(DataElementType.TITLE);
+				dati.addElement(de);
+				
+				de = new DataElement();
+				de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS );
+				if(passiveHealthCheck) {
+					de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
+					de.setNote(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS_NOTE);
+					de.setType(DataElementType.NUMBER);
+					de.setMinValue(1);
+					de.reloadMinValue(false);
+				}
+				else {
+					de.setType(DataElementType.HIDDEN);
+				}
+				if(passiveHealthCheck_excludeForSeconds==null || "".equals(passiveHealthCheck_excludeForSeconds)){
+					de.setValue(HealthCheckCostanti.PASSIVE_HEALTH_CHECK_SECONDS_DEFAULT_VALUE+"");
+				}
+				else {
+					de.setValue(passiveHealthCheck_excludeForSeconds);
+				}
+				dati.add(de);
+				
+			}
 
 			if(BehaviourType.CONSEGNA_CON_NOTIFICHE.getValue().equals(modalitaConsegna)) {
 				// sezione notifiche
@@ -7314,7 +7359,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 	
 	public boolean connettoriMultipliConfigurazioneCheckData(TipoOperazione tipoOp, String stato, String modalitaConsegna, String tipoCustom, String loadBalanceStrategia, 
 			boolean isSoapOneWay,
-			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge) throws Exception{
+			boolean sticky, String stickyTipoSelettore, String stickyTipoSelettorePattern, String stickyMaxAge,
+			boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds) throws Exception{
 		
 		if (StringUtils.isEmpty(stato)) {
 			this.pd.setMessage("Il campo "+PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO+" non pu&ograve; essere vuoto");
@@ -7382,6 +7428,27 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 						}
 					}
 					
+				}
+				
+				if(passiveHealthCheck) {
+					if(StringUtils.isEmpty(passiveHealthCheck_excludeForSeconds)) {
+						this.pd.setMessage("Il campo "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS +" non pu&ograve; essere vuoto");
+						return false;
+					}
+					int w = -1;
+					try {
+						w = Integer.parseInt(passiveHealthCheck_excludeForSeconds);
+					}catch (Exception e) {
+						this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRRORE_FORMATO_NUMERICO_XX_NON_VALIDO,
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS));
+						return false;
+					}
+					
+					if(w < 0) {
+						this.pd.setMessage(MessageFormat.format(PorteApplicativeCostanti.MESSAGGIO_ERRRORE_MIN_XX_NON_VALIDO,
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS, 0));
+						return false;
+					}
 				}
 				
 				validaSezioneCondizionalita = true; 
@@ -8818,6 +8885,17 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			config.setPattern(stickyTipoSelettorePattern);
 			if(!StringUtils.isEmpty(stickyMaxAge)) {
 				config.setMaxAgeSeconds(Integer.valueOf(stickyMaxAge));
+			}
+		}
+		return config;
+	}
+	
+	public org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione toConfigurazioneHealthCheck(boolean passiveHealthCheck, String passiveHealthCheck_excludeForSeconds) throws NotFoundException {
+		org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione config = new org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione();
+		config.setPassiveCheckEnabled(passiveHealthCheck);
+		if(passiveHealthCheck) {
+			if(!StringUtils.isEmpty(passiveHealthCheck_excludeForSeconds)) {
+				config.setPassiveHealthCheck_excludeForSeconds(Integer.valueOf(passiveHealthCheck_excludeForSeconds));
 			}
 		}
 		return config;

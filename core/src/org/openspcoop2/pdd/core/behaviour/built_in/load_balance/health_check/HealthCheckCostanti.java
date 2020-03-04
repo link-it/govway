@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky;
+package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check;
 
 /**
  * Costanti
@@ -26,10 +26,11 @@ package org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky;
  * @author $Author$
  * @version $Rev$, $Date$
  */
-public class StickyCostanti  {
+public class HealthCheckCostanti  {
+
+	public static final String PASSIVE_HEALTH_CHECK = "passiveHealthCheck";
+	public static final String PASSIVE_HEALTH_CHECK_SECONDS = "passiveHealthCheckExcludeForSeconds";
 	
-	public static final String STICKY = "sticky";
-	public static final String STICKY_TIPO_SELETTORE = "sticky_selettore";
-	public static final String STICKY_PATTERN = "sticky_pattern";
-	public static final String STICKY_EXPIRE = "sticky_expire";
+	
+	public static final int PASSIVE_HEALTH_CHECK_SECONDS_DEFAULT_VALUE = 600; // 10 minuti
 }

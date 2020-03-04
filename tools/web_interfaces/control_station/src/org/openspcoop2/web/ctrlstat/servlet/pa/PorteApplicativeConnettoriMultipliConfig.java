@@ -43,6 +43,8 @@ import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckUtils;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyConfigurazione;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
 import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
@@ -167,6 +169,10 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 			String stickyTipoSelettore = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_TIPO_SELETTORE);
 			String stickyTipoSelettorePattern = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_PATTERN);
 			String stickyMaxAge = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_STICKY_MAX_AGE);
+			
+			String passiveHealthCheckS = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK);
+			boolean passiveHealthCheck = ServletUtils.isCheckBoxEnabled(passiveHealthCheckS);
+			String passiveHealthCheck_excludeForSeconds = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_MODALITA_CONSEGNA_LOAD_BALANCE_PASSIVE_HEALTH_CHECK_EXCLUDE_FOR_SECONDS);
 			
 			boolean accessoDaListaAPS = false;
 			String accessoDaAPSParametro = null;
@@ -353,6 +359,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 																		
 						if(behaviourType.equals(BehaviourType.CONSEGNA_LOAD_BALANCE)) {
 							loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(portaApplicativa.getBehaviour());
+							
 							if(StickyUtils.isConfigurazioneSticky(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger())) {
 								sticky = true;
 								StickyConfigurazione stickyConfig = StickyUtils.read(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger());
@@ -368,7 +375,15 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 							else {
 								sticky = false;
 							}
+							
+							HealthCheckConfigurazione config = HealthCheckUtils.read(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger());
+							passiveHealthCheck = config.isPassiveCheckEnabled();
+							if(passiveHealthCheck) {
+								passiveHealthCheck_excludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
+							}
+							
 							consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
+														
 						} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA) ||
 								behaviourType.equals(BehaviourType.CONSEGNA_CONDIZIONALE) ||
 								behaviourType.equals(BehaviourType.CONSEGNA_CON_NOTIFICHE)) {
@@ -456,7 +471,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore,
 						connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
-						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge
+						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
+						passiveHealthCheck, passiveHealthCheck_excludeForSeconds
 						);
 
 				pd.setDati(dati);
@@ -469,7 +485,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 
 			// Controlli sui campi immessi
 			boolean isOk = porteApplicativeHelper.connettoriMultipliConfigurazioneCheckData(TipoOperazione.OTHER, stato, modalitaConsegna, tipoCustom, loadBalanceStrategia, isSoapOneWay,
-					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge);
+					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
+					passiveHealthCheck, passiveHealthCheck_excludeForSeconds);
 
 			if(!isOk) {
 				// preparo i campi
@@ -484,7 +501,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 						numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
 						connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
-						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge
+						sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
+						passiveHealthCheck, passiveHealthCheck_excludeForSeconds
 						);
 
 				dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null,idAsps, dati);
@@ -510,8 +528,14 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					ConfigurazioneLoadBalancer.addLoadBalancerType(behaviour, loadBalanceStrategia);
 					
 					// configurazione sticky
-					org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyConfigurazione stickyConfig = porteApplicativeHelper.toConfigurazioneSticky(sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge);
+					org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyConfigurazione stickyConfig = 
+							porteApplicativeHelper.toConfigurazioneSticky(sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge);
 					StickyUtils.save(portaApplicativa, stickyConfig);
+					
+					// configurazione healthCheck
+					org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione healthCheckConfig = 
+							porteApplicativeHelper.toConfigurazioneHealthCheck(passiveHealthCheck, passiveHealthCheck_excludeForSeconds);
+					HealthCheckUtils.save(portaApplicativa, healthCheckConfig);
 					
 					// configurazione multideliver
 					org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver configurazioneMultiDeliver = porteApplicativeHelper.toConfigurazioneMultiDeliver(connettoreImplementaAPI, notificheCondizionaliEsito, esitiTransazione);
@@ -522,6 +546,7 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 						ConfigurazioneCondizionale configurazioneCondizionale = porteApplicativeHelper.toConfigurazioneCondizionale(consegnaCondizionale, selezioneConnettoreBy, identificazioneCondizionale, identificazioneCondizionalePattern, identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, condizioneNonIdentificataAbortTransaction, condizioneNonIdentificataDiagnostico, condizioneNonIdentificataConnettore, connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore);
 						org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.save(portaApplicativa, configurazioneCondizionale);
 					}
+					
 				} 
 				break;
 				case CONSEGNA_MULTIPLA:
@@ -603,6 +628,13 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					else {
 						sticky = false;
 					}
+					
+					HealthCheckConfigurazione config = HealthCheckUtils.read(portaApplicativa, ControlStationLogger.getPddConsoleCoreLogger());
+					passiveHealthCheck = config.isPassiveCheckEnabled();
+					if(passiveHealthCheck) {
+						passiveHealthCheck_excludeForSeconds = config.getPassiveHealthCheck_excludeForSeconds().intValue()+"";
+					}
+					
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
 				} else if(behaviourType.equals(BehaviourType.CONSEGNA_MULTIPLA)) {
 					consegnaCondizionale = org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils.isConfigurazioneCondizionale(portaApplicativa, ControlStationCore.getLog());
@@ -688,7 +720,8 @@ public class PorteApplicativeConnettoriMultipliConfig extends Action {
 					identificazioneCondizionalePrefisso, identificazioneCondizionaleSuffisso, visualizzaLinkRegolePerAzioni, servletRegolePerAzioni, listaParametriServletRegolePerAzioni,
 					numeroRegolePerAzioni,  condizioneNonIdentificataAbortTransaction,  condizioneNonIdentificataDiagnostico,  condizioneNonIdentificataConnettore,
 					connettoreNonTrovatoAbortTransaction, connettoreNonTrovatoDiagnostico, connettoreNonTrovatoConnettore,
-					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge
+					sticky, stickyTipoSelettore, stickyTipoSelettorePattern, stickyMaxAge,
+					passiveHealthCheck, passiveHealthCheck_excludeForSeconds
 					);
 
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);

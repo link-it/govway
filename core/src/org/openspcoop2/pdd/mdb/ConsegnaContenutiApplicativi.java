@@ -355,6 +355,24 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					}
 					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer: "+t.getMessage(),t);
 				}
+				try {
+					boolean erroreUtilizzoConnettore = false;
+					if(consegnaContenutiApplicativiMsg.getPddContext()!=null){
+						Object o = consegnaContenutiApplicativiMsg.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.ERRORE_UTILIZZO_CONNETTORE);
+						if(o!=null && (o instanceof Boolean)){
+							erroreUtilizzoConnettore = (Boolean) o;
+						}
+					}
+					if(erroreUtilizzoConnettore) {
+						loadBalancer.getLoadBalancerPool().registerConnectionError(loadBalancer.getConnectorName());
+					}
+				}catch(Throwable t) {
+					String prefix = "";
+					if(transazioneApplicativoServer!=null) {
+						prefix = "["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] " ;
+					}
+					this.log.error(prefix+"Errore durante il salvataggio delle informazioni di load balancer (register error connection): "+t.getMessage(),t);
+				}
 			}
 		}
 				
