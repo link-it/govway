@@ -582,6 +582,10 @@ public class ControlStationCore {
 	public boolean isConnettoriMultipliEnabled() {
 		return this.isConnettoriMultipliEnabled;
 	}
+	private boolean isConnettoriMultipliConsegnaMultiplaEnabled;
+	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() {
+		return this.isConnettoriMultipliConsegnaMultiplaEnabled;
+	}
 	
 	/** Connettori Multipli */
 	private boolean isApplicativiServerEnabled;
@@ -1711,6 +1715,7 @@ public class ControlStationCore {
 
 		/** Connettori Multipli */
 		this.isConnettoriMultipliEnabled = core.isConnettoriMultipliEnabled;
+		this.isConnettoriMultipliConsegnaMultiplaEnabled = core.isConnettoriMultipliConsegnaMultiplaEnabled;
 		
 		/** Applicativi Server */
 		this.isApplicativiServerEnabled = core.isApplicativiServerEnabled;		
@@ -2000,6 +2005,7 @@ public class ControlStationCore {
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();
 			this.isApplicativiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isApplicativiCredenzialiBasicCheckUniqueUsePassword();
 			this.isConnettoriMultipliEnabled = consoleProperties.isConnettoriMultipliEnabled();
+			this.isConnettoriMultipliConsegnaMultiplaEnabled = consoleProperties.isConnettoriMultipliConsegnaMultiplaEnabled();
 			this.isApplicativiServerEnabled = consoleProperties.isApplicativiServerEnabled();
 			
 			// Impostazioni grafiche

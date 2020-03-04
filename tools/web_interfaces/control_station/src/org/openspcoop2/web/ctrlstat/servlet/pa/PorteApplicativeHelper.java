@@ -6514,8 +6514,8 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		if(stato.equals(PorteApplicativeCostanti.VALUE_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STATO_ABILITATO)) {	
 			de.setType(DataElementType.SELECT);
-			List<String> modalitaLabels = BehaviourType.getLabels(isSoapOneWay);
-			List<String> modalitaValues = BehaviourType.getValues(isSoapOneWay);
+			List<String> modalitaLabels = BehaviourType.getLabels(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
+			List<String> modalitaValues = BehaviourType.getValues(this.porteApplicativeCore.isConnettoriMultipliConsegnaMultiplaEnabled(), isSoapOneWay);
 			de.setValues(modalitaValues);
 			de.setLabels(modalitaLabels);
 			de.setPostBack(true);
@@ -6552,6 +6552,10 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 					dati.addElement(de);
 				}
 			} else if(BehaviourType.CONSEGNA_LOAD_BALANCE.getValue().equals(modalitaConsegna)) {
+				
+				if(loadBalanceStrategia==null) {
+					loadBalanceStrategia = LoadBalancerType.ROUND_ROBIN.getValue(); // default
+				}
 				
 				// select list con strategia
 				de = new DataElement();

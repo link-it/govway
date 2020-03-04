@@ -923,4 +923,8 @@ public class PddMonitorProperties {
 //	public Integer getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente() throws Exception{
 //		return Integer.valueOf(this.appProperties.getProperty("console.buttonMenuSoggettiOperativi.lunghezzaMassimaLabel",true,true));
 //	}
+
+	public boolean isSearchFormEsitoConsegnaMultiplaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.searchForm.esiti.consegnaMultiplaEnabled", true, true));
+	}
 }

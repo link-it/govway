@@ -108,29 +108,31 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 
 	/** Utilities */
 
-	public static List<BehaviourType> getEnums(boolean soapOneway){
+	public static List<BehaviourType> getEnums(boolean consegnaMultiplaEnabled, boolean soapOneway){
 		List<BehaviourType> l = new ArrayList<BehaviourType>();
 		l.add(BehaviourType.CONSEGNA_LOAD_BALANCE);
 		l.add(BehaviourType.CONSEGNA_CONDIZIONALE);
-		if(soapOneway) {
-			l.add(BehaviourType.CONSEGNA_MULTIPLA);
-		}
-		else {
-			l.add(BehaviourType.CONSEGNA_CON_NOTIFICHE);
+		if(consegnaMultiplaEnabled) {
+			if(soapOneway) {
+				l.add(BehaviourType.CONSEGNA_MULTIPLA);
+			}
+			else {
+				l.add(BehaviourType.CONSEGNA_CON_NOTIFICHE);
+			}
 		}
 		l.add(BehaviourType.CUSTOM);
 		return l;
 	}
-	public static List<String> getLabels(boolean soapOneway){
-		List<BehaviourType> l = getEnums(soapOneway);
+	public static List<String> getLabels(boolean consegnaMultiplaEnabled, boolean soapOneway){
+		List<BehaviourType> l = getEnums(consegnaMultiplaEnabled, soapOneway);
 		List<String> newL = new ArrayList<String>();
 		for (BehaviourType behaviourType : l) {
 			newL.add(behaviourType.getLabel());
 		}
 		return newL;
 	}
-	public static List<String> getValues(boolean soapOneway){
-		List<BehaviourType> l = getEnums(soapOneway);
+	public static List<String> getValues(boolean consegnaMultiplaEnabled, boolean soapOneway){
+		List<BehaviourType> l = getEnums(consegnaMultiplaEnabled, soapOneway);
 		List<String> newL = new ArrayList<String>();
 		for (BehaviourType behaviourType : l) {
 			newL.add(behaviourType.getValue());

@@ -143,6 +143,10 @@ public class StatsSearchForm extends BaseSearchForm{
 		return super.getEsitiDettaglio(true);
 	}
 	
+	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+		return super.getEsitiDettagliPersonalizzati(true);
+	}
+	
 	@Override
 	protected String eseguiFiltra() {
 		

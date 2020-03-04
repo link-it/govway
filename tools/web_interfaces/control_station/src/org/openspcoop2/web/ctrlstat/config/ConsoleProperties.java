@@ -347,6 +347,10 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "connettoriMultipli.enabled");
 	}
 	
+	public boolean isConnettoriMultipliConsegnaMultiplaEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "connettoriMultipli.consegnaMultipla.enabled");
+	}
+	
 	public boolean isApplicativiServerEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "applicativiServer.enabled");
 	}

@@ -168,6 +168,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private CaseSensitiveMatch mittenteCaseSensitiveType = CaseSensitiveMatch.SENSITIVE;
 	private String clientAddressMode = null;
 	
+	private boolean isSearchFormEsitoConsegnaMultiplaEnabled = true;
+	
 
 	public TipiDatabase getDatabaseType() {
 		return _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
@@ -223,6 +225,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.setRicerchePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloRicerchePersonalizzate());
 			this.setStatistichePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate());	
 			this._tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuolo();
+			this.isSearchFormEsitoConsegnaMultiplaEnabled = govwayMonitorProperties.isSearchFormEsitoConsegnaMultiplaEnabled();
 		} catch (Exception e) {
 			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -1394,17 +1397,28 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				esitiFiltro = esitiProperties.getEsitiCodeRichiestaScartate();
 			}
 			
-			List<Integer> escludiEsitiRichiesteMalformate = null;
+			List<Integer> escludiEsiti = null;
+			
 			if(this.escludiRichiesteScartate && (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE != this.esitoGruppo)){
-				escludiEsitiRichiesteMalformate = esitiProperties.getEsitiCodeRichiestaScartate();
+				escludiEsiti = esitiProperties.getEsitiCodeRichiestaScartate();
 			}
 
+			if(!this.isSearchFormEsitoConsegnaMultiplaEnabled) {
+				if(escludiEsiti==null) {
+					escludiEsiti = new ArrayList<Integer>();
+				}
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA));
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA));
+			}
+			
+			
 			for (Integer esito : esiti) {
 
 				if(esitiFiltro!=null){
 					boolean found = false;
 					for (Integer esitoFiltro : esitiFiltro) {
-						if(esitoFiltro == esito){
+						if(esitoFiltro.intValue() == esito.intValue()){
 							found = true;
 							break;
 						}
@@ -1414,10 +1428,10 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					}
 				}
 				
-				if(escludiEsitiRichiesteMalformate!=null) {
+				if(escludiEsiti!=null) {
 					boolean found = false;
-					for (Integer esitoRichiestaMalformataDaEscludere : escludiEsitiRichiesteMalformate) {
-						if(esitoRichiestaMalformataDaEscludere == esito){
+					for (Integer checkEsito : escludiEsiti) {
+						if(checkEsito.intValue() == esito.intValue()){
 							found = true;
 							break;
 						}
@@ -1430,13 +1444,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
-				if(statistiche &&
-						(
-								EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA.equals(esitoTransactionName)
-								||
-								EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA.equals(esitoTransactionName)
-							)
-					) {
+				if(statistiche && EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName)) {
 					continue;
 				}
 				
@@ -1465,7 +1473,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return list;
 	}
 
-	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+	public List<SelectItem> getEsitiDettagliPersonalizzati(boolean statistiche) {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
@@ -1478,6 +1486,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
+				if(!this.isSearchFormEsitoConsegnaMultiplaEnabled && EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+					continue;
+				}
+				if(statistiche && EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName)) {
+					continue;
+				}
+				
 				SelectItem si = new SelectItem(esito.intValue(),esitiProperties.getEsitoLabel(esito));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);

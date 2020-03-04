@@ -205,6 +205,10 @@ Context, Cloneable {
 		return super.getEsitiDettaglio(false);
 	}
 	
+	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+		return super.getEsitiDettagliPersonalizzati(false);
+	}
+	
 	public boolean isIntegrationManagerEnabled() {
 		return this.integrationManagerEnabled;
 	}

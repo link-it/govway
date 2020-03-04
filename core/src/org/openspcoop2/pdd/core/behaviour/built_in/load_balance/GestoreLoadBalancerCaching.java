@@ -492,7 +492,10 @@ public class GestoreLoadBalancerCaching {
 							}catch(Exception e) {}
 						}
 					}
-					String nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+					String nomeConnettore = null;
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						nomeConnettore = servizioApplicativo.getDatiConnettore().getNome();
+					}
 					if(nomeConnettore==null) {
 						nomeConnettore = org.openspcoop2.pdd.core.behaviour.built_in.Costanti.NOME_CONNETTORE_DEFAULT;
 					}
