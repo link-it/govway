@@ -9111,7 +9111,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, pIdSogg, pIdPorta, pIdAsps,
-					pConnettoreAccessoDaGruppi,	pConnettoreRegistro, pConnettoreAccessoCM));
+					pAccessoDaAPS, pConnettoreAccessoDaGruppi,	pConnettoreRegistro, pConnettoreAccessoCM));
 			
 			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE;
 			

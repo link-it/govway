@@ -208,7 +208,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			}
 			
 			lstParam.add(new Parameter(labelPerPorta,PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONFIGURAZIONE_CONNETTORI_MULTIPLI, pIdSogg, pIdPorta, pIdAsps,
-					pConnettoreAccessoDaGruppi,	pConnettoreRegistro, pConnettoreAccessoCM));
+					pAccessoDaAPS, pConnettoreAccessoDaGruppi,	pConnettoreRegistro, pConnettoreAccessoCM));
 			
 			String labelPagLista = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_REGOLE;
 			
@@ -223,8 +223,7 @@ public final class PorteApplicativeConnettoriMultipliConfigAzioniChange extends 
 			listaParametriServletProprietaCustom.add(pConnettoreAccessoCM);
 			lstParam.add(new Parameter(labelPagLista, PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIG_AZIONI_LIST,	listaParametriServletProprietaCustom.toArray(new Parameter[listaParametriServletProprietaCustom.size()])));
 			
-			
-			lstParam.add(ServletUtils.getParameterAggiungi());
+			lstParam.add(new Parameter(oldRegola.getRegola(), null));
 
 			// Se servizioApplicativohid = null, devo visualizzare la pagina per
 			// l'inserimento dati
