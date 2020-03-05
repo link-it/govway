@@ -37,7 +37,7 @@ public enum BehaviourType implements IEnumeration , Serializable , Cloneable {
 
 	CONSEGNA_LOAD_BALANCE (Costanti.CONSEGNA_LOAD_BALANCE ,"Load Balance"), // per tutti
 	CONSEGNA_MULTIPLA (Costanti.CONSEGNA_MULTIPLA ,"Più Destinatari"), // per oneway-soap
-	CONSEGNA_CONDIZIONALE (Costanti.CONSEGNA_CONDIZIONALE ,"Consegna Condizionale"), // per !oneway-soap e rest
+	CONSEGNA_CONDIZIONALE (Costanti.CONSEGNA_CONDIZIONALE ,"Consegna Condizionale"), // per tutti
 	CONSEGNA_CON_NOTIFICHE (Costanti.CONSEGNA_CON_NOTIFICHE ,"Consegna con Notifiche"), // per !oneway-soap e rest
 	CUSTOM (Costanti.CONSEGNA_CUSTOM ,"Personalizzata");
 

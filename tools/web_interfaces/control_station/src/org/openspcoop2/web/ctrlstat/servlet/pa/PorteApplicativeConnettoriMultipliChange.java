@@ -63,10 +63,13 @@ import org.openspcoop2.core.constants.TransferLengthModes;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.ConfigurazioneMultiDeliver;
+import org.openspcoop2.pdd.core.behaviour.built_in.multi_deliver.MultiDeliverUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.behaviour.conditional.ConfigurazioneSelettoreCondizioneRegola;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -304,11 +307,6 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 
-			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(porteApplicativeHelper);
-			String filtroTipoSA = isApplicativiServerEnabled ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
-
-			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
-
 			// valora iniziale della configurazione
 			PortaApplicativaServizioApplicativo oldPaSA = null;
 			for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
@@ -316,6 +314,32 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 					oldPaSA = paSATmp;					
 				}
 			}
+			
+			boolean integrationManagerEnabled = !porteApplicativeHelper.isModalitaStandard() && porteApplicativeCore.isIntegrationManagerEnabled();
+			boolean isSoapOneWay = false;
+			if(pa!=null) {
+				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+				isSoapOneWay = porteApplicativeHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+			}
+			if(integrationManagerEnabled) {
+				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType)) {
+					ConfigurazioneMultiDeliver confMultiDeliver = MultiDeliverUtils.read(pa, ControlStationCore.getLog());
+					String nomeConnettoreSincrono = null;
+					if(confMultiDeliver!=null) {
+						nomeConnettoreSincrono = confMultiDeliver.getTransazioneSincrona_nomeConnettore();
+					}
+					String oldNomeConnettore = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(oldPaSA);
+					integrationManagerEnabled = !oldNomeConnettore.equals(nomeConnettoreSincrono); // l'integration manager e' abilitato solamente se e' il connettore adibito alle notifiche
+				}
+				else {
+					integrationManagerEnabled = isSoapOneWay; // l'integration manager e' abilitato solamente se c'e' almeno una azione oneway in api soap
+				}
+			}
+			
+			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(porteApplicativeHelper);
+			String filtroTipoSA = isApplicativiServerEnabled ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
+
+			String nomeProtocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(pa.getTipoSoggettoProprietario());
 
 			PortaApplicativaServizioApplicativoConnettore oldDatiConnettore = oldPaSA.getDatiConnettore();
 			IDServizioApplicativo idSA = new IDServizioApplicativo();
@@ -609,6 +633,10 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 								}
 							}
 						}
+					}
+					
+					if(getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+						forceEnableConnettore = false;
 					}
 
 					if (invrifRichiesta == null) {
@@ -943,7 +971,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
-							null, false);
+							null, false,
+							integrationManagerEnabled);
 
 					dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
@@ -976,7 +1005,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,
-							null, false);
+							null, false,
+							integrationManagerEnabled);
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 
@@ -1055,7 +1085,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
-							null, false);
+							null, false,
+							integrationManagerEnabled);
 
 					dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 							null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
@@ -1088,7 +1119,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							getmsg,getmsgUsername,getmsgPassword,true,
 							invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 							parentPA,serviceBinding, accessoDaAPSParametro, true,
-							null, false);
+							null, false,
+							integrationManagerEnabled);
 
 					dati = porteApplicativeHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 

@@ -498,6 +498,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
 
+			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
+						
 			ServiceBinding serviceBinding = null;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
@@ -529,6 +531,13 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				
+				boolean isSoapOneWay = false;
+				if(pa!=null) {
+					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					isSoapOneWay = saHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+				}
+				integrationManagerEnabled = integrationManagerEnabled && isSoapOneWay;
 			}
 			else {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI+nomeservizioApplicativo;
@@ -917,7 +926,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
-						null, false);
+						null, false,
+						integrationManagerEnabled);
 				
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject,
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);
@@ -974,7 +984,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
-						null, false);
+						null, false,
+						integrationManagerEnabled);
 				
 				//				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, user, password, confpw, subject, 
 				//						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT,true,endpointtype,true);

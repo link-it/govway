@@ -4308,6 +4308,37 @@ public class DriverConfigurazioneDB_LIB {
 				// cancello anche le associazioni delle porteapplicative
 				// associate a questo servizio
 				// serviziapplicativi
+				
+				List<Long> idsPA_SA = new ArrayList<>(); 
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idServizioApplicativo);
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					idsPA_SA.add(rs.getLong("id"));
+				}
+				rs.close();
+				stm.close();
+				
+				if(!idsPA_SA.isEmpty()) {
+					for (Long idsapa : idsPA_SA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQuery = sqlQueryObject.createSQLDelete();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idsapa);
+						n=stm.executeUpdate();
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (SA "+idServizioApplicativo+")");
+					}
+				}
+				
 				DriverConfigurazioneDB_LIB.log.debug("Deleted PA associazioni...");
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);

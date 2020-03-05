@@ -2235,10 +2235,12 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 				getmsgPassword = this.getParameter(readedDatiConnettori,defaultProperties,ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				//}
 				boolean erogazioneServizioApplicativoServerEnabled = false;
+				boolean integrationManagerEnabled = !this.isModalitaStandard() && this.archiviCore.isIntegrationManagerEnabled();
 				this.addEndPointToDati(dati,"","",sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						null,null,protocollo,false,true, showSection, null,null, null, erogazioneServizioApplicativoServerEnabled,
-						null, false);
+						null, false,
+						integrationManagerEnabled);
 							
 				boolean forceEnabled = true; // non ha senso non fornire un connettore a meno che non vi sia la possibilita' di utilizzare l'integration manager
 				boolean showSectionTitle = false;

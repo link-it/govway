@@ -238,10 +238,11 @@ public final class PorteApplicativeConnettoriMultipliDel extends Action {
 
 				String userLogin = ServletUtils.getUserLoginFromSession(session);
 
+				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
+				
 				if(!listaOggettiDaEliminare.isEmpty())
 					porteApplicativeCore.performDeleteOperation(userLogin, porteApplicativeHelper.smista(), listaOggettiDaEliminare.toArray(new Object[listaOggettiDaEliminare.size()]));
 
-				porteApplicativeCore.performUpdateOperation(userLogin, porteApplicativeHelper.smista(), pa);
 			} 
 
 			// Preparo il menu

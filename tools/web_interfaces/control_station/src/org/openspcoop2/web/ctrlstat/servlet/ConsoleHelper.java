@@ -14920,4 +14920,42 @@ public class ConsoleHelper implements IConsoleHelper {
 		}
 		return l;
 	}
+	
+	public boolean isSoapOneWay(PortaApplicativa portaApplicativa, MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa, 
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding) 
+					throws Exception, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		boolean isSoapOneWay = false;
+		
+		if(serviceBinding.equals(ServiceBinding.SOAP)) {
+			// controllo che tutte le azioni del gruppo siano oneway
+			// se c'e' almeno un'azione non oneway visualizzo la sezione notifiche
+			if(mappingErogazionePortaApplicativa.isDefault()) {
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<String>());
+				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+				List<MappingErogazionePortaApplicativa> lista = this.apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
+		
+				boolean allActionRedefined = false;
+				List<String> actionNonRidefinite = null;
+		
+				List<String> azioniL = new ArrayList<>();
+				if(azioni != null && azioni.size() > 0)
+					azioniL.addAll(azioni.keySet());
+				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, lista);
+				if(!allActionRedefined) {
+					actionNonRidefinite = this.getAllActionsNotRedefinedMappingErogazione(azioniL, lista);
+					isSoapOneWay = this.porteApplicativeCore.azioniTutteOneway(asps, as, actionNonRidefinite);
+				} else {
+					isSoapOneWay = false;
+				} 
+			} else {
+				List<String> listaAzioni = portaApplicativa.getAzione()!= null ?  portaApplicativa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				isSoapOneWay = this.porteApplicativeCore.azioniTutteOneway(asps, as, listaAzioni);
+			}
+		} else {
+			isSoapOneWay = false;
+		}
+		
+		return isSoapOneWay;
+	}
+
 }

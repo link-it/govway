@@ -259,7 +259,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			String tipoCredenzialiSSLAliasCertificatoType, String tipoCredenzialiSSLAliasCertificatoVersion, String tipoCredenzialiSSLAliasCertificatoSerialNumber, String tipoCredenzialiSSLAliasCertificatoSelfSigned,
 			String tipoCredenzialiSSLAliasCertificatoNotBefore, String tipoCredenzialiSSLAliasCertificatoNotAfter, String tipoCredenzialiSSLVerificaTuttiICampi, String tipoCredenzialiSSLConfigurazioneManualeSelfSigned,
 			String issuer,String tipoCredenzialiSSLStatoElaborazioneCertificato,
-			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient) throws Exception {
+			boolean autenticazioneToken, String tokenPolicy, String tipoSA, boolean useAsClient,
+			boolean integrationManagerEnabled) throws Exception {
 
 		if(ruoloFruitore==null){
 			ruoloFruitore = TipologiaFruizione.DISABILITATO.getValue();
@@ -1023,7 +1024,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			this.addEndPointToDati(dati,id,nome,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 					getmsg, utente, password, true, invrif,risprif,nomeProtocollo,false,true, true,
 					parentSA,null,null,servizioApplicativoServerEnabled,
-					tipoSA, useAsClient);
+					tipoSA, useAsClient,
+					integrationManagerEnabled);
 			
 			if(!applicativiServerEnabled && TipologiaFruizione.DISABILITATO.equals(ruoloFruitore) &&
 					CostantiConfigurazione.ABILITATO.equals(getmsg)){
@@ -2159,7 +2161,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
 			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled,
-			String tipoSA, boolean useAsClient) throws Exception{
+			String tipoSA, boolean useAsClient,
+			boolean integrationManagerEnabled) throws Exception{
 		this.addEndPointToDati(dati, 
 				idsil, nomeservizioApplicativo, sbustamento, sbustamentoInformazioniProtocolloRichiesta, 
 				getmsg, null, null, true, 
@@ -2167,7 +2170,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				isInvocazioneServizio, showTitleTrattamentoMessaggio, 
 				parentSA, serviceBinding, 
 				accessoDaAPSParametro, servizioApplicativoServerEnabled,
-				tipoSA, useAsClient);
+				tipoSA, useAsClient,
+				integrationManagerEnabled);
 	}
 	
 	public void addEndPointToDati(Vector<DataElement> dati,
@@ -2177,7 +2181,8 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			boolean isInvocazioneServizio, boolean showTitleTrattamentoMessaggio,
 			Integer parentSA, ServiceBinding serviceBinding,
 			String accessoDaAPSParametro, boolean servizioApplicativoServerEnabled, 
-			String tipoSA, boolean useAsClient) throws Exception{
+			String tipoSA, boolean useAsClient,
+			boolean integrationManagerEnabled) throws Exception{
 		
 		if(servizioApplicativoServerEnabled) {
 			this.addEndPointToDatiAsHidden(dati, idsil, nomeservizioApplicativo, sbustamento,
@@ -2336,8 +2341,6 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				dati.addElement(de);
 			}
 			
-			
-			boolean integrationManagerEnabled = !this.isModalitaStandard() && this.core.isIntegrationManagerEnabled();
 			
 			if(integrationManagerEnabled) {
 				de = new DataElement();

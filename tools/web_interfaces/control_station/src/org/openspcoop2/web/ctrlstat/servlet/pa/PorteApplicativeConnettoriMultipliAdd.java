@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
@@ -292,6 +293,21 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 			AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
 			
+			boolean integrationManagerEnabled = !porteApplicativeHelper.isModalitaStandard() && porteApplicativeCore.isIntegrationManagerEnabled();
+			boolean isSoapOneWay = false;
+			if(pa!=null) {
+				MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+				isSoapOneWay = porteApplicativeHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+			}
+			if(integrationManagerEnabled) {
+				if(BehaviourType.CONSEGNA_CON_NOTIFICHE.equals(beaBehaviourType)) {
+					integrationManagerEnabled = true; // l'integration manager e' abilitato solamente se e' il connettore adibito alle notifiche; siccome siamo in add sicuramente sar' un nuovo connettore per le notifiche
+				}
+				else {
+					integrationManagerEnabled = isSoapOneWay; // l'integration manager e' abilitato solamente se c'e' almeno una azione oneway in api soap
+				}
+			}
+						
 			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(porteApplicativeHelper);
 			String filtroTipoSA = isApplicativiServerEnabled ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 			
@@ -527,7 +543,8 @@ public final class PorteApplicativeConnettoriMultipliAdd extends Action {
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,true, true,
 						parentPA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
-						null, false);
+						null, false,
+						integrationManagerEnabled);
 				
 				dati = porteApplicativeHelper.addEndPointToDati(dati, connettoreDebug, endpointtype, autenticazioneHttp, 
 						null, //(porteApplicativeHelper.isModalitaCompleta() || !multitenant)?null:AccordiServizioParteSpecificaCostanti.LABEL_APS_APPLICATIVO_INTERNO_PREFIX , 
