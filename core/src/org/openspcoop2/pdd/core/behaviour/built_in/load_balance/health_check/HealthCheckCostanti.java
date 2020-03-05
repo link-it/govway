@@ -32,5 +32,5 @@ public class HealthCheckCostanti  {
 	public static final String PASSIVE_HEALTH_CHECK_SECONDS = "passiveHealthCheckExcludeForSeconds";
 	
 	
-	public static final int PASSIVE_HEALTH_CHECK_SECONDS_DEFAULT_VALUE = 600; // 10 minuti
+	public static final int PASSIVE_HEALTH_CHECK_SECONDS_DEFAULT_VALUE = 60; // 1 minuto
 }

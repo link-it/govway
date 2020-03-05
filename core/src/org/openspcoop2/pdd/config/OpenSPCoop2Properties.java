@@ -856,6 +856,7 @@ public class OpenSPCoop2Properties {
 			this.getTimerConsegnaContenutiApplicativiLimit();
 			this.getTimerConsegnaContenutiApplicativiInterval();
 			this.getTimerConsegnaContenutiApplicativiMinIntervalResend();
+			this.isLoadBalancerDebug();
 			if(this.isTimerLockByDatabase()) {
 				this.getTimerConsegnaContenutiApplicativi_lockMaxLife();
 				this.getTimerConsegnaContenutiApplicativi_lockIdleTime();
@@ -4816,6 +4817,28 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.getTimerConsegnaContenutiApplicativiMinIntervalResend;
+	}
+	
+	private static Boolean isLoadBalancerDebug = null;
+	public boolean isLoadBalancerDebug(){
+		if(OpenSPCoop2Properties.isLoadBalancerDebug==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.loadBalancer.debug"); 
+				if(value!=null){
+					value = value.trim();
+					OpenSPCoop2Properties.isLoadBalancerDebug = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.loadBalancer.debug' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isLoadBalancerDebug = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop 'org.openspcoop2.pdd.loadBalancer.debug', viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isLoadBalancerDebug = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isLoadBalancerDebug;
 	}
 	
 	private static Integer getTimerConsegnaContenutiApplicativi_lockMaxLife = null;

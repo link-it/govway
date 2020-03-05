@@ -25,12 +25,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.behaviour.BehaviourException;
 import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.health_check.HealthCheckConfigurazione;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
 
@@ -50,8 +53,12 @@ public class LoadBalancerPool implements Serializable{
 	
 	public static int DEFAULT_WEIGHT = 1; 
 	
+	private HealthCheckConfigurazione healthCheck = null;
+	private boolean debug = false;
+	
 	public LoadBalancerPool(HealthCheckConfigurazione healthCheck) {
 		this.healthCheck = healthCheck;
+		this.debug = OpenSPCoop2Properties.getInstance().isLoadBalancerDebug();
 	}
 	
 	@Override
@@ -91,7 +98,6 @@ public class LoadBalancerPool implements Serializable{
 	
 	private int position = -1;
 	
-	private HealthCheckConfigurazione healthCheck = null;
 	
 	
 
@@ -108,7 +114,12 @@ public class LoadBalancerPool implements Serializable{
 				
 				Set<String> setOriginal = this.connectorMap.keySet();
 				List<String> serverList = new ArrayList<>();
-				serverList.addAll(setOriginal);
+				if(checkByWeight) {
+					serverList.addAll(this.getWeightList(false));
+				}
+				else {
+					serverList.addAll(setOriginal);
+				}
 				
 				Set<String> setAfterPassiveHealthCheck = passiveHealthCheck(setOriginal, false);
 				
@@ -148,6 +159,31 @@ public class LoadBalancerPool implements Serializable{
 		return this.position;
 	}
 	
+	
+	public List<String> getWeightList(boolean passiveHealthCheck) throws BehaviourException {
+		Set<String> servers = this.getConnectorNames(passiveHealthCheck);
+		if(servers.isEmpty()) {
+			throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
+		}
+		List<String> serverList = new ArrayList<>();    
+
+		Iterator<String> iterator = servers.iterator();
+		while (iterator.hasNext()) {
+			String server = iterator.next();
+			Integer weight = this.getWeight(server);
+			if (weight == null || weight <= 0) {
+				weight = LoadBalancerPool.DEFAULT_WEIGHT;
+			}
+			for (int i = 0; i < weight; i++) {
+				serverList.add(server);
+			}
+		}
+
+		debug("weightList (passiveHealthCheck:"+passiveHealthCheck+"): "+serverList);
+		
+		return serverList;
+	}
+	
 
 	public String getNextConnectorLeastConnections() {
 		synchronized (this.semaphore) {
@@ -181,12 +217,12 @@ public class LoadBalancerPool implements Serializable{
 			}
 
 			if(listMin.isEmpty()) {
-				listMin.addAll(this.connectorMap.keySet());
-				//System.out.println("LISTA is EMPTY");
+				listMin.addAll(setKeys);
+				debug("getNextConnectorLeastConnections: list is empty");
 				
 			}
 			
-			//System.out.println("LISTA min["+min+"]: "+listMin);
+			debug("getNextConnectorLeastConnections min["+min+"]: "+listMin);
 			
 			return listMin.get(0);
 			
@@ -229,7 +265,11 @@ public class LoadBalancerPool implements Serializable{
 		synchronized (this.semaphore) {
 			if(this.connectorMap_errorDate.containsKey(name)==false) {
 				// non aggiorniamo eventualmente la data, teniamo la prima
+				debug("Registrazione errore di connessione per connettore ["+name+"]");
 				this.connectorMap_errorDate.put(name, DateManager.getDate());
+			}
+			else {
+				debug("Registrazione non effettuata dell'errore di connessione per connettore ["+name+"]: gia' presente una entry");
 			}
 		}
 	}
@@ -242,7 +282,7 @@ public class LoadBalancerPool implements Serializable{
 			}
 			activeConnections++;
 			this.connectorMap_activeConnections.put(name, activeConnections);
-			//System.out.println("ADD ["+name+"] ["+activeConnections+"]");
+			debug("Registrazione connessione attiva per connettore ["+name+"] (active:"+activeConnections+")");
 		}
 	}
 	public void removeActiveConnection(String name) throws BehaviourException {
@@ -255,7 +295,7 @@ public class LoadBalancerPool implements Serializable{
 			if(activeConnections>0) {
 				this.connectorMap_activeConnections.put(name, activeConnections);
 			}
-			//System.out.println("REMOVE ["+name+"] ["+activeConnections+"]");
+			debug("Rimozione connessione attiva per connettore ["+name+"] (active:"+activeConnections+")");
 		}
 	}
 	
@@ -273,6 +313,8 @@ public class LoadBalancerPool implements Serializable{
 		
 		Date now = DateManager.getDate();
 		
+		debug("Passive Health Check della lista: "+set);
+		
 		Set<String> newSet = new HashSet<String>();
 		List<String> listRimuoviDate = new ArrayList<String>();
 		
@@ -282,19 +324,23 @@ public class LoadBalancerPool implements Serializable{
 				long registrationDateLong = registrationDate.getTime();
 				long registrationDateExpired = registrationDateLong + (this.healthCheck.getPassiveHealthCheck_excludeForSeconds().intValue() * 1000);
 				if(registrationDateExpired<now.getTime()) {
-					//System.out.println("RILEVATO ERRORE SCADUTO PER C ["+name+"]");
+					debug("(PassiveHealthCheck) Rilevato errore di connessione scaduto per connettore ["+name+"]");
 					listRimuoviDate.add(name);
 				}
 				else {
-					//System.out.println("RILEVATO ERRORE SCADUTO NON ANCORA SCADUTO PER C ["+name+"]");
+					debug("(PassiveHealthCheck) Rilevato errore di connessione non ancora scaduto per connettore ["+name+"]");
 					continue; // non e' ancora scaduto
 				}
+			}
+			else {
+				debug("(PassiveHealthCheck) Non è presente alcun errore di connessione per il connettore ["+name+"]");
 			}
 						
 			newSet.add(name);
 		}
 		
 		if(listRimuoviDate!=null && !listRimuoviDate.isEmpty()) {
+			debug("(PassiveHealthCheck) lista di errori di connessione scaduti: "+listRimuoviDate);
 			if(syncErase) {
 				synchronized (this.semaphore) { // un altro thread potrebbe già averlo modificato
 					cleanErrorDate(listRimuoviDate, now);
@@ -305,18 +351,71 @@ public class LoadBalancerPool implements Serializable{
 			}
 		}
 		
+		if(newSet.isEmpty()) {
+			// Se tutti i connettori vengono esclusi, non ha senso sospenderli tutti poichè si avrebbe un non servizio anche se poi qualcuno riprende.
+			// Per questo motivo si ritornano tutti e se re-inizia il giro di verifica.
+			debug("(PassiveHealthCheck) !!FULL!! tutti i connettori del pool risultano sospesi per errori di connessione: "+this.connectorMap_errorDate.keySet());
+			Date dateCleaner = DateManager.getDate();
+			synchronized (this.semaphore) { // un altro thread potrebbe già averlo modificato
+				cleanAllErrorDate(dateCleaner);
+			}
+			return set;
+		}
+		else {
+			debug("(PassiveHealthCheck) lista di connettori validi: "+newSet);
+		}
+		
 		return newSet;
 	}
 	private void cleanErrorDate(List<String> listRimuoviDate, Date now) {
+		List<String> listDaRimuovere = new ArrayList<String>();
 		for (String name : listRimuoviDate) {
 			if(this.connectorMap_errorDate.containsKey(name)) {
 				Date registrationDate = this.connectorMap_errorDate.get(name);
 				long registrationDateLong = registrationDate.getTime();
 				long registrationDateExpired = registrationDateLong + (this.healthCheck.getPassiveHealthCheck_excludeForSeconds().intValue() * 1000);
 				if(registrationDateExpired<now.getTime()) {
-					this.connectorMap_errorDate.remove(name);
+					debug("Registro da eliminare l'informazione sull'errore di connessione per il connettore ["+name+"]");
+					listDaRimuovere.add(name);
+				}
+				else {
+					debug("Non registro da eliminare l'informazione sull'errore di connessione per il connettore ["+name+"]: la data di registrazione e' stata aggiornata");
 				}
 			}
+		}
+		if(!listDaRimuovere.isEmpty()) {
+			for (String name : listDaRimuovere) {
+				debug("Elimino l'informazione sull'errore di connessione per il connettore ["+name+"]");
+				this.connectorMap_errorDate.remove(name);
+			}
+		}
+	}
+	private void cleanAllErrorDate(Date now) {
+		debug("(HealthCheck) lista di errori di connessione prima della pulizia totale: "+this.connectorMap_errorDate.keySet());
+		List<String> listDaRimuovere = new ArrayList<String>();
+		for (String name : this.connectorMap_errorDate.keySet()) {
+			Date registrationDate = this.connectorMap_errorDate.get(name);
+			if(registrationDate.before(now)) {
+				debug("(HealthCheck) Registro da eliminare l'informazione sull'errore di connessione per il connettore ["+name+"]");
+				listDaRimuovere.add(name);
+			}
+			else {
+				debug("(HealthCheck) Non registro da eliminare l'informazione sull'errore di connessione per il connettore ["+name+"]: la data di registrazione e' stata aggiornata");
+			}
+		}
+		if(!listDaRimuovere.isEmpty()) {
+			for (String name : listDaRimuovere) {
+				debug("(HealthCheck) Elimino l'informazione sull'errore di connessione per il connettore ["+name+"]");
+				this.connectorMap_errorDate.remove(name);
+			}
+		}
+		debug("(HealthCheck) lista di errori di connessione terminata la pulizia totale: "+this.connectorMap_errorDate.keySet());
+	}
+	
+	
+	private void debug(String msg) {
+		if(this.debug) {
+			OpenSPCoop2Logger.getLoggerOpenSPCoopCore().debug(msg);
 		}
 	}
 }

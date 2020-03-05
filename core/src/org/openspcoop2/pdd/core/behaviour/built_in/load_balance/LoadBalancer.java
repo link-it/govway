@@ -21,7 +21,6 @@
 package org.openspcoop2.pdd.core.behaviour.built_in.load_balance;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -76,7 +75,7 @@ public class LoadBalancer {
 		return target;
 	}
 	private String getWeightRoundRobin() throws BehaviourException {
-		List<String> serverList = getWeightList(false); // il passive health check viene effettuato dentro il metodo nextPosition
+		List<String> serverList = this.pool.getWeightList(false); // il passive health check viene effettuato dentro il metodo nextPosition
 		int position = this.pool.getNextPosition(true);
 		String target = serverList.get(position);
 		return target;
@@ -95,7 +94,7 @@ public class LoadBalancer {
 		return target;
 	}
 	private String getWeightRandom() throws BehaviourException {
-		List<String> serverList = getWeightList(true);
+		List<String> serverList = this.pool.getWeightList(true);
 		Integer index = new Random().nextInt(serverList.size());
 		String target = serverList.get(index);
 		return target;
@@ -172,27 +171,4 @@ public class LoadBalancer {
 		return this.pool.getNextConnectorLeastConnections();
 	}
 
-	private List<String> getWeightList(boolean passiveHealthCheck) throws BehaviourException {
-		Set<String> servers = this.pool.getConnectorNames(passiveHealthCheck);
-		if(servers.isEmpty()) {
-			throw new BehaviourException("Nessun connettore selezionabile (passive health check)");
-		}
-		List<String> serverList = new ArrayList<>();    
-
-		Iterator<String> iterator = servers.iterator();
-		while (iterator.hasNext()) {
-			String server = iterator.next();
-			Integer weight = this.pool.getWeight(server);
-			if (weight == null || weight <= 0) {
-				weight = LoadBalancerPool.DEFAULT_WEIGHT;
-			}
-			for (int i = 0; i < weight; i++) {
-				serverList.add(server);
-			}
-		}
-
-		//System.out.println("LISTA: "+serverList);
-		
-		return serverList;
-	}
 }

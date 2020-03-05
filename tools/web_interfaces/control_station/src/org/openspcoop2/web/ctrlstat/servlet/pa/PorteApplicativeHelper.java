@@ -9122,7 +9122,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			ServiceBinding serviceBinding = this.porteApplicativeCore.toMessageServiceBinding(as.getServiceBinding());
 			
 			// setto le label delle colonne
-			String[] labels = {PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME,	this.getLabelAzione(serviceBinding )};
+			String[] labels = {PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_LIST,	this.getLabelAzione(serviceBinding )};
 			this.pd.setLabels(labels);
 
 			// preparo i dati
@@ -9182,7 +9182,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		// nome
 		de = new DataElement();
-		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
+		de.setLabel(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM);
 		de.setValue(nome);
 		de.setType(DataElementType.TEXT_EDIT);
 		de.setName(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME);
@@ -9364,7 +9364,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		
 		// campi obbligatori
 		if (nome.equals("")){
-			this.pd.setMessage("Il campo "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME +" non pu&ograve; essere vuoto");
+			this.pd.setMessage("Il campo "+ PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM +" non pu&ograve; essere vuoto");
 			return false;
 		}
 		
@@ -9374,7 +9374,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 		}
 		
 		// Check Lunghezza
-		if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME)==false) {
+		if(this.checkLength255(nome, PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_AZIONI_NOME_FORM)==false) {
 			return false;
 		}
 		
