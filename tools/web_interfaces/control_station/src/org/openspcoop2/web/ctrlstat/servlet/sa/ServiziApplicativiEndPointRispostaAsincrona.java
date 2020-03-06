@@ -274,7 +274,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			boolean forceEnabled = false;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				if(!saHelper.isModalitaStandard() && 
+				if(
+						//va visualizzato comunque se già configurato:!saHelper.isModalitaStandard() && 
 						( (getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) 
 								||
 						  (getmsg==null && ra!=null && ra.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(ra.getGetMessage()))
@@ -387,6 +388,11 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 							}
 						}
 					}
+				}
+				
+				if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					// faccio vedere I.M. anche con interfaccia standard
+					integrationManagerEnabled = true;
 				}
 				
 				if (invrifRichiesta == null) {

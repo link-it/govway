@@ -833,8 +833,13 @@ public final class ServiziApplicativiChange extends Action {
 						sbustamentoInformazioniProtocolloRichiesta = is.getSbustamentoInformazioniProtocollo().toString();
 				}
 				if (getmsg == null){
-					if(is.getGetMessage()!=null)
+					if(is.getGetMessage()!=null) {
 						getmsg = is.getGetMessage().toString();
+					}
+					if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+						// faccio vedere I.M. anche con interfaccia standard
+						integrationManagerEnabled = true;
+					}
 				}
 				
 				if (invrifRichiesta == null) {
@@ -1333,7 +1338,7 @@ public final class ServiziApplicativiChange extends Action {
 			
 			// *** Invocazione Porta ***
 			boolean showInvocazionePortaStep1 = ( (interfacciaAvanzata && !isApplicativiServerEnabled) || !TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
-			boolean showInvocazionePortaStep2 = !showInvocazionePortaStep1 && (interfacciaStandard && TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
+			boolean showInvocazionePortaStep2 = !showInvocazionePortaStep1 && (!saHelper.isModalitaCompleta() && TipologiaFruizione.DISABILITATO.getValue().equals(ruoloFruitore));
 			
 //			if(isApplicativiServerEnabled) {
 //				showInvocazionePortaStep1 = showInvocazionePortaStep1 && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA);

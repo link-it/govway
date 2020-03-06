@@ -487,11 +487,20 @@ IDriverWS ,IMonitoraggioRisorsa{
 				accordoCooperazione.setDescrizione(((tmp == null || tmp.equals("")) ? null : tmp));
 
 				// Soggetto referente
-				if(rs.getLong("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(rs.getLong("id_referente"),con);
+				long id_referente = rs.getLong("id_referente");
+				if(id_referente>0) {
+					IDSoggetto soggettoReferente = null;
+					try {
+						soggettoReferente = this.getIdSoggetto(id_referente,con);
+						if(soggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						throw new Exception ("Soggetto referente ["+id_referente+"] dell'accordo non esiste");
+					}
 					IdSoggetto assr = new IdSoggetto();
-					assr.setTipo(soggRef.getTipo());
-					assr.setNome(soggRef.getNome());
+					assr.setTipo(soggettoReferente.getTipo());
+					assr.setNome(soggettoReferente.getNome());
 					accordoCooperazione.setSoggettoReferente(assr);
 				}
 
@@ -550,9 +559,16 @@ IDriverWS ,IMonitoraggioRisorsa{
 					rs2 = stm2.executeQuery();
 					if(rs2.next()){
 						IDSoggetto soggettoReferente = null;
-						if(rs2.getLong("id_referente")>0){
-							Soggetto s = this.getSoggetto(rs2.getLong("id_referente"));
-							soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
+						long id_referenteInternal = rs2.getLong("id_referente");
+						if(id_referenteInternal>0){
+							try {
+								soggettoReferente = this.getIdSoggetto(id_referenteInternal,con);
+								if(soggettoReferente==null){
+									throw new DriverRegistroServiziNotFound ("non esiste");
+								}
+							}catch(DriverRegistroServiziNotFound notFound) {
+								throw new Exception ("Soggetto referente ["+id_referenteInternal+"] dell'accordo non esiste");
+							}
 						}
 						String uriAccordo = this.idAccordoFactory.getUriFromValues(rs2.getString("nome"), soggettoReferente, rs2.getInt("versione"));
 						accordoCooperazione.addUriServiziComposti(uriAccordo);
@@ -1985,12 +2001,21 @@ IDriverWS ,IMonitoraggioRisorsa{
 				}
 
 				// Soggetto referente
-				if(rs.getLong("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(rs.getLong("id_referente"),con);
+				long id_referente = rs.getLong("id_referente");
+				if(id_referente>0) {
+					IDSoggetto soggettoReferente = null;
+					try {
+						soggettoReferente = this.getIdSoggetto(id_referente,con);
+						if(soggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						throw new Exception ("Soggetto referente ["+id_referente+"] dell'accordo non esiste");
+					}
 					IdSoggetto assr = new IdSoggetto();
-					assr.setTipo(soggRef.getTipo());
-					assr.setNome(soggRef.getNome());
-					assr.setId(soggRef.getId());
+					assr.setTipo(soggettoReferente.getTipo());
+					assr.setNome(soggettoReferente.getNome());
+					assr.setId(id_referente);
 					accordoServizio.setSoggettoReferente(assr);
 				}
 
@@ -3582,8 +3607,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 				long idReferente = rs.getLong("id_referente");
 				IDSoggetto idSoggettoReferente = null;
 				if(idReferente>0){
-					Soggetto soggettoReferente = this.getSoggetto(idReferente,con);
-					if(soggettoReferente==null){
+					try {
+						idSoggettoReferente = this.getIdSoggetto(idReferente,con);
+						if(idSoggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
 						try{
 							throw new Exception("Soggetto referente ["+idReferente+"] presente nell'accordo ["+rs.getString("nome")+"] (versione ["+rs.getInt("versione")+"]) non presente?");
 						}finally{
@@ -3601,7 +3630,6 @@ IDriverWS ,IMonitoraggioRisorsa{
 							}catch (Exception e) {}
 						}
 					}
-					idSoggettoReferente = new IDSoggetto(soggettoReferente.getTipo(),soggettoReferente.getNome());
 				}
 
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(rs.getString("nomeAccordo"),idSoggettoReferente,rs.getInt("versione"));
@@ -9548,7 +9576,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 	 * @param credenziale
 	 * @return tutti i soggetti con i tipi indicati che utilizzano le credenziali indicate
 	 */
-	public List<Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverRegistroServiziException {
+	public List<IDSoggettoDB> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser, CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverRegistroServiziException {
 		Connection con = null;
 		PreparedStatement stmt = null;
 		ResultSet risultato = null;
@@ -9558,7 +9586,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		
 		this.log.debug("getSoggettiFromTipoAutenticazione...");
 		
-		List<Soggetto> soggetti= null;
+		List<IDSoggettoDB> soggetti= null;
 		
 		try {
 			this.log.debug("operazione atomica = " + this.atomica);
@@ -9628,11 +9656,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			
 			risultato = stmt.executeQuery();
 			
-			Soggetto sog;
-			soggetti = new ArrayList<Soggetto>();
+			soggetti = new ArrayList<IDSoggettoDB>();
 			while (risultato.next()) {
 
-				sog = new Soggetto();
+				IDSoggettoDB sog = new IDSoggettoDB();
 				sog.setId(risultato.getLong("idTableSoggetto"));
 				sog.setNome(risultato.getString("nome_soggetto"));
 				sog.setTipo(risultato.getString("tipo_soggetto"));
@@ -11101,8 +11128,27 @@ IDriverWS ,IMonitoraggioRisorsa{
 				IDSoggetto soggettoReferente = null;
 				long idSoggettoReferente = rs.getLong("id_referente");
 				if(idSoggettoReferente>0){
-					Soggetto s = this.getSoggetto(idSoggettoReferente,con);
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
+					try {
+						soggettoReferente = this.getIdSoggetto(idSoggettoReferente,con);
+						if(soggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						try {
+							throw new Exception ("Soggetto referente ["+idSoggettoReferente+"] dell'accordo non esiste");
+						}finally {
+							try{
+								if(rs!=null) rs.close();
+							}catch (Exception e) {
+								//ignore
+							}
+							try{
+								if(stm!=null) stm.close();
+							}catch (Exception e) {
+								//ignore
+							}
+						}
+					}
 				}
 				IDAccordo idAccordo = this.idAccordoFactory.getIDAccordoFromValues(rs.getString("nome"),soggettoReferente,rs.getInt("versione"));
 				idServ.setUriAccordoServizioParteComune(this.idAccordoFactory.getUriFromIDAccordo(idAccordo));
@@ -11144,6 +11190,10 @@ IDriverWS ,IMonitoraggioRisorsa{
 			//Chiudo statement and resultset
 			try{
 				if(rs!=null) rs.close();
+			}catch (Exception e) {
+				//ignore
+			}
+			try{
 				if(stm!=null) stm.close();
 			}catch (Exception e) {
 				//ignore
@@ -13181,11 +13231,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				long id_referente = rs.getLong("id_referente");
 				IDSoggetto soggettoReferente = null;
 				if(id_referente>0){
-					Soggetto s = this.getSoggetto(id_referente,con);
-					if(s==null){
+					try {
+						soggettoReferente = this.getIdSoggetto(id_referente,con);
+						if(soggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
 						throw new Exception ("Soggetto referente ["+id_referente+"] dell'accordo non esiste");
 					}
-					soggettoReferente = new IDSoggetto(s.getTipo(),s.getNome());
 				}
 				accordoServizioParteSpecifica.setAccordoServizioParteComune(this.idAccordoFactory.getUriFromValues(tmp, soggettoReferente, tmpVersione));
 
@@ -16164,11 +16217,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 				IDSoggetto referente = null;
 				long idReferente = rs.getLong("id_referente");
 				if(idReferente>0){
-					Soggetto s = this.getSoggetto(idReferente,con);
-					if(s==null){
-						throw new Exception("Soggetto referente non presente?");
+					try {
+						referente = this.getIdSoggetto(idReferente,con);
+						if(referente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						throw new Exception ("Soggetto referente ["+idReferente+"] dell'accordo non esiste");
 					}
-					referente = new IDSoggetto(s.getTipo(),s.getNome());
 				}
 
 				idAccordo = this.idAccordoFactory.getIDAccordoFromValues(rs.getString("nome"),referente,rs.getInt("versione"));
@@ -23495,13 +23551,23 @@ IDriverWS ,IMonitoraggioRisorsa{
 				accordo.setVersione(risultato.getInt("versione"));
 
 				// Soggetto referente
-				if(risultato.getLong("id_referente")>0) {
-					Soggetto soggRef = getSoggetto(risultato.getLong("id_referente"),con);
+				long id_referente = risultato.getLong("id_referente");
+				IDSoggetto soggettoReferente = null;
+				if(id_referente>0){
+					try {
+						soggettoReferente = this.getIdSoggetto(id_referente,con);
+						if(soggettoReferente==null){
+							throw new DriverRegistroServiziNotFound ("non esiste");
+						}
+					}catch(DriverRegistroServiziNotFound notFound) {
+						throw new Exception ("Soggetto referente ["+id_referente+"] dell'accordo non esiste");
+					}
 					IdSoggetto assr = new IdSoggetto();
-					assr.setTipo(soggRef.getTipo());
-					assr.setNome(soggRef.getNome());
+					assr.setTipo(soggettoReferente.getTipo());
+					assr.setNome(soggettoReferente.getNome());
 					accordo.setSoggettoReferente(assr);
 				}
+				
 				lista.add(accordo);
 
 				this.readAccordoServizioComposto(accordo, con);

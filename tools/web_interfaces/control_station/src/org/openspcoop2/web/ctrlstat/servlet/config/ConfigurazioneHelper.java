@@ -55,7 +55,6 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
 import org.openspcoop2.core.config.Route;
 import org.openspcoop2.core.config.RoutingTable;
 import org.openspcoop2.core.config.RoutingTableDestinazione;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Tracciamento;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
@@ -63,6 +62,7 @@ import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicyFiltro;
@@ -110,6 +110,7 @@ import org.openspcoop2.core.registry.constants.RuoloTipologia;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
@@ -12655,7 +12656,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						
 						List<String> tipiSoggettiGestitiProtocollo = this.soggettiCore.getTipiSoggettiGestitiProtocollo(protocolloSelezionatoValue);
 						
-						List<org.openspcoop2.core.registry.Soggetto> list = null;
+						List<IDSoggettoDB> list = null;
 						if(this.core.isVisioneOggettiGlobale(userLogin)){
 							list = this.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 						}else{
@@ -12663,7 +12664,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
 							for (int i = 0; i < list.size(); i++) {
-								Soggetto soggettoCheck = list.get(i);
+								IDSoggettoDB soggettoCheck = list.get(i);
 								if(soggettoCheck.getTipo().equals(idSoggettoProprietario.getTipo()) && soggettoCheck.getNome().equals(idSoggettoProprietario.getNome())) {
 									list.remove(i);
 									break;
@@ -12683,16 +12684,21 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 								boolean isPddEsterna = this.pddCore.isPddEsterna(s.getPortaDominio());
 								if(!isPddEsterna) {
 									boolean found = false;
-									for (org.openspcoop2.core.registry.Soggetto sogg : list) {
+									for (IDSoggettoDB sogg : list) {
 										if(sogg.getTipo().equals(s.getTipo()) && sogg.getNome().equals(s.getNome())) {
 											found = true;
 											break;
 										}
 									}
 									if(!found) {
-										List<ServizioApplicativo> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig);
+										List<IDServizioApplicativoDB> listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazioneConfig);
 										if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
-											list.add(s);
+											IDSoggettoDB idSoggettoDB = new IDSoggettoDB();
+											idSoggettoDB.setTipo(s.getTipo());
+											idSoggettoDB.setNome(s.getNome());
+											idSoggettoDB.setCodicePorta(s.getIdentificativoPorta());
+											idSoggettoDB.setId(s.getId());
+											list.add(idSoggettoDB);
 										}
 									}
 								}
@@ -12700,7 +12706,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						
 						if(!list.isEmpty()) {
-							for (Soggetto soggetto : list) {
+							for (IDSoggettoDB soggetto : list) {
 								listSoggetti.add(new IDSoggetto(soggetto.getTipo(), soggetto.getNome()));
 							}
 						}
@@ -12773,7 +12779,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						User user = ServletUtils.getUserFromSession(this.session);
 						String userLogin = user.getLogin();
 						
-						List<ServizioApplicativo> listServiziApplicativiTmp = null;
+						List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 						if(delegata || !multitenant) {
 							listServiziApplicativiTmp = this.saCore.soggettiServizioApplicativoList(idSoggettoProprietario,userLogin,tipoAutenticazioneConfig);
 						}
@@ -12790,7 +12796,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 						}
 						
 						if(listServiziApplicativiTmp!=null && !listServiziApplicativiTmp.isEmpty()) {
-							for (ServizioApplicativo servizioApplicativo : listServiziApplicativiTmp) {
+							for (IDServizioApplicativoDB servizioApplicativo : listServiziApplicativiTmp) {
 								IDServizioApplicativo idSA = new IDServizioApplicativo();
 								idSA.setIdSoggettoProprietario(idSoggettoProprietario);
 								idSA.setNome(servizioApplicativo.getNome());

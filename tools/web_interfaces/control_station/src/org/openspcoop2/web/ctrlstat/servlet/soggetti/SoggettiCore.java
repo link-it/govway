@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.resources.MapReader;
@@ -967,7 +968,7 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverConfigurazioneException{
+	public List<IDSoggettoDB> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getSoggettiFromTipoAutenticazione";
 		DriverControlStationDB driver = null;

@@ -17773,13 +17773,13 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		}
 	}
 
-	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipoSA) throws DriverConfigurazioneException {
+	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipoSA) throws DriverConfigurazioneException {
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		Connection con = null;
 		PreparedStatement stmt=null;
 		ResultSet risultato=null;
 		boolean error = false;
-		ArrayList<ServizioApplicativo> silList = new ArrayList<ServizioApplicativo>();
+		ArrayList<IDServizioApplicativoDB> silList = new ArrayList<IDServizioApplicativoDB>();
 
 		if (this.atomica) {
 			try {
@@ -17800,8 +17800,10 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
 			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
-			sqlQueryObject.addSelectField(CostantiDB.SERVIZI_APPLICATIVI+".id");
-			sqlQueryObject.addSelectField("nome");
+			sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "idServAppl");
+			sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "nomeServAppl");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
 			sqlQueryObject.addSelectField("id_soggetto");
 			sqlQueryObject.addWhereCondition("id_soggetto = "+CostantiDB.SOGGETTI+".id");
 			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".tipo_soggetto = ?");
@@ -17839,8 +17841,12 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			risultato = stmt.executeQuery();
 
 			while (risultato.next()) {
-				ServizioApplicativo sa = this.getServizioApplicativo(risultato.getLong("id"));
-				silList.add(sa);
+				
+				IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
+				idSA.setIdSoggettoProprietario(new IDSoggetto(risultato.getString("tipo_soggetto"), risultato.getString("nome_soggetto")));
+				idSA.setNome(risultato.getString("nomeServAppl"));
+				idSA.setId(risultato.getLong("idServAppl"));
+				silList.add(idSA);
 			}
 
 			return silList;
@@ -22165,13 +22171,15 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 
 	}
 
-	public List<ServizioApplicativo> getServiziApplicativiWithIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException {
+	
+	public List<IDServizioApplicativoDB> getIdServiziApplicativiWithIdErogatore(Long idErogatore, String tipo, 
+			boolean checkIM, boolean checkConnettoreAbilitato) throws DriverConfigurazioneException {
 
 		Connection con = null;
 		PreparedStatement stm = null;
 		ResultSet rs = null;
 		String sqlQuery = "";
-		ArrayList<ServizioApplicativo> lista = new ArrayList<ServizioApplicativo>();
+		ArrayList<IDServizioApplicativoDB> lista = new ArrayList<IDServizioApplicativoDB>();
 
 		if (this.atomica) {
 			try {
@@ -22187,27 +22195,81 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 		try {
 			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
 			sqlQueryObject.addFromTable(CostantiDB.SERVIZI_APPLICATIVI);
-			sqlQueryObject.addSelectField("*");
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "id", "idServAppl");
+			sqlQueryObject.addSelectAliasField(CostantiDB.SERVIZI_APPLICATIVI, "nome", "nomeServAppl");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "tipo_soggetto");
+			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
+			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto");
 			if(tipo != null) {
-				sqlQueryObject.addWhereCondition("tipo = ?");
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
 				sqlQueryObject.setANDLogicOperator(true);
+			}
+			if(checkConnettoreAbilitato) {
+				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);
+				sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI+".id="+CostantiDB.SERVIZI_APPLICATIVI+".id_connettore_inv");
+				if(checkIM) {
+					sqlQueryObject.addWhereCondition(false,
+							CostantiDB.SERVIZI_APPLICATIVI+".getmsginv = ? ",
+							CostantiDB.CONNETTORI+".endpointtype <> ? " );
+				}
+				else {
+					sqlQueryObject.addWhereCondition(CostantiDB.CONNETTORI+".endpointtype <> ? " );
+				}
+			}
+			else if(checkIM) {
+				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".getmsginv = ? ");
 			}
 			
 			sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = con.prepareStatement(sqlQuery);
 
-			stm.setLong(1, idErogatore);
+			int index = 1;
+			stm.setLong(index++, idErogatore);
 			if(tipo != null) {
-				stm.setString(2, tipo);
+				stm.setString(index++, tipo);
+			}
+			if(checkConnettoreAbilitato) {
+				if(checkIM) {
+					stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+					stm.setString(index++, TipiConnettore.DISABILITATO.getNome());
+				}
+				else {
+					stm.setString(index++, TipiConnettore.DISABILITATO.getNome());
+				}
+			}
+			else if(checkIM) {
+				stm.setString(index++, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
 			}
 
-			this.log.debug("eseguo query : " + DBUtils.formatSQLString(sqlQuery, idErogatore));
+			String debugQuery = DBUtils.formatSQLString(sqlQuery, idErogatore);
+			if(tipo != null) {
+				debugQuery = DBUtils.formatSQLString(debugQuery, tipo);
+			}
+			if(checkConnettoreAbilitato) {
+				if(checkIM) {
+					debugQuery = DBUtils.formatSQLString(debugQuery,  DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+					debugQuery = DBUtils.formatSQLString(debugQuery,  TipiConnettore.DISABILITATO.getNome());
+				}
+				else {
+					debugQuery = DBUtils.formatSQLString(debugQuery,  TipiConnettore.DISABILITATO.getNome());
+				}
+			}
+			else if(checkIM) {
+				debugQuery = DBUtils.formatSQLString(debugQuery, DriverConfigurazioneDB_LIB.getValue(StatoFunzionalita.ABILITATO));
+			}
+			this.log.debug("eseguo query : " + debugQuery);
+			
 			rs = stm.executeQuery();
 
 			while (rs.next()) {
-				ServizioApplicativo sa = this.getServizioApplicativo(rs.getLong("id"));
-				lista.add(sa);
+				
+				IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
+				idSA.setIdSoggettoProprietario(new IDSoggetto(rs.getString("tipo_soggetto"), rs.getString("nome_soggetto")));
+				idSA.setNome(rs.getString("nomeServAppl"));
+				idSA.setId(rs.getLong("idServAppl"));
+				lista.add(idSA);
 			}
 
 			rs.close();

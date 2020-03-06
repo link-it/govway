@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -127,13 +128,13 @@ public class SoggettoUpdateUtilities {
 
 		if (!this.oldnomeprov.equals(this.nomeprov) || !this.oldtipoprov.equals(this.tipoprov)) {
 
-			List<Long> idListSA = new ArrayList<Long>();
+			List<String> nomeListSA = new ArrayList<String>();
 			List<ServizioApplicativo> listSA = new ArrayList<ServizioApplicativo>();
-			List<ServizioApplicativo> tmpListSA = this.saCore.getServiziApplicativiByIdErogatore(this.sog.getId());
-			for (ServizioApplicativo servizioApplicativo : tmpListSA) {
-				long idSA = servizioApplicativo.getId();
-				if (!idListSA.contains(idSA)) {
-					idListSA.add(idSA);
+			List<IDServizioApplicativoDB> tmpListIDSA = this.saCore.getIdServiziApplicativiWithIdErogatore(this.sog.getId());
+			for (IDServizioApplicativoDB idServizioApplicativo : tmpListIDSA) {
+				if (!nomeListSA.contains(idServizioApplicativo.getNome())) {
+					nomeListSA.add(idServizioApplicativo.getNome());
+					ServizioApplicativo servizioApplicativo = this.saCore.getServizioApplicativo(idServizioApplicativo);
 					servizioApplicativo.setTipoSoggettoProprietario(this.tipoprov);
 					servizioApplicativo.setNomeSoggettoProprietario(this.nomeprov);
 					IDServizioApplicativo oldIDServizioApplicativoForUpdate = new IDServizioApplicativo();

@@ -20,15 +20,12 @@
 package org.openspcoop2.web.ctrlstat.servlet.aps;
 
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.DBUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.commons.ISearch;
@@ -36,7 +33,6 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDPortType;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -50,7 +46,6 @@ import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Documento;
 import org.openspcoop2.core.registry.Fruitore;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -64,13 +59,12 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
-import org.openspcoop2.utils.sql.ISQLQueryObject;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.ctrlstat.core.UtilitiesSQLQuery;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationDB;
 import org.openspcoop2.web.ctrlstat.driver.DriverControlStationException;
 import org.openspcoop2.web.ctrlstat.registro.GestoreRegistroServiziRemoto;
@@ -1303,108 +1297,6 @@ public class AccordiServizioParteSpecificaCore extends ControlStationCore {
 		} finally {
 			ControlStationCore.dbM.releaseConnection(con);
 		}
-	}
-
-	public List<String[]> getAccordiListLabels(String userLogin){
-		Connection con = null;
-		String nomeMetodo = "getAccordiListLabels";
-//		DriverControlStationDB driver = null;
-		PreparedStatement stmt;
-		ResultSet risultato;
-		String queryString = "";
-		String[] accordiList = null;
-		String[] accordiListLabel = null;
-		try{
-			
-			// prendo una connessione
-			con = ControlStationCore.dbM.getConnection();
-			
-			ISQLQueryObject sqlQueryObject = (new UtilitiesSQLQuery()).getSQLQueryObject();
-			sqlQueryObject.addSelectCountField(CostantiDB.ACCORDI + ".id", "tot", true);
-			sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-			sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
-			sqlQueryObject.setANDLogicOperator(true);
-			sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI + ".id=" + CostantiDB.PORT_TYPE + ".id_accordo");
-			if(isVisioneOggettiGlobale(userLogin)==false){
-				sqlQueryObject.addWhereCondition("superuser = ?");
-			}
-			//sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".privato=?");
-			queryString = sqlQueryObject.createSQLQuery();
-			stmt = con.prepareStatement( queryString);
-			//this.stmt.setLong(1, 0);
-			if(isVisioneOggettiGlobale(userLogin)==false){
-				stmt.setString(1, userLogin);
-			}
-			risultato = stmt.executeQuery();
-			int totAcc = 0;
-			if (risultato.next()) {
-				totAcc = risultato.getInt("tot");
-			}
-			risultato.close();
-			stmt.close();
-			
-			if (totAcc != 0) {
-				IDAccordoFactory idAccordoFactory = IDAccordoFactory.getInstance();
-				SoggettiCore soggettiCore = new SoggettiCore(this);
-				accordiList = new String[totAcc];
-				accordiListLabel = new String[totAcc];
-				int i = 0;
-				sqlQueryObject = (new UtilitiesSQLQuery()).getSQLQueryObject();
-				sqlQueryObject.addFromTable(CostantiDB.ACCORDI);
-				sqlQueryObject.addFromTable(CostantiDB.PORT_TYPE);
-
-				sqlQueryObject.setSelectDistinct(true);
-				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "id", "idAccordo");
-				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "nome", "nomeAccordo");
-				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "versione","versione");
-				sqlQueryObject.addSelectAliasField(CostantiDB.ACCORDI, "id_referente","id_referente");
-
-				sqlQueryObject.setANDLogicOperator(true);
-				sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI + ".id=" + CostantiDB.PORT_TYPE + ".id_accordo");
-				if(isVisioneOggettiGlobale(userLogin)==false){
-					sqlQueryObject.addWhereCondition("superuser = ?");
-				}
-				//sqlQueryObject.addWhereCondition(CostantiDB.ACCORDI+".privato=?");
-				queryString = sqlQueryObject.createSQLQuery();
-				stmt = con.prepareStatement(queryString);
-				if(isVisioneOggettiGlobale(userLogin)==false){
-					stmt.setString(1, userLogin);
-				}
-				//this.stmt.setLong(1, 0);
-				risultato = stmt.executeQuery();
-				while (risultato.next()) {
-					accordiList[i] = "" + risultato.getInt("idAccordo");
-
-					int idReferente = risultato.getInt("id_referente");
-					IDSoggetto soggettoReferente = null;
-					if(idReferente>0){
-						Soggetto sRef = soggettiCore.getSoggettoRegistro(idReferente);
-						soggettoReferente = new IDSoggetto();
-						soggettoReferente.setTipo(sRef.getTipo());
-						soggettoReferente.setNome(sRef.getNome());
-					}
-
-
-					accordiListLabel[i] = idAccordoFactory.getUriFromValues(risultato.getString("nomeAccordo"),soggettoReferente,
-							risultato.getInt("versione"));
-
-					i++;
-				}
-				risultato.close();
-				stmt.close();
-			}
-		}catch (Exception e){
-			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
-			
-		}finally {
-			ControlStationCore.dbM.releaseConnection(con);
-		}
-		
-		List<String[]> toRet = new ArrayList<String[]>();
-		toRet.add(accordiList);
-		toRet.add(accordiListLabel);
-		
-		return toRet;
 	}
 
 	

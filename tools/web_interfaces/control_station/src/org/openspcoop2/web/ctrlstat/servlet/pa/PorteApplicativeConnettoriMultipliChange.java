@@ -57,6 +57,7 @@ import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazio
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -88,6 +89,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiUtilities;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -345,6 +347,8 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			IDServizioApplicativo idSA = new IDServizioApplicativo();
 			idSA.setNome(oldPaSA.getNome());
 			idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+			IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
+			idSADB.setId(oldPaSA.getId());
 			ServizioApplicativo oldSA = saCore.getServizioApplicativo(idSA );
 			InvocazionePorta invocazionePorta = oldSA.getInvocazionePorta();
 			InvocazioneServizio oldIS = oldSA.getInvocazioneServizio();
@@ -354,39 +358,16 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 			String oldTipoSA = oldSA.getTipo();
 
 			// Lista dei servizi applicativi per la creazione automatica
-			String [] saSoggetti = null;	
+			List<IDServizioApplicativoDB> listaIdSAServer = null;
+			//String [] saSoggetti = null;	
 			if ((idsogg != null) && !idsogg.equals("")) {
-				int idErogatore = Integer.parseInt(idsogg);
+				long idErogatore = Long.valueOf(idsogg);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), filtroTipoSA);
-
-				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				listaIdSAServer = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, filtroTipoSA, integrationManagerEnabled, true);
 
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
-					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()];
-				//				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i] = sa.getNome();
-				}
 			}
 
 			String postBackElementName = porteApplicativeHelper.getPostBackElementName();
@@ -631,6 +612,26 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 										}
 									}
 								}
+							}
+						}
+					}
+					
+					if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+						// faccio vedere I.M. anche con interfaccia standard
+						integrationManagerEnabled = true;
+						if(erogazioneServizioApplicativoServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
+							if(listaIdSAServer==null) {
+								listaIdSAServer = new ArrayList<IDServizioApplicativoDB>();
+							}
+							boolean found = false;
+							for (IDServizioApplicativoDB idServizioApplicativo : listaIdSAServer) {
+								if(idServizioApplicativo.getNome().equals(idSADB.getNome())) {
+									found = true;
+									break;
+								}
+							}
+							if(!found) {
+								listaIdSAServer.add(idSADB);
 							}
 						}
 					}
@@ -998,7 +999,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
 					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
@@ -1112,7 +1113,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				} else {
 
 					porteApplicativeHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,

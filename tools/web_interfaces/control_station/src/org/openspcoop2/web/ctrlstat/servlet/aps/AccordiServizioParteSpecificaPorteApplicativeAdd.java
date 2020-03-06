@@ -39,14 +39,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDAccordo;
@@ -54,12 +52,12 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -79,6 +77,7 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -397,40 +396,19 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				}
 			}
 
-			String [] saSoggetti = null;
+			// Lista dei servizi applicativi per la creazione automatica
+			List<IDServizioApplicativoDB> listaIdSA = null;
 			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
-				int idErogatore = Integer.parseInt(idSoggettoErogatoreDelServizio);
-
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore),tipoSA);
-
-				// rif bug #45
+				long idErogatore = Long.valueOf(idSoggettoErogatoreDelServizio);
+				
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
 
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
-					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()];
-//				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i] = sa.getNome();
-				}
 			}
+			String [] saSoggetti = ServiziApplicativiHelper.toArray(listaIdSA);
+		
 			
 			List<String> soggettiAutenticati = new ArrayList<String>();
 			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
@@ -441,7 +419,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(erogazioneAutenticazione) : null;
 			}
 			
-			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+			List<IDSoggettoDB> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
 				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
@@ -453,7 +431,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				
 				soggettiAutenticati.add("-"); // elemento nullo di default
 				soggettiAutenticatiLabel.add("-");
-				for (Soggetto soggetto : listSoggettiCompatibili) {
+				for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 					soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 					soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
 					
@@ -541,7 +519,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
 							soggettiAutenticati.add("-"); // elemento nullo di default
 							soggettiAutenticatiLabel.add("-");
-							for (Soggetto soggetto : listSoggettiCompatibili) {
+							for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 								soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 								soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
 							}

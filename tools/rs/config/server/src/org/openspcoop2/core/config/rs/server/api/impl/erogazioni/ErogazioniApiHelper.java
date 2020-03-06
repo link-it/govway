@@ -213,6 +213,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
@@ -605,7 +606,7 @@ public class ErogazioniApiHelper {
 		
 	}
 	
-	public static final List<Soggetto> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		PddTipologia pddTipologiaSoggettoAutenticati = null;
 		boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
@@ -627,11 +628,11 @@ public class ErogazioniApiHelper {
 		List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
 		
 		// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
-		List<Soggetto> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+		List<IDSoggettoDB> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 		
 		if( !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore ) {
 			for (int i = 0; i < list.size(); i++) {
-				Soggetto soggettoCheck = list.get(i);
+				IDSoggettoDB soggettoCheck = list.get(i);
 				if(soggettoCheck.getTipo().equals(erogatore.getTipo()) && soggettoCheck.getNome().equals(erogatore.getNome())) {
 					list.remove(i);
 					break;
@@ -971,7 +972,7 @@ public class ErogazioniApiHelper {
         		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazioneNew.get(authn.getTipo()) );
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
         	        	.stream()
-        	        	.map( Soggetto::getNome )
+        	        	.map( IDSoggettoDB::getNome )
         	        	.filter( s -> s.equals( configAuthz_final.getSoggetto() ) )
         	        	.findAny();
         	

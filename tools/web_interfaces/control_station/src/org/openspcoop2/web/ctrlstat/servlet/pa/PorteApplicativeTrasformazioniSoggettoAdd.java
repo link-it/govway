@@ -40,9 +40,9 @@ import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.Trasformazioni;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -194,7 +194,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			String[] soggettiListLabel = null;
 			
 			// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
-			List<org.openspcoop2.core.registry.Soggetto> list = null;
+			List<IDSoggettoDB> list = null;
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
 				list = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 			}else{
@@ -202,7 +202,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			}
 			if(list!=null && !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore) {
 				for (int i = 0; i < list.size(); i++) {
-					Soggetto soggettoCheck = list.get(i);
+					IDSoggettoDB soggettoCheck = list.get(i);
 					if(soggettoCheck.getTipo().equals(portaApplicativa.getTipoSoggettoProprietario()) && soggettoCheck.getNome().equals(portaApplicativa.getNomeSoggettoProprietario())) {
 						list.remove(i);
 						break;
@@ -217,7 +217,7 @@ public final class PorteApplicativeTrasformazioniSoggettoAdd extends Action {
 			if (list.size() > 0) {
 				List<String> soggettiListTmp = new ArrayList<String>();
 				List<String> soggettiListLabelTmp = new ArrayList<String>();
-				for (org.openspcoop2.core.registry.Soggetto soggetto : list) {
+				for (IDSoggettoDB soggetto : list) {
 					// scartare i soggetti gia associati
 					boolean found = false;
 					

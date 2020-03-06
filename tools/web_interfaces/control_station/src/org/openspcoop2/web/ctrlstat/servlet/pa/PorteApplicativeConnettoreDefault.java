@@ -44,9 +44,9 @@ import org.openspcoop2.core.config.RispostaAsincrona;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
 import org.openspcoop2.core.config.constants.TipologiaFruizione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDServizio;
@@ -70,6 +70,7 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -252,39 +253,16 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			String tipoSA = (isApplicativiServerEnabled) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 
 			// Lista dei servizi applicativi per la creazione automatica
-			String [] saSoggetti = null;	
+			List<IDServizioApplicativoDB> listaIdSAServer = null;
+			//String [] saSoggetti = null;	
 			if ((idsogg != null) && !idsogg.equals("")) {
-				int idErogatore = Integer.parseInt(idsogg);
+				long idErogatore = Long.valueOf(idsogg);
 
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), tipoSA);
-
-				// rif bug #45
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				listaIdSAServer = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
 
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
-					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()];
-				//				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i] = sa.getNome();
-				}
 			}
 
 			PortaApplicativa portaApplicativa = porteApplicativeCore.getPortaApplicativa(idInt);
@@ -468,7 +446,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				}
 
 				pd.setDati(dati);
@@ -542,7 +520,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 							autenticazioneToken,token_policy,
 							listExtendedConnettore, forceEnableConnettore,
 							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-							erogazioneServizioApplicativoServer, saSoggetti);
+							erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer));
 				}
 
 				pd.setDati(dati);

@@ -190,7 +190,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 			
 			List<String> versioniProtocollo = null;
-			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 

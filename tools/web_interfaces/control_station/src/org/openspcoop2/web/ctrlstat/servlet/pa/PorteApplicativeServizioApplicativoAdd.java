@@ -21,7 +21,6 @@
 
 package org.openspcoop2.web.ctrlstat.servlet.pa;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Vector;
@@ -35,8 +34,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.Connettore;
-import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
@@ -44,11 +41,9 @@ import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
-import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
-import org.openspcoop2.core.constants.TipiConnettore;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -66,6 +61,7 @@ import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.apc.AccordiServizioParteComuneCore;
 import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
@@ -517,7 +513,7 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 	}
 	
 	
-	public static String[] loadSAErogatori(PortaApplicativa pa, ServiziApplicativiCore saCore, int soggInt, boolean addSAEsistenti) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
+	public static String[] loadSAErogatori(PortaApplicativa pa, ServiziApplicativiCore saCore, long soggInt, boolean addSAEsistenti) throws DriverConfigurazioneException, DriverConfigurazioneNotFound{
 		// recupero nome dei servizi applicativi gia associati alla
 		// porta applicativa
 		HashSet<String> saEsistenti = new HashSet<String>();
@@ -528,36 +524,11 @@ public final class PorteApplicativeServizioApplicativoAdd extends Action {
 			}
 		}
 
-		List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(soggInt));
-
-		// rif bug #45
 		// I servizi applicativi da visualizzare sono quelli che hanno
 		// -Integration Manager (getMessage abilitato)
 		// -connettore != disabilitato
-		ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-		for (ServizioApplicativo sa : listaSA) {
-			InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-			Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-			StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-
-			if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-				// il connettore non e' disabilitato oppure il get
-				// message e' abilitato
-				// Lo aggiungo solo se gia' non esiste tra quelli
-				// aggiunti
-				if (saEsistenti.contains(sa.getNome()) == false)
-					validSA.add(sa);
-			}
-		}
-
-		// Prendo la lista di servizioApplicativo associati al soggetto
-		// e la metto in un array
-		String[] servizioApplicativoList = new String[validSA.size()];
-		for (int i = 0; i < validSA.size(); i++) {
-			ServizioApplicativo sa = validSA.get(i);
-			servizioApplicativoList[i] = sa.getNome();
-		}
-		return servizioApplicativoList;
+		List<IDServizioApplicativoDB> listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(soggInt, true, true);
+		return ServiziApplicativiHelper.toArray(listaIdSA);
 
 	}
 }

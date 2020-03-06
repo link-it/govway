@@ -53,6 +53,7 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.InvocazioneServizioTipoAutenticazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipologiaErogazione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -424,7 +425,8 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 
 			boolean forceEnabled = false;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				if(!saHelper.isModalitaStandard() && 
+				if(
+						//va visualizzato comunque se già configurato: !saHelper.isModalitaStandard() && 
 						( (getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) 
 								||
 								(getmsg==null && is!=null && is.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(is.getGetMessage()))
@@ -452,42 +454,6 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				if(provider != null && !provider.equals("")){
 					soggLong = Long.parseLong(provider);
 				}
-
-			// Lista dei servizi applicativi per la creazione automatica
-			String [] saSoggetti = null;	
-			if ((provider != null) && !provider.equals("")) {
-				int idErogatore = Integer.parseInt(provider);
-
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore), filtroTipoSA);
-
-				// rif bug #45
-				// I servizi applicativi da visualizzare sono quelli che hanno
-				// -Integration Manager (getMessage abilitato)
-				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo saTmp : listaSA) {
-					InvocazioneServizio invServizio = saTmp.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
-
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(saTmp);
-					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()];
-				//				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo saTmp = validSA.get(i);
-					saSoggetti[i] = saTmp.getNome();
-				}
-			}
 
 			Boolean isConnettoreCustomUltimaImmagineSalvata = connis.getCustom();
 
@@ -543,6 +509,19 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_INVOCAZIONE_SERVIZIO_DI+nomeservizioApplicativo;
 			}
 
+			// Lista dei servizi applicativi per la creazione automatica
+			List<IDServizioApplicativoDB> listaIdSAServer = null;
+			//String [] saSoggetti = null;	
+			if ((provider != null) && !provider.equals("")) {
+				int idErogatore = Integer.parseInt(provider);
+
+				// I servizi applicativi da visualizzare sono quelli che hanno
+				// -Integration Manager (getMessage abilitato)
+				// -connettore != disabilitato
+				listaIdSAServer = saCore.getIdServiziApplicativiWithIdErogatore(Long.valueOf(idErogatore), filtroTipoSA, integrationManagerEnabled, true);
+
+			}
+			
 			if(accessoDaListaAPS) {
 				lstParm.remove(lstParm.size()-1);
 			}
@@ -603,6 +582,34 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 							}
 						}
 					}
+				}
+				
+				if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					// faccio vedere I.M. anche con interfaccia standard
+					integrationManagerEnabled = true;
+					
+					forceEnabled = false;
+					
+					if(erogazioneServizioApplicativoServerEnabled && ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())) {
+						if(listaIdSAServer==null) {
+							listaIdSAServer = new ArrayList<IDServizioApplicativoDB>();
+						}
+						boolean found = false;
+						for (IDServizioApplicativo idServizioApplicativo : listaIdSAServer) {
+							if(idServizioApplicativo.getNome().equals(sa.getNome())) {
+								found = true;
+								break;
+							}
+						}
+						if(!found) {
+							IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
+							idSA.setNome(sa.getNome());
+							idSA.setIdSoggettoProprietario(new IDSoggetto(sa.getTipoSoggettoProprietario(), sa.getNomeSoggettoProprietario()));
+							idSA.setId(sa.getId());
+							listaIdSAServer.add(idSA);
+						}
+					}
+					
 				}
 
 				if (invrifRichiesta == null) {
@@ -955,7 +962,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false
 						, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-						erogazioneServizioApplicativoServer, saSoggetti
+						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer)
 						);
 
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
@@ -1012,7 +1019,7 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
 						nomeProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
-						erogazioneServizioApplicativoServer, saSoggetti
+						erogazioneServizioApplicativoServer, ServiziApplicativiHelper.toArray(listaIdSAServer)
 						);
 
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);

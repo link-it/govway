@@ -50,6 +50,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteDelegate;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -639,7 +640,9 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 			showFruitore = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT.equals(tipoSA);
 			showErogatore = ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(tipoSA);
 			
-			if(!this.isModalitaStandard() && getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+			if(
+					//va visualizzato comunque se già configurato: !this.isModalitaStandard() && 
+					getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
 				connettoreErogatoreForceEnabled = false;
 			}
 			else {
@@ -2377,7 +2380,7 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME);
 				de.setValue(StringEscapeUtils.escapeHtml(usernameGetMsg));
-				if(!this.isModalitaStandard()) {
+				if(integrationManagerEnabled) {
 					de.setType(DataElementType.TEXT_EDIT);
 				}
 				else {
@@ -2391,8 +2394,12 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				de = new DataElement();
 				de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD);
 				de.setValue(StringEscapeUtils.escapeHtml(passwordGetMsg));
-				if(!this.isModalitaStandard()) {
-					de.setType(DataElementType.TEXT_EDIT);
+				if(integrationManagerEnabled) {
+					//de.setType(DataElementType.TEXT_EDIT);
+					// Nuova visualizzazione Password con bottone genera password
+					de.setType(DataElementType.CRYPT);
+					de.getPassword().setVisualizzaPasswordChiaro(true);
+					de.getPassword().setVisualizzaBottoneGeneraPassword(true);
 				}
 				else {
 					de.setType(DataElementType.HIDDEN);
@@ -2990,5 +2997,16 @@ public class ServiziApplicativiHelper extends ConnettoriHelper {
 				}
 			}
 		}
+	}
+	
+	public static String[] toArray(List<IDServizioApplicativoDB> listIDSa) {
+		if(listIDSa==null || listIDSa.isEmpty()) {
+			return null;
+		}
+		String [] l = new String [listIDSa.size()];
+		for (int i = 0; i < listIDSa.size(); i++) {
+			l[i] = listIDSa.get(i).getNome();
+		}
+		return l;
 	}
 }

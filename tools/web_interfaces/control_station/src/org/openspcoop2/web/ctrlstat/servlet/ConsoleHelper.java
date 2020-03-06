@@ -84,7 +84,6 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
@@ -106,6 +105,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -2423,7 +2423,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public Vector<DataElement> addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
-			Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
+			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili, boolean showTitle, boolean modipa) {
 			
 		if(modipa) {
@@ -2459,7 +2459,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			dati.addElement(de);
 			
-			List<ServizioApplicativo> listSA = null;
+			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
 				listSA = listServiziApplicativi.get(soggetto);
 			}
@@ -2469,7 +2469,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String [] saValues = new String[listSA.size()];
 				String [] saLabels = new String[listSA.size()];
 				int index =0;
-				for (ServizioApplicativo saObject : listSA) {
+				for (IDServizioApplicativoDB saObject : listSA) {
 					saValues[index] = saObject.getId().longValue()+"";
 					saLabels[index] = saObject.getNome();
 					index++;
@@ -5110,7 +5110,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					
 					String[] soggettiList = utilities.soggettiList;
 					String[] soggettiListLabel = utilities.soggettiListLabel;
-					Map<String,List<ServizioApplicativo>> listServiziApplicativi = utilities.listServiziApplicativi;
+					Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = utilities.listServiziApplicativi;
 					idSoggettoToAdd = utilities.idSoggettoToAdd;
 					int saSize = utilities.saSize;
 					
@@ -14075,7 +14075,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList, 
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
-		Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
+		Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili) {
 		
 		if(fromList) {
@@ -14116,7 +14116,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			dati.addElement(de);
 			
-			List<ServizioApplicativo> listSA = null;
+			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
 				listSA = listServiziApplicativi.get(soggetto);
 			}
@@ -14126,7 +14126,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String [] saValues = new String[listSA.size()];
 				String [] saLabels = new String[listSA.size()];
 				int index =0;
-				for (ServizioApplicativo saObject : listSA) {
+				for (IDServizioApplicativoDB saObject : listSA) {
 					saValues[index] = saObject.getId().longValue()+"";
 					saLabels[index] = saObject.getNome();
 					index++;

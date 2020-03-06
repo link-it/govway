@@ -38,6 +38,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -161,7 +162,7 @@ public final class PorteApplicativeServizioApplicativoAutorizzatoAdd extends Act
 			
 			String[] soggettiList = utilities.soggettiList;
 			String[] soggettiListLabel = utilities.soggettiListLabel;
-			Map<String,List<ServizioApplicativo>> listServiziApplicativi = utilities.listServiziApplicativi;
+			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = utilities.listServiziApplicativi;
 			idSoggettoToAdd = utilities.idSoggettoToAdd;
 			int saSize = utilities.saSize;
 			PortaApplicativaAutorizzazioneServiziApplicativi saList = utilities.saList;

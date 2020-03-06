@@ -1752,7 +1752,9 @@ public class ConnettoriHelper extends ConsoleHelper {
 			}
 		}
 		
-		if(this.isModalitaAvanzata() && visualizzaSezioneSAServer && (listaSAServer != null && listaSAServer.length > 0)) {
+		if(
+				// serve sempre poter sceglire un applicativo server: this.isModalitaAvanzata() && 
+				visualizzaSezioneSAServer && (listaSAServer != null && listaSAServer.length > 0)) {
 			DataElement de = new DataElement();
 			de.setLabel(ConnettoriCostanti.LABEL_PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
 			de.setName(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER);
