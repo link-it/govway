@@ -9,9 +9,9 @@ del software di base nell'ambiente di esercizio. Verificare i passi
 seguenti, procedendo eventualmente all'installazione dei componenti
 mancanti.
 
-#. *Java Runtime Environment (JRE) 8* (è possibile scaricare
+#. *Java Runtime Environment (JRE) 11* (è possibile scaricare
    JRE al seguente indirizzo:
-   http://www.oracle.com/technetwork/java/javase/downloads/index.html)
+   https://jdk.java.net/archive/)
 
    Verificare la configurazione dell'ambiente Java dell'Application
    Server. Si raccomanda una configurazione minima dei parametri della
@@ -23,8 +23,8 @@ mancanti.
 
    - -Dfile.encoding=UTF-8
 
-#. *Application Server WildFly* (http://wildfly.org) dalla versione 10 alla versione 18. In alternativa è possibile effettuare
-   l'installazione su Apache Tomcat (http://tomcat.apache.org) dalla versione 7 alla versione 9.
+#. *Application Server WildFly* (http://wildfly.org) versione 18. In alternativa è possibile effettuare
+   l'installazione su Apache Tomcat (http://tomcat.apache.org) versione 9.
 
    .. note::
       GovWay supporta anche altri application server j2ee diversi da
@@ -46,8 +46,8 @@ mancanti.
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
--  *Sun JRE 8 (version: 1.8.0_201)*
+-  *Openjdk 11 (version: 11+28)*
 
 -  *PostgreSQL 9 (version: 9.5.10)*
 
--  *WildFly 18 (version: 18.0.1.Final) e Tomcat 8 (version: 8.5.37)*
+-  *WildFly 18 (version: 18.0.1.Final) e Tomcat 9 (version: 9.0.31)*

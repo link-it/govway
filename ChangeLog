@@ -1,4 +1,8 @@
-2019-03-02  Andrea Poli <apoli@link.it>
+2020-03-08  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.0.rc1
+
+2020-03-02  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Aggiunta funzionalità OP-957
@@ -6,7 +10,7 @@
 	- La versione 11 di Java, una release di tipo LTS (Long-Term Support).
 	- Vengono supportate solamente le versioni degli Application Server più recenti: v18 per WildFly e v9 per Apache Tomcat.
 
-2019-03-28  Andrea Poli <apoli@link.it>
+2020-03-28  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Aggiunta funzionalità OP-957
@@ -241,23 +245,23 @@
 	wss4j-ws-security-policy-stax-2.2.2.jar -> wss4j-ws-security-policy-stax-2.2.4.jar
 	wss4j-ws-security-stax-2.2.2.jar -> wss4j-ws-security-stax-2.2.4.jar
 
-2019-02-28  Giuliano Pintori <pintori@link.it>
+2020-02-28  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
 	Uniformata procedura di export delle transazioni nella schermata storico.
 	La selezione del tipo di export è stata spostata nella finestra modale di export, cosi come la selezione dei contenuti da esportare.
 
-2019-02-25  Andrea Poli <apoli@link.it>
+2020-02-25  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Aggiunto nei diagnostici la registrazione dei Problem JSON come veniva effettuato per i SOAPFault.
 
-2019-02-23  Giuliano Pintori <pintori@link.it>
+2020-02-23  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole]
 	Uniformate label per le modalità di identificazione (headerBased, urlBased, ContentBased ... ) nella varie funzionalità.
 
-2019-02-21  Andrea Poli <apoli@link.it>
+2020-02-21  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-390
@@ -270,12 +274,12 @@
 	terminare la richiesta con errore nel caso in cui non si riesca ad identificare la condizione dalla richiesta o 
 	la condizione non permetta di identificare alcun connettore all'interno del pool. 
 
-2019-02-20  Giuliano Pintori <pintori@link.it>
+2020-02-20  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor]
 	Nello storico delle transazioni è adesso possibile indicare il numero di risultati della ricerca che si desidera ottenere (default: 25).
 
-2019-02-19  Andrea Poli <apoli@link.it>
+2020-02-19  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]
 	Aggiunta funzionalità OP-390
@@ -287,7 +291,7 @@
 	Inoltre negli altri criteri di ricerca con qualsiasi esito è possibile comunque indicare se le richieste scartate devono essere prese in considerazione o meno; 
 	per default le richieste scartate non vengono considerati ai fini del risultato della ricerca.
 
-2019-02-18  Giuliano Pintori <pintori@link.it>
+2020-02-18  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayMonitor]
 	Aggiunta funzionalità OP-390
@@ -295,7 +299,7 @@
 	con un approccio non più tabellare ma orientato all'ottimizzazione degli spazi e del posizionamento delle informazioni di interesse per il monitoraggio. 
 	È stata inoltre rivista anche la maschera di dettaglio di una transazione al fine di suddividere le molteplici informazioni riportate in più tab categorizzati.
 
-2019-02-16  Andrea Poli <apoli@link.it>
+2020-02-16  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]
 	Aggiunta funzionalità OP-390
@@ -305,7 +309,7 @@
 	- API non Individuata: la richiesta non permette di individuare una API registrata sul Gateway;
 	- Operazione non Individuata: la richiesta non indirizza un'operazione esistente sull'API invocata.
 
-2019-02-14  Andrea Poli <apoli@link.it>
+2020-02-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-390
@@ -321,7 +325,7 @@
 	Infine in una configurazione di bilanciamento del carico è possibile attivare un 'Passive Health Check' che verifica la connettività verso i connettori configurati. 
 	Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool dei connettori utilizzabili per un intervallo di tempo configurabile.
 
-2019-02-08  Giuliano Pintori <pintori@link.it>
+2020-02-08  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-390
@@ -333,7 +337,7 @@
 		  In una erogazione è quindi possibile riferire l'applicativo server precedentemente registrato 
 		  come modalità alternativa a quella di indicare tutte le informazioni di backend.
 
-2019-02-05  Andrea Poli <apoli@link.it>
+2020-02-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.2
 

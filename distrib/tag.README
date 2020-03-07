@@ -82,6 +82,6 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-13. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki
+13. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
 14. Creazione versione tag
