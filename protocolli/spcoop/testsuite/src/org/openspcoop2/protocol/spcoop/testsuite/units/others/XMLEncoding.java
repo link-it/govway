@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Iterator;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.soap.AttachmentPart;
 import javax.xml.soap.SOAPException;
 import javax.xml.transform.TransformerException;
@@ -59,6 +60,7 @@ import org.testng.annotations.AfterGroups;
 import org.testng.annotations.BeforeGroups;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
+import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 /**
@@ -106,7 +108,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncoding=new Repository();
 	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncoding"},description="Test di tipo xmlEncoding, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncoding() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncoding() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException, ParserConfigurationException{
 		// Creazione client xmlEncoding
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStateful);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -124,7 +126,16 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
-		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
+		String msg = null;
+		try {
+			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+		}catch(Throwable t) {
+			// normalize per conflito di librerie axis - saaj
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
+			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+		}
+		String value = xpathEngine.getStringMatchPattern(msg, dnc, "//prova2/text()");
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(value, "AMÉLIE");
 		
@@ -165,7 +176,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingSoapWithAttachments=new Repository();
 	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingSoapWithAttachments"},description="Test di tipo xmlEncodingSoapWithAttachments, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException, ParserConfigurationException{
 		// Creazione client xmlEncodingSoapWithAttachments
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingSoapWithAttachments);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -184,7 +195,16 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
-		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
+		String msg = null;
+		try {
+			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+		}catch(Throwable t) {
+			// normalize per conflito di librerie axis - saaj
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
+			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+		}
+		String valueBody = xpathEngine.getStringMatchPattern(msg, dncBody, "//prova2/text()");
 		
 			//System.out.println("VALUE = "+value);
 		Assert.assertEquals(valueBody, "AMÉLIE");
@@ -241,7 +261,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingStateful=new Repository();
 	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingStateful"},description="Test di tipo xmlEncodingStateful, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingStateful() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingStateful() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException, ParserConfigurationException{
 		// Creazione client xmlEncodingStateful
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStateful);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -259,7 +279,16 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dnc = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
-		String value = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody()), dnc, "//prova2/text()");
+		String msg = null;
+		try {
+			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+		}catch(Throwable t) {
+			// normalize per conflito di librerie axis - saaj
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
+			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+		}
+		String value = xpathEngine.getStringMatchPattern(msg, dnc, "//prova2/text()");
 		
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(value, "AMÉLIE");
@@ -301,7 +330,7 @@ public class XMLEncoding {
 	 */
 	Repository repositoryXMLEncodingStatefulSoapWithAttachments=new Repository();
 	@Test(groups={CostantiOthers.ID_GRUPPO_OTHERS, XMLEncoding.ID_GRUPPO,XMLEncoding.ID_GRUPPO+".xmlEncodingStatefulSoapWithAttachments"},description="Test di tipo xmlEncodingStatefulSoapWithAttachments, Viene controllato se i body sono uguali e se gli attachment sono uguali")
-	public void xmlEncodingStatefulSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException{
+	public void xmlEncodingStatefulSoapWithAttachments() throws TestSuiteException, IOException, SOAPException, TransformerException, SAXException, XPathException, XPathNotFoundException, XPathNotValidException, XMLException, ParserConfigurationException{
 		// Creazione client xmlEncodingStatefulSoapWithAttachments
 		ClientSincrono client=new ClientSincrono(this.repositoryXMLEncodingStatefulSoapWithAttachments);
 		client.setUrlPortaDiDominio(Utilities.testSuiteProperties.getServizioRicezioneContenutiApplicativiFruitore());
@@ -320,7 +349,16 @@ public class XMLEncoding {
 		
 		DynamicNamespaceContext dncBody = DynamicNamespaceContextFactory.getInstance(messageFactory).getNamespaceContextFromSoapEnvelope11(client.getResponseMessage().getSOAPEnvelope());
 		XPathExpressionEngine xpathEngine = new XPathExpressionEngine(messageFactory);
-		String valueBody = xpathEngine.getStringMatchPattern(org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody()), dncBody, "//prova2/text()");
+		String msg = null;
+		try {
+			msg = org.openspcoop2.message.xml.XMLUtils.getInstance(messageFactory).toString(client.getResponseMessage().getSOAPBody());
+		}catch(Throwable t) {
+			// normalize per conflito di librerie axis - saaj
+			org.w3c.dom.Document d = org.openspcoop2.message.xml.XMLUtils.DEFAULT.newDocument();
+			Node n = d.importNode(client.getResponseMessage().getSOAPBody(), true);
+			msg = org.openspcoop2.message.xml.XMLUtils.DEFAULT.toString(n,true);
+		}
+		String valueBody = xpathEngine.getStringMatchPattern(msg, dncBody, "//prova2/text()");
 		
 		//System.out.println("VALUE = "+value);
 		Assert.assertEquals(valueBody, "AMÉLIE");

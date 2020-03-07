@@ -34,9 +34,9 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="risposte">
- * 		&lt;attribute name="connessione" type="{http://www.openspcoop2.org/core/config}TipoConnessioneRisposte" use="optional" default="reply"/>
- * &lt;/complexType>
+ * &lt;complexType name="risposte"&gt;
+ * 		&lt;attribute name="connessione" type="{http://www.openspcoop2.org/core/config}TipoConnessioneRisposte" use="optional" default="reply"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

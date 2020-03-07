@@ -40,6 +40,7 @@ import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.datamodel.ResLive;
+import org.openspcoop2.web.monitor.transazioni.bean.DumpMessaggioBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 
@@ -76,23 +77,23 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	 */
 	public ResLive getEsitiInfoLive(PermessiUtenteOperatore permessiUtente, Date lastDatePick,String protocollo);
 
-	public boolean hasInfoDumpAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio);
+	public boolean hasInfoDumpAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio);
 
-	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione,
-			TipoMessaggio tipoMessaggio);
+	public boolean hasInfoHeaderTrasportoAvailable(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio);
 
-	public DumpMessaggio getDumpMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio) throws Exception;
+	public DumpMessaggio getDumpMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio) throws Exception;
+	
+	public int countDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore);
+	
+	public Date getDataConsegnaErogatore(String idTransazione, String saErogatore, Date dataAccettazione) ;
+	
+	public List<DumpMessaggioBean> listDumpMessaggiGByDataConsegnaErogatore(String idTransazione, String saErogatore, int start, int limit);
 
-	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpAllegato> getAllegatiMessaggio(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
-	public List<DumpContenuto> getContenutiSpecifici(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpContenuto> getContenutiSpecifici(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
-	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione,
-			TipoMessaggio tipoMessaggio,Long idDump);
+	public List<DumpHeaderTrasporto> getHeaderTrasporto(String idTransazione, String saErogatore, Date dataConsegnaErogatore, TipoMessaggio tipoMessaggio,Long idDump);
 
 	/**
 	 * Effettua una ricerca dei duplicati della transazione

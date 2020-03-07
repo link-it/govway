@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.sdk;
 /**
  * Dati integrativi in appoggio inseriti nel repository
  *  
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

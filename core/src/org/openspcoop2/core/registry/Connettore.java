@@ -40,14 +40,14 @@ import java.util.Set;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="connettore">
- * 		&lt;sequence>
- * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/registry}Property" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="custom" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
- * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="connettore"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="property" type="{http://www.openspcoop2.org/core/registry}Property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="custom" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -181,7 +181,7 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getPropertyList
-   * @return List<Property>
+   * @return List&lt;Property&gt;
   */
   @Deprecated
   public List<Property> getProperty() {
@@ -190,7 +190,7 @@ public class Connettore extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setPropertyList
-   * @param property List<Property>
+   * @param property List&lt;Property&gt;
   */
   @Deprecated
   public void setProperty(List<Property> property) {

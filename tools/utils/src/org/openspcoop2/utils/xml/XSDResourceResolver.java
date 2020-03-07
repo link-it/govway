@@ -34,7 +34,7 @@ import org.w3c.dom.ls.LSResourceResolver;
 /**
  * Classe utilizzabile per Risolvere gli import di eventuali schemi
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

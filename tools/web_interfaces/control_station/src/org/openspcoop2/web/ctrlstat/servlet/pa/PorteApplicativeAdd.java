@@ -48,6 +48,7 @@ import org.openspcoop2.core.config.GestioneToken;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAzione;
+import org.openspcoop2.core.config.PortaApplicativaBehaviour;
 import org.openspcoop2.core.config.PortaApplicativaServizio;
 import org.openspcoop2.core.config.PortaApplicativaSoggettoVirtuale;
 import org.openspcoop2.core.config.Proprieta;
@@ -844,8 +845,10 @@ public final class PorteApplicativeAdd extends Action {
 			
 			pa.setValidazioneContenutiApplicativi(vx);
 
-			if(behaviour!=null && !"".equals(behaviour))
-				pa.setBehaviour(behaviour);
+			if(behaviour!=null && !"".equals(behaviour)) {
+				pa.setBehaviour(new PortaApplicativaBehaviour());
+				pa.getBehaviour().setNome(behaviour);
+			}
 			else 
 				pa.setBehaviour(null);
 			

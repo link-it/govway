@@ -62,7 +62,7 @@ import org.slf4j.Logger;
 /**
  * Interfaccia Tracciamento
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

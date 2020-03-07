@@ -401,16 +401,18 @@ public abstract class BaseBean {
 		return this.toString(style, outputTransients, outputStatics, null);
 	}
 	public String toString(ToStringStyle style,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		this.toString(style, buffer, outputTransients, outputStatics, reflectUpToClass);
 		return buffer.toString();
 	}
-	public void toString(ToStringStyle style,StringBuffer buffer,boolean outputTransients,boolean outputStatics){
+	public void toString(ToStringStyle style,StringBuilder buffer,boolean outputTransients,boolean outputStatics){
 		this.toString(style, buffer, outputTransients, outputStatics, null);
 	}
-	public void toString(ToStringStyle style,StringBuffer buffer,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
-		ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, style, buffer, reflectUpToClass, outputTransients, outputStatics);
+	public void toString(ToStringStyle style,StringBuilder buffer,boolean outputTransients,boolean outputStatics,Class<?>reflectUpToClass){
+		StringBuffer bf = new StringBuffer();
+		ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, style, bf, reflectUpToClass, outputTransients, outputStatics);
 		builder.toString();
+		buffer.append(bf.toString());
 	}
 	
 	

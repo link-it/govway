@@ -99,7 +99,7 @@ public class DumpUtilities {
 						transactionWithClient.setRequest(new Request());
 					}
 					if(msg.getContent()!=null ) {
-						transactionWithClient.getRequest().setSize(new Long(msg.getContent().length));
+						transactionWithClient.getRequest().setSize(Long.valueOf(msg.getContent().length));
 					}
 					else {
 						transactionWithClient.getRequest().setSize(0l);
@@ -144,7 +144,7 @@ public class DumpUtilities {
 						server.setRequest(new ConnectionMessage());
 					}
 					if(msg.getContent()!=null ) {
-						server.getRequest().setSize(new Long(msg.getContent().length));
+						server.getRequest().setSize(Long.valueOf(msg.getContent().length));
 					}
 					else {
 						server.getRequest().setSize(0l);
@@ -204,7 +204,7 @@ public class DumpUtilities {
 						transactionWithClient.setResponse(new Response());
 					}
 					if(msg.getContent()!=null ) {
-						transactionWithClient.getResponse().setSize(new Long(msg.getContent().length));
+						transactionWithClient.getResponse().setSize(Long.valueOf(msg.getContent().length));
 					}
 					else {
 						transactionWithClient.getResponse().setSize(0l);
@@ -258,7 +258,7 @@ public class DumpUtilities {
 						server.setResponse(new ConnectionMessage());
 					}
 					if(msg.getContent()!=null ) {
-						server.getResponse().setSize(new Long(msg.getContent().length));
+						server.getResponse().setSize(Long.valueOf(msg.getContent().length));
 					}
 					else {
 						server.getResponse().setSize(0l);

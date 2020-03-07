@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.StatoFunzionalitaCacheDigestQueryParameter;
@@ -75,6 +76,9 @@ public class CostantiControlStation {
 
 	/** Debug COSTANT STRING */
 	public static final String DEBUG_STRING = "PDD_CONSOLE_DEBUG";
+	
+	/** Tooltip Utils */
+	public static final String TOOLTIP_BREAK_LINE = "&#10;";
 	
 	/** PLACEHOLDER PROTOCOLLO in creazione automatica endpoint del soggetto */
 	public static final String PLACEHOLDER_SOGGETTO_ENDPOINT_CREAZIONE_AUTOMATICA = "@protocol@";
@@ -129,6 +133,7 @@ public class CostantiControlStation {
 	public final static String LABEL_EMPTY = "&nbsp;";
 	
 	public final static String LABEL_BOTTONE_INDIVIDUA_GRUPPO = "Individua Gruppo";
+	public final static String LABEL_BOTTONE_INDIVIDUA_CONNETTORE = "Individua Connettore";
 	
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE_COLUMN = "Non standard";
 	public final static String LABEL_CONFIGURAZIONE_IMPOSTATA_MODALITA_AVANZATA_SHORT_MESSAGE = "Configurazione non visualizzabile";
@@ -189,11 +194,13 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE = "Stato";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_BASIC_FORWARD = "Forward Authorization";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TIPO = "Tipo";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM = "Claim";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER = ModalitaIdentificazione.HEADER_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM = ModalitaIdentificazione.FORM_BASED.getLabelParametro();
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM = ModalitaIdentificazione.TOKEN.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO = "seleziona altro claim";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_ESTESO = "Nome del Claim";
-	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE = "Espressione Regolare";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME = "Nome";
+	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_ESPRESSIONE = ModalitaIdentificazione.URL_BASED.getLabelParametro();
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_HEADER = "Forward Header";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORWARD_FORM = "Forward Parametro Url";
 	public final static String LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_OPZIONALE = "Opzionale";
@@ -259,6 +266,7 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_RISORSE_CONFIG_DI = "Risorse di ";
 	public final static String LABEL_PARAMETRO_PORTE_NOME_GRUPPO = "Nome Gruppo";
 	public final static String LABEL_DEL_GRUPPO = " del gruppo ";
+	public final static String LABEL_DEL_CONNETTORE = " del connettore ";
 	public final static String LABEL_PARAMETRO_PORTA_AZIONE_MODALITA = "Modalità Identificazione Azione";
 	public final static String LABEL_PARAMETRO_PORTA_RISORSA_MODALITA = "Modalità Identificazione Risorsa";
 	public final static String LABEL_PARAMETRO_PORTA_QUALSIASI_AZIONE = "Tutte le azioni del servizio";
@@ -414,6 +422,8 @@ public class CostantiControlStation {
 	public final static String LABEL_CONFIGURAZIONE_VERIFICA_CONNETTORE_FALLITA = "Test di connettività fallito: ";
 	public final static String LABEL_VERIFICA_CONNETTORE_VALORE_LINK = "verifica";
 	public final static String LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI = "Verifica su tutti i nodi";
+	public final static String LABEL_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "Configurazione Connettori Multipli";
+	public final static String LABEL_ELENCO_CONNETTORI_MULTIPLI = "Elenco Connettori";
 	
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING = "Caching Risposta";
 	public final static String LABEL_CONFIGURAZIONE_RESPONSE_CACHING_DI = "Caching Risposta di ";
@@ -606,10 +616,12 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_NOME = "Nome";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_TRASFORMAZIONI_RICHIESTA_PARAMETRO_TIPO = "Operazione";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = "Registra qualsiasi esito";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "Completate con successo";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "Fault Applicativo";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "Fallite";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = "Fallite - Fault Applicativo";
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = "Scartate";
 	
 	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE = "Numero Richieste";
 	public final static String LABEL_CONFIGURAZIONE_RISORSA_NUMERO_RICHIESTE_SIMULTANEE = "Numero Richieste Simultanee";
@@ -643,6 +655,10 @@ public class CostantiControlStation {
 	public final static String LABEL_PARAMETRO_AUTENTICAZIONE_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CUSTOM_PROPERTIES = "Propriet&agrave;";
 	public final static String LABEL_PARAMETRO_AUTORIZZAZIONE_CONTENUTI_CUSTOM_PROPERTIES = "Propriet&agrave;";
+	
+	
+	public final static String LABEL_PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "Utilizza Applicativo Server";
+	public final static String LABEL_PARAMETRO_ID_APPLICATIVO_SERVER = "Applicativo";
 	
 	// POLICY RISORSA TIPO
 	
@@ -760,6 +776,8 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY = "docSicXacmlPol";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA = "autorizzazioneModIPA";
 	public final static String PARAMETRO_PORTE_AUTORIZZAZIONE_MODIPA_STATO = "autorizzazioneModIPAStato";
+	public final static String PARAMETRO_ABILITA_USO_APPLICATIVO_SERVER = "saServerEnabled";
+	public final static String PARAMETRO_ID_APPLICATIVO_SERVER = "saServer";
 	
 	public final static String PARAMETRO_RESET_SEARCH = "resetSearch";
 	
@@ -819,11 +837,19 @@ public class CostantiControlStation {
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI = "connettoreAccessoDaGruppi";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_REGISTRO = "connettoreRegistro";
 	public final static String PARAMETRO_VERIFICA_CONNETTORE_NODO = "connettoreNodo";
+	public final static String PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI = "connettoreAccessoDaCM";
 	
 	public final static String PARAMETRO_ID_TAB = "idTab";
 	public final static String PARAMETRO_RESET_ID_TAB = "rIdTab";
+	public final static String PARAMETRO_ID_CONN_TAB = "idConnTab";
+	public final static String PARAMETRO_RESET_ID_CONN_TAB = "rIdConnTab";
 	
 	public final static String PARAMETRO_API_PAGE_INFO = "fromApiPageInfo";
+	
+	public final static String PARAMETRO_CONFIGURAZIONE_DATI_INVOCAZIONE = "configurazioneDatiInvocazione";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALTRO_PORTA = "configurazioneAltroPorta";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALTRO_API = "configurazioneAltroApi";
+	public final static String PARAMETRO_CONNETTORE_DA_LISTA_APS = "connettoreDaListaAps";
 	
 	
 	public final static String PARAMETRO_CONFIGURAZIONE_RESPONSE_CACHING_STATO = "resCacheStato";
@@ -1017,6 +1043,7 @@ public class CostantiControlStation {
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_HEADER_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_HEADER_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_CONTENT_BASED = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_CONTENT_BASED.toString();
 	public final static String VALUE_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = CostantiConfigurazione.CORRELAZIONE_APPLICATIVA_RICHIESTA_DISABILITATO.toString();
+	public final static String LABEL_PARAMETRO_MODE_CORRELAZIONE_DISABILITATO = "Disabilitata";
 	
 	public final static String VALUE_PARAMETRO_DUMP_STATO_DEFAULT = "default";
 	public final static String VALUE_PARAMETRO_DUMP_STATO_RIDEFINITO = "ridefinito";
@@ -1196,6 +1223,9 @@ public class CostantiControlStation {
 	public final static int LABEL_PARAMETRO_TEXT_AREA_API_COLUMNS = 110;
 	
 	/** INFO */
+	
+	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_LEFT = "Identificazione tramite API";
+	public final static String LABEL_PARAMETRO_FORCE_INTERFACE_BASED_RIGHT = "Modalità alternativa utilizzata se l'identificazione indicata fallisce";
 	
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA = "Espressione applicata sul messaggio; se si ha un match la regola di correlazione verrà utilizzata.<br/>I tipi di espressione utilizzabili sono:";
 	public final static String LABEL_CONFIGURAZIONE_CORRELAZIONE_APPLICATIVA_INFO_APPLICABILITA_SOAP = "<b>Path</b>: espressione XPath";
@@ -1715,7 +1745,7 @@ public class CostantiControlStation {
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_username.name());
 		TOKEN_VALUES_WITHOUT_ISSUER.add(TipoCredenzialeMittente.token_eMail.name());
 	}
-	
+		
 	/** MESSAGGI */
 	public static final String MESSAGGIO_CONFERMA_REGOLA_POLICY_SPOSTATA_CORRETTAMENTE = "Posizione della policy modificata correttamente.";
 	public static final String MESSAGGIO_CONFERMA_REGOLA_TRASFORMAZIONE_SPOSTATA_CORRETTAMENTE = "Posizione della regola modificata correttamente.";
@@ -1816,6 +1846,14 @@ public class CostantiControlStation {
 	public final static String ICONA_VERIFICA = "&#xE8BE;";
 	public final static String ICONA_VERIFICA_TOOLTIP = "Verifica";
 	public final static String ICONA_VERIFICA_TOOLTIP_CON_PARAMETRO = "Verifica {0}";
+	
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI = "&#xE8B8;";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP = "Configurazione Connettori Multipli";
+	public final static String ICONA_MODIFICA_CONFIGURAZIONE_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Configurazione Connettori Multipli {0}";
+	
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI = "list_alt";
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP = "Elenco Connettori";
+	public final static String ICONA_ELENCO_CONNETTORI_MULTIPLI_TOOLTIP_CON_PARAMETRO = "Elenco Connettori {0}";
 	
 	public final static String ICONA_MODIFICA_TOGGLE_ON = "toggle_on";
 	public final static String ICONA_MODIFICA_TOGGLE_OFF = "toggle_off";

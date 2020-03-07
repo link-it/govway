@@ -112,7 +112,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -147,7 +147,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;			
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -214,7 +214,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -247,7 +247,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -264,7 +264,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-	    public byte[] getReportDistribuzioneApiBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tag, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+	    public byte[] getReportDistribuzioneApiBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String tag, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -296,9 +296,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -307,7 +315,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -340,7 +348,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -357,7 +365,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -390,9 +398,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -401,7 +417,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -434,7 +450,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -451,7 +467,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneAzioneBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneAzioneBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -482,9 +498,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -493,7 +517,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -527,7 +551,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -583,7 +607,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -616,7 +640,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -634,7 +658,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneIdAutenticatoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -667,9 +691,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -679,7 +711,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -711,7 +743,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -728,7 +760,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneSoggettoLocaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -759,9 +791,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -769,7 +809,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -802,7 +842,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -819,7 +859,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneSoggettoRemotoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -852,9 +892,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -864,7 +912,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -897,7 +945,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -914,7 +962,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneTemporaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneTemporaleBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -947,9 +995,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -959,7 +1015,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -990,7 +1046,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1007,7 +1063,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, TokenClaimEnum claim, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneTokenInfoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, TokenClaimEnum claim, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -1040,9 +1096,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -1053,7 +1117,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1084,7 +1148,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1099,7 +1163,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
      *
      */
     @Override
-    public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneIndirizzoIPBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
     	IContext context = this.getContext();
 		try {
@@ -1132,9 +1196,17 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			ricerca.setTag(tag);
 			
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtro_esito = new FiltroEsito();
-				filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtro_esito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtro_esito.setEscludiScartate(escludiScartate);
+				}
 				ricerca.setEsito(filtro_esito);
 			}
 
@@ -1144,7 +1216,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			return ret;
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1204,7 +1276,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -1259,7 +1331,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			}
 
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());

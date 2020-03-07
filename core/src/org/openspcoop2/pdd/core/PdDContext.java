@@ -22,6 +22,7 @@
 package org.openspcoop2.pdd.core;
 
 import java.io.Serializable;
+import java.util.Enumeration;
 
 import org.openspcoop2.protocol.sdk.Context;
 
@@ -55,4 +56,15 @@ public class PdDContext extends Context implements Serializable {
 		return value;
 	}
 	
+	@Override
+	public Object clone() {
+		PdDContext newPdDContext = new PdDContext();
+		Enumeration<String> keys = this.keys();
+		while (keys.hasMoreElements()) {
+			String key = (String) keys.nextElement();
+			Object o = this.getObject(key);
+			newPdDContext.addObject(key, o);
+		}
+		return newPdDContext;
+	}
 }

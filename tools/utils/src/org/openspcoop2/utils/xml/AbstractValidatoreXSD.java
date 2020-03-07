@@ -530,10 +530,10 @@ public abstract class AbstractValidatoreXSD {
 	 * @param nodeXML Node
 	 */
 	public void valida(Node nodeXML) throws Exception{
-		valida(new DOMSource(nodeXML));
+		valida(new DOMSourceFix(nodeXML));
 	}
 	public void valida(Node nodeXML,ErrorHandler errorHandler) throws Exception{
-		valida(new DOMSource(nodeXML),errorHandler);
+		valida(new DOMSourceFix(nodeXML),errorHandler);
 	}
 	
 	/**

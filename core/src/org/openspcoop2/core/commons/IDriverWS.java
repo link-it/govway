@@ -26,7 +26,7 @@ package org.openspcoop2.core.commons;
 /**
  * Interfaccia generale per l'utilizzo del driver nel web service.
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

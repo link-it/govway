@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="actions">
- * 		&lt;sequence>
- * 			&lt;element name="action" type="{http://www.domibus.eu/configuration}action" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="actions"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="action" type="{http://www.domibus.eu/configuration}action" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Actions extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getActionList
-   * @return List<Action>
+   * @return List&lt;Action&gt;
   */
   @Deprecated
   public List<Action> getAction() {
@@ -102,7 +102,7 @@ public class Actions extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setActionList
-   * @param action List<Action>
+   * @param action List&lt;Action&gt;
   */
   @Deprecated
   public void setAction(List<Action> action) {

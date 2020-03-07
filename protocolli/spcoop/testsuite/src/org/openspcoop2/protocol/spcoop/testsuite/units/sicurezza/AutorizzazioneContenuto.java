@@ -59,7 +59,7 @@ import org.testng.annotations.Test;
 /**
  * Testsuite per autorizzazione contenuto
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

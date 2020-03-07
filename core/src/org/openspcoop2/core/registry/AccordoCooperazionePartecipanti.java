@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-cooperazione-partecipanti">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto-partecipante" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-cooperazione-partecipanti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto-partecipante" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class AccordoCooperazionePartecipanti extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method getSoggettoPartecipanteList
-   * @return List<IdSoggetto>
+   * @return List&lt;IdSoggetto&gt;
   */
   @Deprecated
   public List<IdSoggetto> getSoggettoPartecipante() {
@@ -120,7 +120,7 @@ public class AccordoCooperazionePartecipanti extends org.openspcoop2.utils.beans
 
   /**
    * @deprecated Use method setSoggettoPartecipanteList
-   * @param soggettoPartecipante List<IdSoggetto>
+   * @param soggettoPartecipante List&lt;IdSoggetto&gt;
   */
   @Deprecated
   public void setSoggettoPartecipante(List<IdSoggetto> soggettoPartecipante) {

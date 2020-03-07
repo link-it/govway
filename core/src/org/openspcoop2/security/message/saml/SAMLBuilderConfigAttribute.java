@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * SAMLBuilderConfigAttribute
  * 	
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -103,6 +103,7 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 			String idBusta = msgDiagnostico.getIdBusta();
 			String idBustaRisposta = msgDiagnostico.getIdBustaRisposta();
 			String codiceDiagnostico = msgDiagnostico.getCodice();
+			String applicativo = msgDiagnostico.getApplicativo();
 			
 			String idTransazione = msgDiagnostico.getIdTransazione();
 			
@@ -147,8 +148,9 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 						CostantiDB.MSG_DIAGNOSTICI_COLUMN_IDMESSAGGIO_RISPOSTA+", "+
 						CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO+", "+
 						CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE+", "+
-						CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE+""+
-				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?)";
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE+", "+
+						CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO+""+
+				") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? , ?, ?)";
 				int index = 1;
 				stmt = con.prepareStatement(updateString);
 				if(gdo!=null)
@@ -166,6 +168,7 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 				JDBCUtilities.setSQLStringValue(stmt,index++,msgDiagnostico.getProtocollo());
 				JDBCUtilities.setSQLStringValue(stmt,index++, codiceDiagnostico);
 				JDBCUtilities.setSQLStringValue(stmt,index++, idTransazione);
+				JDBCUtilities.setSQLStringValue(stmt,index++, applicativo);
 				stmt.executeUpdate();
 				stmt.close();
 				
@@ -198,6 +201,7 @@ public class DiagnosticProducer extends BasicProducer implements IDiagnosticProd
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO, getSQLStringValue(msgDiagnostico.getProtocollo()), InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_CODICE, getSQLStringValue(codiceDiagnostico), InsertAndGeneratedKeyJDBCType.STRING) );
 				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE, getSQLStringValue(idTransazione), InsertAndGeneratedKeyJDBCType.STRING) );
+				listInsertAndGeneratedKeyObject.add( new InsertAndGeneratedKeyObject(CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO, getSQLStringValue(applicativo), InsertAndGeneratedKeyJDBCType.STRING) );
 								
 				// ** Insert and return generated key
 				long iddiagnostico = InsertAndGeneratedKey.insertAndReturnGeneratedKey(con, tipo, 

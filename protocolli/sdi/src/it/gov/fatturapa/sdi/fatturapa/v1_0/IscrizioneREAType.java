@@ -34,15 +34,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IscrizioneREAType">
- * 		&lt;sequence>
- * 			&lt;element name="Ufficio" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="NumeroREA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="CapitaleSociale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="SocioUnico" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}SocioUnicoType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="StatoLiquidazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}StatoLiquidazioneType" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="IscrizioneREAType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Ufficio" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="NumeroREA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="CapitaleSociale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="SocioUnico" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}SocioUnicoType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="StatoLiquidazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}StatoLiquidazioneType" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

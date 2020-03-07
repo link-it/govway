@@ -26,12 +26,12 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Properties;
 
-import org.slf4j.Logger;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.resources.Loader;
+import org.slf4j.Logger;
 import org.testng.annotations.ITestAnnotation;
 import org.testng.internal.annotations.IAnnotationTransformer;
 
@@ -45,35 +45,56 @@ import org.testng.internal.annotations.IAnnotationTransformer;
 
 public class TestSuiteTransformer implements IAnnotationTransformer{
 
-	public static Boolean sequentialForced = false;
-	
+	@Override
+	public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod,
+			Class<?> occurringClazz) {
+		this._transform(annotation, testClass, testConstructor, testMethod);
+	}
+
 	@Override
 	public void transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){
+		this._transform(annotation, testClass, testConstructor, testMethod);
+	}
+	
+	public static Boolean sequentialForced = false;
+	
+	public static Boolean initializedSemaphore = true;
+	public static Boolean initialized = false;
+	
+	private void _transform(ITestAnnotation annotation, @SuppressWarnings("rawtypes") Class testClass, @SuppressWarnings("rawtypes") Constructor testConstructor, Method testMethod){
 		
-		try{
-			DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(TestSuiteTransformer.class));
-		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(), e);
+		synchronized(initializedSemaphore) {
+			if(initialized==false) {
+			
+				try{
+					DateManager.initializeDataManager(org.openspcoop2.utils.date.SystemDate.class.getName(), new Properties(), LoggerWrapperFactory.getLogger(TestSuiteTransformer.class));
+				}catch(Exception e){
+					throw new RuntimeException(e.getMessage(), e);
+				}
+				
+				try{
+					ConfigurazionePdD config = new ConfigurazionePdD();
+					config.setLoader(new Loader());
+					LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_spcoop.log4j2.properties"));
+					Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
+					config.setLog(log);
+					ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
+				}catch(Exception e){
+					throw new RuntimeException(e.getMessage(),e);
+				}
+				
+				org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
+				org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
+				
+				initialized = true;
+			}
 		}
-		
-		try{
-			ConfigurazionePdD config = new ConfigurazionePdD();
-			config.setLoader(new Loader());
-			LoggerWrapperFactory.setLogConfiguration(TestSuiteTransformer.class.getResource("/testsuite_spcoop.log4j2.properties"));
-			Logger log = LoggerWrapperFactory.getLogger("govway.testsuite");
-			config.setLog(log);
-			ProtocolFactoryManager.initializeSingleProtocol(log, config, CostantiTestSuite.PROTOCOL_NAME);
-		}catch(Exception e){
-			throw new RuntimeException(e.getMessage(),e);
-		}
-		
-		org.openspcoop2.testsuite.core.CostantiTestSuite.setREAD_TIMEOUT(TestSuiteProperties.getInstance().getReadConnectionTimeout());
-		org.openspcoop2.testsuite.core.CostantiTestSuite.setCONNECTION_TIMEOUT(TestSuiteProperties.getInstance().getConnectionTimeout());
 		
 		if(testMethod!=null){
 			
 			if(org.openspcoop2.protocol.spcoop.testsuite.units.messaggi_malformati.SOAPMessageScorretti.class.getName().equals(testMethod.getDeclaringClass().getName())){
-				annotation.setSequential(true);
+				//annotation.setSequential(true);
+				annotation.setSingleThreaded(true);
 			}
 			
 			String methodName = testMethod.getName();
@@ -89,12 +110,16 @@ public class TestSuiteTransformer implements IAnnotationTransformer{
 			   "stopServerRicezioneRispostaAsincronaSimmetrica_modalitaSincrona_Stateful".equals(methodName)==false ){
 					annotation.setInvocationCount(Utilities.testSuiteProperties.getWorkerNumber());
 					annotation.setThreadPoolSize(Utilities.testSuiteProperties.getPoolSize());
-					if(TestSuiteTransformer.sequentialForced)
-						annotation.setSequential(true);
-					else
-						annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+					if(TestSuiteTransformer.sequentialForced) {
+						//annotation.setSequential(true);
+						annotation.setSingleThreaded(true);
+					}else {
+						//annotation.setSequential(Utilities.testSuiteProperties.sequentialTests());
+						annotation.setSingleThreaded(Utilities.testSuiteProperties.sequentialTests());
+					}
 			}
 		}
+
 	}
 	
 }

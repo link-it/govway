@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="agreements">
- * 		&lt;sequence>
- * 			&lt;element name="agreement" type="{http://www.domibus.eu/configuration}agreement" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="agreements"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="agreement" type="{http://www.domibus.eu/configuration}agreement" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Agreements extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getAgreementList
-   * @return List<Agreement>
+   * @return List&lt;Agreement&gt;
   */
   @Deprecated
   public List<Agreement> getAgreement() {
@@ -102,7 +102,7 @@ public class Agreements extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setAgreementList
-   * @param agreement List<Agreement>
+   * @param agreement List&lt;Agreement&gt;
   */
   @Deprecated
   public void setAgreement(List<Agreement> agreement) {

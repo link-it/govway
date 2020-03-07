@@ -34,12 +34,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="gestione-errore-codice-trasporto">
- * 		&lt;attribute name="valore-minimo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="valore-massimo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 		&lt;attribute name="comportamento" type="{http://www.openspcoop2.org/core/config}GestioneErroreComportamento" use="required"/>
- * 		&lt;attribute name="cadenza-rispedizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="gestione-errore-codice-trasporto"&gt;
+ * 		&lt;attribute name="valore-minimo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="valore-massimo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 		&lt;attribute name="comportamento" type="{http://www.openspcoop2.org/core/config}GestioneErroreComportamento" use="required"/&gt;
+ * 		&lt;attribute name="cadenza-rispedizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

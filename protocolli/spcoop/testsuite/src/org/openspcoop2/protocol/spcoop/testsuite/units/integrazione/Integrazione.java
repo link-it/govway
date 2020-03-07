@@ -121,6 +121,7 @@ public class Integrazione {
 	//private static final String MSG_ERRORE = "Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
 	//private static final String MSG_ERRORE_SERVIZIO="Servizio richiesto con la porta delegata non trovato nel Registro dei Servizi";
 	private static final String MSG_ERRORE_IDENTIFICAZIONE_AZIONE="Identificazione dinamica dell'azione associata alla porta delegata fallita";
+	private static final String MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2="Identificazione dinamica dell'operazione fallita";
 	//private static final String MSG_ERRORE_IDENTIFICAZIONE_SERVIZIO="Riscontrato errore durante l'identificazione del servizio associato alla porta delegata, utilizzando il pattern specificato nella configurazione";
 	private static final String MSG_ERRORE_SERVIZIO_ERRATO = "Azione richiesta non corretta: (azione:@AZIONE@) Azione '@AZIONE@' non trovata nell'API @ACCORDO_SERVIZIO@";
 	
@@ -1957,8 +1958,9 @@ public class Integrazione {
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
+				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
@@ -2221,8 +2223,9 @@ public class Integrazione {
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
+				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
@@ -2584,8 +2587,9 @@ public class Integrazione {
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
+				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 				return;
@@ -3099,8 +3103,9 @@ public class Integrazione {
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
+				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{
@@ -3539,8 +3544,9 @@ public class Integrazione {
 				Reporter.log("Controllo fault code ["+org.openspcoop2.protocol.basic.Costanti.ERRORE_INTEGRAZIONE_PREFIX_CODE+"403]");
 				Assert.assertTrue(Utilities.toString(CodiceErroreIntegrazione.CODICE_403_AZIONE_NON_IDENTIFICATA).equals(error.getFaultCode().getLocalPart()));
 				String msgErrore = MSG_ERRORE_IDENTIFICAZIONE_AZIONE;
-				Reporter.log("Controllo fault string ["+msgErrore+"]");
-				Assert.assertTrue(msgErrore.equals(error.getFaultString()));
+				String msgErrore2 = MSG_ERRORE_IDENTIFICAZIONE_AZIONE_2;
+				Reporter.log("Controllo fault string ["+msgErrore+"] o ["+msgErrore2+"]");
+				Assert.assertTrue(msgErrore2.equals(error.getFaultString()) || msgErrore.equals(error.getFaultString()));
 				Reporter.log("Controllo fault actor ["+org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR+"]");
 				Assert.assertTrue(org.openspcoop2.testsuite.core.CostantiTestSuite.OPENSPCOOP2_INTEGRATION_ACTOR.equals(error.getFaultActor()));
 			}finally{

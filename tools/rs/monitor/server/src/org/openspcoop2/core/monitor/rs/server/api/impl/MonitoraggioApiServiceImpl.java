@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.monitor.rs.server.api.impl;
 
-import static org.openspcoop2.core.monitor.rs.server.api.impl.utils.TransazioniHelper.searchTransazioni;
-
 import java.sql.Connection;
 import java.util.List;
 import java.util.UUID;
@@ -151,7 +149,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -183,7 +181,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -213,7 +211,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -233,7 +231,8 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			FiltroRicercaRuoloTransazioneEnum tipo, String idApplicativo, ProfiloEnum profilo, String soggetto,
 			Integer offset, Integer limit, String sort, String idCluster, String soggettoRemoto,
 			String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio,
-			String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean ricercaEsatta, Boolean caseSensitive) {
+			String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, 
+			Boolean ricercaEsatta, Boolean caseSensitive) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");     
@@ -261,9 +260,18 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			bodyRicerca.setLimit(limit);
 			bodyRicerca.setOffset(offset);
 			bodyRicerca.setSort(sort);
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtroEsito = new FiltroEsito();
-				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtroEsito.setEscludiScartate(escludiScartate);
+				}
+				bodyRicerca.setEsito(filtroEsito);
 			}
 			
 			ListaTransazioni ret = TransazioniHelper.findAllTransazioniByIdApplicativo(bodyRicerca, env);
@@ -271,7 +279,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			return ret;
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -305,11 +313,11 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			search.setIdEgov(id);
 			search.setTipoIdMessaggio(tipoMessaggio == TipoMessaggioEnum.RICHIESTA ? "Richiesta" : "Risposta");
 
-			ListaTransazioni ret = searchTransazioni(search, offset, limit, sort, env);
+			ListaTransazioni ret = TransazioniHelper.searchTransazioni(search, offset, limit, sort, env);
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -329,7 +337,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			FiltroRicercaRuoloTransazioneEnum tipo, ProfiloEnum profilo, String soggetto, Integer offset, Integer limit,
 			String sort, String idCluster, String soggettoRemoto, String soggettoErogatore, String tag,
 			String nomeServizio, String tipoServizio, Integer versioneServizio, String azione,
-			EsitoTransazioneSimpleSearchEnum esito) {
+			EsitoTransazioneSimpleSearchEnum esito,Boolean escludiScartate) {
 		IContext context = this.getContext();
 		try {
 			context.getLogger().info("Invocazione in corso ...");
@@ -353,9 +361,17 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			bodyRicerca.setLimit(limit);
 			bodyRicerca.setOffset(offset);
 
-			if (esito != null) {
+			if (esito != null || escludiScartate!=null) {
 				FiltroEsito filtroEsito = new FiltroEsito();
-				filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				if(esito!=null) {
+					filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.valueOf(esito.name()));
+				}
+				else {
+					filtroEsito.setTipo(EsitoTransazioneFullSearchEnum.QUALSIASI);
+				}
+				if(escludiScartate!=null) {
+					filtroEsito.setEscludiScartate(escludiScartate);
+				}
 				bodyRicerca.setEsito(filtroEsito);
 			}
 			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio,
@@ -365,7 +381,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			context.getLogger().info("Invocazione completata con successo");
 			return ret;
 		} catch (javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s", e, e.getMessage());
 			throw e;
 		} catch (Throwable e) {
 			context.getLogger().error("Invocazione terminata con errore: %s", e, e.getMessage());
@@ -413,7 +429,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -462,7 +478,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			}
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {

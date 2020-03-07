@@ -32,15 +32,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dati-cooperazione">
- * 		&lt;sequence>
- * 			&lt;element name="sender" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="provider" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="service" type="{http://govway.org/integration/fault}servizio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="action" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="application" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dati-cooperazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="sender" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="provider" type="{http://govway.org/integration/fault}soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="service" type="{http://govway.org/integration/fault}servizio" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="action" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="application" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

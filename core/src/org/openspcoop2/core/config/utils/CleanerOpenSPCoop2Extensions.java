@@ -23,6 +23,7 @@ package org.openspcoop2.core.config.utils;
 import org.openspcoop2.core.config.AccessoRegistroRegistro;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ProtocolProperty;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -164,6 +165,12 @@ public class CleanerOpenSPCoop2Extensions {
 		portaApplicativa.setTipoSoggettoProprietario(null);
 		portaApplicativa.setNomeSoggettoProprietario(null);
 	
+		if(portaApplicativa.sizeServizioApplicativoList()>0) {
+			for (PortaApplicativaServizioApplicativo pasa : portaApplicativa.getServizioApplicativoList()) {
+				pasa.setIdServizioApplicativo(null);
+			}
+		}
+		
 		if(portaApplicativa.getMessageSecurity()!=null) {
 			if(portaApplicativa.getMessageSecurity().getRequestFlow()!=null && portaApplicativa.getMessageSecurity().getRequestFlow().sizeParameterList()<=0) {
 				portaApplicativa.getMessageSecurity().setRequestFlow(null); // altrimeni da errore di validazione in fase di import

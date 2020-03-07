@@ -38,6 +38,8 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 	@XmlElements({
 	@XmlElement(name="wrapperIdTransazione", namespace="http://www.openspcoop2.org/core/transazioni/management", type=WrapperIdTransazione.class),
 	
+	@XmlElement(name="wrapperIdTransazioneApplicativoServer", namespace="http://www.openspcoop2.org/core/transazioni/management", type=WrapperIdTransazioneApplicativoServer.class),
+	
 	@XmlElement(name="wrapperIdDumpMessaggio", namespace="http://www.openspcoop2.org/core/transazioni/management", type=WrapperIdDumpMessaggio.class)
 	})
 	
@@ -48,6 +50,9 @@ public class IdEntity extends org.openspcoop2.utils.beans.BaseBean {
 	}
 
 	public void setId(WrapperIdTransazione id) {
+		this.id = id;
+	}
+	public void setId(WrapperIdTransazioneApplicativoServer id) {	
 		this.id = id;
 	}
 	public void setId(WrapperIdDumpMessaggio id) {	

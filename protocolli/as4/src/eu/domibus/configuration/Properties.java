@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="properties">
- * 		&lt;sequence>
- * 			&lt;element name="property" type="{http://www.domibus.eu/configuration}property" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="propertySet" type="{http://www.domibus.eu/configuration}propertySet" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="properties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="property" type="{http://www.domibus.eu/configuration}property" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="propertySet" type="{http://www.domibus.eu/configuration}propertySet" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getPropertyList
-   * @return List<Property>
+   * @return List&lt;Property&gt;
   */
   @Deprecated
   public List<Property> getProperty() {
@@ -128,7 +128,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setPropertyList
-   * @param property List<Property>
+   * @param property List&lt;Property&gt;
   */
   @Deprecated
   public void setProperty(List<Property> property) {
@@ -149,7 +149,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getPropertySetList
-   * @return List<PropertySet>
+   * @return List&lt;PropertySet&gt;
   */
   @Deprecated
   public List<PropertySet> getPropertySet() {
@@ -158,7 +158,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setPropertySetList
-   * @param propertySet List<PropertySet>
+   * @param propertySet List&lt;PropertySet&gt;
   */
   @Deprecated
   public void setPropertySet(List<PropertySet> propertySet) {

@@ -30,7 +30,7 @@ import org.openspcoop2.security.message.MessageSecurityContext;
 /**
  * Classe per la gestione della Sicurezza (role:Sender)
  *
- * @author Spadafora Marcello <Ma.Spadafora@finsiel.it>
+ * @author Spadafora Marcello (Ma.Spadafora@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

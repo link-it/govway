@@ -96,6 +96,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private Integer esitoDettaglio;
 	private Integer[] esitoDettaglioPersonalizzato;
 	private String esitoContesto;
+	private boolean escludiRichiesteScartate;
 
 	private String servizioApplicativo;
 	private String idCorrelazioneApplicativa;
@@ -167,6 +168,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private CaseSensitiveMatch mittenteCaseSensitiveType = CaseSensitiveMatch.SENSITIVE;
 	private String clientAddressMode = null;
 	
+	private boolean isSearchFormEsitoConsegnaMultiplaEnabled = true;
+	
 
 	public TipiDatabase getDatabaseType() {
 		return _getTipoDatabase(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
@@ -206,6 +209,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 			this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 		}
+		this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
 		this.tipoRicercaSPCoop = "spcoop";
 		this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 				: "Ultimo mese");
@@ -221,6 +225,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.setRicerchePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloRicerchePersonalizzate());
 			this.setStatistichePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate());	
 			this._tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuolo();
+			this.isSearchFormEsitoConsegnaMultiplaEnabled = govwayMonitorProperties.isSearchFormEsitoConsegnaMultiplaEnabled();
 		} catch (Exception e) {
 			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -245,6 +250,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 			this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 		}
+		this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
 		this.tipoRicercaSPCoop = "spcoop";
 		this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 				: "Ultimo mese");
@@ -284,6 +290,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 				this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 			}
+			this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
 			this.tipoRicercaSPCoop = "spcoop";
 			this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 					: "Ultimo mese");
@@ -935,6 +942,18 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.esitoDettaglioPersonalizzato = esitoDettaglioPersonalizzato;
 	}
 
+	public boolean isShowRichiesteScartate() {
+		if(EsitoUtils.ALL_VALUE == this.esitoGruppo ||
+				EsitoUtils.ALL_ERROR_VALUE == this.esitoGruppo ||
+				EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo 
+				//||
+				//EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo
+				){
+			return true;
+		}
+		return false;
+	}	
+	
 	private void checkDettaglio(){
 		if(EsitoUtils.ALL_VALUE != this.esitoDettaglio){
 			// devo verificare il dettaglio che sia compatibile con il nuovo esito
@@ -954,15 +973,41 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 					else if(EsitoUtils.ALL_PERSONALIZZATO_VALUE == this.esitoGruppo){
 						this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 					}
-					if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
+					else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
 						codes = esitiProperties.getEsitiCodeKo();
 						codes.addAll(esitiProperties.getEsitiCodeFaultApplicativo());
 					}
+					else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == this.esitoGruppo){
+						codes = esitiProperties.getEsitiCodeErroriConsegna();
+					}
+					else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == this.esitoGruppo){
+						codes = esitiProperties.getEsitiCodeRichiestaScartate();
+					}
+					
+					if(this.escludiRichiesteScartate){
+						List<Integer> escludiEsitiRichiesteMalformate = esitiProperties.getEsitiCodeRichiestaScartate();
+						boolean found = false;
+						if(escludiEsitiRichiesteMalformate!=null) {
+							for (Integer code : escludiEsitiRichiesteMalformate) {
+								if(code == this.esitoDettaglio){
+									found = true;
+									break;
+								}
+							}
+						}
+						if(found){
+							this.esitoDettaglio = EsitoUtils.ALL_VALUE;
+						}
+					}
+					
+					
 					boolean found = false;
-					for (Integer code : codes) {
-						if(code == this.esitoDettaglio){
-							found = true;
-							break;
+					if(codes!=null) {
+						for (Integer code : codes) {
+							if(code == this.esitoDettaglio){
+								found = true;
+								break;
+							}
 						}
 					}
 					if(!found){
@@ -971,6 +1016,29 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				}catch(Exception e){
 					this.esitoDettaglio = EsitoUtils.ALL_VALUE;
 					BaseSearchForm.log.error("Errore durante il controllo della compatibilità del dettaglio esito "+e.getMessage(),e);
+				}
+			}
+			else {
+				if(this.escludiRichiesteScartate){
+					try{
+						EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
+						List<Integer> escludiEsitiRichiesteMalformate = esitiProperties.getEsitiCodeRichiestaScartate();
+						boolean found = false;
+						if(escludiEsitiRichiesteMalformate!=null) {
+							for (Integer code : escludiEsitiRichiesteMalformate) {
+								if(code == this.esitoDettaglio){
+									found = true;
+									break;
+								}
+							}
+						}
+						if(found){
+							this.esitoDettaglio = EsitoUtils.ALL_VALUE;
+						}
+					}catch(Exception e){
+						this.esitoDettaglio = EsitoUtils.ALL_VALUE;
+						BaseSearchForm.log.error("Errore durante il controllo della compatibilità del dettaglio esito "+e.getMessage(),e);
+					}
 				}
 			}
 		}
@@ -992,6 +1060,15 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		this.esitoContesto = esitoContesto;
 	}
 
+	public boolean isEscludiRichiesteScartate() {
+		return this.escludiRichiesteScartate;
+	}
+
+	public void setEscludiRichiesteScartate(boolean escludiRichiesteScartate) {
+		this.escludiRichiesteScartate = escludiRichiesteScartate;
+		this.checkDettaglio();
+	}
+	
 	public String getTipoRicercaSPCoop() {
 		return this.tipoRicercaSPCoop;
 	}
@@ -1268,13 +1345,14 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
-			
-			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE)));
-			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_OK_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_OK_VALUE,false)));
+			list.add(new SelectItem(EsitoUtils.ALL_PERSONALIZZATO_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_PERSONALIZZATO_VALUE,false)));
 	
 			return list;
 		}catch(Exception e){
@@ -1290,13 +1368,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return this.esitoGruppo!=null &&  (EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE != this.esitoGruppo) && !this.isShowDettaglioPersonalizzato();
 	}
 
-	public List<SelectItem> getEsitiDettaglio() {
+	public List<SelectItem> getEsitiDettaglio(boolean statistiche) {
 		ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
 		try{
 			EsitoUtils esitoUtils = new EsitoUtils(BaseSearchForm.log, this.protocollo);
 			
-			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE)));
+			list.add(new SelectItem(EsitoUtils.ALL_VALUE,esitoUtils.getEsitoLabelFromValue(EsitoUtils.ALL_VALUE, statistiche)));
 
 			EsitiProperties esitiProperties = EsitiProperties.getInstance(BaseSearchForm.log, this.protocollo);
 
@@ -1312,13 +1390,35 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			else if(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE == this.esitoGruppo){
 				esitiFiltro = esitiProperties.getEsitiCodeKo();
 			}
+			else if(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE == this.esitoGruppo){
+				esitiFiltro = esitiProperties.getEsitiCodeErroriConsegna();
+			}
+			else if(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE == this.esitoGruppo){
+				esitiFiltro = esitiProperties.getEsitiCodeRichiestaScartate();
+			}
+			
+			List<Integer> escludiEsiti = null;
+			
+			if(this.escludiRichiesteScartate && (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE != this.esitoGruppo)){
+				escludiEsiti = esitiProperties.getEsitiCodeRichiestaScartate();
+			}
 
+			if(!this.isSearchFormEsitoConsegnaMultiplaEnabled) {
+				if(escludiEsiti==null) {
+					escludiEsiti = new ArrayList<Integer>();
+				}
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA));
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_COMPLETATA));
+				escludiEsiti.add(esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA_FALLITA));
+			}
+			
+			
 			for (Integer esito : esiti) {
 
 				if(esitiFiltro!=null){
 					boolean found = false;
 					for (Integer esitoFiltro : esitiFiltro) {
-						if(esitoFiltro == esito){
+						if(esitoFiltro.intValue() == esito.intValue()){
 							found = true;
 							break;
 						}
@@ -1327,11 +1427,28 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 						continue;
 					}
 				}
-
+				
+				if(escludiEsiti!=null) {
+					boolean found = false;
+					for (Integer checkEsito : escludiEsiti) {
+						if(checkEsito.intValue() == esito.intValue()){
+							found = true;
+							break;
+						}
+					}
+					if(found){
+						continue;
+					}
+				}
+				
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
-				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito));
+				if(statistiche && EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName)) {
+					continue;
+				}
+				
+				SelectItem si = new SelectItem(esito,esitoUtils.getEsitoLabelFromValue(esito, statistiche));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
 				boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);				
@@ -1356,7 +1473,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 		return list;
 	}
 
-	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+	public List<SelectItem> getEsitiDettagliPersonalizzati(boolean statistiche) {
 		try{
 			ArrayList<SelectItem> list = new ArrayList<SelectItem>();
 
@@ -1369,6 +1486,13 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				String name = esitiProperties.getEsitoName(esito);
 				EsitoTransazioneName esitoTransactionName = EsitoTransazioneName.convertoTo(name);
 
+				if(!this.isSearchFormEsitoConsegnaMultiplaEnabled && EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+					continue;
+				}
+				if(statistiche && EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName)) {
+					continue;
+				}
+				
 				SelectItem si = new SelectItem(esito.intValue(),esitiProperties.getEsitoLabel(esito));
 
 				boolean pddSpecific = EsitoTransazioneName.isPddSpecific(esitoTransactionName);
@@ -1680,7 +1804,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public String getSoggettoPddMonitor() {
-		if(this.soggettoPddMonitor == null)
+		return getSoggettoPddMonitor(true);
+	}
+	
+	public String getSoggettoPddMonitor(boolean checkLoginBean) {
+		if(this.soggettoPddMonitor == null && checkLoginBean)
 			return Utility.getLoginBean().getSoggettoPddMonitor();
 		
 		return this.soggettoPddMonitor;

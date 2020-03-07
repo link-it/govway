@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 /**
 * PropertiesUtilities
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */

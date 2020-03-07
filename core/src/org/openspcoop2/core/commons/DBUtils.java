@@ -50,7 +50,7 @@ import org.openspcoop2.utils.sql.SQLObjectFactory;
 /**
  * Funzioni di utilita utilizzate dai driver
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

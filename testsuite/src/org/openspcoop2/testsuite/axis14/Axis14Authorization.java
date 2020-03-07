@@ -27,7 +27,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 /**
  * Interfaccia Authorization
  *
- * @author Montebove Luciano <L.Montebove@finsiel.it>
+ * @author Montebove Luciano (L.Montebove@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

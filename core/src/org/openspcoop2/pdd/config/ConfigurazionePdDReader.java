@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.AccessoConfigurazione;
 import org.openspcoop2.core.config.AccessoConfigurazionePdD;
 import org.openspcoop2.core.config.AccessoDatiAutenticazione;
 import org.openspcoop2.core.config.AccessoDatiAutorizzazione;
+import org.openspcoop2.core.config.AccessoDatiConsegnaApplicativi;
 import org.openspcoop2.core.config.AccessoDatiGestioneToken;
 import org.openspcoop2.core.config.AccessoDatiKeystore;
 import org.openspcoop2.core.config.AccessoRegistro;
@@ -4980,6 +4981,14 @@ public class ConfigurazionePdDReader {
 		ResponseCachingConfigurazioneGenerale c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getResponseCaching();
 		if(c==null) {
 			c = new ResponseCachingConfigurazioneGenerale();
+		}
+		return c.getCache();
+	}
+	
+	public Cache getConfigurazioneConsegnaApplicativiCache(Connection connectionPdD) throws DriverConfigurazioneException,DriverConfigurazioneNotFound{ 
+		AccessoDatiConsegnaApplicativi c = this.configurazionePdD.getConfigurazioneGenerale(connectionPdD).getAccessoDatiConsegnaApplicativi();
+		if(c==null) {
+			c = new AccessoDatiConsegnaApplicativi();
 		}
 		return c.getCache();
 	}

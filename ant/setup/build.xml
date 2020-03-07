@@ -173,13 +173,13 @@
 			antinstaller_as4_dbusername=domibus
 			antinstaller_as4_dbpassword=domibus
 			antinstaller_as4_oracle_mode=SID/serviceName
-
-		[DEPRECATO e commentato] Compatibilità interfacce OpenSPCoop-v1
-			antinstaller_backward_compatibility=true
 			
 	 -->
 
-	
+	<!-- Per agganciare loader valorizzare questa proprieta'
+	<var name="antinstaller_loader" value="true" />
+	-->	
+
 	<if>
 		<or>
 			<matches string="${antinstaller_as}" pattern="jboss.*"/>
@@ -201,7 +201,7 @@
 			<matches string="${antinstaller_as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="build_for_as" value="tomcat7"/>
+			<var name="build_for_as" value="tomcat9"/>
 		</then>
 		<else>
 			<var name="build_for_as" value="${antinstaller_as}"/>
@@ -268,10 +268,13 @@
 		     		<equals arg1="${ant.java.version}" arg2="1.5" />
 				<equals arg1="${ant.java.version}" arg2="1.6" />
 				<equals arg1="${ant.java.version}" arg2="1.7" />
+				<equals arg1="${ant.java.version}" arg2="1.8" />
+				<equals arg1="${ant.java.version}" arg2="9" />
+				<equals arg1="${ant.java.version}" arg2="10" />
 			</or>
 			<then>
 				<echo message="Java version: ${ant.java.version}"/>
-				<fail message="E' richiesta una versione di java 8 o superiore (trovata versione: ${ant.java.version})"/>
+				<fail message="E' richiesta una versione di java 11 o superiore"/>
 			</then>
 		</if>
 		
@@ -648,7 +651,7 @@
 								</copy>
 								<copy todir="${tmp_archivi}/govway.ear/lib">
 								    <fileset dir="${deploy_sw}/jars">
-									<include name="javax.jms-api-2.0.jar"/>
+									<include name="javax.jms-api-2.0.1.jar"/>
 									<include name="javax.management-1.0-gov4j.jar"/>
 								    </fileset>
 								</copy>
@@ -665,7 +668,7 @@
 								</copy>
 								<copy todir="${tmp_archivi}/govway.ear/lib">
 								    <fileset dir="${deploy_sw}/jars">
-									<include name="mailapi-1.6.2.gw.jar"/>
+									<include name="mailapi-1.6.4.gw.jar"/>
 								    </fileset>
 								</copy>
 							</then>
@@ -2475,62 +2478,7 @@
 			</then>
 		</if>
 	</target>
-		
-	
-	<target name="setup_backward_compatibility" depends="_setup_backward_compatibility"/>
-	<target name="_setup_backward_compatibility">
-		<if>
-			<and>
-				<istrue value="${antinstaller_protocollo_spcoop}"/>
-				<istrue value="${antinstaller_backward_compatibility}"/>
-			</and>
-			<then>
-				<unzip src="${deploy_sw}/${build_for_as}/OpenSPCoopV1BackwardCompatibility.war" dest="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
-				
-				<!-- Ripristino jar -->
-				<antcall target="ripristina_jar">
-				    <param name="archiveFile" value="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war"/>
-					<param name="as" value="${build_for_as}"/>
-					<param name="archiveType" value="WAR"/>
-				</antcall>
-				
-				<!-- Sposto configurazioni nella PdD -->
-				<if>
-					<or>
-						<matches string="${build_for_as}" pattern="jboss.*"/>
-						<matches string="${build_for_as}" pattern="wildfly.*"/>
-					</or>
-					<then>
-						<move todir="${tmp_archivi}/govway.ear/lib">
-							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
-						    	<include name="*.jar"/>
-							</fileset>
-						</move>
-						<move todir="${tmp_archivi}/govway.ear/properties">
-							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
-						    	<include name="*.properties"/>
-							</fileset>
-						</move>
-					</then>
-					<else>
-						<move todir="${tmp_archivi}/govway.war/WEB-INF/lib">
-							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/lib">
-						    	<include name="*.jar"/>
-							</fileset>
-						</move>
-						<move todir="${tmp_archivi}/govway.war/WEB-INF/classes">
-							<fileset dir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war/WEB-INF/classes">
-						    	<include name="*.properties"/>
-							</fileset>
-						</move>
-					</else>
-				</if>
-									
-			</then>
-		</if>
-	</target>
-	
-	
+			
 	<target name="setup_finished" depends="_setup_finished"/>
 	<target name="_setup_finished">
 		<antcall target="patch-distrib"/>

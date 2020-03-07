@@ -2575,6 +2575,138 @@
             <forward name="porteApplicativeTrasformazioniServizioApplicativoAutorizzatoDel" path="/jsplib/listElement.jsp"/>
             <forward name="porteApplicativeTrasformazioniServizioApplicativoAutorizzatoError" path="/jsplib/info.jsp"/>
         </action>
+        
+        <!--  Porte Applicative (Configurazione Connettori Multipli) -->
+
+        <action path="/porteApplicativeConnettoriMultipliConfig" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfig"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Configurazione Connettori Multipli Proprieta) -->
+
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli) -->
+               
+        <action path="/porteApplicativeConnettoriMultipliAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliAddOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliList" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliList" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliChange" 
+        	scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliChangeOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliDel" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli Proprieta) -->
+
+        <action path="/porteApplicativeConnettoriMultipliPropertiesAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliPropertiesList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliPropertiesDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliProprietaDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliPropertiesDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliPropertiesError" path="/jsplib/info.jsp"/>
+        </action>
+  
+    	<!--  Porte Applicative (Connettori Multipli ProprietaForm) -->
+    	 
+    	<action path="/porteApplicativeConnettoriMultipliConfigProprietaForm" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaForm"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaFormError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli Proprieta Notifiche) -->
+    	 
+    	<action path="/porteApplicativeConnettoriMultipliConfigProprietaNotifiche" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigProprietaNotifiche"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigProprietaNotificheError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli Abilitazione) -->
+
+        <action path="/porteApplicativeConnettoriMultipliAbilitazione" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliAbilitazione"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliAbilitazioneOk" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliAbilitazioneError" path="/jsplib/info.jsp"/>
+        </action>
+        
+        <!--  Porte Applicative (Connettori Multipli Regole Azioni) -->
+
+        <action path="/porteApplicativeConnettoriMultipliConfigAzioniAdd" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigAzioniAdd"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniAddForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniAddOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniAddCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigAzioniList" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigAzioniList"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniList" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigAzioniChange" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigAzioniChange"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniChangeForm" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniChangeOk" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniChangeCheckError" path="/jsplib/addElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniError" path="/jsplib/info.jsp"/>
+        </action>
+        <action path="/porteApplicativeConnettoriMultipliConfigAzioniDel" type="org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeConnettoriMultipliConfigAzioniDel"
+            scope="request" validate="true">
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniDel" path="/jsplib/listElement.jsp"/>
+            <forward name="porteApplicativeConnettoriMultipliConfigAzioniError" path="/jsplib/info.jsp"/>
+        </action>
     
     	<!--  Configurazione (Generale) -->
     	

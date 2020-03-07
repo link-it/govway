@@ -34,13 +34,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiDDTType">
- * 		&lt;sequence>
- * 			&lt;element name="NumeroDDT" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DataDDT" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="RiferimentoNumeroLinea" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}integer" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiDDTType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="NumeroDDT" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataDDT" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="RiferimentoNumeroLinea" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}integer" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -124,7 +124,7 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method getRiferimentoNumeroLineaList
-   * @return List<java.math.BigInteger>
+   * @return List&lt;java.math.BigInteger&gt;
   */
   @Deprecated
   public List<java.math.BigInteger> getRiferimentoNumeroLinea() {
@@ -133,7 +133,7 @@ public class DatiDDTType extends org.openspcoop2.utils.beans.BaseBean implements
 
   /**
    * @deprecated Use method setRiferimentoNumeroLineaList
-   * @param riferimentoNumeroLinea List<java.math.BigInteger>
+   * @param riferimentoNumeroLinea List&lt;java.math.BigInteger&gt;
   */
   @Deprecated
   public void setRiferimentoNumeroLinea(List<java.math.BigInteger> riferimentoNumeroLinea) {

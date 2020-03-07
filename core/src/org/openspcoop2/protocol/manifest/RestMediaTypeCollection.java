@@ -34,13 +34,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RestMediaTypeCollection">
- * 		&lt;sequence>
- * 			&lt;element name="mediaType" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeMapping" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="undefined" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="RestMediaTypeCollection"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mediaType" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeMapping" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="default" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeDefaultMapping" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="undefined" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeUndefinedMapping" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -113,7 +113,7 @@ public class RestMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getMediaTypeList
-   * @return List<RestMediaTypeMapping>
+   * @return List&lt;RestMediaTypeMapping&gt;
   */
   @Deprecated
   public List<RestMediaTypeMapping> getMediaType() {
@@ -122,7 +122,7 @@ public class RestMediaTypeCollection extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setMediaTypeList
-   * @param mediaType List<RestMediaTypeMapping>
+   * @param mediaType List&lt;RestMediaTypeMapping&gt;
   */
   @Deprecated
   public void setMediaType(List<RestMediaTypeMapping> mediaType) {

@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 package org.openspcoop2.core.tracciamento.ws.client.utils;
 
 import java.io.InputStream;

@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eccezioni">
- * 		&lt;sequence>
- * 			&lt;element name="exception" type="{http://govway.org/integration/fault/details}eccezione" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="eccezioni"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="exception" type="{http://govway.org/integration/fault/details}eccezione" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getExceptionList
-   * @return List<Eccezione>
+   * @return List&lt;Eccezione&gt;
   */
   @Deprecated
   public List<Eccezione> getException() {
@@ -102,7 +102,7 @@ public class Eccezioni extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setExceptionList
-   * @param exception List<Eccezione>
+   * @param exception List&lt;Eccezione&gt;
   */
   @Deprecated
   public void setException(List<Eccezione> exception) {

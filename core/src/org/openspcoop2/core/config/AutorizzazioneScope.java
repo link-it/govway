@@ -38,13 +38,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="autorizzazione-scope">
- * 		&lt;sequence>
- * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}scope" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="autorizzazione-scope"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/config}scope" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="match" type="{http://www.openspcoop2.org/core/config}ScopeTipoMatch" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -156,7 +156,7 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getScopeList
-   * @return List<Scope>
+   * @return List&lt;Scope&gt;
   */
   @Deprecated
   public List<Scope> getScope() {
@@ -165,7 +165,7 @@ public class AutorizzazioneScope extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setScopeList
-   * @param scope List<Scope>
+   * @param scope List&lt;Scope&gt;
   */
   @Deprecated
   public void setScope(List<Scope> scope) {

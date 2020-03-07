@@ -30,18 +30,14 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.protocol.sdk.constants.Inoltro;
 import org.openspcoop2.protocol.trasparente.testsuite.core.CostantiTestSuite;
 import org.openspcoop2.protocol.trasparente.testsuite.core.DatabaseProperties;
-import org.openspcoop2.protocol.trasparente.testsuite.core.FileSystemUtilities;
 import org.openspcoop2.protocol.trasparente.testsuite.core.TrasparenteTestsuiteLogger;
 import org.openspcoop2.protocol.trasparente.testsuite.core.Utilities;
-import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Repository;
+import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.db.DatabaseComponent;
 import org.openspcoop2.testsuite.db.DatabaseMsgDiagnosticiComponent;
 import org.openspcoop2.testsuite.units.CooperazioneBaseInformazioni;
-import org.openspcoop2.utils.date.DateManager;
 import org.testng.Assert;
-import org.testng.annotations.AfterClass;
-import org.testng.annotations.BeforeClass;
 
 /**
  * Test sui profili di collaborazione implementati nella Porta di Dominio
@@ -122,19 +118,6 @@ public class Porta {
 		this.collaborazioneTrasparenteBaseFault500.setResponseIsFault(true);
 	}
 
-	private Date dataAvvioGruppoTest = null;
-	
-	@BeforeClass
-	public void testOpenspcoopCoreLog_raccoltaTempoAvvioTest() throws Exception{
-		this.dataAvvioGruppoTest = DateManager.getDate();
-	} 	
-	
-	@AfterClass
-	public void testOpenspcoopCoreLog() throws Exception{
-		FileSystemUtilities.verificaOpenspcoopCore(this.dataAvvioGruppoTest);
-	} 
-
-	
 	public void setPortaDelegataSincrono(String portaDelegataSincrono) {
 		this.portaDelegataSincrono = portaDelegataSincrono;
 	}	

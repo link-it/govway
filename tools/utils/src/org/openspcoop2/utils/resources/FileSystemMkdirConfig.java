@@ -24,7 +24,7 @@ package org.openspcoop2.utils.resources;
 /**
  * Classe utilizzabile per raccogliere la configurazione dell'operazione mkdir
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

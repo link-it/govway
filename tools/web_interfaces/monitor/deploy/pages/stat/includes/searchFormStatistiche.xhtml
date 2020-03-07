@@ -232,6 +232,16 @@
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl"/>
 					</rich:comboBox>
 				</link:prop>	
+				
+				<a4j:outputPanel layout="block" id="escludiRichiesteScartatePnl" rendered="#{sf_bean.showRichiesteScartate}">
+					<link:prop label="#{msg['commons.search.escludiRichiesteScartate.label']}">
+						<h:selectOneRadio id="escludiRichiesteScartate" value="#{sf_bean.escludiRichiesteScartate}" styleClass="controlset" style="margin-left: 170px">
+							<f:selectItem itemValue="true" itemLabel="Si"/>
+							<f:selectItem itemValue="false" itemLabel="No"/>
+							<a4j:support status="mainStatus" event="onchange" reRender="searchPnl" limitToList="true"/>
+						</h:selectOneRadio>
+					</link:prop>
+				</a4j:outputPanel>
 			
 			</a4j:outputPanel>
 			

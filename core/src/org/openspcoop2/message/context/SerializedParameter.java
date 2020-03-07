@@ -33,14 +33,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="serialized-parameter">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.openspcoop2.org/message/context}byte[]">
- * 				&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 				&lt;attribute name="classe" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="serialized-parameter"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.openspcoop2.org/message/context}byte[]"&gt;
+ * 				&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 				&lt;attribute name="classe" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

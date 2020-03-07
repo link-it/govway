@@ -44,6 +44,7 @@ import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaRichiesta;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.Trasformazioni;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -193,19 +194,19 @@ public final class PorteApplicativeTrasformazioniServizioApplicativoAutorizzatoA
 			
 			List<TrasformazioneRegolaApplicabilitaServizioApplicativo> saList = applicabilita != null ? applicabilita.getServizioApplicativoList() : null;
 			int saSize = saList!=null ? saList.size() : 0;
-			Map<String,List<ServizioApplicativo>> listServiziApplicativi = new HashMap<>();
+			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = new HashMap<>();
 			if(listSoggetti!=null && !listSoggetti.isEmpty()) {
 				List<String> soggettiListBuild = new ArrayList<>();
 				List<String> soggettiLabelListBuild = new ArrayList<>();
 				
 				for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
 					IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-					List<ServizioApplicativo> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
-					List<ServizioApplicativo> listServiziApplicativiTmpUnique = new ArrayList<>();
+					List<IDServizioApplicativoDB> listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+					List<IDServizioApplicativoDB> listServiziApplicativiTmpUnique = new ArrayList<>();
 					
 					// scarto i sa già associati
 					if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
-						for (ServizioApplicativo sa : listServiziApplicativiTmp) {
+						for (IDServizioApplicativoDB sa : listServiziApplicativiTmp) {
 							boolean found = false;
 							if(saList!=null && saList.size()>0) {
 								for (TrasformazioneRegolaApplicabilitaServizioApplicativo saAssociatoPA : saList) { 

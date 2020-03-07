@@ -40,6 +40,7 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.constants.TransferLengthModes;
@@ -93,6 +94,9 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pd.PorteDelegateCore;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.protocol_properties.ProtocolPropertiesCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -324,6 +328,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			String erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			
 			// Preparo il menu
 			apsHelper.makeMenu();
 
@@ -367,7 +375,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 			porteApplicativeCore = new PorteApplicativeCore(apsCore);
 			porteDelegateCore = new PorteDelegateCore(apsCore);
 			PddCore pddCore = new PddCore(apsCore);
-
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(apsCore);
+			
 			String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 			boolean gestioneFruitori = false;
 			boolean gestioneErogatori = false;
@@ -380,6 +389,10 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				}
 			}
 			
+			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(apsHelper);
+			
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
 			
 			PermessiUtente pu = ServletUtils.getUserFromSession(session).getPermessi();
 
@@ -425,15 +438,14 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 				for (AccordoServizioParteComuneSintetico as : lista) {
 					accordiList[i] = as.getId().toString();
 					IDSoggetto soggettoReferente = null;
-					int idReferente = -1;
+					long idReferente = -1;
 					if(as.getSoggettoReferente()!=null && as.getSoggettoReferente().getId()!=null)
-						idReferente = as.getSoggettoReferente().getId().intValue();
+						idReferente = as.getSoggettoReferente().getId();
 
 					if(idReferente>0){
-						Soggetto sRef = soggettiCore.getSoggettoRegistro(idReferente);
 						soggettoReferente = new IDSoggetto();
-						soggettoReferente.setTipo(sRef.getTipo());
-						soggettoReferente.setNome(sRef.getNome());
+						soggettoReferente.setTipo(as.getSoggettoReferente().getTipo());
+						soggettoReferente.setNome(as.getSoggettoReferente().getNome());
 					}
 					accordiListLabel[i] = idAccordoFactory.getUriFromValues(as.getNome(),soggettoReferente,as.getVersione());
 					i++;
@@ -645,6 +657,29 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					i++;
 				}
 			}
+			
+			// Lista dei servizi applicativi per la creazione automatica
+			List<IDServizioApplicativoDB> listaIdSA = null;
+			if (gestioneErogatori && (provider != null) && !provider.equals("")) {
+				long idErogatore = Long.valueOf(provider);
+				
+				// I servizi applicativi da visualizzare sono quelli che hanno
+				// -Integration Manager (getMessage abilitato)
+				// -connettore != disabilitato
+				listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
+
+				List<IDServizioApplicativoDB> newListaIdSA = new ArrayList<IDServizioApplicativoDB>();
+				IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
+				idSA.setNome("-"); // elemento nullo di default
+				idSA.setIdSoggettoProprietario(new IDSoggetto("-", "-"));
+				newListaIdSA.add(idSA);
+				if(listaIdSA!=null && !listaIdSA.isEmpty()) {
+					newListaIdSA.addAll(listaIdSA);
+				}
+				listaIdSA = newListaIdSA;
+			}
+			String [] saSoggetti = ServiziApplicativiHelper.toArray(listaIdSA);
+			
 
 			//se passo dal link diretto di ripristino stato (e poi con conferma == ok) imposto il nuovo stato
 			if(backToStato != null && (actionConfirm == null || actionConfirm.equals(Costanti.PARAMETRO_ACTION_CONFIRM_VALUE_OK))) 
@@ -1098,10 +1133,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					else {
+						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
 						dati = apsHelper.addEndPointToDatiAsHidden(dati,
 								endpointtype, url, nome, tipo,
@@ -1188,7 +1225,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 					null, null, null, null,
 					tipoProtocollo,null, 
 					descrizione, tipoSoggettoFruitore, nomeSoggettoFruitore,
-					autenticazioneToken, token_policy);
+					autenticazioneToken, token_policy, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 			
 			// updateDynamic
 			if(isOk) {
@@ -1285,10 +1322,13 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							tipoProtocollo, false, false);
+							tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+							erogazioneServizioApplicativoServer, saSoggetti);
 					
 				}
 				else {
+					
+					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 					
 					dati = apsHelper.addEndPointToDatiAsHidden(dati,
 							endpointtype, url, nome, tipo,
@@ -1395,7 +1435,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					
@@ -1405,6 +1446,8 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							statoPackage,oldStatoPackage,versione,versioniProtocollo,validazioneDocumenti,
 							null,null,tipoProtocollo,generaPACheckSoggetto);
 
+					dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
+					
 					dati = apsHelper.addEndPointToDatiAsHidden(dati, endpointtype, url, nome,
 							tipo, user, password, initcont, urlpgk, provurl,
 							connfact, sendas, AccordiServizioParteSpecificaCostanti.OBJECT_NAME_APS,tipoOp, httpsurl, httpstipologia,
@@ -1421,8 +1464,7 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 							tempiRisposta_enabled, tempiRisposta_connectionTimeout, tempiRisposta_readTimeout, tempiRisposta_tempoMedioRisposta,
 							opzioniAvanzate, transfer_mode, transfer_mode_chunk_size, redirect_mode, redirect_max_hop,
 							requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
-							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime
-							);
+							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime);
 					
 					if(backToStato != null) {
 						// backtostato per chiudere la modifica dopo la conferma
@@ -1728,10 +1770,12 @@ public final class AccordiServizioParteSpecificaChange extends Action {
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								tipoProtocollo, false, false);
+								tipoProtocollo, false, false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 					else {
+						dati = apsHelper.addEndPointSAServerToDatiAsHidden(dati, erogazioneServizioApplicativoServerEnabled, erogazioneServizioApplicativoServer);
 						
 						dati = apsHelper.addEndPointToDatiAsHidden(dati,
 								endpointtype, url, nome, tipo,

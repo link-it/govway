@@ -33,6 +33,7 @@ import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaServiziApplicativi;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -55,8 +56,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 	public ServiziApplicativiCore(ControlStationCore core) throws Exception {
 		super(core);
 	}
-	
-	
+		
 	public ServizioApplicativo getServizioApplicativo(long idServizioApplicativo) throws DriverConfigurazioneNotFound, DriverConfigurazioneException {
 		Connection con = null;
 		String nomeMetodo = "getServizioApplicativo";
@@ -94,7 +94,13 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 			return driver.getDriverConfigurazioneDB().getServizioApplicativo(idServizioApplicativo);
 
-		} catch (Exception e) {
+		} 
+		catch (DriverConfigurazioneNotFound  e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] ExceptionNotFound :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
+		}
+		catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
 		} finally {
@@ -315,8 +321,11 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 	
-	
+	/*
 	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.getServiziApplicativiByIdErogatore(idErogatore, null);
+	}
+	public List<ServizioApplicativo> getServiziApplicativiByIdErogatore(Long idErogatore, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "getServiziApplicativiWithIdErogatore";
 		DriverControlStationDB driver = null;
@@ -327,7 +336,37 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore);
+			return driver.getDriverConfigurazioneDB().getServiziApplicativiWithIdErogatore(idErogatore, tipo);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	*/
+	
+	public List<IDServizioApplicativoDB> getIdServiziApplicativiWithIdErogatore(Long idErogatore) throws DriverConfigurazioneException {
+		return getIdServiziApplicativiWithIdErogatore(idErogatore, null, false, false);
+	}
+	public List<IDServizioApplicativoDB> getIdServiziApplicativiWithIdErogatore(Long idErogatore,
+			boolean checkIM, boolean checkConnettoreAbilitato) throws DriverConfigurazioneException {
+		return getIdServiziApplicativiWithIdErogatore(idErogatore, null, checkIM, checkConnettoreAbilitato);
+	}
+	public List<IDServizioApplicativoDB> getIdServiziApplicativiWithIdErogatore(Long idErogatore, String tipo, 
+			boolean checkIM, boolean checkConnettoreAbilitato) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getServiziApplicativiWithIdErogatore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getIdServiziApplicativiWithIdErogatore(idErogatore, tipo, checkIM, checkConnettoreAbilitato);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -337,7 +376,11 @@ public class ServiziApplicativiCore extends ControlStationCore {
 		}
 	}
 
-	public List<ServizioApplicativo> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		return this.soggettiServizioApplicativoList(idSoggetto, superuser, credenziale, null);
+	}
+	
+	public List<IDServizioApplicativoDB> soggettiServizioApplicativoList(IDSoggetto idSoggetto,String superuser,CredenzialeTipo credenziale, String tipo) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
 		Connection con = null;
 		String nomeMetodo = "soggettiServizioApplicativoList";
 		DriverControlStationDB driver = null;
@@ -348,7 +391,7 @@ public class ServiziApplicativiCore extends ControlStationCore {
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
-			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale);
+			return driver.getDriverConfigurazioneDB().soggettiServizioApplicativoList(idSoggetto,superuser,credenziale, tipo);
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
@@ -507,4 +550,24 @@ public class ServiziApplicativiCore extends ControlStationCore {
 
 	}
 	
+	public long getIdServizioApplicativoByConnettore(long idConnettore) throws DriverConfigurazioneException {
+		Connection con = null;
+		String nomeMetodo = "getIdServizioApplicativoByConnettore";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverConfigurazioneDB().getIdServizioApplicativoByConnettore(idConnettore);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
 }

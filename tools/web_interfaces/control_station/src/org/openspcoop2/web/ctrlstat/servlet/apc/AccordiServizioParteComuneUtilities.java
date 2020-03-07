@@ -393,8 +393,7 @@ public class AccordiServizioParteComuneUtilities {
 				inUsoMessage.append("Azione '"+nomeop+"' non rimuovibile poichè in uso in fruizioni per la configurazione di trasformazioni"+newLine);
 				continue;
 			}
-			
-			
+						
 			// Controllo che l'azione non sia in uso (se esistono servizi, allora poi saranno state create PD o PA)
 			if(idServiziWithPortType!=null && idServiziWithPortType.size()>0){
 			

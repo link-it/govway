@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-applicativa-autorizzazione-soggetti">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetto" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="porta-applicativa-autorizzazione-soggetti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}porta-applicativa-autorizzazione-soggetto" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class PortaApplicativaAutorizzazioneSoggetti extends org.openspcoop2.util
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<PortaApplicativaAutorizzazioneSoggetto>
+   * @return List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
   */
   @Deprecated
   public List<PortaApplicativaAutorizzazioneSoggetto> getSoggetto() {
@@ -120,7 +120,7 @@ public class PortaApplicativaAutorizzazioneSoggetti extends org.openspcoop2.util
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<PortaApplicativaAutorizzazioneSoggetto>
+   * @param soggetto List&lt;PortaApplicativaAutorizzazioneSoggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<PortaApplicativaAutorizzazioneSoggetto> soggetto) {

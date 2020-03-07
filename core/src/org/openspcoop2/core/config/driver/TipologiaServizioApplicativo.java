@@ -27,7 +27,7 @@ import org.openspcoop2.core.id.IDServizioApplicativo;
 /**
  * TipologiaServizioApplicativo
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -58,7 +58,6 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
-import org.openspcoop2.message.OpenSPCoop2MessageFactory_impl;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.DBManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
@@ -78,6 +77,8 @@ import org.openspcoop2.utils.resources.MapReader;
 import org.openspcoop2.utils.transport.http.SSLConstants;
 import org.openspcoop2.utils.transport.http.SSLUtilities;
 import org.slf4j.Logger;
+
+import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
 
 
 /**
@@ -767,7 +768,7 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 		bf.append("\n");
 		bf.append(provider.getName());
 		bf.append("\n");	
-		bf.append("Versione: v").append(provider.getVersion()).append(" ");
+		bf.append("Versione: v").append(provider.getVersionStr()).append(" ");
 		bf.append(provider.getInfo());
 		bf.append("\n");
 		try{
@@ -1044,8 +1045,27 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	
 	public String getMessageFactory(){
 		try{
+			StringBuilder sb = new StringBuilder();
 			OpenSPCoop2MessageFactory factory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
-			return "OpenSPCoopMessageFactory (open:"+OpenSPCoop2MessageFactory_impl.class.getName().equals(factory.getClass().getName())+") "+factory.getClass().getName();
+			
+			String docOp2 = factory.getDocumentBuilderFactoryClass();
+			String docSaaj = SOAPDocumentImpl.newInstanceDocumentBuilderFactory().getClass().getName();
+			sb.append("DocumentBuilderFactory:").append(docSaaj).append(" ");
+			if(docSaaj.equals(docOp2)==false) {
+				sb.append("OpenSPCoop2DocumentBuilderFactory:").append(docOp2).append(" ");
+					
+			}
+			
+			String saxOp2 = factory.getSAXParserFactoryClass();
+			String saxSaaj = SOAPDocumentImpl.newInstanceSAXParserFactory().getClass().getName();
+			sb.append("SAXParserFactory:").append(saxSaaj).append(" ");
+			if(saxSaaj.equals(saxOp2)==false) {
+				sb.append("OpenSPCoop2SAXParserFactory:").append(saxOp2).append(" ");
+					
+			}
+			
+			return sb.toString();
+			
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

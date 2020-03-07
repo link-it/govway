@@ -37,6 +37,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.utils.certificate.CertificateInfo;
 import org.openspcoop2.utils.resources.MapReader;
@@ -459,6 +460,10 @@ public class SoggettiCore extends ControlStationCore {
 			
 			idSoggetto = driver.getDriverConfigurazioneDB().getSoggetto(aSoggetto).getId();
 
+		} catch (DriverConfigurazioneNotFound e) {
+			// Lasciare DEBUG, usato anche in servizio API RS
+			ControlStationCore.log.debug("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(), e);
+			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] NotFound :" + e.getMessage(),e);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverConfigurazioneException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
@@ -963,7 +968,7 @@ public class SoggettiCore extends ControlStationCore {
 
 	}
 	
-	public List<org.openspcoop2.core.registry.Soggetto> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverConfigurazioneException{
+	public List<IDSoggettoDB> getSoggettiFromTipoAutenticazione(List<String> tipiSoggetto, String superuser,CredenzialeTipo credenziale, PddTipologia pddTipologia) throws DriverConfigurazioneException{
 		Connection con = null;
 		String nomeMetodo = "getSoggettiFromTipoAutenticazione";
 		DriverControlStationDB driver = null;

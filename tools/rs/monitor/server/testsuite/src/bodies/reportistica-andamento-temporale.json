@@ -13,6 +13,7 @@
       }
     },
     "esito": {
-      "tipo": "error"
+      "tipo": "fallite",
+      "escludi_scartate": false
     }
   }

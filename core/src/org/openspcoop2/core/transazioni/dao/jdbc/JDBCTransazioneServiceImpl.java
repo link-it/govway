@@ -74,6 +74,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().STATO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().RUOLO_TRANSAZIONE,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_SINCRONO,false),"?");
+		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_CONTESTO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PROTOCOLLO,false),"?");
 		sqlQueryObjectInsert.addInsertField(this.getTransazioneFieldConverter().toColumn(Transazione.model().TIPO_RICHIESTA,false),"?");
@@ -174,6 +176,8 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getStato(),Transazione.model().STATO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getRuoloTransazione(),Transazione.model().RUOLO_TRANSAZIONE.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getEsito(),Transazione.model().ESITO.getFieldType()) );
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getEsitoSincrono(),Transazione.model().ESITO_SINCRONO.getFieldType()) );
+		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getConsegneMultipleInCorso(),Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getEsitoContesto(),Transazione.model().ESITO_CONTESTO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getProtocollo(),Transazione.model().PROTOCOLLO.getFieldType()) );
 		listaJDBCObject.add(new org.openspcoop2.generic_project.dao.jdbc.utils.JDBCObject(transazione.getTipoRichiesta(),Transazione.model().TIPO_RICHIESTA.getFieldType()) );
@@ -298,6 +302,10 @@ public class JDBCTransazioneServiceImpl extends JDBCTransazioneServiceSearchImpl
 		lstObjects_transazione.add(new JDBCObject(transazione.getRuoloTransazione(), Transazione.model().RUOLO_TRANSAZIONE.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getEsito(), Transazione.model().ESITO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_SINCRONO,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getEsitoSincrono(), Transazione.model().ESITO_SINCRONO.getFieldType()));
+		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO,false), "?");
+		lstObjects_transazione.add(new JDBCObject(transazione.getConsegneMultipleInCorso(), Transazione.model().CONSEGNE_MULTIPLE_IN_CORSO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().ESITO_CONTESTO,false), "?");
 		lstObjects_transazione.add(new JDBCObject(transazione.getEsitoContesto(), Transazione.model().ESITO_CONTESTO.getFieldType()));
 		sqlQueryObjectUpdate.addUpdateField(this.getTransazioneFieldConverter().toColumn(Transazione.model().PROTOCOLLO,false), "?");

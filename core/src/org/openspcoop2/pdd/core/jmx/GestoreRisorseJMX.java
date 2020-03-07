@@ -197,6 +197,21 @@ public class GestoreRisorseJMX extends org.openspcoop2.utils.jmx.GestoreRisorseJ
 	}
 	
 	/**
+	 * Registrazione del MBean per la consegna dei contenuti applicativi
+	 * 
+	 * @throws RisorseJMXException
+	 */
+	public void registerMBeanConsegnaApplicativi()throws RisorseJMXException{
+		try{
+			this.registerMBean(org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi.class, CostantiPdD.JMX_LOAD_BALANCER);
+		}catch(Exception e){
+			this.log.error("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Consegna Applicativi: "+e.getMessage(),e);
+			throw new RisorseJMXException("Riscontrato errore durante l'inizializzazione della risorsa JMX Gestore Consegna Applicativi: "+e.getMessage(),e);
+		}	
+		
+	}
+	
+	/**
 	 * Registrazione del MBean per il repository dei Messaggi
 	 * 
 	 * @throws RisorseJMXException

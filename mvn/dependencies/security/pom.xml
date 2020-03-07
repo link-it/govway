@@ -17,20 +17,20 @@
 
 		<jar.group.name>security</jar.group.name>
 		
-		<bcpkix-jdk15on.version>1.60</bcpkix-jdk15on.version>
-		<bcprov-ext-jdk15on.version>1.60</bcprov-ext-jdk15on.version>
-		<cryptacular.version>1.2.2</cryptacular.version>
+		<bcpkix-jdk15on.version>1.64</bcpkix-jdk15on.version>
+		<bcprov-ext-jdk15on.version>1.64</bcprov-ext-jdk15on.version>
+		<cryptacular.version>1.2.4</cryptacular.version>
 		<herasaf-xacml-core.version>1.0.4.RELEASE</herasaf-xacml-core.version>
-		<jasypt.version>1.9.2</jasypt.version>
+		<jasypt.version>1.9.3</jasypt.version>
 		<neethi.version>3.1.1</neethi.version>
-		<xmlsec.version>2.1.2</xmlsec.version>
+		<xmlsec.version>2.1.4</xmlsec.version>
 		<xml-security-impl.version>1.0</xml-security-impl.version>
-		<nimbus-jose.version>7.0.1</nimbus-jose.version>
+		<nimbus-jose.version>8.6</nimbus-jose.version>
 
 	</properties>
 
 	<dependencies>
-	
+
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>

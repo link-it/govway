@@ -35,16 +35,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dettaglio">
- * 		&lt;sequence>
- * 			&lt;element name="errore-processamento" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="id-correlazione-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="id-modulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo-consegna" type="{http://www.openspcoop2.org/pdd/monitor}servizio-applicativo-consegna" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/pdd/monitor}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dettaglio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="errore-processamento" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-correlazione-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-modulo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-consegna" type="{http://www.openspcoop2.org/pdd/monitor}servizio-applicativo-consegna" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/pdd/monitor}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -193,7 +193,7 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getServizioApplicativoConsegnaList
-   * @return List<ServizioApplicativoConsegna>
+   * @return List&lt;ServizioApplicativoConsegna&gt;
   */
   @Deprecated
   public List<ServizioApplicativoConsegna> getServizioApplicativoConsegna() {
@@ -202,7 +202,7 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setServizioApplicativoConsegnaList
-   * @param servizioApplicativoConsegna List<ServizioApplicativoConsegna>
+   * @param servizioApplicativoConsegna List&lt;ServizioApplicativoConsegna&gt;
   */
   @Deprecated
   public void setServizioApplicativoConsegna(List<ServizioApplicativoConsegna> servizioApplicativoConsegna) {
@@ -223,7 +223,7 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -232,7 +232,7 @@ public class Dettaglio extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

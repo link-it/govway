@@ -45,7 +45,7 @@ import org.slf4j.Logger;
 /**
  * DriverMsgDiagnosticiUtilities
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -162,6 +162,13 @@ public class DiagnosticDriverUtilities {
 		
 		if(DiagnosticDriverUtilities.isDefined(filter.getProtocollo())){
 			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO+"=?");
+		}
+		
+		if(DiagnosticDriverUtilities.isDefined(filter.getApplicativo())){
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO+"=?");
+		}
+		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()){
+			sqlQueryObject.addWhereCondition(CostantiDB.MSG_DIAGNOSTICI+"."+CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO+" is null");
 		}
 		
 		if(filter.getProperties()!=null){
@@ -342,6 +349,16 @@ public class DiagnosticDriverUtilities {
 				query.replaceFirst("\\?","'"+filter.getProtocollo()+"'");
 		}
 		
+		if(DiagnosticDriverUtilities.isDefined(filter.getApplicativo())){
+			if(pstmt!=null)
+				pstmt.setString(startIndex++, filter.getApplicativo());
+			if(query!=null)
+				query.replaceFirst("\\?","'"+filter.getApplicativo()+"'");
+		}
+		else if(DiagnosticDriverUtilities.isDefined(filter.getCheckApplicativoIsNull()) && filter.getCheckApplicativoIsNull()){
+			// nop
+		}
+		
 		if(filter.getProperties()!=null){
 			Enumeration<String> keys =filter.getProperties().keys();
 			while(keys.hasMoreElements()){
@@ -392,6 +409,8 @@ public class DiagnosticDriverUtilities {
 				msg.setGdo(gdo);
 				
 				msg.setIdTransazione(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE));
+				
+				msg.setApplicativo(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_APPLICATIVO));
 				
 				IDSoggetto idSoggetto = new IDSoggetto();
 				idSoggetto.setCodicePorta(rs.getString(CostantiDB.MSG_DIAGNOSTICI_COLUMN_PDD_CODICE));

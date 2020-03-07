@@ -37,11 +37,13 @@ import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -107,6 +109,9 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 			SoggettiCore soggettiCore = new SoggettiCore(porteDelegateCore);
 			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteDelegateCore);
 			
+			boolean escludiSAServer = saCore.isApplicativiServerEnabled(porteDelegateHelper);
+			String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
+			
 			IDSoggetto idSoggetto = null;
 			if(porteDelegateCore.isRegistroServiziLocale()){
 				org.openspcoop2.core.registry.Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggInt);
@@ -167,13 +172,15 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 				Vector<DataElement> dati = new Vector<DataElement>();
 				
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
+				
+				
 
 				// Prendo la lista di servizioApplicativo associati al soggetto
 				// e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<ServizioApplicativo> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, filtroTipoSA);
 				for (int i = 0; i < oldSilList.size(); i++) {
-					ServizioApplicativo singleSA = oldSilList.get(i);
+					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
 					boolean trovatoSA = false;
 					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {
@@ -221,9 +228,9 @@ public final class PorteDelegateServizioApplicativoAdd extends Action {
 				// Prendo la lista di servizioApplicativo (tranne quelli già
 				// usati) e la metto in un array
 				Vector<String> silV = new Vector<String>();
-				List<ServizioApplicativo> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+				List<IDServizioApplicativoDB> oldSilList = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
 				for (int i = 0; i < oldSilList.size(); i++) {
-					ServizioApplicativo singleSA = oldSilList.get(i);
+					IDServizioApplicativoDB singleSA = oldSilList.get(i);
 					String tmpNome = singleSA.getNome();
 					boolean trovatoSA = false;
 					for (int j = 0; j < pde.sizeServizioApplicativoList(); j++) {

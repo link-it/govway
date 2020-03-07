@@ -34,7 +34,7 @@ import org.w3c.dom.ls.LSInput;
 /**
  * Classe utilizzabile per raccogliere uno schema XSD
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

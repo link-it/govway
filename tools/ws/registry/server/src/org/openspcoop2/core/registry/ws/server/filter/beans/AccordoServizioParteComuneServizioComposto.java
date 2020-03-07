@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-servizio-parte-comune-servizio-composto">
- *     &lt;sequence>
- *         &lt;element name="accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-servizio-parte-comune-servizio-composto"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="accordo-cooperazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

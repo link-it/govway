@@ -33,7 +33,7 @@ import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 /**
  *
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

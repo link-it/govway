@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 /**
  * Classe utilizzabile per identificare la porta applicativa richiesta.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

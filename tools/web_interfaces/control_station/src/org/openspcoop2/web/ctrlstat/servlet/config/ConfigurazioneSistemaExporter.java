@@ -645,6 +645,16 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 			statoConnessioniPA = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
 		
+		String statoPoolThread = null;
+		try{
+			statoPoolThread = confCore.invokeJMXMethod(gestoreRisorseJMX, alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
+					confCore.getJmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi(alias),
+					confCore.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
+		}catch(Exception e){
+			ControlStationCore.logError("Errore durante la lettura dello stato del thread pool per la consegna agli applicativi (jmxResourcePdD): "+e.getMessage(),e);
+			statoPoolThread = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
+		}
+		
 		String infoInstallazione = null;
 		try{
 			infoInstallazione = confCore.invokeJMXMethod(gestoreRisorseJMX,alias,confCore.getJmxPdD_configurazioneSistema_type(alias), 
@@ -671,6 +681,7 @@ public class ConfigurazioneSistemaExporter extends HttpServlet {
 				statoConnessioniDB, statoConnessioniAltriDB, statoConnessioniJMS,
 				statoTransazioniId, statoTransazioniIdProtocollo,
 				statoConnessioniPD, statoConnessioniPA, 
+				statoPoolThread,
 				infoInstallazione,
 				cacheArray);
 	}

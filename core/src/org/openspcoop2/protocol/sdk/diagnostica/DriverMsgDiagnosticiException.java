@@ -24,7 +24,7 @@ package org.openspcoop2.protocol.sdk.diagnostica;
 /**
  *
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

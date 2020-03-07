@@ -36,12 +36,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="protocollo">
- * 		&lt;sequence>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/tracciamento}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="protocollo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/core/tracciamento}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="identificativo" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -121,7 +121,7 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -130,7 +130,7 @@ public class Protocollo extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

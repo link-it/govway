@@ -35,7 +35,7 @@ import org.openspcoop2.utils.UtilsException;
 /**
  * MimeMultipartContent
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

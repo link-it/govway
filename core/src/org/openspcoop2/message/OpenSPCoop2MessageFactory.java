@@ -61,6 +61,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import com.sun.xml.messaging.saaj.soap.SOAPDocumentImpl;
+
 
 /**
  * Factory per la costruzione di messaggi OpenSPCoop2Message. 
@@ -95,6 +97,10 @@ public abstract class OpenSPCoop2MessageFactory {
 		try {
 			if(OpenSPCoop2MessageFactory.openspcoopMessageFactory==null || force){
 				OpenSPCoop2MessageFactory.openspcoopMessageFactory = (OpenSPCoop2MessageFactory) Loader.getInstance().newInstance(OpenSPCoop2MessageFactory.messageFactoryImpl);
+				
+				SOAPDocumentImpl.setCustomDocumentBuilderFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getDocumentBuilderFactoryClass());
+				SOAPDocumentImpl.setCustomSAXParserFactory(OpenSPCoop2MessageFactory.openspcoopMessageFactory.getSAXParserFactoryClass());
+				
 				//System.out.println("CREATO F("+force+") ["+OpenSPCoop2MessageFactory.openspcoopMessageFactory+"] ["+OpenSPCoop2MessageFactory.messageFactoryImpl+"]");
 			}
 	//		else{
@@ -197,6 +203,8 @@ public abstract class OpenSPCoop2MessageFactory {
 	// ********** SAAJ *************
 	
 	public abstract String getDocumentBuilderFactoryClass();
+	
+	public abstract String getSAXParserFactoryClass();
 	
     public abstract Element convertoForXPathSearch(Element contenutoAsElement);
     

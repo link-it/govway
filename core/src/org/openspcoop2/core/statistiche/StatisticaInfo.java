@@ -34,12 +34,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statistica-info">
- * 		&lt;sequence>
- * 			&lt;element name="tipo-statistica" type="{http://www.openspcoop2.org/core/statistiche}tipo-intervallo-statistico" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="data-ultima-generazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statistica-info"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tipo-statistica" type="{http://www.openspcoop2.org/core/statistiche}tipo-intervallo-statistico" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="data-ultima-generazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

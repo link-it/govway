@@ -36,12 +36,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="validazione-buste">
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" use="optional" default="abilitato"/>
- * 		&lt;attribute name="controllo" type="{http://www.openspcoop2.org/core/config}ValidazioneBusteTipoControllo" use="optional" default="normale"/>
- * 		&lt;attribute name="profiloCollaborazione" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="manifestAttachments" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="validazione-buste"&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaConWarning" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="controllo" type="{http://www.openspcoop2.org/core/config}ValidazioneBusteTipoControllo" use="optional" default="normale"/&gt;
+ * 		&lt;attribute name="profiloCollaborazione" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="manifestAttachments" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

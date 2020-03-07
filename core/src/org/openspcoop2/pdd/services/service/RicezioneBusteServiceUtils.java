@@ -64,7 +64,9 @@ import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.URLProtocolContext;
 import org.openspcoop2.protocol.engine.constants.IDService;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
 import org.openspcoop2.utils.date.DateManager;
@@ -90,19 +92,26 @@ public class RicezioneBusteServiceUtils {
 		URLProtocolContext protocolContext = requestInfo.getProtocolContext();
 		ServiceBindingConfiguration bindingConfig = requestInfo.getBindingConfig();
 
-						
-		
-		
 		IDPortaApplicativa idPA = null;
 		try{
 			idPA = serviceIdentificationReader.findPortaApplicativa(protocolContext, true);
 		}catch(RegistryNotFound notFound){
 			if(bindingConfig.existsContextUrlMapping()==false){
+				if(pddContextNullable!=null) {
+					pddContextNullable.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
+				}
 				logCore.error("Porta Applicativa non trovata: "+notFound.getMessage(),notFound);
 				msgDiag.addKeywordErroreProcessamento(notFound);
 				msgDiag.logPersonalizzato(MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO,"portaApplicativaNonEsistente");
-				return ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
+				ConnectorDispatcherInfo c = ConnectorDispatcherUtils.doError(requestInfo, generatoreErrore, serviceIdentificationReader.getErroreIntegrazioneNotFound(), 
 						IntegrationError.NOT_FOUND, notFound, null, res, logCore, ConnectorDispatcherUtils.CLIENT_ERROR);
+				try {
+					EsitoTransazione esito = requestInfo.getProtocolFactory().createEsitoBuilder().getEsito(requestInfo.getProtocolContext(),EsitoTransazioneName.API_NON_INDIVIDUATA);
+					c.setEsitoTransazione(esito);
+				}catch(Throwable t) {
+					logCore.error("Errore durante l'impostazione dell'esito 'API_NON_INDIVIDUATA'");
+				}
+				return c;
 			}
 		}
 		if(idPA!=null){

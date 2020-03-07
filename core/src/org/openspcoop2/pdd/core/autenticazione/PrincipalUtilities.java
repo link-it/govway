@@ -31,7 +31,7 @@ import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 /**
  * PrincipalUtilities
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -106,6 +106,16 @@ public class PrincipalUtilities {
 			if(principal==null || "".equals(principal)) {
 				if(throwException) {
 					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client non disponibile");
+				}
+			}
+			return principal;
+		case INDIRIZZO_IP_X_FORWARDED_FOR:
+			if(pddContext!=null && pddContext.containsKey(Costanti.CLIENT_IP_TRANSPORT_ADDRESS)) {
+				principal = PdDContext.getValue(Costanti.CLIENT_IP_TRANSPORT_ADDRESS, pddContext);
+			}
+			if(principal==null || "".equals(principal)) {
+				if(throwException) {
+					throw new AutenticazioneException("["+tipoAutenticazionePrincipal+"] Indirizzo IP del Client, tramite 'X-Forwarded-For', non disponibile");
 				}
 			}
 			return principal;

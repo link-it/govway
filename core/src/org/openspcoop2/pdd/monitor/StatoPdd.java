@@ -33,23 +33,23 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="stato-pdd">
- * 		&lt;sequence>
- * 			&lt;element name="num-msg-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="tempo-medio-attesa-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tempo-max-attesa-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="num-msg-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="tempo-medio-attesa-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tempo-max-attesa-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="num-msg-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="tempo-medio-attesa-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tempo-max-attesa-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tot-messaggi" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/>
- * 			&lt;element name="tempo-medio-attesa" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tempo-max-attesa" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/>
- * 			&lt;element name="tot-messaggi-duplicati" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="stato-pdd"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="num-msg-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="tempo-medio-attesa-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tempo-max-attesa-in-consegna" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="num-msg-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="tempo-medio-attesa-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tempo-max-attesa-in-spedizione" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="num-msg-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="tempo-medio-attesa-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tempo-max-attesa-in-processamento" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tot-messaggi" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 			&lt;element name="tempo-medio-attesa" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tempo-max-attesa" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="-1"/&gt;
+ * 			&lt;element name="tot-messaggi-duplicati" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="1" maxOccurs="1" default="0"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

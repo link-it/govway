@@ -24,6 +24,7 @@ package org.openspcoop2.security.message.soapbox;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +54,13 @@ import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.w3c.dom.Document;
 
 /**
  * WSSContext_soapbox
  *
- * @author Andrea Poli <apoli@link.it>
- * @author Giovanni Bussu <bussu@link.it>
+ * @author Andrea Poli (apoli@link.it)
+ * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -109,7 +111,9 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			// ********** Inizializzo Header WSS ***************
 
 			SOAPPart sp = message.getSOAPPart();
-			MessageSecurityContext msgSecCtx = new MessageSecurityContext(sp, new MessageImpl(true, null, "http"));
+			//Document d = sp;
+			Document d = sp.getDocumentElement().getOwnerDocument();
+			MessageSecurityContext msgSecCtx = new MessageSecurityContext(d, new MessageImpl(true, null, "http"));
 			Object mustUnderstandObject = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.MUST_UNDERSTAND);
 			boolean mustUnderstand = false;
 			if(mustUnderstandObject!=null){
@@ -217,8 +221,6 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);
-				signMsgProc.setUseXMLSec(messageSecurityContext.isUseXMLSec());
-
 
 				// encryptionParts
 				Object signatureParts =  messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_PARTS);
@@ -374,51 +376,8 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			
 			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_encryption = null;
 			if(encrypt){
-				Object encryptionKeySizeObject = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_SIZE);
-				int encryptionKeySize = -1;
-				if(encryptionKeySizeObject!=null){
-					encryptionKeySize = Integer.parseInt((String)encryptionKeySizeObject);
-				}
-
-				Object encryptionSymmetricAlgoritm = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
-				Object encryptionKeyTransport = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM);
+				updateSecurityContextForEncryption(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasEncryptUser);
 				
-				if(encryptionKeySize>0){
-					msgSecCtx.getEncryptionRequest().setKeySize(encryptionKeySize);
-				}
-				if(encryptionSymmetricAlgoritm!=null){
-					msgSecCtx.getEncryptionRequest().setSymmetricKeyAlgoURI((String)encryptionSymmetricAlgoritm);
-				}
-				if(encryptionKeyTransport!=null){
-					msgSecCtx.getEncryptionRequest().setEncryptionAlgoURI((String)encryptionKeyTransport);
-				}
-				Object encryptionKeyIdentifier = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.ENCRYPTION_KEY_IDENTIFIER);
-				if(encryptionKeyIdentifier!=null){
-					if(SecurityConstants.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(encryptionKeyIdentifier)){
-						msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_ISSUER_SERIAL.equals(encryptionKeyIdentifier)){
-						msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.ISSUER_SERIAL);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_SKI.equals(encryptionKeyIdentifier)){
-						msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.SKI_KEY_IDENTIFIER);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_THUMBPRINT.equals(encryptionKeyIdentifier)){
-						msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.THUMBPRINT_IDENTIFIER);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_X509.equals(encryptionKeyIdentifier)){
-						msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.X509_KEY_IDENTIFIER);		
-					}
-					else{
-						throw new Exception(SecurityConstants.ENCRYPTION_KEY_IDENTIFIER+" not supported ["+encryptionKeyIdentifier+"]");
-					}
-				}else{
-					// default: BST
-					msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);	
-				}
-				
-				msgSecCtx.getEncryptionRequest().setCertAlias(aliasEncryptUser);
-
 				Map<String, String> passwordMap_encryption = new HashMap<String, String>();
 				passwordMap_encryption.put(aliasEncryptUser, aliasEncryptPassword);
 
@@ -441,57 +400,9 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 			// **************** Inizializzo Secure Context for signature **************************
 			org.openspcoop2.security.message.soapbox.SecurityConfig securityConfig_signature = null;
 			if(signature){
-				Object c14nAlgoURI = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_C14N_ALGORITHM);
-				Object digestAlgoURI = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_DIGEST_ALGORITHM);
-				Object signatureAlgoURI = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_ALGORITHM);
-				Object wsiBPCompliant = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.IS_BSP_COMPLIANT);
-				Object signatureKeyIdentifier = messageSecurityContext.getOutgoingProperties().get(SecurityConstants.SIGNATURE_KEY_IDENTIFIER);
-
-				if(c14nAlgoURI!=null){
-					msgSecCtx.getSignatureRequest().setC14nAlgoURI((String)c14nAlgoURI);
-				}
-				if(digestAlgoURI!=null){
-					msgSecCtx.getSignatureRequest().setDigestAlgoURI((String)digestAlgoURI);
-				}
-				if(wsiBPCompliant!=null){
-					try{
-						msgSecCtx.getSignatureRequest().setWsiBPCompliant(Boolean.parseBoolean((String)wsiBPCompliant));
-					}catch(Exception e){
-						throw new Exception(SecurityConstants.IS_BSP_COMPLIANT+" con valore non valido (atteso true/false): ["+wsiBPCompliant+"]");
-					}
-				}else{
-					msgSecCtx.getSignatureRequest().setWsiBPCompliant(true);
-				}
-				if(signatureAlgoURI!=null){
-					msgSecCtx.getSignatureRequest().setSignatureAlgoURI((String)signatureAlgoURI);
-				}else{
-					throw new Exception(SecurityConstants.SIGNATURE_ALGORITHM+" non fornito");
-				}
-				if(signatureKeyIdentifier!=null){
-					if(SecurityConstants.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(signatureKeyIdentifier)){
-						msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_ISSUER_SERIAL.equals(signatureKeyIdentifier)){
-						msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.ISSUER_SERIAL);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_SKI.equals(signatureKeyIdentifier)){
-						msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.SKI_KEY_IDENTIFIER);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_THUMBPRINT.equals(signatureKeyIdentifier)){
-						msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.THUMBPRINT_IDENTIFIER);		
-					}
-					else if(SecurityConstants.KEY_IDENTIFIER_X509.equals(signatureKeyIdentifier)){
-						msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.X509_KEY_IDENTIFIER);		
-					}
-					else{
-						throw new Exception(SecurityConstants.SIGNATURE_KEY_IDENTIFIER+" not supported ["+signatureKeyIdentifier+"]");
-					}
-				}else{
-					// default: BST
-					msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);	
-				}
-				msgSecCtx.getSignatureRequest().setCertAlias(aliasSignatureUser);
-
+				
+				updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
+								
 				Map<String, String> passwordMap_signature = new HashMap<String, String>();
 				passwordMap_signature.put(aliasSignatureUser, aliasSignaturePassword);
 
@@ -521,6 +432,9 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 						//byte[]xmlCifrato=this.xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
 						//message.getSOAPPart().setContent(new DOMSource(this.xmlUtils.newElement(xmlCifrato)));
 						//signMsgProc.setMessage(message);
+						//Document dUpdated = message.getSOAPPart().getDocumentElement().getOwnerDocument();
+						//msgSecCtx = new MessageSecurityContext(dUpdated, new MessageImpl(true, null, "http"));
+						//updateSecurityContextForEncryption(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasEncryptUser);
 					}
 					encMsgProc.process(securityConfig_encryption, msgSecCtx);
 					actionSignatureOrEncryptDo = true;
@@ -530,6 +444,9 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 						byte[]xmlCifrato=xmlUtils.toByteArray(msgSecCtx.getDocument().getDocumentElement());
 						message.getSOAPPart().setContent(new DOMSource(xmlUtils.newElement(xmlCifrato)));
 						signMsgProc.setMessage(message);
+						Document dUpdated = message.getSOAPPart().getDocumentElement().getOwnerDocument();
+						msgSecCtx = new MessageSecurityContext(dUpdated, new MessageImpl(true, null, "http"));
+						updateSecurityContextForSignature(msgSecCtx, messageSecurityContext.getOutgoingProperties(), aliasSignatureUser);
 					}
 					signMsgProc.process(securityConfig_signature, msgSecCtx);
 					actionSignatureOrEncryptDo = true;
@@ -592,6 +509,108 @@ public class MessageSecuritySender_soapbox implements IMessageSecuritySender{
 	}
 
 
+	
+	private void updateSecurityContextForSignature(MessageSecurityContext msgSecCtx, Hashtable<String, Object> outProps, String aliasSignatureUser) throws Exception {
+		
+		Object c14nAlgoURI = outProps.get(SecurityConstants.SIGNATURE_C14N_ALGORITHM);
+		Object digestAlgoURI = outProps.get(SecurityConstants.SIGNATURE_DIGEST_ALGORITHM);
+		Object signatureAlgoURI = outProps.get(SecurityConstants.SIGNATURE_ALGORITHM);
+		Object wsiBPCompliant = outProps.get(SecurityConstants.IS_BSP_COMPLIANT);
+		Object signatureKeyIdentifier = outProps.get(SecurityConstants.SIGNATURE_KEY_IDENTIFIER);
+
+		if(c14nAlgoURI!=null){
+			msgSecCtx.getSignatureRequest().setC14nAlgoURI((String)c14nAlgoURI);
+		}
+		if(digestAlgoURI!=null){
+			msgSecCtx.getSignatureRequest().setDigestAlgoURI((String)digestAlgoURI);
+		}
+		if(wsiBPCompliant!=null){
+			try{
+				msgSecCtx.getSignatureRequest().setWsiBPCompliant(Boolean.parseBoolean((String)wsiBPCompliant));
+			}catch(Exception e){
+				throw new Exception(SecurityConstants.IS_BSP_COMPLIANT+" con valore non valido (atteso true/false): ["+wsiBPCompliant+"]");
+			}
+		}else{
+			msgSecCtx.getSignatureRequest().setWsiBPCompliant(true);
+		}
+		if(signatureAlgoURI!=null){
+			msgSecCtx.getSignatureRequest().setSignatureAlgoURI((String)signatureAlgoURI);
+		}else{
+			throw new Exception(SecurityConstants.SIGNATURE_ALGORITHM+" non fornito");
+		}
+		if(signatureKeyIdentifier!=null){
+			if(SecurityConstants.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(signatureKeyIdentifier)){
+				msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_ISSUER_SERIAL.equals(signatureKeyIdentifier)){
+				msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.ISSUER_SERIAL);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_SKI.equals(signatureKeyIdentifier)){
+				msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.SKI_KEY_IDENTIFIER);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_THUMBPRINT.equals(signatureKeyIdentifier)){
+				msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.THUMBPRINT_IDENTIFIER);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_X509.equals(signatureKeyIdentifier)){
+				msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.X509_KEY_IDENTIFIER);		
+			}
+			else{
+				throw new Exception(SecurityConstants.SIGNATURE_KEY_IDENTIFIER+" not supported ["+signatureKeyIdentifier+"]");
+			}
+		}else{
+			// default: BST
+			msgSecCtx.getSignatureRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);	
+		}
+		msgSecCtx.getSignatureRequest().setCertAlias(aliasSignatureUser);
+	}
+	
+	private void updateSecurityContextForEncryption(MessageSecurityContext msgSecCtx, Hashtable<String, Object> outProps, String aliasEncryptUser) throws Exception {
+		
+		Object encryptionKeySizeObject = outProps.get(SecurityConstants.ENCRYPTION_KEY_SIZE);
+		int encryptionKeySize = -1;
+		if(encryptionKeySizeObject!=null){
+			encryptionKeySize = Integer.parseInt((String)encryptionKeySizeObject);
+		}
+
+		Object encryptionSymmetricAlgoritm = outProps.get(SecurityConstants.ENCRYPTION_SYMMETRIC_ALGORITHM);
+		Object encryptionKeyTransport = outProps.get(SecurityConstants.ENCRYPTION_KEY_TRANSPORT_ALGORITHM);
+		
+		if(encryptionKeySize>0){
+			msgSecCtx.getEncryptionRequest().setKeySize(encryptionKeySize);
+		}
+		if(encryptionSymmetricAlgoritm!=null){
+			msgSecCtx.getEncryptionRequest().setSymmetricKeyAlgoURI((String)encryptionSymmetricAlgoritm);
+		}
+		if(encryptionKeyTransport!=null){
+			msgSecCtx.getEncryptionRequest().setEncryptionAlgoURI((String)encryptionKeyTransport);
+		}
+		Object encryptionKeyIdentifier = outProps.get(SecurityConstants.ENCRYPTION_KEY_IDENTIFIER);
+		if(encryptionKeyIdentifier!=null){
+			if(SecurityConstants.KEY_IDENTIFIER_BST_DIRECT_REFERENCE.equals(encryptionKeyIdentifier)){
+				msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_ISSUER_SERIAL.equals(encryptionKeyIdentifier)){
+				msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.ISSUER_SERIAL);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_SKI.equals(encryptionKeyIdentifier)){
+				msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.SKI_KEY_IDENTIFIER);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_THUMBPRINT.equals(encryptionKeyIdentifier)){
+				msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.THUMBPRINT_IDENTIFIER);		
+			}
+			else if(SecurityConstants.KEY_IDENTIFIER_X509.equals(encryptionKeyIdentifier)){
+				msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.X509_KEY_IDENTIFIER);		
+			}
+			else{
+				throw new Exception(SecurityConstants.ENCRYPTION_KEY_IDENTIFIER+" not supported ["+encryptionKeyIdentifier+"]");
+			}
+		}else{
+			// default: BST
+			msgSecCtx.getEncryptionRequest().setKeyIdentifierType(SecurityRequest.KeyIdentifierType.BST_DIRECT_REFERENCE);	
+		}
+		
+		msgSecCtx.getEncryptionRequest().setCertAlias(aliasEncryptUser);
+	}
 }
 
 

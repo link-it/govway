@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="submitResponse">
- * 		&lt;sequence>
- * 			&lt;element name="messageID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="submitResponse"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="messageID" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -94,7 +94,7 @@ public class SubmitResponse extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getMessageIDList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getMessageID() {
@@ -103,7 +103,7 @@ public class SubmitResponse extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setMessageIDList
-   * @param messageID List<java.lang.String>
+   * @param messageID List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setMessageID(List<java.lang.String> messageID) {

@@ -123,8 +123,9 @@ public class ApplicativiApiHelper {
 	
 	    sa.setNome(applicativo.getNome());
 	    sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
-	    sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());	
-	
+	    sa.setTipo(CostantiConfigurazione.CLIENT);
+		sa.setTipologiaErogazione(TipologiaErogazione.DISABILITATO.getValue());	
+		
 	    //Inseriamo il soggetto del registro locale
 	    sa.setIdSoggetto(soggettoRegistro.getId());
 	    sa.setNomeSoggettoProprietario(soggettoRegistro.getNome());

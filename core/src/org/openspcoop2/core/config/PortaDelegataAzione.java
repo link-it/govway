@@ -38,16 +38,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="porta-delegata-azione">
- * 		&lt;sequence>
- * 			&lt;element name="azione-delegata" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataAzioneIdentificazione" use="optional" default="static"/>
- * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="porta-delegata-azione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="azione-delegata" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="identificazione" type="{http://www.openspcoop2.org/core/config}PortaDelegataAzioneIdentificazione" use="optional" default="static"/&gt;
+ * 		&lt;attribute name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="nome-porta-delegante" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="force-interface-based" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -184,7 +184,7 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getAzioneDelegataList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getAzioneDelegata() {
@@ -193,7 +193,7 @@ public class PortaDelegataAzione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setAzioneDelegataList
-   * @param azioneDelegata List<java.lang.String>
+   * @param azioneDelegata List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setAzioneDelegata(List<java.lang.String> azioneDelegata) {

@@ -30,7 +30,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 /**
  * AutenticazioneUtils
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -59,6 +59,7 @@ public class AutenticazioneUtils {
 			switch (tipoAutenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 			case URL:
 			case TOKEN:
 				break;

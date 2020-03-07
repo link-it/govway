@@ -28,7 +28,7 @@ import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 /**
  * ParametriAutenticazionePrincipal
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

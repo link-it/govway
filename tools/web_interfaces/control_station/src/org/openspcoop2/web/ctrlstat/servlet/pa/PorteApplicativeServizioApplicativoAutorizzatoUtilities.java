@@ -28,9 +28,9 @@ import java.util.Map;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServiziApplicativi;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.driver.FiltroRicercaProtocolProperty;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.Soggetto;
@@ -38,6 +38,7 @@ import org.openspcoop2.protocol.sdk.registry.FiltroRicercaServiziApplicativi;
 import org.openspcoop2.web.ctrlstat.servlet.ConsoleHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.ServletUtils;
 
@@ -53,14 +54,14 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 
 	public String[] soggettiList = null;
 	public String[] soggettiListLabel = null;
-	public Map<String,List<ServizioApplicativo>> listServiziApplicativi = new HashMap<>();
+	public Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = new HashMap<>();
 	public String idSoggettoToAdd = null;
 	public int saSize;
 	public PortaApplicativaAutorizzazioneServiziApplicativi saList;
 	
 	public void buildList(PortaApplicativa pa, boolean modipa, String protocollo, boolean escludiSoggettoErogatore,
 			String idSoggettoToAdd,
-			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper) throws Exception {
+			PorteApplicativeCore paCore, ConsoleHelper porteApplicativeHelper, boolean escludiSAServer) throws Exception {
 		
 		this.idSoggettoToAdd = idSoggettoToAdd;
 		
@@ -92,15 +93,17 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 		this.saList = pa.getServiziApplicativiAutorizzati();
 		this.saSize = this.saList!=null ? this.saList.sizeServizioApplicativoList() : 0;
 		this.listServiziApplicativi = new HashMap<>();
+		
+		String filtroTipoSA = escludiSAServer ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_CLIENT : null;
 		if(listSoggetti!=null && !listSoggetti.isEmpty()) {
 			List<String> soggettiListBuild = new ArrayList<>();
 			List<String> soggettiLabelListBuild = new ArrayList<>();
 			
 			for (org.openspcoop2.core.registry.Soggetto soggetto : listSoggetti) {
 				IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipo(), soggetto.getNome());
-				List<ServizioApplicativo> listServiziApplicativiTmp = null;
+				List<IDServizioApplicativoDB> listServiziApplicativiTmp = null;
 				if(!modipa || pddCore.isPddEsterna(soggetto.getPortaDominio())) {
-					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione);
+					listServiziApplicativiTmp = saCore.soggettiServizioApplicativoList(idSoggetto,userLogin,tipoAutenticazione, filtroTipoSA);
 				}
 				else {
 					// modipa, soggetto interno
@@ -108,6 +111,7 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					filtro.setTipoSoggetto(idSoggetto.getTipo());
 					filtro.setNomeSoggetto(idSoggetto.getNome());
 					filtro.setProtocolProperties(new ArrayList<>());
+					filtro.setTipo(filtroTipoSA);
 					FiltroRicercaProtocolProperty pp = new FiltroRicercaProtocolProperty();
 					pp.setName(porteApplicativeHelper.getProfiloModIPASicurezzaMessaggioPropertyName());
 					pp.setValueAsBoolean(true);
@@ -116,15 +120,17 @@ public class PorteApplicativeServizioApplicativoAutorizzatoUtilities {
 					if(list!=null && !list.isEmpty()) {
 						listServiziApplicativiTmp = new ArrayList<>();
 						for (IDServizioApplicativo idSA : list) {
-							listServiziApplicativiTmp.add(saCore.getServizioApplicativo(idSA));	
+							IDServizioApplicativoDB idSADB = new IDServizioApplicativoDB(idSA);
+							idSADB.setId(saCore.getIdServizioApplicativo(idSA.getIdSoggettoProprietario(), idSA.getNome()));
+							listServiziApplicativiTmp.add(idSADB);	
 						}
 					}
 				}
-				List<ServizioApplicativo> listServiziApplicativiTmpUnique = new ArrayList<>();
+				List<IDServizioApplicativoDB> listServiziApplicativiTmpUnique = new ArrayList<>();
 				
 				// scarto i sa già associati
 				if(listServiziApplicativiTmp!=null && listServiziApplicativiTmp.size()>0) {
-					for (ServizioApplicativo sa : listServiziApplicativiTmp) {
+					for (IDServizioApplicativoDB sa : listServiziApplicativiTmp) {
 						boolean found = false;
 						if(this.saList!=null && this.saList.sizeServizioApplicativoList()>0) {
 							for (PortaApplicativaAutorizzazioneServizioApplicativo saAssociatoPA : this.saList.getServizioApplicativoList()) { 

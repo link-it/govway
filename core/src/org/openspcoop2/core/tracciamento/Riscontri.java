@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="riscontri">
- * 		&lt;sequence>
- * 			&lt;element name="riscontro" type="{http://www.openspcoop2.org/core/tracciamento}riscontro" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="riscontri"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="riscontro" type="{http://www.openspcoop2.org/core/tracciamento}riscontro" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class Riscontri extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getRiscontroList
-   * @return List<Riscontro>
+   * @return List&lt;Riscontro&gt;
   */
   @Deprecated
   public List<Riscontro> getRiscontro() {
@@ -120,7 +120,7 @@ public class Riscontri extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setRiscontroList
-   * @param riscontro List<Riscontro>
+   * @param riscontro List&lt;Riscontro&gt;
   */
   @Deprecated
   public void setRiscontro(List<Riscontro> riscontro) {

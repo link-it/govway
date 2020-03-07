@@ -53,7 +53,7 @@ public class PolicyGroupByActiveThreads implements Serializable,IPolicyGroupByAc
 	
 	private Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati> mapActiveThreads = new Hashtable<IDUnivocoGroupByPolicy, DatiCollezionati>();
 	
-	private Boolean semaphore = new Boolean(false);
+	private Boolean semaphore = Boolean.valueOf(false);
 		
 	private ActivePolicy activePolicy;
 

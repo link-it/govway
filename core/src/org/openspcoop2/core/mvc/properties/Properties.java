@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="properties">
- * 		&lt;sequence>
- * 			&lt;element name="collection" type="{http://www.openspcoop2.org/core/mvc/properties}collection" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="properties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="collection" type="{http://www.openspcoop2.org/core/mvc/properties}collection" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getCollectionList
-   * @return List<Collection>
+   * @return List&lt;Collection&gt;
   */
   @Deprecated
   public List<Collection> getCollection() {
@@ -102,7 +102,7 @@ public class Properties extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setCollectionList
-   * @param collection List<Collection>
+   * @param collection List&lt;Collection&gt;
   */
   @Deprecated
   public void setCollection(List<Collection> collection) {

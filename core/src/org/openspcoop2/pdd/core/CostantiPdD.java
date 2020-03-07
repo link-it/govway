@@ -254,6 +254,8 @@ public class CostantiPdD {
     
     /** Intervallo per riconsegna messaggi verso ConsegnaContenutiApplicativi */
     public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_INTERVAL = 60; 
+    public final static int TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_PRESA_IN_CONSEGNA_MAX_LIFE = 1800; 
+    public final static String TIMER_RICONSEGNA_CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE = "CONTENUTI_APPLICATIVI_MESSAGGI_SPEDIRE";
     
     /** Tempi di gestione dei lock da parte del Timer */
     public final static int TIMER_LOCK_MAX_LIFE = -1; 
@@ -313,6 +315,8 @@ public class CostantiPdD {
     public static final String JMX_RESPONSE_CACHING = "ResponseCaching";
     /** MBean per il caching dei keystore */
     public static final String JMX_KEYSTORE_CACHING = "Keystore";
+    /** MBean per la gestione della consegna agli applicativi */
+    public static final String JMX_LOAD_BALANCER = "LoadBalancer";
     /** MBean per il repository dei messaggi */
     public static final String JMX_REPOSITORY_MESSAGGI = "RepositoryMessaggi";
     /** MBean per lo stato dei servizi PdD */
@@ -329,6 +333,9 @@ public class CostantiPdD {
     
     /** Limit messaggi processati dai Gestori */
     public static final int LIMIT_MESSAGGI_GESTORI = 50;
+    
+    /** Limit thread pool size per ConsegnaContenuti */
+    public static final int CONSEGNA_CONTENUTI_THREADS_POOL_SIZE = 10;
     
     /** Tipo WSDL */
     public final static String SCHEMA_XSD = "Schema xsd dei messaggi";
@@ -501,6 +508,17 @@ public class CostantiPdD {
     /** Costante che descrive il behaviour personalizzato */
     public final static String KEY_DESCRIZIONE_BEHAVIOUR = "@DESCRIZIONE_BEHAVIOUR@";
     
+    /** Costante che identifica il tipo di selettore per l'indentificazione dinamica dei connettori */
+    public final static String KEY_TIPO_SELETTORE = "@TIPO_SELETTORE@";
+    /** Costante che identifica il patter utilizzato dal selettore per l'indentificazione dinamica dei connettori */
+    public final static String KEY_PATTERN_SELETTORE = "@PATTERN_SELETTORE@";
+    /** Costante che identifica la condizione estratta per l'indentificazione dinamica dei connettori */
+    public final static String KEY_CONDIZIONE_CONNETTORE =  "@CONDIZIONE_CONNETTORE@";
+    /** Costante che identifica il nome di un connettore */
+    public final static String KEY_NOME_CONNETTORE = "@NOME_CONNETTORE@";
+    /** Costante che identifica la condizione estratta per lo sticky */
+    public final static String KEY_CONDIZIONE_STICKY =  "@CONDIZIONE_STICKY@";
+    
     
     /* Proprietà specifiche per modulo funzionale */
     
@@ -608,6 +626,8 @@ public class CostantiPdD {
     public final static String KEY_DESTINATARIO_TRASMISSIONE = "@DESTINATARIO_TRASMISSIONE@";
     /** Costante che indica la descrizione degli elementi principali che formano un soap fault ricevuto */
     public final static String KEY_SOAP_FAULT = "@SOAP_FAULT@";
+    /** Costante che indica la descrizione degli elementi principali che formano un problem detail ricevuto */
+    public final static String KEY_REST_PROBLEM = "@REST_PROBLEM@";
     /** Costante (true/false) indica se la funzionalità è stata richiesta nell'accordo*/
     public final static String KEY_FUNZIONALITA_COLLABORAZIONE = "@FUNZIONALITA_COLLABORAZIONE@";
     /** Costante (true/false) indica se la funzionalità è stata richiesta nell'accordo*/

@@ -21,6 +21,7 @@
 
 package org.openspcoop2.core.config.constants;
 
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.utils.TipiDatabase;
 
 /**
@@ -108,13 +109,14 @@ public class CostantiConfigurazione {
 	public final static String LABEL_CREDENZIALE_PRINCIPAL = "principal";
 	public final static String LABEL_CREDENZIALE_DISABILITATO = "disabilitato";
 	
-	public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTAINER = "Container";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_HEADER = "HeaderBased";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_FORM = "FormBased";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_URL = "UrlBased";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT = "ContentBased";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "Indirizzo IP";
-    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_TOKEN = "Token";
+	public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTAINER = ModalitaIdentificazione.CONTAINER_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_HEADER = ModalitaIdentificazione.HEADER_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_FORM = ModalitaIdentificazione.FORM_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_URL = ModalitaIdentificazione.URL_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_CONTENT = ModalitaIdentificazione.CONTENT_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = ModalitaIdentificazione.INDIRIZZO_IP_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP_X_FORWARDED_FOR = ModalitaIdentificazione.X_FORWARD_FOR_BASED.getLabel();
+    public final static String LABEL_AUTENTICAZIONE_PRINCIPAL_TOKEN = ModalitaIdentificazione.TOKEN.getLabel();
     
     /** tipo di porta autenticazione */
     public final static String AUTENTICAZIONE_NONE = "none";
@@ -132,6 +134,7 @@ public class CostantiConfigurazione {
     public final static String AUTENTICAZIONE_PRINCIPAL_URL = "url-based";
     public final static String AUTENTICAZIONE_PRINCIPAL_CONTENT = "content-based";
     public final static String AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP = "indirizzo-ip";
+    public final static String AUTENTICAZIONE_PRINCIPAL_INDIRIZZO_IP_X_FORWARDED_FOR = "x-forwarded-for";
     public final static String AUTENTICAZIONE_PRINCIPAL_TOKEN = "token";
     
     /** tipo di porta autorizzazione */
@@ -323,4 +326,9 @@ public class CostantiConfigurazione {
 		return DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_PROTOCOLLO_PREFIX_URL_INVOCAZIONE_PA.replace(DEFAULT_VALUE_PARAMETRO_CONFIGURAZIONE_INVOCAZIONE_PROTOCOL_TEMPLATE, c);
 	}
 	
+	 /** Servizio Applicativo Tipo */
+    public final static String CLIENT = "client";
+    public final static String SERVER = "server";
+    public final static String CLIENT_OR_SERVER = "clientORserver";
+    
 }

@@ -24,8 +24,7 @@
 		
 		<!-- 
 		  PROTOCOL DEFAULT
-		  Se è abilitato spcoop in backward compatibility è spcoop, 
-		  altrimenti se abilitati verrano scelto nell'ordine:
+		  se abilitati verrano scelto nell'ordine:
 		  - trasparente
 		  - modipa
 		  - spcoop
@@ -33,69 +32,54 @@
 		  - sdi
 		-->
 		<if>
-			<and>
-				<istrue value="${antinstaller_protocollo_spcoop}"/>
-				<istrue value="${antinstaller_backward_compatibility}"/>
-			</and>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
 			<then>
 				<antcall target="set_property">
 				    <param name="file" value="${file}"/>
 					<param name="token" value="protocolloDefault"/>
-					<param name="value" value="spcoop"/>
+					<param name="value" value="trasparente"/>
 				</antcall>
 			</then>
-			<else>
-				<if>
-					<istrue value="${antinstaller_protocollo_trasparente}"/>
-					<then>
-						<antcall target="set_property">
-						    <param name="file" value="${file}"/>
-							<param name="token" value="protocolloDefault"/>
-							<param name="value" value="trasparente"/>
-						</antcall>
-					</then>
-					<elseif>
-						<istrue value="${antinstaller_protocollo_modipa}"/>
-						<then>
-							<antcall target="set_property">
-							    <param name="file" value="${file}"/>
-								<param name="token" value="protocolloDefault"/>
-								<param name="value" value="modipa"/>
-							</antcall>
-						</then>
-					</elseif>
-					<elseif>
-						<istrue value="${antinstaller_protocollo_spcoop}"/>
-						<then>
-							<antcall target="set_property">
-							    <param name="file" value="${file}"/>
-								<param name="token" value="protocolloDefault"/>
-								<param name="value" value="spcoop"/>
-							</antcall>
-						</then>
-					</elseif>
-					<elseif>
-						<istrue value="${antinstaller_protocollo_as4}"/>
-						<then>
-							<antcall target="set_property">
-							    <param name="file" value="${file}"/>
-								<param name="token" value="protocolloDefault"/>
-								<param name="value" value="as4"/>
-							</antcall>
-						</then>
-					</elseif>
-					<elseif>
-						<istrue value="${antinstaller_protocollo_sdi}"/>
-						<then>
-							<antcall target="set_property">
-							    <param name="file" value="${file}"/>
-								<param name="token" value="protocolloDefault"/>
-								<param name="value" value="sdi"/>
-							</antcall>
-						</then>
-					</elseif>
-				</if>
-			</else>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_modipa}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="modipa"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="spcoop"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_as4}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="as4"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_sdi}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="sdi"/>
+					</antcall>
+				</then>
+			</elseif>
 		</if>
 		
 		<!-- LOG4J APPEND -->

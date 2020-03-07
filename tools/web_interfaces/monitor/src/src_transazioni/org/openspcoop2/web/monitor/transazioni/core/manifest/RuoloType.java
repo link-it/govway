@@ -38,18 +38,18 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * <p>
  * <pre>
- * &lt;simpleType name="ruolo_type">
- *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *     &lt;enumeration value="sconosciuto"/>
- *     &lt;enumeration value="invocazioneOneway"/>
- *     &lt;enumeration value="invocazioneSincrona"/>
- *     &lt;enumeration value="invocazioneAsincronaSimmetrica"/>
- *     &lt;enumeration value="rispostaAsincronaSimmetrica"/>
- *     &lt;enumeration value="invocazioneAsincronaAsimmetrica"/>
- *     &lt;enumeration value="richiestaStatoAsincronaAsimmetrica"/>
- *     &lt;enumeration value="integrationManager"/>
- *   &lt;/restriction>
- * &lt;/simpleType>
+ * &lt;simpleType name="ruolo_type"&gt;
+ *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *     &lt;enumeration value="sconosciuto"/&gt;
+ *     &lt;enumeration value="invocazioneOneway"/&gt;
+ *     &lt;enumeration value="invocazioneSincrona"/&gt;
+ *     &lt;enumeration value="invocazioneAsincronaSimmetrica"/&gt;
+ *     &lt;enumeration value="rispostaAsincronaSimmetrica"/&gt;
+ *     &lt;enumeration value="invocazioneAsincronaAsimmetrica"/&gt;
+ *     &lt;enumeration value="richiestaStatoAsincronaAsimmetrica"/&gt;
+ *     &lt;enumeration value="integrationManager"/&gt;
+ *   &lt;/restriction&gt;
+ * &lt;/simpleType&gt;
  * </pre>
  * 
  * @author Pintori Giuliano (pintori@link.it)

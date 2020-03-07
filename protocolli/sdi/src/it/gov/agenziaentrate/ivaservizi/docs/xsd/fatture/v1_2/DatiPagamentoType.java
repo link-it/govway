@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiPagamentoType">
- * 		&lt;sequence>
- * 			&lt;element name="CondizioniPagamento" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}CondizioniPagamentoType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="DettaglioPagamento" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DettaglioPagamentoType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiPagamentoType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="CondizioniPagamento" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}CondizioniPagamentoType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="DettaglioPagamento" type="{http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2}DettaglioPagamentoType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -122,7 +122,7 @@ public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getDettaglioPagamentoList
-   * @return List<DettaglioPagamentoType>
+   * @return List&lt;DettaglioPagamentoType&gt;
   */
   @Deprecated
   public List<DettaglioPagamentoType> getDettaglioPagamento() {
@@ -131,7 +131,7 @@ public class DatiPagamentoType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setDettaglioPagamentoList
-   * @param dettaglioPagamento List<DettaglioPagamentoType>
+   * @param dettaglioPagamento List&lt;DettaglioPagamentoType&gt;
   */
   @Deprecated
   public void setDettaglioPagamento(List<DettaglioPagamentoType> dettaglioPagamento) {

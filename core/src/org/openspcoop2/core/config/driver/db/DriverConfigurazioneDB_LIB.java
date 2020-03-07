@@ -3690,7 +3690,8 @@ public class DriverConfigurazioneDB_LIB {
 		int n = 0;
 
 		try {
-			// String nome = aSA.getNome();
+			String tipoSA = aSA.getTipo();
+			int useAsClient = aSA.getUseAsClient() ? CostantiDB.TRUE : CostantiDB.FALSE;
 			String descrizione = aSA.getDescrizione();
 			DriverConfigurazioneDB_LIB.log.debug("get ID Soggetto con tipo["+tipoProprietario+"] e nome["+nomeProprietario+"]");
 			long idProprietario = DBUtils.getIdSoggetto(nomeProprietario, tipoProprietario, con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
@@ -3715,6 +3716,8 @@ public class DriverConfigurazioneDB_LIB {
 				ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addInsertTable(CostantiDB.SERVIZI_APPLICATIVI);
 				sqlQueryObject.addInsertField("nome", "?");
+				sqlQueryObject.addInsertField("tipo", "?");
+				sqlQueryObject.addInsertField("as_client", "?");
 				sqlQueryObject.addInsertField("descrizione", "?");
 				sqlQueryObject.addInsertField("sbustamentorisp", "?");
 				sqlQueryObject.addInsertField("sbustamento_protocol_info_risp", "?");
@@ -3791,6 +3794,8 @@ public class DriverConfigurazioneDB_LIB {
 				int index = 1;
 				
 				stm.setString(index++, nomeSA);
+				stm.setString(index++, tipoSA);
+				stm.setInt(index++, useAsClient);
 				stm.setString(index++, descrizione);
 
 				// RicezioneRisposta
@@ -4004,6 +4009,8 @@ public class DriverConfigurazioneDB_LIB {
 				// update
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addUpdateTable(CostantiDB.SERVIZI_APPLICATIVI);
+				sqlQueryObject.addUpdateField("tipo", "?");
+				sqlQueryObject.addUpdateField("as_client", "?");
 				sqlQueryObject.addUpdateField("descrizione", "?");
 				sqlQueryObject.addUpdateField("sbustamentorisp", "?");
 				sqlQueryObject.addUpdateField("sbustamento_protocol_info_risp", "?");
@@ -4113,6 +4120,8 @@ public class DriverConfigurazioneDB_LIB {
 
 				index = 1;
 				
+				stm.setString(index++, tipoSA);
+				stm.setInt(index++, useAsClient);
 				stm.setString(index++, descrizione);
 
 				// RicezioneRisposta
@@ -4299,6 +4308,37 @@ public class DriverConfigurazioneDB_LIB {
 				// cancello anche le associazioni delle porteapplicative
 				// associate a questo servizio
 				// serviziapplicativi
+				
+				List<Long> idsPA_SA = new ArrayList<>(); 
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idServizioApplicativo);
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					idsPA_SA.add(rs.getLong("id"));
+				}
+				rs.close();
+				stm.close();
+				
+				if(!idsPA_SA.isEmpty()) {
+					for (Long idsapa : idsPA_SA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQuery = sqlQueryObject.createSQLDelete();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idsapa);
+						n=stm.executeUpdate();
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (SA "+idServizioApplicativo+")");
+					}
+				}
+				
 				DriverConfigurazioneDB_LIB.log.debug("Deleted PA associazioni...");
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
@@ -4631,6 +4671,10 @@ public class DriverConfigurazioneDB_LIB {
 			response_cache_regole = responseCachingConfigurazone.getRegolaList();
 		}
 		
+		String behaviour = null;
+		if(aPA.getBehaviour()!=null) {
+			behaviour = aPA.getBehaviour().getNome();
+		}
 		
 		ExtendedInfoManager extInfoManager = ExtendedInfoManager.getInstance();
 		IExtendedInfo extInfoConfigurazioneDriver = extInfoManager.newInstanceExtendedInfoPortaApplicativa();
@@ -4777,6 +4821,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_hash_headers", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addInsertField("response_cache_hash_payload", "?");
+				// servizio applicativo default
+				sqlQueryObject.addInsertField("id_sa_default", "?");
 				// id
 				sqlQueryObject.addInsertField("id_accordo", "?");
 				sqlQueryObject.addInsertField("id_port_type", "?");
@@ -4835,7 +4881,9 @@ public class DriverConfigurazioneDB_LIB {
 				
 				// Stateless
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
-				stm.setString(index++, aPA!=null ? aPA.getBehaviour() : null);
+				
+				// Behaviour
+				stm.setString(index++, behaviour);
 				
 				// Autenticazione
 				stm.setString(index++, autenticazione);
@@ -4923,6 +4971,17 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
+				
+				// servizio applicativo default
+				long idServizioApplicativoDefault = -1;
+				if(aPA.getServizioApplicativoDefault()!=null) {
+					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
+							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					if(idServizioApplicativoDefault<=0) {
+						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
+					}
+				}
+				stm.setLong(index++, idServizioApplicativoDefault);
 				
 				//idaccordo
 				stm.setLong(index++, aPA.getIdAccordo()!=null ? aPA.getIdAccordo() : -1L);
@@ -5140,9 +5199,15 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 				sqlQueryObject.addInsertField("id_porta", "?");
 				sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+				sqlQueryObject.addInsertField("connettore_nome", "?");
+				sqlQueryObject.addInsertField("connettore_notifica", "?");
+				sqlQueryObject.addInsertField("connettore_descrizione", "?");
+				sqlQueryObject.addInsertField("connettore_stato", "?");
+				sqlQueryObject.addInsertField("connettore_filtri", "?");
 				sqlQuery = sqlQueryObject.createSQLInsert();
 				stm = con.prepareStatement(sqlQuery);
 
+				List<Long> idsPA_SA = new ArrayList<>();
 				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
 					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
 					String nomeSA = servizioApplicativo.getNome();
@@ -5161,13 +5226,119 @@ public class DriverConfigurazioneDB_LIB {
 					if (idSA <= 0)
 						throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
 
-					stm.setLong(1, idPortaApplicativa);
-					stm.setLong(2, idSA);
+					idsPA_SA.add(idSA);
+					
+					int indexSA = 1;
+					stm.setLong(indexSA++, idPortaApplicativa);
+					stm.setLong(indexSA++, idSA);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
+					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					
+					String filtri = null; 
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						if(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
+								if(k>0) {
+									bf.append(",");
+								}
+								bf.append(servizioApplicativo.getDatiConnettore().getFiltro(k));
+							}
+							filtri = bf.toString();
+						}
+					}
+					stm.setString(indexSA++, filtri);
+					
 					stm.executeUpdate();
+					
 				}
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				
+				
+				// serviziapplicativi props			
+				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
+					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
+					String nomeSA = servizioApplicativo.getNome();
+					
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
+					
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						
+						long idSA = idsPA_SA.get(i);
+						
+						long idPA_SA = -1;
+						sqlQuery = sqlQueryObject.createSQLQuery();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(2, idSA);
+						rs = stm.executeQuery();
+						if(rs.next()) {
+							idPA_SA = rs.getLong("id");
+						}
+						rs.close();
+						stm.close();
+						
+						if(idPA_SA<=0) {
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id della registrazione del Servizio Applicativo [" + nomeSA + "](id:"+idSA+") alla porta applicativa con id:"+idPortaApplicativa );
+						}
+						
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						
+						int j = 0;
+						for ( ; j < servizioApplicativo.getDatiConnettore().sizeProprietaList(); j++) {
+							
+							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
+							
+							stm.setLong(1, idPA_SA);
+							stm.setString(2, p.getNome());
+							stm.setString(3, p.getValore());
+							stm.executeUpdate();
+							
+						}
+	
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Insererted " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				
+				// set prop behaviour
+				if(aPA.getBehaviour()!=null) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+					for (i = 0; i < aPA.getBehaviour().sizeProprietaList(); i++) {
+						propProtocollo = aPA.getBehaviour().getProprieta(i);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setString(2, propProtocollo.getNome());
+						stm.setString(3, propProtocollo.getValore());
+						stm.executeUpdate();
+					}
+					stm.close();
+					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				}
+				
+				
 				
 				// set prop autenticazione
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5583,6 +5754,8 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_hash_headers", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_hdr_list", "?");
 				sqlQueryObject.addUpdateField("response_cache_hash_payload", "?");
+				// servizio applicativo default
+				sqlQueryObject.addUpdateField("id_sa_default", "?");
 				// id
 				sqlQueryObject.addUpdateField("id_accordo", "?");
 				sqlQueryObject.addUpdateField("id_port_type", "?");
@@ -5651,7 +5824,8 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getGestioneManifest()) : null);
 				// Stateless
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getStateless()) : null);
-				stm.setString(index++, aPA!=null ? aPA.getBehaviour() : null);
+				// Behaviour
+				stm.setString(index++, behaviour);
 				// Autenticazione
 				stm.setString(index++, autenticazione);
 				stm.setString(index++, aPA!=null ? DriverConfigurazioneDB_LIB.getValue(aPA.getAutenticazioneOpzionale()) : null);
@@ -5731,6 +5905,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.setString(index++, response_cache_hash_headers);
 				stm.setString(index++, response_cache_hash_headers_list);
 				stm.setString(index++, response_cache_hash_payload);
+				
+				// servizio applicativo default
+				idServizioApplicativoDefault = -1;
+				if(aPA.getServizioApplicativoDefault()!=null) {
+					idServizioApplicativoDefault = DBUtils.getIdServizioApplicativo(aPA.getServizioApplicativoDefault(), tipoProprietario, nomeProprietario, 
+							con, DriverConfigurazioneDB_LIB.tipoDB,DriverConfigurazioneDB_LIB.tabellaSoggetti);
+					if(idServizioApplicativoDefault<=0) {
+						throw new DriverConfigurazioneException("[DriverConfigurazioneDB_LIB::CRUDPortaApplicativa(CREATE)] Impossibile recuperare l'ID del servizio applicativo di default '"+aPA.getServizioApplicativoDefault()+"'.");
+					}
+				}
+				stm.setLong(index++, idServizioApplicativoDefault);
+				
 				// id
 				stm.setLong(index++, aPA.getIdAccordo() !=null ? aPA.getIdAccordo() : -1L);
 				stm.setLong(index++, aPA.getIdPortType() !=null ? aPA.getIdPortType() : -1L);
@@ -5985,6 +6171,41 @@ public class DriverConfigurazioneDB_LIB {
 				//la lista dei servizi applicativi passata contiene tutti e soli i servizi applicativi necessari
 				//quindi nel db devono essere presenti tutti e solo quelli presenti nella lista
 
+				
+				
+				// serviziapplicativi props			
+				
+				idsPA_SA = new ArrayList<>(); 
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					idsPA_SA.add(rs.getLong("id"));
+				}
+				rs.close();
+				stm.close();
+				
+				if(!idsPA_SA.isEmpty()) {
+					for (Long idsapa : idsPA_SA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQuery = sqlQueryObject.createSQLDelete();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idsapa);
+						n=stm.executeUpdate();
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
+					}
+				}
+				
+				
 				//TODO possibile ottimizzazione in termini di tempo
 				//cancello i servizi applicativi associati alla porta e inserisco tutti e soli quelli presenti in lista
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -5996,8 +6217,12 @@ public class DriverConfigurazioneDB_LIB {
 				n=stm.executeUpdate();
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Cancellati "+n+" servizi applicativi associati alla Porta Applicativa "+idPortaApplicativa);
+				
+				
+				
 				//scrivo la lista nel db
 				n=0;
+				idsPA_SA = new ArrayList<>();
 				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
 					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
 
@@ -6017,14 +6242,42 @@ public class DriverConfigurazioneDB_LIB {
 					if (idSA <= 0)
 						throw new DriverConfigurazioneException("Impossibile recuperare l'id del Servizio Applicativo [" + nomeSA + "] di [" + tipoProprietarioSA + "/" + nomeProprietarioSA + "]");
 
+					idsPA_SA.add(idSA);
+					
 					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA);
 					sqlQueryObject.addInsertField("id_porta", "?");
 					sqlQueryObject.addInsertField("id_servizio_applicativo", "?");
+					sqlQueryObject.addInsertField("connettore_nome", "?");
+					sqlQueryObject.addInsertField("connettore_notifica", "?");
+					sqlQueryObject.addInsertField("connettore_descrizione", "?");
+					sqlQueryObject.addInsertField("connettore_stato", "?");
+					sqlQueryObject.addInsertField("connettore_filtri", "?");
 					sqlQuery = sqlQueryObject.createSQLInsert();
 					stm = con.prepareStatement(sqlQuery);
-					stm.setLong(1, idPortaApplicativa);
-					stm.setLong(2, idSA);
+				
+					int indexSA = 1;
+					stm.setLong(indexSA++, idPortaApplicativa);
+					stm.setLong(indexSA++, idSA);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getNome() : null);
+					stm.setInt(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? (servizioApplicativo.getDatiConnettore().isNotifica() ? CostantiDB.TRUE : CostantiDB.FALSE) : CostantiDB.FALSE);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? servizioApplicativo.getDatiConnettore().getDescrizione() : null);
+					stm.setString(indexSA++, servizioApplicativo.getDatiConnettore()!=null ? getValue(servizioApplicativo.getDatiConnettore().getStato()) : null);
+					
+					String filtri = null; 
+					if(servizioApplicativo.getDatiConnettore()!=null) {
+						if(servizioApplicativo.getDatiConnettore().getFiltroList()!=null && servizioApplicativo.getDatiConnettore().sizeFiltroList()>0) {
+							StringBuilder bf = new StringBuilder();
+							for (int k = 0; k < servizioApplicativo.getDatiConnettore().sizeFiltroList(); k++) {
+								if(k>0) {
+									bf.append(",");
+								}
+								bf.append(servizioApplicativo.getDatiConnettore().getFiltro(k));
+							}
+							filtri = bf.toString();
+						}
+					}
+					stm.setString(indexSA++, filtri);
 
 					stm.executeUpdate();
 					stm.close();
@@ -6034,6 +6287,107 @@ public class DriverConfigurazioneDB_LIB {
 
 				DriverConfigurazioneDB_LIB.log.debug("Aggiunti " + n + " associazioni PortaApplicativa<->ServizioApplicativo associati alla PortaDelegata[" + idPortaApplicativa + "]");
 
+
+				// serviziapplicativi props			
+				
+				for (i = 0; i < aPA.sizeServizioApplicativoList(); i++) {
+					PortaApplicativaServizioApplicativo servizioApplicativo = aPA.getServizioApplicativo(i);
+					String nomeSA = servizioApplicativo.getNome();
+					
+					if(servizioApplicativo.getDatiConnettore()!=null && servizioApplicativo.getDatiConnettore().sizeProprietaList()>0) {
+					
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+						sqlQueryObject.addSelectField("id");
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQueryObject.addWhereCondition("id_servizio_applicativo=?");
+						sqlQueryObject.setANDLogicOperator(true);
+						sqlQuery = sqlQueryObject.createSQLQuery();
+						
+						long idSA = idsPA_SA.get(i);
+						
+						long idPA_SA = -1;
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setLong(2, idSA);
+						rs = stm.executeQuery();
+						if(rs.next()) {
+							idPA_SA = rs.getLong("id");
+						}
+						rs.close();
+						stm.close();
+						
+						if(idPA_SA<=0) {
+							throw new DriverConfigurazioneException("Impossibile recuperare l'id della registrazione del Servizio Applicativo [" + nomeSA + "](id:"+idSA+") alla porta applicativa con id:"+idPortaApplicativa );
+						}
+						
+						
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addInsertField("id_porta", "?");
+						sqlQueryObject.addInsertField("nome", "?");
+						sqlQueryObject.addInsertField("valore", "?");
+						sqlQuery = sqlQueryObject.createSQLInsert();
+						stm = con.prepareStatement(sqlQuery);
+						
+						int j = 0;
+						for ( ; j < servizioApplicativo.getDatiConnettore().sizeProprietaList(); j++) {
+							
+							Proprieta p = servizioApplicativo.getDatiConnettore().getProprieta(j);
+							
+							stm.setLong(1, idPA_SA);
+							stm.setString(2, p.getNome());
+							stm.setString(3, p.getValore());
+							stm.executeUpdate();
+							
+						}
+	
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Insererted " + j + " SetSAProp associati al Servizio Applicativo [" + nomeSA + "](id:"+idSA+") della PortaApplicativa[" + idPortaApplicativa + "]");
+					}
+				}
+				
+				
+				// set prop behaviour
+				
+				//TODO possibilie ottimizzazione
+				//La lista di proprieta contiene tutte e sole le proprieta associate alla porta
+				//cancello le proprieta per poi sincronizzarle con la lista passata
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				
+				if(aPA.getBehaviour()!=null) {
+					sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+					sqlQueryObject.addInsertTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
+					sqlQueryObject.addInsertField("id_porta", "?");
+					sqlQueryObject.addInsertField("nome", "?");
+					sqlQueryObject.addInsertField("valore", "?");
+					sqlQuery = sqlQueryObject.createSQLInsert();
+					stm = con.prepareStatement(sqlQuery);
+					for (i = 0; i < aPA.getBehaviour().sizeProprietaList(); i++) {
+						propProtocollo = aPA.getBehaviour().getProprieta(i);
+						stm.setLong(1, idPortaApplicativa);
+						stm.setString(2, propProtocollo.getNome());
+						stm.setString(3, propProtocollo.getValore());
+						stm.executeUpdate();
+					}
+					stm.close();
+					DriverConfigurazioneDB_LIB.log.debug("Insererted " + i + " SeBehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				}
+				
+				
+				
+				
+				
+				
+				
+				
 				
 				/*Proprieta autenticazione associate alla Porta Applicativa*/
 				//TODO possibilie ottimizzazione
@@ -6589,6 +6943,37 @@ public class DriverConfigurazioneDB_LIB {
 				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " response flow con id=" + idPortaApplicativa);
 				//}
 
+				// serviziapplicativi props
+				idsPA_SA = new ArrayList<>(); 
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addFromTable(CostantiDB.PORTE_APPLICATIVE_SA);
+				sqlQueryObject.addSelectField("id");
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQueryObject.setANDLogicOperator(true);
+				sqlQuery = sqlQueryObject.createSQLQuery();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				rs = stm.executeQuery();
+				while(rs.next()) {
+					idsPA_SA.add(rs.getLong("id"));
+				}
+				rs.close();
+				stm.close();
+				
+				if(!idsPA_SA.isEmpty()) {
+					for (Long idsapa : idsPA_SA) {
+						sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+						sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA_PROPS);
+						sqlQueryObject.addWhereCondition("id_porta=?");
+						sqlQuery = sqlQueryObject.createSQLDelete();
+						stm = con.prepareStatement(sqlQuery);
+						stm.setLong(1, idsapa);
+						n=stm.executeUpdate();
+						stm.close();
+						DriverConfigurazioneDB_LIB.log.debug("Eliminate "+n+" proprieta relative all'associazione '"+idsapa+"' (Porta Applicativa "+idPortaApplicativa+")");
+					}
+				}
+				
 				// serviziapplicativi
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
 				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_SA);
@@ -6600,6 +6985,18 @@ public class DriverConfigurazioneDB_LIB {
 				stm.close();
 				DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " servizi applicativi associati alla PortaApplicativa[" + idPortaApplicativa + "]");
 
+				// cancello le prop relative al behaviour
+				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
+				sqlQueryObject.addDeleteTable(CostantiDB.PORTE_APPLICATIVE_BEHAVIOUR_PROPS);
+				sqlQueryObject.addWhereCondition("id_porta=?");
+				sqlQuery = sqlQueryObject.createSQLDelete();
+				stm = con.prepareStatement(sqlQuery);
+				stm.setLong(1, idPortaApplicativa);
+				n=stm.executeUpdate();
+				stm.close();
+				if (n > 0)
+					DriverConfigurazioneDB_LIB.log.debug("Deleted " + n + " BehaviourProp associati alla PortaApplicativa[" + idPortaApplicativa + "]");
+				
 				// cancello anche le flow di request/response associate a questa
 				// porta applicativa
 				sqlQueryObject = SQLObjectFactory.createSQLQueryObject(DriverConfigurazioneDB_LIB.tipoDB);
@@ -8208,7 +8605,7 @@ public class DriverConfigurazioneDB_LIB {
 			}
 		}
 		
-		ResponseCachingConfigurazioneGenerale responseCachingConfigurazone = config.getResponseCaching();
+		ResponseCachingConfigurazioneGenerale responseCachingConfigurazione = config.getResponseCaching();
 		
 		String response_cache_stato = null;
 		Integer response_cache_seconds = null;
@@ -8223,49 +8620,49 @@ public class DriverConfigurazioneDB_LIB {
 		boolean response_cache_maxAge = true;
 		boolean response_cache_noStore = true;
 		List<ResponseCachingConfigurazioneRegola> response_cache_regole = null;
-		if(responseCachingConfigurazone!=null && responseCachingConfigurazone.getConfigurazione()!=null) {
-			response_cache_stato = getValue(responseCachingConfigurazone.getConfigurazione().getStato());
-			response_cache_seconds = responseCachingConfigurazone.getConfigurazione().getCacheTimeoutSeconds();
-			response_cache_max_msg_size = responseCachingConfigurazone.getConfigurazione().getMaxMessageSize();
-			if(responseCachingConfigurazone.getConfigurazione().getControl()!=null) {
-				response_cache_noCache = responseCachingConfigurazone.getConfigurazione().getControl().getNoCache();
-				response_cache_maxAge = responseCachingConfigurazone.getConfigurazione().getControl().getMaxAge();
-				response_cache_noStore = responseCachingConfigurazone.getConfigurazione().getControl().getNoStore();
+		if(responseCachingConfigurazione!=null && responseCachingConfigurazione.getConfigurazione()!=null) {
+			response_cache_stato = getValue(responseCachingConfigurazione.getConfigurazione().getStato());
+			response_cache_seconds = responseCachingConfigurazione.getConfigurazione().getCacheTimeoutSeconds();
+			response_cache_max_msg_size = responseCachingConfigurazione.getConfigurazione().getMaxMessageSize();
+			if(responseCachingConfigurazione.getConfigurazione().getControl()!=null) {
+				response_cache_noCache = responseCachingConfigurazione.getConfigurazione().getControl().getNoCache();
+				response_cache_maxAge = responseCachingConfigurazione.getConfigurazione().getControl().getMaxAge();
+				response_cache_noStore = responseCachingConfigurazione.getConfigurazione().getControl().getNoStore();
 			}
-			if(responseCachingConfigurazone.getConfigurazione().getHashGenerator()!=null) {
-				response_cache_hash_url = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getRequestUri());
+			if(responseCachingConfigurazione.getConfigurazione().getHashGenerator()!=null) {
+				response_cache_hash_url = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getRequestUri());
 				
-				response_cache_hash_query = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters());
-				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameters())) {
-					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
+				response_cache_hash_query = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters());
+				if(StatoFunzionalitaCacheDigestQueryParameter.SELEZIONE_PUNTUALE.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameters())) {
+					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameterList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList()>0) {
 						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
+						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeQueryParameterList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
-							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getQueryParameter(i));
+							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getQueryParameter(i));
 						}
 						response_cache_hash_query_list = bf.toString();
 					}
 				}
 				
-				response_cache_hash_headers = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders());
-				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaders())) {
-					if(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
+				response_cache_hash_headers = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders());
+				if(StatoFunzionalita.ABILITATO.equals(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaders())) {
+					if(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeaderList()!=null && responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList()>0) {
 						StringBuilder bf = new StringBuilder();
-						for (int i = 0; i < responseCachingConfigurazone.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
+						for (int i = 0; i < responseCachingConfigurazione.getConfigurazione().getHashGenerator().sizeHeaderList(); i++) {
 							if(i>0) {
 								bf.append(",");
 							}
-							bf.append(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getHeader(i));
+							bf.append(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getHeader(i));
 						}
 						response_cache_hash_headers_list = bf.toString();
 					}
 				}
 				
-				response_cache_hash_payload = getValue(responseCachingConfigurazone.getConfigurazione().getHashGenerator().getPayload());
+				response_cache_hash_payload = getValue(responseCachingConfigurazione.getConfigurazione().getHashGenerator().getPayload());
 			}
-			response_cache_regole = responseCachingConfigurazone.getConfigurazione().getRegolaList();
+			response_cache_regole = responseCachingConfigurazione.getConfigurazione().getRegolaList();
 		}
 		
 		Cache responseCaching_cache = null;
@@ -8274,8 +8671,8 @@ public class DriverConfigurazioneDB_LIB {
 		String responseCaching_idleCache = null;
 		String responseCaching_lifeCache = null;
 		String responseCaching_statoCache = null;
-		if(responseCachingConfigurazone !=null){
-			responseCaching_cache = responseCachingConfigurazone.getCache();
+		if(responseCachingConfigurazione !=null){
+			responseCaching_cache = responseCachingConfigurazione.getCache();
 
 		}
 		responseCaching_statoCache = (responseCaching_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
@@ -8284,6 +8681,25 @@ public class DriverConfigurazioneDB_LIB {
 			responseCaching_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(responseCaching_cache.getAlgoritmo());
 			responseCaching_idleCache = responseCaching_cache.getItemIdleTime();
 			responseCaching_lifeCache = responseCaching_cache.getItemLifeSecond();
+		}
+		
+		
+		Cache consegna_cache = null;
+		String consegna_dimensioneCache = null;
+		String consegna_algoritmoCache = null;
+		String consegna_idleCache = null;
+		String consegna_lifeCache = null;
+		String consegna_statoCache = null;
+		if(config.getAccessoDatiConsegnaApplicativi() !=null){
+			consegna_cache = config.getAccessoDatiConsegnaApplicativi().getCache();
+
+		}
+		consegna_statoCache = (consegna_cache != null ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString());
+		if (consegna_statoCache.equals(CostantiConfigurazione.ABILITATO.toString())) {
+			consegna_dimensioneCache = consegna_cache.getDimensione();
+			consegna_algoritmoCache = DriverConfigurazioneDB_LIB.getValue(consegna_cache.getAlgoritmo());
+			consegna_idleCache = consegna_cache.getItemIdleTime();
+			consegna_lifeCache = consegna_cache.getItemLifeSecond();
 		}
 		
 		String utilizzoIndTelematico = null;
@@ -8581,6 +8997,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addInsertField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addInsertField("response_cache_idlecache", "?");
 				sqlQueryObject.addInsertField("response_cache_lifecache", "?");
+				// consegna applicativi cache
+				sqlQueryObject.addInsertField("consegna_statocache", "?");
+				sqlQueryObject.addInsertField("consegna_dimensionecache", "?");
+				sqlQueryObject.addInsertField("consegna_algoritmocache", "?");
+				sqlQueryObject.addInsertField("consegna_idlecache", "?");
+				sqlQueryObject.addInsertField("consegna_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLInsert();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -8695,6 +9117,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, responseCaching_algoritmoCache);
 				updateStmt.setString(index++, responseCaching_idleCache);
 				updateStmt.setString(index++, responseCaching_lifeCache);
+				// consegna applicativi cache
+				updateStmt.setString(index++, consegna_statoCache);
+				updateStmt.setString(index++, consegna_dimensioneCache);
+				updateStmt.setString(index++, consegna_algoritmoCache);
+				updateStmt.setString(index++, consegna_idleCache);
+				updateStmt.setString(index++, consegna_lifeCache);
 
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -8723,7 +9151,8 @@ public class DriverConfigurazioneDB_LIB {
 								(response_cache_maxAge ? CostantiDB.TRUE : CostantiDB.FALSE),
 								(response_cache_noStore ? CostantiDB.TRUE : CostantiDB.FALSE),
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();
@@ -9210,6 +9639,12 @@ public class DriverConfigurazioneDB_LIB {
 				sqlQueryObject.addUpdateField("response_cache_algoritmocache", "?");
 				sqlQueryObject.addUpdateField("response_cache_idlecache", "?");
 				sqlQueryObject.addUpdateField("response_cache_lifecache", "?");
+				// consegna applicativi cache
+				sqlQueryObject.addUpdateField("consegna_statocache", "?");
+				sqlQueryObject.addUpdateField("consegna_dimensionecache", "?");
+				sqlQueryObject.addUpdateField("consegna_algoritmocache", "?");
+				sqlQueryObject.addUpdateField("consegna_idlecache", "?");
+				sqlQueryObject.addUpdateField("consegna_lifecache", "?");
 
 				updateQuery = sqlQueryObject.createSQLUpdate();
 				updateStmt = con.prepareStatement(updateQuery);
@@ -9324,6 +9759,12 @@ public class DriverConfigurazioneDB_LIB {
 				updateStmt.setString(index++, responseCaching_algoritmoCache);
 				updateStmt.setString(index++, responseCaching_idleCache);
 				updateStmt.setString(index++, responseCaching_lifeCache);
+				// consegna applicativi cache
+				updateStmt.setString(index++, consegna_statoCache);
+				updateStmt.setString(index++, consegna_dimensioneCache);
+				updateStmt.setString(index++, consegna_algoritmoCache);
+				updateStmt.setString(index++, consegna_idleCache);
+				updateStmt.setString(index++, consegna_lifeCache);
 				
 				DriverConfigurazioneDB_LIB.log.debug("eseguo query :" + 
 						DBUtils.formatSQLString(updateQuery, 
@@ -9350,7 +9791,8 @@ public class DriverConfigurazioneDB_LIB {
 								cors_allow_origins, cors_allow_headers, cors_allow_methods, cors_allow_expose_headers,
 								response_cache_stato, response_cache_seconds, response_cache_max_msg_size, 
 								response_cache_hash_url, response_cache_hash_query, response_cache_hash_query_list, response_cache_hash_headers, response_cache_hash_headers_list, response_cache_hash_payload,
-								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache
+								responseCaching_statoCache, responseCaching_dimensioneCache, responseCaching_algoritmoCache, responseCaching_idleCache, responseCaching_lifeCache,
+								consegna_statoCache, consegna_dimensioneCache, consegna_algoritmoCache, consegna_idleCache, consegna_lifeCache
 								));
 
 				n = updateStmt.executeUpdate();

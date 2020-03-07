@@ -33,13 +33,20 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.pdd.core.jmx.JMXUtils;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
+import org.openspcoop2.web.ctrlstat.servlet.aps.AccordiServizioParteSpecificaCore;
+import org.openspcoop2.web.ctrlstat.servlet.aps.erogazioni.ErogazioniCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCore;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
 import org.openspcoop2.web.lib.mvc.Costanti;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
@@ -73,6 +80,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 		// Inizializzo GeneralData
 		GeneralData gd = generalHelper.initGeneralData(request);
 
+		Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 		
 		// prelevo il flag che mi dice da quale pagina ho acceduto la sezione delle porte delegate
 		Integer parentPA = ServletUtils.getIntegerAttributeFromSession(PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT, session);
@@ -81,6 +89,8 @@ public class PorteApplicativeVerificaConnettore extends Action {
 		try {
 
 			PorteApplicativeHelper porteApplicativeHelper = new PorteApplicativeHelper(request, pd, session);
+			boolean isModalitaCompleta = porteApplicativeHelper.isModalitaCompleta();
+			
 			String id = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID);
 			int idInt = Integer.parseInt(id);
 			String idsogg = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO);
@@ -92,6 +102,11 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			if(!porteApplicativeHelper.isModalitaCompleta() && StringUtils.isNotEmpty(idTab)) {
 				ServletUtils.setObjectIntoSession(session, idTab, CostantiControlStation.PARAMETRO_ID_TAB);
 			}
+			
+			String idConnTab = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			if(StringUtils.isNotEmpty(idConnTab)) {
+				ServletUtils.setObjectIntoSession(session, idConnTab, CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			}
 
 			// Preparo il menu
 			porteApplicativeHelper.makeMenu();
@@ -99,6 +114,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore();
 			ConfigurazioneCore confCore = new ConfigurazioneCore(porteApplicativeCore);
 			ConnettoriCore connettoriCore = new ConnettoriCore(porteApplicativeCore);
+			ServiziApplicativiCore saCore = new ServiziApplicativiCore(porteApplicativeCore);
 
 			String tmpIdConnettore = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ID);
 			long idConnettore = Long.valueOf(tmpIdConnettore);
@@ -108,6 +124,22 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			
 			String tmpConnettoreRegistro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
 			boolean connettoreRegistro = "true".equalsIgnoreCase(tmpConnettoreRegistro);
+			
+			boolean accessoDaListaAPS = false;
+			String accessoDaAPSParametro = null;
+			// nell'erogazione vale sempre
+			//if(gestioneErogatori) {
+			accessoDaAPSParametro = porteApplicativeHelper.getParameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS);
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaAPSParametro)) {
+				accessoDaListaAPS = true;
+			}
+			
+			boolean accessoDaListaConnettoriMultipli = false;
+			String accessoDaListaConnettoriMultipliParametro = null;
+			accessoDaListaConnettoriMultipliParametro = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
+			if(Costanti.CHECK_BOX_ENABLED_TRUE.equals(accessoDaListaConnettoriMultipliParametro)) {
+				accessoDaListaConnettoriMultipli = true;
+			}
 
 			String alias = porteApplicativeHelper.getParameter(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER);
 						
@@ -126,6 +158,16 @@ public class PorteApplicativeVerificaConnettore extends Action {
 				connettore = connettoriCore.getConnettoreConfig(idConnettore);
 			}
 			String labelConnettore = porteApplicativeHelper.getLabelConnettore(connettore);
+			
+			long idSA = saCore.getIdServizioApplicativoByConnettore(idConnettore);
+			ServizioApplicativo sa = null;
+			String nomeServer = null;
+			if(idSA>0) {
+				sa = saCore.getServizioApplicativo(idSA);
+				if(CostantiConfigurazione.SERVER.equals(sa.getTipo())) {
+					nomeServer = sa.getNome();
+				}
+			}
 			
 			PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(idInt);
 			String idporta = pa.getNome();
@@ -153,6 +195,71 @@ public class PorteApplicativeVerificaConnettore extends Action {
 				}
 			}
 			
+			if(accessoDaListaConnettoriMultipli) {
+				String labelListaConnettoriMultipli = null;
+				if(parentPA!=null && (parentPA.intValue() == PorteApplicativeCostanti.ATTRIBUTO_PORTE_APPLICATIVE_PARENT_CONFIGURAZIONE)) {
+					
+					AccordiServizioParteSpecificaCore apsCore = new AccordiServizioParteSpecificaCore(saCore);
+					AccordoServizioParteSpecifica asps = apsCore.getAccordoServizioParteSpecifica(Integer.parseInt(idAsps));
+					
+					if(accessoDaListaAPS) {
+						if(!isModalitaCompleta) {
+							if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
+								labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+							} else {
+								labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+
+										porteApplicativeHelper.getLabelIdServizio(asps);
+							}
+						}
+						else {
+							labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI;
+						}
+					}
+					else {
+						labelListaConnettoriMultipli = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI,
+								PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI,
+								pa);
+					}
+				}
+				else {
+					labelListaConnettoriMultipli = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_DI+pa.getNome();
+				}
+				
+				List<Parameter> listParametersConfigutazioneConnettoriMultipli = new ArrayList<>();
+				Parameter pIdPorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID, id);
+				Parameter pNomePorta = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_NOME, pa.getNome());
+				Parameter pIdSogg = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_SOGGETTO, idsogg);
+				Parameter pIdAsps = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_ID_ASPS, idAsps);
+				String idTabP = porteApplicativeHelper.getParameter(CostantiControlStation.PARAMETRO_ID_TAB);
+				Parameter pIdTab = new Parameter(CostantiControlStation.PARAMETRO_ID_TAB, idTabP != null ? idTabP : "");
+				Parameter pAccessoDaAPS = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DA_LISTA_APS, accessoDaAPSParametro != null ? accessoDaAPSParametro : "");
+				
+				Parameter pConnettoreAccessoDaGruppi = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI, tmpAccessoDaGruppi);
+				Parameter pConnettoreAccesso = new Parameter(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO, tmpConnettoreRegistro);
+				
+				listParametersConfigutazioneConnettoriMultipli.add(pIdSogg);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdPorta);
+				listParametersConfigutazioneConnettoriMultipli.add(pNomePorta);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdAsps);
+				listParametersConfigutazioneConnettoriMultipli.add(pIdTab);
+				listParametersConfigutazioneConnettoriMultipli.add(pAccessoDaAPS);
+				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccessoDaGruppi);
+				listParametersConfigutazioneConnettoriMultipli.add(pConnettoreAccesso);
+				
+				lstParam.add(new Parameter(labelListaConnettoriMultipli,  PorteApplicativeCostanti.SERVLET_NAME_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_LIST, listParametersConfigutazioneConnettoriMultipli.toArray(new Parameter[1])));
+				
+				PortaApplicativaServizioApplicativo paSA = null;
+				for (PortaApplicativaServizioApplicativo paSATmp : pa.getServizioApplicativoList()) {
+					if(paSATmp.getNome().equals(sa.getNome())) {
+						paSA = paSATmp;
+						break;
+					}
+				}
+				
+				labelPerPorta = porteApplicativeHelper.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+			}
+			
 			lstParam.add(new Parameter(labelPerPorta,  null));
 
 			
@@ -170,7 +277,7 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			
 			if(aliases.size()==1 || alias!=null) {
 
-				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, labelConnettore, connettore);
+				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, nomeServer, labelConnettore, connettore);
 				
 				if (!porteApplicativeHelper.isEditModeInProgress()) {
 				
@@ -265,6 +372,9 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			porteApplicativeHelper.addVerificaConnettoreHidden(dati,
 					id, idsogg, idAsps, null,
 					idConnettore, accessoDaGruppi, connettoreRegistro);
+			
+			dati = porteApplicativeHelper.addInformazioniGruppiAsHiddenToDati(TipoOperazione.OTHER, dati, idTab, idConnTab, accessoDaAPSParametro != null ? accessoDaAPSParametro : "", 
+					null, null, accessoDaListaConnettoriMultipliParametro);
 			
 			dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.OTHER,id, idsogg, null, idAsps, dati);
 

@@ -89,7 +89,7 @@ public class ServerInfoContextFeature extends AbstractFeature {
 			dumpConfig.setRole(Role.CLIENT);
 			dumpFeature.setDumpConfig(dumpConfig);
 			dumpFeature.setServerConfig(this.serverConfig);
-			dumpFeature.initialize(provider,bus);
+			dumpFeature.doInitializeProvider(provider,bus);
 			
 		}
 		

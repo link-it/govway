@@ -442,7 +442,7 @@ public class SingleCsvFileExporter implements IExporter{
 						oneLine.add(CostantiExport.DUPLICATA_VALUE);
 					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO)){
-					oneLine.add(esitoUtils.getEsitoLabelFromValue(t.getEsito()));
+					oneLine.add(esitoUtils.getEsitoLabelFromValue(t.getEsito(),false));
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_ESITO_CONTESTO)){
 					if(StringUtils.isNotEmpty(t.getEsitoContesto())){
 						oneLine.add(esitoUtils.getEsitoContestoLabelFromValue(t.getEsitoContesto()));

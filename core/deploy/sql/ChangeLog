@@ -1,3 +1,41 @@
+2020-02-20  Andrea Poli <apoli@link.it>
+
+	Aggiunte informazioni per gestire i connettori multipli:
+
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ADD COLUMN LOCK_CONSEGNA TIMESTAMP;
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ADD COLUMN CLUSTER_ID VARCHAR(255);
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ADD COLUMN ATTESA_ESITO INT;
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ADD COLUMN ERRORE_PROCESSAMENTO_COMPACT VARCHAR(255);
+
+	CREATE INDEX MSG_SERV_APPL_ACQUIRE_SEND ON MSG_SERVIZI_APPLICATIVI (ID_MESSAGGIO,TIPO_CONSEGNA,ERRORE_PROCESSAMENTO_COMPACT,RISPEDIZIONE,LOCK_CONSEGNA,ATTESA_ESITO);
+	CREATE INDEX MSG_SERV_APPL_RELEASE_SEND ON MSG_SERVIZI_APPLICATIVI (CLUSTER_ID,LOCK_CONSEGNA);
+
+	ALTER TABLE porte_applicative ADD COLUMN id_sa_default BIGINT;
+
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_nome VARCHAR(255);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_notifica INT;
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_descrizione VARCHAR(4000);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_stato VARCHAR(255);
+	ALTER TABLE porte_applicative_sa ADD COLUMN connettore_filtri TEXT;
+
+	ALTER TABLE servizi_applicativi ADD COLUMN tipo VARCHAR(255); 
+	ALTER TABLE servizi_applicativi ADD COLUMN as_client INT;
+
+	Nuove tabelle 'pa_sa_properties' e 'pa_behaviour_props'.
+
+	ALTER TABLE msgdiagnostici ADD COLUMN applicativo VARCHAR(2000);
+
+	ALTER TABLE MSG_SERVIZI_APPLICATIVI ALTER COLUMN SERVIZIO_APPLICATIVO TYPE VARCHAR(2000);
+
+	ALTER TABLE transazioni ALTER COLUMN servizio_applicativo_erogatore TYPE VARCHAR(2000);
+	ALTER TABLE transazioni ADD COLUMN esito_sincrono INT;
+	ALTER TABLE transazioni ADD COLUMN consegne_multiple INT;
+
+	Nuova tabella 'transazioni_sa'
+
+	ALTER TABLE dump_messaggi ADD COLUMN servizio_applicativo_erogatore VARCHAR(2000);
+	ALTER TABLE dump_messaggi ADD COLUMN data_consegna_erogatore TIMESTAMP;
+
 2020-02-03  Andrea Poli <apoli@link.it>
 
 	Aggiunti indici su tabelle di configurazioni:

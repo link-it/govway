@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="routing-table-default">
- * 		&lt;sequence>
- * 			&lt;element name="route" type="{http://www.openspcoop2.org/core/config}route" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="routing-table-default"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="route" type="{http://www.openspcoop2.org/core/config}route" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class RoutingTableDefault extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getRouteList
-   * @return List<Route>
+   * @return List&lt;Route&gt;
   */
   @Deprecated
   public List<Route> getRoute() {
@@ -120,7 +120,7 @@ public class RoutingTableDefault extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setRouteList
-   * @param route List<Route>
+   * @param route List&lt;Route&gt;
   */
   @Deprecated
   public void setRoute(List<Route> route) {

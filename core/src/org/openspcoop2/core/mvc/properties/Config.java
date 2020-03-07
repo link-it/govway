@@ -35,18 +35,18 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="config">
- * 		&lt;sequence>
- * 			&lt;element name="compatibility" type="{http://www.openspcoop2.org/core/mvc/properties}compatibility" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="properties" type="{http://www.openspcoop2.org/core/mvc/properties}properties" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="section" type="{http://www.openspcoop2.org/core/mvc/properties}section" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="sortLabel" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="config"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="compatibility" type="{http://www.openspcoop2.org/core/mvc/properties}compatibility" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="properties" type="{http://www.openspcoop2.org/core/mvc/properties}properties" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="section" type="{http://www.openspcoop2.org/core/mvc/properties}section" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="sortLabel" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="provider" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -177,7 +177,7 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method getSectionList
-   * @return List<Section>
+   * @return List&lt;Section&gt;
   */
   @Deprecated
   public List<Section> getSection() {
@@ -186,7 +186,7 @@ public class Config extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method setSectionList
-   * @param section List<Section>
+   * @param section List&lt;Section&gt;
   */
   @Deprecated
   public void setSection(List<Section> section) {

@@ -42,59 +42,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
+     */
+    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
+        return new WrapperIdAccordoServizioParteComune();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdPortaDominio }
      */
     public WrapperIdPortaDominio createWrapperIdPortaDominio() {
         return new WrapperIdPortaDominio();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdGruppo }
-     */
-    public WrapperIdGruppo createWrapperIdGruppo() {
-        return new WrapperIdGruppo();
-    }
-    
-    /**
-     * Create an instance of {@link IdEntity }
-     */
-    public IdEntity createIdEntity() {
-        return new IdEntity();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdScope }
-     */
-    public WrapperIdScope createWrapperIdScope() {
-        return new WrapperIdScope();
-    }
-    
-    /**
-     * Create an instance of {@link InUseCondition }
-     */
-    public InUseCondition createInUseCondition() {
-        return new InUseCondition();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdAccordoServizioParteSpecifica }
-     */
-    public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
-        return new WrapperIdAccordoServizioParteSpecifica();
-    }
-    
-    /**
-     * Create an instance of {@link UseInfo }
-     */
-    public UseInfo createUseInfo() {
-        return new UseInfo();
-    }
-    
-    /**
-     * Create an instance of {@link WrapperIdRuolo }
-     */
-    public WrapperIdRuolo createWrapperIdRuolo() {
-        return new WrapperIdRuolo();
     }
     
     /**
@@ -105,6 +63,41 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link UseInfo }
+     */
+    public UseInfo createUseInfo() {
+        return new UseInfo();
+    }
+    
+    /**
+     * Create an instance of {@link IdEntity }
+     */
+    public IdEntity createIdEntity() {
+        return new IdEntity();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdRuolo }
+     */
+    public WrapperIdRuolo createWrapperIdRuolo() {
+        return new WrapperIdRuolo();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdScope }
+     */
+    public WrapperIdScope createWrapperIdScope() {
+        return new WrapperIdScope();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdAccordoServizioParteSpecifica }
+     */
+    public WrapperIdAccordoServizioParteSpecifica createWrapperIdAccordoServizioParteSpecifica() {
+        return new WrapperIdAccordoServizioParteSpecifica();
+    }
+    
+    /**
      * Create an instance of {@link WrapperIdAccordoCooperazione }
      */
     public WrapperIdAccordoCooperazione createWrapperIdAccordoCooperazione() {
@@ -112,10 +105,17 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link WrapperIdAccordoServizioParteComune }
+     * Create an instance of {@link InUseCondition }
      */
-    public WrapperIdAccordoServizioParteComune createWrapperIdAccordoServizioParteComune() {
-        return new WrapperIdAccordoServizioParteComune();
+    public InUseCondition createInUseCondition() {
+        return new InUseCondition();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdGruppo }
+     */
+    public WrapperIdGruppo createWrapperIdGruppo() {
+        return new WrapperIdGruppo();
     }
     
 

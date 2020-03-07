@@ -17,7 +17,7 @@
 
 		<jar.group.name>lucene</jar.group.name>
 		
-		<lucene.version>7.4.0</lucene.version>
+		<lucene.version>8.4.1</lucene.version>
 
 	</properties>
 

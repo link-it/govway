@@ -41,14 +41,12 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Filtri;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDFruizione;
@@ -70,6 +68,7 @@ import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -98,6 +97,8 @@ import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.connettori.ConnettoriHelper;
 import org.openspcoop2.web.ctrlstat.servlet.pdd.PddCore;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCostanti;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
@@ -207,6 +208,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 	
 	private String tipoProtocollo;
 	
+	private String erogazioneServizioApplicativoServer;
+	private boolean erogazioneServizioApplicativoServerEnabled = false;
+	
 	@Override
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request, HttpServletResponse response) throws Exception {
 
@@ -245,7 +249,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			this.servcorr = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_SERVIZIO_CORRELATO);
 			// this.servpub = apsHelper.getParameter("servpub");
 			//			this.endpointtype = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE );
-
+			
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			this.erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			this.erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			
 			this.endpointtype = apsHelper.readEndPointType();
 			this.tipoconn = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_TIPO_PERSONALIZZATO );
 			this.autenticazioneHttp = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_ENDPOINT_TYPE_ENABLE_HTTP);
@@ -425,10 +433,14 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				}
 			}
 			
+			boolean visualizzaSezioneApplicativiServerEnabled = gestioneErogatori && saCore.isApplicativiServerEnabled(apsHelper);
+			
 			PddTipologia pddTipologiaSoggettoAutenticati = null;
 			if(gestioneErogatori) {
 				pddTipologiaSoggettoAutenticati = PddTipologia.ESTERNO;
 			}
+			
+			
 			
 			if(ServletUtils.isEditModeInProgress(this.editMode)){
 				// primo accesso alla servlet
@@ -530,7 +542,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			boolean accordoPrivato = false;
 			String uriAccordo = null;
 			IDSoggetto soggettoReferente = null;
-			int idReferente = -1;
+			long idReferente = -1;
 
 			List<AccordoServizioParteComuneSintetico> listaAPI = AccordiServizioParteSpecificaUtilities.getListaAPI(this.tipoProtocollo, userLogin, apsCore, apsHelper);
 
@@ -547,18 +559,17 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					soggettoReferente = null;
 					idReferente = -1;
 					if(as.getSoggettoReferente()!=null && as.getSoggettoReferente().getId()!=null)
-						idReferente = as.getSoggettoReferente().getId().intValue();
+						idReferente = as.getSoggettoReferente().getId();
 
 					if(idReferente>0){
-						Soggetto sRef = soggettiCore.getSoggettoRegistro(idReferente);
 						soggettoReferente = new IDSoggetto();
-						soggettoReferente.setTipo(sRef.getTipo());
-						soggettoReferente.setNome(sRef.getNome());
+						soggettoReferente.setTipo(as.getSoggettoReferente().getTipo());
+						soggettoReferente.setNome(as.getSoggettoReferente().getNome());
 
 						// se ancora non ho scelto l'accordo da mostrare quando entro
 						if(accordoPrimoAccesso == -1){
 							//mostro il primo accordo che ha tipo che corrisponde a quello di default
-							if(apcCore.getProtocolloDefault(session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(sRef.getTipo()))){
+							if(apcCore.getProtocolloDefault(session,listaTipiProtocollo).equals(soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo()))){
 								accordoPrimoAccesso = i;
 							}
 						}
@@ -598,6 +609,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 						this.providerSoggettoFruitore = null;
 					}
 					
+					this.erogazioneServizioApplicativoServerEnabled = false;
 					this.url = null;
 					
 					if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ACCORDO) && this.tipoProtocollo!=null) {
@@ -635,8 +647,12 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PORT_TYPE)){
 					this.nomeservizio = "";
 					this.url = null;
+					this.erogazioneServizioApplicativoServerEnabled = false;
 				}
 				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_EROGATORE)){
+					this.erogazioneServizioApplicativoServerEnabled = false;
+				}
 			}
 
 			// Lista port-type associati all'accordo di servizio
@@ -657,6 +673,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			if(as!=null){
 				// salvo il soggetto referente
 				soggettoReferente = new IDSoggetto(as.getSoggettoReferente().getTipo(), as.getSoggettoReferente().getNome());
+				idReferente = as.getSoggettoReferente().getId();
 
 				this.serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding());
 				this.formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
@@ -729,14 +746,6 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			String urlAPI = apcCore.readEndpoint(as, this.portType, this.servcorr, this.wsdlimpler, this.wsdlimplfru);
 			//System.out.println("Endpoint ricavato dall'API ["+urlSuggerita+"]");
 			
-			//String profiloValue = profiloSoggettoErogatore;
-			//if(this.profilo!=null && !"".equals(this.profilo) && !"-".equals(this.profilo)){
-			//	profiloValue = this.profilo;
-			//}
-
-			// Versione
-			//String profiloReferente = core.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getProfilo();
-
 			List<String> versioniProtocollo = apsCore.getVersioniProtocollo(this.tipoProtocollo);
 			List<String> tipiSoggettiCompatibiliAccordo = soggettiCore.getTipiSoggettiGestitiProtocollo(this.tipoProtocollo);
 			List<String> tipiServizioCompatibiliAccordo = apsCore.getTipiServiziGestitiProtocollo(this.tipoProtocollo,this.serviceBinding);
@@ -995,12 +1004,11 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				//profiloSoggettoErogatore = soggetto.getVersioneProtocollo();
 			} else {
 				if(soggettoReferente != null ){
-					Soggetto soggetto = soggettiCore.getSoggettoRegistro(soggettoReferente);
 					for (Soggetto soggettoCheck : listSoggetti) {
-						if(soggettoCheck.getTipo().equals(soggetto.getTipo()) && soggettoCheck.getNome().equals(soggetto.getNome())) {
-							this.provider = soggetto.getId() + "";
-							this.nomeSoggettoErogatore = soggetto.getNome();
-							this.tipoSoggettoErogatore = soggetto.getTipo();
+						if(soggettoCheck.getTipo().equals(soggettoReferente.getTipo()) && soggettoCheck.getNome().equals(soggettoReferente.getNome())) {
+							this.provider = idReferente + "";
+							this.nomeSoggettoErogatore = soggettoReferente.getNome();
+							this.tipoSoggettoErogatore = soggettoReferente.getTipo();
 							break;
 						}
 					}
@@ -1022,41 +1030,32 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 			}
 
 
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (visualizzaSezioneApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
+			
 			// Lista dei servizi applicativi per la creazione automatica
-			String [] saSoggetti = null;	
+			List<IDServizioApplicativoDB> listaIdSA = null;
 			if ((this.provider != null) && !this.provider.equals("")) {
-				int idErogatore = Integer.parseInt(this.provider);
-
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
-
-				// rif bug #45
+				long idErogatore = Long.valueOf(this.provider);
+				
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
 
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
+				if(tipoSA == null) {
+					List<IDServizioApplicativoDB> newListaIdSA = new ArrayList<IDServizioApplicativoDB>();
+					IDServizioApplicativoDB idSA = new IDServizioApplicativoDB();
+					idSA.setNome("-"); // elemento nullo di default
+					idSA.setIdSoggettoProprietario(new IDSoggetto("-", "-"));
+					newListaIdSA.add(idSA);
+					if(listaIdSA!=null && !listaIdSA.isEmpty()) {
+						newListaIdSA.addAll(listaIdSA);
 					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()+1];
-				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i+1] = sa.getNome();
+					listaIdSA = newListaIdSA;
 				}
 			}
+			String [] saSoggetti = ServiziApplicativiHelper.toArray(listaIdSA);
 			
 			
 			// ServiziApplicativi
@@ -1072,7 +1071,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
-					List<ServizioApplicativo> oldSilList = null;
+					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(userLogin)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoFruitoreSelected,null,
 								org.openspcoop2.core.config.constants.CredenzialeTipo.toEnumConstant(auth));
@@ -1099,7 +1098,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(this.erogazioneAutenticazione) : null;
 			}
 			
-			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+			List<IDSoggettoDB> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
 				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
@@ -1111,7 +1110,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				
 				soggettiAutenticati.add("-"); // elemento nullo di default
 				soggettiAutenticatiLabel.add("-");
-				for (Soggetto soggetto : listSoggettiCompatibili) {
+				for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 					soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 					soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo(), soggetto.getNome())); 
 				}
@@ -1333,6 +1332,9 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					break;
 				}
 
+//				this.erogazioneServizioApplicativoServerEnabled = false;
+				if(this.erogazioneServizioApplicativoServer==null)
+					this.erogazioneServizioApplicativoServer = "";
 
 				if(this.erogazioneRuolo==null || "".equals(this.erogazioneRuolo))
 					this.erogazioneRuolo = "-";
@@ -1355,7 +1357,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
 						soggettiAutenticati.add("-"); // elemento nullo di default
 						soggettiAutenticatiLabel.add("-");
-						for (Soggetto soggetto : listSoggettiCompatibili) {
+						for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 							soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 							soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(this.tipoProtocollo, soggetto.getTipo(), soggetto.getNome())); 
 						}
@@ -1519,7 +1521,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient);
+							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+							this.erogazioneServizioApplicativoServer, saSoggetti);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1591,7 +1594,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					this.fruizioneAutorizzazioneAutenticati, this.fruizioneAutorizzazioneRuoli, this.fruizioneAutorizzazioneRuoliTipologia, this.fruizioneAutorizzazioneRuoliMatch,
 					this.tipoProtocollo, allegatoXacmlPolicy, 
 					this.descrizione, this.tipoSoggettoFruitore, this.nomeSoggettoFruitore,
-					this.autenticazioneToken,this.token_policy);
+					this.autenticazioneToken,this.token_policy,this.erogazioneServizioApplicativoServerEnabled,
+					this.erogazioneServizioApplicativoServer);
 
 			if(isOk){
 				if(generaPortaApplicativa && apsHelper.isModalitaCompleta() && (this.nomeSA==null || "".equals(this.nomeSA) || "-".equals(this.nomeSA))){
@@ -1720,7 +1724,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							this.tipoProtocollo, forceHttps, forceHttpsClient);
+							this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+							this.erogazioneServizioApplicativoServer, saSoggetti);
 					
 					// url suggerita
 					if(urlAPI!=null) {
@@ -1968,7 +1973,8 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								this.tipoProtocollo, forceHttps, forceHttpsClient);
+								this.tipoProtocollo, forceHttps, forceHttpsClient, visualizzaSezioneApplicativiServerEnabled, this.erogazioneServizioApplicativoServerEnabled,
+								this.erogazioneServizioApplicativoServer, saSoggetti);
 						
 					}
 
@@ -2091,7 +2097,7 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 					gestioneTokenValidazioneInput, gestioneTokenIntrospection, gestioneTokenUserInfo, gestioneTokenTokenForward, 
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail, 
 					this.protocolProperties, this.consoleOperationType, 
-					apsCore, apsHelper);
+					apsCore, apsHelper, this.erogazioneServizioApplicativoServer);
 
 			// cancello i file temporanei
 			apsHelper.deleteBinaryParameters(this.wsdlimpler,this.wsdlimplfru);

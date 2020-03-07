@@ -47,7 +47,7 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 /**
  * Bean Contenente le informazioni relative alle tracce
  * 
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author Nardi Lorenzo
  * @author $Author$
  * @version $Rev$, $Date$

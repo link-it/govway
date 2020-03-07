@@ -50,23 +50,23 @@ indicare i seguenti dati:
 -  *Modalità Identificazione*: rappresenta la modalità di acquisizione
    dell'identificatore applicativo. Può assumere i seguenti valori:
 
-   -  *urlBased*: il valore viene preso dalla url utilizzata dal
+   -  *Url di Invocazione*: il valore viene preso dalla url utilizzata dal
       servizio applicativo per l'invocazione. La regola per l'estrazione
       dalla url viene specificata tramite un'espressione regolare
       inserita nel campo pattern.
 
-   -  *contentBased*: Il valore viene estratto direttamente dal
+   -  *Contenuto*: Il valore viene estratto direttamente dal
       messaggio applicativo. La regola per l'estrazione dal messaggio è
       specificata tramite un'espressione XPath o JSONPath inserita nel
       campo pattern;
 
-   -  *headerBased*: Il valore viene estratto dall'header di trasporto
+   -  *Header HTTP*: Il valore viene estratto dall'header di trasporto
       avente il nome indicato nel campo successivo.
 
-   -  *inputBased*: il valore viene estratto dall'header di integrazione
-      GovWay e presente nel valore della proprietà *IDApplicativo*.
+   -  *Header di Integrazione*: il valore viene estratto dall'header di integrazione
+      GovWay presente nel valore della proprietà *IDApplicativo*.
 
-   -  *disabilitato*: l'identificatore applicativo non viene estratto.
+   -  *Disabilitata*: l'identificatore applicativo non viene estratto.
       Questa opzione è utile quando si vuole disabilitare l'estrazione
       dell'id applicativo solo per specifici messaggi;
 

@@ -19,22 +19,23 @@
  */
 package org.openspcoop2.web.monitor.core.datamodel;
 
-import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
-import org.openspcoop2.generic_project.expression.IExpression;
-import org.openspcoop2.utils.LoggerWrapperFactory;
-
-import org.openspcoop2.web.monitor.core.dao.IService;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SerializableDataModel;
+import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
+import org.openspcoop2.generic_project.expression.IExpression;
+import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.dao.IService;
 import org.slf4j.Logger;
 
 /**
@@ -63,6 +64,7 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
     protected Integer rowCount;
     protected IExpression countFilter= null;
     protected Integer currentPage = 1;
+    protected Integer rowsToDisplay = 25;
     
     /**
      * The boolean field, detached, starts as false.  
@@ -275,6 +277,18 @@ public abstract class BaseDataModel<K, T , D> extends SerializableDataModel {
 	public void setCurrentPage(Integer currentPage) {
 		this.currentPage = currentPage;
 	}
+
+	public Integer getRowsToDisplay() {
+		return  this.rowsToDisplay;
+	}
+
+	public void setRowsToDisplay(Integer rowsToDisplay) {
+		this.rowsToDisplay = rowsToDisplay;
+	}
+	
+	public void rowsToDisplaySelected(ActionEvent ae) {}
     
-    
+	public List<SelectItem> getListaNumeroRisultati(){
+		return Costanti.SELECT_ITEM_ENTRIES;
+	}
 }

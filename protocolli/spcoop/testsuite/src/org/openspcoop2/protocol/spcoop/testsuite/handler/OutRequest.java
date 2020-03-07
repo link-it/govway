@@ -28,7 +28,7 @@ import org.openspcoop2.pdd.core.handlers.OutRequestHandler;
 /**
  * Libreria per handler testsuite
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

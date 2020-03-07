@@ -122,6 +122,8 @@ public class Enums {
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.FORM_BASED, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.FORM);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.HEADER_BASED, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.HEADER);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.IP_ADDRESS, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.INDIRIZZO_IP);
+		// TODO: aggiungere all'API
+		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.IP_ADDRESS_FORWARDED_FOR, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.INDIRIZZO_IP_X_FORWARDED_FOR);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.URL_BASED, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.URL);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.TOKEN, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.TOKEN);
 	}

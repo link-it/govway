@@ -161,34 +161,49 @@
 			<div class="spacer"></div>
 	
 			<a4j:outputPanel id="eventiTbl" layout="block" styleClass="panelLista" rendered="#{eventiDM.executeQuery}">
+			
+				<script type="text/javascript">
+					//<![CDATA[
+					   jQuery(document).ready(nascondiChk);
+					   
+					   function nascondiChk(){
+						
+						   jQuery("th[id$='colEsitoImgheader']").css('padding','8px');
+						   jQuery("th[id$='colEsitoImgheader']").css('width','16px');
+					   }
+					   
+					   function completa(evt){   }
+					 //]]>	
+				</script>
+				
 				<h:form>
 					<link:dataTable value="#{eventiDM}" id="tableEventi"
 						mBean="#{eventiBean}" showSelectAll="false"
 						selectionMapTarget="#{eventiBean.selectedIds[item]}"
 						headerText="Lista Eventi" enableDelete="false"
-						reRenderIds="eventiTbl"
+						reRenderIds="eventiTbl" mostraComandiFooterSelezionePageSize="true"
 						useCount="#{searchFormEventi.useCount}">
 		
 						<rich:column id="colEsitoImg" style="text-align: center;">
 							<f:facet name="header">
 								<h:graphicImage value="/images/tema_link/circle_light_grey.png" />
 							</f:facet>
-							<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/verified_green.png" rendered="#{item.severitaReadable=='INFO' or item.severitaReadable=='DEBUG'}">
+							<h:graphicImage id="outEsitoImgOk" value="/images/tema_link/status_green.png" rendered="#{item.severitaReadable=='INFO' or item.severitaReadable=='DEBUG'}">
 								<rich:toolTip for="outEsitoImgOk">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgWarn" value="/images/tema_link/alert_yellow.png" rendered="#{item.severitaReadable=='WARN'}">
+							<h:graphicImage id="outEsitoImgWarn" value="/images/tema_link/status_yellow.png" rendered="#{item.severitaReadable=='WARN'}">
 								<rich:toolTip for="outEsitoImgWarn">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/alert_red.png" rendered="#{item.severitaReadable=='ERROR' or item.severitaReadable=='FATAL'}">
+							<h:graphicImage id="outEsitoImgKo" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable=='ERROR' or item.severitaReadable=='FATAL'}">
 								<rich:toolTip for="outEsitoImgKo">
 									<h:outputText value="#{item.severitaReadable}"/>
 								</rich:toolTip>
 							</h:graphicImage>
-							<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/ko_red.png" rendered="#{item.severitaReadable!='INFO' and 
+							<h:graphicImage id="outEsitoImgOther" value="/images/tema_link/status_red.png" rendered="#{item.severitaReadable!='INFO' and 
 								item.severitaReadable!='DEBUG' and 
 								item.severitaReadable!='WARN' and 
 								item.severitaReadable!='ERROR' and 

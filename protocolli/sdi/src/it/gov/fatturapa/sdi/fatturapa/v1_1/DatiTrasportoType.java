@@ -32,23 +32,23 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiTrasportoType">
- * 		&lt;sequence>
- * 			&lt;element name="DatiAnagraficiVettore" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiVettoreType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="MezzoTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CausaleTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="NumeroColli" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}integer" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Descrizione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="UnitaMisuraPeso" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="PesoLordo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="PesoNetto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DataOraRitiro" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DataInizioTrasporto" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="TipoResa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="IndirizzoResa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DataOraConsegna" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiTrasportoType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="DatiAnagraficiVettore" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}DatiAnagraficiVettoreType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="MezzoTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CausaleTrasporto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="NumeroColli" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}integer" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Descrizione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="UnitaMisuraPeso" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="PesoLordo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="PesoNetto" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataOraRitiro" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataInizioTrasporto" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="TipoResa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="IndirizzoResa" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}IndirizzoType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataOraConsegna" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

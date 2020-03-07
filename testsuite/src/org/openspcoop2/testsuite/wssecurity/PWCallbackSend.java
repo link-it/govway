@@ -30,7 +30,7 @@ import org.apache.ws.security.WSPasswordCallback;
 /**
  * Gestore delle password dei certificati scambiati con wssecurity, gestore di esempio.
  * 	
- * @author Montebove Luciano <L.Montebove@finsiel.it>
+ * @author Montebove Luciano (L.Montebove@finsiel.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -46,7 +46,7 @@ import org.slf4j.Logger;
 /**
 * GeneralInstanceProperties
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

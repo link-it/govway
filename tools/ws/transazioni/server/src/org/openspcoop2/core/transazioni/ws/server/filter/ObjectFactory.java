@@ -42,17 +42,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link SearchFilterTransazione }
-     */
-    public SearchFilterTransazione createSearchFilterTransazione() {
-        return new SearchFilterTransazione();
-    }
-    
-    /**
      * Create an instance of {@link SearchFilterDumpMessaggio }
      */
     public SearchFilterDumpMessaggio createSearchFilterDumpMessaggio() {
         return new SearchFilterDumpMessaggio();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterTransazioneApplicativoServer }
+     */
+    public SearchFilterTransazioneApplicativoServer createSearchFilterTransazioneApplicativoServer() {
+        return new SearchFilterTransazioneApplicativoServer();
+    }
+    
+    /**
+     * Create an instance of {@link SearchFilterTransazione }
+     */
+    public SearchFilterTransazione createSearchFilterTransazione() {
+        return new SearchFilterTransazione();
     }
     
 

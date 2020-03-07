@@ -19,10 +19,7 @@
  */
 package org.openspcoop2.web.monitor.transazioni.mbean;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
@@ -41,7 +38,6 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneRisorsaContenuto;
 import org.openspcoop2.monitor.engine.config.transazioni.ConfigurazioneTransazioneStato;
-import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
@@ -97,7 +93,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private transient IUserService userService = null;
 
 	private boolean visualizzaIdCluster = false;
-	private boolean exportCsvAbilitato = false;
 	private boolean exportCsvCompletato = false;
 	private boolean visualizzaDataAccettazione = false;
 	private boolean updateTipoStorico = false;
@@ -107,6 +102,8 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	private List<GruppoStorico> tipiStorico;
 	private String tipoStorico;
 	
+	private boolean visualizzazioneStoricoTabellare = false;
+	private boolean exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = false;
 
 	public TransazioniBean(){
 		super();
@@ -119,6 +116,9 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			
 			this.applicationBean = new ApplicationBean();
 			this.applicationBean.setLoginBean(Utility.getLoginBean()); 
+			
+			this.visualizzazioneStoricoTabellare = !govwayMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni();
+			this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti = PddMonitorProperties.getInstance(log).isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti();
 			
 		}catch(Exception e){
 			TransazioniBean.log.error(e.getMessage(), e);
@@ -362,76 +362,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		return null;
 	}
 
-	public String exportSelected() {
-		try {
-
-			// recupero lista diagnostici
-			List<String> idTransazioni = new ArrayList<String>();
-
-			// se nn sono in select all allore prendo solo quelle selezionate
-			if (!this.isSelectedAll()) {
-				
-				// NOTA: Al massimo sono selezionate 25 transazioni
-				// NOTA2: Le transazioni esportate sono sempre ordinate per data
-				List<String> orderFix = new ArrayList<String>();
-				Hashtable<String, String> orderMap = new Hashtable<String, String>();
-				SimpleDateFormat format = DateUtils.getSimpleDateFormatMs();
-				
-				Iterator<TransazioneBean> it = this.selectedIds.keySet().iterator();
-				while (it.hasNext()) {
-					TransazioneBean t = it.next();
-					if (this.selectedIds.get(t).booleanValue()) {
-						
-						String d = format.format(t.getDataIngressoRichiesta());
-						orderFix.add(d);
-						orderMap.put(d, t.getIdTransazione());
-						
-						it.remove();
-					}
-				}
-				
-				Collections.sort(orderFix, Collections.reverseOrder());
-				for (String data : orderFix) {
-					idTransazioni.add(orderMap.get(data));
-				}
-
-			}
-
-			// We must get first our context
-			FacesContext context = FacesContext.getCurrentInstance();
-
-			// Then we have to get the Response where to write our file
-			HttpServletResponse response = (HttpServletResponse) context
-					.getExternalContext().getResponse();
-
-			// Salvo i parametri di export in sessione
-			HttpSession sessione = (HttpSession) context.getExternalContext().getSession(false);
-
-			sessione.setAttribute(CostantiExport.PARAMETER_ID_TRANSAZIONI_ORIGINALI, StringUtils.join(idTransazioni, ","));
-			sessione.setAttribute(CostantiExport.PARAMETER_IS_ALL_ORIGINALE, this.isSelectedAll());
-			sessione.setAttribute(CostantiExport.PARAMETER_TIPI_EXPORT_ORIGINALI, StringUtils.join(this.esportazioniSelezionate, ","));
-
-			response.sendRedirect(context.getExternalContext()
-					.getRequestContextPath()
-					+ "/" + CostantiExport.TRANSAZIONI_EXPORTER_SERVLET_NAME + "?" + CostantiExport.PARAMETER_IS_ALL + "="
-					+ this.isSelectedAll()
-					+ "&" + CostantiExport.PARAMETER_IDS + "="
-					+ StringUtils.join(idTransazioni, ",")
-					+ "&" + CostantiExport.PARAMETER_EXPORTER + "="
-					+ StringUtils.join(this.esportazioniSelezionate, ","));
-
-			context.responseComplete();
-
-			// End of the method
-		} catch (Exception e) {
-			FacesContext.getCurrentInstance().responseComplete();
-			TransazioniBean.log.error(e.getMessage(), e);
-			MessageUtils
-			.addErrorMsg("Si e' verificato un errore durante l'esportazione dei diagnostici.");
-		}
-
-		return null;
-	}
 
 	public String exportCsvSelected() {
 		try {
@@ -500,27 +430,44 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 			// Salvo i parametri di export in sessione
 			HttpSession sessione = (HttpSession) context.getExternalContext().getSession(false);
+			
+			if(CostantiExport.FORMATO_ZIP_VALUE.equals(formatoExport)) {
+				sessione.setAttribute(CostantiExport.PARAMETER_ID_TRANSAZIONI_ORIGINALI, StringUtils.join(idTransazioni, ","));
+				sessione.setAttribute(CostantiExport.PARAMETER_IS_ALL_ORIGINALE, this.isSelectedAll());
+				sessione.setAttribute(CostantiExport.PARAMETER_TIPI_EXPORT_ORIGINALI, StringUtils.join(this.esportazioniSelezionate, ","));
 
-			sessione.setAttribute(CostantiExport.PARAMETER_ID_TRANSAZIONI_ORIGINALI, StringUtils.join(idTransazioni, ","));
-			sessione.setAttribute(CostantiExport.PARAMETER_IS_ALL_ORIGINALE, this.isSelectedAll());
-			sessione.setAttribute(CostantiExport.PARAMETER_TIPI_EXPORT_ORIGINALI, StringUtils.join(this.esportazioniSelezionate, ","));
-			sessione.setAttribute(CostantiExport.PARAMETER_FORMATO_EXPORT_ORIGINALE, formatoExport);
-			sessione.setAttribute(CostantiExport.PARAMETER_ID_SELEZIONI_ORIGINALI, idColonneSelezionate);
-			sessione.setAttribute(CostantiExport.PARAMETER_LISTA_SELEZIONI_ORIGINALI, colonneSelezionate);
+				response.sendRedirect(context.getExternalContext()
+						.getRequestContextPath()
+						+ "/" + CostantiExport.TRANSAZIONI_EXPORTER_SERVLET_NAME + "?" + CostantiExport.PARAMETER_IS_ALL + "="
+						+ this.isSelectedAll()
+						+ "&" + CostantiExport.PARAMETER_IDS + "="
+						+ StringUtils.join(idTransazioni, ",")
+						+ "&" + CostantiExport.PARAMETER_EXPORTER + "="
+						+ StringUtils.join(this.esportazioniSelezionate, ","));
+			} else {
+				sessione.setAttribute(CostantiExport.PARAMETER_ID_TRANSAZIONI_ORIGINALI, StringUtils.join(idTransazioni, ","));
+				sessione.setAttribute(CostantiExport.PARAMETER_IS_ALL_ORIGINALE, this.isSelectedAll());
+				sessione.setAttribute(CostantiExport.PARAMETER_TIPI_EXPORT_ORIGINALI, StringUtils.join(this.esportazioniSelezionate, ","));
+				sessione.setAttribute(CostantiExport.PARAMETER_FORMATO_EXPORT_ORIGINALE, formatoExport);
+				sessione.setAttribute(CostantiExport.PARAMETER_ID_SELEZIONI_ORIGINALI, idColonneSelezionate);
+				sessione.setAttribute(CostantiExport.PARAMETER_LISTA_SELEZIONI_ORIGINALI, colonneSelezionate);
 
-			response.sendRedirect(context.getExternalContext()
-					.getRequestContextPath()
-					+ "/" + CostantiExport.TRANSAZIONI_CSV_EXPORTER_SERVLET_NAME + "?" + CostantiExport.PARAMETER_IS_ALL + "="
-					+ this.isSelectedAll()
-					+ "&" + CostantiExport.PARAMETER_IDS + "="
-					+ StringUtils.join(idTransazioni, ",")
-					+ "&" + CostantiExport.PARAMETER_EXPORTER + "="
-					+ StringUtils.join(this.esportazioniSelezionate, ",")
-					+ "&" + CostantiExport.PARAMETER_FORMATO_EXPORT + "="
-					+ formatoExport
-					+ "&" + CostantiExport.PARAMETER_ID_SELEZIONI + "="
-					+ idColonneSelezionate
-					);
+				response.sendRedirect(context.getExternalContext()
+						.getRequestContextPath()
+						+ "/" + CostantiExport.TRANSAZIONI_CSV_EXPORTER_SERVLET_NAME + "?" + CostantiExport.PARAMETER_IS_ALL + "="
+						+ this.isSelectedAll()
+						+ "&" + CostantiExport.PARAMETER_IDS + "="
+						+ StringUtils.join(idTransazioni, ",")
+						+ "&" + CostantiExport.PARAMETER_EXPORTER + "="
+						+ StringUtils.join(this.esportazioniSelezionate, ",")
+						+ "&" + CostantiExport.PARAMETER_FORMATO_EXPORT + "="
+						+ formatoExport
+						+ "&" + CostantiExport.PARAMETER_ID_SELEZIONI + "="
+						+ idColonneSelezionate
+						);
+			}
+
+			
 
 			context.responseComplete();
 
@@ -539,6 +486,8 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		super.initExportListener(ae);
 		
 		this.tipoExport = CostantiExport.FORMATO_CSV_VALUE;
+		this.showSelezioneContenuti = this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti;
+		this.showSelezioneTipoColonne = true;
 		this.colonneEsportate = null;
 		this.tipiColonneEsportate = null;
 	}
@@ -569,29 +518,44 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			}
 			
 		}else if(colonneEsportate.equals(CostantiExport.COLONNE_VALUE_VISUALIZZATE_NELLO_STORICO)){
-			try{
-				JSONObject json = JSONObject.fromObject(this.getTableState());
-				if(json != null){
-					// prelevo l'array dell'ordine delle colonne
-					JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
-					JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
-
-					for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
-						String key = jsonArrayColumnsOrder.getString(i);
-						int visibility = jsonObjectColumnsVisibility.getInt(key);
-						
-						if(isCsvColumnEnabled(key)==false){
-							visibility = -1;
-						}
-
-						// controllo che la colonna sia tra quelle previste e tra quelle visibili
-						if(ColonnaExportManager.getInstance().containsColonna(key) && visibility > 0){
-							colonneSelezionate.add(key);
+			if(this.visualizzazioneStoricoTabellare) {
+				try{
+					JSONObject json = JSONObject.fromObject(this.getTableState());
+					if(json != null){
+						// prelevo l'array dell'ordine delle colonne
+						JSONArray jsonArrayColumnsOrder = json.getJSONArray(TransazioniBean.COLUMNS_ORDER_STATO_TABELLE_KEY);
+						JSONObject jsonObjectColumnsVisibility = json.getJSONObject(TransazioniBean.COLUMNS_VISIBILITY_STATO_TABELLE_KEY); 
+	
+						for (int i = 0; i < jsonArrayColumnsOrder.size(); i++) {
+							String key = jsonArrayColumnsOrder.getString(i);
+							int visibility = jsonObjectColumnsVisibility.getInt(key);
+							
+							if(isCsvColumnEnabled(key)==false){
+								visibility = -1;
+							}
+	
+							// controllo che la colonna sia tra quelle previste e tra quelle visibili
+							if(ColonnaExportManager.getInstance().containsColonna(key) && visibility > 0){
+								colonneSelezionate.add(key);
+							}
 						}
 					}
+				}catch(Exception e){
+					TransazioniBean.log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
 				}
-			}catch(Exception e){
-				TransazioniBean.log.error("Errore durante la lettura dei nomi colonne: " + e.getMessage(), e); 
+			}
+			else {
+				// inserisco tutte le chiavi della custom view
+				List<String> colonneSelezionateTmp = ColonnaExportManager.getInstance().getKeysColonneCustomView();
+				
+				for (String key : colonneSelezionateTmp) {
+					
+					if(isCsvColumnEnabled(key)==false){
+						continue;
+					}
+									
+					colonneSelezionate.add(key);
+				}
 			}
 		}else  { // personalizzato
 			if(this.getElencoColonneSelezionate() != null)
@@ -605,10 +569,14 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		// gestione di tracce e diagnostici
 		if(this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_TRACCE)){
 			colonneSelezionate.addAll(ColonnaExportManager.getInstance().getKeysColonneTracce());
+		} else {
+			colonneSelezionate.removeAll(ColonnaExportManager.getInstance().getKeysColonneTracce());
 		}
 
 		if(this.esportazioniSelezionate.contains(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI)){
 			colonneSelezionate.addAll(ColonnaExportManager.getInstance().getKeysColonneDiagnostici());
+		} else {
+			colonneSelezionate.removeAll(ColonnaExportManager.getInstance().getKeysColonneDiagnostici());
 		}
 
 
@@ -656,10 +624,28 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	}
 	
 	public List<String> getEsportazioniSelezionate() {
-
-		if (this.esportazioniSelezionate.size() == 0) {
-			this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_TRACCE);
-			this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI);
+		try {
+			if (this.esportazioniSelezionate.size() == 0) {
+				if(CostantiExport.FORMATO_ZIP_VALUE.equals(this.tipoExport)) {
+					if(PddMonitorProperties.getInstance(log).isExportTransazioniZipTracceDefaultValue())
+						this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_TRACCE);
+					if(PddMonitorProperties.getInstance(log).isExportTransazioniZipDiagnosticiDefaultValue())
+						this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI);
+					if(PddMonitorProperties.getInstance(log).isExportTransazioniZipContenutiDefaultValue())
+						this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_CONTENUTI);
+				} else { // CSV/XLS
+					if(this.showSelezioneContenuti) {
+						if(PddMonitorProperties.getInstance(log).isExportTransazioniCsvTracceDefaultValue())
+							this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_TRACCE);
+						if(PddMonitorProperties.getInstance(log).isExportTransazioniCsvDiagnosticiDefaultValue())
+							this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI);
+					} else {
+						this.esportazioniSelezionate.clear();
+					}
+				}
+			}
+		}catch(Exception e) {
+			
 		}
 
 		return this.esportazioniSelezionate;
@@ -669,19 +655,40 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		this.esportazioniSelezionate = esportazioniSelezionate;
 	}
 	
-	public void setElencoEsportazioni(String esportazioniSelezionate) {
-		String [] split = esportazioniSelezionate.split(",");
-		if(split != null){
-			this.esportazioniSelezionate.clear();
-			for (String sel : split) {
-				if(sel.equals("0"))
-					this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_TRACCE);
-				if(sel.equals("1"))
-					this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI);
-				if(sel.equals("2"))
-					this.esportazioniSelezionate.add(CostantiExport.ESPORTAZIONI_VALUE_CONTENUTI);	
-			}
+	private List<SelectItem> esportazioniSelezionateDisponibili = null;
+
+	public List<SelectItem> getEsportazioniSelezionateDisponibili() {
+		this.esportazioniSelezionateDisponibili = new ArrayList<SelectItem>();
+		
+		if(CostantiExport.FORMATO_ZIP_VALUE.equals(this.tipoExport)) {
+			this.esportazioniSelezionateDisponibili.add(new SelectItem(CostantiExport.ESPORTAZIONI_VALUE_TRACCE, CostantiExport.ESPORTAZIONI_LABEL_TRACCE));
+			this.esportazioniSelezionateDisponibili.add(new SelectItem(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI, CostantiExport.ESPORTAZIONI_LABEL_DIAGNOSTICI));
+			this.esportazioniSelezionateDisponibili.add(new SelectItem(CostantiExport.ESPORTAZIONI_VALUE_CONTENUTI, CostantiExport.ESPORTAZIONI_LABEL_CONTENUTI));
+		} else { // CSV/XLS
+			this.esportazioniSelezionateDisponibili.add(new SelectItem(CostantiExport.ESPORTAZIONI_VALUE_TRACCE, CostantiExport.ESPORTAZIONI_LABEL_TRACCE));
+			this.esportazioniSelezionateDisponibili.add(new SelectItem(CostantiExport.ESPORTAZIONI_VALUE_DIAGNOSTICI, CostantiExport.ESPORTAZIONI_LABEL_DIAGNOSTICI));
 		}
+
+		return this.esportazioniSelezionateDisponibili;
+	}
+
+	public void setEsportazioniSelezionateDisponibili(List<SelectItem> esportazioniSelezionateDisponibili) {
+		this.esportazioniSelezionateDisponibili = esportazioniSelezionateDisponibili;
+	}
+	
+	private Boolean showSelezioneContenuti = false;
+	
+	public Boolean getShowSelezioneContenuti() {
+		if(CostantiExport.FORMATO_ZIP_VALUE.equals(this.tipoExport)) {
+			this.showSelezioneContenuti = true;
+		} else { // CSV/XLS
+			this.showSelezioneContenuti = this.exportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti;
+		}
+		return this.showSelezioneContenuti;
+	}
+
+	public void setShowSelezioneContenuti(Boolean showSelezioneContenuti) {
+		this.showSelezioneContenuti = showSelezioneContenuti;
 	}
 
 	public String getTableState() {
@@ -722,20 +729,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 		this.visualizzaDataAccettazione = visualizzaDataAccettazione;
 	}
 
-
-	public boolean isExportCsvAbilitato() {
-		this.exportCsvAbilitato = true;
-
-		if(this.getEsportazioniSelezionate().contains(CostantiExport.ESPORTAZIONI_VALUE_CONTENUTI))
-			this.exportCsvAbilitato = false;
-
-		return this.exportCsvAbilitato;
-	}
-
-	public void setExportCsvAbilitato(boolean exportCsvAbilitato) {
-		this.exportCsvAbilitato = exportCsvAbilitato;
-	}
-
 	/**
 	 * <!-- <a4j:support event="onclick" reRender="exportCsv-iconLink" actionListener="#{mBean.esportazioneSelectListener}" /> -->
 	 * */
@@ -766,6 +759,7 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			this.exportDisponibili = new ArrayList<SelectItem>();
 			this.exportDisponibili.add(new SelectItem(CostantiExport.FORMATO_CSV_VALUE));
 			this.exportDisponibili.add(new SelectItem(CostantiExport.FORMATO_XLS_VALUE));
+			this.exportDisponibili.add(new SelectItem(CostantiExport.FORMATO_ZIP_VALUE));
 		}
 
 		return this.exportDisponibili;
@@ -781,6 +775,10 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 	public void setTipoExport(String tipoExport) {
 		this.tipoExport = tipoExport;
+	}
+	
+	public void tipoExportSelected(ActionEvent ae){
+		this.esportazioniSelezionate.clear();
 	}
 
 	public void tipoColonneSelected(ActionEvent ae){
@@ -889,6 +887,17 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 
 
 	private Boolean showSelezioneColonne = false;
+	private Boolean showSelezioneTipoColonne = false;
+	
+	public Boolean getShowSelezioneTipoColonne() {
+		this.showSelezioneTipoColonne = !this.getTipoExport().equals(CostantiExport.FORMATO_ZIP_VALUE);
+
+		return this.showSelezioneTipoColonne;
+	}
+
+	public void setShowSelezioneTipoColonne(Boolean showSelezioneTipoColonne) {
+		this.showSelezioneTipoColonne = showSelezioneTipoColonne;
+	}
 
 
 	public List<GruppoStorico> getTipiStorico() {
@@ -993,5 +1002,4 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 	public void setUpdateTipoStorico(boolean updateTipoStorico) {
 		this.updateTipoStorico = updateTipoStorico;
 	}
-	
 }

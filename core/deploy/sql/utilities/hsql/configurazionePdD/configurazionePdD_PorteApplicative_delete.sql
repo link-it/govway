@@ -21,5 +21,7 @@ DELETE FROM pa_properties;
 DELETE FROM pa_authzc_properties;
 DELETE FROM pa_authz_properties;
 DELETE FROM pa_auth_properties;
+DELETE FROM pa_behaviour_props;
+DELETE FROM pa_sa_properties;
 DELETE FROM porte_applicative_sa;
 DELETE FROM porte_applicative;

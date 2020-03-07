@@ -20,32 +20,47 @@
 package org.openspcoop2.web.monitor.transazioni.bean;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.core.commons.search.IdAccordoServizioParteComune;
+import org.openspcoop2.core.commons.search.IdSoggetto;
+import org.openspcoop2.core.commons.search.Resource;
+import org.openspcoop2.core.commons.search.dao.IResourceServiceSearch;
+import org.openspcoop2.core.config.constants.TipoAutenticazione;
+import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.id.IDAccordo;
+import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
 import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazione;
 import org.openspcoop2.core.transazioni.utils.TempiElaborazioneUtils;
-import org.openspcoop2.message.constants.MessageType;
-import org.openspcoop2.monitor.engine.condition.EsitoUtils;
+import org.openspcoop2.generic_project.exception.MultipleResultException;
+import org.openspcoop2.generic_project.exception.NotImplementedException;
+import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.expression.IPaginatedExpression;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
-import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.beans.BlackListElement;
-import org.openspcoop2.utils.json.JSONUtils;
-import org.openspcoop2.web.monitor.core.core.Utils;
+import org.openspcoop2.utils.certificate.CertificateUtils;
+import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
+import org.openspcoop2.web.monitor.transazioni.dao.TransazioniService;
+import org.openspcoop2.web.monitor.transazioni.utils.FormatoFaultUtils;
+import org.openspcoop2.web.monitor.transazioni.utils.TransazioniEsitiUtils;
+import org.slf4j.Logger;
 
 /**
  * TransazioneBean
@@ -67,6 +82,7 @@ public class TransazioneBean extends Transazione{
 	private Long latenzaPorta = null;
 
 	private java.lang.String trasportoMittenteLabel = null;
+	private java.lang.String tipoTrasportoMittenteLabel = null;
 	private java.lang.String tokenIssuerLabel = null;
 	private java.lang.String tokenClientIdLabel = null;
 	private java.lang.String tokenSubjectLabel = null;
@@ -74,18 +90,25 @@ public class TransazioneBean extends Transazione{
 	private java.lang.String tokenMailLabel = null;
 	private java.lang.String eventiLabel = null;
 	private java.lang.String gruppiLabel = null;
+	private java.lang.String operazioneLabel;
 
+	private String soggettoPddMonitor;
+	
 	public TransazioneBean() {
 		super();
 	}
 
-	public TransazioneBean(Transazione transazione){
+	public TransazioneBean(Transazione transazione, String soggettoPddMonitor){
+		
+		this.soggettoPddMonitor = soggettoPddMonitor;
+		
 		List<BlackListElement> metodiEsclusi = new ArrayList<BlackListElement>(
 				0);
 		metodiEsclusi.add(new BlackListElement("setLatenzaTotale", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaServizio", Long.class));
 		metodiEsclusi.add(new BlackListElement("setLatenzaPorta", Long.class));
 		metodiEsclusi.add(new BlackListElement("setTrasportoMittenteLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setTipoTrasportoMittenteLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenIssuerLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenClientIdLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setTokenSubjectLabel", String.class));
@@ -93,7 +116,10 @@ public class TransazioneBean extends Transazione{
 		metodiEsclusi.add(new BlackListElement("setTokenMailLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setEventiLabel", String.class));
 		metodiEsclusi.add(new BlackListElement("setGruppiLabel", String.class));
-
+		metodiEsclusi.add(new BlackListElement("setOperazioneLabel", String.class));
+		metodiEsclusi.add(new BlackListElement("setListaGruppi", List.class));
+		metodiEsclusi.add(new BlackListElement("setConsegnaMultipla", boolean.class));
+		
 		BeanUtils.copy(this, transazione, metodiEsclusi);
 	}
 
@@ -152,71 +178,40 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public String getEsitoStyleClass(){
-
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			String name = esitiProperties.getEsitoName(this.getEsito());
-			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
-			boolean casoSuccesso = esitiProperties.getEsitiCodeOk().contains(this.getEsito());
-			if(EsitoTransazioneName.ERRORE_APPLICATIVO.equals(esitoName)){
-				//return "icon-alert-orange";
-				return "icon-alert-yellow";
-			}
-			else if(casoSuccesso){
-				return "icon-verified-green";
-			}
-			else{
-				return "icon-alert-red";
-			}
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return "icon-ko";
-		}
-
+		return TransazioniEsitiUtils.getEsitoStyleClass(this.getEsito(), this.getProtocollo());
 	}
-
+	
 	public boolean isEsitoOk(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeOk_senzaFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoFaultApplicativo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo());
 	}
 	public boolean isEsitoKo(){	
-		try{
-			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
-			boolean res = esitiProperties.getEsitiCodeKo_senzaFaultApplicativo().contains(this.getEsito());
-			//System.out.println("isEsitoOk:"+res+" (esitoChecked:"+this.getEsito()+")");
-			return res;
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo del layout dell'esito ["+this.getEsito()+"]: "+e.getMessage(),e);
-			return false;
-		}
+		return TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo());
+	}
+	
+	public String getEsitoIcona() {
+		if(TransazioniEsitiUtils.isEsitoOk(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_OK_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoFaultApplicativo(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_ERROR_ICON_KEY);
+		if(TransazioniEsitiUtils.isEsitoKo(this.getEsito(), this.getProtocollo()))
+			return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY);
+
+		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_ESITO_WARNING_ICON_KEY);
 	}
 
 	public java.lang.String getEsitoLabel() {
-		try{
-			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoLabelFromValue(this.esito);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per l'esito ["+this.esito+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoLabel(this.getEsito(), this.getProtocollo());
+	}
+	
+	public java.lang.String getEsitoLabelSyntetic() {
+		return TransazioniEsitiUtils.getEsitoLabelSyntetic(this.getEsito(), this.getProtocollo());
+	}
+	
+	public java.lang.String getEsitoLabelDescription() {
+		return TransazioniEsitiUtils.getEsitoLabelDescription(this.getEsito(), this.getProtocollo());
 	}
 	
 	public boolean isShowContesto(){
@@ -227,256 +222,41 @@ public class TransazioneBean extends Transazione{
 			return false;
 		}
 	}
-
+	
 	public java.lang.String getEsitoContestoLabel() {
-		try{
-			EsitoUtils esitoUtils = new EsitoUtils(LoggerManager.getPddMonitorCoreLogger(), this.protocollo);
-			return esitoUtils.getEsitoContestoLabelFromValue(this.esitoContesto);
-		}catch(Exception e){
-			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il calcolo della label per il contesto esito ["+this.esitoContesto+"]: "+e.getMessage(),e);
-			return "Conversione non riuscita";
-		}
+		return TransazioniEsitiUtils.getEsitoContestoLabel(this.getEsitoContesto(), this.getProtocollo());
 	}
 	
-	
 	public String getFaultCooperazionePretty(){
-		String f = super.getFaultCooperazione();
-		String toRet = null;
-		if(f !=null) {
-			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, true);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFaultCooperazione(), super.getFormatoFaultCooperazione());
 	}
 
 	public boolean isVisualizzaFaultCooperazione(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFaultCooperazione();
-
-		if(f == null)
-			return false;
-
-		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder, false);
-		if(errore!= null)
-			return false;
-
-		//			MessageType messageType= MessageType.XML;
-		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-		//			}
-
-		//			switch (messageType) {
-		//			case BINARY:
-		//			case MIME_MULTIPART:
-		//				// questi due casi dovrebbero essere gestiti sopra 
-		//				break;	
-		//			case JSON:
-		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-		//				try {
-		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-		//				} catch (UtilsException e) {
-		//				}
-		//				break;
-		//			case SOAP_11:
-		//			case SOAP_12:
-		//			case XML:
-		//			default:
-		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-		//				break;
-		//			}
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFaultCooperazione());
 	}
 
 	public String getBrushFaultCooperazione() {
-		String toRet = null;
-		String f = super.getFaultCooperazione();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultCooperazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultCooperazione());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFaultCooperazione(), super.getFormatoFaultCooperazione());
 	}
 
 	public String getErroreVisualizzaFaultCooperazione(){
-		String f = super.getFaultCooperazione();
-		if(f!=null) {
-			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultCooperazione());
 	}
 
 	public String getFaultIntegrazionePretty(){
-		String f = super.getFaultIntegrazione();
-		String toRet = null;
-		if(f !=null) {
-			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,true);
-			if(errore!= null)
-				return "";
-
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
-			}
-
-			switch (messageType) {
-			case BINARY:
-			case MIME_MULTIPART:
-				// questi due casi dovrebbero essere gestiti sopra 
-				break;	
-			case JSON:
-				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-				try {
-					toRet = jsonUtils.toString(jsonUtils.getAsNode(f));
-				} catch (UtilsException e) {
-				}
-				break;
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = Utils.prettifyXml(f);
-				break;
-			}
-		}
-
-		if(toRet == null)
-			toRet = f != null ? f : "";
-
-		return toRet;
+		return FormatoFaultUtils.getFaultPretty(super.getFaultIntegrazione(), super.getFormatoFaultIntegrazione());
 	}
 
 	public boolean isVisualizzaFaultIntegrazione(){
-		boolean visualizzaMessaggio = true;
-		String f = super.getFaultIntegrazione();
-
-		if(f == null)
-			return false;
-
-		StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-		String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
-		if(errore!= null)
-			return false;
-
-		//			MessageType messageType= MessageType.XML;
-		//			if(StringUtils.isNotEmpty(this.dumpMessaggio.getFormatoMessaggio())) {
-		//				messageType = MessageType.valueOf(this.dumpMessaggio.getFormatoMessaggio());
-		//			}
-
-		//			switch (messageType) {
-		//			case BINARY:
-		//			case MIME_MULTIPART:
-		//				// questi due casi dovrebbero essere gestiti sopra 
-		//				break;	
-		//			case JSON:
-		//				JSONUtils jsonUtils = JSONUtils.getInstance(true);
-		//				try {
-		//					toRet = jsonUtils.toString(jsonUtils.getAsNode(this.dumpMessaggio.getBody()));
-		//				} catch (UtilsException e) {
-		//				}
-		//				break;
-		//			case SOAP_11:
-		//			case SOAP_12:
-		//			case XML:
-		//			default:
-		//				toRet = Utils.prettifyXml(this.dumpMessaggio.getBody());
-		//				break;
-		//			}
-
-		return visualizzaMessaggio;
+		return FormatoFaultUtils.isVisualizzaFault(super.getFaultIntegrazione());
 	}
 
 	public String getBrushFaultIntegrazione() {
-		String toRet = null;
-		String f = super.getFaultIntegrazione();
-		if(f!=null) {
-			MessageType messageType= MessageType.XML;
-			if(StringUtils.isNotEmpty(super.getFormatoFaultIntegrazione())) {
-				messageType = MessageType.valueOf(super.getFormatoFaultIntegrazione());
-			}
-
-			switch (messageType) {
-			case JSON:
-				toRet = "json";
-				break;
-			case BINARY:
-			case MIME_MULTIPART:
-				// per ora restituisco il default
-			case SOAP_11:
-			case SOAP_12:
-			case XML:
-			default:
-				toRet = "xml";
-				break;
-			}
-		}
-
-		return toRet;
+		return FormatoFaultUtils.getBrushFault(super.getFaultIntegrazione(), super.getFormatoFaultIntegrazione());
 	}
 
 	public String getErroreVisualizzaFaultIntegrazione(){
-		String f = super.getFaultIntegrazione();
-		if(f!=null) {
-			StringBuilder contenutoDocumentoStringBuilder = new StringBuilder();
-			String errore = Utils.getTestoVisualizzabile(f.getBytes(),contenutoDocumentoStringBuilder,false);
-			return errore;
-		}
-
-		return null;
+		return FormatoFaultUtils.getErroreVisualizzaFault(super.getFaultIntegrazione());
 	}
 
 	@Override
@@ -549,6 +329,14 @@ public class TransazioneBean extends Transazione{
 		this.trasportoMittenteLabel = trasportoMittenteLabel;
 	}
 
+	public java.lang.String getTipoTrasportoMittenteLabel() {
+		return this.tipoTrasportoMittenteLabel;
+	}
+
+	public void setTipoTrasportoMittenteLabel(java.lang.String tipoTrasportoMittenteLabel) {
+		this.tipoTrasportoMittenteLabel = tipoTrasportoMittenteLabel;
+	}
+	
 	public java.lang.String getTokenIssuerLabel() {
 		return this.tokenIssuerLabel;
 	}
@@ -683,7 +471,51 @@ public class TransazioneBean extends Transazione{
 		this.gruppiLabel = gruppiLabel;
 	}
 	
+	public List<Gruppo> getListaGruppi(){
+		String tmp = this.getGruppi();
+		List<Gruppo> gruppiObj = new ArrayList<Gruppo>();
+		if(tmp!=null){
+			// colleziono i tags registrati
+			List<String> tagsDisponibili = Utility.getListaNomiGruppi();
+			
+			tmp = tmp.trim();
+			
+			if(tmp.contains(",")){
+				String [] split = tmp.split(",");
+				if(split!=null && split.length>0){
+					for (String nomeGruppo : split) {
+						Gruppo gruppo = new Gruppo();
+						gruppo.setLabel(nomeGruppo);
+						gruppiObj.add(gruppo);
+						
+						int indexOf = tagsDisponibili.indexOf(nomeGruppo);
+						if(indexOf == -1)
+							indexOf = 0;
+						
+						indexOf = indexOf % TransazioniCostanti.NUMERO_GRUPPI_CSS;
+						
+						gruppo.setValue("label-info-"+indexOf);
+					}
+				}
+			}else {
+				Gruppo gruppo = new Gruppo();
+				gruppo.setLabel(tmp);
+				int indexOf = tagsDisponibili.indexOf(tmp);
+				if(indexOf == -1)
+					indexOf = 0;
+				
+				indexOf = indexOf % TransazioniCostanti.NUMERO_GRUPPI_CSS;
+				
+				gruppo.setValue("label-info-"+indexOf);
+				
+				gruppiObj.add(gruppo);
+			}
+		}
+		
+		return gruppiObj;
+	}
 	
+	public void setListaGruppi(List<Gruppo> lista) {}
 	
 	
 	public TempiElaborazioneBean getTempiElaborazioneObject() {
@@ -750,6 +582,10 @@ public class TransazioneBean extends Transazione{
 		return "";
 	}
 	
+	public boolean isShowProfiloCollaborazione() {
+		return TipoAPI.SOAP.getValoreAsInt() == this.getTipoApi();
+	}
+	
 	public String getPddRuoloToolTip() {
 		PddRuolo pddRuolo = this.getPddRuolo();
 		if(pddRuolo!=null) {
@@ -784,5 +620,313 @@ public class TransazioneBean extends Transazione{
 		return MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_ELENCO_RUOLO_PDD_ROUTER_ICON_KEY);
 	}
 	
+	public void normalizeRichiedenteInfo(Transazione t, TransazioneBean transazioneBean, TransazioniService transazioniService) throws ServiceException, MultipleResultException, NotImplementedException {
+		
+		// 1) Username del Token
+		String sTokenUsername = getTokenUsername();
+		if(StringUtils.isNotEmpty(sTokenUsername)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenUsername(transazioneBean, t);
+			return;
+		}
+		
+		// 2) Subject/Issuer del Token
+		String sTokenSubject = getTokenSubject();
+		if(StringUtils.isNotEmpty(sTokenSubject)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenSubject(transazioneBean, t);
+			String sTokenIssuer = getTokenIssuer();
+			if(StringUtils.isNotEmpty(sTokenIssuer)) {
+				transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenIssuer(transazioneBean, t);
+			}
+			return;
+		}
+		
+		// 3) Applicativo Fruitore
+		String sApplicativoFruitore = getServizioApplicativoFruitore();
+		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
+			return;
+		}
+		
+		// 4) Credenziali dell'autenticazione di trasporto
+		String sTrasportoMittente = getTrasportoMittente();
+		if(StringUtils.isNotEmpty(sTrasportoMittente)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTrasporto(transazioneBean, t);
+			return;
+		}
+		
+		// 5) Client ID, per il caso di ClientCredential
+		String sTokenClientId = getTokenClientId();
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			transazioniService.normalizeInfoTransazioniFromCredenzialiMittenteTokenClientID(transazioneBean, t);
+			return;
+		}
 
+	}
+	
+	public String getRichiedente() {
+				
+		// 1) Username del Token
+		String sTokenUsername = getTokenUsernameLabel();
+		if(StringUtils.isNotEmpty(sTokenUsername)) {
+			return sTokenUsername;
+		}
+		
+		// 2) Subject/Issuer del Token
+		String sTokenSubject = getTokenSubjectLabel();
+		if(StringUtils.isNotEmpty(sTokenSubject)) {
+			
+			String sTokenIssuer = getTokenIssuerLabel();
+			if(StringUtils.isNotEmpty(sTokenIssuer)) {
+				return sTokenSubject + NamingUtils.LABEL_DOMINIO + sTokenIssuer;
+			}
+			else {
+				return sTokenSubject;
+			}
+		}
+		
+		// 3) Applicativo Fruitore
+		String sApplicativoFruitore = getServizioApplicativoFruitore();
+		if(StringUtils.isNotEmpty(sApplicativoFruitore)) {
+			return sApplicativoFruitore;
+		}
+		
+		// 4) Credenziali dell'autenticazione di trasporto
+		// volutamente uso l'id autenticato.
+		// se l'api è pubblica non deve essere visualizzata questa informazione!
+		String sTrasportoMittente = getTrasportoMittenteLabel();
+		String sTipoTrasportoMittente = getTipoTrasportoMittenteLabel();
+		if(StringUtils.isNotEmpty(sTrasportoMittente) && StringUtils.isNotEmpty(sTipoTrasportoMittente)) {
+			if(sTipoTrasportoMittente.endsWith("_"+TipoAutenticazione.SSL.getValue())) {
+				try {
+					Hashtable<String, List<String>> l = CertificateUtils.getPrincipalIntoHashtable(sTrasportoMittente, PrincipalType.subject);
+					if(l!=null && !l.isEmpty()) {
+						List<String> cnList = l.get("CN");
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("cn");
+						}
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("Cn");
+						}
+						if(cnList==null || cnList.isEmpty()) {
+							cnList = l.get("cN");
+						}						
+						if(cnList!=null && cnList.size()>0) {
+							StringBuilder bfList = new StringBuilder();
+							for (String s : cnList) {
+								if(bfList.length()>0) {
+									bfList.append(", ");
+								}
+								bfList.append(s);
+							}
+							return bfList.toString();
+						}
+					}
+					return sTrasportoMittente;
+				}catch(Throwable t) {	
+					return sTrasportoMittente;
+				}
+			}
+			else {
+				return sTrasportoMittente;
+			}
+		}
+		
+		// 5) Client ID, per il caso di ClientCredential
+		String sTokenClientId = getTokenClientIdLabel();
+		if(StringUtils.isNotEmpty(sTokenClientId)) {
+			return sTokenClientId;
+		}
+		
+		return null;
+		
+	}
+	
+	public String getLabelRichiedenteConFruitore() throws Exception {
+		StringBuilder bf = new StringBuilder();
+		
+		String richiedente = getRichiedente();
+		if(StringUtils.isNotEmpty(richiedente)) {
+			bf.append(richiedente);	
+		}
+		
+		
+		String sFruitore = getSoggettoFruitore();
+		if(StringUtils.isNotEmpty(sFruitore)) {
+		
+			boolean addFruitore = true;
+			
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoFruitore()) && StringUtils.isNotEmpty(this.getNomeSoggettoFruitore())) {
+					IDSoggetto idSoggettoFruitore = new IDSoggetto(this.getTipoSoggettoFruitore(), this.getNomeSoggettoFruitore());
+					addFruitore = !this.soggettoPddMonitor.equals(idSoggettoFruitore.toString());
+				}
+			}
+			
+			if(addFruitore) {
+				if(bf.length()>0) {
+					bf.append(NamingUtils.LABEL_DOMINIO);
+				}
+				
+				bf.append(sFruitore);	
+			}
+		}
+		
+		return bf.toString();
+	}
+	
+	public String getLabelAPIConErogatore() throws Exception {
+		StringBuilder bf = new StringBuilder();
+		
+		String api = getServizio();
+		if(StringUtils.isNotEmpty(api)) {
+			bf.append(api);	
+		}
+		else {
+			return "API non individuata";
+		}
+		
+		
+		String sErogatore = getSoggettoErogatore();
+		if(StringUtils.isNotEmpty(sErogatore)) {
+		
+			boolean addErogatore = true;
+			
+			if(org.openspcoop2.core.transazioni.constants.PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
+				if(this.soggettoPddMonitor!=null && StringUtils.isNotEmpty(this.getTipoSoggettoErogatore()) && StringUtils.isNotEmpty(this.getNomeSoggettoErogatore())) {
+					IDSoggetto idSoggettoErogatore = new IDSoggetto(this.getTipoSoggettoErogatore(), this.getNomeSoggettoErogatore());
+					addErogatore = !this.soggettoPddMonitor.equals(idSoggettoErogatore.toString());
+				}
+			}
+			
+			if(addErogatore) {
+				
+				bf = new StringBuilder();
+				bf.append(NamingUtils.getLabelServizioConDominioErogatore(api, sErogatore));
+				
+			}
+		}
+		
+		return bf.toString();
+	}
+	
+	public java.lang.String getTipoOperazioneLabel() {
+		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
+			return "Risorsa";
+		}
+		else {
+			return "Azione";
+		}
+	}
+	
+	public java.lang.String getOperazioneLabel() {
+		return this.operazioneLabel;
+	}
+
+	public void setOperazioneLabel(java.lang.String operazioneLabel) {
+		this.operazioneLabel = operazioneLabel;
+	}
+	
+	public void normalizeOperazioneInfo(org.openspcoop2.core.commons.search.dao.IServiceManager service, Logger log) {
+		
+		if(TipoAPI.REST.getValoreAsInt() == this.getTipoApi()) {
+			
+			String uriAPI = this.getUriAccordoServizio();
+			String op = getAzione();
+			try {
+			
+				if(StringUtils.isNotEmpty(uriAPI) && StringUtils.isNotEmpty(op)) {
+					IDAccordo idAccordo = IDAccordoFactory.getInstance().getIDAccordoFromUri(uriAPI);
+					IdAccordoServizioParteComune idAPI = new IdAccordoServizioParteComune();
+					idAPI.setIdSoggetto(new IdSoggetto());
+					idAPI.getIdSoggetto().setTipo(idAccordo.getSoggettoReferente().getTipo());
+					idAPI.getIdSoggetto().setNome(idAccordo.getSoggettoReferente().getNome());
+					idAPI.setVersione(idAccordo.getVersione());
+					idAPI.setNome(idAccordo.getNome());
+					
+					
+					IResourceServiceSearch resourceServiceSearch = service.getResourceServiceSearch();
+					IPaginatedExpression pagExpr = resourceServiceSearch.newPaginatedExpression();
+					pagExpr.equals(Resource.model().NOME, op).
+						and().
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.NOME, idAccordo.getNome()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.VERSIONE, idAccordo.getVersione()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.TIPO, idAccordo.getSoggettoReferente().getTipo()).
+						equals(Resource.model().ID_ACCORDO_SERVIZIO_PARTE_COMUNE.ID_SOGGETTO.NOME, idAccordo.getSoggettoReferente().getNome());
+					List<Map<String,Object>> l = service.getResourceServiceSearch().select(pagExpr, Resource.model().HTTP_METHOD, Resource.model().PATH);
+					if(l!=null && l.size()==1) {
+						Map<String,Object> map = l.get(0);
+						String method = (String) map.get(Resource.model().HTTP_METHOD.getFieldName());
+						String path = (String) map.get(Resource.model().PATH.getFieldName());
+						//System.out.println("LETTO ["+method+"] ["+path+"]");
+						StringBuilder bf = new StringBuilder();
+						if(!CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE.equals(method)) {
+							bf.append(method);
+							bf.append(" ");
+						}
+						if(!CostantiDB.API_RESOURCE_PATH_ALL_VALUE.equals(path)) {
+							bf.append(path);
+							this.operazioneLabel = bf.toString();
+							return ;
+						}
+					}
+				}
+				
+			}catch(Exception e) {
+				// L'API puo non esistere piu se e' stata eliminata; non loggare come error
+				log.info("Normalizzazione operazione '"+op+"' per api '"+uriAPI+"' non riuscita: "+e.getMessage(),e);
+			}
+			
+		}
+		
+		this.operazioneLabel = getAzione();
+	}
+	
+	public String getLabelOperazioneConGestioneNonPresenza() throws Exception {
+		
+		String op = getOperazioneLabel();
+		if(StringUtils.isNotEmpty(op)) {
+			
+			return this.getOperazioneLabel();
+			
+		}
+		else {
+			return "-";
+		}
+		
+	}
+	
+	public String getCssColonnaEsito() {
+		if(this.isEsitoOk())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_OK;
+		if(this.isEsitoFaultApplicativo())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_FAULT;
+		if(this.isEsitoKo())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_ERRORE;
+		
+		return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_ESITO_ERRORE;
+	}
+	
+	public String getCssColonnaLatenza() {
+		if(this.isEsitoOk())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_OK;
+		if(this.isEsitoFaultApplicativo())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_FAULT;
+		if(this.isEsitoKo())
+			return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE;
+		
+		return TransazioniCostanti.TRANSAZIONI_ELENCO_CUSTOM_CLASSE_CSS_COL_LATENZA_ERRORE;
+	}
+	
+	public boolean isConsegnaMultipla() {
+		try{
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),this.getProtocollo());
+			String name = esitiProperties.getEsitoName(this.getEsito());
+			EsitoTransazioneName esitoName = EsitoTransazioneName.convertoTo(name);
+			return EsitoTransazioneName.isConsegnaMultipla(esitoName);
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il check consegna multipla: "+e.getMessage(),e);
+			return false;
+		}
+	}
+
+	public void setConsegnaMultipla(boolean consegnaMultipla) {}
 }

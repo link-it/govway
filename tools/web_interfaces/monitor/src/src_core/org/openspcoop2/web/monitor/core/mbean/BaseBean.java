@@ -35,6 +35,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.Utilities;
 import org.slf4j.Logger;
 
 /**
@@ -78,7 +79,7 @@ public abstract class BaseBean<T,K, ServiceType extends IService> implements Ser
 		if(this.selectedElement==null){
 			try{
 				ParameterizedType parameterizedType = (ParameterizedType) getClass().getGenericSuperclass();
-				this.selectedElement = ((Class<T>)parameterizedType.getActualTypeArguments()[0]).newInstance();
+				this.selectedElement = Utilities.newInstance((Class<T>)parameterizedType.getActualTypeArguments()[0]);
 			}catch (Exception e) {
 				BaseBean.log.error("errore cercando di istanziare il selectedElement ", e);
 			}

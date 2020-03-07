@@ -33,15 +33,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="property">
- * 		&lt;sequence>
- * 			&lt;element name="value" type="{http://www.domibus.eu/configuration}PropertyValue" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="key" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="datatype" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="property"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="value" type="{http://www.domibus.eu/configuration}PropertyValue" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="key" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="datatype" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * 		&lt;attribute name="required" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

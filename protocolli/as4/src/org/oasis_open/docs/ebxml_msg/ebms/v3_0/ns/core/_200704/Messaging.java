@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Messaging">
- * 		&lt;sequence>
- * 			&lt;element name="SignalMessage" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}SignalMessage" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="UserMessage" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}UserMessage" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Messaging"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="SignalMessage" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}SignalMessage" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="UserMessage" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}UserMessage" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="id" type="{http://www.w3.org/2001/XMLSchema}ID" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -141,7 +141,7 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getSignalMessageList
-   * @return List<SignalMessage>
+   * @return List&lt;SignalMessage&gt;
   */
   @Deprecated
   public List<SignalMessage> getSignalMessage() {
@@ -150,7 +150,7 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setSignalMessageList
-   * @param signalMessage List<SignalMessage>
+   * @param signalMessage List&lt;SignalMessage&gt;
   */
   @Deprecated
   public void setSignalMessage(List<SignalMessage> signalMessage) {
@@ -171,7 +171,7 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getUserMessageList
-   * @return List<UserMessage>
+   * @return List&lt;UserMessage&gt;
   */
   @Deprecated
   public List<UserMessage> getUserMessage() {
@@ -180,7 +180,7 @@ public class Messaging extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setUserMessageList
-   * @param userMessage List<UserMessage>
+   * @param userMessage List&lt;UserMessage&gt;
   */
   @Deprecated
   public void setUserMessage(List<UserMessage> userMessage) {

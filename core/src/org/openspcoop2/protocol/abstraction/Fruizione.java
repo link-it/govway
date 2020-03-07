@@ -34,16 +34,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="fruizione">
- * 		&lt;sequence>
- * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoAccordoServizioParteSpecifica" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="soggetto-fruitore" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoSoggetto" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="fruizione" type="{http://www.openspcoop2.org/protocol/abstraction}DatiFruizione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoServizioApplicativoFruitore" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/protocol/abstraction}Tipologia" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="fruizione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="accordo-servizio-parte-specifica" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoAccordoServizioParteSpecifica" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="soggetto-fruitore" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoSoggetto" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="fruizione" type="{http://www.openspcoop2.org/protocol/abstraction}DatiFruizione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/protocol/abstraction}RiferimentoServizioApplicativoFruitore" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/protocol/abstraction}Tipologia" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

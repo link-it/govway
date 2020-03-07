@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="gruppi-accordo">
- * 		&lt;sequence>
- * 			&lt;element name="gruppo" type="{http://www.openspcoop2.org/core/registry}gruppo-accordo" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="gruppi-accordo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="gruppo" type="{http://www.openspcoop2.org/core/registry}gruppo-accordo" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class GruppiAccordo extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getGruppoList
-   * @return List<GruppoAccordo>
+   * @return List&lt;GruppoAccordo&gt;
   */
   @Deprecated
   public List<GruppoAccordo> getGruppo() {
@@ -120,7 +120,7 @@ public class GruppiAccordo extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setGruppoList
-   * @param gruppo List<GruppoAccordo>
+   * @param gruppo List&lt;GruppoAccordo&gt;
   */
   @Deprecated
   public void setGruppo(List<GruppoAccordo> gruppo) {

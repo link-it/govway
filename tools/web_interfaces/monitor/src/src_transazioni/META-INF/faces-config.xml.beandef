@@ -50,14 +50,39 @@
 		<managed-property>
 			<property-name>diagnosticiBean</property-name>
 			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
-			<value>#{diagnosticiBean}</value>
+			<value>#{dettagliBean.diagnosticiBean}</value>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>diagnosticiBean</managed-bean-name>
-		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</managed-bean-class>
+		<managed-bean-name>diagnosticiSADM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.DiagnosticiDM</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>diagnosticiBean</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
+			<value>#{dettagliTransazioneApplicativoServerBean.diagnosticiBean}</value>
+		</managed-property>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>dumpSADM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.DumpMessaggiDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>diagnosticiBean</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
+			<value>#{dettagliTransazioneApplicativoServerBean.diagnosticiBean}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>dataProvider</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.TransazioniService</property-class>
+			<value>#{transazioniService}</value>
+		</managed-property>
+	</managed-bean>
+<!-- 	<managed-bean> -->
+<!-- 		<managed-bean-name>diagnosticiBean</managed-bean-name> -->
+<!-- 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</managed-bean-class> -->
+<!-- 		<managed-bean-scope>request</managed-bean-scope> -->
+<!-- 	</managed-bean> -->
 	<managed-bean>
 		<managed-bean-name>dettagliBean</managed-bean-name>
 		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliBean</managed-bean-class>
@@ -66,6 +91,36 @@
 			<property-name>transazioniService</property-name>
 			<property-class>org.openspcoop2.web.monitor.transazioni.dao.TransazioniService</property-class>
 			<value>#{transazioniService}</value>
+		</managed-property>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>dettagliTransazioneApplicativoServerBean</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.mbean.DettagliTransazioneApplicativoServerBean</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>transazioniService</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.TransazioniService</property-class>
+			<value>#{transazioniService}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>transazioniApplicativoServerService</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService</property-class>
+			<value>#{transazioniApplicativoServerService}</value>
+		</managed-property>
+	</managed-bean>	
+	<managed-bean>
+		<managed-bean-name>transazioniApplicativoServerDM</managed-bean-name>
+		<managed-bean-class>org.openspcoop2.web.monitor.transazioni.datamodel.TransazioniApplicativoServerDM</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+		<managed-property>
+			<property-name>diagnosticiBean</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.mbean.DiagnosticiBean</property-class>
+			<value>#{dettagliBean.diagnosticiBean}</value>
+		</managed-property>
+		<managed-property>
+			<property-name>dataProvider</property-name>
+			<property-class>org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService</property-class>
+			<value>#{transazioniApplicativoServerService}</value>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
@@ -151,18 +206,14 @@
 		<from-view-id>/transazioni/pages/list/transazioni.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
-		<from-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</from-view-id>
+		<from-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>visualizzaTraccia</from-outcome>
 			<to-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>visualizzaDiagnostici</from-outcome>
-			<to-view-id>/transazioni/pages/form/visualizzaDiagnostici.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dettaglioDump</from-outcome>
@@ -178,41 +229,82 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettaglioDump</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>fault</from-outcome>
+			<to-view-id>/transazioni/pages/form/faultTransazioneApplicativoServer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/visualizzaTraccia.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/fault.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/faultTransazioneApplicativoServer.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/visualizzaDiagnostici.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/tokenInfo.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<from-view-id>/transazioni/pages/form/dettaglioDump.xhtml</from-view-id>
 		<navigation-case>
 			<from-outcome>dettagliMessaggio</from-outcome>
-			<to-view-id>/transazioni/pages/form/dettagliMessaggio.xhtml</to-view-id>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<from-view-id>/transazioni/pages/form/dettaglioDumpTransazioneApplicativoServer.xhtml</from-view-id>
+		<navigation-case>
+			<from-outcome>dettagliMessaggio</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliMessaggioTab.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dettagliConsegna</from-outcome>
+			<to-view-id>/transazioni/pages/form/dettagliTransazioneApplicativoServer.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>

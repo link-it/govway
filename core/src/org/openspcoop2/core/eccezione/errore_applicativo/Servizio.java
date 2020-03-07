@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="servizio">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 				&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="servizio"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ * 				&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 				&lt;attribute name="version" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional" default="1"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

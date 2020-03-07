@@ -97,7 +97,7 @@
 				<include name="openspcoop2_utils_*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/shared">
-				<include name="commons-jcs-core-2.2-gov4j-2.jar"/>
+				<include name="commons-jcs-core-2.2.1-gov4j-1.jar"/>
 				<include name="com.springsource.edu.oswego.cs.dl.util.concurrent-1.3.4.jar"/>
 			</lib>
 		</war>
@@ -113,7 +113,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-codec-1.11.jar"/>
+			<include name="commons-codec-1.14.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/log" >
 			<include name="*.jar"/>
@@ -130,10 +130,10 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/shared">
-			<include name="snakeyaml-1.22.jar"/>
+			<include name="snakeyaml-1.25.jar"/>
 		</fileset>
 		<fileset dir="${required_lib}/commons">
-			<include name="commons-lang3-3.8.jar"/>
+			<include name="commons-lang3-3.9.jar"/>
 		</fileset>
 	</path>	
 		

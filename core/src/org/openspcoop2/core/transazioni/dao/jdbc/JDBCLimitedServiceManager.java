@@ -30,6 +30,8 @@ import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneService;
+import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerServiceSearch;
+import org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneInfoServiceSearch;
 import org.openspcoop2.core.transazioni.dao.ITransazioneInfoService;
 import org.openspcoop2.core.transazioni.dao.ITransazioneExportServiceSearch;
@@ -137,6 +139,38 @@ public class JDBCLimitedServiceManager extends JDBCServiceManager {
 	@Override
 	public ITransazioneService getTransazioneService() throws ServiceException,NotImplementedException{
 		return new JDBCTransazioneService(this.unlimitedJdbcServiceManager);
+	}
+	
+	
+	
+	/*
+	 =====================================================================================================================
+	 Services relating to the object with name:transazione-applicativo-server type:transazione-applicativo-server
+	 =====================================================================================================================
+	*/
+	
+	/**
+	 * Return a service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 *
+	 * @return Service used to research on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneApplicativoServerServiceSearch getTransazioneApplicativoServerServiceSearch() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneApplicativoServerServiceSearch(this.unlimitedJdbcServiceManager);
+	}
+	
+	/**
+	 * Return a service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 *
+	 * @return Service used to research and manage on the backend on objects of type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}	
+	 * @throws ServiceException Exception thrown when an error occurs during processing of the request
+	 * @throws NotImplementedException Exception thrown when the method is not implemented
+	 */
+	@Override
+	public ITransazioneApplicativoServerService getTransazioneApplicativoServerService() throws ServiceException,NotImplementedException{
+		return new JDBCTransazioneApplicativoServerService(this.unlimitedJdbcServiceManager);
 	}
 	
 	

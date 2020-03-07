@@ -35,14 +35,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasformazione-regola-applicabilita-risposta">
- * 		&lt;sequence>
- * 			&lt;element name="return-code-min" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="return-code-max" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="trasformazione-regola-applicabilita-risposta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="return-code-min" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="return-code-max" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -150,7 +150,7 @@ public class TrasformazioneRegolaApplicabilitaRisposta extends org.openspcoop2.u
 
   /**
    * @deprecated Use method getContentTypeList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getContentType() {
@@ -159,7 +159,7 @@ public class TrasformazioneRegolaApplicabilitaRisposta extends org.openspcoop2.u
 
   /**
    * @deprecated Use method setContentTypeList
-   * @param contentType List<java.lang.String>
+   * @param contentType List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setContentType(List<java.lang.String> contentType) {

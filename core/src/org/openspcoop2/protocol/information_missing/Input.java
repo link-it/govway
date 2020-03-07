@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Input">
- * 		&lt;sequence>
- * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}Proprieta" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="Input"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/protocol/information_missing}ConditionsType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/protocol/information_missing}Proprieta" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -116,7 +116,7 @@ public class Input extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -125,7 +125,7 @@ public class Input extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

@@ -725,7 +725,6 @@
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
                 <module name="org.apache.commons.logging"/>
-                <module name="org.log4j"/>  
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
@@ -747,7 +746,6 @@
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
                 <module name="org.apache.commons.logging"/>
-                <module name="org.log4j"/>  
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
@@ -772,7 +770,6 @@
                 <module name="org.apache.log4j"/>
                 <module name="org.slf4j" />
                 <module name="org.apache.commons.logging"/>
-                <module name="org.log4j"/>  
                 <module name="org.jboss.logging"/>
         </exclusions>
     </sub-deployment>
@@ -794,72 +791,54 @@
 				</antcall>
 			</then>
 		</if>
-		
-		<!-- *** Aggiunta dell'applicazione OpenSPCoopV1BackwardCompatibility.war ***-->
+
+		<!-- ** correggo manifest ** -->
+
+		<antcall target="-correctManifest">
+			<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.war"/>
+			<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_WAR"/>
+		</antcall>
+		<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+			<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.war"/>
+			<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_WAR"/>
+		</antcall>
+
+		<!-- *** Aggiunta dell'applicazione govwaySec *** -->
 		<if>
-			<and>
-				<istrue value="${antinstaller_protocollo_spcoop}"/>
-				<istrue value="${antinstaller_backward_compatibility}"/>
-			</and>
+			<istrue value="${build_openspcoop_sec_archive}" />
 			<then>
-				<war destfile="${dist}/archivi/OpenSPCoop2/OpenSPCoopV1BackwardCompatibility.war" basedir="${tmp_archivi}/OpenSPCoopV1BackwardCompatibility.war" />
-				
-		        <replace file="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" token="&lt;/application&gt;" value=""/>
-		        <concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/application.xml" append="yes">
-<![CDATA[
-	
-	<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
-	<module>
-		<web>
-			<web-uri>OpenSPCoopV1BackwardCompatibility.war</web-uri>
-			<context-root>openspcoop</context-root>
-		</web>
-	</module>
-	<!-- End MODULE OpenSPCoopV1BackwardCompatibility -->
-
-</application>
-]]>
-		        </concat>
-				<antcall target="dos2unix">
-					<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
-				    <param name="file" value="application.xml"/>
+				<!-- ** correggo manifest ** -->
+				<antcall target="-correctManifest">
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govwaySec.war"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAYSEC_WAR"/>
 				</antcall>
-				
-				<if>
-					<or>
-						<equals arg1="${antinstaller_as}" arg2="jboss7" />
-						<matches string="${antinstaller_as}" pattern="wildfly.*"/>
-					</or>
-					<then>
-						<replace file="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" token="&lt;/jboss-deployment-structure&gt;" value=""/>
-						<concat destfile="${dist}/archivi/OpenSPCoop2/META-INF/jboss-deployment-structure.xml" append="yes">
-					<![CDATA[
-
-	<!-- Start MODULE OpenSPCoopV1BackwardCompatibility -->
-	<sub-deployment name="OpenSPCoopV1BackwardCompatibility.war">
-        <exclusions>
-                <module name="org.apache.log4j"/>
-                <module name="org.slf4j" />
-                <module name="org.apache.commons.logging"/>
-                <module name="org.log4j"/>  
-                <module name="org.jboss.logging"/>
-        </exclusions>
-    </sub-deployment>
-	<!-- End MODULE OpenSPCoopV1BackwardCompatibility -->							
-
-</jboss-deployment-structure>
-]]>
-						</concat>
-						<antcall target="dos2unix">
-							<param name="dir" value="${dist}/archivi/OpenSPCoop2/META-INF"/>
-						    <param name="file" value="jboss-deployment-structure.xml"/>
-						</antcall>
-					</then>
-				</if>
-				
+				<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govwaySec.war"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAYSEC_WAR"/>
+				</antcall>
+			</then>
+			<else>
+				<delete file="${dist}/archivi/OpenSPCoop2/govwaySec.war"/>
+			</else>
+		</if>
+		
+		<!-- ** correggo manifest in govway.jar (stateful) ** -->
+		<available file="${dist}/archivi/OpenSPCoop2/govway.jar" type="file" property="govway.jar.present"/>
+		<if>
+			<equals arg1="${govway.jar.present}" arg2="true"/>
+			<then>
+				<antcall target="-correctManifest">
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
+				</antcall>
+				<antcall target="-correctManifest"> <!-- la seconda volta serve a risolvere i RELEASE rimasti perche' inizialmente andati a capo -->
+					<param name="correctManifest_archive" value="${dist}/archivi/OpenSPCoop2/govway.jar"/>
+					<param name="correctManifest_archive_destDir" value="${dist}/archivi/OpenSPCoop2/GOVWAY_JAR"/>
+				</antcall>
 			</then>
 		</if>
-
+	
+	
 		<!-- *** Aggiunta dell'applicazione govwayAPIConfig.war ***-->
 		<if>
 			<istrue value="${antinstaller_rs_config}"/>
@@ -880,6 +859,26 @@
 		<zip destfile="${dist}/archivi/govway.ear" basedir="${dist}/archivi/OpenSPCoop2"/>
 		<delete dir="${dist}/archivi/OpenSPCoop2"/>
 		
+	</target>
+
+	<target name="-correctManifest">
+		<unzip src="${correctManifest_archive}" dest="${correctManifest_archive_destDir}"/>
+
+		<!-- replace jar di openspcoop con patch version -->
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="_RELEASE." value="-${antinstaller_versione_attuale_con_p_level}."/>
+
+		<!-- replace jar in cui e' stato corretto il manifest -->
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-impl-2.3.2.jar" value="jaxb-impl-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-core-2.3.0.1.jar" value="jaxb-core-2.3.0.1.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="jaxb-xjc-2.3.2.jar" value="jaxb-xjc-2.3.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="xalan-2.7.2.jar" value="xalan-2.7.2.gw.jar"/>
+		<replace file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" token="serializer-2.7.2.jar" value="serializer-2.7.2.gw.jar"/>
+
+		<copy file="${correctManifest_archive_destDir}/META-INF/MANIFEST.MF" todir="${correctManifest_archive_destDir}"/>
+		<delete file="${correctManifest_archive}"/>		
+		<jar destfile="${correctManifest_archive}" basedir="${correctManifest_archive_destDir}" 
+			filesetmanifest="merge" excludes="MANIFEST.MF"/>
+		<delete dir="${correctManifest_archive_destDir}"/>	
 	</target>
 	
 	<target name="_prepareArchivioTomcat">

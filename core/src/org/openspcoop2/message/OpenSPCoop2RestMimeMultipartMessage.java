@@ -26,7 +26,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 /**
  * OpenSPCoop2RestMimeMultipartMessage
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

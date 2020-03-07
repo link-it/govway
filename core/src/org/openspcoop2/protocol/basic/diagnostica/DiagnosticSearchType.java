@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.basic.diagnostica;
 /**
  * TipoRicercaDiagnostici
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

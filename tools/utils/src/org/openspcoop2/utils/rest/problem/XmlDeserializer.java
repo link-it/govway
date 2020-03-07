@@ -66,8 +66,8 @@ public class XmlDeserializer extends AbstractDeserializer {
 	}
 	public boolean isProblemRFC7807(Node problemNode) {
 		return problemNode!=null && 
-				XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME.equals(problemNode.getLocalName()) &&
-				XmlSerializer.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI());
+				ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_LOCAL_NAME.equals(problemNode.getLocalName()) &&
+				ProblemConstants.XML_PROBLEM_DETAILS_RFC_7807_NAMESPACE.equals(problemNode.getNamespaceURI());
 	}
 	
 	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
@@ -77,7 +77,9 @@ public class XmlDeserializer extends AbstractDeserializer {
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
-		return this.fromNode(problemNode);
+		ProblemRFC7807 p = new ProblemRFC7807();
+		p.setRaw(problemString);
+		return this._fromNode(p, problemNode, true);
 	}
 	public ProblemRFC7807 fromByteArray(byte[] problemByteArray) throws UtilsException {
 		Element problemNode = null;
@@ -86,21 +88,61 @@ public class XmlDeserializer extends AbstractDeserializer {
 		}catch(Exception e) {
 			throw new UtilsException(e.getMessage(),e);
 		}
-		return this.fromNode(problemNode);
+		ProblemRFC7807 p = new ProblemRFC7807();
+		p.setRaw(new String(problemByteArray));
+		return this._fromNode(p, problemNode, true);
 	}
 	public ProblemRFC7807 fromNode(Node problemNode) throws UtilsException {
+		return this._fromNode(null, problemNode, true);
+	}
+	public ProblemRFC7807 fromNode(Node problemNode, boolean setRaw) throws UtilsException {
+		return this._fromNode(null, problemNode, setRaw);
+	}
+	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, Node problemNode, boolean setRaw) throws UtilsException {
 		
-		ProblemRFC7807 problem = new ProblemRFC7807();
+		ProblemRFC7807 problem = null;
+		if(problemParam!=null) {
+			problem = problemParam;
+		}
+		else {
+			problem = new ProblemRFC7807();
+		}
 		
 		List<Node> list = this.xmlUtils.getNotEmptyChildNodes(problemNode);
 		for (Node node : list) {
 			
 			String name = node.getLocalName();
-			Object value = node.getTextContent();
+			if(name==null) {
+				name = node.getNodeName();
+			}
+			Object value = null;
+			try {
+				value = node.getTextContent();
+			}catch(Throwable e) {
+				if(e instanceof java.lang.AbstractMethodError) { // axis per test
+					value = node.getNodeValue();
+					if(value==null) {
+						if(node.getChildNodes()!=null) {
+							value = ((org.w3c.dom.Text)node.getChildNodes().item(0)).getData();
+						}
+					}
+				}
+				else {
+					throw new UtilsException(e.getMessage(),e);
+				}
+			}
 			
 			super.set(problem, name, value);
 		}
 
+		if(setRaw && problem.getRaw()==null) {
+			try {
+				problem.setRaw(this.xmlUtils.toString(problemNode));
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(), e);
+			}
+		}
+		
 		return problem;
 	}
 	

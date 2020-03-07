@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-servizio-azione">
- * 		&lt;sequence>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-servizio-azione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -125,7 +125,7 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getAzioneList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getAzione() {
@@ -134,7 +134,7 @@ public class ConfigurazioneServizioAzione extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setAzioneList
-   * @param azione List<java.lang.String>
+   * @param azione List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setAzione(List<java.lang.String> azione) {

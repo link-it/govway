@@ -89,11 +89,13 @@ public class DiagnosticiDM extends
 
 				// devo solo settare l'idtransazione
 				// filter.setIdEgov(this.diagnosticiBean.getIdEgov());
-
 				Hashtable<String, String> properties = new Hashtable<String, String>();
 				properties.put("id_transazione",
 						this.diagnosticiBean.getIdTransazione());
 				filter.setProperties(properties);
+				
+				filter.setCheckApplicativoIsNull(this.diagnosticiBean.getForceNomeServizioApplicativoNull());
+				filter.setApplicativo(this.diagnosticiBean.getNomeServizioApplicativo());
 
 				// NON CI VUOLE: altrimenti non vengono visualizzati i primi diagnostici che possiedono un identificativo porta differente
 //				IDSoggetto dominio = new IDSoggetto();
@@ -152,6 +154,9 @@ public class DiagnosticiDM extends
 						this.diagnosticiBean.getIdTransazione());
 				filter.setProperties(properties);
 				
+				filter.setCheckApplicativoIsNull(this.diagnosticiBean.getForceNomeServizioApplicativoNull());
+				filter.setApplicativo(this.diagnosticiBean.getNomeServizioApplicativo());
+				
 				// NON CI VUOLE: altrimenti non vengono visualizzati i primi diagnostici che possiedono un identificativo porta differente
 //				IDSoggetto dominio = new IDSoggetto();
 //				dominio.setCodicePorta(this.diagnosticiBean
@@ -178,7 +183,7 @@ public class DiagnosticiDM extends
 									
 					BeanUtils.copy(msgDiagnosticoBean, msgDiagnostico, metodiEsclusi);
 					
-					Integer k = new Long(msgDiagnostico.getId()).intValue();
+					Integer k = Long.valueOf(msgDiagnostico.getId()).intValue();
 					this.wrappedData.put(k, msgDiagnosticoBean);
 					this.wrappedKeys.add(k);
 					visitor.process(context, k, argument);

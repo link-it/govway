@@ -55,24 +55,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DettaglioEccezione }
-     */
-    public DettaglioEccezione createDettaglioEccezione() {
-        return new DettaglioEccezione();
-    }
-
-    /**
      * Create an instance of {@link DominioSoggetto }
      */
     public DominioSoggetto createDominioSoggetto() {
         return new DominioSoggetto();
-    }
-
-    /**
-     * Create an instance of {@link Eccezioni }
-     */
-    public Eccezioni createEccezioni() {
-        return new Eccezioni();
     }
 
     /**
@@ -83,13 +69,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Eccezione }
-     */
-    public Eccezione createEccezione() {
-        return new Eccezione();
-    }
-
-    /**
      * Create an instance of {@link Dettagli }
      */
     public Dettagli createDettagli() {
@@ -97,10 +76,31 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Eccezione }
+     */
+    public Eccezione createEccezione() {
+        return new Eccezione();
+    }
+
+    /**
+     * Create an instance of {@link Eccezioni }
+     */
+    public Eccezioni createEccezioni() {
+        return new Eccezioni();
+    }
+
+    /**
      * Create an instance of {@link Dettaglio }
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
+    }
+
+    /**
+     * Create an instance of {@link DettaglioEccezione }
+     */
+    public DettaglioEccezione createDettaglioEccezione() {
+        return new DettaglioEccezione();
     }
 
     private final static QName _FaultDetails = new QName("http://govway.org/integration/fault/details", "fault-details");

@@ -123,7 +123,10 @@ public class SSLUtilities {
 	public static String getDefaultProtocol() throws UtilsException{
 		// Ritorno l'ultima versione disponibile
 		List<String> p = getSSLSupportedProtocols();
-		if(p.contains(SSLConstants.PROTOCOL_TLS_V1_2)){
+		if(p.contains(SSLConstants.PROTOCOL_TLS_V1_3)){
+			return SSLConstants.PROTOCOL_TLS_V1_3;
+		}
+		else if(p.contains(SSLConstants.PROTOCOL_TLS_V1_2)){
 			return SSLConstants.PROTOCOL_TLS_V1_2;
 		}
 		else if(p.contains(SSLConstants.PROTOCOL_TLS_V1_1)){

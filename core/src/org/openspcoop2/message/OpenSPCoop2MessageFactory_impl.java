@@ -90,6 +90,11 @@ public class OpenSPCoop2MessageFactory_impl extends OpenSPCoop2MessageFactory {
 	public String getDocumentBuilderFactoryClass() {
 		return org.apache.xerces.jaxp.DocumentBuilderFactoryImpl.class.getName();
 	}
+	
+	@Override
+	public String getSAXParserFactoryClass() {
+		return org.apache.xerces.jaxp.SAXParserFactoryImpl.class.getName();
+	}
 
     @Override
 	public Element convertoForXPathSearch(Element contenutoAsElement){

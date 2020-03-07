@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="as4">
- * 		&lt;sequence>
- * 			&lt;element name="receptionAwareness" type="{http://www.domibus.eu/configuration}receptionAwareness" minOccurs="1" maxOccurs="unbounded"/>
- * 			&lt;element name="reliability" type="{http://www.domibus.eu/configuration}reliability" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="as4"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="receptionAwareness" type="{http://www.domibus.eu/configuration}receptionAwareness" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="reliability" type="{http://www.domibus.eu/configuration}reliability" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method getReceptionAwarenessList
-   * @return List<ReceptionAwareness>
+   * @return List&lt;ReceptionAwareness&gt;
   */
   @Deprecated
   public List<ReceptionAwareness> getReceptionAwareness() {
@@ -128,7 +128,7 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method setReceptionAwarenessList
-   * @param receptionAwareness List<ReceptionAwareness>
+   * @param receptionAwareness List&lt;ReceptionAwareness&gt;
   */
   @Deprecated
   public void setReceptionAwareness(List<ReceptionAwareness> receptionAwareness) {
@@ -149,7 +149,7 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method getReliabilityList
-   * @return List<Reliability>
+   * @return List&lt;Reliability&gt;
   */
   @Deprecated
   public List<Reliability> getReliability() {
@@ -158,7 +158,7 @@ public class As4 extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method setReliabilityList
-   * @param reliability List<Reliability>
+   * @param reliability List&lt;Reliability&gt;
   */
   @Deprecated
   public void setReliability(List<Reliability> reliability) {

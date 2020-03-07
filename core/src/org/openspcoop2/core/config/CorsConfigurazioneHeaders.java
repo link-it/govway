@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="cors-configurazione-headers">
- * 		&lt;sequence>
- * 			&lt;element name="header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="cors-configurazione-headers"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -112,7 +112,7 @@ public class CorsConfigurazioneHeaders extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method getHeaderList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getHeader() {
@@ -121,7 +121,7 @@ public class CorsConfigurazioneHeaders extends org.openspcoop2.utils.beans.BaseB
 
   /**
    * @deprecated Use method setHeaderList
-   * @param header List<java.lang.String>
+   * @param header List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setHeader(List<java.lang.String> header) {

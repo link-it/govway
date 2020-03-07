@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="compatibility">
- * 		&lt;sequence>
- * 			&lt;element name="tags" type="{http://www.openspcoop2.org/core/mvc/properties}tags" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="compatibility"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="tags" type="{http://www.openspcoop2.org/core/mvc/properties}tags" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -120,7 +120,7 @@ public class Compatibility extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getTagsList
-   * @return List<Tags>
+   * @return List&lt;Tags&gt;
   */
   @Deprecated
   public List<Tags> getTags() {
@@ -129,7 +129,7 @@ public class Compatibility extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setTagsList
-   * @param tags List<Tags>
+   * @param tags List&lt;Tags&gt;
   */
   @Deprecated
   public void setTags(List<Tags> tags) {

@@ -34,23 +34,23 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="businessProcesses">
- * 		&lt;sequence>
- * 			&lt;element name="roles" type="{http://www.domibus.eu/configuration}roles" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="parties" type="{http://www.domibus.eu/configuration}parties" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="meps" type="{http://www.domibus.eu/configuration}meps" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="properties" type="{http://www.domibus.eu/configuration}properties" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="payloadProfiles" type="{http://www.domibus.eu/configuration}payloadProfiles" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="securities" type="{http://www.domibus.eu/configuration}securities" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="errorHandlings" type="{http://www.domibus.eu/configuration}errorHandlings" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="agreements" type="{http://www.domibus.eu/configuration}agreements" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="services" type="{http://www.domibus.eu/configuration}services" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="actions" type="{http://www.domibus.eu/configuration}actions" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="as4" type="{http://www.domibus.eu/configuration}as4" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="legConfigurations" type="{http://www.domibus.eu/configuration}legConfigurations" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="process" type="{http://www.domibus.eu/configuration}process" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="businessProcesses"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="roles" type="{http://www.domibus.eu/configuration}roles" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="parties" type="{http://www.domibus.eu/configuration}parties" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="meps" type="{http://www.domibus.eu/configuration}meps" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="properties" type="{http://www.domibus.eu/configuration}properties" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="payloadProfiles" type="{http://www.domibus.eu/configuration}payloadProfiles" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="securities" type="{http://www.domibus.eu/configuration}securities" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="errorHandlings" type="{http://www.domibus.eu/configuration}errorHandlings" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="agreements" type="{http://www.domibus.eu/configuration}agreements" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="services" type="{http://www.domibus.eu/configuration}services" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="actions" type="{http://www.domibus.eu/configuration}actions" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="as4" type="{http://www.domibus.eu/configuration}as4" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="legConfigurations" type="{http://www.domibus.eu/configuration}legConfigurations" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="process" type="{http://www.domibus.eu/configuration}process" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -249,7 +249,7 @@ public class BusinessProcesses extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getProcessList
-   * @return List<Process>
+   * @return List&lt;Process&gt;
   */
   @Deprecated
   public List<Process> getProcess() {
@@ -258,7 +258,7 @@ public class BusinessProcesses extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setProcessList
-   * @param process List<Process>
+   * @param process List&lt;Process&gt;
   */
   @Deprecated
   public void setProcess(List<Process> process) {

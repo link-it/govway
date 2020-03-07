@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.core.connettori;
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -30,6 +31,8 @@ import org.openspcoop2.core.config.Property;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.id.IDPortaApplicativa;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -106,6 +109,10 @@ public class ConnettoreMsg  {
 	private MsgDiagnostico msgDiagnostico;
 	/** IState */
 	private IState state;
+	
+	private TransazioneApplicativoServer transazioneApplicativoServer;
+	private IDPortaApplicativa idPortaApplicativa;
+	private Date dataConsegnaTransazioneApplicativoServer;
 	
 
 
@@ -472,5 +479,24 @@ public class ConnettoreMsg  {
 				}
 			}
 		}
+	}
+	
+	public TransazioneApplicativoServer getTransazioneApplicativoServer() {
+		return this.transazioneApplicativoServer;
+	}
+	public void setTransazioneApplicativoServer(TransazioneApplicativoServer transazioneApplicativoServer) {
+		this.transazioneApplicativoServer = transazioneApplicativoServer;
+	}
+	public IDPortaApplicativa getIdPortaApplicativa() {
+		return this.idPortaApplicativa;
+	}
+	public void setIdPortaApplicativa(IDPortaApplicativa idPortaApplicativa) {
+		this.idPortaApplicativa = idPortaApplicativa;
+	}
+	public Date getDataConsegnaTransazioneApplicativoServer() {
+		return this.dataConsegnaTransazioneApplicativoServer;
+	}
+	public void setDataConsegnaTransazioneApplicativoServer(Date dataConsegnaTransazioneApplicativoServer) {
+		this.dataConsegnaTransazioneApplicativoServer = dataConsegnaTransazioneApplicativoServer;
 	}
 }

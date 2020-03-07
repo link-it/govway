@@ -34,13 +34,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statesType">
- * 		&lt;sequence>
- * 			&lt;element name="state-initial" type="{http://spcoop.gov.it/sica/wsbl}StateTypeInitial" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="state-final" type="{http://spcoop.gov.it/sica/wsbl}StateTypeFinal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="state" type="{http://spcoop.gov.it/sica/wsbl}StateTypeNormal" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statesType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="state-initial" type="{http://spcoop.gov.it/sica/wsbl}StateTypeInitial" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="state-final" type="{http://spcoop.gov.it/sica/wsbl}StateTypeFinal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="state" type="{http://spcoop.gov.it/sica/wsbl}StateTypeNormal" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method getStateList
-   * @return List<StateTypeNormal>
+   * @return List&lt;StateTypeNormal&gt;
   */
   @Deprecated
   public List<StateTypeNormal> getState() {
@@ -128,7 +128,7 @@ public class StatesType extends org.openspcoop2.utils.beans.BaseBean implements 
 
   /**
    * @deprecated Use method setStateList
-   * @param state List<StateTypeNormal>
+   * @param state List&lt;StateTypeNormal&gt;
   */
   @Deprecated
   public void setState(List<StateTypeNormal> state) {

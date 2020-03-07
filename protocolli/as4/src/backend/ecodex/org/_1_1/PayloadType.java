@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PayloadType">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://org.ecodex.backend/1_1/}byte[]">
- * 				&lt;attribute name="payloadId" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/>
- * 				&lt;attribute name="contentType" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="PayloadType"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://org.ecodex.backend/1_1/}byte[]"&gt;
+ * 				&lt;attribute name="payloadId" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/&gt;
+ * 				&lt;attribute name="contentType" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

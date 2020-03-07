@@ -1,3 +1,338 @@
+2019-03-02  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-957
+	GovWay richiede un nuovo stack tecnologico su cui essere dispiegato:
+	- La versione 11 di Java, una release di tipo LTS (Long-Term Support).
+	- Vengono supportate solamente le versioni degli Application Server più recenti: v18 per WildFly e v9 per Apache Tomcat.
+
+2019-03-28  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-957
+	Sono state aggiornate alle versioni più recenti tutte le librerie 3parti.
+	-- antinstaller 
+	ant-1.9.8.jar -> ant-1.10.6.jar
+	ant-apache-regexp-1.9.8.jar -> ant-apache-regexp-1.10.6.jar
+	ant-launcher-1.9.8.jar -> ant-launcher-1.10.6.jar
+	jgoodies-edited-1.2.2.jar -> jgoodies-edited-1.2.2-gov4j-1.jar
+	-- bean validation
+	classmate-1.5.0.jar -> classmate-1.5.1.jar
+	hibernate-validator-6.0.15.Final.jar -> hibernate-validator-6.1.2.Final.jar
+	hibernate-validator-cdi-6.0.15.Final.jar -> hibernate-validator-cdi-6.1.2.Final.jar
+	jboss-logging-3.3.2.Final.jar -> jboss-logging-3.4.1.Final.jar
+	-- commons
+	add: commons-collections4-4.4.jar
+	add: commons-math3-3.6.1.jar
+	commons-beanutils-1.9.3.jar -> commons-beanutils-1.9.4.jar
+	commons-codec-1.11.jar -> commons-codec-1.14.jar
+	commons-compress-1.19.jar -> commons-compress-1.20.jar
+	commons-csv-1.5.jar -> commons-csv-1.8.jar
+	commons-dbcp2-2.5.0.jar -> commons-dbcp2-2.7.0.jar
+	commons-fileupload-1.3.3.jar -> commons-fileupload-1.4.jar
+	commons-lang3-3.8.jar -> commons-lang3-3.9.jar
+	commons-pool2-2.6.0.jar -> commons-pool2-2.8.0.jar
+	-- cxf
+	add: cxf-rt-rs-service-description-common-openapi-3.3.5.jar
+	asm-5.2.jar -> asm-7.1.jar
+	cxf-core-3.2.6-gov4j-1.jar -> cxf-core-3.3.5-gov4j-1.jar
+	cxf-rt-bindings-soap-3.2.6.jar -> cxf-rt-bindings-soap-3.3.5.jar
+	cxf-rt-databinding-jaxb-3.2.6.jar -> cxf-rt-databinding-jaxb-3.3.5.jar
+	cxf-rt-features-logging-3.2.6.jar -> cxf-rt-features-logging-3.3.5.jar
+	cxf-rt-frontend-jaxrs-3.2.6.jar -> cxf-rt-frontend-jaxrs-3.3.5.jar
+	cxf-rt-frontend-jaxws-3.2.6.jar -> cxf-rt-frontend-jaxws-3.3.5.jar
+	cxf-rt-frontend-simple-3.2.6.jar -> cxf-rt-frontend-simple-3.3.5.jar
+	cxf-rt-rs-client-3.2.6.jar -> cxf-rt-rs-client-3.3.5.jar
+	cxf-rt-rs-json-basic-3.2.6.jar -> cxf-rt-rs-json-basic-3.3.5.jar
+	cxf-rt-rs-security-jose-3.2.6-gov4j-1.jar -> cxf-rt-rs-security-jose-3.3.5-gov4j-1.jar
+	cxf-rt-rs-security-jose-jaxrs-3.2.6.jar -> cxf-rt-rs-security-jose-jaxrs-3.3.5.jar
+	cxf-rt-rs-service-description-openapi-v3-3.2.6.jar -> cxf-rt-rs-service-description-openapi-v3-3.3.5.jar
+	cxf-rt-rs-service-description-swagger-ui-3.2.6.jar -> cxf-rt-rs-service-description-swagger-ui-3.3.5.jar
+	cxf-rt-security-3.2.6.jar -> cxf-rt-security-3.3.5.jar
+	cxf-rt-security-saml-3.2.6.jar -> cxf-rt-security-saml-3.3.5.jar
+	cxf-rt-transports-http-3.2.6.jar -> cxf-rt-transports-http-3.3.5.jar
+	cxf-rt-transports-http-jetty-3.2.6.jar -> cxf-rt-transports-http-jetty-3.3.5.jar
+	cxf-rt-ws-policy-3.2.6.jar -> cxf-rt-ws-policy-3.3.5.jar
+	cxf-rt-ws-security-3.2.6.jar -> cxf-rt-ws-security-3.3.5.jar
+	cxf-rt-wsdl-3.2.6.jar -> cxf-rt-wsdl-3.3.5.jar
+	cxf-tools-common-3.2.6.jar -> cxf-tools-common-3.3.5.jar
+	cxf-tools-validator-3.2.6.jar -> cxf-tools-validator-3.3.5.jar
+	cxf-tools-wsdlto-core-3.2.6.jar -> cxf-tools-wsdlto-core-3.3.5.jar
+	cxf-tools-wsdlto-databinding-jaxb-3.2.6.jar -> cxf-tools-wsdlto-databinding-jaxb-3.3.5.jar
+	cxf-tools-wsdlto-frontend-jaxws-3.2.6.jar -> cxf-tools-wsdlto-frontend-jaxws-3.3.5.jar
+	javax.ws.rs-api-2.1.jar -> jakarta.ws.rs-api-2.1.6.jar
+	stax2-api-4.1.jar -> stax2-api-4.2.jar
+	woodstox-core-5.1.0.jar -> woodstox-core-5.3.0.jar
+	xmlschema-core-2.2.3.jar -> xmlschema-core-2.2.5.jar
+	-- httpcore 
+	apache-mime4j-core-0.8.2.jar -> apache-mime4j-core-0.8.3.jar
+	apache-mime4j-dom-0.8.2.jar -> apache-mime4j-dom-0.8.3.jar
+	fluent-hc-4.5.6.jar -> fluent-hc-4.5.11.jar
+	httpclient-4.5.6.jar -> httpclient-4.5.11.jar
+	httpclient-cache-4.5.6.jar -> httpclient-cache-4.5.11.jar
+	httpclient-win-4.5.6.jar -> httpclient-win-4.5.11.jar
+	httpcore-4.4.10.jar -> httpcore-4.4.13.jar
+	httpcore-ab-4.4.10-gov4j-1.jar -> httpcore-ab-4.4.13-gov4j-2.jar
+	httpcore-nio-4.4.10.jar -> httpcore-nio-4.4.13.jar
+	httpmime-4.5.6.jar -> httpmime-4.5.11.jar
+	-- jackson 
+	add: jackson-datatype-jsr310-2.10.2.jar
+	jackson-annotations-2.9.10.jar -> jackson-annotations-2.10.2.jar
+	jackson-core-2.9.10.jar -> jackson-core-2.10.2.jar
+	jackson-databind-2.9.10.jar -> jackson-databind-2.10.2.jar
+	jackson-dataformat-xml-2.9.10.jar -> jackson-dataformat-xml-2.10.2.jar
+	jackson-dataformat-yaml-2.9.10.jar -> jackson-dataformat-yaml-2.10.2.jar
+	jackson-datatype-joda-2.9.10.jar -> jackson-datatype-joda-2.10.2.jar
+	jackson-jaxrs-base-2.9.10.jar -> jackson-jaxrs-base-2.10.2.jar
+	jackson-jaxrs-json-provider-2.9.10.jar -> jackson-jaxrs-json-provider-2.10.2.jar
+	jackson-jaxrs-xml-provider-2.9.10.jar -> jackson-jaxrs-xml-provider-2.10.2.jar
+	jackson-jaxrs-yaml-provider-2.9.10.jar -> jackson-jaxrs-yaml-provider-2.10.2.jar
+	jackson-module-jaxb-annotations-2.9.10.jar -> jackson-module-jaxb-annotations-2.10.2.jar
+	jackson-module-jsonSchema-2.9.10.jar -> jackson-module-jsonSchema-2.10.2.jar
+	-- javax
+	add openjdk-orb-8.1.4.Final.jar
+	javax.annotation-api-1.2.jar -> javax.annotation-api-1.3.2.jar
+	javax.jms-api-2.0.jar -> javax.jms-api-2.0.1.jar
+	javax.resource-api-1.7.jar -> javax.resource-api-1.7.1.jar
+	javax.security.jacc-api-1.4.jar -> javax.security.jacc-api-1.6.jar
+	javax.servlet-api-3.1.0.jar -> javax.servlet-api-4.0.1.jar
+	javax.xml.registry-api-1.0.4.jar -> javax.xml.registry-api-1.0.8.jar
+	-- jax
+	jaxb-api-2.3.0.1-gov4j.jar -> jaxb-api-2.3.1.jar
+	jaxb-core-2.3.0.1-gov4j.jar -> jaxb-core-2.3.0.1.jar
+	jaxb-impl-2.3.0.1-gov4j.jar -> jaxb-impl-2.3.2.jar
+	jaxb-xjc-2.3.0.1-gov4j.jar -> jaxb-xjc-2.3.2.jar
+	jaxws-api-2.3.0.2.jar -> jaxws-api-2.3.1.jar
+	jaxws-jsr181-api-2.3.0.2.jar -> jaxws-jsr181-api-2.3.1.jar
+	-- jetty
+	jetty-continuation-9.4.11.v20180605.jar -> jetty-continuation-9.4.26.v20200117.jar
+	jetty-http-9.4.11.v20180605.jar -> jetty-http-9.4.26.v20200117.jar
+	jetty-io-9.4.11.v20180605.jar -> jetty-io-9.4.26.v20200117.jar
+	jetty-security-9.4.11.v20180605.jar -> jetty-security-9.4.26.v20200117.jar
+	jetty-server-9.4.11.v20180605.jar -> jetty-server-9.4.26.v20200117.jar
+	jetty-util-9.4.11.v20180605.jar -> jetty-util-9.4.26.v20200117.jar
+	-- json
+	handy-uri-templates-2.1.7.jar -> handy-uri-templates-2.1.8.jar
+	json-20180813.jar -> json-20190722.jar
+	libphonenumber-8.9.12.jar -> libphonenumber-8.11.4.jar
+	networknt_json-schema-validator-1.0.16.jar -> networknt_json-schema-validator-1.0.30.jar
+	org.everit.json.schema-1.9.1.jar -> org.everit.json.schema-1.12.1.jar
+	-- log
+	slf4j-api-1.7.25 -> slf4j-api-1.7.30
+	log4j-1.2-api-2.11.1.jar -> log4j-1.2-api-2.13.0.jar
+	log4j-api-2.11.1.jar -> log4j-api-2.13.0.jar
+	log4j-core-2.11.1.jar -> log4j-core-2.13.0.jar
+	log4j-jcl-2.11.1.jar -> log4j-jcl-2.13.0.jar
+	log4j-slf4j-impl-2.11.1.jar -> log4j-slf4j-impl-2.13.0.jar
+	-- lucene
+	lucene-analyzers-common-7.4.0.jar -> lucene-analyzers-common-8.4.1.jar
+	lucene-codecs-7.4.0.jar -> lucene-codecs-8.4.1.jar
+	lucene-core-7.4.0.jar -> lucene-core-8.4.1.jar
+	lucene-misc-7.4.0.jar -> lucene-misc-8.4.1.jar
+	lucene-queries-7.4.0.jar -> lucene-queries-8.4.1.jar
+	lucene-suggest-7.4.0.jar -> lucene-suggest-8.4.1.jar
+	-- opensaml
+	java-support-7.3.0.jar -> java-support-7.5.0.jar
+	opensaml-core-3.3.1.jar -> opensaml-core-3.4.3.jar
+	opensaml-messaging-api-3.3.1.jar -> opensaml-messaging-api-3.4.3.jar
+	opensaml-messaging-impl-3.3.1.jar -> opensaml-messaging-impl-3.4.3.jar
+	opensaml-profile-api-3.3.1.jar -> opensaml-profile-api-3.4.3.jar
+	opensaml-profile-impl-3.3.1.jar -> opensaml-profile-impl-3.4.3.jar
+	opensaml-saml-api-3.3.1.jar -> opensaml-saml-api-3.4.3.jar
+	opensaml-saml-impl-3.3.1.jar -> opensaml-saml-impl-3.4.3.jar
+	opensaml-security-api-3.3.1.jar -> opensaml-security-api-3.4.3.jar
+	opensaml-security-impl-3.3.1.jar -> opensaml-security-impl-3.4.3.jar
+	opensaml-soap-api-3.3.1.jar -> opensaml-soap-api-3.4.3.jar
+	opensaml-soap-impl-3.3.1.jar -> opensaml-soap-impl-3.4.3.jar
+	opensaml-storage-api-3.3.1.jar -> opensaml-storage-api-3.4.3.jar
+	opensaml-storage-impl-3.3.1.jar -> opensaml-storage-impl-3.4.3.jar
+	opensaml-xacml-api-3.3.1.jar -> opensaml-xacml-api-3.4.3.jar
+	opensaml-xacml-impl-3.3.1.jar -> opensaml-xacml-impl-3.4.3.jar
+	opensaml-xacml-saml-api-3.3.1.jar -> opensaml-xacml-saml-api-3.4.3.jar
+	opensaml-xacml-saml-impl-3.3.1.jar -> opensaml-xacml-saml-impl-3.4.3.jar
+	opensaml-xmlsec-api-3.3.1.jar -> opensaml-xmlsec-api-3.4.3.jar
+	opensaml-xmlsec-impl-3.3.1.jar -> opensaml-xmlsec-impl-3.4.3.jar
+	-- reports
+	add: SparseBitSet-1.2.jar
+	add: net.tascalate.javaflow.api-2.6.1.jar
+	add: jasperreports-metadata-6.11.0.jar
+	dynamicreports-core-6.0.0.jar -> dynamicreports-core-6.1.0.jar
+	jasperreports-6.7.1.jar -> jasperreports-6.11.0.jar
+	jcommon-1.0.23.jar -> jcommon-1.0.24.jar
+	jfreechart-1.0.19.jar -> jfreechart-1.5.0.jar
+	poi-3.17.jar -> poi-4.1.2.jar
+	itext-2.1.7.js6.jar -> itext-2.1.7.js7.jar
+	-- saaj
+	add javax.xml.soap-api-1.4.0.jar
+	mimepull-1.9.7.jar -> mimepull-1.9.12.jar
+	saaj-impl-1.3.28.jar -> saaj-impl-1.5.1-gov4j-2.jar
+	stax-ex-1.7.8.jar -> stax-ex-1.8.2.jar
+	-- security
+	bcpkix-jdk15on-1.60.jar -> bcpkix-jdk15on-1.64.jar
+	bcprov-ext-jdk15on-1.60.jar -> bcprov-ext-jdk15on-1.64.jar
+	cryptacular-1.2.2.jar -> cryptacular-1.2.4.jar
+	jasypt-1.9.2.jar -> jasypt-1.9.3.jar
+	nimbus-jose-jwt-7.0.1.jar -> nimbus-jose-jwt-8.6.jar
+	xmlsec-2.1.2.jar -> xmlsec-2.1.4.jar
+	-- shared
+	Eliminato: Saxon-HE-9.8.0-14-xqj.jar
+	Aggiunti: velocity-tools-generic-3.0.jar, velocity-tools-view-3.0.jar e velocity-tools-view-jsp-3.0.jar
+	Saxon-HE-9.8.0-14.jar -> Saxon-HE-9.9.1-6.jar
+	activation-1.1.1.jar -> jakarta.activation-1.2.1.jar
+	aspectjrt-1.9.1.jar -> aspectjrt-1.9.5.jar
+	aspectjweaver-1.9.1.jar -> aspectjweaver-1.9.5.jar
+	commons-jcs-core-2.2-gov4j-2.jar -> commons-jcs-core-2.2.1-gov4j-1.jar
+	freemarker-2.3.28.jar -> freemarker-2.3.29.jar
+	guava-26.0-jre.jar -> guava-28.2-jre.jar
+	java-uuid-generator-3.1.5.jar -> java-uuid-generator-3.3.0.jar
+	joda-time-2.10.jar -> joda-time-2.10.5.jar
+	mailapi-1.6.2.jar -> mailapi-1.6.4.jar
+	reactive-streams-1.0.2.jar -> reactive-streams-1.0.3.jar
+	reflections-0.9.11.jar -> reflections-0.9.12.jar
+	snakeyaml-1.22.jar -> snakeyaml-1.25.jar
+	urlrewritefilter-4.0.3.jar -> urlrewritefilter-4.0.4.jar
+	velocity-1.7.jar -> velocity-engine-core-2.2.jar
+	-- spring e spring-security
+	spring-aop-5.1.6.RELEASE.jar -> spring-aop-5.2.3.RELEASE.jar
+	spring-aspects-5.1.6.RELEASE.jar -> spring-aspects-5.2.3.RELEASE.jar
+	spring-beans-5.1.6.RELEASE.jar -> spring-beans-5.2.3.RELEASE.jar
+	spring-context-5.1.6.RELEASE.jar -> spring-context-5.2.3.RELEASE.jar
+	spring-context-support-5.1.6.RELEASE.jar -> spring-context-support-5.2.3.RELEASE.jar
+	spring-core-5.1.6.RELEASE.jar -> spring-core-5.2.3.RELEASE.jar
+	spring-expression-5.1.6.RELEASE.jar -> spring-expression-5.2.3.RELEASE.jar
+	spring-orm-5.1.6.RELEASE.jar -> spring-orm-5.2.3.RELEASE.jar
+	spring-tx-5.1.6.RELEASE.jar -> spring-tx-5.2.3.RELEASE.jar
+	spring-web-5.1.6.RELEASE.jar -> spring-web-5.2.3.RELEASE.jar
+	spring-security-config-5.1.5.RELEASE.jar -> spring-security-config-5.2.2.RELEASE.jar
+	spring-security-core-5.1.5.RELEASE.jar -> spring-security-core-5.2.2.RELEASE.jar
+	spring-security-web-5.1.5.RELEASE.jar -> spring-security-web-5.2.2.RELEASE.jar
+	-- swagger
+	add: classgraph-4.8.65.jar
+	swagger-annotations-2.0.3.jar -> swagger-annotations-2.1.1.jar
+	swagger-core-1.5.21.jar -> swagger-core-1.6.0.jar
+	swagger-core-2.0.3.jar -> swagger-core-2.1.1.jar
+	swagger-integration-2.0.3.jar -> swagger-integration-2.1.1.jar
+	swagger-jaxrs2-2.0.3.jar -> swagger-jaxrs2-2.1.1.jar
+	swagger-models-1.5.21.jar -> swagger-models-1.6.0.jar
+	swagger-models-2.0.3.jar -> swagger-models-2.1.1.jar
+	swagger-parser-1.0.37.jar -> swagger-parser-1.0.49.jar
+	swagger-parser-2.0.2.jar -> swagger-parser-2.0.17.jar
+	swagger-parser-core-2.0.2.jar -> swagger-parser-core-2.0.17.jar
+	swagger-parser-v2-converter-2.0.2.jar -> swagger-parser-v2-converter-2.0.17.jar
+	swagger-parser-v3-2.0.2.jar -> swagger-parser-v3-2.0.17.jar
+	swagger-ui-3.18.2.jar -> swagger-ui-3.25.0.jar
+	-- testsuite
+	add: guice-4.2.2.jar
+	jcommander-1.72.jar -> jcommander-1.78.jar
+	junit-4.12.jar -> junit-4.13.jar
+	karate-apache-0.9.1.jar -> karate-apache-0.9.5.jar
+	karate-core-0.9.1.jar -> karate-core-0.9.5.jar
+	karate-junit4-0.9.1.jar -> karate-junit4-0.9.5.jar
+	karate-netty-0.9.1.jar -> karate-netty-0.9.2.jar
+	picocli-3.9.5.jar -> picocli-4.2.0.jar
+	testng-6.14.3.jar -> testng-7.1.0.jar
+	spring-jdbc-5.1.6.RELEASE.jar -> spring-jdbc-5.2.3.RELEASE.jar
+	-- wss4j
+	wss4j-bindings-2.2.2.jar -> wss4j-bindings-2.2.4.jar
+	wss4j-integration-2.2.2.jar -> wss4j-integration-2.2.4.jar
+	wss4j-policy-2.2.2.jar -> wss4j-policy-2.2.4.jar
+	wss4j-ws-security-common-2.2.2.jar -> wss4j-ws-security-common-2.2.4.jar
+	wss4j-ws-security-dom-2.2.2.jar -> wss4j-ws-security-dom-2.2.4.jar
+	wss4j-ws-security-policy-stax-2.2.2.jar -> wss4j-ws-security-policy-stax-2.2.4.jar
+	wss4j-ws-security-stax-2.2.2.jar -> wss4j-ws-security-stax-2.2.4.jar
+
+2019-02-28  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Uniformata procedura di export delle transazioni nella schermata storico.
+	La selezione del tipo di export è stata spostata nella finestra modale di export, cosi come la selezione dei contenuti da esportare.
+
+2019-02-25  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunto nei diagnostici la registrazione dei Problem JSON come veniva effettuato per i SOAPFault.
+
+2019-02-23  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole]
+	Uniformate label per le modalità di identificazione (headerBased, urlBased, ContentBased ... ) nella varie funzionalità.
+
+2019-02-21  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-390
+	Per le erogazioni di API è possibile definire connettori multipli dai quali dovrà essere selezionato il connettore da utilizzare per soddisfare una richiesta.
+	Ogni connettore all'interno del pool può essere identificato in base al nome o ad un filtro associato al connettore stesso. 
+	Il nome o il valore del filtro deve essere estratto dalla richiesta attraverso una delle seguenti modalità: 
+		Header HTTP, Espressione regolare applicata sulla Url di Inovcazione, Parametro della Url di Invocazione, SOAPAction,
+		Espressione XPath o JsonPath applicata sul body della richiesta, Client IP, X-Forwarded-For, Template di tipo GovWay, Freemarker o Velocity.
+	In una configurazione di consegna condizionale è infine possibile indicare se utilizzare uno specifico connettore o 
+	terminare la richiesta con errore nel caso in cui non si riesca ad identificare la condizione dalla richiesta o 
+	la condizione non permetta di identificare alcun connettore all'interno del pool. 
+
+2019-02-20  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor]
+	Nello storico delle transazioni è adesso possibile indicare il numero di risultati della ricerca che si desidera ottenere (default: 25).
+
+2019-02-19  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-390
+	Sia le ricerche nello storico delle transazioni che le informazioni statistiche possono adesso essere ricercate per due nuovi raggruppamenti degli esiti:
+	- Errori di Consegna: in questo gruppo sono collezionati tutti gli esiti che individuano un errore generato dal backend applicativo 
+			      (Fault Applicativi e/o codici di ritorno 4xx e 5xx) o un errore di connettività verso il backend.
+	- Richiesta Scartate: in questo gruppo sono presenti gli esiti che riguardano richieste di erogazione o fruizione malformate 
+			      (es. api non individuate, operazioni non individuate, errori di autenticazione ...)
+	Inoltre negli altri criteri di ricerca con qualsiasi esito è possibile comunque indicare se le richieste scartate devono essere prese in considerazione o meno; 
+	per default le richieste scartate non vengono considerati ai fini del risultato della ricerca.
+
+2019-02-18  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-390
+	Restyling grafico dello storico delle Transazioni: le informazioni sulle transazioni vengono riportate tramite una nuova grafica, 
+	con un approccio non più tabellare ma orientato all'ottimizzazione degli spazi e del posizionamento delle informazioni di interesse per il monitoraggio. 
+	È stata inoltre rivista anche la maschera di dettaglio di una transazione al fine di suddividere le molteplici informazioni riportate in più tab categorizzati.
+
+2019-02-16  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-390
+	Gestiti nuovi esiti associati alle Transazioni:
+	- Token non Presente: la richiesta non presente un token;
+	- Autenticazione Token Fallita: nel token ricevuto non sono presenti dei claim obbligatori richiesti per l'accesso all'API invocata;
+	- API non Individuata: la richiesta non permette di individuare una API registrata sul Gateway;
+	- Operazione non Individuata: la richiesta non indirizza un'operazione esistente sull'API invocata.
+
+2019-02-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-390
+	Per le erogazioni di API è possibile definire connettori multipli allo scopo di ridirigere il traffico bilanciando il carico sui vari connettori.
+	Vengono forniti differenti tipi di bilanciamento del carico: Round Robin, Weight Round Robin, Random, Weight Random, Source IP hash e Least Connections.
+	In una configurazione di bilanciamento del carico è possibile abilitare una sessione sticky 
+	in modo che tutte le richieste che presentano lo stesso id di sessione vengano servite tramite lo stesso connettore.
+	Se l'identificativo di sessione si riferisce ad una nuova sessione viene selezionato un connettore rispetto alla strategia indicata. 
+	L'individuazione dell'identificativo di sessione è configurabile attraverso una delle seguenti modalità:
+		Cookie, Header HTTP, Espressione regolare applicata sulla Url di Inovcazione, Parametro della Url di Invocazione,
+		Espressione XPath o JsonPath applicata sul body della richiesta, Client IP, X-Forwarded-For, Template di tipo GovWay, Freemarker o Velocity. 
+	È possibile indicare anche la durata della sessione in secondi.
+	Infine in una configurazione di bilanciamento del carico è possibile attivare un 'Passive Health Check' che verifica la connettività verso i connettori configurati. 
+	Un utilizzo di un connettore che provoca un errore di connettività comporta la sua esclusione dal pool dei connettori utilizzabili per un intervallo di tempo configurabile.
+
+2019-02-08  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-390
+	Gli applicativi registrati su GovWay, dalla versione 3.3.0, possono essere di due tipi:
+	- Client: si tratta degli applicativi presenti anche nelle precedenti versioni, 
+		  censiti allo scopo di identificarli ed autorizzarli durante l'invocazione di erogazioni o fruizioni di API;
+	- Server: questo nuovo tipo di applicativo consente di censire una applicazione di backend alla quale gli vengono associati i dati 
+		  che tipicamente venivano indicati nella sezione 'Connettore' di una erogazione di API (endpoint, credenziali, ...). 
+		  In una erogazione è quindi possibile riferire l'applicativo server precedentemente registrato 
+		  come modalità alternativa a quella di indicare tutte le informazioni di backend.
+
 2019-02-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.2

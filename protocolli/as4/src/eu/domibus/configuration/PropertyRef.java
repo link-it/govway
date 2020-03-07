@@ -32,9 +32,9 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="propertyRef">
- * 		&lt;attribute name="property" type="{http://www.domibus.eu/configuration}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="propertyRef"&gt;
+ * 		&lt;attribute name="property" type="{http://www.domibus.eu/configuration}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

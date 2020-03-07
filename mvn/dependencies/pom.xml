@@ -21,7 +21,7 @@
 		<owasp.output.dir>${project.parent.parent.basedir}/dependency-check-result</owasp.output.dir>
 
 		<!-- Versioni condivise dai moduli -->
-		<module.spring.version>5.1.6.RELEASE</module.spring.version>
+		<module.spring.version>5.2.3.RELEASE</module.spring.version>
 	</properties>
 
 	<modules>
@@ -43,7 +43,6 @@
 		<module>log</module>
 		<module>lucene</module>
 		<module>opensaml</module>
-		<module>proguard</module>
 		<module>reports</module>
 		<module>saaj</module>
 		<module>security</module>

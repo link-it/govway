@@ -33,14 +33,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PartInfo">
- * 		&lt;sequence>
- * 			&lt;element name="Schema" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Schema" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Description" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Description" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="PartProperties" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartProperties" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="PartInfo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Schema" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Schema" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Description" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Description" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="PartProperties" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}PartProperties" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="href" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

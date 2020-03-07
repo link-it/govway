@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="roles">
- * 		&lt;sequence>
- * 			&lt;element name="role" type="{http://www.domibus.eu/configuration}role" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="roles"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="role" type="{http://www.domibus.eu/configuration}role" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Roles extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method getRoleList
-   * @return List<Role>
+   * @return List&lt;Role&gt;
   */
   @Deprecated
   public List<Role> getRole() {
@@ -102,7 +102,7 @@ public class Roles extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method setRoleList
-   * @param role List<Role>
+   * @param role List&lt;Role&gt;
   */
   @Deprecated
   public void setRole(List<Role> role) {

@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-servizio">
- * 		&lt;sequence>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-servizio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="configurazione-azione" type="{http://www.openspcoop2.org/core/registry}configurazione-servizio-azione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -124,7 +124,7 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method getConfigurazioneAzioneList
-   * @return List<ConfigurazioneServizioAzione>
+   * @return List&lt;ConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public List<ConfigurazioneServizioAzione> getConfigurazioneAzione() {
@@ -133,7 +133,7 @@ public class ConfigurazioneServizio extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method setConfigurazioneAzioneList
-   * @param configurazioneAzione List<ConfigurazioneServizioAzione>
+   * @param configurazioneAzione List&lt;ConfigurazioneServizioAzione&gt;
   */
   @Deprecated
   public void setConfigurazioneAzione(List<ConfigurazioneServizioAzione> configurazioneAzione) {

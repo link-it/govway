@@ -37,26 +37,26 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DettaglioLineeType">
- * 		&lt;sequence>
- * 			&lt;element name="NumeroLinea" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}integer" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="TipoCessionePrestazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoCessionePrestazioneType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CodiceArticolo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CodiceArticoloType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="Descrizione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Quantita" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="UnitaMisura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DataInizioPeriodo" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="DataFinePeriodo" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="PrezzoUnitario" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="ScontoMaggiorazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}ScontoMaggiorazioneType" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="PrezzoTotale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="AliquotaIVA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Ritenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RitenutaType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Natura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}NaturaType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="AltriDatiGestionali" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}AltriDatiGestionaliType" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DettaglioLineeType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="NumeroLinea" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}integer" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="TipoCessionePrestazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoCessionePrestazioneType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CodiceArticolo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}CodiceArticoloType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="Descrizione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Quantita" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="UnitaMisura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataInizioPeriodo" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="DataFinePeriodo" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="PrezzoUnitario" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="ScontoMaggiorazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}ScontoMaggiorazioneType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="PrezzoTotale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="AliquotaIVA" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Ritenuta" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}RitenutaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Natura" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}NaturaType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="RiferimentoAmministrazione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="AltriDatiGestionali" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}AltriDatiGestionaliType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -348,7 +348,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method getCodiceArticoloList
-   * @return List<CodiceArticoloType>
+   * @return List&lt;CodiceArticoloType&gt;
   */
   @Deprecated
   public List<CodiceArticoloType> getCodiceArticolo() {
@@ -357,7 +357,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setCodiceArticoloList
-   * @param codiceArticolo List<CodiceArticoloType>
+   * @param codiceArticolo List&lt;CodiceArticoloType&gt;
   */
   @Deprecated
   public void setCodiceArticolo(List<CodiceArticoloType> codiceArticolo) {
@@ -414,7 +414,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method getScontoMaggiorazioneList
-   * @return List<ScontoMaggiorazioneType>
+   * @return List&lt;ScontoMaggiorazioneType&gt;
   */
   @Deprecated
   public List<ScontoMaggiorazioneType> getScontoMaggiorazione() {
@@ -423,7 +423,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setScontoMaggiorazioneList
-   * @param scontoMaggiorazione List<ScontoMaggiorazioneType>
+   * @param scontoMaggiorazione List&lt;ScontoMaggiorazioneType&gt;
   */
   @Deprecated
   public void setScontoMaggiorazione(List<ScontoMaggiorazioneType> scontoMaggiorazione) {
@@ -477,7 +477,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method getAltriDatiGestionaliList
-   * @return List<AltriDatiGestionaliType>
+   * @return List&lt;AltriDatiGestionaliType&gt;
   */
   @Deprecated
   public List<AltriDatiGestionaliType> getAltriDatiGestionali() {
@@ -486,7 +486,7 @@ public class DettaglioLineeType extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setAltriDatiGestionaliList
-   * @param altriDatiGestionali List<AltriDatiGestionaliType>
+   * @param altriDatiGestionali List&lt;AltriDatiGestionaliType&gt;
   */
   @Deprecated
   public void setAltriDatiGestionali(List<AltriDatiGestionaliType> altriDatiGestionali) {

@@ -52,7 +52,6 @@
 
 package org.openspcoop2.security.message.soapbox;
 
-import java.lang.reflect.Constructor;
 import java.security.cert.X509Certificate;
 
 import org.adroitlogic.soapbox.CryptoUtil;
@@ -63,30 +62,19 @@ import org.adroitlogic.soapbox.SecurityFailureException;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.slf4j.Logger;
 import org.w3c.dom.Element;
-
-import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi;
 
 /**
  * ProcessSignedMessage
  *
- * @author Andrea Poli <apoli@link.it>
- * @author Giovanni Bussu <bussu@link.it>
+ * @author Andrea Poli (apoli@link.it)
+ * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public class ProcessSignedMessage implements Processor {
 
-	private boolean useXMLSec = true;
-	public boolean isUseXMLSec() {
-		return this.useXMLSec;
-	}
-	public void setUseXMLSec(boolean useXMLSec) {
-		this.useXMLSec = useXMLSec;
-	}
-	
 	private OpenSPCoop2SoapMessage message;
 	public void setMessage(OpenSPCoop2SoapMessage message) {
 		this.message = message;
@@ -150,59 +138,33 @@ public class ProcessSignedMessage implements Processor {
         // A seconda della versione utilizzata devono inoltre essere implementate le classe di risoluzione delle signature reference
         // - com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi implementata tramite org.openspcoop2.security.message.signature.SunEnvelopeIdResolver
         // - org.apache.xml.security.utils.resolver.ResourceResolverSpi implementata tramite org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver
-        com.sun.org.apache.xml.internal.security.signature.XMLSignature sigSUN = null;
+        
+        // NOTA!!!: tutto il discorso sopra e' terminato con java 11
+        
         org.apache.xml.security.signature.XMLSignature sigXMLSec = null;
         //org.apache.xml.security.signature.XMLSignature sig2 = null;
         try {
-        	if(this.useXMLSec){
-        		sigXMLSec = new org.apache.xml.security.signature.XMLSignature(elemSignature, null);
-        	    //sig2 = new org.apache.xml.security.signature.XMLSignature(msgSecCtx.getDocument(), null, "http://www.w3.org/2000/09/xmldsig#rsa-sha1", "http://www.w3.org/2001/10/xml-exc-c14n#");
-        	}else{
-        		sigSUN = new com.sun.org.apache.xml.internal.security.signature.XMLSignature(elemSignature, null);
-        	}
+        	sigXMLSec = new org.apache.xml.security.signature.XMLSignature(elemSignature, null);
+        	//sig2 = new org.apache.xml.security.signature.XMLSignature(msgSecCtx.getDocument(), null, "http://www.w3.org/2000/09/xmldsig#rsa-sha1", "http://www.w3.org/2001/10/xml-exc-c14n#");
         } catch (Exception e) {
             throw new SecurityFailureException("No signature or error in processing signature in document", e);
         }
-        if(this.useXMLSec){
-        	sigXMLSec.addResourceResolver(XMLSecEnvelopeIdResolver.getInstance(this.message));
-        }
-        else{
-        	try {
-        		// Uso la reflection poiche' da java 9 la classe usata in SunEnvelopeIdResolver non esiste piu' e quindi la classe non viene compilata tra quelle di openspcoop (esclusa nel build)
-        		Class<?> c = ClassLoaderUtilities.forName("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver");
-        		Constructor<?> constructor = c.getConstructor(OpenSPCoop2SoapMessage.class);
-        		sigSUN.addResourceResolver((ResourceResolverSpi) constructor.newInstance(this.message.castAsSoap()));
-        	}catch(Exception e) {
-        		throw new SecurityFailureException(e.getMessage(),e);
-        	}
-        }
+        sigXMLSec.addResourceResolver(XMLSecEnvelopeIdResolver.getInstance(this.message));
         
         
                 
         
         // *** 2. Extract certificate for the signature, from reference or other means ***
         X509Certificate[] certs = null;
-        if(this.useXMLSec){
-        	org.apache.xml.security.keys.KeyInfo keyInfo = sigXMLSec.getKeyInfo();
-        	if (keyInfo != null && keyInfo.containsKeyValue()) {
-        		throw new UnsupportedOperationException("Verification of signatures from PublicKeys not yet supported");
-        	} else if (keyInfo != null) {
-        		certs = CryptoUtil.getCertificatesFromSecurityTokenReference(secConfig, msgSecCtx,
-        				CryptoUtil.getFirstChild(elemSignature, SBConstants.WSSE, SBConstants.SECURITY_TOKEN_REFERENCE));
-        	} else {
-        		throw new SecurityFailureException("No key information for signature was found");
-        	}
-        }else{
-        	com.sun.org.apache.xml.internal.security.keys.KeyInfo keyInfo = sigSUN.getKeyInfo();
-        	if (keyInfo != null && keyInfo.containsKeyValue()) {
-        		throw new UnsupportedOperationException("Verification of signatures from PublicKeys not yet supported");
-        	} else if (keyInfo != null) {
-        		certs = CryptoUtil.getCertificatesFromSecurityTokenReference(secConfig, msgSecCtx,
-        				CryptoUtil.getFirstChild(elemSignature, SBConstants.WSSE, SBConstants.SECURITY_TOKEN_REFERENCE));
-        	} else {
-        		throw new SecurityFailureException("No key information for signature was found");
-        	}
-        }
+       	org.apache.xml.security.keys.KeyInfo keyInfo = sigXMLSec.getKeyInfo();
+    	if (keyInfo != null && keyInfo.containsKeyValue()) {
+    		throw new UnsupportedOperationException("Verification of signatures from PublicKeys not yet supported");
+    	} else if (keyInfo != null) {
+    		certs = CryptoUtil.getCertificatesFromSecurityTokenReference(secConfig, msgSecCtx,
+    				CryptoUtil.getFirstChild(elemSignature, SBConstants.WSSE, SBConstants.SECURITY_TOKEN_REFERENCE));
+    	} else {
+    		throw new SecurityFailureException("No key information for signature was found");
+    	}
         this.certificates = certs;
         
         
@@ -229,11 +191,7 @@ public class ProcessSignedMessage implements Processor {
 
             try {
             	boolean signValid = false;
-            	if(this.useXMLSec){
-            		signValid = sigXMLSec.checkSignatureValue(certs[0]);
-            	}else{
-            		signValid = sigSUN.checkSignatureValue(certs[0]);
-            	}
+            	signValid = sigXMLSec.checkSignatureValue(certs[0]);
             	
                 if (!signValid) {
                 	//System.out.println("TEST["+sig2.checkSignatureValue(certs[0])+"]");

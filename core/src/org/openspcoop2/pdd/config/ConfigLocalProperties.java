@@ -74,7 +74,7 @@ import org.openspcoop2.utils.properties.PropertiesUtilities;
 /**
 * ConfigLocalProperties
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

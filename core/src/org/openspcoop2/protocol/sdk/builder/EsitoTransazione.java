@@ -27,7 +27,7 @@ import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 /**
 * EsitoTransazione
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

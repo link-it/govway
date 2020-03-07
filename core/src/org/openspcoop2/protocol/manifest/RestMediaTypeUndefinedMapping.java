@@ -33,9 +33,9 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RestMediaTypeUndefinedMapping">
- * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}RestMessageType" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="RestMediaTypeUndefinedMapping"&gt;
+ * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}RestMessageType" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

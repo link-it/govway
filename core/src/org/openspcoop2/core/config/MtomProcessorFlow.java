@@ -37,12 +37,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="mtom-processor-flow">
- * 		&lt;sequence>
- * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/config}mtom-processor-flow-parameter" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="mode" type="{http://www.openspcoop2.org/core/config}MTOMProcessorType" use="optional" default="disable"/>
- * &lt;/complexType>
+ * &lt;complexType name="mtom-processor-flow"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="parameter" type="{http://www.openspcoop2.org/core/config}mtom-processor-flow-parameter" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="mode" type="{http://www.openspcoop2.org/core/config}MTOMProcessorType" use="optional" default="disable"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -134,7 +134,7 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getParameterList
-   * @return List<MtomProcessorFlowParameter>
+   * @return List&lt;MtomProcessorFlowParameter&gt;
   */
   @Deprecated
   public List<MtomProcessorFlowParameter> getParameter() {
@@ -143,7 +143,7 @@ public class MtomProcessorFlow extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setParameterList
-   * @param parameter List<MtomProcessorFlowParameter>
+   * @param parameter List&lt;MtomProcessorFlowParameter&gt;
   */
   @Deprecated
   public void setParameter(List<MtomProcessorFlowParameter> parameter) {

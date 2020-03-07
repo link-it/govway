@@ -36,11 +36,11 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-multitenant">
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="fruizioneSceltaSoggettiErogatori" type="{http://www.openspcoop2.org/core/config}PortaDelegataSoggettiErogatori" use="optional" default="soggettiEsterni"/>
- * 		&lt;attribute name="erogazioneSceltaSoggettiFruitori" type="{http://www.openspcoop2.org/core/config}PortaApplicativaSoggettiFruitori" use="optional" default="soggettiEsterni"/>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-multitenant"&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="fruizioneSceltaSoggettiErogatori" type="{http://www.openspcoop2.org/core/config}PortaDelegataSoggettiErogatori" use="optional" default="soggettiEsterni"/&gt;
+ * 		&lt;attribute name="erogazioneSceltaSoggettiFruitori" type="{http://www.openspcoop2.org/core/config}PortaApplicativaSoggettiFruitori" use="optional" default="soggettiEsterni"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

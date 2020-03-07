@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="errorHandlings">
- * 		&lt;sequence>
- * 			&lt;element name="errorHandling" type="{http://www.domibus.eu/configuration}errorHandling" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="errorHandlings"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="errorHandling" type="{http://www.domibus.eu/configuration}errorHandling" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ErrorHandlings extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getErrorHandlingList
-   * @return List<ErrorHandling>
+   * @return List&lt;ErrorHandling&gt;
   */
   @Deprecated
   public List<ErrorHandling> getErrorHandling() {
@@ -102,7 +102,7 @@ public class ErrorHandlings extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setErrorHandlingList
-   * @param errorHandling List<ErrorHandling>
+   * @param errorHandling List&lt;ErrorHandling&gt;
   */
   @Deprecated
   public void setErrorHandling(List<ErrorHandling> errorHandling) {

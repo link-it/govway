@@ -102,7 +102,7 @@
 			</lib>
 			<lib dir="${required_lib}/axis14">
 				<include name="axis-1.4-gov4j-1.jar"/>
-				<include name="axis-saaj-1.4.jar"/>
+				<include name="${axis_saaj_jar}"/>
 				<include name="axis-jaxrpc-1.4-gov4j-1.jar"/>
 				<include name="wss4j-1.5.11.jar"/>
 				<include name="opensaml-1.1.jar"/>
@@ -116,16 +116,17 @@
 																									Missing End Boundary for Mime Package : EOF while skipping headers 
 					Deve essere usata una versione compatibile (mailapi-1.5.6.jar presente tra i jar axis14) con le classi della versione 1.4 di axis.
 				--> 
-				<!-- <include name="mailapi-1.6.2.jar"/> -->
+				<!-- <include name="mailapi-1.6.4.jar"/> -->
 				<include name="wsdl4j-1.6.3.jar"/>
-				<include name="activation-1.1.1.jar"/>
+				<include name="jakarta.activation-1.2.1.jar"/>
 				<include name="${xerces_jar}"/>
 				<include name="${xml_apis_jar}"/>
 				<include name="${xalan_jar}"/>
 				<include name="${xalan_serializer_jar}"/>
+				<include name="joda-time-2.10.5.jar"/>
 			</lib>
 			<lib dir="${required_lib}/commons">
-				<include name="commons-codec-1.11.jar"/>
+				<include name="commons-codec-1.14.jar"/>
 				<include name="commons-discovery-0.5.jar"/>
 				<include name="commons-io-2.6.jar"/>
 				<include name="commons-lang-2.6.jar"/>
@@ -133,20 +134,24 @@
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${required_lib}/security">
-				<include name="bcprov-ext-jdk15on-1.60.jar"/>
+				<include name="bcprov-ext-jdk15on-1.64.jar"/>
 			</lib>
 			<lib dir="${required_lib}/saaj">
 				<include name="*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/jax">
+				<include name="${jaxb_jar}" />
 				<include name="${jaxp_ri_jar}" />
 			</lib>
+			<lib dir="${required_lib}/jackson">
+				<include name="${jackson_jar}"/>
+			</lib>
 			<lib dir="${required_lib}/log">
-				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${required_lib}/javax">
-				<include name="${javax.jms-api-2.0.jar}"/>
+				<include name="${javax.jms-api-2.0.1.jar}"/>
 			</lib>
 			<lib dir="${required_lib}/stub/axis14">
 				<include name="openspcoop2_integrationManagerStub_axis14.jar"/>

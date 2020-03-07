@@ -24,10 +24,12 @@ import org.openspcoop2.generic_project.exception.DeserializerException;
 import org.openspcoop2.core.transazioni.DumpAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
+import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.IdCredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.CredenzialeMittente;
 import org.openspcoop2.core.transazioni.DumpContenuto;
+import org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer;
 import org.openspcoop2.core.transazioni.Transazione;
 import org.openspcoop2.core.transazioni.DumpMessaggio;
 import org.openspcoop2.core.transazioni.TransazioneExtendedInfo;
@@ -235,6 +237,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpMultipartHeader readDumpMultipartHeaderFromString(String in) throws DeserializerException {
 		return (DumpMultipartHeader) this.xmlToObj(in.getBytes(), DumpMultipartHeader.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: transazione-applicativo-server
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneApplicativoServer readTransazioneApplicativoServer(String fileName) throws DeserializerException {
+		return (TransazioneApplicativoServer) this.xmlToObj(fileName, TransazioneApplicativoServer.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneApplicativoServer readTransazioneApplicativoServer(File file) throws DeserializerException {
+		return (TransazioneApplicativoServer) this.xmlToObj(file, TransazioneApplicativoServer.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneApplicativoServer readTransazioneApplicativoServer(InputStream in) throws DeserializerException {
+		return (TransazioneApplicativoServer) this.xmlToObj(in, TransazioneApplicativoServer.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneApplicativoServer readTransazioneApplicativoServer(byte[] in) throws DeserializerException {
+		return (TransazioneApplicativoServer) this.xmlToObj(in, TransazioneApplicativoServer.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.TransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public TransazioneApplicativoServer readTransazioneApplicativoServerFromString(String in) throws DeserializerException {
+		return (TransazioneApplicativoServer) this.xmlToObj(in.getBytes(), TransazioneApplicativoServer.class);
 	}	
 	
 	
@@ -487,6 +552,69 @@ public abstract class AbstractDeserializer extends org.openspcoop2.generic_proje
 	 */
 	public DumpContenuto readDumpContenutoFromString(String in) throws DeserializerException {
 		return (DumpContenuto) this.xmlToObj(in.getBytes(), DumpContenuto.class);
+	}	
+	
+	
+	
+	/*
+	 =================================================================================
+	 Object: id-transazione-applicativo-server
+	 =================================================================================
+	*/
+	
+	/**
+	 * Transform the xml in <var>fileName</var> in the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * 
+	 * @param fileName Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdTransazioneApplicativoServer readIdTransazioneApplicativoServer(String fileName) throws DeserializerException {
+		return (IdTransazioneApplicativoServer) this.xmlToObj(fileName, IdTransazioneApplicativoServer.class);
+	}
+	
+	/**
+	 * Transform the xml in <var>file</var> in the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * 
+	 * @param file Xml file to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdTransazioneApplicativoServer readIdTransazioneApplicativoServer(File file) throws DeserializerException {
+		return (IdTransazioneApplicativoServer) this.xmlToObj(file, IdTransazioneApplicativoServer.class);
+	}
+	
+	/**
+	 * Transform the input stream <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * 
+	 * @param in InputStream to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdTransazioneApplicativoServer readIdTransazioneApplicativoServer(InputStream in) throws DeserializerException {
+		return (IdTransazioneApplicativoServer) this.xmlToObj(in, IdTransazioneApplicativoServer.class);
+	}	
+	
+	/**
+	 * Transform the byte array <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * 
+	 * @param in Byte array to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdTransazioneApplicativoServer readIdTransazioneApplicativoServer(byte[] in) throws DeserializerException {
+		return (IdTransazioneApplicativoServer) this.xmlToObj(in, IdTransazioneApplicativoServer.class);
+	}	
+	
+	/**
+	 * Transform the String <var>in</var> in the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * 
+	 * @param in String to use for the reconstruction of the object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @return Object type {@link org.openspcoop2.core.transazioni.IdTransazioneApplicativoServer}
+	 * @throws DeserializerException The exception that is thrown when an error occurs during deserialization
+	 */
+	public IdTransazioneApplicativoServer readIdTransazioneApplicativoServerFromString(String in) throws DeserializerException {
+		return (IdTransazioneApplicativoServer) this.xmlToObj(in.getBytes(), IdTransazioneApplicativoServer.class);
 	}	
 	
 	

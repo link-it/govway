@@ -32,15 +32,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RFC7807">
- * 		&lt;attribute name="useAcceptHeader" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="details" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="instance" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="govwayStatus" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="govwayTransactionId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * 		&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="typeFormat" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="https://httpstatuses.com/%d"/>
- * &lt;/complexType>
+ * &lt;complexType name="RFC7807"&gt;
+ * 		&lt;attribute name="useAcceptHeader" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="details" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="instance" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="govwayStatus" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="govwayTransactionId" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * 		&lt;attribute name="type" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="typeFormat" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="https://httpstatuses.com/%d"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

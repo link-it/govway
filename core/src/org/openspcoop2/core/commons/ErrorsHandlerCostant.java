@@ -25,7 +25,7 @@ package org.openspcoop2.core.commons;
 /**
  * Enumeration per Controlli
  *
- * @author Stefano Corallo <corallo@link.it>
+ * @author Stefano Corallo (corallo@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

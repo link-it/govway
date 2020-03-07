@@ -37,16 +37,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="response-caching-configurazione">
- * 		&lt;sequence>
- * 			&lt;element name="hash-generator" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-hash-generator" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="control" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-control" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-regola" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="cache-timeout-seconds" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="300"/>
- * 		&lt;attribute name="max-message-size" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="response-caching-configurazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="hash-generator" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-hash-generator" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="control" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-control" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione-regola" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="cache-timeout-seconds" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="300"/&gt;
+ * 		&lt;attribute name="max-message-size" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -178,7 +178,7 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
 
   /**
    * @deprecated Use method getRegolaList
-   * @return List<ResponseCachingConfigurazioneRegola>
+   * @return List&lt;ResponseCachingConfigurazioneRegola&gt;
   */
   @Deprecated
   public List<ResponseCachingConfigurazioneRegola> getRegola() {
@@ -187,7 +187,7 @@ public class ResponseCachingConfigurazione extends org.openspcoop2.utils.beans.B
 
   /**
    * @deprecated Use method setRegolaList
-   * @param regola List<ResponseCachingConfigurazioneRegola>
+   * @param regola List&lt;ResponseCachingConfigurazioneRegola&gt;
   */
   @Deprecated
   public void setRegola(List<ResponseCachingConfigurazioneRegola> regola) {

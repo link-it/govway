@@ -1306,6 +1306,8 @@ public class RicezioneContenutiApplicativi {
 			}
 			if(throwFault) {
 			
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+				
 				msgDiag.addKeywordErroreProcessamento(e);
 				msgDiag.logPersonalizzato("identificazioneDinamicaAzioneNonRiuscita");
 				openspcoopstate.releaseResource();
@@ -1490,6 +1492,7 @@ public class RicezioneContenutiApplicativi {
 					}
 				}
 			}else {
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, identificazione.getErroreIntegrazione().getDescrizione(protocolFactory));
 				msgDiag.logPersonalizzato("portaDelegataNonEsistente");
 				openspcoopstate.releaseResource();
@@ -1944,7 +1947,12 @@ public class RicezioneContenutiApplicativi {
 					}
 			
 					if(fineGestione) {
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
+						if(esitoPresenzaToken.isPresente()) {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_TOKEN, "true");
+						}
+						else {
+							pddContext.addObject(org.openspcoop2.core.constants.Costanti.TOKEN_NON_PRESENTE, "true");
+						}
 						msgDiag.logPersonalizzato("gestioneTokenFallita");
 						
 						List<InformazioniToken> listaEsiti = GestoreToken.getInformazioniTokenNonValide(esitoValidazioneToken, esitoIntrospectionToken, esitoUserInfoToken);
@@ -2285,7 +2293,7 @@ public class RicezioneContenutiApplicativi {
 					}
 					
 					if (erroreIntegrazione != null) {
-						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE, "true");
+						pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_AUTENTICAZIONE_TOKEN, "true");
 					}
 					else {
 						msgDiag.logPersonalizzato("autenticazioneTokenEffettuata");							
@@ -3217,6 +3225,8 @@ public class RicezioneContenutiApplicativi {
 					azione = "(azione:"+ idServizio.getAzione()+ ") ";
 				}
 				
+				pddContext.addObject(org.openspcoop2.core.constants.Costanti.OPERAZIONE_NON_INDIVIDUATA, "true");
+				
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_423_SERVIZIO_CON_AZIONE_SCORRETTA.
 						getErrore423_ServizioConAzioneScorretta(azione+ invocazioneAzioneErrata);
 				integrationError = IntegrationError.BAD_REQUEST;
@@ -3249,7 +3259,7 @@ public class RicezioneContenutiApplicativi {
 		infoServizio.setCorrelato(isServizioCorrelato);
 		this.msgContext.getProtocol().setProfiloCollaborazione(infoServizio.getProfiloDiCollaborazione(),null); // il valore verra' serializzato solo successivamente nella busta
 		msgDiag.addKeyword(CostantiPdD.KEY_PROFILO_COLLABORAZIONE, traduttore.toString(infoServizio.getProfiloDiCollaborazione()));
-		if(infoServizio!=null){
+		if(infoServizio!=null && infoServizio.getIdAccordo()!=null){
 			this.msgContext.getProtocol().setIdAccordo(infoServizio.getIdAccordo());
 			richiestaDelegata.setIdAccordo(infoServizio.getIdAccordo());
 			try{
@@ -3260,6 +3270,17 @@ public class RicezioneContenutiApplicativi {
 		Busta bustaRichiesta = infoServizio.convertToBusta(protocolFactory.getProtocol(), soggettoFruitore);
 		msgDiag.highDebug("Convert infoServizio to Busta terminata");
 		inRequestPDMessage.setBustaRichiesta(bustaRichiesta);
+		
+		// Aggiorno eventuale valore dipendete dal profilo (PDC)
+		if(this.msgContext.getProtocol()!=null && idServizio.getVersione()!=null) {
+			if(this.msgContext.getProtocol().getVersioneServizio()==null) {
+				this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
+			}
+			else if(this.msgContext.getProtocol().getVersioneServizio().intValue()!=idServizio.getVersione().intValue()) {
+				this.msgContext.getProtocol().setVersioneServizio(idServizio.getVersione());
+			}
+		}
+
 		
 	
 		

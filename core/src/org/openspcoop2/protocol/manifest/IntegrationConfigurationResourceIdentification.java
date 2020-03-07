@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfigurationResourceIdentification">
- * 		&lt;sequence>
- * 			&lt;element name="identificationModes" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationModes" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="identificationParameter" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationName" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="specificResource" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationSpecificResource" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfigurationResourceIdentification"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="identificationModes" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationModes" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="identificationParameter" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationName" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificResource" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationSpecificResource" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -31,7 +31,9 @@ import org.openspcoop2.core.config.InvocazioneServizio;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
+import org.openspcoop2.core.config.constants.TipologiaFruizione;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
 import org.openspcoop2.core.id.IDServizio;
@@ -717,7 +719,8 @@ public class ImporterInformationMissingSetter {
 					sa.getInvocazionePorta().removeCredenziali(0);
 				}
 				sa.getInvocazionePorta().addCredenziali(credenziali);
-				
+				sa.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+				sa.setTipo(CostantiConfigurazione.CLIENT);
 			}
 		}
 	}

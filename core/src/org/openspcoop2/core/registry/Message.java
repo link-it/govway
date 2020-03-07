@@ -37,13 +37,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="message">
- * 		&lt;sequence>
- * 			&lt;element name="part" type="{http://www.openspcoop2.org/core/registry}message-part" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="use" type="{http://www.openspcoop2.org/core/registry}BindingUse" use="optional" default="literal"/>
- * 		&lt;attribute name="soap-namespace" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="message"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="part" type="{http://www.openspcoop2.org/core/registry}message-part" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="use" type="{http://www.openspcoop2.org/core/registry}BindingUse" use="optional" default="literal"/&gt;
+ * 		&lt;attribute name="soap-namespace" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -143,7 +143,7 @@ public class Message extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getPartList
-   * @return List<MessagePart>
+   * @return List&lt;MessagePart&gt;
   */
   @Deprecated
   public List<MessagePart> getPart() {
@@ -152,7 +152,7 @@ public class Message extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setPartList
-   * @param part List<MessagePart>
+   * @param part List&lt;MessagePart&gt;
   */
   @Deprecated
   public void setPart(List<MessagePart> part) {

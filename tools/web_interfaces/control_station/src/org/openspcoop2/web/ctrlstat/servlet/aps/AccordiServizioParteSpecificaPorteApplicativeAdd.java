@@ -39,14 +39,12 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
-import org.openspcoop2.core.config.InvocazioneServizio;
-import org.openspcoop2.core.config.ServizioApplicativo;
-import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.PortaApplicativaAzioneIdentificazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDAccordo;
@@ -54,12 +52,12 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
 import org.openspcoop2.core.registry.Connettore;
-import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
 import org.openspcoop2.core.registry.constants.PddTipologia;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
@@ -78,6 +76,8 @@ import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCore;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeCostanti;
 import org.openspcoop2.web.ctrlstat.servlet.pa.PorteApplicativeHelper;
 import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCore;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiCostanti;
+import org.openspcoop2.web.ctrlstat.servlet.sa.ServiziApplicativiHelper;
 import org.openspcoop2.web.ctrlstat.servlet.soggetti.SoggettiCore;
 import org.openspcoop2.web.lib.mvc.BinaryParameter;
 import org.openspcoop2.web.lib.mvc.Costanti;
@@ -154,6 +154,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String erogazioneAutorizzazioneRuoliMatch = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_RUOLO_MATCH);
 			String erogazioneSoggettoAutenticato = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_AUTORIZZAZIONE_SOGGETTO_AUTENTICATO);
 
+			String erogazioneServizioApplicativoServerEnabledS = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER);
+			boolean erogazioneServizioApplicativoServerEnabled = ServletUtils.isCheckBoxEnabled(erogazioneServizioApplicativoServerEnabledS);
+			String erogazioneServizioApplicativoServer = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ID_APPLICATIVO_SERVER);
+			  
 			String nomeSA = apsHelper.getParameter(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_NOME_SA);
 			
 			String gestioneToken = apsHelper.getParameter(CostantiControlStation.PARAMETRO_PORTE_GESTIONE_TOKEN);
@@ -267,6 +271,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String responseInputFileNameHeaders = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_HEADERS);
 			String responseInputDeleteAfterRead = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_FILE_NAME_DELETE_AFTER_READ);
 			String responseInputWaitTime = apsHelper.getParameter(ConnettoriCostanti.PARAMETRO_CONNETTORE_FILE_RESPONSE_INPUT_WAIT_TIME);
+			
+
 
 			boolean httpshostverify = false;
 			if (httpshostverifyS != null && httpshostverifyS.equals(Costanti.CHECK_BOX_ENABLED))
@@ -317,6 +323,10 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
 			int soggInt = Integer.parseInt(idSoggettoErogatoreDelServizio);
 			
+			boolean isApplicativiServerEnabled = apsCore.isApplicativiServerEnabled(apsHelper);
+			// La lista degli SA viene filtrata per tipo se sono abilitati gli applicativiServer.
+			String tipoSA = (isApplicativiServerEnabled && gestioneErogatori) ? ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER : null;
+			
 			AccordiServizioParteSpecificaPorteApplicativeMappingInfo mappingInfo = AccordiServizioParteSpecificaUtilities.getMappingInfo(mappingPA, asps, apsCore);
 			MappingErogazionePortaApplicativa mappingSelezionato = mappingInfo.getMappingSelezionato();
 			MappingErogazionePortaApplicativa mappingDefault = mappingInfo.getMappingDefault();
@@ -325,6 +335,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 			String[] listaMappingValues = mappingInfo.getListaMappingValues();
 			List<String> azioniOccupate = mappingInfo.getAzioniOccupate();
 			String nomeNuovaConfigurazione = mappingInfo.getNomeNuovaConfigurazione();
+			boolean paMappingSelezionatoMulti = mappingInfo.isPaMappingSelezionatoMulti();
 
 			// Prendo nome, tipo e pdd del soggetto
 			String tipoSoggettoProprietario = null;
@@ -376,42 +387,28 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						initConnettore = true;
 					}
 				}
+				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
+					// devo resettare il connettore se passo da SA Server a Default
+					if(!erogazioneServizioApplicativoServerEnabled) {
+						initConnettore = true;
+					}
+				}
 			}
 
-			String [] saSoggetti = null;
+			// Lista dei servizi applicativi per la creazione automatica
+			List<IDServizioApplicativoDB> listaIdSA = null;
 			if ((idSoggettoErogatoreDelServizio != null) && !idSoggettoErogatoreDelServizio.equals("")) {
-				int idErogatore = Integer.parseInt(idSoggettoErogatoreDelServizio);
-
-				List<ServizioApplicativo> listaSA = saCore.getServiziApplicativiByIdErogatore(Long.valueOf(idErogatore));
-
-				// rif bug #45
+				long idErogatore = Long.valueOf(idSoggettoErogatoreDelServizio);
+				
 				// I servizi applicativi da visualizzare sono quelli che hanno
 				// -Integration Manager (getMessage abilitato)
 				// -connettore != disabilitato
-				ArrayList<ServizioApplicativo> validSA = new ArrayList<ServizioApplicativo>();
-				for (ServizioApplicativo sa : listaSA) {
-					InvocazioneServizio invServizio = sa.getInvocazioneServizio();
-					org.openspcoop2.core.config.Connettore connettore = invServizio != null ? invServizio.getConnettore() : null;
-					StatoFunzionalita getMessage = invServizio != null ? invServizio.getGetMessage() : null;
+				listaIdSA = saCore.getIdServiziApplicativiWithIdErogatore(idErogatore, tipoSA, true, true);
 
-					if ((connettore != null && !TipiConnettore.DISABILITATO.getNome().equals(connettore.getTipo())) || CostantiConfigurazione.ABILITATO.equals(getMessage)) {
-						// il connettore non e' disabilitato oppure il get
-						// message e' abilitato
-						// Lo aggiungo solo se gia' non esiste tra quelli
-						// aggiunti
-						validSA.add(sa);
-					}
-				}
-
-				// Prendo la lista di servizioApplicativo associati al soggetto
-				// e la metto in un array
-				saSoggetti = new String[validSA.size()+1];
-				saSoggetti[0] = "-"; // elemento nullo di default
-				for (int i = 0; i < validSA.size(); i++) {
-					ServizioApplicativo sa = validSA.get(i);
-					saSoggetti[i+1] = sa.getNome();
-				}
 			}
+			String [] saSoggetti = ServiziApplicativiHelper.toArray(listaIdSA);
+		
 			
 			List<String> soggettiAutenticati = new ArrayList<String>();
 			List<String> soggettiAutenticatiLabel = new ArrayList<String>();
@@ -422,7 +419,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				credenziale = !tipoAutenticazione.equals(TipoAutenticazione.DISABILITATO) ? CredenzialeTipo.toEnumConstant(erogazioneAutenticazione) : null;
 			}
 			
-			List<org.openspcoop2.core.registry.Soggetto> listSoggettiCompatibili = null;
+			List<IDSoggettoDB> listSoggettiCompatibili = null;
 			 
 			if(apsCore.isVisioneOggettiGlobale(userLogin)){
 				listSoggettiCompatibili = soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiCompatibiliAccordo, null, credenziale, pddTipologiaSoggettoAutenticati );
@@ -434,7 +431,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				
 				soggettiAutenticati.add("-"); // elemento nullo di default
 				soggettiAutenticatiLabel.add("-");
-				for (Soggetto soggetto : listSoggettiCompatibili) {
+				for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 					soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 					soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
 					
@@ -522,7 +519,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						if(listSoggettiCompatibili != null && listSoggettiCompatibili.size() >0 ) {
 							soggettiAutenticati.add("-"); // elemento nullo di default
 							soggettiAutenticatiLabel.add("-");
-							for (Soggetto soggetto : listSoggettiCompatibili) {
+							for (IDSoggettoDB soggetto : listSoggettiCompatibili) {
 								soggettiAutenticati.add(soggetto.getTipo() + "/"+ soggetto.getNome());
 								soggettiAutenticatiLabel.add(apsHelper.getLabelNomeSoggetto(protocollo, soggetto.getTipo(), soggetto.getNome())); 
 							}
@@ -644,7 +641,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					dati = porteApplicativeHelper.addHiddenFieldsToDati(TipoOperazione.ADD, idAsps, null, null, dati);
 					dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 							identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-							mappingPA, mappingLabel, nomeSA, saSoggetti, 
+							mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 							controlloAccessiStato,
 							erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 							erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -682,7 +679,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 								responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 								autenticazioneToken, token_policy,
 								listExtendedConnettore, forceEnableConnettore,
-								protocollo,false,false);
+								protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+								erogazioneServizioApplicativoServer, saSoggetti);
 					}
 				}
 					
@@ -715,7 +713,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 						requestOutputFileName,requestOutputFileNameHeaders,requestOutputParentDirCreateIfNotExists,requestOutputOverwriteIfExists,
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken, token_policy,
-						listExtendedConnettore);
+						listExtendedConnettore,erogazioneServizioApplicativoServerEnabled,
+						erogazioneServizioApplicativoServer);
 			}
 			
 			
@@ -732,7 +731,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 
 				dati = apsHelper.addConfigurazioneErogazioneToDati(TipoOperazione.ADD, dati, nome, nomeGruppo, azioni, azioniDisponibiliList, azioniDisponibiliLabelList, idAsps, idSoggettoErogatoreDelServizio,
 						identificazione, asps, as, serviceBinding, modeCreazione, modeCreazioneConnettore, listaMappingLabels, listaMappingValues,
-						mappingPA, mappingLabel, nomeSA, saSoggetti, 
+						mappingPA, mappingLabel, paMappingSelezionatoMulti, nomeSA, saSoggetti, 
 						controlloAccessiStato,
 						erogazioneAutenticazione, erogazioneAutenticazioneOpzionale, erogazioneAutenticazionePrincipal, erogazioneAutenticazioneParametroList,
 						erogazioneIsSupportatoAutenticazioneSoggetti, erogazioneAutorizzazione, erogazioneAutorizzazioneAutenticati, 
@@ -768,7 +767,8 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 							responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 							autenticazioneToken, token_policy,
 							listExtendedConnettore, forceEnableConnettore,
-							protocollo,false,false);
+							protocollo,false,false, isApplicativiServerEnabled, erogazioneServizioApplicativoServerEnabled,
+							erogazioneServizioApplicativoServer, saSoggetti);
 				}
 
 				pd.setDati(dati);
@@ -794,7 +794,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				erogazioneAutorizzazioneRuoliMatch = null;
 				
 			}
-
+			
 			AccordiServizioParteSpecificaUtilities.addAccordoServizioParteSpecificaPorteApplicative(mappingDefault,
 					mappingSelezionato,
 					nome, nomeGruppo, azioni, modeCreazione, modeCreazioneConnettore,
@@ -829,7 +829,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 					autenticazioneTokenIssuer, autenticazioneTokenClientId, autenticazioneTokenSubject, autenticazioneTokenUsername, autenticazioneTokenEMail,
 					asps, 
 					protocollo, userLogin,
-					apsCore, apsHelper);
+					apsCore, apsHelper,erogazioneServizioApplicativoServer);
 			
 			
 			// Preparo la lista

@@ -8,6 +8,7 @@
 -- DROP INDEX index_dump_messaggi_3;
 -- DROP INDEX index_dump_messaggi_2;
 -- DROP INDEX index_dump_messaggi_1;
+-- DROP INDEX index_transazioni_sa_1;
 -- DROP INDEX INDEX_TR_RIF_RICHIESTA;
 -- DROP INDEX INDEX_TR_COLLABORAZIONE;
 -- DROP INDEX INDEX_TR_FILTROD_RES_2;
@@ -27,5 +28,6 @@ DROP TABLE dump_multipart_header;
 DROP TABLE dump_messaggi;
 DROP TABLE transazioni_export;
 DROP TABLE transazioni_info;
+DROP TABLE transazioni_sa;
 DROP TABLE transazioni;
 DROP TABLE credenziale_mittente;

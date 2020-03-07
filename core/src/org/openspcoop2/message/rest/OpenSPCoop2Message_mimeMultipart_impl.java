@@ -32,7 +32,7 @@ import org.openspcoop2.utils.mime.MimeMultipart;
 /**
  * Implementazione dell'OpenSPCoop2Message utilizzabile per messaggi binari
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

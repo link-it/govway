@@ -37,16 +37,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasformazione-regola">
- * 		&lt;sequence>
- * 			&lt;element name="applicabilita" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-richiesta" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="richiesta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-richiesta" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risposta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-risposta" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="trasformazione-regola"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="applicabilita" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-richiesta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="richiesta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-richiesta" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risposta" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-risposta" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -178,7 +178,7 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method getRispostaList
-   * @return List<TrasformazioneRegolaRisposta>
+   * @return List&lt;TrasformazioneRegolaRisposta&gt;
   */
   @Deprecated
   public List<TrasformazioneRegolaRisposta> getRisposta() {
@@ -187,7 +187,7 @@ public class TrasformazioneRegola extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method setRispostaList
-   * @param risposta List<TrasformazioneRegolaRisposta>
+   * @param risposta List&lt;TrasformazioneRegolaRisposta&gt;
   */
   @Deprecated
   public void setRisposta(List<TrasformazioneRegolaRisposta> risposta) {

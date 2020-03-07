@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PartyInfo">
- * 		&lt;sequence>
- * 			&lt;element name="From" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}From" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="To" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}To" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="PartyInfo"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="From" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}From" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="To" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}To" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

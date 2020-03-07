@@ -5,15 +5,17 @@
             <module name="deployment.custom" />
         </dependencies> 
     	<exclusions>
-        	<module name="org.apache.cxf" />
+        	<module name="org.slf4j" />
+		<module name="org.apache.log4j" />
+		<module name="org.apache.commons.logging"/>		
+		<!-- non caricato in wf18 e java 11
+		<module name="org.apache.cxf" />
         	<module name="org.springframework.spring" />
-			<module name="org.slf4j" />
-			<module name="org.apache.log4j" />
-			<module name="org.apache.commons.logging"/>		
-	 		<module name="org.jboss.as.webservices" />
-			<module name="org.jboss.ws" />
-			<module name="org.jboss.ws.*" />
-			<module name="javaee.api" />
+		<module name="org.jboss.as.webservices" />
+		<module name="org.jboss.ws" />
+		<module name="org.jboss.ws.*" />
+		<module name="javaee.api" />
+		-->
     	</exclusions>
     </deployment>
     <module name="deployment.custom">
@@ -25,7 +27,7 @@
 	        NOTA: non sembra necessario e fa scaturire un errore sulla testsuite, se utilizzato, simile al seguente: 
 			java.lang.IllegalAccessError: tried to access method org.bouncycastle.asn1.ASN1Primitive.<init>()V from class org.bouncycastle.asn1.ASN1Sequence
 			<resources>
-	                <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.60.jar" use-physical-code-source="true"/>
+	                <resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.64.jar" use-physical-code-source="true"/>
 	        </resources>
 		-->
         <dependencies>

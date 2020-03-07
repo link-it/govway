@@ -24,7 +24,7 @@ package org.openspcoop2.utils.transport.http;
 /**
 * RFC2047Encoding
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */

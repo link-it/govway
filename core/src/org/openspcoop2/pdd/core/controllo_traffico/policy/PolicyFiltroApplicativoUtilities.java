@@ -31,6 +31,7 @@ import org.openspcoop2.pdd.config.ClassNameProperties;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.Dati;
 import org.openspcoop2.pdd.core.controllo_traffico.plugins.IRateLimiting;
 import org.openspcoop2.pdd.core.handlers.InRequestProtocolContext;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.regexp.RegExpNotFoundException;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.transport.TransportUtils;
@@ -102,7 +103,17 @@ public class PolicyFiltroApplicativoUtilities {
 						
 		case SOAPACTION_BASED:
 			
-			return context.getConnettore().getSoapAction();
+			String soapAction = context.getConnettore().getSoapAction();
+			if(soapAction!=null) {
+				soapAction = soapAction.trim();
+				if(soapAction.startsWith("\"") && soapAction.length()>1){
+					soapAction = soapAction.substring(1);
+				}
+				if(soapAction.endsWith("\"")  && soapAction.length()>1){
+					soapAction = soapAction.substring(0, (soapAction.length()-1));
+				}
+			}
+			return soapAction;
 			
 		case INDIRIZZO_IP:
 			
@@ -127,7 +138,7 @@ public class PolicyFiltroApplicativoUtilities {
 			}
 			try{
 				Class<?> classPlugin = Class.forName(className);
-				Object o = classPlugin.newInstance();
+				Object o = Utilities.newInstance(classPlugin);
 				if(o instanceof IRateLimiting){
 					
 					Dati datiRichiesta = new Dati();

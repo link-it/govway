@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="initiatorParties">
- * 		&lt;sequence>
- * 			&lt;element name="initiatorParty" type="{http://www.domibus.eu/configuration}initiatorParty" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="initiatorParties"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="initiatorParty" type="{http://www.domibus.eu/configuration}initiatorParty" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class InitiatorParties extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method getInitiatorPartyList
-   * @return List<InitiatorParty>
+   * @return List&lt;InitiatorParty&gt;
   */
   @Deprecated
   public List<InitiatorParty> getInitiatorParty() {
@@ -102,7 +102,7 @@ public class InitiatorParties extends org.openspcoop2.utils.beans.BaseBean imple
 
   /**
    * @deprecated Use method setInitiatorPartyList
-   * @param initiatorParty List<InitiatorParty>
+   * @param initiatorParty List&lt;InitiatorParty&gt;
   */
   @Deprecated
   public void setInitiatorParty(List<InitiatorParty> initiatorParty) {

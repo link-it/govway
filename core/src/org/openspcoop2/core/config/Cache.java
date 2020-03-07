@@ -34,12 +34,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="cache">
- * 		&lt;attribute name="dimensione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="algoritmo" type="{http://www.openspcoop2.org/core/config}AlgoritmoCache" use="optional" default="lru"/>
- * 		&lt;attribute name="item-idle-time" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="item-life-second" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="cache"&gt;
+ * 		&lt;attribute name="dimensione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="algoritmo" type="{http://www.openspcoop2.org/core/config}AlgoritmoCache" use="optional" default="lru"/&gt;
+ * 		&lt;attribute name="item-idle-time" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="item-life-second" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

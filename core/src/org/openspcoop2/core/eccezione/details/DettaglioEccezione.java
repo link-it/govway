@@ -32,14 +32,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dettaglio-eccezione">
- * 		&lt;sequence>
- * 			&lt;element name="domain" type="{http://govway.org/integration/fault/details}dominio" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="exceptions" type="{http://govway.org/integration/fault/details}eccezioni" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="details" type="{http://govway.org/integration/fault/details}dettagli" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dettaglio-eccezione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="domain" type="{http://govway.org/integration/fault/details}dominio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="exceptions" type="{http://govway.org/integration/fault/details}eccezioni" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="details" type="{http://govway.org/integration/fault/details}dettagli" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

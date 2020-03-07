@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="submitRequest">
- * 		&lt;sequence>
- * 			&lt;element name="payload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="submitRequest"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="payload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class SubmitRequest extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getPayloadList
-   * @return List<LargePayloadType>
+   * @return List&lt;LargePayloadType&gt;
   */
   @Deprecated
   public List<LargePayloadType> getPayload() {
@@ -102,7 +102,7 @@ public class SubmitRequest extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setPayloadList
-   * @param payload List<LargePayloadType>
+   * @param payload List&lt;LargePayloadType&gt;
   */
   @Deprecated
   public void setPayload(List<LargePayloadType> payload) {

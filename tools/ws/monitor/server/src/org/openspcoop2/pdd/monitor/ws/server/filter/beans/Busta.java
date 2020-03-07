@@ -25,18 +25,18 @@ package org.openspcoop2.pdd.monitor.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="busta">
- *     &lt;sequence>
- *         &lt;element name="attesa-riscontro" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="mittente" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="destinatario" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="servizio" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-servizio" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="profilo-collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="riferimento-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="busta"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="attesa-riscontro" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="mittente" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="destinatario" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-soggetto" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="servizio" type="{http://www.openspcoop2.org/pdd/monitor/management}busta-servizio" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="profilo-collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="collaborazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="riferimento-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

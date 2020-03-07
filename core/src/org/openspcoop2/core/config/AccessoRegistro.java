@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accesso-registro">
- * 		&lt;sequence>
- * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="registro" type="{http://www.openspcoop2.org/core/config}accesso-registro-registro" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="accesso-registro"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="registro" type="{http://www.openspcoop2.org/core/config}accesso-registro-registro" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -124,7 +124,7 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getRegistroList
-   * @return List<AccessoRegistroRegistro>
+   * @return List&lt;AccessoRegistroRegistro&gt;
   */
   @Deprecated
   public List<AccessoRegistroRegistro> getRegistro() {
@@ -133,7 +133,7 @@ public class AccessoRegistro extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setRegistroList
-   * @param registro List<AccessoRegistroRegistro>
+   * @param registro List&lt;AccessoRegistroRegistro&gt;
   */
   @Deprecated
   public void setRegistro(List<AccessoRegistroRegistro> registro) {

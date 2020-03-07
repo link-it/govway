@@ -816,7 +816,43 @@ public class PddMonitorProperties {
 	}
 	
 
+	public boolean isAttivoUtilizzaVisualizzazioneCustomTransazioni() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.enabled", true, true));
+	}
 	
+	public boolean isAttivoUtilizzaVisualizzazioneCustomLive() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.enabled", true, true));
+	}
+	
+	public boolean isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
+	}
+	
+	/* Properties gestione finestra di export transazioni */
+	
+	public boolean isExportTransazioniZipTracceDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.tracce.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniZipDiagnosticiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.diagnostici.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniZipContenutiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.zip.contenuti.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvTracceDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.tracce.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvDiagnosticiDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.diagnostici.defaultValue", true, true));
+	}
+	
+	public boolean isExportTransazioniCsvVisualizzaCheckBoxSelezioneContenuti() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.export.csv.visualizzaCheckBoxSelezioneContenuti.enabled", true, true));
+	}
 	
 	/* Properties gestione della paginazione delle liste con le count */
 	
@@ -877,14 +913,18 @@ public class PddMonitorProperties {
 	}
 	
 	public Integer getNumeroMassimoSoggettiOperativiMenuUtente() throws Exception{
-		return new Integer(this.appProperties.getProperty("console.selectListSoggettiOperativi.numeroMassimoSoggettiVisualizzati",true,true));
+		return Integer.valueOf(this.appProperties.getProperty("console.selectListSoggettiOperativi.numeroMassimoSoggettiVisualizzati",true,true));
 	}
 	
 	public Integer getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente() throws Exception{
-		return new Integer(this.appProperties.getProperty("console.selectListSoggettiOperativi.lunghezzaMassimaLabel",true,true));
+		return Integer.valueOf(this.appProperties.getProperty("console.selectListSoggettiOperativi.lunghezzaMassimaLabel",true,true));
 	}
 	
 //	public Integer getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente() throws Exception{
-//		return new Integer(this.appProperties.getProperty("console.buttonMenuSoggettiOperativi.lunghezzaMassimaLabel",true,true));
+//		return Integer.valueOf(this.appProperties.getProperty("console.buttonMenuSoggettiOperativi.lunghezzaMassimaLabel",true,true));
 //	}
+
+	public boolean isSearchFormEsitoConsegnaMultiplaEnabled() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.searchForm.esiti.consegnaMultiplaEnabled", true, true));
+	}
 }

@@ -58,14 +58,15 @@ import org.openspcoop2.security.message.utils.SignatureBean;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.certificate.KeyStore;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.w3c.dom.Document;
 
 
 
 /**
  * WSSContext_soapbox
  *
- * @author Andrea Poli <apoli@link.it>
- * @author Giovanni Bussu <bussu@link.it>
+ * @author Andrea Poli (apoli@link.it)
+ * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -114,12 +115,14 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 			// ********** Inizializzo Header WSS ***************
 
 			SOAPPart sp = message.getSOAPPart();
+			//Document d = sp;
+			Document d = sp.getDocumentElement().getOwnerDocument();
 			Object mustUnderstandObject = messageSecurityContext.getIncomingProperties().get(SecurityConstants.MUST_UNDERSTAND);
 			boolean mustUnderstand = false;
 			if(mustUnderstandObject!=null){
 				mustUnderstand = SecurityConstants.TRUE.equals(mustUnderstandObject);
 			}
-			MessageSecurityContext msgSecCtx = new MessageSecurityContext(sp, new MessageImpl(true, null, "http"));
+			MessageSecurityContext msgSecCtx = new MessageSecurityContext(d, new MessageImpl(true, null, "http"));
 			Iterator<?> it = message.getAttachments();
 			if(it!=null){
 				while(it.hasNext()) {
@@ -204,7 +207,6 @@ public class MessageSecurityReceiver_soapbox extends AbstractSOAPMessageSecurity
 				signMsgProc.setMessage(message);
 				signMsgProc.setActor(messageSecurityContext.getActor());
 				signMsgProc.setMustUnderstand(mustUnderstand);
-				signMsgProc.setUseXMLSec(messageSecurityContext.isUseXMLSec());
 			}
 			
 			

@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang.StringUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
@@ -597,6 +598,34 @@ public class EsitiProperties {
 		}
 	}
 	
+	private List<Integer> esitiCodeRichiestaScartate = null;
+	public List<Integer> getEsitiCodeRichiestaScartate() throws ProtocolException {
+		if(this.esitiCodeRichiestaScartate == null){
+			this.initEsitiCodeRichiestaScartate();
+		}
+
+		return this.esitiCodeRichiestaScartate;
+	}
+	private synchronized void initEsitiCodeRichiestaScartate() throws ProtocolException {
+		if(this.esitiCodeRichiestaScartate == null){
+			this.esitiCodeRichiestaScartate = filterByProtocol(getListaInteger("esiti.codes.richiestaScartate")); 	   
+		}
+	}
+	
+	private List<Integer> esitiCodeErroriConsegna = null;
+	public List<Integer> getEsitiCodeErroriConsegna() throws ProtocolException {
+		if(this.esitiCodeErroriConsegna == null){
+			this.initEsitiCodeErroriConsegna();
+		}
+
+		return this.esitiCodeErroriConsegna;
+	}
+	private synchronized void initEsitiCodeErroriConsegna() throws ProtocolException {
+		if(this.esitiCodeErroriConsegna == null){
+			this.esitiCodeErroriConsegna = filterByProtocol(getListaInteger("esiti.codes.erroriConsegna")); 	   
+		}
+	}
+	
 	private List<Integer> esitiCodeForSoapFaultIdentificationMode = null;
 	public List<Integer> getEsitiCodeForSoapFaultIdentificationMode() throws ProtocolException {
 		if(this.esitiCodeForSoapFaultIdentificationMode == null){
@@ -729,6 +758,28 @@ public class EsitiProperties {
 				String label = getProperty("esito."+code+".label");
 				label = filterByProtocol(label, code);
 				this.esitoLabel.put(code+"", label);
+			}    
+		}
+	}
+	
+	private ConcurrentHashMap<String,String> esitoLabelSyntetic= null;
+	public String getEsitoLabelSyntetic(Integer codeEsito) throws ProtocolException {
+		if(this.esitoLabelSyntetic == null){
+			this.initEsitoLabelSyntetic(); 
+		}
+		if(this.esitoLabelSyntetic.containsKey(codeEsito+"")==false){
+			throw new ProtocolException("EsitoLabelSyntetic for code ["+codeEsito+"] not found");
+		}
+		return this.esitoLabelSyntetic.get(codeEsito+"");
+	}
+	private synchronized void initEsitoLabelSyntetic() throws ProtocolException {
+		if(this.esitoLabelSyntetic == null){
+			this.esitoLabelSyntetic = new ConcurrentHashMap<String, String>();
+			List<Integer> codes = getEsitiCode();
+			for (Integer code : codes) {
+				String label = getProperty("esito."+code+".label.syntetic");
+				label = filterByProtocol(label, code);
+				this.esitoLabelSyntetic.put(code+"", label);
 			}    
 		}
 	}
@@ -1140,8 +1191,8 @@ public class EsitiProperties {
 	
 	private List<String> getLista(String property) throws ProtocolException {
 		List<String> lista = null;
+		String name = null;
 		try{ 
-			String name = null;
 			name = this.reader.getValue_convertEnvProperties(property);
 			if(name==null)
 				throw new Exception("proprieta non definita");
@@ -1155,19 +1206,23 @@ public class EsitiProperties {
 			for (int i = 0; i < split.length; i++) {
 				String p = split[i];
 				if(p==null){
-					throw new Exception("valore "+(i+1)+" della proprieta non definita");
+					throw new Exception("valore alla posizione "+(i+1)+" della proprieta non definita");
 				}
 				p = p .trim();
 				if(p.equals("")){
-					throw new Exception("valore "+(i+1)+" della proprieta è vuoto");
+					throw new Exception("valore alla posizione "+(i+1)+" della proprieta è vuoto");
 				}
 				if(lista.contains(p)){
-					throw new Exception("valore "+(i+1)+" della proprieta è definito più di una volta");
+					throw new Exception("valore '"+p+"' alla posizione "+(i+1)+" della proprieta è definito più di una volta");
 				}
 				lista.add(p);
 			}
 		}catch(java.lang.Exception e) {
-			String msg = "Riscontrato errore durante la lettura della proprieta' '"+property+"': "+e.getMessage();
+			String listaDebug = "";
+			if(StringUtils.isNotEmpty(name)) {
+				listaDebug = " (lista: "+name+")";
+			}
+			String msg = "Riscontrato errore durante la lettura della proprieta' '"+property+"'"+listaDebug+": "+e.getMessage();
 			this.log.error(msg,e);
 			throw new ProtocolException(msg,e);
 		} 	   

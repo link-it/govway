@@ -34,14 +34,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SignalMessage">
- * 		&lt;sequence>
- * 			&lt;element name="MessageInfo" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}MessageInfo" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="PullRequest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Receipt" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Error" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Error" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SignalMessage"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="MessageInfo" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}MessageInfo" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="PullRequest" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Receipt" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Error" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Error" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -134,7 +134,7 @@ public class SignalMessage extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method getErrorList
-   * @return List<Error>
+   * @return List&lt;Error&gt;
   */
   @Deprecated
   public List<Error> getError() {
@@ -143,7 +143,7 @@ public class SignalMessage extends org.openspcoop2.utils.beans.BaseBean implemen
 
   /**
    * @deprecated Use method setErrorList
-   * @param error List<Error>
+   * @param error List&lt;Error&gt;
   */
   @Deprecated
   public void setError(List<Error> error) {

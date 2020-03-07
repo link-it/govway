@@ -51,7 +51,7 @@ import org.openspcoop2.security.message.saml.SAMLBuilderConfigConstants;
 /**
  * Classe per la gestione della Sicurezza  (role:Receiver)
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

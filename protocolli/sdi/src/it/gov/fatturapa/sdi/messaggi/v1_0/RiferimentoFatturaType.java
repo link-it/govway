@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RiferimentoFattura_Type">
- * 		&lt;sequence>
- * 			&lt;element name="NumeroFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="AnnoFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}nonNegativeInteger" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="PosizioneFattura" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="RiferimentoFattura_Type"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="NumeroFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="AnnoFattura" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}nonNegativeInteger" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="PosizioneFattura" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

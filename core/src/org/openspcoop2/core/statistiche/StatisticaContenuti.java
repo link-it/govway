@@ -33,40 +33,40 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="statistica-contenuti">
- * 		&lt;sequence>
- * 			&lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risorsa-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risorsa-valore" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-1" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-2" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-3" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-4" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-5" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-6" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-7" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-8" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-9" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-nome-10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="filtro-valore-10" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="dimensioni-bytes-banda-esterna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="statistica-contenuti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="data" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risorsa-nome" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risorsa-valore" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-1" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-1" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-2" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-2" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-3" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-3" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-4" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-4" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-5" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-5" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-6" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-6" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-7" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-7" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-8" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-8" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-9" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-9" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-nome-10" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="filtro-valore-10" type="{http://www.openspcoop2.org/core/statistiche}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="numero-transazioni" type="{http://www.w3.org/2001/XMLSchema}integer" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-complessiva" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-interna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="dimensioni-bytes-banda-esterna" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-totale" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-porta" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="latenza-servizio" type="{http://www.w3.org/2001/XMLSchema}unsignedLong" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

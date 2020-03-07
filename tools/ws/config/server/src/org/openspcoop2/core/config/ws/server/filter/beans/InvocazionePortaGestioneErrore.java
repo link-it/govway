@@ -25,14 +25,14 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="invocazione-porta-gestione-errore">
- *     &lt;sequence>
- *         &lt;element name="fault" type="{http://www.openspcoop2.org/core/config}FaultIntegrazioneTipo" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="fault-actor" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="generic-fault-code" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="prefix-fault-code" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="invocazione-porta-gestione-errore"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="fault" type="{http://www.openspcoop2.org/core/config}FaultIntegrazioneTipo" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="fault-actor" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="generic-fault-code" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="prefix-fault-code" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

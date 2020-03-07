@@ -29,7 +29,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroreIntegrazione;
 /**
  * Esito di un processo di autenticazione.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

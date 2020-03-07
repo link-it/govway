@@ -162,11 +162,15 @@
 				            				
 				            				String tooltipTextValNoEdit = "";
 											
-											if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
+				            				if(de.getToolTip()!=null && !de.getToolTip().equals("")){
+				            					tooltipTextValNoEdit = " title=\"" + de.getToolTip() + "\"";
+											}
+				            				else if(textValNoEdit.length() > Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA) {
 												tooltipTextValNoEdit = " title=\"" + textValNoEdit + "\"";
 												textValNoEdit = textValNoEdit.substring(0,(Costanti.LUNGHEZZA_RIGA_TESTO_TABELLA -3)) + "...";
 												
-											}				            				
+											}		
+											
 				            				%>
 				                			<tr class="">
 												<td class="tdTextRiepilogo labelRiepilogo">

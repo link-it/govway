@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -92,6 +93,7 @@ import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.StatoServiziPdD;
 import org.openspcoop2.pdd.core.autenticazione.GestoreAutenticazione;
 import org.openspcoop2.pdd.core.autorizzazione.GestoreAutorizzazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.GestoreLoadBalancerCaching;
 import org.openspcoop2.pdd.core.controllo_traffico.GestoreControlloTraffico;
 import org.openspcoop2.pdd.core.controllo_traffico.NotificatoreEventi;
 import org.openspcoop2.pdd.core.controllo_traffico.policy.DatiStatisticiDAOManager;
@@ -216,6 +218,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 
 	/** Timer per la gestione di riconsegna ContenutiApplicativi */
 	private TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativi;
+	public static TimerConsegnaContenutiApplicativiThread threadConsegnaContenutiApplicativiRef;
 	
 	/** Gestore risorse JMX */
 	private GestoreRisorseJMX gestoreRisorseJMX = null;
@@ -426,7 +429,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			 * 	Necessario in jboss7 per evitare errore 'error constructing MAC: java.lang.SecurityException: JCE cannot authenticate the provider BC'
 			 *  se vengono utilizzati keystore P12.
 			 *  Il codice  
-			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.60.jar" use-physical-code-source="true"/>
+			 *  	<resource-root path="WEB-INF/lib/bcprov-ext-jdk15on-1.64.jar" use-physical-code-source="true"/>
 			 *  all'interno del file jboss-deployment-structure.xml non è più sufficiente da quanto è stato necessario
 			 *  introdurre il codice sottostante 'org.apache.wss4j.dom.engine.WSSConfig.init' 
 			 *  e di conseguenza tutta la configurazione del modulo 'deployment.custom.javaee.api'
@@ -490,6 +493,16 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			Utilities.freeMemoryLog = propertiesReader.getFreeMemoryLog();
 			
 			OpenSPCoop2Startup.initializeLog = true;
+			
+			if(propertiesReader.isLoggerSaajDisabilitato()) {
+				//java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.SOAP_DOMAIN
+				//																		"com.sun.xml.messaging.saaj.soap.LocalStrings");
+				java.util.logging.Logger logSaaj = java.util.logging.Logger.getLogger(com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN);
+				logSaaj.setLevel(Level.OFF);
+				logSaaj.severe("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato; questo messaggio non deve essere visualizzato");
+				logSaaj.severe("SAAJ0511.soap.cannot.create.envelope"); // serve per caricare il logger con il local string
+				OpenSPCoop2Startup.log.info("Il logger utilizzato nel package '"+com.sun.xml.messaging.saaj.util.LogDomainConstants.MODULE_TOPLEVEL_DOMAIN+"' e' stato disabilitato");
+			}
 
 			
 			
@@ -1276,6 +1289,70 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 			
 			
 			
+			/*----------- Inizializzazione Cache per Consegna Applicativi --------------*/
+			// Viene fatta prima, perchè questi valori vengono letti dalle inforamzioni JMX sotto.
+			try{
+				org.openspcoop2.core.config.Cache consegnaApplicativiCacheConfig = configurazionePdDManager.getConfigurazioneConsegnaApplicativiCache();
+				if(consegnaApplicativiCacheConfig!=null){
+					
+					int dimensioneCache = -1;
+					if(consegnaApplicativiCacheConfig.getDimensione()!=null){
+						try{
+							dimensioneCache = Integer.parseInt(consegnaApplicativiCacheConfig.getDimensione());
+						}catch(Exception e){
+							throw new Exception("Parametro 'dimensioneCache' errato per la cache di response caching");
+						}
+					}
+					
+					String algoritmo = null;
+					if(consegnaApplicativiCacheConfig.getAlgoritmo()!=null){
+						algoritmo = consegnaApplicativiCacheConfig.getAlgoritmo().toString();
+					}
+					
+					long idleTime = -1;
+					if(consegnaApplicativiCacheConfig.getItemIdleTime()!=null){
+						try{
+							idleTime = Integer.parseInt(consegnaApplicativiCacheConfig.getItemIdleTime());
+						}catch(Exception e){
+							throw new Exception("Parametro 'idleTime' errato per la cache di response caching");
+						}
+					}
+					
+					long itemLifeSecond = -1;
+					if(consegnaApplicativiCacheConfig.getItemLifeSecond()!=null){
+						try{
+							itemLifeSecond = Integer.parseInt(consegnaApplicativiCacheConfig.getItemLifeSecond());
+						}catch(Exception e){
+							throw new Exception("Parametro 'itemLifeSecond' errato per la cache di response caching");
+						}
+					}
+
+					GestoreLoadBalancerCaching.initialize(dimensioneCache, algoritmo, idleTime, itemLifeSecond, logCore);
+				}
+				else{
+					GestoreLoadBalancerCaching.initialize(logCore);
+				}
+			}catch(Exception e){
+				msgDiag.logStartupError(e,"Gestore Consegna Applicativi Cache");
+				return;
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			
 			
 			/* ----------- Inizializzazione Gestore Risorse JMX (le risorse jmx vengono registrate in seguito) ------------ */
 			try{
@@ -1744,6 +1821,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				FileSystemUtilities.mkdir(dirRecovery, configMkdir);
 				FileSystemSerializer fs = FileSystemSerializer.getInstance();
 				FileSystemUtilities.mkdir(fs.getDirTransazioni().getAbsolutePath(), configMkdir);
+				FileSystemUtilities.mkdir(fs.getDirTransazioneApplicativoServer().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDiagnostici().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirTracce().getAbsolutePath(), configMkdir);
 				FileSystemUtilities.mkdir(fs.getDirDump().getAbsolutePath(), configMkdir);
@@ -1955,6 +2033,12 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				}catch(Exception e){
 					msgDiag.logStartupError(e,"RisorsaJMX - keystore salvate in cache");
 				}
+				// MBean GestioneConsegnaApplicativi
+				try{
+					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanConsegnaApplicativi();
+				}catch(Exception e){
+					msgDiag.logStartupError(e,"RisorsaJMX - gestione consegna applicativi");
+				}
 				// MBean RepositoryMessaggi
 				try{
 					OpenSPCoop2Startup.this.gestoreRisorseJMX.registerMBeanRepositoryMessaggi();
@@ -2056,6 +2140,13 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				informazioniStatoPortaCache_keystoreCaching.setStatoCache(infoKeystoreCaching.printStatCache());
 			}
 			informazioniStatoPortaCache.add(informazioniStatoPortaCache_keystoreCaching);
+			
+			org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi infoGestoreConsegnaApplicativi = new org.openspcoop2.pdd.core.jmx.GestoreConsegnaApplicativi();
+			InformazioniStatoPortaCache informazioniStatoPortaCache_gestoreConsegnaApplicativi = new InformazioniStatoPortaCache(CostantiPdD.JMX_LOAD_BALANCER, infoGestoreConsegnaApplicativi.isCacheAbilitata());
+			if(infoGestoreConsegnaApplicativi.isCacheAbilitata()){
+				informazioniStatoPortaCache_gestoreConsegnaApplicativi.setStatoCache(infoGestoreConsegnaApplicativi.printStatCache());
+			}
+			informazioniStatoPortaCache.add(informazioniStatoPortaCache_gestoreConsegnaApplicativi);
 			
 			org.openspcoop2.pdd.core.jmx.RepositoryMessaggi infoRepositoryMessaggi = new org.openspcoop2.pdd.core.jmx.RepositoryMessaggi();
 			InformazioniStatoPortaCache informazioniStatoPortaCache_repositoryMessaggi = new InformazioniStatoPortaCache(CostantiPdD.JMX_REPOSITORY_MESSAGGI, infoRepositoryMessaggi.isCacheAbilitata());
@@ -2458,6 +2549,7 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 					try{
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi = new TimerConsegnaContenutiApplicativiThread();
 						OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi.start();
+						OpenSPCoop2Startup.threadConsegnaContenutiApplicativiRef = OpenSPCoop2Startup.this.threadConsegnaContenutiApplicativi;
 					}catch(Exception e){
 						msgDiag.logStartupError(e,"Avvio timer (thread) '"+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"'");
 					}

@@ -32,16 +32,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="replaceFruitoreMatchType">
- * 		&lt;sequence>
- * 			&lt;element name="nome" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="nome-servizio" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-servizio" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="nome-erogatore" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo-erogatore" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="replaceFruitoreMatchType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="nome" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome-servizio" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-servizio" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="nome-erogatore" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-erogatore" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceMatchFieldType" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

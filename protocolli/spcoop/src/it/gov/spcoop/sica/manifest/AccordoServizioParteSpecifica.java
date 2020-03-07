@@ -34,16 +34,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordoServizioParteSpecifica">
- * 		&lt;sequence>
- * 			&lt;element name="riferimentoParteComune" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaPortiAccesso" type="{http://spcoop.gov.it/sica/manifest}SpecificaPortiAccesso" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="specificaSicurezza" type="{http://spcoop.gov.it/sica/manifest}SpecificaSicurezza" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="specificaLivelliServizio" type="{http://spcoop.gov.it/sica/manifest}SpecificaLivelliServizio" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="adesione" type="{http://spcoop.gov.it/sica/manifest}TipoAdesione" use="required"/>
- * 		&lt;attribute name="erogatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="accordoServizioParteSpecifica"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="riferimentoParteComune" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaPortiAccesso" type="{http://spcoop.gov.it/sica/manifest}SpecificaPortiAccesso" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaSicurezza" type="{http://spcoop.gov.it/sica/manifest}SpecificaSicurezza" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="specificaLivelliServizio" type="{http://spcoop.gov.it/sica/manifest}SpecificaLivelliServizio" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="adesione" type="{http://spcoop.gov.it/sica/manifest}TipoAdesione" use="required"/&gt;
+ * 		&lt;attribute name="erogatore" type="{http://spcoop.gov.it/sica/manifest}anyURI" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -254,6 +254,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			}
 			//}
 			
+			boolean erogazioneServizioApplicativoServerEnabled = false;
+			
 			// Preparo il menu
 			saHelper.makeMenu();
 			
@@ -272,7 +274,8 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			boolean forceEnabled = false;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
-				if(!saHelper.isModalitaStandard() && 
+				if(
+						//va visualizzato comunque se già configurato:!saHelper.isModalitaStandard() && 
 						( (getmsg!=null && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) 
 								||
 						  (getmsg==null && ra!=null && ra.getGetMessage()!=null && StatoFunzionalita.ABILITATO.equals(ra.getGetMessage()))
@@ -311,16 +314,20 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 			
 			List<Parameter> lstParm = saHelper.getTitoloSA(parentSA, provider, idAsps, idPorta);
 			
+			boolean integrationManagerEnabled = !saHelper.isModalitaStandard() && saCore.isIntegrationManagerEnabled();
+			
 			ServiceBinding serviceBinding = null;
 			String labelPerPorta = null;
 			if(parentSA!=null && (parentSA.intValue() == ServiziApplicativiCostanti.ATTRIBUTO_SERVIZI_APPLICATIVI_PARENT_CONFIGURAZIONE)) {
+				
+				PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
+				PortaApplicativa pa = null;		
 				
 				if(accessoDaListaAPS) {
 					labelPerPorta = PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE;
 				}
 				else {
-					PorteApplicativeCore porteApplicativeCore = new PorteApplicativeCore(saCore);
-					PortaApplicativa pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
+					pa = porteApplicativeCore.getPortaApplicativa(Long.parseLong(idPorta)); 
 					labelPerPorta = porteApplicativeCore.getLabelRegolaMappingErogazionePortaApplicativa(
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE_DI,
 							PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORE,
@@ -332,6 +339,13 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				AccordiServizioParteComuneCore apcCore = new AccordiServizioParteComuneCore(apsCore);
 				AccordoServizioParteComuneSintetico apc = apcCore.getAccordoServizioSintetico(asps.getIdAccordo()); 
 				serviceBinding = apcCore.toMessageServiceBinding(apc.getServiceBinding());
+				
+				boolean isSoapOneWay = false;
+				if(pa!=null) {
+					MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa = porteApplicativeCore.getMappingErogazionePortaApplicativa(pa);
+					isSoapOneWay = saHelper.isSoapOneWay(pa, mappingErogazionePortaApplicativa, asps, apc, serviceBinding);
+				}
+				integrationManagerEnabled = integrationManagerEnabled && isSoapOneWay;
 			}
 			else {
 				labelPerPorta = ServiziApplicativiCostanti.LABEL_PARAMETRO_SERVIZI_APPLICATIVI_RISPOSTA_ASINCRONA_DI+nomeservizioApplicativo;
@@ -374,6 +388,11 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 							}
 						}
 					}
+				}
+				
+				if(!integrationManagerEnabled && CostantiConfigurazione.ABILITATO.toString().equals(getmsg)) {
+					// faccio vedere I.M. anche con interfaccia standard
+					integrationManagerEnabled = true;
 				}
 				
 				if (invrifRichiesta == null) {
@@ -699,7 +718,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false,
+						integrationManagerEnabled);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -725,7 +746,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
+						nomeProtocollo, false, false
+						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				
@@ -754,7 +777,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 				saHelper.addEndPointToDati(dati,idsil,nomeservizioApplicativo,sbustamento,sbustamentoInformazioniProtocolloRichiesta,
 						getmsg,getmsgUsername,getmsgPassword,true,
 						invrifRichiesta,risprif,nomeProtocollo,true,false,true,
-						parentSA,serviceBinding, accessoDaAPSParametro);
+						parentSA,serviceBinding, accessoDaAPSParametro, erogazioneServizioApplicativoServerEnabled,
+						null, false,
+						integrationManagerEnabled);
 
 //				dati = connettoriHelper.addCredenzialiToDati(dati, tipoauth, utente, password, confpw, subject, 
 //						ServiziApplicativiCostanti.SERVLET_NAME_SERVIZI_APPLICATIVI_ENDPOINT_RISPOSTA,true,endpointtype,true);
@@ -780,7 +805,9 @@ public final class ServiziApplicativiEndPointRispostaAsincrona extends Action {
 						responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 						autenticazioneToken,token_policy,
 						listExtendedConnettore, forceEnabled,
-						nomeProtocollo, false, false);
+						nomeProtocollo, false, false
+						, false, erogazioneServizioApplicativoServerEnabled, null, null
+						);
 				
 				dati = saHelper.addHiddenFieldsToDati(dati, provider, idAsps, idPorta);
 				

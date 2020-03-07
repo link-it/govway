@@ -32,7 +32,7 @@ import org.openspcoop2.security.SecurityException;
 /**
  * SymmetricKeystore
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

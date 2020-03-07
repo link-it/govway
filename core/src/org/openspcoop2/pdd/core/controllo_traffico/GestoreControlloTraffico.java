@@ -67,8 +67,8 @@ public class GestoreControlloTraffico {
 	public StatoTraffico getStatoControlloTraffico() {
 		synchronized (this.semaphore) {	
 			StatoTraffico stato = new StatoTraffico();
-			stato.setActiveThreads(new Long(this.activeThreads));
-			stato.setPddCongestionata(new Boolean(this.pddCongestionata));
+			stato.setActiveThreads(Long.valueOf(this.activeThreads));
+			stato.setPddCongestionata(Boolean.valueOf(this.pddCongestionata));
 			return stato;
 		}
 	}

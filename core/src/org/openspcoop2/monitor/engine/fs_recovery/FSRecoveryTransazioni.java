@@ -38,6 +38,7 @@ import org.slf4j.Logger;
 public class FSRecoveryTransazioni {
 
 	private FSRecoveryTransazioniImpl transazioniImpl;
+	private FSRecoveryTransazioniApplicativoServerImpl transazioniApplicativoServerImpl;
 	private FSRecoveryTracceImpl tracceImpl;
 	private FSRecoveryDiagnosticiImpl diagnosticiImpl;
 	private FSRecoveryDumpImpl dumpImpl;
@@ -53,10 +54,12 @@ public class FSRecoveryTransazioni {
 			File directoryDiagnostici, File directoryDiagnosticiDLQ,
 			File directoryTracce, File directoryTracceDLQ,
 			File directoryDump, File directoryDumpDLQ,
+			File directoryTransazioniApplicativoServer, File directoryTransazioniApplicativoServerDLQ,
 			File directoryTransazioni, File directoryTransazioniDLQ,
 			int tentativi) {
 	
 		this.transazioniImpl = new FSRecoveryTransazioniImpl(log, debug, transazioniSM, directoryTransazioni, directoryTransazioniDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
+		this.transazioniApplicativoServerImpl = new FSRecoveryTransazioniApplicativoServerImpl(log, debug, transazioniSM, directoryTransazioniApplicativoServer, directoryTransazioniApplicativoServerDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.tracceImpl = new FSRecoveryTracceImpl(log, debug, tracciamentoAppender, directoryTracce, directoryTracceDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.dumpImpl = new FSRecoveryDumpImpl(log, debug, dumpAppender, directoryDump, directoryDumpDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
 		this.diagnosticiImpl = new FSRecoveryDiagnosticiImpl(log, debug, diagnosticoAppender, directoryDiagnostici, directoryDiagnosticiDLQ, tentativi, MINUTI_ATTESA_PROCESSING_FILE);
@@ -65,6 +68,7 @@ public class FSRecoveryTransazioni {
 	public void process(Connection connection){
 		
 		this.transazioniImpl.process(connection);
+		this.transazioniApplicativoServerImpl.process(connection);
 		this.tracceImpl.process(connection);
 		this.diagnosticiImpl.process(connection);
 		this.dumpImpl.process(connection);

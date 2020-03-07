@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="operationListType">
- * 		&lt;sequence>
- * 			&lt;element name="operation" type="{http://www.cnipa.it/collProfiles}operationType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="operationListType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="operation" type="{http://www.cnipa.it/collProfiles}operationType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getOperationList
-   * @return List<OperationType>
+   * @return List&lt;OperationType&gt;
   */
   @Deprecated
   public List<OperationType> getOperation() {
@@ -102,7 +102,7 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setOperationList
-   * @param operation List<OperationType>
+   * @param operation List&lt;OperationType&gt;
   */
   @Deprecated
   public void setOperation(List<OperationType> operation) {

@@ -41,13 +41,13 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaDelegata;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CredenzialeTipo;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
 import org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal;
 import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale;
 import org.openspcoop2.core.id.IDFruizione;
@@ -524,7 +524,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 					if(auth==null || "".equals(auth)){
 						auth = apsCore.getAutenticazione_generazioneAutomaticaPorteDelegate();
 					}
-					List<ServizioApplicativo> oldSilList = null;
+					List<IDServizioApplicativoDB> oldSilList = null;
 					if(apsCore.isVisioneOggettiGlobale(superUser)){
 						oldSilList = saCore.soggettiServizioApplicativoList(idSoggettoSelected,null,
 								CredenzialeTipo.toEnumConstant(auth));
@@ -778,7 +778,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
 						//spostato dentro l'helper
 					}
@@ -920,7 +920,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 							this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 							this.autenticazioneToken,this.token_policy,
 							listExtendedConnettore, false,
-							protocollo, forceHttps, forceHttpsClient);
+							protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 				}else{
 					//spostato dentro l'helper
 				}
@@ -1076,7 +1076,7 @@ public final class AccordiServizioParteSpecificaFruitoriAdd extends Action {
 								this.responseInputMode, this.responseInputFileName, this.responseInputFileNameHeaders, this.responseInputDeleteAfterRead, this.responseInputWaitTime,
 								this.autenticazioneToken,this.token_policy,
 								listExtendedConnettore, false,
-								protocollo, forceHttps, forceHttpsClient);
+								protocollo, forceHttps, forceHttpsClient, false, false, null, null);
 					}else{
 						//spostato dentro l'helper
 					}

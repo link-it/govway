@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
 import org.ajax4jsf.model.DataVisitor;
 import org.ajax4jsf.model.Range;
@@ -35,10 +37,10 @@ import org.openspcoop2.generic_project.dao.IServiceSearchWithId;
 import org.openspcoop2.generic_project.expression.IExpression;
 import org.openspcoop2.generic_project.expression.SortOrder;
 import org.openspcoop2.utils.LoggerWrapperFactory;
-import org.slf4j.Logger;
-
 import org.openspcoop2.web.monitor.core.bean.AbstractCoreSearchForm;
+import org.openspcoop2.web.monitor.core.constants.Costanti;
 import org.openspcoop2.web.monitor.core.dao.ISearchFormService;
+import org.slf4j.Logger;
 
 /**
  * BaseDataModelWithSearchForm
@@ -66,6 +68,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	protected Integer rowCount;
 	protected IExpression countFilter= null;
 	protected Integer currentPage = 1;
+	protected Integer rowsToDisplay = 25;
 	protected S search;
 
 	/**
@@ -217,7 +220,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 			if(service.getSearch().isExecuteQuery())
 				return service.totalCount();
 			else return 0;
-		} else return 25;
+		} else return this.rowsToDisplay;
 	}
 
 	/**
@@ -422,7 +425,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		if(this.dataProvider != null) {
 			if(this.dataProvider instanceof ISearchFormService){
 				if(((ISearchFormService)this.dataProvider).getSearch() != null)
-					this.firstEnabled = ((ISearchFormService)this.dataProvider).getSearch().getCurrentPage() > 1;
+					this.firstEnabled = ((ISearchFormService)this.dataProvider).getSearch().getCurrentPage().intValue() > 1;
 			}
 		}
 
@@ -438,7 +441,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 		if(this.dataProvider != null) {
 			if(this.dataProvider instanceof ISearchFormService){
 				if(((ISearchFormService)this.dataProvider).getSearch() != null)
-					this.prevEnabled = ((ISearchFormService)this.dataProvider).getSearch().getCurrentPage() > 1;
+					this.prevEnabled = ((ISearchFormService)this.dataProvider).getSearch().getCurrentPage().intValue() > 1;
 			}
 		}
 		return this.prevEnabled;
@@ -454,7 +457,7 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 			if(this.dataProvider instanceof ISearchFormService){
 				AbstractCoreSearchForm searchForm = ((ISearchFormService)this.dataProvider).getSearch();
 				if(searchForm != null) {
-					this.nextEnabled = searchForm.getCurrentSearchSize() != null && searchForm.getCurrentSearchSize() == searchForm.getLimit();
+					this.nextEnabled = searchForm.getCurrentSearchSize() != null && searchForm.getCurrentSearchSize().intValue() == searchForm.getLimit().intValue();
 				}
 			}
 		}
@@ -477,8 +480,8 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 
 						// se ci sono dati nella schermata corrente
 						if(searchForm.getCurrentSearchSize() > 0) {
-							int start = searchForm.getStart() != null ? (searchForm.getStart() + 1) : 1;
-							int end = searchForm.getStart() != null ? (searchForm.getStart() + searchForm.getCurrentSearchSize() ) : searchForm.getCurrentSearchSize();
+							int start = searchForm.getStart() != null ? (searchForm.getStart().intValue() + 1) : 1;
+							int end = searchForm.getStart() != null ? (searchForm.getStart().intValue() + searchForm.getCurrentSearchSize().intValue() ) : searchForm.getCurrentSearchSize().intValue();
 							sb.append(start);
 							sb.append(" - ");
 							sb.append(end);
@@ -495,5 +498,51 @@ public abstract class BaseDataModelWithSearchForm<K, T , D, S extends AbstractCo
 	}
 
 	public void setRecordLabel(String recordLabel) {
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public Integer getRowsToDisplay() {
+		if(this.dataProvider != null) {
+			if(this.dataProvider instanceof ISearchFormService){
+				if(((ISearchFormService)this.dataProvider).getSearch() != null)
+					return ((ISearchFormService)this.dataProvider).getSearch().getLimit();
+			}
+		}
+		
+		return  this.rowsToDisplay;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public void setRowsToDisplay(Integer rowsToDisplay) {
+		this.rowsToDisplay = rowsToDisplay;
+		
+		if(this.dataProvider != null) {
+			if(this.dataProvider instanceof ISearchFormService){
+				AbstractCoreSearchForm searchForm = ((ISearchFormService)this.dataProvider).getSearch();
+				if(searchForm != null) {
+					searchForm.setLimit(this.rowsToDisplay);
+				}
+			}
+		}
+		
+		
+	}
+	
+	public void rowsToDisplaySelected(ActionEvent ae) {
+		firstPage();
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public List<SelectItem> getListaNumeroRisultati(){
+		if(this.dataProvider != null) {
+			if(this.dataProvider instanceof ISearchFormService){
+				AbstractCoreSearchForm searchForm = ((ISearchFormService)this.dataProvider).getSearch();
+				if(searchForm != null) {
+					return searchForm.getListaNumeroRisultati();
+				}
+			}
+		}
+				
+		return Costanti.SELECT_ITEM_ENTRIES;
 	}
 }

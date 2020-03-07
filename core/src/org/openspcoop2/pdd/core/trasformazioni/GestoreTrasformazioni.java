@@ -66,7 +66,7 @@ import org.w3c.dom.Element;
 /**
  * Gestione delle trasformazioni
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

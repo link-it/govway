@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="web">
- * 		&lt;sequence>
- * 			&lt;element name="context" type="{http://www.openspcoop2.org/protocol/manifest}Context" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="emptyContext" type="{http://www.openspcoop2.org/protocol/manifest}WebEmptyContext" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="web"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="context" type="{http://www.openspcoop2.org/protocol/manifest}Context" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="emptyContext" type="{http://www.openspcoop2.org/protocol/manifest}WebEmptyContext" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -103,7 +103,7 @@ public class Web extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method getContextList
-   * @return List<Context>
+   * @return List&lt;Context&gt;
   */
   @Deprecated
   public List<Context> getContext() {
@@ -112,7 +112,7 @@ public class Web extends org.openspcoop2.utils.beans.BaseBean implements Seriali
 
   /**
    * @deprecated Use method setContextList
-   * @param context List<Context>
+   * @param context List&lt;Context&gt;
   */
   @Deprecated
   public void setContext(List<Context> context) {

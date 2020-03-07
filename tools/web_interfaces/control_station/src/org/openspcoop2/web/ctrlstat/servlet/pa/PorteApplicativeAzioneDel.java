@@ -115,7 +115,8 @@ public final class PorteApplicativeAzioneDel extends Action {
 			
 			String userLogin = ServletUtils.getUserLoginFromSession(porteApplicativeHelper.getSession());
 			
-			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, inUsoMessage, azioni, userLogin);
+			PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, porteApplicativeCore, porteApplicativeHelper, 
+					inUsoMessage, org.openspcoop2.core.constants.Costanti.WEB_NEW_LINE, azioni, userLogin);
 
 			// imposto msg di errore se presente
 			if (inUsoMessage.length()>0) {

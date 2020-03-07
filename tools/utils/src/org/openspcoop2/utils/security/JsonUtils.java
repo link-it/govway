@@ -53,6 +53,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsException;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureProvider;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -175,14 +176,14 @@ public class JsonUtils {
 	
 	public static byte[] readKeystoreFromURI(Properties props) throws Exception {
 		
-		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
+		String propertyKeystoreName = RSSecurityConstants.RSSEC_KEY_STORE_FILE;
 		String path = props.getProperty(propertyKeystoreName);
 		byte[]content = null;
 		if(path!=null && (path.startsWith("http") || path.startsWith("https"))) {
 			HttpResponse httpResponse = null;
-			String trustStoreProperty =  JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
-			String trustStorePasswordProperty =  JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
-			String trustStoreTypeProperty =  JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+			String trustStoreProperty =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
+			String trustStorePasswordProperty =  RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+			String trustStoreTypeProperty =  RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
 			String trustStore = props.getProperty(trustStoreProperty);
 			String trustStorePassword = props.getProperty(trustStorePasswordProperty);
 			String trustStoreType = props.getProperty(trustStoreTypeProperty);
@@ -220,13 +221,13 @@ public class JsonUtils {
 	
 	public static File normalizeProperties(Properties props) throws Exception {
 		
-		String propertyKeystoreName = JoseConstants.RSSEC_KEY_STORE_FILE;
+		String propertyKeystoreName = RSSecurityConstants.RSSEC_KEY_STORE_FILE;
 		byte[] content = readKeystoreFromURI(props);
 		
 		File fTmp = null;
 		if(content!=null) {
 		
-			String tipo = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String tipo = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(tipo==null) {
 				tipo = "jks";
 			}
@@ -242,9 +243,9 @@ public class JsonUtils {
 	}
 	
 	public static boolean isDynamicProvider(Properties props) throws Exception {
-		String alias = props.getProperty(JoseConstants.RSSEC_KEY_STORE_ALIAS);
+		String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 		if("*".equalsIgnoreCase(alias)) {
-			props.remove(JoseConstants.RSSEC_KEY_STORE_ALIAS);
+			props.remove(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
 			return true;
 		}
 		return false;
@@ -279,14 +280,14 @@ public class JsonUtils {
 	}
 	
 	public static SecretKey getSecretKey(Properties props) throws Exception {
-		if(props.containsKey(JoseConstants.RSSEC_KEY_STORE_TYPE)) {
-			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+		if(props.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_TYPE)) {
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
-				Object oKeystore = props.get(JoseConstants.RSSEC_KEY_STORE);
-				String fileK = props.getProperty(JoseConstants.RSSEC_KEY_STORE_FILE);
-				String password = props.getProperty(JoseConstants.RSSEC_KEY_STORE_PSWD);
-				String alias = props.getProperty(JoseConstants.RSSEC_KEY_STORE_ALIAS);
-				String passwordKey = props.getProperty(JoseConstants.RSSEC_KEY_PSWD);
+				Object oKeystore = props.get(RSSecurityConstants.RSSEC_KEY_STORE);
+				String fileK = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+				String password = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+				String alias = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS);
+				String passwordKey = props.getProperty(RSSecurityConstants.RSSEC_KEY_PSWD);
 				
 				if(oKeystore!=null && oKeystore instanceof java.security.KeyStore) {
 					java.security.KeyStore keystoreJCEKS = (java.security.KeyStore) oKeystore;
@@ -355,13 +356,13 @@ public class JsonUtils {
 	}
 	
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props) throws Exception {
-		String algorithm = props.getProperty(JoseConstants.RSSEC_SIGNATURE_ALGORITHM);
+		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSymmetricProvider(props, algorithm);
 	}
 	public static JwsSignatureProvider getJwsSymmetricProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");	
 			}
@@ -389,13 +390,13 @@ public class JsonUtils {
 	}
 	
 	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props) throws Exception {
-		String algorithm = props.getProperty(JoseConstants.RSSEC_SIGNATURE_ALGORITHM);
+		String algorithm = props.getProperty(RSSecurityConstants.RSSEC_SIGNATURE_ALGORITHM);
 		return getJwsSignatureVerifier(props, algorithm);
 	}
 	public static JwsSignatureVerifier getJwsSignatureVerifier(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.SignatureAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Signature Algorithm undefined");
 			}
@@ -430,7 +431,7 @@ public class JsonUtils {
 	public static JweEncryptionProvider getJweEncryptionProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}
@@ -463,7 +464,7 @@ public class JsonUtils {
 	public static JweDecryptionProvider getJweDecryptionProvider(Properties props, String algorithm) throws Exception {
 		org.apache.cxf.rs.security.jose.jwa.ContentAlgorithm algo = null;
 		if(algorithm==null || "".equals(algorithm)) {
-			String type = props.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String type = props.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if("jceks".equalsIgnoreCase(type)) {
 				throw new Exception("(JCEKS) Content Algorithm undefined");
 			}

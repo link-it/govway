@@ -36,16 +36,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ruolo">
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/core/registry}RuoloTipologia" use="optional" default="qualsiasi"/>
- * 		&lt;attribute name="nome-esterno" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" use="optional" default="qualsiasi"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="old-id-ruolo-for-update" type="{http://www.openspcoop2.org/core/registry}id-ruolo" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="ruolo"&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="tipologia" type="{http://www.openspcoop2.org/core/registry}RuoloTipologia" use="optional" default="qualsiasi"/&gt;
+ * 		&lt;attribute name="nome-esterno" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="contesto-utilizzo" type="{http://www.openspcoop2.org/core/registry}RuoloContesto" use="optional" default="qualsiasi"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="old-id-ruolo-for-update" type="{http://www.openspcoop2.org/core/registry}id-ruolo" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

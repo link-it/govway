@@ -26,6 +26,7 @@ import java.util.List;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.beans.ListaSenzaTotale;
 
@@ -52,7 +53,7 @@ public class ListaUtils {
 		return costruisciListaPaginata(getUrl(uriInfo), offset, limit, total, lclass);
 	}
 	public static final <T extends Lista> T costruisciListaPaginata(String requestURI, Integer offset, Integer limit, long total, Class<T> lclass) throws InstantiationException, IllegalAccessException {
-		T l = lclass.newInstance();
+		T l = Utilities.newInstance_throwInstantiationException(lclass);
 		
 		if (total < 0)
 			throw new IllegalArgumentException("Il numero totale di elementi deve essere positivo");
@@ -106,7 +107,7 @@ public class ListaUtils {
 
 	
 	private static final <T extends ListaSenzaTotale> T _costruisciLista(String requestURI, Integer offset, Integer limit, Long total, long pageCurrentSize, Class<T> lclass) throws InstantiationException, IllegalAccessException {
-		T l = lclass.newInstance();
+		T l = Utilities.newInstance_throwInstantiationException(lclass);
 	
 		int realOffset = (offset == null || offset < 0) ? 0 : offset;
 		int realLimit  = (limit == null || limit <= 0 ) ? -1 : limit;

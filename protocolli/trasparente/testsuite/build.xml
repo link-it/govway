@@ -58,6 +58,7 @@
 	<path id="classpath_compile" >
 		<fileset dir="${openspcoop2_lib}" >
 			<include name="**/*.jar"/>
+			<exclude name="saajjavax.xml.soap-api-1.4.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
 		<fileset dir="deploy/lib" >
 			<include name="*.jar"/>
@@ -106,8 +107,9 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/testsuite" >
-			<include name="jcommander-1.72.jar"/>
-			<include name="testng-6.14.3.jar"/>
+			<include name="jcommander-1.78.jar"/>
+			<include name="testng-7.1.0.jar"/>
+			<include name="guice-4.2.2.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/axis14" >
 			<include name="*.jar"/>
@@ -123,7 +125,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/security" >
-			<include name="bcprov-ext-jdk15on-1.60.jar"/>
+			<include name="bcprov-ext-jdk15on-1.64.jar"/>
 			<include name="neethi-3.1.1.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/shared" >
@@ -151,10 +153,13 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/saaj">
 			<include name="*.jar"/>
+			<exclude name="javax.xml.soap-api-1.4.0.jar"/> <!-- deve essere usata, con axis, l'interfaccia più vecchia presente in axis-saaj-1.4.jar -->
 		</fileset>
-		<!-- Non funziona MTOM <fileset dir="${openspcoop2_lib}/jax" >
+		<fileset dir="${openspcoop2_lib}/jax" >
 			<include name="jaxb*.jar"/>
-		</fileset> -->
+			<include name="jaxws-api-2.3.1.jar"/>
+			<include name="jaxws-jsr181-api-2.3.1.jar"/>
+		</fileset>
 		<fileset dir="${openspcoop2_lib}/jetty" >
 			<include name="*.jar"/>
 		</fileset>

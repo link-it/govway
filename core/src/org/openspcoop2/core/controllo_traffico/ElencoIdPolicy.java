@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-id-policy">
- * 		&lt;sequence>
- * 			&lt;element name="id-policy" type="{http://www.openspcoop2.org/core/controllo_traffico}id-policy" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-id-policy"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-policy" type="{http://www.openspcoop2.org/core/controllo_traffico}id-policy" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoIdPolicy extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getIdPolicyList
-   * @return List<IdPolicy>
+   * @return List&lt;IdPolicy&gt;
   */
   @Deprecated
   public List<IdPolicy> getIdPolicy() {

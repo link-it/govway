@@ -123,6 +123,8 @@ public class HTTPS {
 	private static final String PDD_NON_DISPONIBILE = "Servizio erogato dal Soggetto @DESTINATARIO@ non disponibile";
 	private static final String BAD_CERTIFICATE = "bad_certificate";
 	private static final String BAD_CERTIFICATE_2 = "Remote host closed connection during handshake";
+	private static final String BAD_CERTIFICATE_3 = "Connection reset by peer";
+	private static final String BAD_CERTIFICATE_4 = "readHandshakeRecord";
 	private static final String CA_NON_PRESENTE = "unable to find valid certification path to requested target";
 	private static final String HOST_VERIFY = "No subject alternative names present";
 	private static final String HOST_VERIFY_2 = "HTTPS hostname wrong:  should be <127.0.0.1>";
@@ -358,6 +360,14 @@ public class HTTPS {
 		err2.setIntervalloSuperiore(dataFineTest);
 		err2.setMsgErrore("Errore avvenuto durante la consegna HTTP: Remote host closed connection during handshake");
 		this.erroriAttesiOpenSPCoopCore.add(err2);
+		
+		// java 11 - wildfly
+		ErroreAttesoOpenSPCoopLogCore err3 = new ErroreAttesoOpenSPCoopLogCore();
+		err3.setIntervalloInferiore(dataInizioTest);
+		err3.setIntervalloSuperiore(dataFineTest);
+		err3.setMsgErrore("Errore avvenuto durante la consegna HTTP: Connection reset by peer");
+		this.erroriAttesiOpenSPCoopCore.add(err3);
+		
 	}
 	@DataProvider (name="httpsWithClientAuthError")
 	public Object[][]testHttpsWithClientAuthError()throws Exception{
@@ -396,7 +406,10 @@ public class HTTPS {
 			if(dataMsg!=null){
 				boolean badCertificate = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE);
 				boolean badCertificate2 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_2);
-				Assert.assertTrue(badCertificate || badCertificate2);
+				// succedono casualmente
+				boolean badCertificate3 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_3); // java11 e wildfly
+				boolean badCertificate4 = dataMsg.isTracedMessaggioWithLike(id,BAD_CERTIFICATE_4); // java11 e wildfly
+				Assert.assertTrue(badCertificate || badCertificate2 || badCertificate3 || badCertificate4);
 			}
 			
 		}catch(Exception e){

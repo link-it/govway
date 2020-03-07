@@ -1439,7 +1439,17 @@ public class GestoreHandlers  {
 				}catch(Exception e){
 					// Non sollevo l'eccezione poiche' dove viene chiamato questo handler e' finita la gestione, quindi l'eccezione non causa altri avvenimenti
 					// Registro solamento l'evento
-					msgDiag.logErroreGenerico(e,name+" ["+tipiHandlers[i]+"]");
+					if(handlers[i] instanceof org.openspcoop2.pdd.core.handlers.transazioni.PostOutResponseHandler) {
+						// altrimenti succede questo errore, non esistendo più la transazione:
+						// Errore durante l'emissione del msg diagnostico nel contesto della transazione: Non abilitata la gestione delle transazioni stateful 
+						// org.openspcoop2.pdd.core.transazioni.TransactionStatefulNotSupportedException: Non abilitata la gestione delle transazioni stateful
+						if(log!=null) {
+							log.error(name+" ["+tipiHandlers[i]+"]"+e.getMessage(),e);
+						}
+					}
+					else {
+						msgDiag.logErroreGenerico(e,name+" ["+tipiHandlers[i]+"]");
+					}
 				}
 			}
 		}

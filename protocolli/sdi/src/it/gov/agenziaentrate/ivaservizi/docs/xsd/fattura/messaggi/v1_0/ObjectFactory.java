@@ -62,17 +62,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RiferimentoFatturaType }
+     */
+    public RiferimentoFatturaType createRiferimentoFatturaType() {
+        return new RiferimentoFatturaType();
+    }
+
+    /**
      * Create an instance of {@link RicevutaScartoType }
      */
     public RicevutaScartoType createRicevutaScartoType() {
         return new RicevutaScartoType();
-    }
-
-    /**
-     * Create an instance of {@link FileMetadatiType }
-     */
-    public FileMetadatiType createFileMetadatiType() {
-        return new FileMetadatiType();
     }
 
     /**
@@ -83,24 +83,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RiferimentoFatturaType }
-     */
-    public RiferimentoFatturaType createRiferimentoFatturaType() {
-        return new RiferimentoFatturaType();
-    }
-
-    /**
-     * Create an instance of {@link RicevutaImpossibilitaRecapitoType }
-     */
-    public RicevutaImpossibilitaRecapitoType createRicevutaImpossibilitaRecapitoType() {
-        return new RicevutaImpossibilitaRecapitoType();
-    }
-
-    /**
      * Create an instance of {@link ListaErroriType }
      */
     public ListaErroriType createListaErroriType() {
         return new ListaErroriType();
+    }
+
+    /**
+     * Create an instance of {@link ErroreType }
+     */
+    public ErroreType createErroreType() {
+        return new ErroreType();
+    }
+
+    /**
+     * Create an instance of {@link FileMetadatiType }
+     */
+    public FileMetadatiType createFileMetadatiType() {
+        return new FileMetadatiType();
     }
 
     /**
@@ -111,10 +111,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ErroreType }
+     * Create an instance of {@link RicevutaImpossibilitaRecapitoType }
      */
-    public ErroreType createErroreType() {
-        return new ErroreType();
+    public RicevutaImpossibilitaRecapitoType createRicevutaImpossibilitaRecapitoType() {
+        return new RicevutaImpossibilitaRecapitoType();
     }
 
     private final static QName _RicevutaConsegna = new QName("http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fattura/messaggi/v1.0", "RicevutaConsegna");

@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dettagli">
- * 		&lt;sequence>
- * 			&lt;element name="detail" type="{http://govway.org/integration/fault/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="dettagli"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="detail" type="{http://govway.org/integration/fault/details}dettaglio" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getDetailList
-   * @return List<Dettaglio>
+   * @return List&lt;Dettaglio&gt;
   */
   @Deprecated
   public List<Dettaglio> getDetail() {
@@ -102,7 +102,7 @@ public class Dettagli extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setDetailList
-   * @param detail List<Dettaglio>
+   * @param detail List&lt;Dettaglio&gt;
   */
   @Deprecated
   public void setDetail(List<Dettaglio> detail) {

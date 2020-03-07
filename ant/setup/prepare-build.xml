@@ -21,7 +21,6 @@
 	<import file="./ant/prepare/govwayAPIMonitor-build.xml" />
 	<import file="./ant/prepare/batchCrond-build.xml" />
 	<import file="./ant/prepare/batchStatistiche-build.xml" />
-	<import file="./ant/prepare/backwardCompatibility-build.xml" />
 
 	<property name="build" location="build" />
 	<property name="deploy_sw" location="deploy/sw" />
@@ -48,7 +47,6 @@
 		<antcall target="prepare_govwayAPIMonitor_setup" />
 		<antcall target="prepare_batchCrond_setup" />
 		<antcall target="prepare_batchStatistiche_setup" />
-		<antcall target="prepare_backwardCompatibility_setup" />
 		<antcall target="prepare_sql_setup" />
 		<!-- Elimina i openspcoop2_jars singoli creati -->
 		<delete dir="${deploy_sw_openspcoop2_jars}"/>
@@ -73,6 +71,7 @@
 			<include name="faces/*"/>
 			<include name="jackson/*"/>
 			<include name="jax/jaxb*"/>
+			<include name="jax/jaxws*"/>
 			<include name="javax/*"/>
 			<include name="jminix/*"/>
 			<include name="json/*"/>

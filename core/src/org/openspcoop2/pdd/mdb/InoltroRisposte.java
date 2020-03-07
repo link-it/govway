@@ -112,6 +112,7 @@ import org.openspcoop2.security.message.constants.SecurityConstants;
 import org.openspcoop2.security.message.engine.MessageSecurityFactory;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
@@ -1015,7 +1016,8 @@ public class InoltroRisposte extends GenericLib{
 			java.sql.Timestamp dataRiconsegna = null;
 			String motivoErroreConsegna = null;
 			boolean invokerNonSupportato = false;
-			SOAPFault faultConnectionReply = null;
+			SOAPFault soapFaultConnectionReply = null;
+			ProblemRFC7807 restProblemConnectionReply = null;
 			OpenSPCoop2MessageFactory faultConnectionReplyMessageFactory = null;
 			Exception eccezioneProcessamentoConnettore = null;
 
@@ -1132,7 +1134,8 @@ public class InoltroRisposte extends GenericLib{
 					dataRiconsegna = gestoreErrore.getDataRispedizione();
 				}
 				// raccolta risultati del connettore
-				faultConnectionReply = gestoreErrore.getFault();
+				soapFaultConnectionReply = gestoreErrore.getFault();
+				restProblemConnectionReply = gestoreErrore.getProblem();
 				faultConnectionReplyMessageFactory = connectorSender.getResponse()!=null ? connectorSender.getResponse().getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 				codiceRitornato = connectorSender.getCodiceTrasporto();
 				responseHttpReply = connectorSender.getResponse();
@@ -1304,9 +1307,13 @@ public class InoltroRisposte extends GenericLib{
 			}
 			else if(errorConsegna && presenzaRispostaProtocolConnectionReply==false){
 				//	Effettuo log dell'eventuale fault
-				if(faultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, faultConnectionReply));
+				if(soapFaultConnectionReply!=null){
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
+				}
+				else if(restProblemConnectionReply!=null){
+					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblemConnectionReply.getRaw());
+					msgDiag.logPersonalizzato("ricezioneRestProblem");
 				}
 				String motivazioneErrore = "Errore duranta la spedizione della busta: "+motivoErroreConsegna;
 				if(riconsegna){
@@ -1439,9 +1446,13 @@ public class InoltroRisposte extends GenericLib{
 			}
 			else if(responseHttpReply != null ){
 				// potenziale Fault (inserito dopo il codice soprastante, per fare decriptare il body al MessageSecurity se presente)
-				if(faultConnectionReply!=null){
-					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, faultConnectionReply));
+				if(soapFaultConnectionReply!=null){
+					msgDiag.addKeyword(CostantiPdD.KEY_SOAP_FAULT, SoapUtils.toString(faultConnectionReplyMessageFactory, soapFaultConnectionReply));
 					msgDiag.logPersonalizzato("ricezioneSoapFault");
+				}
+				else if(restProblemConnectionReply!=null){
+					msgDiag.addKeyword(CostantiPdD.KEY_REST_PROBLEM, restProblemConnectionReply.getRaw());
+					msgDiag.logPersonalizzato("ricezioneRestProblem");
 				}
 			}
 

@@ -25,7 +25,7 @@ package org.openspcoop2.protocol.basic.diagnostica;
 /**
  * Bean Contenente le informazioni per il root element dei messaggi diagnostici
  * 
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

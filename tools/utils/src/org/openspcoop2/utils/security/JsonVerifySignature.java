@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.cxf.common.util.Base64UrlUtility;
-import org.apache.cxf.rs.security.jose.common.JoseConstants;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKey;
 import org.apache.cxf.rs.security.jose.jwk.JsonWebKeys;
 import org.apache.cxf.rs.security.jose.jwk.JwkUtils;
@@ -40,6 +39,7 @@ import org.apache.cxf.rs.security.jose.jws.JwsJsonConsumer;
 import org.apache.cxf.rs.security.jose.jws.JwsJsonProducer;
 import org.apache.cxf.rs.security.jose.jws.JwsSignatureVerifier;
 import org.apache.cxf.rs.security.jose.jws.JwsUtils;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.CertificateInfo;
@@ -341,7 +341,7 @@ public class JsonVerifySignature {
 			Properties pNew = new Properties();
 			pNew.putAll(this.properties);
 			//System.out.println("ALIAS ["+alias+"]");
-			pNew.put(JoseConstants.RSSEC_KEY_STORE_ALIAS, alias);
+			pNew.put(RSSecurityConstants.RSSEC_KEY_STORE_ALIAS, alias);
 			provider = loadProviderFromProperties(pNew, jwsHeaders.getSignatureAlgorithm());
 		}
 		
@@ -389,7 +389,7 @@ public class JsonVerifySignature {
 				try {
 					byte [] cer = null;
 					if(this.properties!=null) {
-						this.properties.put(JoseConstants.RSSEC_KEY_STORE_FILE, path);
+						this.properties.put(RSSecurityConstants.RSSEC_KEY_STORE_FILE, path);
 						cer = JsonUtils.readKeystoreFromURI(this.properties);
 					}
 					else {

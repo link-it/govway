@@ -25,11 +25,11 @@ package org.openspcoop2.core.transazioni.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="count">
- *     &lt;sequence>
- *         &lt;element name="filter" type="{http://www.openspcoop2.org/core/transazioni}search-filter-dump-messaggio" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="count"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="filter" type="{http://www.openspcoop2.org/core/transazioni}search-filter-dump-messaggio" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

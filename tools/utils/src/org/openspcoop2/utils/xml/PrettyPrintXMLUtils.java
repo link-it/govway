@@ -28,7 +28,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringWriter;
 import java.io.Writer;
 
 import javax.xml.transform.ErrorListener;
@@ -40,14 +39,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.DOMConfiguration;
-import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.ls.DOMImplementationLS;
-import org.w3c.dom.ls.LSOutput;
-import org.w3c.dom.ls.LSSerializer;
 
 
 /**
@@ -411,70 +405,19 @@ public class PrettyPrintXMLUtils {
 	 */
 	
 	public static void prettyPrintWithDOM3LS(Document document,OutputStream out){
-		// Pretty-prints a DOM document to XML using DOM Load and Save's LSSerializer.
-		// Note that the "format-pretty-print" DOM configuration parameter can only be set in JDK 1.6+.
-		DOMImplementation domImplementation = document.getImplementation();
-		if (domImplementation.hasFeature("LS", "3.0") && domImplementation.hasFeature("Core", "2.0")) {
-			DOMImplementationLS domImplementationLS = (DOMImplementationLS) domImplementation.getFeature("LS", "3.0");
-			LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
-			DOMConfiguration domConfiguration = lsSerializer.getDomConfig();
-			if (domConfiguration.canSetParameter("format-pretty-print", Boolean.TRUE)) {
-				lsSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-				LSOutput lsOutput = domImplementationLS.createLSOutput();
-				lsOutput.setEncoding("UTF-8");
-				lsOutput.setByteStream(out);
-				lsSerializer.write(document, lsOutput);
-			} else {
-				throw new RuntimeException("DOMConfiguration 'format-pretty-print' parameter isn't settable.");
-			}
-		} else {
-			throw new RuntimeException("DOM 3.0 LS and/or DOM 2.0 Core not supported.");
-		}
+		DOM3LS_XMLUtils.serialize(document, out);
 	}
 	
 	public static void prettyPrintWithDOM3LS(Document document,Writer writer){
-		// Pretty-prints a DOM document to XML using DOM Load and Save's LSSerializer.
-		// Note that the "format-pretty-print" DOM configuration parameter can only be set in JDK 1.6+.
-		DOMImplementation domImplementation = document.getImplementation();
-		if (domImplementation.hasFeature("LS", "3.0") && domImplementation.hasFeature("Core", "2.0")) {
-			DOMImplementationLS domImplementationLS = (DOMImplementationLS) domImplementation.getFeature("LS", "3.0");
-			LSSerializer lsSerializer = domImplementationLS.createLSSerializer();
-			DOMConfiguration domConfiguration = lsSerializer.getDomConfig();
-			if (domConfiguration.canSetParameter("format-pretty-print", Boolean.TRUE)) {
-				lsSerializer.getDomConfig().setParameter("format-pretty-print", Boolean.TRUE);
-				LSOutput lsOutput = domImplementationLS.createLSOutput();
-				lsOutput.setEncoding("UTF-8");
-				lsOutput.setCharacterStream(writer);
-				lsSerializer.write(document, lsOutput);
-			} else {
-				throw new RuntimeException("DOMConfiguration 'format-pretty-print' parameter isn't settable.");
-			}
-		} else {
-			throw new RuntimeException("DOM 3.0 LS and/or DOM 2.0 Core not supported.");
-		}
+		DOM3LS_XMLUtils.serialize(document, writer);
 	}
 	
 	public static void prettyPrintWithDOM3LS(Document document,File file) throws FileNotFoundException{
-		FileOutputStream fout = null;
-		try{
-			fout = new FileOutputStream(file);
-			PrettyPrintXMLUtils.prettyPrintWithDOM3LS(document,fout);
-		}finally{
-			try{
-				fout.flush();
-			}catch(Exception eClose){}
-			try{
-				fout.close();
-			}catch(Exception eClose){}
-		}
-		StringWriter stringWriter = new StringWriter();
-		PrettyPrintXMLUtils.prettyPrintWithDOM3LS(document,stringWriter);
+		DOM3LS_XMLUtils.serialize(document, file);
 	}
 	
 	public static String prettyPrintWithDOM3LS(Document document){
-		StringWriter stringWriter = new StringWriter();
-		PrettyPrintXMLUtils.prettyPrintWithDOM3LS(document,stringWriter);
-		return stringWriter.toString();
+		return DOM3LS_XMLUtils.toString(document);
 	}
 	
 }

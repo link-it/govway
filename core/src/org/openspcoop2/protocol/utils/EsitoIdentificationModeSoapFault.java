@@ -23,7 +23,7 @@ package org.openspcoop2.protocol.utils;
 /**
 * EsitoIdentificationModeSoapFault
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

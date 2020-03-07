@@ -63,6 +63,9 @@ import org.openspcoop2.testsuite.core.SOAPEngine;
 import org.openspcoop2.testsuite.core.TestSuiteException;
 import org.openspcoop2.testsuite.core.Utilities;
 import org.openspcoop2.utils.resources.ClassLoaderUtilities;
+import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.XmlDeserializer;
+import org.openspcoop2.utils.rest.problem.XmlSerializer;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.SSLHostNameVerifierDisabled;
 import org.openspcoop2.utils.xml.AbstractXPathExpressionEngine;
@@ -612,8 +615,25 @@ public class ClientHttpGenerico extends ClientCore{
 												if(detailChilds!=null){
 													for(int j=0; j<detailChilds.getLength(); j++){
 														Node n = detailChilds.item(j);
-														byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
-														elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
+														try {
+															byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
+															elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
+														}catch(Throwable t) {
+															XmlDeserializer des = new XmlDeserializer();
+															if(des.isProblemRFC7807(n)) {
+																ProblemRFC7807 problem = des.fromNode(n, false);
+																XmlSerializer ser = new XmlSerializer();
+																Element nn = ser.toNode(problem);
+																elementsW3C.add(nn);
+															}
+															else {
+																// normalize per conflito di librerie axis - saaj
+																org.w3c.dom.Document d = XMLUtils.DEFAULT.newDocument();
+																n = d.importNode(n, true);
+																byte [] nByte = XMLUtils.DEFAULT.toByteArray(n,true);
+																elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
+															}
+														}
 													}
 												}
 												

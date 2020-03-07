@@ -112,6 +112,7 @@ CREATE TABLE porte_applicative
 	response_cache_control_nocache INT,
 	response_cache_control_maxage INT,
 	response_cache_control_nostore INT,
+	id_sa_default BIGINT,
 	-- Stato della porta: abilitato/disabilitato
 	stato VARCHAR(255),
 	-- proprietario porta applicativa
@@ -137,6 +138,12 @@ CREATE TABLE porte_applicative_sa
 (
 	id_porta BIGINT NOT NULL,
 	id_servizio_applicativo BIGINT NOT NULL,
+	-- Dati Connettore
+	connettore_nome VARCHAR(255),
+	connettore_notifica INT,
+	connettore_descrizione VARCHAR(4000),
+	connettore_stato VARCHAR(255),
+	connettore_filtri VARCHAR(max),
 	-- fk/pk columns
 	id BIGINT IDENTITY,
 	-- unique constraints
@@ -149,6 +156,44 @@ CREATE TABLE porte_applicative_sa
 
 -- index
 CREATE INDEX INDEX_PA_SA ON porte_applicative_sa (id_porta);
+
+
+
+CREATE TABLE pa_sa_properties
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(255) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_pa_sa_props_1 UNIQUE (id_porta,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_sa_properties_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative_sa(id),
+	CONSTRAINT pk_pa_sa_properties PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX INDEX_PA_SA_PROP ON pa_sa_properties (id_porta);
+
+
+
+CREATE TABLE pa_behaviour_props
+(
+	id_porta BIGINT NOT NULL,
+	nome VARCHAR(255) NOT NULL,
+	valore VARCHAR(4000) NOT NULL,
+	-- fk/pk columns
+	id BIGINT IDENTITY,
+	-- unique constraints
+	CONSTRAINT uniq_pa_behaviour_props_1 UNIQUE (id_porta,nome,valore),
+	-- fk/pk keys constraints
+	CONSTRAINT fk_pa_behaviour_props_1 FOREIGN KEY (id_porta) REFERENCES porte_applicative(id),
+	CONSTRAINT pk_pa_behaviour_props PRIMARY KEY (id)
+);
+
+-- index
+CREATE INDEX INDEX_PA_BEHAVIOUR_PROP ON pa_behaviour_props (id_porta);
 
 
 

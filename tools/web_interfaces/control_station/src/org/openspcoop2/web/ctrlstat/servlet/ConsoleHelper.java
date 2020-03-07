@@ -75,6 +75,7 @@ import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MtomProcessor;
 import org.openspcoop2.core.config.MtomProcessorFlowParameter;
 import org.openspcoop2.core.config.PortaApplicativa;
+import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataLocalForward;
 import org.openspcoop2.core.config.PortaTracciamento;
@@ -83,7 +84,6 @@ import org.openspcoop2.core.config.ResponseCachingConfigurazioneControl;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneGenerale;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneHashGenerator;
 import org.openspcoop2.core.config.ResponseCachingConfigurazioneRegola;
-import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Soggetto;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaRichiesta;
@@ -105,6 +105,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
+import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -151,10 +152,17 @@ import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.core.transazioni.utils.PropertiesSerializator;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
+import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazionePrincipal;
 import org.openspcoop2.pdd.core.autorizzazione.CostantiAutorizzazione;
+import org.openspcoop2.pdd.core.behaviour.built_in.BehaviourType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.ConfigurazioneLoadBalancer;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.LoadBalancerType;
+import org.openspcoop2.pdd.core.behaviour.built_in.load_balance.sticky.StickyUtils;
+import org.openspcoop2.pdd.core.behaviour.conditional.ConditionalUtils;
 import org.openspcoop2.pdd.core.token.TokenUtilities;
 import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.LogLevels;
@@ -2415,7 +2423,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public Vector<DataElement> addPorteServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, 
 			String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
-			Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
+			Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili, boolean showTitle, boolean modipa) {
 			
 		if(modipa) {
@@ -2451,7 +2459,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			dati.addElement(de);
 			
-			List<ServizioApplicativo> listSA = null;
+			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
 				listSA = listServiziApplicativi.get(soggetto);
 			}
@@ -2461,7 +2469,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String [] saValues = new String[listSA.size()];
 				String [] saLabels = new String[listSA.size()];
 				int index =0;
-				for (ServizioApplicativo saObject : listSA) {
+				for (IDServizioApplicativoDB saObject : listSA) {
 					saValues[index] = saObject.getId().longValue()+"";
 					saLabels[index] = saObject.getNome();
 					index++;
@@ -3760,6 +3768,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			switch (autenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				break;
 			case HEADER:
 			case FORM:
@@ -4123,6 +4132,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					switch (autenticazionePrincipal) {
 					case CONTAINER:
 					case INDIRIZZO_IP:
+					case INDIRIZZO_IP_X_FORWARDED_FOR:
 						break;
 					case HEADER:
 					case FORM:
@@ -4133,7 +4143,12 @@ public class ConsoleHelper implements IConsoleHelper {
 							autenticazioneParametro = autenticazioneParametroList.get(0);
 						}
 						de = new DataElement();
-						de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+						if(TipoAutenticazionePrincipal.HEADER.equals(autenticazionePrincipal)) {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER);
+						}
+						else {
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM);
+						}
 						de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+0);
 						de.setValue(autenticazioneParametro);
 						if(allHidden) {
@@ -4242,7 +4257,7 @@ public class ConsoleHelper implements IConsoleHelper {
 							}
 							de = new DataElement();
 							de.setName(CostantiControlStation.PARAMETRO_PORTE_AUTENTICAZIONE_PARAMETRO_LIST+1);
-							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME);
+							de.setLabel(CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_TOKEN_CLAIM_PERSONALIZZATO_NOME);
 							de.setValue(autenticazioneParametro);
 							if(allHidden) {
 								de.setType(DataElementType.HIDDEN);
@@ -5088,13 +5103,14 @@ public class ConsoleHelper implements IConsoleHelper {
 					// Calcolo liste
 					PortaApplicativa pa = (PortaApplicativa) oggetto;
 					PorteApplicativeServizioApplicativoAutorizzatoUtilities utilities = new PorteApplicativeServizioApplicativoAutorizzatoUtilities();
+					boolean escludiSAServer = this.porteApplicativeCore.isApplicativiServerEnabled(this);					
 					utilities.buildList(pa, profiloModi, protocollo, true,
 							idSoggettoToAdd,
-							this.porteApplicativeCore, this);
+							this.porteApplicativeCore, this, escludiSAServer);
 					
 					String[] soggettiList = utilities.soggettiList;
 					String[] soggettiListLabel = utilities.soggettiListLabel;
-					Map<String,List<ServizioApplicativo>> listServiziApplicativi = utilities.listServiziApplicativi;
+					Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi = utilities.listServiziApplicativi;
 					idSoggettoToAdd = utilities.idSoggettoToAdd;
 					int saSize = utilities.saSize;
 					
@@ -5232,11 +5248,17 @@ public class ConsoleHelper implements IConsoleHelper {
 				switch (autenticazionePrincipal) {
 				case CONTAINER:
 				case INDIRIZZO_IP:
+				case INDIRIZZO_IP_X_FORWARDED_FOR:
 					break;
 				case HEADER:
+					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_HEADER));
+						return false;
+					}
+					break;
 				case FORM:
 					if(autenticazioneParametroList==null || autenticazioneParametroList.isEmpty() || StringUtils.isEmpty(autenticazioneParametroList.get(0))){
-						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_NOME));
+						this.pd.setMessage(MessageFormat.format(CostantiControlStation.MESSAGGIO_ERRRORE_DATI_INCOMPLETI_E_NECESSARIO_INDICARE_XX,	CostantiControlStation.LABEL_PARAMETRO_PORTE_AUTENTICAZIONE_PRINCIPAL_FORM));
 						return false;
 					}
 					break;
@@ -8657,9 +8679,15 @@ public class ConsoleHelper implements IConsoleHelper {
 	
 	
 	public void setFilterRuoloServizioApplicativo(ISearch ricerca, int idLista) throws Exception{
-		if( (this.isModalitaCompleta()==false) && 
-				(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
-			ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+		if(this.core.isApplicativiServerEnabled(this)) {
+			if(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_TIPO_SERVIZIO_APPLICATIVO, CostantiConfigurazione.CLIENT_OR_SERVER);
+			}
+		} else {
+			if( (this.isModalitaCompleta()==false) && 
+					(Liste.SERVIZIO_APPLICATIVO==idLista || Liste.SERVIZI_APPLICATIVI_BY_SOGGETTO==idLista)) {
+				ricerca.addFilter(idLista, Filtri.FILTRO_RUOLO_SERVIZIO_APPLICATIVO, Filtri.VALUE_FILTRO_RUOLO_SERVIZIO_APPLICATIVO_FRUITORE);
+			}
 		}
 	}
 	
@@ -8805,7 +8833,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		return this.getLabelServizioFruizione(protocollo, idSoggettoFruitore, this.idServizioFactory.getIDServizioFromAccordo(asps));
 	}
 	public String getLabelServizioFruizione(String protocollo, IDSoggetto idSoggettoFruitore, IDServizio idServizio) throws Exception{
-		String labelServizio = this.getLabelIdServizio(protocollo, idServizio);
+		//String labelServizio = this.getLabelIdServizio(protocollo, idServizio);
+		String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
+		String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
+		String labelServizio = NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
 		boolean showSoggettoFruitoreInFruizioni = this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		if(showSoggettoFruitoreInFruizioni) {
@@ -8823,7 +8854,10 @@ public class ConsoleHelper implements IConsoleHelper {
 		boolean showSoggettoErogatoreInErogazioni = this.core.isMultitenant() && 
 				!this.isSoggettoMultitenantSelezionato();
 		if(showSoggettoErogatoreInErogazioni) {
-			return this.getLabelIdServizio(protocollo, idServizio);
+			//return this.getLabelIdServizio(protocollo, idServizio);
+			String servizio = this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
+			String soggetto = this.getLabelNomeSoggetto(protocollo, idServizio.getSoggettoErogatore());
+			return NamingUtils.getLabelServizioConDominioErogatore(servizio, soggetto);
 		}
 		else {
 			return this.getLabelIdServizioSenzaErogatore(protocollo, idServizio);
@@ -10009,17 +10043,35 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public List<Integer> getListaEsitiFalliteSenzaMaxThreads(EsitiProperties esiti) throws ProtocolException{
+	public List<Integer> getListaEsitiFalliteSenza_MaxThreads_Scartate(EsitiProperties esiti) throws ProtocolException{
 		List<Integer> listFallite = esiti.getEsitiCodeKo_senzaFaultApplicativo();
+		
+		List<Integer> listDaScartare = new ArrayList<>();
+		listDaScartare.addAll(esiti.getEsitiCodeRichiestaScartate());
 		int esitoViolazione = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS);
-		List<Integer> listFalliteSenzaMax = new ArrayList<>(); 
+		listDaScartare.add(esitoViolazione);
+		
+		List<Integer> listFalliteSenzaMax_e_scartate = new ArrayList<>(); 
 		int i = 0;
 		for (; i < listFallite.size(); i++) {
-			if(listFallite.get(i).intValue() != esitoViolazione) {
-				listFalliteSenzaMax.add(listFallite.get(i));
+			boolean findDaScartare = false;
+			for (Integer daScartare : listDaScartare) {
+				if(listFallite.get(i).intValue() == daScartare.intValue()) {
+					findDaScartare = true;
+					break;
+				}
+			}
+			if(!findDaScartare) {
+				
+				boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listFallite.get(i).intValue()));
+				if(statiConsegnaMultipla) {
+					continue; // non vengono gestiti in questa configurazione
+				}
+				
+				listFalliteSenzaMax_e_scartate.add(listFallite.get(i));
 			}
 		}
-		return listFalliteSenzaMax;
+		return listFalliteSenzaMax_e_scartate;
 	}
 	
 	public List<Integer> getListaEsitiOkSenzaCors(EsitiProperties esiti) throws ProtocolException{
@@ -10029,6 +10081,12 @@ public class ConsoleHelper implements IConsoleHelper {
 		List<Integer> listOkSenzaCors = new ArrayList<>(); 
 		int i = 0;
 		for (; i < listOk.size(); i++) {
+			
+			boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esiti.getEsitoTransazioneName(listOk.get(i).intValue()));
+			if(statiConsegnaMultipla) {
+				continue; // non vengono gestiti in questa configurazione
+			}
+			
 			if((listOk.get(i).intValue() != esitoCorsGateway) && (listOk.get(i).intValue() != esitoCorsTrasparente)) {
 				listOkSenzaCors.add(listOk.get(i));
 			}
@@ -10048,9 +10106,10 @@ public class ConsoleHelper implements IConsoleHelper {
 	public void addToDatiRegistrazioneEsiti(Vector<DataElement> dati, TipoOperazione tipoOperazione, 
 			String tracciamentoEsitiStato,
 			String nuovaConfigurazioneEsiti,
+			boolean selectAll,
 			String tracciamentoEsitiSelezionePersonalizzataOk, String tracciamentoEsitiSelezionePersonalizzataFault, 
-			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataMax,
-			String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
+			String tracciamentoEsitiSelezionePersonalizzataFallite, String tracciamentoEsitiSelezionePersonalizzataScartate, 
+			String tracciamentoEsitiSelezionePersonalizzataMax, String tracciamentoEsitiSelezionePersonalizzataCors) throws Exception {
 		
 	
 		DataElement de = new DataElement();
@@ -10069,7 +10128,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setSelected(tracciamentoEsitiStato);
 			de.setLabels(labelsStato);
 			de.setValues(valuesStato); 
-			de.setPostBack(true);
+			de.setPostBack_viaPOST(true);
 			dati.addElement(de);
 		}
 		
@@ -10079,6 +10138,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setValue(ConfigurazioneCostanti.LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI);
 			de.setType(DataElementType.NOTE);
 			dati.addElement(de);
+			
 			
 			List<String> attivi = new ArrayList<String>();
 			if(nuovaConfigurazioneEsiti!=null){
@@ -10103,36 +10163,67 @@ public class ConsoleHelper implements IConsoleHelper {
 			values_senza_personalizzato.add(ConfigurazioneCostanti.DEFAULT_VALUE_DISABILITATO);
 			
 			
+			// select all
+			
+			de = new DataElement();
+			de.setLabelRight(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL);
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(selectAll);
+			de.setPostBack_viaPOST(true);
+			dati.addElement(de);
+			
+			
 			// ok
 			
 			List<Integer> listOk = getListaEsitiOkSenzaCors(esiti);
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataOk);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataOk) ||
+					selectAll) {
 				for (Integer esito : listOk) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
-					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
 					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+										
 					de = new DataElement();
-					de.setLabelRight(esiti.getEsitoLabel(esito));
+					if(EsitoTransazioneName.CONSEGNA_MULTIPLA.equals(esitoTransactionName)) {
+						de.setLabelRight(EsitoUtils.LABEL_ESITO_CONSEGNA_MULTIPLA_SENZA_STATI);
+					}
+					else {
+						de.setLabelRight(esiti.getEsitoLabel(esito));
+					}
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
@@ -10160,31 +10251,40 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			List<Integer> listFault = esiti.getEsitiCodeFaultApplicativo();
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT);
-			de.setType(DataElementType.SELECT);
-			if(listFault.size()>1) {
-				de.setValues(values);
-				de.setLabels(values);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				if(listFault.size()>1) {
+					de.setValues(values);
+					de.setLabels(values);
+				}
+				else {
+					de.setValues(values_senza_personalizzato);
+					de.setLabels(values_senza_personalizzato);
+				}
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
+				de.setPostBack_viaPOST(true);
 			}
 			else {
-				de.setValues(values_senza_personalizzato);
-				de.setLabels(values_senza_personalizzato);
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataFault);
 			}
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFault);
-			de.setPostBack(true);
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFault) ||
+					selectAll) {
 				for (Integer esito : listFault) {
 					de = new DataElement();
 					de.setLabelRight(esiti.getEsitoLabel(esito));
@@ -10207,30 +10307,45 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// fallite
 			
-			List<Integer> listFalliteSenzaMax = getListaEsitiFalliteSenzaMaxThreads(esiti);
+			List<Integer> listFalliteSenza_MaxThreads_Scartate = getListaEsitiFalliteSenza_MaxThreads_Scartate(esiti);
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 					
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataFallite);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataFallite);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
-				for (Integer esito : listFalliteSenzaMax) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite) ||
+					selectAll) {
+				for (Integer esito : listFalliteSenza_MaxThreads_Scartate) {
 					
 					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
 					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
 					
 					de = new DataElement();
@@ -10255,17 +10370,87 @@ public class ConsoleHelper implements IConsoleHelper {
 					dati.addElement(de);
 				}
 			}
+			
+			
+			
+			// Scartate
+			
+			List<Integer> listScartate = esiti.getEsitiCodeRichiestaScartate();
+			
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
+					
+			de = new DataElement();
+			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
+			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataScartate);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataScartate);
+			}
+			dati.addElement(de);
+					
+			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate) ||
+					selectAll) {
+				for (Integer esito : listScartate) {
+					
+					EsitoTransazioneName esitoTransactionName = esiti.getEsitoTransazioneName(esito);
+					
+					boolean statiConsegnaMultipla = EsitoTransazioneName.isStatiConsegnaMultipla(esitoTransactionName);
+					if(statiConsegnaMultipla) {
+						continue; // non vengono gestiti in questa configurazione
+					}
+					
+					boolean integrationManagerSpecific = EsitoTransazioneName.isIntegrationManagerSpecific(esitoTransactionName);		
+					
+					de = new DataElement();
+					de.setLabelRight(esiti.getEsitoLabel(esito));
+					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+	//						de.setNote(esiti.getEsitoLabel(esito));
+					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
+					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
+						if(integrationManagerSpecific && this.isModalitaStandard()) {
+							de.setType(DataElementType.HIDDEN);
+							de.setValue(attivi.contains((esito+""))+"");
+						}
+						else {
+							de.setType(DataElementType.CHECKBOX);
+							de.setSelected(attivi.contains((esito+"")));
+						}
+					}
+					else {
+						de.setType(DataElementType.HIDDEN);
+						de.setValue("true");
+					}
+					dati.addElement(de);
+				}
+			}
 					
 			
 			
 			
 			// max
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 			
 			String esitoViolazioneAsString = esiti.convertoToCode(EsitoTransazioneName.CONTROLLO_TRAFFICO_MAX_THREADS) + "";
 			
@@ -10273,14 +10458,21 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values_senza_personalizzato);
-			de.setLabels(values_senza_personalizzato);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values_senza_personalizzato);
+				de.setLabels(values_senza_personalizzato);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataMax);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataMax);
+			}
 			dati.addElement(de);
 			
-			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax)) {
+			if(ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataMax) ||
+					selectAll) {
 				de = new DataElement();
 				de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esitoViolazioneAsString);
 				de.setType(DataElementType.HIDDEN);
@@ -10293,25 +10485,34 @@ public class ConsoleHelper implements IConsoleHelper {
 			
 			// cors
 			
-			de = new DataElement();
-			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
-			de.setType(DataElementType.SUBTITLE);
-			dati.addElement(de);
+			if(!selectAll) {
+				de = new DataElement();
+				de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
+				//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
+				de.setType(DataElementType.SUBTITLE);
+				dati.addElement(de);
+			}
 			
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO);
 			//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 			de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS);
-			de.setType(DataElementType.SELECT);
-			de.setValues(values);
-			de.setLabels(values);
-			de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
-			de.setPostBack(true);
+			if(!selectAll) {
+				de.setType(DataElementType.SELECT);
+				de.setValues(values);
+				de.setLabels(values);
+				de.setSelected(tracciamentoEsitiSelezionePersonalizzataCors);
+				de.setPostBack_viaPOST(true);
+			}
+			else {
+				de.setType(DataElementType.HIDDEN);
+				de.setValue(tracciamentoEsitiSelezionePersonalizzataCors);
+			}
 			dati.addElement(de);
 					
 			if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
-					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+					ConfigurazioneCostanti.DEFAULT_VALUE_ABILITATO.equals(tracciamentoEsitiSelezionePersonalizzataCors) ||
+					selectAll) {
 				
 				List<Integer> listCors = this.getListaEsitiCors(esiti);
 				
@@ -10947,7 +11148,15 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String labelConnettore, Connettore connettore) throws Exception {
+	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, Connettore connettore) throws Exception {
+		
+		if(server!=null && !"".equals(server)) {
+			DataElement de = new DataElement();
+			de.setType(DataElementType.TEXT);
+			de.setLabel(ConnettoriCostanti.LABEL_SERVER);
+			de.setValue(server);
+			dati.add(de);
+		}
 		
 		DataElement de = new DataElement();
 		de.setType(DataElementType.TEXT);
@@ -13866,7 +14075,7 @@ public class ConsoleHelper implements IConsoleHelper {
 
 	public Vector<DataElement> addPorteTrasformazioniServizioApplicativoAutorizzatiToDati(TipoOperazione tipoOp, Vector<DataElement> dati, String idTrasformazione, boolean fromList, 
 		String[] soggettiLabelList, String[] soggettiList, String soggetto, int sizeAttuale, 
-		Map<String,List<ServizioApplicativo>> listServiziApplicativi, String sa,
+		Map<String,List<IDServizioApplicativoDB>> listServiziApplicativi, String sa,
 			boolean addMsgApplicativiNonDisponibili) {
 		
 		if(fromList) {
@@ -13907,7 +14116,7 @@ public class ConsoleHelper implements IConsoleHelper {
 			}
 			dati.addElement(de);
 			
-			List<ServizioApplicativo> listSA = null;
+			List<IDServizioApplicativoDB> listSA = null;
 			if(soggetto!=null && !"".equals(soggetto)) {
 				listSA = listServiziApplicativi.get(soggetto);
 			}
@@ -13917,7 +14126,7 @@ public class ConsoleHelper implements IConsoleHelper {
 				String [] saValues = new String[listSA.size()];
 				String [] saLabels = new String[listSA.size()];
 				int index =0;
-				for (ServizioApplicativo saObject : listSA) {
+				for (IDServizioApplicativoDB saObject : listSA) {
 					saValues[index] = saObject.getId().longValue()+"";
 					saLabels[index] = saObject.getNome();
 					index++;
@@ -14190,7 +14399,6 @@ public class ConsoleHelper implements IConsoleHelper {
 		return dati;
 		
 	}
-	
 	
 	
 	// ****** PROFILO MODI PA ******
@@ -14511,4 +14719,243 @@ public class ConsoleHelper implements IConsoleHelper {
 				
 		return dati;
 	}
+	
+	public String getStatoConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
+		boolean connettoreMultiploEnabled = paAssociata.getBehaviour() != null;
+		return connettoreMultiploEnabled ? CostantiConfigurazione.ABILITATO.toString() : CostantiConfigurazione.DISABILITATO.toString();
+	}
+	
+	public String getNomiConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound, NotFoundException {
+		StringBuilder sbConnettoriMultipli = new StringBuilder();
+		
+		BehaviourType behaviourType = BehaviourType.toEnumConstant(paAssociata.getBehaviour().getNome());
+		switch (behaviourType) {
+		case CONSEGNA_LOAD_BALANCE:
+			String loadBalanceStrategia = ConfigurazioneLoadBalancer.readLoadBalancerType(paAssociata.getBehaviour());
+			LoadBalancerType type = LoadBalancerType.toEnumConstant(loadBalanceStrategia, true);
+			sbConnettoriMultipli.append(behaviourType.getLabel()).append(" '");
+			if(StickyUtils.isConfigurazioneSticky(paAssociata, ControlStationLogger.getPddConsoleCoreLogger())){
+				sbConnettoriMultipli.append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_STICKY).append(" ");
+			}
+			sbConnettoriMultipli.append(type.getLabel()).append("'");
+			
+			boolean condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE);
+			}
+			
+			break;
+		case CONSEGNA_MULTIPLA:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONSEGNA_CONDIZIONALE);
+			}
+			
+			break;
+		case CONSEGNA_CON_NOTIFICHE:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			condizionale = ConditionalUtils.isConfigurazioneCondizionale(paAssociata, ControlStationLogger.getPddConsoleCoreLogger());
+			if(condizionale) {
+				sbConnettoriMultipli.append(" ").append(PorteApplicativeCostanti.LABEL_PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_NOTIFICHE_CONDIZIONALI);
+			}
+			
+			break;
+		case CONSEGNA_CONDIZIONALE:
+			sbConnettoriMultipli.append(behaviourType.getLabel());
+			
+			break;
+		case CUSTOM:
+			sbConnettoriMultipli.append("Consegna Personalizzata '"+paAssociata.getBehaviour().getNome()+"'");
+			break;
+		}
+		
+		return sbConnettoriMultipli.toString();
+	}
+	
+	public String getToolTipConnettoriMultipliPortaApplicativa(PortaApplicativa paAssociata) throws DriverControlStationException, DriverControlStationNotFound {
+		StringBuilder sbConnettoriMultipli = new StringBuilder();
+		for (PortaApplicativaServizioApplicativo paSA : paAssociata.getServizioApplicativoList()) {
+			if(sbConnettoriMultipli.length() >0)
+				sbConnettoriMultipli.append(", ");
+			if(paSA.getDatiConnettore() == null) {
+				sbConnettoriMultipli.append(CostantiControlStation.LABEL_DEFAULT);
+			} else {
+				sbConnettoriMultipli.append(paSA.getDatiConnettore().getNome());
+			}
+		}
+		return sbConnettoriMultipli.toString();
+	}
+	
+	public Vector<DataElement> addInformazioniGruppiAsHiddenToDati(TipoOperazione tipoOp, Vector<DataElement> dati,	
+			String idTabGruppo, String idTabConnettoriMultipli, String accessoDaAPS, String connettoreAccessoDaGruppi, String connettoreRegistro, String connettoreAccessoDaListaConnettoriMultipli) {
+		
+		if(idTabGruppo != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_ID_TAB);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idTabGruppo);
+			dati.add(de);
+		}
+		
+		if(idTabConnettoriMultipli != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_ID_CONN_TAB);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(idTabConnettoriMultipli);
+			dati.add(de);
+		}
+		
+		if(accessoDaAPS != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_CONNETTORE_DA_LISTA_APS);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(accessoDaAPS);
+			dati.add(de);
+		}
+		
+		if(connettoreAccessoDaGruppi != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_GRUPPI);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreAccessoDaGruppi);
+			dati.add(de);
+		}
+		
+		if(connettoreRegistro != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_REGISTRO);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreRegistro);
+			dati.add(de);
+		}
+		
+		if(connettoreAccessoDaListaConnettoriMultipli != null) {
+			DataElement de = new DataElement();
+			de.setName(CostantiControlStation.PARAMETRO_VERIFICA_CONNETTORE_ACCESSO_DA_LISTA_CONNETTORI_MULTIPLI);
+			de.setType(DataElementType.HIDDEN);
+			de.setValue(connettoreAccessoDaListaConnettoriMultipli);
+			dati.add(de);
+		}
+		
+		return dati;
+	}
+	
+	public boolean isConnettoreDefault(PortaApplicativaServizioApplicativo paSA) {
+		return paSA.getDatiConnettore()!= null ? !paSA.getDatiConnettore().isNotifica() : true;
+	}
+	
+	public String getLabelNomePortaApplicativaServizioApplicativo(PortaApplicativaServizioApplicativo paSA) {
+		String nomePaSA = paSA.getDatiConnettore()!= null ? paSA.getDatiConnettore().getNome() : CostantiControlStation.LABEL_DEFAULT;
+		return nomePaSA;
+	}
+	
+	public int getIdxNuovoConnettoreMultiplo(PortaApplicativa pa) {
+		int idxConfigurazione = 0;
+		int listaMappingErogazioneSize = pa.sizeServizioApplicativoList();
+		
+		for (int i = 0; i < listaMappingErogazioneSize; i++) {
+			PortaApplicativaServizioApplicativo paSA = pa.getServizioApplicativo(i);
+			if(!this.isConnettoreDefault(paSA)) {
+				int idx = paSA.getNome().indexOf(ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX);
+				if(idx > -1) {
+					String idxTmp = paSA.getNome().substring(idx + ConnettoriCostanti.PARAMETRO_CONNETTORI_MULTIPLI_SAX_PREFIX.length());
+					int idxMax = -1;
+					try {
+						idxMax = Integer.parseInt(idxTmp);
+					}catch(Exception e) {
+						idxMax = 0;
+					}
+					idxConfigurazione = Math.max(idxConfigurazione, idxMax);
+				}
+			}
+		}
+				
+		return ( ++ idxConfigurazione);
+	}
+
+	
+	public boolean allActionsRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		boolean all = true;
+		if(azioni!=null && azioni.size()>0) {
+			for (String azione : azioni) {
+				if(lista==null || lista.size()<=0) {
+					all  = false;
+					break;
+				}
+				boolean found = false;
+				for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+					PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+					if(paAssociata.getAzione() != null && paAssociata.getAzione().getAzioneDelegataList().contains(azione)) {
+						found = true;
+						break;
+					}
+				}
+				if(!found) {
+					all  = false;
+					break;
+				}
+			}
+		}
+		return all;
+	}
+	
+	public List<String> getAllActionsNotRedefinedMappingErogazione(List<String> azioni, List<MappingErogazionePortaApplicativa> lista) throws DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		// verifico se tutte le azioni sono definite in regole specifiche
+		List<String> l = new ArrayList<>();
+		if(lista==null || lista.size()<=0) {
+			return azioni;
+		}
+		l.addAll(azioni);
+		for (MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa : lista) {
+			PortaApplicativa paAssociata = this.porteApplicativeCore.getPortaApplicativa(mappingErogazionePortaApplicativa.getIdPortaApplicativa());
+			if(paAssociata.getAzione() != null && !paAssociata.getAzione().getAzioneDelegataList().isEmpty()) {
+				for (String azPA : paAssociata.getAzione().getAzioneDelegataList()) {
+					l.remove(azPA);
+				}
+			}
+		}
+		return l;
+	}
+	
+	public boolean isSoapOneWay(PortaApplicativa portaApplicativa, MappingErogazionePortaApplicativa mappingErogazionePortaApplicativa, 
+			AccordoServizioParteSpecifica asps, AccordoServizioParteComuneSintetico as, ServiceBinding serviceBinding) 
+					throws Exception, DriverRegistroServiziException, DriverConfigurazioneException, DriverConfigurazioneNotFound {
+		boolean isSoapOneWay = false;
+		
+		if(serviceBinding.equals(ServiceBinding.SOAP)) {
+			// controllo che tutte le azioni del gruppo siano oneway
+			// se c'e' almeno un'azione non oneway visualizzo la sezione notifiche
+			if(mappingErogazionePortaApplicativa.isDefault()) {
+				Map<String,String> azioni = this.porteApplicativeCore.getAzioniConLabel(asps, as, false, true, new ArrayList<String>());
+				IDServizio idServizio2 = IDServizioFactory.getInstance().getIDServizioFromAccordo(asps); 
+				List<MappingErogazionePortaApplicativa> lista = this.apsCore.mappingServiziPorteAppList(idServizio2,asps.getId(), null);
+		
+				boolean allActionRedefined = false;
+				List<String> actionNonRidefinite = null;
+		
+				List<String> azioniL = new ArrayList<>();
+				if(azioni != null && azioni.size() > 0)
+					azioniL.addAll(azioni.keySet());
+				allActionRedefined = this.allActionsRedefinedMappingErogazione(azioniL, lista);
+				if(!allActionRedefined) {
+					actionNonRidefinite = this.getAllActionsNotRedefinedMappingErogazione(azioniL, lista);
+					isSoapOneWay = this.porteApplicativeCore.azioniTutteOneway(asps, as, actionNonRidefinite);
+				} else {
+					isSoapOneWay = false;
+				} 
+			} else {
+				List<String> listaAzioni = portaApplicativa.getAzione()!= null ?  portaApplicativa.getAzione().getAzioneDelegataList() : new ArrayList<String>();
+				isSoapOneWay = this.porteApplicativeCore.azioniTutteOneway(asps, as, listaAzioni);
+			}
+		} else {
+			isSoapOneWay = false;
+		}
+		
+		return isSoapOneWay;
+	}
+
 }

@@ -42,6 +42,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	
 		this.ID_TRANSAZIONE = new Field("id-transazione",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.PROTOCOLLO = new Field("protocollo",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.SERVIZIO_APPLICATIVO_EROGATORE = new Field("servizio-applicativo-erogatore",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.DATA_CONSEGNA_EROGATORE = new Field("data-consegna-erogatore",java.util.Date.class,"dump-messaggio",DumpMessaggio.class);
 		this.TIPO_MESSAGGIO = new Field("tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.FORMATO_MESSAGGIO = new Field("formato-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new Field("content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -71,6 +73,8 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	
 		this.ID_TRANSAZIONE = new ComplexField(father,"id-transazione",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.PROTOCOLLO = new ComplexField(father,"protocollo",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.SERVIZIO_APPLICATIVO_EROGATORE = new ComplexField(father,"servizio-applicativo-erogatore",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
+		this.DATA_CONSEGNA_EROGATORE = new ComplexField(father,"data-consegna-erogatore",java.util.Date.class,"dump-messaggio",DumpMessaggio.class);
 		this.TIPO_MESSAGGIO = new ComplexField(father,"tipo-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.FORMATO_MESSAGGIO = new ComplexField(father,"formato-messaggio",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
 		this.CONTENT_TYPE = new ComplexField(father,"content-type",java.lang.String.class,"dump-messaggio",DumpMessaggio.class);
@@ -99,6 +103,10 @@ public class DumpMessaggioModel extends AbstractModel<DumpMessaggio> {
 	public IField ID_TRANSAZIONE = null;
 	 
 	public IField PROTOCOLLO = null;
+	 
+	public IField SERVIZIO_APPLICATIVO_EROGATORE = null;
+	 
+	public IField DATA_CONSEGNA_EROGATORE = null;
 	 
 	public IField TIPO_MESSAGGIO = null;
 	 

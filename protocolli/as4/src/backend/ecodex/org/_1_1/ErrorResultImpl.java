@@ -34,16 +34,16 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="errorResultImpl">
- * 		&lt;sequence>
- * 			&lt;element name="errorCode" type="{http://org.ecodex.backend/1_1/}errorCode" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="errorDetail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="messageInErrorId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="mshRole" type="{http://org.ecodex.backend/1_1/}mshRole" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="notified" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="errorResultImpl"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="errorCode" type="{http://org.ecodex.backend/1_1/}errorCode" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="errorDetail" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="messageInErrorId" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="mshRole" type="{http://org.ecodex.backend/1_1/}mshRole" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="notified" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="timestamp" type="{http://www.w3.org/2001/XMLSchema}dateTime" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

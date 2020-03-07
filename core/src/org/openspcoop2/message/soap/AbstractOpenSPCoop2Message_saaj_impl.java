@@ -44,7 +44,6 @@ import javax.xml.transform.dom.DOMSource;
 
 import org.apache.commons.io.output.CountingOutputStream;
 import org.apache.wss4j.common.WSS4JConstants;
-import org.apache.wss4j.dom.util.WSSecurityUtil;
 import org.openspcoop2.message.ForwardConfig;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
@@ -73,7 +72,7 @@ import org.w3c.dom.NodeList;
 /**
  * AbstractXMLBaseOpenSPCoop2Message
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -454,7 +453,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			List<Reference> references = new ArrayList<Reference>();
 			
 			// Prendo il security Header di mia competenza
-	        SOAPElement security = (SOAPElement) WSSecurityUtil.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(), actor);
+	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor);
 	       
 	        //TODO verificare se actor==null && mustUnderstand==false?
 	        if(security!=null){
@@ -579,7 +578,7 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		try{
 		
 			// Prendo il security Header di mia competenza
-	        SOAPElement security = (SOAPElement) WSSecurityUtil.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(), actor);
+	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor);
 	        
 	        // Rimuovo l'header Security
 	        if(detachHeaderWSSecurity){

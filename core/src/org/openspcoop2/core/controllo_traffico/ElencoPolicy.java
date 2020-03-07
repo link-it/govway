@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="elenco-policy">
- * 		&lt;sequence>
- * 			&lt;element name="configurazione-policy" type="{http://www.openspcoop2.org/core/controllo_traffico}configurazione-policy" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="elenco-policy"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="configurazione-policy" type="{http://www.openspcoop2.org/core/controllo_traffico}configurazione-policy" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ElencoPolicy extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getConfigurazionePolicyList
-   * @return List<ConfigurazionePolicy>
+   * @return List&lt;ConfigurazionePolicy&gt;
   */
   @Deprecated
   public List<ConfigurazionePolicy> getConfigurazionePolicy() {

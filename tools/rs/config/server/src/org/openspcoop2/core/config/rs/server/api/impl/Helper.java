@@ -46,6 +46,7 @@ import org.openspcoop2.core.registry.beans.AccordoServizioParteComuneSintetico;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
@@ -323,7 +324,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		if (!enumClass.isEnum())
 			throw new IllegalArgumentException("Il parametro enumClass deve essere un'enumerazione");
 		
-		T ret = credClass.newInstance();
+		T ret = Utilities.newInstance(credClass);
 		
 		switch (tipoAuth) {
 		case HTTP_BASIC: {

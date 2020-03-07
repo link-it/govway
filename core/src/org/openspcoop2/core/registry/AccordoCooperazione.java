@@ -37,23 +37,23 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-cooperazione">
- * 		&lt;sequence>
- * 			&lt;element name="uri-servizi-composti" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="soggetto-referente" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="elenco-partecipanti" type="{http://www.openspcoop2.org/core/registry}accordo-cooperazione-partecipanti" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-cooperazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="uri-servizi-composti" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="soggetto-referente" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="elenco-partecipanti" type="{http://www.openspcoop2.org/core/registry}accordo-cooperazione-partecipanti" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -298,7 +298,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getUriServiziCompostiList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getUriServiziComposti() {
@@ -307,7 +307,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setUriServiziCompostiList
-   * @param uriServiziComposti List<java.lang.String>
+   * @param uriServiziComposti List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setUriServiziComposti(List<java.lang.String> uriServiziComposti) {
@@ -334,7 +334,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getAllegatoList
-   * @return List<Documento>
+   * @return List&lt;Documento&gt;
   */
   @Deprecated
   public List<Documento> getAllegato() {
@@ -343,7 +343,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setAllegatoList
-   * @param allegato List<Documento>
+   * @param allegato List&lt;Documento&gt;
   */
   @Deprecated
   public void setAllegato(List<Documento> allegato) {
@@ -364,7 +364,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getSpecificaSemiformaleList
-   * @return List<Documento>
+   * @return List&lt;Documento&gt;
   */
   @Deprecated
   public List<Documento> getSpecificaSemiformale() {
@@ -373,7 +373,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setSpecificaSemiformaleList
-   * @param specificaSemiformale List<Documento>
+   * @param specificaSemiformale List&lt;Documento&gt;
   */
   @Deprecated
   public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
@@ -394,7 +394,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getProtocolPropertyList
-   * @return List<ProtocolProperty>
+   * @return List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public List<ProtocolProperty> getProtocolProperty() {
@@ -403,7 +403,7 @@ public class AccordoCooperazione extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List<ProtocolProperty>
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {

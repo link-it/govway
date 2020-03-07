@@ -33,10 +33,10 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ReplaceMatchFieldType">
- * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceKeywordType" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="ReplaceMatchFieldType"&gt;
+ * 		&lt;attribute name="valore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/protocol/information_missing}ReplaceKeywordType" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

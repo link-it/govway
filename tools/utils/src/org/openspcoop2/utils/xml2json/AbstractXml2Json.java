@@ -30,9 +30,9 @@ import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
-import javax.xml.transform.dom.DOMSource;
 
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.xml.DOMSourceFix;
 import org.w3c.dom.Node;
 
 /**
@@ -70,7 +70,7 @@ public abstract class AbstractXml2Json implements IXml2Json{
 	public String xml2json(Node node) throws UtilsException {
 		XMLEventReader reader = null;
 		try {
-			reader = this.inputFactory.createXMLEventReader(new DOMSource(node));
+			reader = this.inputFactory.createXMLEventReader(new DOMSourceFix(node));
 			StringWriter stringWriter = new StringWriter();
 			xml2json(reader, stringWriter);
 			return stringWriter.toString();

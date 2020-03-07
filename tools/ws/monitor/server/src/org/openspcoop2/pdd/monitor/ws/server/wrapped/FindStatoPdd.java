@@ -25,11 +25,11 @@ package org.openspcoop2.pdd.monitor.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="find">
- *     &lt;sequence>
- *         &lt;element name="filter" type="{http://www.openspcoop2.org/pdd/monitor}search-filter-stato-pdd" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="find"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="filter" type="{http://www.openspcoop2.org/pdd/monitor}search-filter-stato-pdd" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

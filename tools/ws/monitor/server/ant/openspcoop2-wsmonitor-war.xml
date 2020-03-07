@@ -131,7 +131,7 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/security">
 				<include name="neethi-3.1.1.jar"/>
-				<include name="xmlsec-2.1.2.jar"/>
+				<include name="xmlsec-2.1.4.jar"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/jax">
 				<include name="jaxws-*.jar"/>
@@ -150,13 +150,13 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/commons">
 				<include name="commons-lang-2.6.jar"/>
-				<include name="commons-beanutils-1.9.3.jar"/>
+				<include name="commons-beanutils-1.9.4.jar"/>
 				<include name="commons-collections-3.2.2.jar"/>
-				<include name="commons-codec-1.11.jar"/>
+				<include name="commons-codec-1.14.jar"/>
 				<include name="${commons_logging_jar}"/>
 			</lib>
 			<lib dir="${openspcoop2.lib}/log">
-				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			

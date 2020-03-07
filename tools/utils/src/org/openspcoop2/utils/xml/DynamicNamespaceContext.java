@@ -36,7 +36,7 @@ import org.w3c.dom.NodeList;
 /**
  * Classe utilizzabile per raccogliere le informazioni sui namespaces di un messaggio Soap
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

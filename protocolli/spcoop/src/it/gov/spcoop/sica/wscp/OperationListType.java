@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="operationListType">
- * 		&lt;sequence>
- * 			&lt;element name="collaborazione" type="{http://spcoop.gov.it/sica/wscp}operationType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="operationListType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="collaborazione" type="{http://spcoop.gov.it/sica/wscp}operationType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method getCollaborazioneList
-   * @return List<OperationType>
+   * @return List&lt;OperationType&gt;
   */
   @Deprecated
   public List<OperationType> getCollaborazione() {
@@ -102,7 +102,7 @@ public class OperationListType extends org.openspcoop2.utils.beans.BaseBean impl
 
   /**
    * @deprecated Use method setCollaborazioneList
-   * @param collaborazione List<OperationType>
+   * @param collaborazione List&lt;OperationType&gt;
   */
   @Deprecated
   public void setCollaborazione(List<OperationType> collaborazione) {

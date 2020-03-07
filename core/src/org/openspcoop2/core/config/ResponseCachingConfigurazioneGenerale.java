@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="response-caching-configurazione-generale">
- * 		&lt;sequence>
- * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="response-caching-configurazione-generale"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="configurazione" type="{http://www.openspcoop2.org/core/config}response-caching-configurazione" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="cache" type="{http://www.openspcoop2.org/core/config}cache" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

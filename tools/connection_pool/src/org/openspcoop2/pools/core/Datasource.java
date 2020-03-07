@@ -41,37 +41,37 @@ import javax.xml.bind.annotation.XmlType;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType>
- *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element ref="{http://www.openspcoop2.org/pools/core}pool-size" minOccurs="0"/>
- *         &lt;element ref="{http://www.openspcoop2.org/pools/core}validation" minOccurs="0"/>
- *         &lt;element ref="{http://www.openspcoop2.org/pools/core}when-exhausted" minOccurs="0"/>
- *         &lt;element ref="{http://www.openspcoop2.org/pools/core}idle-object-eviction" minOccurs="0"/>
- *       &lt;/sequence>
- *       &lt;attribute name="jndi-name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="connection-url" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="driver-class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="username" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" />
- *       &lt;attribute name="prepared-statement-pool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="auto-commit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="read-only" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" />
- *       &lt;attribute name="transaction-isolation" default="readCommitted">
- *         &lt;simpleType>
- *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
- *             &lt;enumeration value="none"/>
- *             &lt;enumeration value="readCommitted"/>
- *             &lt;enumeration value="readUncommitted"/>
- *             &lt;enumeration value="repeatableRead"/>
- *             &lt;enumeration value="serializable"/>
- *           &lt;/restriction>
- *         &lt;/simpleType>
- *       &lt;/attribute>
- *     &lt;/restriction>
- *   &lt;/complexContent>
- * &lt;/complexType>
+ * &lt;complexType&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/pools/core}pool-size" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/pools/core}validation" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/pools/core}when-exhausted" minOccurs="0"/&gt;
+ *         &lt;element ref="{http://www.openspcoop2.org/pools/core}idle-object-eviction" minOccurs="0"/&gt;
+ *       &lt;/sequence&gt;
+ *       &lt;attribute name="jndi-name" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="connection-url" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="driver-class" use="required" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="username" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="password" type="{http://www.w3.org/2001/XMLSchema}string" /&gt;
+ *       &lt;attribute name="prepared-statement-pool" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="auto-commit" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="read-only" type="{http://www.w3.org/2001/XMLSchema}boolean" default="false" /&gt;
+ *       &lt;attribute name="transaction-isolation" default="readCommitted"&gt;
+ *         &lt;simpleType&gt;
+ *           &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ *             &lt;enumeration value="none"/&gt;
+ *             &lt;enumeration value="readCommitted"/&gt;
+ *             &lt;enumeration value="readUncommitted"/&gt;
+ *             &lt;enumeration value="repeatableRead"/&gt;
+ *             &lt;enumeration value="serializable"/&gt;
+ *           &lt;/restriction&gt;
+ *         &lt;/simpleType&gt;
+ *       &lt;/attribute&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

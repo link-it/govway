@@ -36,20 +36,20 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasformazione-regola-risposta">
- * 		&lt;sequence>
- * 			&lt;element name="conversione-template" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="applicabilita" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-risposta" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-parametro" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="trasformazione-soap" type="{http://www.openspcoop2.org/core/config}trasformazione-soap-risposta" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
- * 		&lt;attribute name="conversione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="conversione-tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="return-code" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="trasformazione-regola-risposta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="conversione-template" type="{http://www.w3.org/2001/XMLSchema}base64Binary" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="applicabilita" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-risposta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="header" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-parametro" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="trasformazione-soap" type="{http://www.openspcoop2.org/core/config}trasformazione-soap-risposta" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="posizione" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
+ * 		&lt;attribute name="conversione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="conversione-tipo" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="return-code" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -207,7 +207,7 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getHeaderList
-   * @return List<TrasformazioneRegolaParametro>
+   * @return List&lt;TrasformazioneRegolaParametro&gt;
   */
   @Deprecated
   public List<TrasformazioneRegolaParametro> getHeader() {
@@ -216,7 +216,7 @@ public class TrasformazioneRegolaRisposta extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setHeaderList
-   * @param header List<TrasformazioneRegolaParametro>
+   * @param header List&lt;TrasformazioneRegolaParametro&gt;
   */
   @Deprecated
   public void setHeader(List<TrasformazioneRegolaParametro> header) {

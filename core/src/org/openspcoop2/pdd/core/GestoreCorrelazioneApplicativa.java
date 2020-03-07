@@ -73,7 +73,7 @@ import org.w3c.dom.Text;
 /**
  * Gestione della correlazione applicativa con gli id
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

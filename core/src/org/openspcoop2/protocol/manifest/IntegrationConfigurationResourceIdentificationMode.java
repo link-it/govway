@@ -33,10 +33,10 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfigurationResourceIdentificationMode">
- * 		&lt;attribute name="name" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" use="required"/>
- * 		&lt;attribute name="onlyAdvancedMode" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfigurationResourceIdentificationMode"&gt;
+ * 		&lt;attribute name="name" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" use="required"/&gt;
+ * 		&lt;attribute name="onlyAdvancedMode" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

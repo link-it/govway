@@ -34,12 +34,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="id-dump-messaggio">
- * 		&lt;sequence>
- * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="id-dump-messaggio"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-transazione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo-messaggio" type="{http://www.openspcoop2.org/core/transazioni}tipo-messaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-applicativo-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -52,7 +53,8 @@ import java.io.Serializable;
 @XmlType(name = "id-dump-messaggio", 
   propOrder = {
   	"idTransazione",
-  	"tipoMessaggio"
+  	"tipoMessaggio",
+  	"servizioApplicativoErogatore"
   }
 )
 
@@ -104,6 +106,14 @@ public class IdDumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implem
     this.tipoMessaggio = tipoMessaggio;
   }
 
+  public java.lang.String getServizioApplicativoErogatore() {
+    return this.servizioApplicativoErogatore;
+  }
+
+  public void setServizioApplicativoErogatore(java.lang.String servizioApplicativoErogatore) {
+    this.servizioApplicativoErogatore = servizioApplicativoErogatore;
+  }
+
   private static final long serialVersionUID = 1L;
 
   @XmlTransient
@@ -120,5 +130,9 @@ public class IdDumpMessaggio extends org.openspcoop2.utils.beans.BaseBean implem
 
   @XmlElement(name="tipo-messaggio",required=true,nillable=false)
   protected TipoMessaggio tipoMessaggio;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="string")
+  @XmlElement(name="servizio-applicativo-erogatore",required=false,nillable=false)
+  protected java.lang.String servizioApplicativoErogatore;
 
 }

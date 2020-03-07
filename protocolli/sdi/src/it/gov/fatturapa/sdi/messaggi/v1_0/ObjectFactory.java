@@ -55,6 +55,62 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link RiferimentoArchivioType }
+     */
+    public RiferimentoArchivioType createRiferimentoArchivioType() {
+        return new RiferimentoArchivioType();
+    }
+
+    /**
+     * Create an instance of {@link NotificaEsitoCommittenteType }
+     */
+    public NotificaEsitoCommittenteType createNotificaEsitoCommittenteType() {
+        return new NotificaEsitoCommittenteType();
+    }
+
+    /**
+     * Create an instance of {@link RiferimentoFatturaType }
+     */
+    public RiferimentoFatturaType createRiferimentoFatturaType() {
+        return new RiferimentoFatturaType();
+    }
+
+    /**
+     * Create an instance of {@link NotificaMancataConsegnaType }
+     */
+    public NotificaMancataConsegnaType createNotificaMancataConsegnaType() {
+        return new NotificaMancataConsegnaType();
+    }
+
+    /**
+     * Create an instance of {@link RicevutaConsegnaType }
+     */
+    public RicevutaConsegnaType createRicevutaConsegnaType() {
+        return new RicevutaConsegnaType();
+    }
+
+    /**
+     * Create an instance of {@link ListaErroriType }
+     */
+    public ListaErroriType createListaErroriType() {
+        return new ListaErroriType();
+    }
+
+    /**
+     * Create an instance of {@link ErroreType }
+     */
+    public ErroreType createErroreType() {
+        return new ErroreType();
+    }
+
+    /**
+     * Create an instance of {@link NotificaScartoType }
+     */
+    public NotificaScartoType createNotificaScartoType() {
+        return new NotificaScartoType();
+    }
+
+    /**
      * Create an instance of {@link NotificaDecorrenzaTerminiType }
      */
     public NotificaDecorrenzaTerminiType createNotificaDecorrenzaTerminiType() {
@@ -62,10 +118,17 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link RiferimentoArchivioType }
+     * Create an instance of {@link MetadatiInvioFileType }
      */
-    public RiferimentoArchivioType createRiferimentoArchivioType() {
-        return new RiferimentoArchivioType();
+    public MetadatiInvioFileType createMetadatiInvioFileType() {
+        return new MetadatiInvioFileType();
+    }
+
+    /**
+     * Create an instance of {@link DestinatarioType }
+     */
+    public DestinatarioType createDestinatarioType() {
+        return new DestinatarioType();
     }
 
     /**
@@ -83,73 +146,10 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link NotificaEsitoCommittenteType }
-     */
-    public NotificaEsitoCommittenteType createNotificaEsitoCommittenteType() {
-        return new NotificaEsitoCommittenteType();
-    }
-
-    /**
-     * Create an instance of {@link RicevutaConsegnaType }
-     */
-    public RicevutaConsegnaType createRicevutaConsegnaType() {
-        return new RicevutaConsegnaType();
-    }
-
-    /**
-     * Create an instance of {@link NotificaMancataConsegnaType }
-     */
-    public NotificaMancataConsegnaType createNotificaMancataConsegnaType() {
-        return new NotificaMancataConsegnaType();
-    }
-
-    /**
-     * Create an instance of {@link MetadatiInvioFileType }
-     */
-    public MetadatiInvioFileType createMetadatiInvioFileType() {
-        return new MetadatiInvioFileType();
-    }
-
-    /**
      * Create an instance of {@link NotificaEsitoType }
      */
     public NotificaEsitoType createNotificaEsitoType() {
         return new NotificaEsitoType();
-    }
-
-    /**
-     * Create an instance of {@link RiferimentoFatturaType }
-     */
-    public RiferimentoFatturaType createRiferimentoFatturaType() {
-        return new RiferimentoFatturaType();
-    }
-
-    /**
-     * Create an instance of {@link ListaErroriType }
-     */
-    public ListaErroriType createListaErroriType() {
-        return new ListaErroriType();
-    }
-
-    /**
-     * Create an instance of {@link NotificaScartoType }
-     */
-    public NotificaScartoType createNotificaScartoType() {
-        return new NotificaScartoType();
-    }
-
-    /**
-     * Create an instance of {@link DestinatarioType }
-     */
-    public DestinatarioType createDestinatarioType() {
-        return new DestinatarioType();
-    }
-
-    /**
-     * Create an instance of {@link ErroreType }
-     */
-    public ErroreType createErroreType() {
-        return new ErroreType();
     }
 
     private final static QName _MetadatiInvioFile = new QName("http://www.fatturapa.gov.it/sdi/messaggi/v1.0", "MetadatiInvioFile");

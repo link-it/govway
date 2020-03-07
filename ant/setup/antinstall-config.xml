@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE installer PUBLIC "-//tp23 //DTD Ant Installer Config//EN" "http://antinstaller.sf.net/dtd/antinstall-config-0.8.dtd">
-<installer name="GovWay Installer v3.2.2" defaultImageResource="/logoSetup.png"
+<installer name="GovWay Installer v3.3.0.b1" defaultImageResource="/logoSetup.png"
     ui="swing,text"
 	verbose="false"
     windowIcon="/iconaSetup.png" wide="550:275" loadDefaults="true">
@@ -8,7 +8,7 @@
     <!-- Se si caricano i loadDefaults non funzionano piu' i cambi di stato per il db -->
     <!-- loadDefaults="true" > -->
 
-    <page type="input" name="intro" displayText="Installer GovWay v3.2.2">
+    <page type="input" name="intro" displayText="Installer GovWay v3.3.0.b1">
         <comment explanatoryText=""/>
         <comment explanatoryText="Il software GovWay e' distribuito con licenza GPL v3"/>
         <comment explanatoryText=""/>
@@ -16,8 +16,8 @@
         <comment explanatoryText="       https://govway.org" bold="true"/>
         <comment explanatoryText="       https://link.it" bold="true"/>
 
-	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.2.2"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
-	<hidden property="antinstaller_versione_attuale" value="3.2.2"/>
+	<hidden property="antinstaller_versione_attuale_con_p_level" value="3.3.0.b1"/> <!-- se presente indicare il patch o RC level (es. 3.2.1.rc1). Finisce nei jar -->
+	<hidden property="antinstaller_versione_attuale" value="3.3.0"/>
 
         <!-- NOTA: le proprieta seguenti NON devono essere utilizzate al di fuori della ifProperty altrimenti su windows non vengono 
                 considerati i valori iniziali presenti nel file ant.install.properties impostato nei comandi install.* -->
@@ -63,6 +63,7 @@
 	  ifProperty="${antinstaller_modalita_installazione}==aggiornamento">
 
 	<large-select defaultValue="" property="antinstaller_versione_precedente" displayText="Versione Precedente">
+	    <option value="3.2.2" text="3.2.2"/>
 	    <option value="3.2.1" text="3.2.1"/>
 	    <option value="3.2.0" text="3.2.0"/>
 	    <option value="3.1.1" text="3.1.1"/>
@@ -92,7 +93,10 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly10" text="WildFly 10-17"/>
+		<!--
+			Deprecati: 10, 11, 12, 13, 14, 15, 15, 17
+			<option value="wildfly10" text="WildFly 10-17"/>
+		-->
 		<!--
 			Deprecati
 			<option value="wildfly9" text="WildFly 9"/>
@@ -107,11 +111,12 @@
 		-->
            
 		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
-		<option value="tomcat7" text="Apache Tomcat 7"/>
-            	<!-- 
+            	<option value="tomcat9" text="Apache Tomcat 9"/>
+		<!-- 
 			Deprecati
-			<option value="tomcat6" text="Apache Tomcat 6"/>
+			<option value="tomcat8" text="Apache Tomcat 8-9"/>
+			<option value="tomcat7" text="Apache Tomcat 7"/>
+            		<option value="tomcat6" text="Apache Tomcat 6"/>
 			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
         </large-select>
@@ -152,7 +157,10 @@
       
 		<!-- Uniformare i valori quando la compilazione e' identica -->
 		<option value="wildfly18" text="WildFly 18"/>
-		<option value="wildfly10" text="WildFly 10-17"/>
+		<!--
+			Deprecati: 10, 11, 12, 13, 14, 15, 16, 17
+			<option value="wildfly10" text="WildFly 10-17"/>
+		-->
 		<!--
 			Deprecati
 			<option value="wildfly9" text="WildFly 9"/>
@@ -166,11 +174,12 @@
 	    		<option value="jboss4" text="JBoss 4"/>
 		-->
            
-		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita --> 
-            	<option value="tomcat8" text="Apache Tomcat 8-9"/>
-		<option value="tomcat7" text="Apache Tomcat 7"/>
+		<!-- Se si introduce un nuovo valore, occhio a sistemare la maschera preinstallazioneCheckCompatibilita -->
+		<option value="tomcat9" text="Apache Tomcat 9"/> 
             	<!-- 
 			Deprecati
+		    	<option value="tomcat8" text="Apache Tomcat 8-9"/>
+			<option value="tomcat7" text="Apache Tomcat 7"/>
 			<option value="tomcat6" text="Apache Tomcat 6"/>
 			<option value="tomcat5" text="Apache Tomcat 5"/> 
 		-->
@@ -489,11 +498,6 @@
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
         
-        <!--
-        <comment displayText=""/>
-         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
-         -->
-
     </page>
 
     <page name="profili_aggiornamento" type="input" displayText="Profili di Interoperabilità"
@@ -524,11 +528,6 @@
         <hidden property="antinstaller_tiposoggetto_sdi" value="sdi"/>
         <validated defaultValue="" property="antinstaller_nomesoggetto" displayText="Soggetto" regex="^[0-9A-Za-z]+$"/>
         
-        <!--
-        <comment displayText=""/>
-         <checkbox defaultValue="true" property="antinstaller_backward_compatibility" value="true" displayText="Compatibilità OpenSPCoop-v1"/>
-         -->
-
     </page>
     
     <page name="preinstallazioneStato" type="input" displayText="Configurazione Avanzata" ifProperty="(${antinstaller_conf_avanzata_enabled}==true) AND (${antinstaller_as}!=tomcat5) AND (${antinstaller_as}!=tomcat6) AND (${antinstaller_as}!=tomcat7) AND (${antinstaller_as}!=tomcat8) AND (${antinstaller_as}!=tomcat9)">
@@ -648,27 +647,7 @@
 
     </page>
 
-<!--
-    <page name="preinstallazione5" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="${antinstaller_protocollo_spcoop}==true">
-        
-         <checkbox defaultValue="false" property="antinstaller_backward_compatibility" value="backward_compatibility" displayText="Modulo OpenSPCoop-v1"/>
-
-    </page>
-
-    <page name="preinstallazioneCheckCompatibilita" type="input" displayText="Compatibilità interfacce OpenSPCoop-v1" ifProperty="(${antinstaller_protocollo_spcoop}=true) AND (${antinstaller_backward_compatibility}=true) AND (${antinstaller_as}=tomcat5) OR (${antinstaller_as}=tomcat6) OR (${antinstaller_as}=tomcat7) OR (${antinstaller_as}=tomcat8) OR (${antinstaller_as}=tomcat9) ">
-
-	<comment displayText="Attenzione: la scelta dell'Application Server Tomcat"/> 
-	<comment displayText="   impedisce l'attivazione delle interfacce di compatibilità."/>
-	<comment displayText="Tornare al pannello precedente e scegliere un Application Server differente"/>
-	<comment displayText="   o procedere con opzione di compatibilità disabilitata"/>
-
-	<comment displayText=""/>
-	<checkbox defaultValue="false" property="antinstaller_backward_compatibility" force="true" displayText="Compatibilità interfacce OpenSPCoop-v1"/>
-
-    </page>
--->
-
    <page name="Fine" displayText="Installazione" type="progress" showTargets="true"
-        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_backward_compatibility,setup_finished"/>
+        target="setup,setup_datasource,setup_sql,setup_pdd,setup_govwayConsole,setup_govwayMonitor,setup_loader,setup_apiConfig,setup_apiMonitor,setup_batchStatistiche,setup_finished"/>
 
 </installer>

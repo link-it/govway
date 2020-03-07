@@ -190,7 +190,6 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			org.openspcoop2.protocol.manifest.constants.InterfaceType formatoSpecifica = apcCore.formatoSpecifica2InterfaceType(as.getFormatoSpecifica());
 			
 			List<String> versioniProtocollo = null;
-			//String profiloReferente = soggettiCore.getSoggettoRegistro(new IDSoggetto(as.getSoggettoReferente().getTipo(),as.getSoggettoReferente().getNome())).getVersioneProtocollo();
 			String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(as.getSoggettoReferente().getTipo());
 			versioniProtocollo = apsCore.getVersioniProtocollo(protocollo);
 
@@ -473,6 +472,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 			String responseInputFileNameHeaders = null;
 			String responseInputDeleteAfterRead = null;
 			String responseInputWaitTime = null;
+			
+			String servizioApplicativoServer = null;
+			boolean servizioApplicativoServerEnabled = false;
 			if ((endpointtype == null) || (url == null) || (nome == null)) {
 				Map<String, String> props = connettore.getProperties();
 
@@ -828,7 +830,9 @@ public final class AccordiServizioParteSpecificaWSDLChange extends Action {
 					responseInputMode, responseInputFileName, responseInputFileNameHeaders, responseInputDeleteAfterRead, responseInputWaitTime,
 					autenticazioneToken, token_policy,
 					listExtendedConnettore, false,
-					protocollo,false,false);
+					protocollo,false,false
+					, false, servizioApplicativoServerEnabled, servizioApplicativoServer, null
+					);
 
 			pd.setDati(dati);
 

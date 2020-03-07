@@ -51,7 +51,6 @@
  */
 package org.openspcoop2.security.message.soapbox;
 
-import java.lang.reflect.Constructor;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -73,7 +72,6 @@ import org.apache.wss4j.common.WSS4JConstants;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.xml.XMLUtils;
 import org.openspcoop2.security.message.constants.WSSAttachmentsConstants;
-import org.openspcoop2.utils.resources.ClassLoaderUtilities;
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -81,29 +79,18 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi;
-import com.sun.xml.wss.core.SignatureHeaderBlock;
-
 
 /**
  * SignPartialMessageProcessor
  *
- * @author Andrea Poli <apoli@link.it>
- * @author Giovanni Bussu <bussu@link.it>
+ * @author Andrea Poli (apoli@link.it)
+ * @author Giovanni Bussu (bussu@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
 public class SignPartialMessageProcessor implements Processor {
 
 	public final static QName TIMESTAMP = new QName(SBConstants.WSU, "Timestamp");
-	
-	private boolean useXMLSec = true;
-	public boolean isUseXMLSec() {
-		return this.useXMLSec;
-	}
-	public void setUseXMLSec(boolean useXMLSec) {
-		this.useXMLSec = useXMLSec;
-	}
 	
 	protected List<QName> signQNames;
     protected List<Boolean> elementsSignatureContent;
@@ -170,17 +157,9 @@ public class SignPartialMessageProcessor implements Processor {
         String sigAlgoURI = signReq.getSignatureAlgoURI();
         if (sigAlgoURI == null) {
             if ("DSA".equalsIgnoreCase(certs[0].getPublicKey().getAlgorithm())) {
-            	if(this.useXMLSec){
-            		sigAlgoURI = org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_DSA;
-            	}else{
-            		sigAlgoURI = com.sun.org.apache.xml.internal.security.signature.XMLSignature.ALGO_ID_SIGNATURE_DSA;
-            	}
+            	sigAlgoURI = org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_DSA;
             } else if ("RSA".equalsIgnoreCase(certs[0].getPublicKey().getAlgorithm())) {
-            	if(this.useXMLSec){
-            		sigAlgoURI = org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA;
-            	}else{
-            		sigAlgoURI = com.sun.org.apache.xml.internal.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA;
-            	}
+            	sigAlgoURI = org.apache.xml.security.signature.XMLSignature.ALGO_ID_SIGNATURE_RSA;
             } else {
                 throw new SecurityFailureException("Signature algorithm not specified, and cannot be auto detected");
             }
@@ -207,26 +186,19 @@ public class SignPartialMessageProcessor implements Processor {
         // - com.sun.org.apache.xml.internal.security.utils.resolver.ResourceResolverSpi implementata tramite org.openspcoop2.security.message.signature.SunEnvelopeIdResolver
         // - org.apache.xml.security.utils.resolver.ResourceResolverSpi implementata tramite org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver
         
+        // NOTA: Tutto il discorso sopra e' terminato con java 11
+        
         Document doc = msgSecCtx.getDocument();
         Element env = doc.getDocumentElement();
-        com.sun.org.apache.xml.internal.security.signature.XMLSignature sigSUN = null;
         org.apache.xml.security.signature.XMLSignature sigXMLSec = null;
         if (org.apache.xml.security.c14n.Canonicalizer.ALGO_ID_C14N_EXCL_OMIT_COMMENTS.equals(signReq.getC14nAlgoURI())) {
             Element canonicalizationMethodElem = doc.createElementNS(SBConstants.DS, "ds:CanonicalizationMethod");
             canonicalizationMethodElem.setAttribute("Algorithm", signReq.getC14nAlgoURI());
               
             try {
-	            if(this.useXMLSec){
-	            	org.apache.xml.security.algorithms.SignatureAlgorithm signatureAlgorithm = new org.apache.xml.security.algorithms.SignatureAlgorithm(doc, sigAlgoURI);
-	            	sigXMLSec = new org.apache.xml.security.signature.XMLSignature(doc, null, signatureAlgorithm.getElement(), canonicalizationMethodElem);
-	            	sigXMLSec.setId(SignPartialMessageProcessor.getSignId());
-	            }
-	            else{
-	            	com.sun.org.apache.xml.internal.security.algorithms.SignatureAlgorithm signatureAlgorithm = new com.sun.org.apache.xml.internal.security.algorithms.SignatureAlgorithm(doc, sigAlgoURI);
-	            	//OLDMETHOD: sig = new XMLSignature(doc, null, signatureAlgorithm.getElement(), canonicalizationMethodElem);
-	            	sigSUN = new com.sun.org.apache.xml.internal.security.signature.XMLSignature(doc, null, signatureAlgorithm.getElement(), canonicalizationMethodElem);
-	            	sigSUN.setId(SignPartialMessageProcessor.getSignId());
-	            }
+            	org.apache.xml.security.algorithms.SignatureAlgorithm signatureAlgorithm = new org.apache.xml.security.algorithms.SignatureAlgorithm(doc, sigAlgoURI);
+            	sigXMLSec = new org.apache.xml.security.signature.XMLSignature(doc, null, signatureAlgorithm.getElement(), canonicalizationMethodElem);
+            	sigXMLSec.setId(SignPartialMessageProcessor.getSignId());
             } catch (Exception e) {
                 throw new SecurityFailureException("Error signing document with credentials of alias : " +
                     signReq.getCertAlias() + " using algorithm : " + sigAlgoURI +
@@ -235,14 +207,8 @@ public class SignPartialMessageProcessor implements Processor {
 
         } else {
             try {
-            	if(this.useXMLSec){
-            		sigXMLSec = new org.apache.xml.security.signature.XMLSignature(doc, null, sigAlgoURI, signReq.getC14nAlgoURI());
-            		sigXMLSec.setId(SignPartialMessageProcessor.getSignId());
-            	}else{
-            		//	OLDMETHOD: sig = new XMLSignature(doc, null, sigAlgoURI, signReq.getC14nAlgoURI());
-            		sigSUN = new com.sun.org.apache.xml.internal.security.signature.XMLSignature(doc, null, sigAlgoURI, signReq.getC14nAlgoURI());
-            		sigSUN.setId(SignPartialMessageProcessor.getSignId());
-            	}
+            	sigXMLSec = new org.apache.xml.security.signature.XMLSignature(doc, null, sigAlgoURI, signReq.getC14nAlgoURI());
+            	sigXMLSec.setId(SignPartialMessageProcessor.getSignId());
             } catch (Exception e) {
                 throw new SecurityFailureException("Error signing document with credentials of alias : " +
                     signReq.getCertAlias() + " using algorithm : " + sigAlgoURI +
@@ -274,23 +240,12 @@ public class SignPartialMessageProcessor implements Processor {
         
         
         // ** Firma degli elementi indicati presenti nella SOAP Envelope **
-        signElements(signElements,signTypeElements, signReq, sigSUN, sigXMLSec);
+        signElements(signElements,signTypeElements, signReq, sigXMLSec);
         
         
         // ** Firma degli attachments indicati **
-        if(this.useXMLSec){
-        	sigXMLSec.addResourceResolver(org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver.getInstance(this.message));
-        }else{
-        	try {
-        		// Uso la reflection poiche' da java 9 la classe usata in SunEnvelopeIdResolver non esiste piu' e quindi la classe non viene compilata tra quelle di openspcoop (esclusa nel build)
-        		Class<?> c = ClassLoaderUtilities.forName("org.openspcoop2.security.message.signature.SunEnvelopeIdResolver");
-        		Constructor<?> constructor = c.getConstructor(OpenSPCoop2SoapMessage.class);
-        		sigSUN.addResourceResolver((ResourceResolverSpi) constructor.newInstance(this.message.castAsSoap()));
-        	}catch(Exception e) {
-        		throw new SecurityFailureException(e.getMessage(),e);
-        	}
-        }
-        signAttachments(xmlUtils, this.signAttachments, signReq, sigSUN, sigXMLSec);
+        sigXMLSec.addResourceResolver(org.openspcoop2.security.message.signature.XMLSecEnvelopeIdResolver.getInstance(this.message));
+        signAttachments(xmlUtils, this.signAttachments, signReq, sigXMLSec, doc);
         
         
         
@@ -301,80 +256,26 @@ public class SignPartialMessageProcessor implements Processor {
         // Altrimenti e' possibile agire direttamente tramite XMLSignature Engine in entrambe le soluzioni.
         // Di seguito il boolean useSignatureHeaderBlock cablato nel codice serve proprio a switchare tra le due soluzioni
         
-        boolean useSignatureHeaderBlock = false; // debug
         Element signatureElem = null;
 	       
-        if(useSignatureHeaderBlock){
-        
-	        SignatureHeaderBlock signatureHeaderBlock = null;
-	        try {
-	        	if(this.useXMLSec){
-	        		//signatureHeaderBlock = new SignatureHeaderBlock(sigXMLSec.getDocument(),sigAlgoURI);
-	        		throw new Exception("Not implemented for XMLSec IMPL");
-	        	}else{
-	        		signatureHeaderBlock = new SignatureHeaderBlock(sigSUN);
-	        	}
-	//        	signAttachments(this.signAttachments, signReq, signatureHeaderBlock); // La firma degli attachments deve essere fatta prima cosi come ho fatto prima la firma degli elementi
-	        	
-	        	if (signReq.isWsiBPCompliant()) {
-	        		
-	        		Element canonicalizationMethodElem = (Element) signatureHeaderBlock.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "CanonicalizationMethod").item(0);
-	        		HashSet<String> prefixes = new HashSet<String>();
-	        		prefixes.addAll(getInclusivePrefixes(signatureHeaderBlock, false));
-	        		com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces inclusiveNamespaces = 
-	         			   new  com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces(doc, prefixes);
-	         	   	canonicalizationMethodElem.appendChild(inclusiveNamespaces.getElement());
-	         	   	
-	           }
-	        	
-	        	signatureHeaderBlock.sign(secConfig.getPrivateKeyByAlias(signReq.getCertAlias()));
-	        	signatureElem = signatureHeaderBlock.getAsSoapElement();
-	        } catch (Exception e) {
-	            throw new SecurityFailureException("Error signing document using alias : " + signReq.getCertAlias(), e);
-	        }
-	        
-        }
-        else{
-        	try {
-        		
-	        	if(this.useXMLSec){
-	        		
-	        		signatureElem = convertToSoapElement(sigXMLSec);
-	        		
-	        		if (signReq.isWsiBPCompliant()) {
-	        			HashSet<String> prefixes = new HashSet<String>();
-	        			prefixes.addAll(getInclusivePrefixes(signatureElem, false));
-		        		Element canonicalizationMethodElem = (Element) signatureElem.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "CanonicalizationMethod").item(0);
-		        		org.apache.xml.security.transforms.params.InclusiveNamespaces inclusiveNamespaces = 
-		         			   new  org.apache.xml.security.transforms.params.InclusiveNamespaces(doc, prefixes);
-		         	   	canonicalizationMethodElem.appendChild(inclusiveNamespaces.getElement());
-	        		}
-	        		
-	        		sigXMLSec.sign(secConfig.getPrivateKeyByAlias(signReq.getCertAlias()));
-	        		signatureElem = convertToSoapElement(sigXMLSec);
-	        		
-	        	}else{
-	        		
-	        		signatureElem = convertToSoapElement(sigSUN);
-	        		
-	        		if (signReq.isWsiBPCompliant()) {
-		        		
-	        			HashSet<String> prefixes = new HashSet<String>();
-	        			prefixes.addAll(getInclusivePrefixes(signatureElem, false));
-	        			Element canonicalizationMethodElem = (Element) signatureElem.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "CanonicalizationMethod").item(0);
-	        			com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces inclusiveNamespaces = 
-	        					new  com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces(doc, prefixes);
-			        	canonicalizationMethodElem.appendChild(inclusiveNamespaces.getElement());
-	        		}
-	        		
-	        		sigSUN.sign(secConfig.getPrivateKeyByAlias(signReq.getCertAlias()));
-	        		signatureElem = convertToSoapElement(sigSUN);
-	        		
-	        	}
-	        	
-        	 } catch (Exception e) {
- 	            throw new SecurityFailureException("Error signing document using alias : " + signReq.getCertAlias(), e);
- 	        }
+    	try {
+    		    	
+    		signatureElem = convertToSoapElement(sigXMLSec);
+    		
+    		if (signReq.isWsiBPCompliant()) {
+    			HashSet<String> prefixes = new HashSet<String>();
+    			prefixes.addAll(getInclusivePrefixes(signatureElem, false));
+        		Element canonicalizationMethodElem = (Element) signatureElem.getElementsByTagNameNS("http://www.w3.org/2000/09/xmldsig#", "CanonicalizationMethod").item(0);
+        		org.apache.xml.security.transforms.params.InclusiveNamespaces inclusiveNamespaces = 
+         			   new  org.apache.xml.security.transforms.params.InclusiveNamespaces(doc, prefixes);
+         	   	canonicalizationMethodElem.appendChild(inclusiveNamespaces.getElement());
+    		}
+    		
+    		sigXMLSec.sign(secConfig.getPrivateKeyByAlias(signReq.getCertAlias()));
+    		signatureElem = convertToSoapElement(sigXMLSec);
+        	
+    	 } catch (Exception e) {
+            throw new SecurityFailureException("Error signing document using alias : " + signReq.getCertAlias(), e);
         }
         
         
@@ -405,18 +306,11 @@ public class SignPartialMessageProcessor implements Processor {
     
 
     
-    private SOAPElement convertToSoapElement(org.apache.xml.security.utils.ElementProxy proxy) {
+    private Element convertToSoapElement(org.apache.xml.security.utils.ElementProxy proxy) {
         org.w3c.dom.Element elem = proxy.getElement();
         if(elem instanceof SOAPElement)
-            return (SOAPElement)elem;
-        return (SOAPElement)proxy.getDocument().importNode(elem, true);
-    }
-    
-    private SOAPElement convertToSoapElement(com.sun.org.apache.xml.internal.security.utils.ElementProxy proxy) {
-    	org.w3c.dom.Element elem = proxy.getElement();
-        if(elem instanceof SOAPElement)
-            return (SOAPElement)elem;
-        return (SOAPElement)proxy.getDocument().importNode(elem, true);
+            return elem;
+        return (Element) proxy.getDocument().importNode(elem, true);
     }
 
     
@@ -483,7 +377,8 @@ public class SignPartialMessageProcessor implements Processor {
 //    protected void signAttachments(List<AttachmentPart> part, SignatureRequest signReq, SignatureHeaderBlock signatureHeaderBlock) throws Exception {
     protected void signAttachments(AbstractXMLUtils xmlUtils,
     		List<AttachmentPart> part, SignatureRequest signReq,
-    		com.sun.org.apache.xml.internal.security.signature.XMLSignature sigSUN, org.apache.xml.security.signature.XMLSignature sigXMLSec) {
+    		org.apache.xml.security.signature.XMLSignature sigXMLSec,
+    		Document d) {
 		
     	try {
     		// Specifica in Web Services Security SOAP Messages With Attachments (Swa) Profile 1.1
@@ -534,58 +429,34 @@ public class SignPartialMessageProcessor implements Processor {
 					uri = p.getContentLocation();
 				}
         		
-        		if(sigSUN!=null){
-        			
-            		com.sun.org.apache.xml.internal.security.transforms.Transforms transforms = 
-            				new com.sun.org.apache.xml.internal.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
-            		transforms.addTransform(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI);
-            		
-            		String contentType = p.getContentType();
-            		if("text/xml".equals(contentType)){
-            			//transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-            			if (signReq.isWsiBPCompliant()) {
-            				byte[]raw = p.getRawContentBytes();
-            				Element signElement = xmlUtils.newElement(raw);
-            				transforms.item(0).getElement().appendChild(new com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces(
-            						this.message.getSOAPHeader().getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
-            			}
-            		}
-            		/*else{
-            			transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_BASE64_DECODE);
-            		}*/
-        			
-        			sigSUN.addDocument(uri, transforms, signReq.getDigestAlgoURI());
-        			
-        		}
+        		//Document d = this.message.getSOAPHeader().getOwnerDocument();
         		
-        		if(sigXMLSec!=null){
-        			
-        			org.apache.xml.security.transforms.Transforms transforms = 
-            				new org.apache.xml.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
-            		transforms.addTransform(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI);
-            		
-            		String contentType = p.getContentType();
-            		if("text/xml".equals(contentType)){
-            			//transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-            			if (signReq.isWsiBPCompliant()) {
-            				byte[]raw = p.getRawContentBytes();
-            				Element signElement = xmlUtils.newElement(raw);
-            				transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
-            						this.message.getSOAPHeader().getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
-            			}
-            		}
-            		/*else{
-            			transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_BASE64_DECODE);
-            		}*/
-        			
-        			sigXMLSec.addDocument(uri, transforms, signReq.getDigestAlgoURI());
+    			org.apache.xml.security.transforms.Transforms transforms = 
+        				new org.apache.xml.security.transforms.Transforms(d);
+        		transforms.addTransform(WSSAttachmentsConstants.ATTACHMENT_CONTENT_SIGNATURE_TRANSFORM_URI);
+        		
+        		String contentType = p.getContentType();
+        		if("text/xml".equals(contentType)){
+        			//transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
+        			if (signReq.isWsiBPCompliant()) {
+        				byte[]raw = p.getRawContentBytes();
+        				Element signElement = xmlUtils.newElement(raw);
+        				transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
+        						d, CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
+        			}
         		}
+        		/*else{
+        			transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_BASE64_DECODE);
+        		}*/
+    			
+    			sigXMLSec.addDocument(uri, transforms, signReq.getDigestAlgoURI());
+        		
 	        	//signatureHeaderBlock.addSignedInfoReference(uri, transforms, signReq.getDigestAlgoURI());
 	        	
 //	        	byte[]raw = p.getRawContentBytes();
 //	        	String contentType = p.getContentType();
 //	        	com.sun.org.apache.xml.internal.security.transforms.Transforms transforms = 
-//        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
+//        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(d);
 //	        	
 //	        	// 1. MIME Part Canonicalize the content of the attachment, as appropriate to the MIME type of the part, as
 //	        	// outlined in section 4.4.2 Attachments of an XML content type require Exclusive XML Canonicalization
@@ -602,7 +473,7 @@ public class SignPartialMessageProcessor implements Processor {
 //	        		Canonicalizer canonicalizer = CanonicalizerFactory.getCanonicalizer(contentType);
 //	        		byte[] canonicalize = canonicalizer.canonicalize(raw);
 //	        		transforms = 
-//	        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(this.message.getSOAPHeader().getOwnerDocument());
+//	        				new com.sun.org.apache.xml.internal.security.transforms.Transforms(d);
 //	        		transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_BASE64_DECODE);
 //	        		transforms.addBase64Text(Base64.encode(canonicalize));
 //	        	}
@@ -644,7 +515,7 @@ public class SignPartialMessageProcessor implements Processor {
     }
     
     private void signElements(List<Element> signList,List<Boolean> signTypeList, SignatureRequest signReq, 
-    		com.sun.org.apache.xml.internal.security.signature.XMLSignature sigSUN, org.apache.xml.security.signature.XMLSignature sigXMLSec) {    
+    		org.apache.xml.security.signature.XMLSignature sigXMLSec) {    
     //OLDMETHOD: private void signElements(List<Element> signList,List<Boolean> signTypeList, SignatureRequest signReq, XMLSignature sig) {
       
 		for (int i = 0; i < signList.size(); i++) {
@@ -665,37 +536,17 @@ public class SignPartialMessageProcessor implements Processor {
                     CryptoUtil.setWsuId(signElement,  signId);
                 } 
 
-                if(sigSUN!=null){
-	            
-                	com.sun.org.apache.xml.internal.security.transforms.Transforms transforms = new com.sun.org.apache.xml.internal.security.transforms.Transforms(signElement.getOwnerDocument());
-	                transforms.addTransform(com.sun.org.apache.xml.internal.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-	                //OLDMETHOD: Transforms transforms = new Transforms(signElement.getOwnerDocument());
-	             	//OLDMETHOD: transforms.addTransform(Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-	                if (signReq.isWsiBPCompliant()) {
-	
-	                	transforms.item(0).getElement().appendChild(new com.sun.org.apache.xml.internal.security.transforms.params.InclusiveNamespaces(
-	                        signElement.getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
-	                	
-	                }
-	                sigSUN.addDocument("#" + signId, transforms, signReq.getDigestAlgoURI());
-                
-                }
-                
-                if(sigXMLSec!=null){
-                	
-                	 org.apache.xml.security.transforms.Transforms transforms = new org.apache.xml.security.transforms.Transforms(signElement.getOwnerDocument());
-                     transforms.addTransform(org.apache.xml.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-                     //OLDMETHOD: Transforms transforms = new Transforms(signElement.getOwnerDocument());
-                  	//OLDMETHOD: transforms.addTransform(Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
-                     if (signReq.isWsiBPCompliant()) {
+            	 org.apache.xml.security.transforms.Transforms transforms = new org.apache.xml.security.transforms.Transforms(signElement.getOwnerDocument());
+                 transforms.addTransform(org.apache.xml.security.transforms.Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
+                 //OLDMETHOD: Transforms transforms = new Transforms(signElement.getOwnerDocument());
+              	//OLDMETHOD: transforms.addTransform(Transforms.TRANSFORM_C14N_EXCL_OMIT_COMMENTS);
+                 if (signReq.isWsiBPCompliant()) {
 
-                     	transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
-                             signElement.getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
-                     	
-                     }
-                     sigXMLSec.addDocument("#" + signId, transforms, signReq.getDigestAlgoURI());
-                	
-                }
+                 	transforms.item(0).getElement().appendChild(new org.apache.xml.security.transforms.params.InclusiveNamespaces(
+                         signElement.getOwnerDocument(), CryptoUtil.getInclusivePrefixes(signElement, true)).getElement());
+                 	
+                 }
+                 sigXMLSec.addDocument("#" + signId, transforms, signReq.getDigestAlgoURI());
 
             } catch (Exception e) {
                 throw new SecurityFailureException("Error processing signature for element : {" +

@@ -26,7 +26,7 @@ import org.apache.wss4j.common.saml.builder.SAML2Constants;
 /**
  * SAMLBuilderConfigConstants
  * 	
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

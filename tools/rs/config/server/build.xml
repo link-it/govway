@@ -49,7 +49,7 @@
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
 	<var name="commons_logging_jar" value="" />
-	<var name="javax.jms-api-2.0.jar" value="" />
+	<var name="javax.jms-api-2.0.1.jar" value="" />
 	<var name="jaxp_ri_jar" value=""/>
 	<var name="ecj_jar" value="" />
 	<var name="jsr311-api_jar" value="" />
@@ -59,6 +59,8 @@
 	<var name="jsf_api_jar" value="" />
 	<var name="el_impl_jar" value="" />
 	<var name="el-api-1.0.jar" value="" />
+	<var name="javax_xml_soap-api_jar" value="" />
+	<var name="jakarta_activation_jar" value="" />
 	<var name="validation-api-2.0.1_jar" value="" />
 	<var name="bean-validation_jars" value="" />
 	<var name="jsf_module_jar" value="" />
@@ -84,7 +86,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="javax.jms-api-2.0.jar" value="javax.jms-api-2.0.jar" />
+			<var name="javax.jms-api-2.0.1.jar" value="javax.jms-api-2.0.1.jar" />
 		</then>
 	</if>
 	<!-- xalan -->
@@ -181,7 +183,25 @@
 			<var name="el-api-1.0.jar" value="el-api-1.0.jar" />
 		</then>
 	</if>
-	<!-- validation-api-2.0.1 -->
+	<!-- javax_xml_soap-api_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="javax_xml_soap-api_jar" value="javax.xml.soap-api-1.4.0.jar" />
+		</then>
+	</if>
+	<!-- jakarta.activation -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jakarta_activation_jar" value="jakarta.activation-1.2.1.jar"/>
+		</then>
+	</if>	
+	<!-- validation-api -->
 	<if>
 		<or>
 			<matches string="${as}" pattern="tomcat.*"/>

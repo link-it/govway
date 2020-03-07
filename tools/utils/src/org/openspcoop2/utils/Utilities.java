@@ -67,6 +67,46 @@ public class Utilities {
 	}
 	
 	
+	
+	
+	// Class.newInstance() is deprecated in Java 1++
+	@SuppressWarnings("unchecked")
+	public static <T> T newInstance(String className) throws UtilsException {
+		if(className!=null && !StringUtils.isEmpty(className)) {
+			try {
+				return  (T) newInstance(Class.forName(className));
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(), e);
+			}
+		}
+		return null;
+	}
+	public static <T> T newInstance(Class<T> classType) throws UtilsException {
+		if(classType!=null) {
+			try {
+				return  (T) classType.getConstructor().newInstance();
+			}catch(Exception e) {
+				throw new UtilsException(e.getMessage(), e);
+			}
+		}
+		return null;
+	}
+	
+	public static <T> T newInstance_throwInstantiationException(String className) throws InstantiationException {
+		try {
+			return newInstance(className);
+		}catch(Exception e) {
+			throw new InstantiationException(e.getMessage());
+		}
+	}
+	public static <T> T newInstance_throwInstantiationException(Class<T> classType) throws InstantiationException {
+		try {
+			return newInstance(classType);
+		}catch(Exception e) {
+			throw new InstantiationException(e.getMessage());
+		}
+	}
+	
 
 
 	/** ArrayBuffer utilizzato per la lettura */

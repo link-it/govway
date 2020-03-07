@@ -25,11 +25,11 @@ package org.openspcoop2.core.registry.ws.server.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="wrapperIdScope">
- *     &lt;sequence>
- *         &lt;element name="id" type="{http://www.openspcoop2.org/core/registry}id-scope" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="wrapperIdScope"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="id" type="{http://www.openspcoop2.org/core/registry}id-scope" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

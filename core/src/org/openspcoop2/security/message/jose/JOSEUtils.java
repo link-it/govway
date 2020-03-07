@@ -33,6 +33,7 @@ import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.rs.security.jose.common.JoseConstants;
+import org.apache.cxf.rt.security.rs.RSSecurityConstants;
 import org.openspcoop2.core.mvc.properties.provider.ProviderException;
 import org.openspcoop2.core.mvc.properties.provider.ProviderValidationException;
 import org.openspcoop2.core.mvc.properties.utils.MultiPropertiesUtilities;
@@ -543,14 +544,14 @@ public class JOSEUtils {
 			log = LoggerWrapperFactory.getLogger(JOSEUtils.class);
 		}
 		
-		if(properties!=null && properties.containsKey(JoseConstants.RSSEC_KEY_STORE_FILE)) {
+		if(properties!=null && properties.containsKey(RSSecurityConstants.RSSEC_KEY_STORE_FILE)) {
 			
-			String file = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_FILE);
-			String type = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_TYPE);
+			String file = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+			String type = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_TYPE);
 			if(type==null) {
 				type = "jks";
 			}
-			String password = properties.getProperty(JoseConstants.RSSEC_KEY_STORE_PSWD);
+			String password = properties.getProperty(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
 			boolean passwordDefined = (password!=null && !"".equals(password));
 			
 			if(file!=null && !"".equals(file) && 
@@ -560,12 +561,12 @@ public class JOSEUtils {
 					
 					byte[]content = null;
 					try {
-						String _trustStoreSslProperty =  JoseConstants.RSSEC_KEY_STORE_FILE+".ssl";
+						String _trustStoreSslProperty =  RSSecurityConstants.RSSEC_KEY_STORE_FILE+".ssl";
 						String trustStoreSslProperty =  properties.getProperty(_trustStoreSslProperty);
 						MerlinTruststore trustStoreSsl = null;
 						if(trustStoreSslProperty!=null) {
-							String _trustStoreSslPasswordProperty =  JoseConstants.RSSEC_KEY_STORE_PSWD+".ssl";
-							String _trustStoreSslTypeProperty =  JoseConstants.RSSEC_KEY_STORE_TYPE+".ssl";
+							String _trustStoreSslPasswordProperty =  RSSecurityConstants.RSSEC_KEY_STORE_PSWD+".ssl";
+							String _trustStoreSslTypeProperty =  RSSecurityConstants.RSSEC_KEY_STORE_TYPE+".ssl";
 							String trustStoreSslPasswordProperty =  properties.getProperty(_trustStoreSslPasswordProperty);
 							String trustStoreSslTypeProperty =  properties.getProperty(_trustStoreSslTypeProperty);
 							if(trustStoreSslPasswordProperty==null) {
@@ -577,15 +578,15 @@ public class JOSEUtils {
 							trustStoreSsl = GestoreKeystoreCache.getMerlinTruststore(trustStoreSslProperty, trustStoreSslTypeProperty, trustStoreSslPasswordProperty);
 						}
 						
-						String _trustStoreSslCrlProperty =  JoseConstants.RSSEC_KEY_STORE+".crl.ssl";
+						String _trustStoreSslCrlProperty =  RSSecurityConstants.RSSEC_KEY_STORE+".crl.ssl";
 						String trustStoreSslCrlProperty =  properties.getProperty(_trustStoreSslCrlProperty);
 						CRLCertstore crlStore = null;
 						if(trustStoreSslCrlProperty!=null) {
 							crlStore = GestoreKeystoreCache.getCRLCertstore(trustStoreSslCrlProperty);
 						}
 						
-						String _trustStoreSslConnectionTimeoutProperty =  JoseConstants.RSSEC_KEY_STORE+".ssl.connectionTimeout";
-						String _trustStoreSslReadTimeoutProperty =  JoseConstants.RSSEC_KEY_STORE+".ssl.readTimeout";
+						String _trustStoreSslConnectionTimeoutProperty =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.connectionTimeout";
+						String _trustStoreSslReadTimeoutProperty =  RSSecurityConstants.RSSEC_KEY_STORE+".ssl.readTimeout";
 						String trustStoreSslConnectionTimeoutProperty =  properties.getProperty(_trustStoreSslConnectionTimeoutProperty);
 						String trustStoreSslReadTimeoutProperty =  properties.getProperty(_trustStoreSslReadTimeoutProperty);
 						Integer connectionTimeout = null;
@@ -626,8 +627,8 @@ public class JOSEUtils {
 					}
 					if(content!=null) {
 						if("jwk".equalsIgnoreCase(type)) {
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
 							properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, new String(content));
 						}
 						else {
@@ -642,10 +643,10 @@ public class JOSEUtils {
 								keystore = null;
 							}
 							if(keystore!=null) {
-								properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 								// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
-								properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
-								properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
+								properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+								properties.put(RSSecurityConstants.RSSEC_KEY_STORE, keystore);
 							}
 						}
 					}
@@ -659,8 +660,8 @@ public class JOSEUtils {
 							log.error("Errore durante l'accesso al jwk set '"+file+"': "+e.getMessage(),e);
 						}
 						if(jwkSet!=null) {
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
 							properties.put(JoseConstants.RSSEC_KEY_STORE_JWKSET, jwkSet);
 						}
 					}
@@ -672,10 +673,10 @@ public class JOSEUtils {
 							log.error("Errore durante l'accesso al keystore '"+file+"': "+e.getMessage(),e);
 						}
 						if(keystore!=null) {
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_FILE);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_FILE);
 							// properties.remove(JoseConstants.RSSEC_KEY_STORE_TYPE); non va rimosso, serve per jceks
-							properties.remove(JoseConstants.RSSEC_KEY_STORE_PSWD);
-							properties.put(JoseConstants.RSSEC_KEY_STORE, keystore);
+							properties.remove(RSSecurityConstants.RSSEC_KEY_STORE_PSWD);
+							properties.put(RSSecurityConstants.RSSEC_KEY_STORE, keystore);
 						}
 					}
 				}

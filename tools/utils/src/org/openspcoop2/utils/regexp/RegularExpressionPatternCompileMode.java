@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 /** Enumeration contenente le modalita' di compilazione delle espressioni regolari
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

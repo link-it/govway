@@ -126,11 +126,6 @@
 	<property name="src_sdi" value="${sdi}/src" />
 	<import file="${sdi}/build.xml" />
 	
-	<!-- SPCoop BackwardCompatibility -->
-	<property name="backwardCompatibility" value="${spcoop}/tools/backward_compatibility"/>
-	<property name="src_backwardCompatibility" value="${spcoop}/tools/backward_compatibility/src" />
-	<import file="${backwardCompatibility}/build.xml" />
-	
 
 </project>
 

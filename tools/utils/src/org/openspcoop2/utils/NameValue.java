@@ -23,7 +23,7 @@ package org.openspcoop2.utils;
 /**
 * NameValue
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

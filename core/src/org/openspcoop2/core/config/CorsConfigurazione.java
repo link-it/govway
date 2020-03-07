@@ -36,19 +36,19 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="cors-configurazione">
- * 		&lt;sequence>
- * 			&lt;element name="access-control-allow-origins" type="{http://www.openspcoop2.org/core/config}cors-configurazione-origin" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="access-control-allow-headers" type="{http://www.openspcoop2.org/core/config}cors-configurazione-headers" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="access-control-allow-methods" type="{http://www.openspcoop2.org/core/config}cors-configurazione-methods" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="access-control-expose-headers" type="{http://www.openspcoop2.org/core/config}cors-configurazione-headers" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}TipoGestioneCORS" use="optional" default="gateway"/>
- * 		&lt;attribute name="access-control-all-allow-origins" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="access-control-allow-credentials" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="access-control-max-age" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="cors-configurazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="access-control-allow-origins" type="{http://www.openspcoop2.org/core/config}cors-configurazione-origin" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="access-control-allow-headers" type="{http://www.openspcoop2.org/core/config}cors-configurazione-headers" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="access-control-allow-methods" type="{http://www.openspcoop2.org/core/config}cors-configurazione-methods" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="access-control-expose-headers" type="{http://www.openspcoop2.org/core/config}cors-configurazione-headers" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="tipo" type="{http://www.openspcoop2.org/core/config}TipoGestioneCORS" use="optional" default="gateway"/&gt;
+ * 		&lt;attribute name="access-control-all-allow-origins" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="access-control-allow-credentials" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="access-control-max-age" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

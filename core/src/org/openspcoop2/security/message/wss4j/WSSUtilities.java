@@ -49,7 +49,7 @@ import org.w3c.dom.Node;
 /**
  * WSSUtilities
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -105,7 +105,7 @@ import com.sun.xml.wss.swa.MimeConstants;
 /**
  * EncryptPartialMessageProcessor
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -490,7 +490,6 @@ public class EncryptPartialMessageProcessor implements Processor {
 	private static byte[] getCipherInput(AttachmentPart part) throws Exception,
 	SOAPException, IOException {
 		byte[] cipherInput;
-		@SuppressWarnings("unchecked")
 		byte[] headers = EncryptPartialMessageProcessor.getAttachmentHeaders(part.getAllMimeHeaders());
 		byte[] content = EncryptPartialMessageProcessor.getBytesFromAttachments(part.getDataHandler());
 

@@ -25,11 +25,11 @@ package org.openspcoop2.core.config.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="autorizzazione-ruoli">
- *     &lt;sequence>
- *         &lt;element name="match" type="{http://www.openspcoop2.org/core/config}RuoloTipoMatch" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="autorizzazione-ruoli"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="match" type="{http://www.openspcoop2.org/core/config}RuoloTipoMatch" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

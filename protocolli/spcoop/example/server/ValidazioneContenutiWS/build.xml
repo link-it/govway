@@ -16,7 +16,7 @@
 			<exclude name="**/saaj/*"/>
 			<exclude name="**/jax/*"/>
 		</fileset>
-		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.3.0.1-gov4j.jar" />
+		<fileset file="${ws_validazione_lib}/jax/jaxb-api-2.3.1.jar" />
 		<fileset dir="${openspcoop2.dist}" >
 			<include name="openspcoop2_utils*.jar"/>
 		</fileset>
@@ -175,7 +175,7 @@
 				<include name="wsdl4j-1.6.3.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/log">
-				<include name="slf4j-api-1.7.25-gov4j-1.jar"/>
+				<include name="slf4j-api-1.7.30-gov4j-1.jar"/>
 				<include name="log4j*.jar"/>
 			</lib>
 			<lib dir="${ws_validazione_lib}/jax">

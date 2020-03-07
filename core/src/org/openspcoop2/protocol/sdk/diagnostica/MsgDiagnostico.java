@@ -38,8 +38,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 /**
  * Bean Contenente le informazioni relative ai messaggi diagnostici
  * 
- * @author Stefano Corallo <corallo@link.it>
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 
@@ -222,6 +222,16 @@ public class MsgDiagnostico implements Serializable{
 	}
 	public void setIdBustaRisposta(String idBustaRisposta) {
 		this.messaggioDiagnostico.setIdentificativoRisposta(idBustaRisposta);
+	}
+	
+	
+	// applicativo [Wrapper]
+	
+	public String getApplicativo() {
+		return this.messaggioDiagnostico.getApplicativo();
+	}
+	public void setApplicativo(String applicativo) {
+		this.messaggioDiagnostico.setApplicativo(applicativo);
 	}
 	
 	

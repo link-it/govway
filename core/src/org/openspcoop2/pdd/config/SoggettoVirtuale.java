@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,12 +30,14 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.pdd.core.GestoreMessaggi;
+import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.behaviour.Behaviour;
 import org.openspcoop2.pdd.core.behaviour.BehaviourForwardToFilter;
+import org.openspcoop2.pdd.core.behaviour.BehaviourLoader;
 import org.openspcoop2.pdd.core.behaviour.IBehaviour;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.sdk.Busta;
-import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.protocol.sdk.IProtocolFactory;
 
 
 
@@ -47,8 +50,13 @@ import org.openspcoop2.utils.resources.Loader;
  * @version $Rev$, $Date$
  */
 
-public class SoggettoVirtuale  {
+public class SoggettoVirtuale implements Serializable  {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	private List<SoggettoVirtualeServizioApplicativo> soggettoVirtuale_serviziApplicativi = new ArrayList<SoggettoVirtualeServizioApplicativo>();
 	private int count = 0;
 
@@ -88,7 +96,8 @@ public class SoggettoVirtuale  {
 		return list;
 	}
 	
-	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo) throws Exception{
+	public List<String> getIdServiziApplicativi(boolean gestisciBehaviuorPerFiltri,GestoreMessaggi gestoreMessaggi,Busta busta, RequestInfo requestInfo,
+			PdDContext pddContext, IProtocolFactory<?> protocolFactory) throws Exception{
 		List<String> list = new ArrayList<String>();
 		for (SoggettoVirtualeServizioApplicativo sa : this.soggettoVirtuale_serviziApplicativi) {
 
@@ -96,12 +105,10 @@ public class SoggettoVirtuale  {
 			
 			if(gestisciBehaviuorPerFiltri){
 				
-				if(sa.getPortaApplicativa().getBehaviour()!=null){
-					String tipoBehaviour = ClassNameProperties.getInstance().getBehaviour(sa.getPortaApplicativa().getBehaviour());
-					if(tipoBehaviour==null){
-						throw new Exception("Tipo di behaviour ["+sa.getPortaApplicativa().getBehaviour()+"] sconosciuto");
-					}
-					IBehaviour behaviourImpl = (IBehaviour) Loader.getInstance().newInstance(tipoBehaviour);
+				if(sa.getPortaApplicativa().getBehaviour()!=null && sa.getPortaApplicativa().getBehaviour().getNome()!=null){
+					
+					IBehaviour behaviourImpl = BehaviourLoader.newInstance(sa.getPortaApplicativa().getBehaviour(), null,
+							pddContext, protocolFactory);
 					
 					Busta bustaConSoggettiReali = busta.clone();
 					// Inverto mitt-dest
@@ -112,7 +119,8 @@ public class SoggettoVirtuale  {
 					bustaConSoggettiReali.setDestinatario(sa.getIdSoggettoReale().getNome());
 					bustaConSoggettiReali.setTipoDestinatario(sa.getIdSoggettoReale().getTipo());
 					
-					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali, requestInfo);
+					Behaviour behaviour = behaviourImpl.behaviour(gestoreMessaggi, bustaConSoggettiReali, 
+							sa.getPortaApplicativa(), requestInfo);
 					if(behaviour!=null && behaviour.getForwardTo()!=null &&
 							behaviour.getForwardTo().size()==1){
 						BehaviourForwardToFilter filter = behaviour.getForwardTo().get(0).getFilter();

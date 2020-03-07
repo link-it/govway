@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="payloadProfiles">
- * 		&lt;sequence>
- * 			&lt;element name="payload" type="{http://www.domibus.eu/configuration}payload" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="payloadProfile" type="{http://www.domibus.eu/configuration}payloadProfile" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="payloadProfiles"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="payload" type="{http://www.domibus.eu/configuration}payload" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="payloadProfile" type="{http://www.domibus.eu/configuration}payloadProfile" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -119,7 +119,7 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getPayloadList
-   * @return List<Payload>
+   * @return List&lt;Payload&gt;
   */
   @Deprecated
   public List<Payload> getPayload() {
@@ -128,7 +128,7 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setPayloadList
-   * @param payload List<Payload>
+   * @param payload List&lt;Payload&gt;
   */
   @Deprecated
   public void setPayload(List<Payload> payload) {
@@ -149,7 +149,7 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getPayloadProfileList
-   * @return List<PayloadProfile>
+   * @return List&lt;PayloadProfile&gt;
   */
   @Deprecated
   public List<PayloadProfile> getPayloadProfile() {
@@ -158,7 +158,7 @@ public class PayloadProfiles extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setPayloadProfileList
-   * @param payloadProfile List<PayloadProfile>
+   * @param payloadProfile List&lt;PayloadProfile&gt;
   */
   @Deprecated
   public void setPayloadProfile(List<PayloadProfile> payloadProfile) {

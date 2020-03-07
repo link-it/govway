@@ -28,7 +28,7 @@ import org.openspcoop2.utils.transport.http.HttpConstants;
 /**
  * ForcedResponseMessage
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

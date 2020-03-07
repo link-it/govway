@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="RiferimentoSoggetto">
- * 		&lt;sequence>
- * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/protocol/abstraction}Soggetto" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="not-exists-behaviour" type="{http://www.openspcoop2.org/protocol/abstraction}SoggettoNotExistsBehaviour" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="RiferimentoSoggetto"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="id-soggetto" type="{http://www.openspcoop2.org/protocol/abstraction}Soggetto" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="not-exists-behaviour" type="{http://www.openspcoop2.org/protocol/abstraction}SoggettoNotExistsBehaviour" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

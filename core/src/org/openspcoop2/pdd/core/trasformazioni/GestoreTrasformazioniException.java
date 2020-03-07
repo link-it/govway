@@ -31,7 +31,7 @@ import org.openspcoop2.pdd.core.dynamic.ErrorMessage;
 /**	
  * Contiene la definizione di una eccezione lanciata dalla classe GestoreTrasformazioni
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

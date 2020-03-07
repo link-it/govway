@@ -49,6 +49,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per API
         nome_servizio: filtro.api.nome,
         versione_servizio: filtro.api.versione,
         esito: filtro.esito.tipo,
+	escludi_scartate: filtro.esito.escludi_scartate,
         formato_report: filtro.report.formato,
         unita_tempo: filtro.unita_tempo,
         tipo_report: filtro.report.tipo,

@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="message-security">
- * 		&lt;sequence>
- * 			&lt;element name="request-flow" type="{http://www.openspcoop2.org/core/config}message-security-flow" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="response-flow" type="{http://www.openspcoop2.org/core/config}message-security-flow" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="message-security"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="request-flow" type="{http://www.openspcoop2.org/core/config}message-security-flow" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="response-flow" type="{http://www.openspcoop2.org/core/config}message-security-flow" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

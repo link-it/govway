@@ -38,16 +38,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="response-caching-configurazione-hash-generator">
- * 		&lt;sequence>
- * 			&lt;element name="header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="query-parameter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="request-uri" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="query-parameters" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaCacheDigestQueryParameter" use="optional" default="abilitato"/>
- * 		&lt;attribute name="headers" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="payload" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="response-caching-configurazione-hash-generator"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="header" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="query-parameter" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="request-uri" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="query-parameters" type="{http://www.openspcoop2.org/core/config}StatoFunzionalitaCacheDigestQueryParameter" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="headers" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="payload" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -225,7 +225,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   /**
    * @deprecated Use method getHeaderList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getHeader() {
@@ -234,7 +234,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   /**
    * @deprecated Use method setHeaderList
-   * @param header List<java.lang.String>
+   * @param header List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setHeader(List<java.lang.String> header) {
@@ -256,7 +256,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   /**
    * @deprecated Use method getQueryParameterList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getQueryParameter() {
@@ -265,7 +265,7 @@ public class ResponseCachingConfigurazioneHashGenerator extends org.openspcoop2.
 
   /**
    * @deprecated Use method setQueryParameterList
-   * @param queryParameter List<java.lang.String>
+   * @param queryParameter List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setQueryParameter(List<java.lang.String> queryParameter) {

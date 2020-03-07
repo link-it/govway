@@ -6,12 +6,12 @@ PropertyConfigurator
 #####################################
 # Costanti #########################
 #####################################
-TRUNK_VERSION=3.2
+TRUNK_VERSION=3.3
 TAG_PDD_VERSION_PRODUCT="3"
-TAG_PDD_VERSION_MAJOR="2"
+TAG_PDD_VERSION_MAJOR="3"
 TAG_PDD_MAJOR_VERSION="${TAG_PDD_VERSION_PRODUCT}.${TAG_PDD_VERSION_MAJOR}"
-TAG_PDD_MINOR_VERSION=2
-TAG_PDD_PATCHLEVEL=
+TAG_PDD_MINOR_VERSION=0
+TAG_PDD_PATCHLEVEL=b1
 ramo=tags # tags / branches
 GIT_URL=https://github.com/link-it/govway.git
 
@@ -168,20 +168,21 @@ then
 	infoPrintln "Checkout delle librerie completato"
 fi
 
-#3 controlla i sorgenti (gpl/copyright/javadoc)
+#3 controlla i sorgenti (gpl/copyright/javadoc/stringBuffer)
 if [ $# -eq 0 ] ; then
     if [ "$SKIP_CHECKS" == "true" ]
     then
-	    warningPrintln "Verifiche (GPL/JavaDoc) sui sorgenti non eseguite su richiesta utente."
+	    warningPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti non eseguite su richiesta utente."
     else
-	    infoPrintln "Verifiche (GPL/JavaDoc) sui sorgenti ..."
+	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti ..."
 	    pushd ${WORKING_COPY} >> ${LOG_FILE} 2>&1
 	    ERROROUTPUT=
-	    for check in GPLCheck JavaDocCheck #XSDCheck
+	    for check in GPLCheck JavaDocCheck StringBufferCheck #XSDCheck
 	    do
 		    [ $check == "XSDCheck" ] && PARAM=core/src/schemi/
 		    [ $check == "JavaDocCheck" ] && PARAM=true
 		    [ $check == "GPLCheck" ] && PARAM=
+		    [ $check == "StringBufferCheck" ] && PARAM=
 		    debugPrintln "Esecuzione check $check con parametri [${WORKING_COPY} , $PARAM]"
 		    OUTPUTCHECK=$(java -cp ${CHECKS_WORKING_COPY} $check ${WORKING_COPY} $PARAM 2>&1)
 		    if [ $? -ne 0 ] 
@@ -193,7 +194,7 @@ if [ $# -eq 0 ] ; then
 		    fi
 	    done
 	    popd >> ${LOG_FILE} 2>&1
-	    infoPrintln "Verifiche (GPL/JavaDoc) sui sorgenti terminata correttamente"
+	    infoPrintln "Verifiche (GPL/JavaDoc/StringBuffer) sui sorgenti terminata correttamente"
     fi
     [ -n "${ERROROUTPUT}" ] && exit 2
 fi

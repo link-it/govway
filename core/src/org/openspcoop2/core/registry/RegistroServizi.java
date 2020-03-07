@@ -35,18 +35,18 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="registro-servizi">
- * 		&lt;sequence>
- * 			&lt;element name="accordo-cooperazione" type="{http://www.openspcoop2.org/core/registry}accordo-cooperazione" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="porta-dominio" type="{http://www.openspcoop2.org/core/registry}porta-dominio" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/registry}ruolo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/registry}scope" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="gruppo" type="{http://www.openspcoop2.org/core/registry}gruppo" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/registry}soggetto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="registro-servizi"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="accordo-cooperazione" type="{http://www.openspcoop2.org/core/registry}accordo-cooperazione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="accordo-servizio-parte-comune" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="porta-dominio" type="{http://www.openspcoop2.org/core/registry}porta-dominio" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/registry}ruolo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="scope" type="{http://www.openspcoop2.org/core/registry}scope" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="gruppo" type="{http://www.openspcoop2.org/core/registry}gruppo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/registry}soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="connettore" type="{http://www.openspcoop2.org/core/registry}connettore" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -293,7 +293,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getAccordoCooperazioneList
-   * @return List<AccordoCooperazione>
+   * @return List&lt;AccordoCooperazione&gt;
   */
   @Deprecated
   public List<AccordoCooperazione> getAccordoCooperazione() {
@@ -302,7 +302,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setAccordoCooperazioneList
-   * @param accordoCooperazione List<AccordoCooperazione>
+   * @param accordoCooperazione List&lt;AccordoCooperazione&gt;
   */
   @Deprecated
   public void setAccordoCooperazione(List<AccordoCooperazione> accordoCooperazione) {
@@ -323,7 +323,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getAccordoServizioParteComuneList
-   * @return List<AccordoServizioParteComune>
+   * @return List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public List<AccordoServizioParteComune> getAccordoServizioParteComune() {
@@ -332,7 +332,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setAccordoServizioParteComuneList
-   * @param accordoServizioParteComune List<AccordoServizioParteComune>
+   * @param accordoServizioParteComune List&lt;AccordoServizioParteComune&gt;
   */
   @Deprecated
   public void setAccordoServizioParteComune(List<AccordoServizioParteComune> accordoServizioParteComune) {
@@ -353,7 +353,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getPortaDominioList
-   * @return List<PortaDominio>
+   * @return List&lt;PortaDominio&gt;
   */
   @Deprecated
   public List<PortaDominio> getPortaDominio() {
@@ -362,7 +362,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setPortaDominioList
-   * @param portaDominio List<PortaDominio>
+   * @param portaDominio List&lt;PortaDominio&gt;
   */
   @Deprecated
   public void setPortaDominio(List<PortaDominio> portaDominio) {
@@ -383,7 +383,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getRuoloList
-   * @return List<Ruolo>
+   * @return List&lt;Ruolo&gt;
   */
   @Deprecated
   public List<Ruolo> getRuolo() {
@@ -392,7 +392,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setRuoloList
-   * @param ruolo List<Ruolo>
+   * @param ruolo List&lt;Ruolo&gt;
   */
   @Deprecated
   public void setRuolo(List<Ruolo> ruolo) {
@@ -413,7 +413,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getScopeList
-   * @return List<Scope>
+   * @return List&lt;Scope&gt;
   */
   @Deprecated
   public List<Scope> getScope() {
@@ -422,7 +422,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setScopeList
-   * @param scope List<Scope>
+   * @param scope List&lt;Scope&gt;
   */
   @Deprecated
   public void setScope(List<Scope> scope) {
@@ -443,7 +443,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getGruppoList
-   * @return List<Gruppo>
+   * @return List&lt;Gruppo&gt;
   */
   @Deprecated
   public List<Gruppo> getGruppo() {
@@ -452,7 +452,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setGruppoList
-   * @param gruppo List<Gruppo>
+   * @param gruppo List&lt;Gruppo&gt;
   */
   @Deprecated
   public void setGruppo(List<Gruppo> gruppo) {
@@ -473,7 +473,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<Soggetto>
+   * @return List&lt;Soggetto&gt;
   */
   @Deprecated
   public List<Soggetto> getSoggetto() {
@@ -482,7 +482,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<Soggetto>
+   * @param soggetto List&lt;Soggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<Soggetto> soggetto) {
@@ -503,7 +503,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getConnettoreList
-   * @return List<Connettore>
+   * @return List&lt;Connettore&gt;
   */
   @Deprecated
   public List<Connettore> getConnettore() {
@@ -512,7 +512,7 @@ public class RegistroServizi extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setConnettoreList
-   * @param connettore List<Connettore>
+   * @param connettore List&lt;Connettore&gt;
   */
   @Deprecated
   public void setConnettore(List<Connettore> connettore) {

@@ -36,17 +36,17 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="resource-representation">
- * 		&lt;sequence>
- * 			&lt;element name="xml" type="{http://www.openspcoop2.org/core/registry}resource-representation-xml" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="json" type="{http://www.openspcoop2.org/core/registry}resource-representation-json" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="media-type" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
- * 		&lt;attribute name="representation-type" type="{http://www.openspcoop2.org/core/registry}RepresentationType" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="resource-representation"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="xml" type="{http://www.openspcoop2.org/core/registry}resource-representation-xml" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="json" type="{http://www.openspcoop2.org/core/registry}resource-representation-json" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="media-type" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/&gt;
+ * 		&lt;attribute name="representation-type" type="{http://www.openspcoop2.org/core/registry}RepresentationType" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

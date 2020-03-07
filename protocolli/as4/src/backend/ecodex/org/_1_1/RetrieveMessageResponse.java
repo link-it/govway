@@ -34,12 +34,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="retrieveMessageResponse">
- * 		&lt;sequence>
- * 			&lt;element name="bodyload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="payload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="retrieveMessageResponse"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="bodyload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="payload" type="{http://org.ecodex.backend/1_1/}LargePayloadType" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -106,7 +106,7 @@ public class RetrieveMessageResponse extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method getPayloadList
-   * @return List<LargePayloadType>
+   * @return List&lt;LargePayloadType&gt;
   */
   @Deprecated
   public List<LargePayloadType> getPayload() {
@@ -115,7 +115,7 @@ public class RetrieveMessageResponse extends org.openspcoop2.utils.beans.BaseBea
 
   /**
    * @deprecated Use method setPayloadList
-   * @param payload List<LargePayloadType>
+   * @param payload List&lt;LargePayloadType&gt;
   */
   @Deprecated
   public void setPayload(List<LargePayloadType> payload) {

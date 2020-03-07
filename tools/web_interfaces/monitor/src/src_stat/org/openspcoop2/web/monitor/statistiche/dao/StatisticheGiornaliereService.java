@@ -325,7 +325,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 	@Override
 	public int countAllAndamentoTemporale() throws ServiceException {
 		try {
-			return new Long(countAndamentoTemporale().longValue()).intValue();
+			return Long.valueOf(countAndamentoTemporale().longValue()).intValue();
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
@@ -1135,6 +1135,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.andamentoTemporaleSearch.getEsitoDettaglio(),
 						this.andamentoTemporaleSearch.getEsitoDettaglioPersonalizzato(),
 						this.andamentoTemporaleSearch.getEsitoContesto(),
+						this.andamentoTemporaleSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO, 
 						dao.newExpression());
 			}
@@ -1511,7 +1512,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				}
 			}
-			numOk = new Long(s);
+			numOk = Long.valueOf(s);
 
 			// fault
 			list = new ArrayList<Map<String,Object>>();
@@ -1531,7 +1532,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				}
 			}
-			numFault = new Long(s);
+			numFault = Long.valueOf(s);
 
 			// ko
 			list = new ArrayList<Map<String,Object>>();
@@ -1551,7 +1552,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 
 				}
 			}
-			numKo = new Long(s);
+			numKo = Long.valueOf(s);
 
 			return new ResLive(numOk.longValue(), numFault.longValue(), numKo.longValue(), new Date());
 
@@ -1567,7 +1568,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 		}
 
-		return new ResLive(new Long("0"), new Long("0"), new Long("0"));
+		return new ResLive(Long.valueOf("0"), Long.valueOf("0"), Long.valueOf("0"));
 	}
 
 	
@@ -1808,6 +1809,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -1900,6 +1902,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2039,6 +2042,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2167,6 +2171,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						this.distribSoggettoSearch.getEsitoDettaglio(),
 						this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 						this.distribSoggettoSearch.getEsitoContesto(),
+						this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 						model.ESITO, model.ESITO_CONTESTO,
 						dao.newExpression());
 
@@ -2350,6 +2355,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -2445,6 +2451,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -2750,6 +2757,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -2859,21 +2867,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva", 
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna", 
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					erogazione_portaApplicativa_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna", 
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				}
 				break;
@@ -2885,7 +2893,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 						model.NUMERO_TRANSAZIONI, Function.SUM,
 						"dato"));
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				break;
 
@@ -2904,7 +2912,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.LATENZA_PORTA,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					break;
 				case LATENZA_SERVIZIO:
@@ -2914,7 +2922,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.LATENZA_SERVIZIO,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					break;
 
@@ -2926,7 +2934,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.LATENZA_TOTALE,
 							Function.AVG, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					break;
 				}
@@ -3032,6 +3040,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSoggettoSearch.getEsitoDettaglio(),
 					this.distribSoggettoSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSoggettoSearch.getEsitoContesto(),
+					this.distribSoggettoSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -3139,7 +3148,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				switch (tipoBanda) {
 				case COMPLESSIVA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA, Function.SUM,
@@ -3147,7 +3156,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					break;
 				case INTERNA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_INTERNA, Function.SUM,
@@ -3155,7 +3164,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					break;
 				case ESTERNA:
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_ESTERNA, Function.SUM,
@@ -3168,7 +3177,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 						model.NUMERO_TRANSAZIONI, Function.SUM,
@@ -3187,7 +3196,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_PORTA,
@@ -3197,7 +3206,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_SERVIZIO,
@@ -3209,7 +3218,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					fruizione_portaDelegata_Expr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale", 
-							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					fruizione_portaDelegata_UnionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_TOTALE,
@@ -3309,7 +3318,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			NonNegativeNumber nnn = dao.count(gByExpr);
 
-			return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -3438,21 +3447,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				}
 				break;
@@ -3461,7 +3470,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				unionExpr.addSelectFunctionField(new FunctionField(
 						model.NUMERO_TRANSAZIONI, Function.SUM,
@@ -3480,7 +3489,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					gByExpr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_PORTA,
@@ -3490,7 +3499,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_SERVIZIO,
@@ -3502,7 +3511,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					gByExpr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_TOTALE,
@@ -3620,6 +3629,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribServizioSearch.getEsitoDettaglio(),
 					this.distribServizioSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribServizioSearch.getEsitoContesto(),
+					this.distribServizioSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -3914,7 +3924,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 			
 			NonNegativeNumber nnn = dao.count(gByExpr);
 
-			return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -3987,6 +3997,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribAzioneSearch.getEsitoDettaglio(),
 					this.distribAzioneSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribAzioneSearch.getEsitoContesto(),
+					this.distribAzioneSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -4356,21 +4367,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				case INTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				case ESTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, datoParamAliasName));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+							Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					break;
 				}
 				break;
@@ -4379,7 +4390,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy(sommaAliasName,SortOrder.DESC);
 				union.addField(sommaAliasName, Function.SUM, datoParamAliasName);
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni",
-						new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
+						Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
 
 				unionExpr.addSelectFunctionField(new FunctionField(
 						model.NUMERO_TRANSAZIONI, Function.SUM,
@@ -4398,7 +4409,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_PORTA);
 					gByExpr.isNotNull(model.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+							Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_PORTA,
@@ -4408,7 +4419,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(model.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+							Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_SERVIZIO,
@@ -4420,7 +4431,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(model.LATENZA_TOTALE);
 					gByExpr.isNotNull(model.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-							new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+							Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							model.LATENZA_TOTALE,
@@ -4560,7 +4571,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					
 					NonNegativeNumber nnn = dao.count(expr);
-					int valoreLetto = nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+					int valoreLetto = nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 					count = count + valoreLetto;
 				}
 				if(forceFruizione){
@@ -4573,7 +4584,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					
 					NonNegativeNumber nnn = dao.count(expr);
-					int valoreLetto = nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+					int valoreLetto = nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 					count = count + valoreLetto;
 				}
 				return count;
@@ -4590,7 +4601,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				
 				NonNegativeNumber nnn = dao.count(expr);
-				return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+				return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 			}
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
@@ -4858,7 +4869,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-								new Integer(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
+								Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				case INTERNA:
@@ -4879,7 +4890,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-								new Integer(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+								Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				case ESTERNA:
@@ -4900,7 +4911,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					}
 					if(unionExprFake!=null){
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-								new Integer(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
+								Integer.valueOf(0), model.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, datoParamAliasName));
 					}
 					break;
 				}
@@ -4927,7 +4938,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				if(unionExprFake!=null){
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni", 
-							new Integer(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
+							Integer.valueOf(0), model.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, datoParamAliasName));
 				}
 				break;
 
@@ -4961,7 +4972,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_PORTA);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-								new Integer(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
+								Integer.valueOf(1), model.LATENZA_PORTA.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 				case LATENZA_SERVIZIO:
@@ -4986,7 +4997,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_SERVIZIO);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio",
-								new Integer(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
+								Integer.valueOf(1), model.LATENZA_SERVIZIO.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 
@@ -5013,7 +5024,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					if(unionExprFake!=null){
 						fakeExpr.isNotNull(model.LATENZA_TOTALE);
 						unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_totale",
-								new Integer(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
+								Integer.valueOf(1), model.LATENZA_TOTALE.getFieldType()), Function.AVG, datoParamAliasName));
 					}
 					break;
 				}
@@ -5153,6 +5164,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.distribSaSearch.getEsitoDettaglio(),
 					this.distribSaSearch.getEsitoDettaglioPersonalizzato(),
 					this.distribSaSearch.getEsitoContesto(),
+					this.distribSaSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 
@@ -5414,7 +5426,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 		try {
 			NonNegativeNumber nnn = executeDistribuzionePersonalizzataCount();
 
-			return nnn != null ? new Long(nnn.longValue()).intValue() : 0;
+			return nnn != null ? Long.valueOf(nnn.longValue()).intValue() : 0;
 		} catch (ServiceException e) {
 			StatisticheGiornaliereService.log.error(e.getMessage(), e);
 			throw e;
@@ -5541,21 +5553,21 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 							modelContenuti.DIMENSIONI_BYTES_BANDA_COMPLESSIVA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_complessiva",
-							new Integer(0), modelContenuti.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), modelContenuti.DIMENSIONI_BYTES_BANDA_COMPLESSIVA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case INTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							modelContenuti.DIMENSIONI_BYTES_BANDA_INTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_interna",
-							new Integer(0), modelContenuti.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), modelContenuti.DIMENSIONI_BYTES_BANDA_INTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				case ESTERNA:
 					unionExpr.addSelectFunctionField(new FunctionField(
 							modelContenuti.DIMENSIONI_BYTES_BANDA_ESTERNA,
 							Function.SUM, "dato"));
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("banda_esterna",
-							new Integer(0), modelContenuti.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
+							Integer.valueOf(0), modelContenuti.DIMENSIONI_BYTES_BANDA_ESTERNA.getFieldType()), Function.SUM, "dato"));
 					break;
 				}
 				break;
@@ -5564,7 +5576,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				union.addOrderBy("somma",SortOrder.DESC);
 				union.addField("somma", Function.SUM, "dato");
 				unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("numero_transazioni", 
-						new Integer(0), modelContenuti.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
+						Integer.valueOf(0), modelContenuti.NUMERO_TRANSAZIONI.getFieldType()), Function.SUM, "dato"));
 
 				unionExpr.addSelectFunctionField(new FunctionField(
 						modelContenuti.NUMERO_TRANSAZIONI, Function.SUM,
@@ -5583,7 +5595,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(modelContenuti.LATENZA_PORTA);
 					gByExpr.isNotNull(modelContenuti.LATENZA_PORTA);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_porta",
-							new Integer(1),modelContenuti.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1),modelContenuti.LATENZA_PORTA.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							modelContenuti.LATENZA_PORTA,
@@ -5593,7 +5605,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(modelContenuti.LATENZA_SERVIZIO);
 					gByExpr.isNotNull(modelContenuti.LATENZA_SERVIZIO);
 					unionExprFake.addSelectFunctionField(new FunctionField(new ConstantField("latenza_servizio", 
-							new Integer(1), modelContenuti.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
+							Integer.valueOf(1), modelContenuti.LATENZA_SERVIZIO.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							modelContenuti.LATENZA_SERVIZIO,
@@ -5605,7 +5617,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					fakeExpr.isNotNull(modelContenuti.LATENZA_TOTALE);
 					gByExpr.isNotNull(modelContenuti.LATENZA_TOTALE);
 					unionExprFake.addSelectFunctionField(new FunctionField(
-							new ConstantField("latenza_totale", new Integer(1), modelContenuti.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
+							new ConstantField("latenza_totale", Integer.valueOf(1), modelContenuti.LATENZA_TOTALE.getFieldType()), Function.AVG, "dato"));
 
 					unionExpr.addSelectFunctionField(new FunctionField(
 							modelContenuti.LATENZA_TOTALE,
@@ -6269,6 +6281,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 					this.statistichePersonalizzateSearch.getEsitoDettaglio(),
 					this.statistichePersonalizzateSearch.getEsitoDettaglioPersonalizzato(),
 					this.statistichePersonalizzateSearch.getEsitoContesto(),
+					this.statistichePersonalizzateSearch.isEscludiRichiesteScartate(),
 					model.ESITO, model.ESITO_CONTESTO,
 					dao.newExpression());
 

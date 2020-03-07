@@ -130,7 +130,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -320,7 +320,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					env.tipo_protocollo, 
 					env.userLogin,
 					env.apsCore,
-					env.apsHelper
+					env.apsHelper,
+	        		null // nomeSAServer TODO quando si aggiunge applicativo server
 				);
 
 		        
@@ -331,7 +332,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			context.getServletResponse().setStatus(201);
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -377,7 +378,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -411,7 +412,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			if ( BaseHelper.findFirst( pa.getAzione().getAzioneDelegataList(), a -> a.equals(nomeAzione)).isPresent() )	{
 				StringBuilder inUsoMessage = new StringBuilder();
 				
-				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
+				PorteApplicativeUtilities.deletePortaApplicativaAzioni(pa, env.paCore, env.paHelper, inUsoMessage, "\n",
+						new ArrayList<String>(Arrays.asList(nomeAzione)), env.userLogin);
 				
 				if (inUsoMessage.length() > 0)
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(inUsoMessage.toString()));
@@ -425,7 +427,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -487,7 +489,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -533,7 +535,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {
@@ -590,7 +592,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
      
 		}
 		catch(javax.ws.rs.WebApplicationException e) {
-			context.getLogger().error("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
+			context.getLogger().error_except404("Invocazione terminata con errore '4xx': %s",e, e.getMessage());
 			throw e;
 		}
 		catch(Throwable e) {

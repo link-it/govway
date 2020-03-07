@@ -35,15 +35,15 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="dump-configurazione">
- * 		&lt;sequence>
- * 			&lt;element name="richiesta-ingresso" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="richiesta-uscita" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risposta-ingresso" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="risposta-uscita" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="realtime" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * &lt;/complexType>
+ * &lt;complexType name="dump-configurazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="richiesta-ingresso" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="richiesta-uscita" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risposta-ingresso" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="risposta-uscita" type="{http://www.openspcoop2.org/core/config}dump-configurazione-regola" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="realtime" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

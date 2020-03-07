@@ -56,6 +56,7 @@ import org.openspcoop2.protocol.sdk.builder.EsitoTransazione;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.TipiDatabase;
 import org.openspcoop2.web.monitor.core.bean.AbstractDateSearchForm;
+import org.openspcoop2.web.monitor.core.bean.ApplicationBean;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
@@ -66,7 +67,9 @@ import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dynamic.Ricerche;
 import org.openspcoop2.web.monitor.core.dynamic.components.BaseComponent;
+import org.openspcoop2.web.monitor.core.filters.BrowserFilter;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.core.utils.BrowserInfo;
 import org.openspcoop2.web.monitor.core.utils.MessageManager;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
 import org.openspcoop2.web.monitor.transazioni.constants.TransazioniCostanti;
@@ -130,6 +133,10 @@ Context, Cloneable {
 	
 	private boolean integrationManagerEnabled = false;
 	
+	private boolean visualizzaStoricoCustomEnabled = false;
+	private boolean visualizzaLiveCustomEnabled = false;
+	private boolean visualizzaConsegneMultipleCustomEnabled = false;
+	
 	public TransazioniSearchForm(){
 		super();
 		
@@ -154,6 +161,12 @@ Context, Cloneable {
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
+			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
+			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
@@ -177,11 +190,25 @@ Context, Cloneable {
 			
 			this.integrationManagerEnabled = pddMonitorProperties.isAttivoTransazioniIntegrationManager();
 			
+			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
+			
+			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			
 		}catch(Exception e){
 			TransazioniSearchForm.log.error(e.getMessage(), e);
 		}
 	}
 
+	public List<SelectItem> getEsitiDettaglio() {
+		return super.getEsitiDettaglio(false);
+	}
+	
+	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+		return super.getEsitiDettagliPersonalizzati(false);
+	}
+	
 	public boolean isIntegrationManagerEnabled() {
 		return this.integrationManagerEnabled;
 	}
@@ -1349,5 +1376,29 @@ Context, Cloneable {
 
 	public void setRicercaLiberaIdApplicativo(String ricercaLiberaIdApplicativo) {
 		this.ricercaLiberaIdApplicativo = ricercaLiberaIdApplicativo;
+	}
+
+	public boolean isVisualizzaStoricoCustomEnabled() {
+		return this.visualizzaStoricoCustomEnabled;
+	}
+
+	public void setVisualizzaStoricoCustomEnabled(boolean visualizzaStoricoCustomEnabled) {
+		this.visualizzaStoricoCustomEnabled = visualizzaStoricoCustomEnabled;
+	}
+
+	public boolean isVisualizzaLiveCustomEnabled() {
+		return this.visualizzaLiveCustomEnabled;
+	}
+
+	public void setVisualizzaLiveCustomEnabled(boolean visualizzaLiveCustomEnabled) {
+		this.visualizzaLiveCustomEnabled = visualizzaLiveCustomEnabled;
+	}
+
+	public boolean isVisualizzaConsegneMultipleCustomEnabled() {
+		return this.visualizzaConsegneMultipleCustomEnabled;
+	}
+
+	public void setVisualizzaConsegneMultipleCustomEnabled(boolean visualizzaConsegneMultipleCustomEnabled) {
+		this.visualizzaConsegneMultipleCustomEnabled = visualizzaConsegneMultipleCustomEnabled;
 	}
 }

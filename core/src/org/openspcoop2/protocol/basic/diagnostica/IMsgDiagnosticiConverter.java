@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 /**
  * MsgDiagnosticiConverter
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

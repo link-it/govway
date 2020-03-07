@@ -23,6 +23,7 @@ package org.openspcoop2.utils.openapi.validator;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
@@ -974,7 +975,7 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					if(typeRestriction.getMultipleOf()!=null) {
 						if (numberValue.compareTo(typeRestriction.getMultipleOf()) != 0) {
 						   try{
-							   numberValue.divide(typeRestriction.getMultipleOf(), 0, BigDecimal.ROUND_UNNECESSARY);
+							   numberValue.divide(typeRestriction.getMultipleOf(), 0, RoundingMode.UNNECESSARY);
 						   }
 						   catch(ArithmeticException e) {
 							   throw new ValidatorException("Value is not multiple of '"+typeRestriction.getMultipleOf()+"'");

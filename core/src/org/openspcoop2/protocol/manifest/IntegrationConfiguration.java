@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfiguration">
- * 		&lt;sequence>
- * 			&lt;element name="name" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationName" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="resourceIdentification" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentification" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfiguration"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="name" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationName" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="resourceIdentification" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentification" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

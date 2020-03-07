@@ -214,6 +214,12 @@ CREATE TABLE configurazione
 	response_cache_algoritmocache VARCHAR2(255),
 	response_cache_idlecache VARCHAR2(255),
 	response_cache_lifecache VARCHAR2(255),
+	-- Cache per la consegna agli applicativi
+	consegna_statocache VARCHAR2(255),
+	consegna_dimensionecache VARCHAR2(255),
+	consegna_algoritmocache VARCHAR2(255),
+	consegna_idlecache VARCHAR2(255),
+	consegna_lifecache VARCHAR2(255),
 	-- fk/pk columns
 	id NUMBER NOT NULL,
 	-- fk/pk keys constraints

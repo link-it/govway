@@ -173,7 +173,6 @@ import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSicurezzaEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoValidazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.TokenClaimEnum;
 import org.openspcoop2.core.config.rs.server.model.Validazione;
-import org.openspcoop2.core.config.rs.server.utils.WrapperFormFile;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -214,6 +213,7 @@ import org.openspcoop2.core.registry.constants.TipologiaServizio;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.FiltroRicercaRuoli;
+import org.openspcoop2.core.registry.driver.db.IDSoggettoDB;
 import org.openspcoop2.core.transazioni.utils.TipoCredenzialeMittente;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.autenticazione.ParametriAutenticazioneBasic;
@@ -230,6 +230,7 @@ import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.ctrlstat.core.AutorizzazioneUtilities;
 import org.openspcoop2.web.ctrlstat.core.Search;
+import org.openspcoop2.web.ctrlstat.core.SerialiableFormFile;
 import org.openspcoop2.web.ctrlstat.costanti.ConnettoreServletType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.plugins.ExtendedConnettore;
@@ -595,7 +596,9 @@ public class ErogazioniApiHelper {
         		null,		// tipoFruitore 
         		null,	// nomeFruitore
         		autenticazioneToken, 
-        		tokenPolicy
+        		tokenPolicy,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -603,7 +606,7 @@ public class ErogazioniApiHelper {
 		
 	}
 	
-	public static final List<Soggetto> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
+	public static final List<IDSoggettoDB> getSoggettiCompatibiliAutorizzazione( CredenzialeTipo tipoAutenticazione, IdSoggetto erogatore, ErogazioniEnv env ) throws DriverRegistroServiziNotFound, DriverRegistroServiziException, DriverConfigurazioneException {
 		
 		PddTipologia pddTipologiaSoggettoAutenticati = null;
 		boolean gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore = false;
@@ -625,11 +628,11 @@ public class ErogazioniApiHelper {
 		List<String> tipiSoggettiGestitiProtocollo = env.soggettiCore.getTipiSoggettiGestitiProtocollo(env.tipo_protocollo);
 		
 		// calcolo soggetti compatibili con tipi protocollo supportati dalla pa e credenziali indicate
-		List<Soggetto> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
+		List<IDSoggettoDB> list = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, pddTipologiaSoggettoAutenticati);
 		
 		if( !list.isEmpty() && gestioneErogatori_soggettiAutenticati_escludiSoggettoErogatore ) {
 			for (int i = 0; i < list.size(); i++) {
-				Soggetto soggettoCheck = list.get(i);
+				IDSoggettoDB soggettoCheck = list.get(i);
 				if(soggettoCheck.getTipo().equals(erogatore.getTipo()) && soggettoCheck.getNome().equals(erogatore.getNome())) {
 					list.remove(i);
 					break;
@@ -696,6 +699,7 @@ public class ErogazioniApiHelper {
         		switch (autenticazionePrincipal) {
 				case CONTAINER:
 				case INDIRIZZO_IP:
+				case INDIRIZZO_IP_X_FORWARDED_FOR:
 					break;
         		case HEADER:
 					if(authConfig.getNome()==null) {
@@ -968,7 +972,7 @@ public class ErogazioniApiHelper {
         		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazioneNew.get(authn.getTipo()) );
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
         	        	.stream()
-        	        	.map( Soggetto::getNome )
+        	        	.map( IDSoggettoDB::getNome )
         	        	.filter( s -> s.equals( configAuthz_final.getSoggetto() ) )
         	        	.findAny();
         	
@@ -1138,7 +1142,9 @@ public class ErogazioniApiHelper {
         		evalnull( () -> fruitore.get().getTipo() ),		// tipoFruitore 
         		evalnull( () -> fruitore.get().getNome() ),			// nomeFruitore
         		autenticazioneToken,
-        		tokenPolicy
+        		tokenPolicy,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
         	)) {
         	throw FaultCode.RICHIESTA_NON_VALIDA.toException( StringEscapeUtils.unescapeHtml( env.pd.getMessage()) );
         }
@@ -1245,7 +1251,9 @@ public class ErogazioniApiHelper {
 				null,	// this.responseInputWaitTime,
 				autenticazioneToken,
 				tokenPolicy,
-				listExtendedConnettore
+				listExtendedConnettore,
+        		false, // erogazioneServizioApplicativoServerEnabled, TODO quando si aggiunge applicativo server
+    			null // rogazioneServizioApplicativoServer
 			);
 	}
 		
@@ -1591,7 +1599,8 @@ public class ErogazioniApiHelper {
 				new ProtocolProperties(), // this.protocolProperties, 
 				ConsoleOperationType.ADD, 
 				env.apsCore, 
-				env.erogazioniHelper
+				env.erogazioniHelper,
+        		null // nomeSAServer TODO quando si aggiunge applicativo server
 			);
 
 		
@@ -1787,7 +1796,7 @@ public class ErogazioniApiHelper {
 
 		Documento documento = ErogazioniApiHelper.implAllegatoToDocumento(body, asps);
 		
-		WrapperFormFile filewrap = new WrapperFormFile(documento.getFile(), documento.getByteContenuto());
+		SerialiableFormFile filewrap = new SerialiableFormFile(documento.getFile(), documento.getByteContenuto());
 		env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, documento.getRuolo());			
 
 		boolean documentoUnivocoIndipendentementeTipo = true;
@@ -1858,7 +1867,7 @@ public class ErogazioniApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non puoi modificare il ruolo di un allegato");
 		}
 
-		WrapperFormFile filewrap = new WrapperFormFile(newDoc.getFile(), newDoc.getByteContenuto());
+		SerialiableFormFile filewrap = new SerialiableFormFile(newDoc.getFile(), newDoc.getByteContenuto());
 		env.requestWrapper.overrideParameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ALLEGATI_RUOLO, newDoc.getRuolo());
 		
 		if (!env.apsHelper.serviziAllegatiCheckData(TipoOperazione.CHANGE,filewrap,newDoc,env.protocolFactory)) {

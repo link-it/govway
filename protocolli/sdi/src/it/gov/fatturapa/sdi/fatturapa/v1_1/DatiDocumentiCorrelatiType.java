@@ -34,17 +34,17 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatiDocumentiCorrelatiType">
- * 		&lt;sequence>
- * 			&lt;element name="RiferimentoNumeroLinea" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}integer" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="IdDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Data" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="NumItem" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CodiceCommessaConvenzione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CodiceCUP" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="CodiceCIG" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="DatiDocumentiCorrelatiType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="RiferimentoNumeroLinea" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}integer" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="IdDocumento" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Data" type="{http://www.w3.org/2001/XMLSchema}date" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="NumItem" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CodiceCommessaConvenzione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CodiceCUP" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="CodiceCIG" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}normalizedString" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -154,7 +154,7 @@ public class DatiDocumentiCorrelatiType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getRiferimentoNumeroLineaList
-   * @return List<java.math.BigInteger>
+   * @return List&lt;java.math.BigInteger&gt;
   */
   @Deprecated
   public List<java.math.BigInteger> getRiferimentoNumeroLinea() {
@@ -163,7 +163,7 @@ public class DatiDocumentiCorrelatiType extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setRiferimentoNumeroLineaList
-   * @param riferimentoNumeroLinea List<java.math.BigInteger>
+   * @param riferimentoNumeroLinea List&lt;java.math.BigInteger&gt;
   */
   @Deprecated
   public void setRiferimentoNumeroLinea(List<java.math.BigInteger> riferimentoNumeroLinea) {

@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="registry">
- * 		&lt;sequence>
- * 			&lt;element name="organization" type="{http://www.openspcoop2.org/protocol/manifest}Organization" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="service" type="{http://www.openspcoop2.org/protocol/manifest}Service" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="versions" type="{http://www.openspcoop2.org/protocol/manifest}Versions" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="registry"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="organization" type="{http://www.openspcoop2.org/protocol/manifest}Organization" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="service" type="{http://www.openspcoop2.org/protocol/manifest}Service" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="versions" type="{http://www.openspcoop2.org/protocol/manifest}Versions" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

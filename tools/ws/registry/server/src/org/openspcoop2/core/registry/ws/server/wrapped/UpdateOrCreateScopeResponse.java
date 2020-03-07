@@ -25,7 +25,7 @@ package org.openspcoop2.core.registry.ws.server.wrapped;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="updateOrCreateResponse" />
+ * &lt;complexType name="updateOrCreateResponse" /&gt;
  * </pre>
  * 
  * 

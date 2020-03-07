@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ConceptualBehavior">
- * 		&lt;sequence>
- * 			&lt;element name="name" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="states" type="{http://spcoop.gov.it/sica/wsbl}statesType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="transitions" type="{http://spcoop.gov.it/sica/wsbl}transitionsType" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ConceptualBehavior"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="name" type="{http://spcoop.gov.it/sica/wsbl}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="states" type="{http://spcoop.gov.it/sica/wsbl}statesType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="transitions" type="{http://spcoop.gov.it/sica/wsbl}transitionsType" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

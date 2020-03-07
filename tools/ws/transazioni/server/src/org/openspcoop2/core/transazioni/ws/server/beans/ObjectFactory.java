@@ -42,17 +42,24 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link WrapperIdDumpMessaggio }
-     */
-    public WrapperIdDumpMessaggio createWrapperIdDumpMessaggio() {
-        return new WrapperIdDumpMessaggio();
-    }
-    
-    /**
      * Create an instance of {@link WrapperIdTransazione }
      */
     public WrapperIdTransazione createWrapperIdTransazione() {
         return new WrapperIdTransazione();
+    }
+    
+    /**
+     * Create an instance of {@link UseInfo }
+     */
+    public UseInfo createUseInfo() {
+        return new UseInfo();
+    }
+    
+    /**
+     * Create an instance of {@link WrapperIdTransazioneApplicativoServer }
+     */
+    public WrapperIdTransazioneApplicativoServer createWrapperIdTransazioneApplicativoServer() {
+        return new WrapperIdTransazioneApplicativoServer();
     }
     
     /**
@@ -63,17 +70,17 @@ public class ObjectFactory {
     }
     
     /**
+     * Create an instance of {@link WrapperIdDumpMessaggio }
+     */
+    public WrapperIdDumpMessaggio createWrapperIdDumpMessaggio() {
+        return new WrapperIdDumpMessaggio();
+    }
+    
+    /**
      * Create an instance of {@link InUseCondition }
      */
     public InUseCondition createInUseCondition() {
         return new InUseCondition();
-    }
-    
-    /**
-     * Create an instance of {@link UseInfo }
-     */
-    public UseInfo createUseInfo() {
-        return new UseInfo();
     }
     
 

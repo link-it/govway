@@ -42,51 +42,51 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="accordo-servizio-parte-comune">
- * 		&lt;sequence>
- * 			&lt;element name="soggetto-referente" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="servizio-composto" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune-servizio-composto" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/registry}azione" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/registry}port-type" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/registry}resource" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="gruppi" type="{http://www.openspcoop2.org/core/registry}gruppi-accordo" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/>
- * 		&lt;attribute name="byte-wsdl-definitorio" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-wsdl-concettuale" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-wsdl-logico-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-wsdl-logico-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-specifica-conversazione-concettuale" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="byte-specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/>
- * 		&lt;attribute name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" use="required"/>
- * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/registry}ProfiloCollaborazione" use="required"/>
- * 		&lt;attribute name="formato-specifica" type="{http://www.openspcoop2.org/core/registry}FormatoSpecifica" use="optional"/>
- * 		&lt;attribute name="wsdl-definitorio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="wsdl-concettuale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="wsdl-logico-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="wsdl-logico-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="specifica-conversazione-concettuale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="utilizzo-senza-azione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * 		&lt;attribute name="filtro-duplicati" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="conferma-ricezione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="id-riferimento-richiesta" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/>
- * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/>
- * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/>
- * &lt;/complexType>
+ * &lt;complexType name="accordo-servizio-parte-comune"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="soggetto-referente" type="{http://www.openspcoop2.org/core/registry}id-soggetto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="servizio-composto" type="{http://www.openspcoop2.org/core/registry}accordo-servizio-parte-comune-servizio-composto" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="azione" type="{http://www.openspcoop2.org/core/registry}azione" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="port-type" type="{http://www.openspcoop2.org/core/registry}port-type" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="resource" type="{http://www.openspcoop2.org/core/registry}resource" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="allegato" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="specifica-semiformale" type="{http://www.openspcoop2.org/core/registry}documento" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="protocol-property" type="{http://www.openspcoop2.org/core/registry}protocol-property" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="gruppi" type="{http://www.openspcoop2.org/core/registry}gruppi-accordo" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="super-user" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="stato-package" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="privato" type="{http://www.w3.org/2001/XMLSchema}string" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="byte-wsdl-definitorio" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-wsdl-concettuale" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-wsdl-logico-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-wsdl-logico-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-specifica-conversazione-concettuale" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="byte-specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}base64Binary" use="optional"/&gt;
+ * 		&lt;attribute name="service-binding" type="{http://www.openspcoop2.org/core/registry}ServiceBinding" use="required"/&gt;
+ * 		&lt;attribute name="message-type" type="{http://www.openspcoop2.org/core/registry}MessageType" use="optional"/&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="descrizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="profilo-collaborazione" type="{http://www.openspcoop2.org/core/registry}ProfiloCollaborazione" use="required"/&gt;
+ * 		&lt;attribute name="formato-specifica" type="{http://www.openspcoop2.org/core/registry}FormatoSpecifica" use="optional"/&gt;
+ * 		&lt;attribute name="wsdl-definitorio" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="wsdl-concettuale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="wsdl-logico-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="wsdl-logico-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="specifica-conversazione-concettuale" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="specifica-conversazione-erogatore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="specifica-conversazione-fruitore" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="utilizzo-senza-azione" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="filtro-duplicati" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="conferma-ricezione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="id-collaborazione" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="id-riferimento-richiesta" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="consegna-in-ordine" type="{http://www.openspcoop2.org/core/registry}StatoFunzionalita" use="optional" default="disabilitato"/&gt;
+ * 		&lt;attribute name="scadenza" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="ora-registrazione" type="{http://www.w3.org/2001/XMLSchema}dateTime" use="optional"/&gt;
+ * 		&lt;attribute name="versione" type="{http://www.w3.org/2001/XMLSchema}unsignedInt" use="optional" default="1"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -707,7 +707,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getAzioneList
-   * @return List<Azione>
+   * @return List&lt;Azione&gt;
   */
   @Deprecated
   public List<Azione> getAzione() {
@@ -716,7 +716,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setAzioneList
-   * @param azione List<Azione>
+   * @param azione List&lt;Azione&gt;
   */
   @Deprecated
   public void setAzione(List<Azione> azione) {
@@ -737,7 +737,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getPortTypeList
-   * @return List<PortType>
+   * @return List&lt;PortType&gt;
   */
   @Deprecated
   public List<PortType> getPortType() {
@@ -746,7 +746,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setPortTypeList
-   * @param portType List<PortType>
+   * @param portType List&lt;PortType&gt;
   */
   @Deprecated
   public void setPortType(List<PortType> portType) {
@@ -767,7 +767,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getResourceList
-   * @return List<Resource>
+   * @return List&lt;Resource&gt;
   */
   @Deprecated
   public List<Resource> getResource() {
@@ -776,7 +776,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setResourceList
-   * @param resource List<Resource>
+   * @param resource List&lt;Resource&gt;
   */
   @Deprecated
   public void setResource(List<Resource> resource) {
@@ -797,7 +797,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getAllegatoList
-   * @return List<Documento>
+   * @return List&lt;Documento&gt;
   */
   @Deprecated
   public List<Documento> getAllegato() {
@@ -806,7 +806,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setAllegatoList
-   * @param allegato List<Documento>
+   * @param allegato List&lt;Documento&gt;
   */
   @Deprecated
   public void setAllegato(List<Documento> allegato) {
@@ -827,7 +827,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getSpecificaSemiformaleList
-   * @return List<Documento>
+   * @return List&lt;Documento&gt;
   */
   @Deprecated
   public List<Documento> getSpecificaSemiformale() {
@@ -836,7 +836,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setSpecificaSemiformaleList
-   * @param specificaSemiformale List<Documento>
+   * @param specificaSemiformale List&lt;Documento&gt;
   */
   @Deprecated
   public void setSpecificaSemiformale(List<Documento> specificaSemiformale) {
@@ -857,7 +857,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method getProtocolPropertyList
-   * @return List<ProtocolProperty>
+   * @return List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public List<ProtocolProperty> getProtocolProperty() {
@@ -866,7 +866,7 @@ public class AccordoServizioParteComune extends org.openspcoop2.utils.beans.Base
 
   /**
    * @deprecated Use method setProtocolPropertyList
-   * @param protocolProperty List<ProtocolProperty>
+   * @param protocolProperty List&lt;ProtocolProperty&gt;
   */
   @Deprecated
   public void setProtocolProperty(List<ProtocolProperty> protocolProperty) {

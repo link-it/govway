@@ -34,8 +34,8 @@ import org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione;
  * Informazioni Busta
  * 
  * 
- * @author Stefano Corallo <corallo@link.it>
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Stefano Corallo (corallo@link.it)
+ * @author Lorenzo Nardi (nardi@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
  */

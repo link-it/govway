@@ -37,14 +37,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="tracciamento">
- * 		&lt;sequence>
- * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/>
- * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="tracciamento"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="stato" type="{http://www.openspcoop2.org/core/config}StatoFunzionalita" use="optional" default="abilitato"/&gt;
+ * 		&lt;attribute name="esiti" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -169,7 +169,7 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getOpenspcoopAppenderList
-   * @return List<OpenspcoopAppender>
+   * @return List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public List<OpenspcoopAppender> getOpenspcoopAppender() {
@@ -178,7 +178,7 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List<OpenspcoopAppender>
+   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
@@ -199,7 +199,7 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getOpenspcoopSorgenteDatiList
-   * @return List<OpenspcoopSorgenteDati>
+   * @return List&lt;OpenspcoopSorgenteDati&gt;
   */
   @Deprecated
   public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
@@ -208,7 +208,7 @@ public class Tracciamento extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setOpenspcoopSorgenteDatiList
-   * @param openspcoopSorgenteDati List<OpenspcoopSorgenteDati>
+   * @param openspcoopSorgenteDati List&lt;OpenspcoopSorgenteDati&gt;
   */
   @Deprecated
   public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {

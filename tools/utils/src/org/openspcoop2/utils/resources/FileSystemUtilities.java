@@ -33,7 +33,7 @@ import java.io.OutputStream;
 /**
  * Classe utilizzabile per raccogliere utility su operazioni effettuate su file system
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

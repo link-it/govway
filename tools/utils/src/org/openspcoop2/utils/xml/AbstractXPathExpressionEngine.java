@@ -44,7 +44,7 @@ import org.w3c.dom.NodeList;
 /**
  * Classe utilizzabile per ricerche effettuate tramite espressioni XPath
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -419,8 +419,8 @@ public abstract class AbstractXPathExpressionEngine {
 									result = expression.evaluate(this.readXPathElement(contenutoAsElement));
 							}
 						}catch(Exception e){
-							if(Utilities.existsInnerException(e,com.sun.org.apache.xpath.internal.XPathException.class)){
-								throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+Utilities.getInnerException(e, com.sun.org.apache.xpath.internal.XPathException.class).getMessage()+")",e);
+							if(Utilities.existsInnerException(e,"com.sun.org.apache.xpath.internal.XPathException")){
+								throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+Utilities.getInnerException(e, "com.sun.org.apache.xpath.internal.XPathException").getMessage()+")",e);
 							}
 							else if(Utilities.existsInnerException(e,org.apache.xpath.XPathException.class)){
 								throw new Exception("Valutazione dell'espressione XPATH contenuta in concat_openspcoop ("+params[i]+") ha causato un errore ("+Utilities.getInnerException(e, org.apache.xpath.XPathException.class).getMessage()+")",e);
@@ -514,8 +514,8 @@ public abstract class AbstractXPathExpressionEngine {
 						}
 					}
 				}catch(Exception e){
-					if(Utilities.existsInnerException(e,com.sun.org.apache.xpath.internal.XPathException.class)){
-						throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+Utilities.getInnerException(e, com.sun.org.apache.xpath.internal.XPathException.class).getMessage()+")",e);
+					if(Utilities.existsInnerException(e,"com.sun.org.apache.xpath.internal.XPathException")){
+						throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+Utilities.getInnerException(e, "com.sun.org.apache.xpath.internal.XPathException").getMessage()+")",e);
 					}
 					else if(Utilities.existsInnerException(e,org.apache.xpath.XPathException.class)){
 						throw new Exception("Valutazione dell'espressione XPATH ha causato un errore ("+Utilities.getInnerException(e, org.apache.xpath.XPathException.class).getMessage()+")",e);

@@ -121,8 +121,19 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 		
 		MessageType formatoMessaggio = messaggio.getFormatoMessaggio();
 		
+		String servizioApplicativoErogatore = messaggio.getServizioApplicativoErogatore();
+		Date dataConsegnaErogatore = messaggio.getDataConsegna();
+		
+		String identificativoDump = "["+idTransazione+"]["+tipoMessaggio+"]";
+		if(servizioApplicativoErogatore!=null) {
+			identificativoDump=identificativoDump+"["+servizioApplicativoErogatore+"]";
+		}
+		if(dataConsegnaErogatore!=null) {
+			identificativoDump=identificativoDump+"["+DateUtils.getSimpleDateFormatMs().format(dataConsegnaErogatore)+"]";
+		}
+		
 		if(this.debug){
-			this.log.debug("@@ log["+idTransazione+"]["+tipoMessaggio+"] ....");
+			this.log.debug("@@ log"+identificativoDump+" ....");
 		}
 		
 		Connection con = null;
@@ -133,7 +144,7 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			con = cr.getConnection();
 
 			if(this.debug){
-				this.log.debug("@@ log["+idTransazione+"]["+tipoMessaggio+"] (getConnection finished) ....");
+				this.log.debug("@@ log"+identificativoDump+" (getConnection finished) ....");
 			}
 			
 			ServiceManagerProperties smProperties = new ServiceManagerProperties();
@@ -152,6 +163,8 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			DumpMessaggio dumpMessaggio = new DumpMessaggio();
 			dumpMessaggio.setProtocollo(protocollo);
 			dumpMessaggio.setIdTransazione(idTransazione);
+			dumpMessaggio.setServizioApplicativoErogatore(servizioApplicativoErogatore);
+			dumpMessaggio.setDataConsegnaErogatore(dataConsegnaErogatore);
 			dumpMessaggio.setTipoMessaggio(tipoMessaggio);
 						
 			if(this.debug){
@@ -397,13 +410,13 @@ public class DumpProducer extends BasicProducer implements IDumpProducer{
 			}
 			
 			if(this.debug){
-				this.log.debug("@@ log["+idTransazione+"]["+tipoMessaggio+"] registrazione in corso ...");
+				this.log.debug("@@ log"+identificativoDump+" registrazione in corso ...");
 			}
 			
 			dumpMessageService.create(dumpMessaggio);
 			
 			if(this.debug){
-				this.log.debug("@@ log["+idTransazione+"]["+tipoMessaggio+"] registrazione completata");
+				this.log.debug("@@ log"+identificativoDump+" registrazione completata");
 			}
 
 		}catch(Exception e){

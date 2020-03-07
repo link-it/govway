@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="openspcoop2">
- * 		&lt;sequence>
- * 			&lt;element name="stato-pdd" type="{http://www.openspcoop2.org/pdd/monitor}stato-pdd" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="messaggio" type="{http://www.openspcoop2.org/pdd/monitor}messaggio" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="openspcoop2"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="stato-pdd" type="{http://www.openspcoop2.org/pdd/monitor}stato-pdd" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="messaggio" type="{http://www.openspcoop2.org/pdd/monitor}messaggio" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

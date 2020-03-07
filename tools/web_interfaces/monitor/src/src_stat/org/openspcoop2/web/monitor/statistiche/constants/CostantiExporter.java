@@ -168,17 +168,26 @@ public class CostantiExporter {
 	public final static String RICERCA_USCITA  = "uscita";
 		
 	public final static String ESITO_GRUPPO  = "esitoGruppo";
-	public final static String ESITO_GRUPPO_ERROR  = "ko";
 	public final static String ESITO_GRUPPO_OK  = "ok";
-	public final static String ESITO_GRUPPO_FAULT_APPLICATIVO  = "faultApplicativo";
-	public final static String ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO  = "ko_faultApplicativo";
+	public final static String ESITO_GRUPPO_FAULT_APPLICATIVO  = "fault";
+	public final static String ESITO_GRUPPO_FALLITE  = "fallite";
+	public final static String ESITO_GRUPPO_FALLITE_E_FAULT_APPLICATIVO  = "fallite_e_fault";
+	public final static String ESITO_GRUPPO_ERRORI_CONSEGNA  = "errori_consegna";
+	public final static String ESITO_GRUPPO_RICHIESTE_SCARTATE  = "richieste_scartate";
+
 	public static final List<String> ESITI_GRUPPO = new ArrayList<String> ();
 	static{
-		ESITI_GRUPPO.add(ESITO_GRUPPO_ERROR);
 		ESITI_GRUPPO.add(ESITO_GRUPPO_OK);
 		ESITI_GRUPPO.add(ESITO_GRUPPO_FAULT_APPLICATIVO);
-		ESITI_GRUPPO.add(ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO);
+		ESITI_GRUPPO.add(ESITO_GRUPPO_FALLITE);
+		ESITI_GRUPPO.add(ESITO_GRUPPO_FALLITE_E_FAULT_APPLICATIVO);
+		ESITI_GRUPPO.add(ESITO_GRUPPO_ERRORI_CONSEGNA);
+		ESITI_GRUPPO.add(ESITO_GRUPPO_RICHIESTE_SCARTATE);
 	}
+	
+	public final static String ESCLUDI_RICHIESTE_SCARTATE  = "escludiRichiesteScartate";
+	public final static String ESCLUDI_RICHIESTE_SCARTATE_TRUE  = "true";
+	public final static String ESCLUDI_RICHIESTE_SCARTATE_FALSE  = "false";
 	
 	public final static String ESITO  = "esito";
 	

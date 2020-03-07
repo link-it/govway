@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ScontoMaggiorazioneType">
- * 		&lt;sequence>
- * 			&lt;element name="Tipo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoScontoMaggiorazioneType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="Percentuale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="Importo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ScontoMaggiorazioneType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Tipo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}TipoScontoMaggiorazioneType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="Percentuale" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="Importo" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.0}decimal" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

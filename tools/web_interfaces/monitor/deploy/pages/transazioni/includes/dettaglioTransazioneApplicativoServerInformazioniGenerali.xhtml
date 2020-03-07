@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+    <a4j:outputPanel layout="block" id="informazioniGenerali">
+    
+ 		<h:panelGrid id="panelDettaglioPrincipale" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+ 		
+ 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
+ 			<h:panelGroup layout="block"  class="subtitle-nopaddingleft-nomarginleft">
+				<h:outputText value="Informazioni Generali" styleClass="subtitle-nopaddingleft-nomarginleft"/>
+			</h:panelGroup>
+ 		
+ 			<h:panelGroup id="iconaStato-IG" layout="block" styleClass="outputFieldLabel" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}">
+				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
+ 				<h:outputLabel value="Stato" styleClass="outputFieldLabel v-align-middle"  />
+			</h:panelGroup>
+ 			<h:outputText id="iconaStatoValue-IG" 
+ 				value="#{dettagliTransazioneApplicativoServerBean.dettaglio.tooltipIconaColonnaSX}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}" />
+ 		
+			<h:outputLabel styleClass="outputFieldLabel" value="Nome Connettore" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.connettoreNome}" />
+ 		
+ 			<h:outputLabel value="Data in Coda" styleClass="outputFieldLabel icon-date" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataRegistrazione}">
+				<f:convertDateTime pattern="yyyy-MM-dd HH:mm:ss.SSS z" timeZone="Europe/Rome"/>
+			</h:outputText>
+			
+			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Scaduto in data" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataMessaggioScaduto}">
+				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
+			</h:outputText>
+									
+			<h:outputLabel styleClass="outputFieldLabel" value="Identificativo Messaggio" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.identificativoMessaggio}" />
+					
+		</h:panelGrid>
+    
+    </a4j:outputPanel>
+ 
+</ui:composition>

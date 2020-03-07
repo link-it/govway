@@ -43,6 +43,9 @@
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 			<jvmarg value="${testngXmx}" />
+			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
+						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
+			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 		</testng>
 		<if>
 			<not>
@@ -91,6 +94,9 @@
 			<classfileset dir="${build_testunits}/NG_UNITS" includes="**/*.class"/>
 			<jvmarg value="-Dtestng.show.stack.frames=${testngShowStackFrames}" />
 			<jvmarg value="${testngXmx}" />
+			<!-- Per non far comparire il WARNING ad ogni invocazione ma solo la prima volta: Illegal reflective access by org.openspcoop2.utils.transport.http.HttpUtilities 
+						(file:...openspcoop2_utils.jar) to field java.net.HttpURLConnection.method -->
+			<jvmarg value="-Djdk.module.illegalAccess=permit"/>
 		</testng>
 		<if>
 			<not>

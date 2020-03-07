@@ -48,15 +48,28 @@ public class JsonDeserializer extends AbstractDeserializer {
 	
 	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
 		ObjectNode problemNode = (ObjectNode) this.jsonUtils.getAsNode(problemString);
-		return this.fromNode(problemNode);
+		ProblemRFC7807 p = new ProblemRFC7807();
+		p.setRaw(problemString);
+		return this._fromNode(p, problemNode);
 	}
 	public ProblemRFC7807 fromByteArray(byte[] problemByteArray) throws UtilsException {
 		ObjectNode problemNode = (ObjectNode) this.jsonUtils.getAsNode(problemByteArray);
-		return this.fromNode(problemNode);
+		ProblemRFC7807 p = new ProblemRFC7807();
+		p.setRaw(new String(problemByteArray));
+		return this._fromNode(p, problemNode);
 	}
 	public ProblemRFC7807 fromNode(ObjectNode problemNode) throws UtilsException {
+		return this._fromNode(null, problemNode);
+	}
+	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, ObjectNode problemNode) throws UtilsException {
 		
-		ProblemRFC7807 problem = new ProblemRFC7807();
+		ProblemRFC7807 problem = null;
+		if(problemParam!=null) {
+			problem = problemParam;
+		}
+		else {
+			problem = new ProblemRFC7807();
+		}
 		
 		Iterator<String> it = problemNode.fieldNames();
 		while (it.hasNext()) {
@@ -66,6 +79,10 @@ public class JsonDeserializer extends AbstractDeserializer {
 			super.set(problem, name, value);
 		}
 
+		if(problem.getRaw()==null) {
+			problem.setRaw(this.jsonUtils.toString(problemNode));
+		}
+		
 		return problem;
 	}
 	

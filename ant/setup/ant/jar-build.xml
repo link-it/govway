@@ -61,6 +61,26 @@
 					<else>
 						<echo message="FILE [@{fileName}]->[${fileNameWithoutTXT}]"/>
 						<copy file="${jarsDir}/${fileNameWithoutTXT}" todir="${archiveFileJarLocation}"/>
+
+						<if>
+							<or>
+								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-impl-2.3.2.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-core-2.3.0.1.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="jaxb-xjc-2.3.2.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="xalan-2.7.2.jar" />
+								<equals arg1="${fileNameWithoutTXT}" arg2="serializer-2.7.2.jar" />
+								<!-- NOTA: i files aggiunti in questo if devono essere gestiti nel task '-correctManifest' del file distrib-build.xml -->
+							</or>
+							<then>
+								<antcall target="deleteManifestClasspath">
+									<param name="__ripri__fileNameWithoutTXT" value="${fileNameWithoutTXT}"/>
+									<param name="__ripri__fileName" value="@{fileName}"/>
+									<param name="jarsDir" value="${jarsDir}"/>
+									<param name="archiveFileJarLocation" value="${archiveFileJarLocation}"/>
+								</antcall>
+							</then>
+						</if>
+
 					</else>
 				</if>
 			</sequential>
@@ -74,6 +94,26 @@
 			global="true" />
 		<echo message="FILE [${__ripri__fileName}]->[${__ripri__fileNameWithoutTXT_releaseVersion}]"/>
 		<copy file="${jarsDir}/${__ripri__fileNameWithoutTXT}" tofile="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT_releaseVersion}"/>
+	</target>
+	<target name="deleteManifestClasspath">
+		<!-- Eiminazione CLASSPATH in MANIFEST che causa errori: does not point to a valid jar for a Class-Path reference. -->
+		<unzip src="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}" 
+			dest="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY"/>
+		<replace file="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY/META-INF/MANIFEST.MF" 
+			token="Class-Path:" value="GovWaySetupClass-Path:"/>
+		<copy file="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY/META-INF/MANIFEST.MF" 
+			todir="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY"/>
+		<delete file="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}"/>	
+		<propertyregex property="__ripri__fileNameWithoutTXT_govway" 
+			override="true"
+			input="${__ripri__fileNameWithoutTXT}"
+			regexp="(.*).jar"
+			select="\1.gw.jar"/>	
+		<jar destfile="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT_govway}" 
+			basedir="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY" 
+			filesetmanifest="merge" excludes="MANIFEST.MF"/>
+		<delete dir="${archiveFileJarLocation}/${__ripri__fileNameWithoutTXT}_DIRECTORY"/>	
+			
 	</target>
 	
 	<!--

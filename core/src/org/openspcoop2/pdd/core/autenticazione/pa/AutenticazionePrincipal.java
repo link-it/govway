@@ -41,7 +41,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 /**
  * Classe che implementa una autenticazione BASIC.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */
@@ -65,6 +65,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 			switch (this.tipoAutenticazionePrincipal) {
 			case CONTAINER:
 			case INDIRIZZO_IP:
+			case INDIRIZZO_IP_X_FORWARDED_FOR:
 				break;
 			case HEADER:
 				this.nome = authPrincipal.getNome();
@@ -120,6 +121,7 @@ public class AutenticazionePrincipal extends AbstractAutenticazioneBase {
 		case FORM:
 		case URL:
 		case INDIRIZZO_IP:
+		case INDIRIZZO_IP_X_FORWARDED_FOR:
 		case TOKEN:
 			if(datiInvocazione==null) {
 				return null;

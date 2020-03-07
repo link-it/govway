@@ -31,7 +31,7 @@ import org.openspcoop2.utils.xacml.XacmlRequest;
 /**
  * Interfaccia che definisce un processo di autorizzazione tramite container
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -831,6 +831,7 @@ public class ReportExporter extends HttpServlet{
 
 		statSearchForm.setEsitoGruppo(EsitoUtils.ALL_VALUE);
 		statSearchForm.setEsitoDettaglio(EsitoUtils.ALL_VALUE);
+		statSearchForm.setEscludiRichiesteScartate(true);
 		
 		String esitoGruppo = req.getParameter(CostantiExporter.ESITO_GRUPPO);
 		if(esitoGruppo!=null){
@@ -842,15 +843,31 @@ public class ReportExporter extends HttpServlet{
 			if(CostantiExporter.ESITO_GRUPPO_OK.equals(esitoGruppo)){
 				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
 			}
-			else if(CostantiExporter.ESITO_GRUPPO_ERROR.equals(esitoGruppo)){
-				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
-			}
 			else if(CostantiExporter.ESITO_GRUPPO_FAULT_APPLICATIVO.equals(esitoGruppo)){
 				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
 			}
-			else if(CostantiExporter.ESITO_GRUPPO_ERROR_FAULT_APPLICATIVO.equals(esitoGruppo)){
+			else if(CostantiExporter.ESITO_GRUPPO_FALLITE.equals(esitoGruppo)){
+				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
+			}
+			else if(CostantiExporter.ESITO_GRUPPO_FALLITE_E_FAULT_APPLICATIVO.equals(esitoGruppo)){
 				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
 			}
+			else if(CostantiExporter.ESITO_GRUPPO_ERRORI_CONSEGNA.equals(esitoGruppo)){
+				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE);
+			}
+			else if(CostantiExporter.ESITO_GRUPPO_RICHIESTE_SCARTATE.equals(esitoGruppo)){
+				statSearchForm.setEsitoGruppo(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE);
+			}
+		}
+		
+		String escludiRichiesteScartate = req.getParameter(CostantiExporter.ESCLUDI_RICHIESTE_SCARTATE);
+		if(escludiRichiesteScartate!=null){
+			escludiRichiesteScartate = escludiRichiesteScartate.trim();
+			if(!"false".equals(escludiRichiesteScartate) && !"true".equals(escludiRichiesteScartate)) {
+				throw new ParameterUncorrectException("Parametro '"+CostantiExporter.ESCLUDI_RICHIESTE_SCARTATE+"' fornito possiede un valore '"+escludiRichiesteScartate
+						+"' non valido. Atteso true/false");
+			}
+			statSearchForm.setEscludiRichiesteScartate(Boolean.valueOf(escludiRichiesteScartate));
 		}
 			
 		String esito = req.getParameter(CostantiExporter.ESITO);

@@ -25,12 +25,12 @@ package org.openspcoop2.core.tracciamento.ws.server.filter.beans;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="profilo-collaborazione">
- *     &lt;sequence>
- *         &lt;element name="base" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" />
- *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoProfiloCollaborazione" minOccurs="0" maxOccurs="1" />
- *     &lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="profilo-collaborazione"&gt;
+ *     &lt;sequence&gt;
+ *         &lt;element name="base" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1" /&gt;
+ *         &lt;element name="tipo" type="{http://www.openspcoop2.org/core/tracciamento}TipoProfiloCollaborazione" minOccurs="0" maxOccurs="1" /&gt;
+ *     &lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * 

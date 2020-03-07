@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasmissioni">
- * 		&lt;sequence>
- * 			&lt;element name="trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}trasmissione" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="trasmissioni"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="trasmissione" type="{http://www.openspcoop2.org/core/tracciamento}trasmissione" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method getTrasmissioneList
-   * @return List<Trasmissione>
+   * @return List&lt;Trasmissione&gt;
   */
   @Deprecated
   public List<Trasmissione> getTrasmissione() {
@@ -120,7 +120,7 @@ public class Trasmissioni extends org.openspcoop2.utils.beans.BaseBean implement
 
   /**
    * @deprecated Use method setTrasmissioneList
-   * @param trasmissione List<Trasmissione>
+   * @param trasmissione List&lt;Trasmissione&gt;
   */
   @Deprecated
   public void setTrasmissione(List<Trasmissione> trasmissione) {

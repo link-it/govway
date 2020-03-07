@@ -37,15 +37,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="gestione-errore">
- * 		&lt;sequence>
- * 			&lt;element name="codice-trasporto" type="{http://www.openspcoop2.org/core/config}gestione-errore-codice-trasporto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="soap-fault" type="{http://www.openspcoop2.org/core/config}gestione-errore-soap-fault" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * 		&lt;attribute name="comportamento" type="{http://www.openspcoop2.org/core/config}GestioneErroreComportamento" use="required"/>
- * 		&lt;attribute name="cadenza-rispedizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="gestione-errore"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="codice-trasporto" type="{http://www.openspcoop2.org/core/config}gestione-errore-codice-trasporto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="soap-fault" type="{http://www.openspcoop2.org/core/config}gestione-errore-soap-fault" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="nome" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * 		&lt;attribute name="comportamento" type="{http://www.openspcoop2.org/core/config}GestioneErroreComportamento" use="required"/&gt;
+ * 		&lt;attribute name="cadenza-rispedizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -178,7 +178,7 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getCodiceTrasportoList
-   * @return List<GestioneErroreCodiceTrasporto>
+   * @return List&lt;GestioneErroreCodiceTrasporto&gt;
   */
   @Deprecated
   public List<GestioneErroreCodiceTrasporto> getCodiceTrasporto() {
@@ -187,7 +187,7 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setCodiceTrasportoList
-   * @param codiceTrasporto List<GestioneErroreCodiceTrasporto>
+   * @param codiceTrasporto List&lt;GestioneErroreCodiceTrasporto&gt;
   */
   @Deprecated
   public void setCodiceTrasporto(List<GestioneErroreCodiceTrasporto> codiceTrasporto) {
@@ -208,7 +208,7 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method getSoapFaultList
-   * @return List<GestioneErroreSoapFault>
+   * @return List&lt;GestioneErroreSoapFault&gt;
   */
   @Deprecated
   public List<GestioneErroreSoapFault> getSoapFault() {
@@ -217,7 +217,7 @@ public class GestioneErrore extends org.openspcoop2.utils.beans.BaseBean impleme
 
   /**
    * @deprecated Use method setSoapFaultList
-   * @param soapFault List<GestioneErroreSoapFault>
+   * @param soapFault List&lt;GestioneErroreSoapFault&gt;
   */
   @Deprecated
   public void setSoapFault(List<GestioneErroreSoapFault> soapFault) {

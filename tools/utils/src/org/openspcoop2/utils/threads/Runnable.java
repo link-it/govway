@@ -56,14 +56,40 @@ public class Runnable extends Thread{
 	private int checkIntervalMs = -1; // ogni X ms reinvoco l'instance
 	private IRunnableInstance instance;
 	
+	private boolean initialized = false; 
+	
 	/** Costruttore */
 	public Runnable(RunnableLogger runnableLogger, IRunnableInstance instance,int checkIntervalMs) throws UtilsException{
+		
+		this.initialized = true;
 		
 		this.log = runnableLogger;
 		this.instance = instance;
 		this.checkIntervalMs = checkIntervalMs;
 		
+		this.instance.initialize(runnableLogger);
+		
 		this.log.info("Avviato");
+	}
+	
+	public Runnable(IRunnableInstance instance,int checkIntervalMs) throws UtilsException{
+		
+		this.instance = instance;
+		this.checkIntervalMs = checkIntervalMs;
+		
+	}
+	public void initialize(RunnableLogger runnableLogger)  throws UtilsException{
+				
+		this.initialized = true;
+		
+		this.log = runnableLogger;
+		
+		this.instance.initialize(runnableLogger);
+		
+		this.log.info("Avviato");
+	}
+	public String getIdentifier() {
+		return this.instance.getIdentifier();
 	}
 	
 	/**
@@ -72,6 +98,10 @@ public class Runnable extends Thread{
 	 */
 	@Override
 	public void run(){
+		
+		if(this.initialized==false) {
+			return; // non inizializzato correttamente
+		}
 		
 		while(this.stop == false){
 			
@@ -82,6 +112,10 @@ public class Runnable extends Thread{
 			}finally{
 			}
 			
+			if(this.instance.isContinuousRunning()==false) {
+				// dopo una invocazione del metodo 'check' il thread termina
+				this.stop = true;
+			}
 					
 			// CheckInterval
 			if(this.stop==false){

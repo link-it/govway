@@ -35,13 +35,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="FatturaElettronicaType">
- * 		&lt;sequence>
- * 			&lt;element name="FatturaElettronicaHeader" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FatturaElettronicaHeaderType" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="FatturaElettronicaBody" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FatturaElettronicaBodyType" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="versione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="FatturaElettronicaType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="FatturaElettronicaHeader" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FatturaElettronicaHeaderType" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="FatturaElettronicaBody" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}FatturaElettronicaBodyType" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="versione" type="{http://www.fatturapa.gov.it/sdi/fatturapa/v1.1}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -128,7 +128,7 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method getFatturaElettronicaBodyList
-   * @return List<FatturaElettronicaBodyType>
+   * @return List&lt;FatturaElettronicaBodyType&gt;
   */
   @Deprecated
   public List<FatturaElettronicaBodyType> getFatturaElettronicaBody() {
@@ -137,7 +137,7 @@ public class FatturaElettronicaType extends org.openspcoop2.utils.beans.BaseBean
 
   /**
    * @deprecated Use method setFatturaElettronicaBodyList
-   * @param fatturaElettronicaBody List<FatturaElettronicaBodyType>
+   * @param fatturaElettronicaBody List&lt;FatturaElettronicaBodyType&gt;
   */
   @Deprecated
   public void setFatturaElettronicaBody(List<FatturaElettronicaBodyType> fatturaElettronicaBody) {

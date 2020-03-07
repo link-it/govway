@@ -37,14 +37,14 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="messaggi-diagnostici">
- * 		&lt;sequence>
- * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="severita" type="{http://www.openspcoop2.org/core/config}Severita" use="optional" default="infoIntegration"/>
- * 		&lt;attribute name="severita-log4j" type="{http://www.openspcoop2.org/core/config}Severita" use="optional" default="infoIntegration"/>
- * &lt;/complexType>
+ * &lt;complexType name="messaggi-diagnostici"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="openspcoop-appender" type="{http://www.openspcoop2.org/core/config}openspcoop-appender" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="openspcoop-sorgente-dati" type="{http://www.openspcoop2.org/core/config}openspcoop-sorgente-dati" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="severita" type="{http://www.openspcoop2.org/core/config}Severita" use="optional" default="infoIntegration"/&gt;
+ * 		&lt;attribute name="severita-log4j" type="{http://www.openspcoop2.org/core/config}Severita" use="optional" default="infoIntegration"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -181,7 +181,7 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getOpenspcoopAppenderList
-   * @return List<OpenspcoopAppender>
+   * @return List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public List<OpenspcoopAppender> getOpenspcoopAppender() {
@@ -190,7 +190,7 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setOpenspcoopAppenderList
-   * @param openspcoopAppender List<OpenspcoopAppender>
+   * @param openspcoopAppender List&lt;OpenspcoopAppender&gt;
   */
   @Deprecated
   public void setOpenspcoopAppender(List<OpenspcoopAppender> openspcoopAppender) {
@@ -211,7 +211,7 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method getOpenspcoopSorgenteDatiList
-   * @return List<OpenspcoopSorgenteDati>
+   * @return List&lt;OpenspcoopSorgenteDati&gt;
   */
   @Deprecated
   public List<OpenspcoopSorgenteDati> getOpenspcoopSorgenteDati() {
@@ -220,7 +220,7 @@ public class MessaggiDiagnostici extends org.openspcoop2.utils.beans.BaseBean im
 
   /**
    * @deprecated Use method setOpenspcoopSorgenteDatiList
-   * @param openspcoopSorgenteDati List<OpenspcoopSorgenteDati>
+   * @param openspcoopSorgenteDati List&lt;OpenspcoopSorgenteDati&gt;
   */
   @Deprecated
   public void setOpenspcoopSorgenteDati(List<OpenspcoopSorgenteDati> openspcoopSorgenteDati) {

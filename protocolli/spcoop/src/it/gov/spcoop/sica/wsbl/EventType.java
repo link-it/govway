@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="eventType">
- * 		&lt;sequence>
- * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}eventTypeMessage" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="eventType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="message" type="{http://spcoop.gov.it/sica/wsbl}eventTypeMessage" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://spcoop.gov.it/sica/wsbl}string" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

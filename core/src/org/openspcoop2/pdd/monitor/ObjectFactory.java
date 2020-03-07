@@ -52,34 +52,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Proprieta }
-     */
-    public Proprieta createProprieta() {
-        return new Proprieta();
-    }
-
-    /**
-     * Create an instance of {@link Busta }
-     */
-    public Busta createBusta() {
-        return new Busta();
-    }
-
-    /**
-     * Create an instance of {@link BustaServizio }
-     */
-    public BustaServizio createBustaServizio() {
-        return new BustaServizio();
-    }
-
-    /**
-     * Create an instance of {@link BustaSoggetto }
-     */
-    public BustaSoggetto createBustaSoggetto() {
-        return new BustaSoggetto();
-    }
-
-    /**
      * Create an instance of {@link ServizioApplicativoConsegna }
      */
     public ServizioApplicativoConsegna createServizioApplicativoConsegna() {
@@ -91,6 +63,34 @@ public class ObjectFactory {
      */
     public StatoPdd createStatoPdd() {
         return new StatoPdd();
+    }
+
+    /**
+     * Create an instance of {@link Openspcoop2 }
+     */
+    public Openspcoop2 createOpenspcoop2() {
+        return new Openspcoop2();
+    }
+
+    /**
+     * Create an instance of {@link BustaServizio }
+     */
+    public BustaServizio createBustaServizio() {
+        return new BustaServizio();
+    }
+
+    /**
+     * Create an instance of {@link Proprieta }
+     */
+    public Proprieta createProprieta() {
+        return new Proprieta();
+    }
+
+    /**
+     * Create an instance of {@link Busta }
+     */
+    public Busta createBusta() {
+        return new Busta();
     }
 
     /**
@@ -108,17 +108,17 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link BustaSoggetto }
+     */
+    public BustaSoggetto createBustaSoggetto() {
+        return new BustaSoggetto();
+    }
+
+    /**
      * Create an instance of {@link Dettaglio }
      */
     public Dettaglio createDettaglio() {
         return new Dettaglio();
-    }
-
-    /**
-     * Create an instance of {@link Openspcoop2 }
-     */
-    public Openspcoop2 createOpenspcoop2() {
-        return new Openspcoop2();
     }
 
 

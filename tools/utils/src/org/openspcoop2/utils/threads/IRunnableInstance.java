@@ -31,6 +31,16 @@ import org.openspcoop2.utils.UtilsException;
  */
 public interface IRunnableInstance {
 
+	default public String getIdentifier() {
+		return null;
+	}
+	
+	default public void initialize(RunnableLogger log) throws UtilsException{}
+	
+	default public boolean isContinuousRunning() {
+		return true;
+	}
+	
 	public void check() throws UtilsException;
 	
 }

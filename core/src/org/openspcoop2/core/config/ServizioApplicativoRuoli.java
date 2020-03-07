@@ -35,11 +35,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="servizio-applicativo-ruoli">
- * 		&lt;sequence>
- * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/config}ruolo" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="servizio-applicativo-ruoli"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="ruolo" type="{http://www.openspcoop2.org/core/config}ruolo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -111,7 +111,7 @@ public class ServizioApplicativoRuoli extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method getRuoloList
-   * @return List<Ruolo>
+   * @return List&lt;Ruolo&gt;
   */
   @Deprecated
   public List<Ruolo> getRuolo() {
@@ -120,7 +120,7 @@ public class ServizioApplicativoRuoli extends org.openspcoop2.utils.beans.BaseBe
 
   /**
    * @deprecated Use method setRuoloList
-   * @param ruolo List<Ruolo>
+   * @param ruolo List&lt;Ruolo&gt;
   */
   @Deprecated
   public void setRuolo(List<Ruolo> ruolo) {

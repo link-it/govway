@@ -30,7 +30,7 @@ import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 /**
  * Esempio di AutorizzazioneContenutoBusteOK
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

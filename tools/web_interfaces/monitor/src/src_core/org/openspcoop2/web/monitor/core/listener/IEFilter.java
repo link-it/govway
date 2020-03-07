@@ -39,7 +39,7 @@ import org.openspcoop2.web.monitor.core.utils.BrowserInfo.BrowserFamily;
 import org.openspcoop2.web.monitor.core.utils.Costanti;
 
 /****
- * IEFilter Filtro JSF che fissa la visualizzazione dell'applicazione in modalita IE-8 Compatibile, per i browser con versione >=8
+ * IEFilter Filtro JSF che fissa la visualizzazione dell'applicazione in modalita IE-8 Compatibile, per i browser con versione &gt;=8
  * 
  * @author Pintori Giuliano (pintori@link.it)
  * @author $Author$

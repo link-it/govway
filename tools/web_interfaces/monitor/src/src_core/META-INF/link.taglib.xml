@@ -8,6 +8,10 @@
 		<source>taglib/PagedDataTable.xhtml</source>
 	</tag>
 	<tag>
+		<tag-name>dataTableCheckboxOnRight</tag-name>
+		<source>taglib/PagedDataTableCheckboxOnRight.xhtml</source>
+	</tag>
+	<tag>
 		<tag-name>extendedDataTable</tag-name>
 		<source>taglib/ExtendedPagedDataTable.xhtml</source>
 	</tag>

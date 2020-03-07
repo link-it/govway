@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="profiloCollaborazioneEGOV">
- * 		&lt;sequence>
- * 			&lt;element name="versioneEGOV" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="riferimentoDefinizioneInterfaccia" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="listaCollaborazioni" type="{http://spcoop.gov.it/sica/wscp}operationListType" minOccurs="1" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="profiloCollaborazioneEGOV"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="versioneEGOV" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="riferimentoDefinizioneInterfaccia" type="{http://www.w3.org/2001/XMLSchema}anyURI" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="listaCollaborazioni" type="{http://spcoop.gov.it/sica/wscp}operationListType" minOccurs="1" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

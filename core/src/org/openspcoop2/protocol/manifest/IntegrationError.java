@@ -33,10 +33,10 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationError">
- * 		&lt;attribute name="httpReturnCode" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/>
- * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorMessageType" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationError"&gt;
+ * 		&lt;attribute name="httpReturnCode" type="{http://www.w3.org/2001/XMLSchema}int" use="required"/&gt;
+ * 		&lt;attribute name="messageType" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationErrorMessageType" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

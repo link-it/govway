@@ -335,6 +335,21 @@ public class DynamicPdDBeanUtils implements Serializable {
 		return gruppi;
 	}
 	
+	public List<String> getListaNomiGruppi(){
+		List<String> gruppi = new ArrayList<String>();
+
+		try{
+			List<IDGruppo>  lista = this.dynamicUtilsService.getGruppi();
+			if(lista!=null && !lista.isEmpty()) {
+				for (IDGruppo id : lista) {
+					gruppi.add(id.getNome());
+				}
+			}
+		}catch(Exception e){}
+
+		return gruppi;
+	}
+	
 	public boolean existsGruppi() {
 		return this.dynamicUtilsService.countGruppi()>0;
 	}

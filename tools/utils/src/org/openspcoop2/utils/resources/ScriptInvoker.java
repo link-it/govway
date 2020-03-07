@@ -29,7 +29,7 @@ import org.openspcoop2.utils.UtilsException;
 /**
 * ScriptInvoker
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
 * @author $Author$
 * @version $Rev$, $Date$
 */

@@ -37,17 +37,17 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Context">
- * 		&lt;sequence>
- * 			&lt;element name="subContext" type="{http://www.openspcoop2.org/protocol/manifest}SubContextMapping" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="emptySubContext" type="{http://www.openspcoop2.org/protocol/manifest}EmptySubContextMapping" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="soapMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="restMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeCollection" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="emptyFunction" type="{http://www.openspcoop2.org/protocol/manifest}FunctionType" use="optional"/>
- * 		&lt;attribute name="binding" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Context"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="subContext" type="{http://www.openspcoop2.org/protocol/manifest}SubContextMapping" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="emptySubContext" type="{http://www.openspcoop2.org/protocol/manifest}EmptySubContextMapping" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soapMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}SoapMediaTypeCollection" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="restMediaTypeCollection" type="{http://www.openspcoop2.org/protocol/manifest}RestMediaTypeCollection" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="emptyFunction" type="{http://www.openspcoop2.org/protocol/manifest}FunctionType" use="optional"/&gt;
+ * 		&lt;attribute name="binding" type="{http://www.openspcoop2.org/protocol/manifest}ServiceBinding" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -177,7 +177,7 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getSubContextList
-   * @return List<SubContextMapping>
+   * @return List&lt;SubContextMapping&gt;
   */
   @Deprecated
   public List<SubContextMapping> getSubContext() {
@@ -186,7 +186,7 @@ public class Context extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setSubContextList
-   * @param subContext List<SubContextMapping>
+   * @param subContext List&lt;SubContextMapping&gt;
   */
   @Deprecated
   public void setSubContext(List<SubContextMapping> subContext) {

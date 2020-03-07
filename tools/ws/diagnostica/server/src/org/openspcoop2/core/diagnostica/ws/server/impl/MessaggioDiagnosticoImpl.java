@@ -144,6 +144,10 @@ public abstract class MessaggioDiagnosticoImpl extends BaseImpl  implements Mess
 			filterSearch.setProtocollo(filter.getProtocollo().getIdentificativo());
 		}
 		
+		if(filter.getApplicativo()!=null) {
+			filterSearch.setApplicativo(filter.getApplicativo());
+		}
+		
 		return filterSearch;
 	}
 

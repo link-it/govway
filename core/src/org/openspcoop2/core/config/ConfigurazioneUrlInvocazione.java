@@ -36,13 +36,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="configurazione-url-invocazione">
- * 		&lt;sequence>
- * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione-regola" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="base-url" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="base-url-fruizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="configurazione-url-invocazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="regola" type="{http://www.openspcoop2.org/core/config}configurazione-url-invocazione-regola" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="base-url" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="base-url-fruizione" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -130,7 +130,7 @@ public class ConfigurazioneUrlInvocazione extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getRegolaList
-   * @return List<ConfigurazioneUrlInvocazioneRegola>
+   * @return List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
   */
   @Deprecated
   public List<ConfigurazioneUrlInvocazioneRegola> getRegola() {
@@ -139,7 +139,7 @@ public class ConfigurazioneUrlInvocazione extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setRegolaList
-   * @param regola List<ConfigurazioneUrlInvocazioneRegola>
+   * @param regola List&lt;ConfigurazioneUrlInvocazioneRegola&gt;
   */
   @Deprecated
   public void setRegola(List<ConfigurazioneUrlInvocazioneRegola> regola) {

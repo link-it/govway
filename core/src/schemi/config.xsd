@@ -159,6 +159,7 @@
 			<xsd:element name="gestione-cors" type="cors-configurazione" minOccurs="0"/>
 			<xsd:element name="response-caching" type="response-caching-configurazione" minOccurs="0"/>
 			<xsd:element name="trasformazioni" type="trasformazioni" minOccurs="0"/>
+			<xsd:element name="behaviour" type="porta-applicativa-behaviour" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
@@ -175,6 +176,7 @@
 		<xsd:attribute name="autorizzazione" type="xsd:string" default="authenticated"/>
 		<xsd:attribute name="autorizzazione-contenuto" type="xsd:string"/>
 		<xsd:attribute name="ricerca-porta-azione-delegata" type="StatoFunzionalita" default="disabilitato"/>
+		<xsd:attribute name="servizio-applicativo-default" type="xsd:string" use="optional"/>
 		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato" />
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 		<xsd:attribute name="options" type="xsd:string" use="optional"/> <!-- altri parametri generici -->
@@ -203,7 +205,20 @@
 	</xsd:complexType>
 	<!-- PortaApplicativa.ServizioApplicativo -->
 	<xsd:complexType name="porta-applicativa-servizio-applicativo">
+		<xsd:sequence>
+			<xsd:element name="dati-connettore" type="porta-applicativa-servizio-applicativo-connettore" minOccurs="0" maxOccurs="1"/>
+		</xsd:sequence>
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>		
+	</xsd:complexType>
+	<xsd:complexType name="porta-applicativa-servizio-applicativo-connettore">
+		<xsd:sequence>
+			<xsd:element name="filtro" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>		
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="descrizione" type="xsd:string" use="optional"/>
+		<xsd:attribute name="notifica" type="xsd:boolean" use="optional"/>
+		<xsd:attribute name="stato" type="StatoFunzionalita" default="abilitato"/>
 	</xsd:complexType>
 	<!-- PortaApplicativa Autorizzazione per Soggetti -->
 	<xsd:complexType name="porta-applicativa-autorizzazione-soggetti">
@@ -226,6 +241,13 @@
 		<xsd:attribute name="nome-soggetto-proprietario" type="xsd:string" use="required"/>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
 	</xsd:complexType>
+	<!-- PortaApplicativa Behaviour -->
+	<xsd:complexType name="porta-applicativa-behaviour">
+		<xsd:sequence>
+			<xsd:element name="proprieta" type="proprieta" maxOccurs="unbounded" minOccurs="0"/>
+		</xsd:sequence>		
+		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+	</xsd:complexType>
 
 
 	<!-- ** ServizioApplicativo ** -->
@@ -239,6 +261,8 @@
 			<xsd:element name="protocol-property" type="protocol-property" maxOccurs="unbounded" minOccurs="0"/>
 		</xsd:sequence>
 		<xsd:attribute name="nome" type="xsd:string" use="required"/>
+		<xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+		<xsd:attribute name="use-as-client" type="xsd:boolean" use="optional" default="false"/>
 		<xsd:attribute name="descrizione" type="xsd:string"/>
 		<xsd:attribute name="ora-registrazione" type="xsd:dateTime"/>
 	</xsd:complexType>
@@ -617,6 +641,7 @@
 			<xsd:element name="accesso-dati-autenticazione" type="accesso-dati-autenticazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-gestione-token" type="accesso-dati-gestione-token" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="accesso-dati-keystore" type="accesso-dati-keystore" maxOccurs="1" minOccurs="0" />
+			<xsd:element name="accesso-dati-consegna-applicativi" type="accesso-dati-consegna-applicativi" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="multitenant" type="configurazione-multitenant" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="url-invocazione" type="configurazione-url-invocazione" maxOccurs="1" minOccurs="0" />
 			<xsd:element name="validazione-buste" type="validazione-buste" maxOccurs="1" minOccurs="0" />
@@ -728,6 +753,13 @@
 		<xsd:sequence>
 			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 			<xsd:element name="crl-item-life-second" type="xsd:string" maxOccurs="1" minOccurs="0"/>
+		</xsd:sequence>
+	</xsd:complexType>
+	
+	<!-- Informazioni per la consegna agli applicativi -->
+	<xsd:complexType name="accesso-dati-consegna-applicativi">
+		<xsd:sequence>
+			<xsd:element name="cache" type="cache" maxOccurs="1" minOccurs="0"/>
 		</xsd:sequence>
 	</xsd:complexType>
 

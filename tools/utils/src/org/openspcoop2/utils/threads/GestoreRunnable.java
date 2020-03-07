@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
@@ -64,6 +65,22 @@ public class GestoreRunnable extends Thread{
 
 	public void setStop(boolean stop) {
 		this.stop = stop;
+	}
+	
+	public String getThreadsImage() {
+		if(this.threadsPool instanceof ThreadPoolExecutor) {
+			ThreadPoolExecutor tpe = (ThreadPoolExecutor) this.threadsPool;
+			return
+	                String.format("[monitor] [%d/%d] Active: %d, Completed: %d, Task: %d, isShutdown: %s, isTerminated: %s",
+	                		tpe.getPoolSize(),
+	                		tpe.getCorePoolSize(),
+	                		tpe.getActiveCount(),
+	                		tpe.getCompletedTaskCount(),
+	                		tpe.getTaskCount(),
+	                		tpe.isShutdown(),
+	                		tpe.isTerminated());
+		}
+		return null;
 	}
 	
 	

@@ -20,14 +20,15 @@
 
 package org.openspcoop2.utils.resources;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import org.apache.commons.collections.ExtendedProperties;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.apache.velocity.runtime.resource.Resource;
 import org.apache.velocity.runtime.resource.loader.ResourceLoader;
+import org.apache.velocity.util.ExtProperties;
 
 /**
  *  VelocityTemplateLoader
@@ -50,18 +51,6 @@ public class VelocityTemplateLoader extends ResourceLoader {
 	}
 
 	@Override
-	public InputStream getResourceStream(String name) throws ResourceNotFoundException {
-		if(this.templateIncludes.containsKey(name)) {
-			return new ByteArrayInputStream(this.templateIncludes.get(name));
-		}
-		return null;
-	}
-
-	@Override
-	public void init(ExtendedProperties arg0) {
-	}
-
-	@Override
 	public boolean isSourceModified(Resource arg0) {
 		return false;
 	}
@@ -69,5 +58,22 @@ public class VelocityTemplateLoader extends ResourceLoader {
 	@Override
 	public boolean resourceExists(String name) {
 		return this.templateIncludes.containsKey(name);
+	}
+
+	@Override
+	public Reader getResourceReader(String name, String encoding) throws ResourceNotFoundException {
+		if(this.templateIncludes.containsKey(name)) {
+			try {
+				return new StringReader(new String(this.templateIncludes.get(name),encoding));
+			} catch (UnsupportedEncodingException e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void init(ExtProperties arg0) {
+		
 	}
 }

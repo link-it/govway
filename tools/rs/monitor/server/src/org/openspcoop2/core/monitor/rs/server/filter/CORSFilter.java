@@ -39,26 +39,26 @@ public class CORSFilter extends AbstractCORSFilter {
 
 	private static CORSFilterConfiguration CORS_FILTER_CONFIGURATION;
 	private static synchronized void initCORSFilterConfiguration() throws IOException {
-		if(CORS_FILTER_CONFIGURATION==null) {
+		if(CORSFilter.CORS_FILTER_CONFIGURATION==null) {
 			try {
 				ServerProperties serverProperties = ServerProperties.getInstance();
-				CORS_FILTER_CONFIGURATION = new CORSFilterConfiguration();
-				CORS_FILTER_CONFIGURATION.init(serverProperties.getProperties());
+				CORSFilter.CORS_FILTER_CONFIGURATION = new CORSFilterConfiguration();
+				CORSFilter.CORS_FILTER_CONFIGURATION.init(serverProperties.getProperties());
 			}catch(Exception e) {
 				throw new IOException(e.getMessage(),e);
 			}
 		}
 	}
 	private static CORSFilterConfiguration getCORSFilterConfiguration() throws IOException {
-		if(CORS_FILTER_CONFIGURATION==null) {
-			initCORSFilterConfiguration();
+		if(CORSFilter.CORS_FILTER_CONFIGURATION==null) {
+			CORSFilter.initCORSFilterConfiguration();
 		}
-		return CORS_FILTER_CONFIGURATION;
+		return CORSFilter.CORS_FILTER_CONFIGURATION;
 	}
 	
 	@Override
 	protected CORSFilterConfiguration getConfig() throws IOException {
-		return getCORSFilterConfiguration();
+		return CORSFilter.getCORSFilterConfiguration();
 	}
 
 	@Override

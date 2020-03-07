@@ -31,7 +31,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 /**
  * Esito di un processo di gestione token.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

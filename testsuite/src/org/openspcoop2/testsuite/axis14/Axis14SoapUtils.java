@@ -36,7 +36,6 @@ import javax.xml.soap.MessageFactory;
 import javax.xml.soap.Name;
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPBodyElement;
-import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPElement;
 import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
@@ -55,6 +54,7 @@ import org.openspcoop2.message.OpenSPCoop2DataContentHandlerInputStream;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -881,9 +881,9 @@ public class Axis14SoapUtils {
 			
 			int offset = 0;
 			
-			String contentType = SOAPConstants.SOAP_1_1_CONTENT_TYPE;
+			String contentType = HttpConstants.CONTENT_TYPE_SOAP_1_1;
 			if(MessageType.SOAP_12.equals(messageType)){
-				contentType = SOAPConstants.SOAP_1_2_CONTENT_TYPE;
+				contentType = HttpConstants.CONTENT_TYPE_SOAP_1_2;
 			}
 			String IDfirst  = null;
 			//BNCL TEST: String contentType = "application/xml";
@@ -904,15 +904,15 @@ public class Axis14SoapUtils {
 				switch (messageType) {
 				case SOAP_11:
 					if(IDfirst==null)
-						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+						contentType = "multipart/related; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_1+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					else
-						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_1_CONTENT_TYPE+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+						contentType = "multipart/related; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_1+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					break;
 				case SOAP_12:
 					if(IDfirst==null)
-						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_2_CONTENT_TYPE+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+						contentType = "multipart/related; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_2+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					else
-						contentType = "multipart/related; type=\""+SOAPConstants.SOAP_1_2_CONTENT_TYPE+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
+						contentType = "multipart/related; type=\""+HttpConstants.CONTENT_TYPE_SOAP_1_2+"\"; start=\""+IDfirst+"\"; \tboundary=\""+boundary.substring(2,boundary.length())+"\" "; 
 					break;
 				}
 				

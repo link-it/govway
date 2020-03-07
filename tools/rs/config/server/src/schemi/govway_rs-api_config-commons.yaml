@@ -1699,7 +1699,7 @@ components:
       example: 'certificato'
     TipoAutenticazionePrincipal:
       type: string
-      enum: ['container', 'header-based', 'form-based', 'url-based', 'ip-address', 'token']
+      enum: ['container', 'header-based', 'form-based', 'url-based', 'ip-address', 'ip-address-forwarded-for', 'token']
       example: 'container'  
     TipoAutenticazionePrincipalToken:
       type: string

@@ -34,7 +34,7 @@ import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 /**
 * Contesto per la classe SICAtoOpenSPCoopContext
 *
-* @author Andrea Poli <apoli@link.it>
+* @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
 */

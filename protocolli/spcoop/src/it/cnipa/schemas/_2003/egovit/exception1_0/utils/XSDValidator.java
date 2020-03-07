@@ -41,8 +41,10 @@ public class XSDValidator {
 		if(validator==null){
 			validator = new org.openspcoop2.generic_project.utils.XSDValidator(log,MessaggioDiErroreApplicativo.class, 
 				"/EccezioneCNIPA.xsd",
-					// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /EccezioneCNIPA.xsd
-					"/Busta.xsd","/soapEnvelope.xsd","/wssecurityUtility.xsd"			
+				"/Busta.xsd",
+				"/soapEnvelope.xsd",
+				"/wssecurityUtility.xsd"
+				// elencare in questa posizione altri schemi xsd che vengono inclusi/importati dallo schema /EccezioneCNIPA.xsd
 			);
 		}
 	}

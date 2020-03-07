@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
+import org.openspcoop2.core.commons.ModalitaIdentificazione;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
@@ -480,6 +481,8 @@ public class ConfigurazioneCostanti {
 	
 	public final static String LABEL_CONFIGURAZIONE_CACHE_RISPOSTE = "Cache (Risposte)";
 	
+	public final static String LABEL_CONFIGURAZIONE_CACHE_CONSEGNA_APPLICATIVI = "Cache (Load Balancer)";
+	
 	public final static String LABEL_INFORMAZIONE_NON_DISPONIBILE = "Informazione non disponibile";
 	
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_RUNTIME = "Runtime";
@@ -505,15 +508,18 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONI_HTTP = "Connessioni HTTP Attive";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PD = "In uscita dal modulo InoltroBuste";
 	public final static String LABEL_CONFIGURAZIONE_SISTEMA_CONNESSIONE_PA = "In uscita dal modulo ConsegnaContenutiApplicativi";
+	public final static String LABEL_CONFIGURAZIONE_SISTEMA_THREADS = "Thread Attivi";
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_TRANSAZIONI = "Transazioni";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Transazioni Registrate";
 	public final static String LABEL_NOTE_CONFIGURAZIONE_REGISTRAZIONE_ESITI = "Selezionare gli esiti che verranno registrati nello storico";
 	
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE;
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE_FAULT;
+	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = CostantiControlStation.LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE;
 	
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUESTS = "Superamento Limite Richieste";
 	public final static String LABEL_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "Stato";
@@ -699,6 +705,12 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_RISPOSTE = "idlecacheRisposte";
 	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_RISPOSTE = "lifecacheRisposte";
 	
+	public final static String PARAMETRO_CONFIGURAZIONE_STATO_CACHE_CONSEGNA = "statocacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_DIMENSIONE_CACHE_CONSEGNA = "dimensionecacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_ALGORITMO_CACHE_CONSEGNA = "algoritmocacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_IDLE_CACHE_CONSEGNA = "idlecacheConsegna";
+	public final static String PARAMETRO_CONFIGURAZIONE_LIFE_CACHE_CONSEGNA = "lifecacheConsegna";
+	
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NODO_CLUSTER = "aliasNodo";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_CACHE = "nomeCache";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_NOME_METODO = "nomeMetodo";
@@ -727,6 +739,7 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_TRANSAZIONI_ID_PROTOCOLLO = "transazioniIDProt";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PD = "connessioniPD";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_CONNESSIONI_PA = "connessioniPA";
+	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_THREADS_CONSEGNA_APPLICATIVI = "threadsPA";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_EXPORT = "Download";
 	public final static String PARAMETRO_CONFIGURAZIONE_SISTEMA_RESET_ALL_CACHES = "ResetAllCaches";
 	public final static String PARAMETRO_CONFIGURAZIONE_APPLICA_MODIFICA = CostantiControlStation.PARAMETRO_APPLICA_MODIFICA;
@@ -734,9 +747,11 @@ public class ConfigurazioneCostanti {
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO = "RecEsitiStato_";
 	public final static String PARAMETRO_CONFIGURAZIONE_FIRST_TIME = "ConfigurazioneFirstTime";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_RIDEFINITO = "RecEsitiStatoRidefinito";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_ALL = "RecEsitiStatoAll";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_OK = "RecEsitiStatoOk";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FAULT = "RecEsitiStatoFault";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_FALLITE = "RecEsitiStatoFallite";
+	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_SCARTATE = "RecEsitiStatoScartate";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_MAX_REQUEST = "RecEsitiStatoMaxRequests";
 	public final static String PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_CORS = "RecEsitiStatoCORS";
 	
@@ -1129,13 +1144,6 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED = "Filtro per Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_ENABLED_COMPACT = "Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_TIPO = "Tipologia";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE = "Espressione Regolare";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_ESPRESSIONE_XPATH = "Pattern";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_SOAP_ACTION = "SoapAction";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP = "Indirizzo IP (Socket)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_NOME_CUSTOM = "Tipo Personalizzato";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_FILTRO_PER_CHIAVE_VALORE = "Valore";
 	
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_ENABLED = "Modalità Calcolo";
@@ -1158,12 +1166,6 @@ public class ConfigurazioneCostanti {
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_LABEL = "Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_ENABLED_NOTE = "Raggruppamento per Chiave";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_TIPO = "Tipologia";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_NOME = "Nome";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_REGOLARE = "Espressione Regolare";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_ESPRESSIONE_XPATH = "Pattern";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_SOAP_ACTION = "SoapAction";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP = "Indirizzo IP (Socket)";
-	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY__PER_CHIAVE_NOME_INDIRIZZO_IP_FORWARDED = "Indirizzo IP (Http Header Forwarded)";
 	public final static String LABEL_PARAMETRO_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_PER_CHIAVE_NOME_CUSTOM = "Tipo Personalizzato";
 	
 	public final static String LABEL_CONFIGURAZIONE_CONTROLLO_TRAFFICO_POLICY_ACTIVE_GROUPBY_DATI_GENERALI = "Dati Generali";
@@ -1412,7 +1414,17 @@ public class ConfigurazioneCostanti {
 	}
 	
 
-	
+	public final static List<String> LABEL_RATE_LIMITING_FILTRO_APPLICATIVO = 
+			ModalitaIdentificazione.getLabels(
+					ModalitaIdentificazione.HEADER_BASED,
+					ModalitaIdentificazione.URL_BASED,
+					ModalitaIdentificazione.FORM_BASED,
+					ModalitaIdentificazione.SOAP_ACTION_BASED,
+					ModalitaIdentificazione.CONTENT_BASED,
+					ModalitaIdentificazione.INDIRIZZO_IP_BASED,
+					ModalitaIdentificazione.X_FORWARD_FOR_BASED,
+					ModalitaIdentificazione.PLUGIN_BASED
+				);
 	
 	public final static String[] TIPI_RUOLO_PDD = {
 			RuoloPolicy.ENTRAMBI.getValue(),

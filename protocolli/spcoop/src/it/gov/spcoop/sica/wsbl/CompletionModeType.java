@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="completionModeType">
- * 		&lt;sequence>
- * 			&lt;element name="mode" type="{http://spcoop.gov.it/sica/wsbl}mode" minOccurs="1" maxOccurs="1"/>
- * 			&lt;element name="compensateMessage" type="{http://spcoop.gov.it/sica/wsbl}completionModeTypeCompensateMessage" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="completionModeType"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mode" type="{http://spcoop.gov.it/sica/wsbl}mode" minOccurs="1" maxOccurs="1"/&gt;
+ * 			&lt;element name="compensateMessage" type="{http://spcoop.gov.it/sica/wsbl}completionModeTypeCompensateMessage" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

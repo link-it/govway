@@ -58,6 +58,8 @@
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
+			<include name="jax/jaxws*.jar"/>
+			<include name="shared/jakarta.activation-1.2.1.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >
 			<include name="*.jar"/>
@@ -77,6 +79,9 @@
 			<include name="shared/*.jar"/>
 			<include name="httpcore/*.jar"/>
 			<include name="commons/*.jar"/>
+                        <include name="jax/jaxb*.jar"/>
+                        <include name="jax/jaxws*.jar"/>
+                        <include name="shared/jakarta.activation-1.2.1.jar"/>
 		</fileset>
 		<fileset dir="${openspcoop2_dist}" >
 			<include name="*.jar"/>

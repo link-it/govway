@@ -35,19 +35,19 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="condition">
- * 		&lt;sequence>
- * 			&lt;element name="defined" type="{http://www.openspcoop2.org/core/mvc/properties}defined" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="selected" type="{http://www.openspcoop2.org/core/mvc/properties}selected" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="equals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="lessThen" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="lessEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="greaterThen" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="greaterEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="condition"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="defined" type="{http://www.openspcoop2.org/core/mvc/properties}defined" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="selected" type="{http://www.openspcoop2.org/core/mvc/properties}selected" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="equals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="lessThen" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="lessEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="greaterThen" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="greaterEquals" type="{http://www.openspcoop2.org/core/mvc/properties}equals" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="and" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * 		&lt;attribute name="not" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -276,7 +276,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getDefinedList
-   * @return List<Defined>
+   * @return List&lt;Defined&gt;
   */
   @Deprecated
   public List<Defined> getDefined() {
@@ -285,7 +285,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setDefinedList
-   * @param defined List<Defined>
+   * @param defined List&lt;Defined&gt;
   */
   @Deprecated
   public void setDefined(List<Defined> defined) {
@@ -306,7 +306,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getSelectedList
-   * @return List<Selected>
+   * @return List&lt;Selected&gt;
   */
   @Deprecated
   public List<Selected> getSelected() {
@@ -315,7 +315,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setSelectedList
-   * @param selected List<Selected>
+   * @param selected List&lt;Selected&gt;
   */
   @Deprecated
   public void setSelected(List<Selected> selected) {
@@ -336,7 +336,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getEqualsList
-   * @return List<Equals>
+   * @return List&lt;Equals&gt;
   */
   @Deprecated
   public List<Equals> getEquals() {
@@ -345,7 +345,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setEqualsList
-   * @param equals List<Equals>
+   * @param equals List&lt;Equals&gt;
   */
   @Deprecated
   public void setEquals(List<Equals> equals) {
@@ -366,7 +366,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getLessThenList
-   * @return List<Equals>
+   * @return List&lt;Equals&gt;
   */
   @Deprecated
   public List<Equals> getLessThen() {
@@ -375,7 +375,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setLessThenList
-   * @param lessThen List<Equals>
+   * @param lessThen List&lt;Equals&gt;
   */
   @Deprecated
   public void setLessThen(List<Equals> lessThen) {
@@ -396,7 +396,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getLessEqualsList
-   * @return List<Equals>
+   * @return List&lt;Equals&gt;
   */
   @Deprecated
   public List<Equals> getLessEquals() {
@@ -405,7 +405,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setLessEqualsList
-   * @param lessEquals List<Equals>
+   * @param lessEquals List&lt;Equals&gt;
   */
   @Deprecated
   public void setLessEquals(List<Equals> lessEquals) {
@@ -426,7 +426,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getGreaterThenList
-   * @return List<Equals>
+   * @return List&lt;Equals&gt;
   */
   @Deprecated
   public List<Equals> getGreaterThen() {
@@ -435,7 +435,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setGreaterThenList
-   * @param greaterThen List<Equals>
+   * @param greaterThen List&lt;Equals&gt;
   */
   @Deprecated
   public void setGreaterThen(List<Equals> greaterThen) {
@@ -456,7 +456,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method getGreaterEqualsList
-   * @return List<Equals>
+   * @return List&lt;Equals&gt;
   */
   @Deprecated
   public List<Equals> getGreaterEquals() {
@@ -465,7 +465,7 @@ public class Condition extends org.openspcoop2.utils.beans.BaseBean implements S
 
   /**
    * @deprecated Use method setGreaterEqualsList
-   * @param greaterEquals List<Equals>
+   * @param greaterEquals List&lt;Equals&gt;
   */
   @Deprecated
   public void setGreaterEquals(List<Equals> greaterEquals) {

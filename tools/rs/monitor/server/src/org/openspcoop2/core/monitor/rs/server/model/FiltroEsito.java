@@ -31,6 +31,12 @@ public class FiltroEsito  {
   @Schema(required = true, description = "")
   private EsitoTransazioneFullSearchEnum tipo = null;
   
+  @Schema(description = "informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault")
+ /**
+   * informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault  
+  **/
+  private Boolean escludiScartate = true;
+  
   @Schema(description = "")
   private Object dettaglio = null;
  /**
@@ -50,6 +56,25 @@ public class FiltroEsito  {
 
   public FiltroEsito tipo(EsitoTransazioneFullSearchEnum tipo) {
     this.tipo = tipo;
+    return this;
+  }
+
+ /**
+   * informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault
+   * @return escludiScartate
+  **/
+  @JsonProperty("escludi_scartate")
+  @Valid
+  public Boolean isEscludiScartate() {
+    return this.escludiScartate;
+  }
+
+  public void setEscludiScartate(Boolean escludiScartate) {
+    this.escludiScartate = escludiScartate;
+  }
+
+  public FiltroEsito escludiScartate(Boolean escludiScartate) {
+    this.escludiScartate = escludiScartate;
     return this;
   }
 
@@ -79,6 +104,7 @@ public class FiltroEsito  {
     sb.append("class FiltroEsito {\n");
     
     sb.append("    tipo: ").append(FiltroEsito.toIndentedString(this.tipo)).append("\n");
+    sb.append("    escludiScartate: ").append(FiltroEsito.toIndentedString(this.escludiScartate)).append("\n");
     sb.append("    dettaglio: ").append(FiltroEsito.toIndentedString(this.dettaglio)).append("\n");
     sb.append("}");
     return sb.toString();

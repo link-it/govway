@@ -32,12 +32,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="PropertyValue">
- * 		&lt;sequence>
- * 			&lt;element name="url" type="{http://www.domibus.eu/configuration}PropertyValueUrl" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="header" type="{http://www.domibus.eu/configuration}PropertyValueHeader" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="PropertyValue"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="url" type="{http://www.domibus.eu/configuration}PropertyValueUrl" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="header" type="{http://www.domibus.eu/configuration}PropertyValueHeader" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Versions">
- * 		&lt;sequence>
- * 			&lt;element name="version" type="{http://www.openspcoop2.org/protocol/manifest}Version" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="Versions"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="version" type="{http://www.openspcoop2.org/protocol/manifest}Version" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Versions extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method getVersionList
-   * @return List<Version>
+   * @return List&lt;Version&gt;
   */
   @Deprecated
   public List<Version> getVersion() {
@@ -102,7 +102,7 @@ public class Versions extends org.openspcoop2.utils.beans.BaseBean implements Se
 
   /**
    * @deprecated Use method setVersionList
-   * @param version List<Version>
+   * @param version List&lt;Version&gt;
   */
   @Deprecated
   public void setVersion(List<Version> version) {

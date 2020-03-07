@@ -86,7 +86,7 @@ public class VelocityTemplateUtils {
 		template.setEncoding(encoding);
 		RuntimeServices runtimeServices = RuntimeSingleton.getRuntimeServices();
 		StringReader reader = new StringReader(new String(bytes));
-		SimpleNode node = runtimeServices.parse(reader, name);
+		SimpleNode node = runtimeServices.parse(reader, template);
 		template.setRuntimeServices(runtimeServices);
 		template.setData(node);
 		template.initDocument();
@@ -97,12 +97,12 @@ public class VelocityTemplateUtils {
 	
 	/** -------- Trasformazioni dei template ------------- */
 		
-	public static VelocityContext toVelocityContext(Map<?, ?> map) {
+	public static VelocityContext toVelocityContext(Map<String, Object> map) {
 		VelocityContext context = new VelocityContext(map);
 		return context;
 	}
 	
-	public static byte[] toByteArray(Template template,Map<?, ?> map) throws IOException {
+	public static byte[] toByteArray(Template template,Map<String, Object> map) throws IOException {
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(bout);
 		template.merge( toVelocityContext(map), writer );
@@ -112,7 +112,7 @@ public class VelocityTemplateUtils {
 		bout.close();
 		return bout.toByteArray();
 	}
-	public static String toString(Template template,Map<?, ?> map) throws IOException{
+	public static String toString(Template template,Map<String, Object> map) throws IOException{
 		ByteArrayOutputStream bout = new ByteArrayOutputStream();
 		OutputStreamWriter writer = new OutputStreamWriter(bout);
 		template.merge( toVelocityContext(map), writer );
@@ -122,7 +122,7 @@ public class VelocityTemplateUtils {
 		bout.close();
 		return bout.toString();
 	}
-	public static void writeFile(Template template,Map<?, ?> map,File file,boolean overwrite) throws Exception{
+	public static void writeFile(Template template,Map<String, Object> map,File file,boolean overwrite) throws Exception{
 		if(!overwrite){
 			if(file.exists()){
 				System.out.println(": WARNING !! File ["+file.getAbsolutePath()+"] is already exist, it is not overwritten !!");

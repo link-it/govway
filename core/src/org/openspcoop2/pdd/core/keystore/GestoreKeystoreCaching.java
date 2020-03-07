@@ -42,7 +42,7 @@ import org.slf4j.Logger;
  */
 public class GestoreKeystoreCaching {
 
-	/** Chiave della cache per l'autenticazione Buste  */
+	/** Chiave della cache */
 	private static final String KEYSTORE_CACHE_NAME = "keystore";
 	/** Cache */
 	private static Cache cache = null;

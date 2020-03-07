@@ -27,7 +27,7 @@ import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 /**
  * Interfaccia che definisce un processo di autorizzazione basata su xacmlPolicy
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

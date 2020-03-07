@@ -36,13 +36,13 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfigurationResourceIdentificationModes">
- * 		&lt;sequence>
- * 			&lt;element name="mode" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationMode" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" use="optional"/>
- * 		&lt;attribute name="forceInterfaceMode" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfigurationResourceIdentificationModes"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="mode" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationResourceIdentificationMode" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="default" type="{http://www.openspcoop2.org/protocol/manifest}ResourceIdentificationType" use="optional"/&gt;
+ * 		&lt;attribute name="forceInterfaceMode" type="{http://www.w3.org/2001/XMLSchema}boolean" use="required"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -129,7 +129,7 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
 
   /**
    * @deprecated Use method getModeList
-   * @return List<IntegrationConfigurationResourceIdentificationMode>
+   * @return List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
   */
   @Deprecated
   public List<IntegrationConfigurationResourceIdentificationMode> getMode() {
@@ -138,7 +138,7 @@ public class IntegrationConfigurationResourceIdentificationModes extends org.ope
 
   /**
    * @deprecated Use method setModeList
-   * @param mode List<IntegrationConfigurationResourceIdentificationMode>
+   * @param mode List&lt;IntegrationConfigurationResourceIdentificationMode&gt;
   */
   @Deprecated
   public void setMode(List<IntegrationConfigurationResourceIdentificationMode> mode) {

@@ -56,7 +56,7 @@ import net.sf.saxon.s9api.XdmNode;
 /**
  * Classe utilizzabile per ricerche effettuate tramite espressioni XQuery
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

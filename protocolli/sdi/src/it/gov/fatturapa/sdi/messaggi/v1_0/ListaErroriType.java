@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ListaErrori_Type">
- * 		&lt;sequence>
- * 			&lt;element name="Errore" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}Errore_Type" minOccurs="1" maxOccurs="200"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ListaErrori_Type"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Errore" type="{http://www.fatturapa.gov.it/sdi/messaggi/v1.0}Errore_Type" minOccurs="1" maxOccurs="200"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ListaErroriType extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method getErroreList
-   * @return List<ErroreType>
+   * @return List&lt;ErroreType&gt;
   */
   @Deprecated
   public List<ErroreType> getErrore() {
@@ -102,7 +102,7 @@ public class ListaErroriType extends org.openspcoop2.utils.beans.BaseBean implem
 
   /**
    * @deprecated Use method setErroreList
-   * @param errore List<ErroreType>
+   * @param errore List&lt;ErroreType&gt;
   */
   @Deprecated
   public void setErrore(List<ErroreType> errore) {

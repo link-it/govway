@@ -1,0 +1,8 @@
+# Ignore everything in this directory
+build
+dist
+doc
+local_env.xml
+.ant-targets-build.xml
+# Except this file
+!.gitignore

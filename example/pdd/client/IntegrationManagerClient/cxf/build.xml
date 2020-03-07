@@ -55,6 +55,7 @@
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
+			<include name="jax/jaxws*.jar"/>
 		</fileset>
 	</path>
 	<path id="classpath_run">
@@ -64,6 +65,7 @@
 			<include name="cxf/*.jar"/>
 			<include name="saaj/*.jar"/>
 			<include name="jax/jaxb*.jar"/>
+			<include name="jax/jaxws*.jar"/>
 			<include name="security/*.jar"/>
 			<include name="shared/*.jar"/>
 			<include name="httpcore/*.jar"/>

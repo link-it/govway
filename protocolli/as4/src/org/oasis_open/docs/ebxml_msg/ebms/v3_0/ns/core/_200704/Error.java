@@ -33,18 +33,18 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Error">
- * 		&lt;sequence>
- * 			&lt;element name="Description" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Description" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="ErrorDetail" type="{http://www.w3.org/2001/XMLSchema}token" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="category" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * 		&lt;attribute name="refToMessageInError" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * 		&lt;attribute name="errorCode" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/>
- * 		&lt;attribute name="origin" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * 		&lt;attribute name="severity" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/>
- * 		&lt;attribute name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="Error"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="Description" type="{http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/}Description" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="ErrorDetail" type="{http://www.w3.org/2001/XMLSchema}token" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="category" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * 		&lt;attribute name="refToMessageInError" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * 		&lt;attribute name="errorCode" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/&gt;
+ * 		&lt;attribute name="origin" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * 		&lt;attribute name="severity" type="{http://www.w3.org/2001/XMLSchema}token" use="required"/&gt;
+ * 		&lt;attribute name="shortDescription" type="{http://www.w3.org/2001/XMLSchema}token" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

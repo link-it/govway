@@ -20,17 +20,17 @@
 		<accessors-smart.version>1.2</accessors-smart.version>
 		<btf.version>1.2</btf.version>
 		<fge_json-schema-validator.version>2.2.10</fge_json-schema-validator.version>
-		<handy-uri-templates.version>2.1.7</handy-uri-templates.version>
+		<handy-uri-templates.version>2.1.8</handy-uri-templates.version>
 		<jettison.version>1.4.0</jettison.version>
-		<org.json.json.version>20180813</org.json.json.version>
+		<org.json.json.version>20190722</org.json.json.version>
 		<json-lib.version>2.4-jdk15</json-lib.version>
 		<json-path.version>2.4.0</json-path.version>
 		<json-schema-core.version>1.2.8</json-schema-core.version>
 		<json-smart.version>2.3</json-smart.version>
-		<libphonenumber.version>8.9.12</libphonenumber.version>
+		<libphonenumber.version>8.11.4</libphonenumber.version>
 		<msg-simple.version>1.1</msg-simple.version>
-		<networknt_json-schema-validator.version>1.0.16</networknt_json-schema-validator.version>
-		<org.everit.json.schema.version>1.9.1</org.everit.json.schema.version>
+		<networknt_json-schema-validator.version>1.0.30</networknt_json-schema-validator.version>
+		<org.everit.json.schema.version>1.12.1</org.everit.json.schema.version>
 		<url-template.version>0.9</url-template.version>
 
 	</properties>
@@ -38,7 +38,7 @@
 	<dependencies>
 
 		<dependency>
-			<groupId>com.github.everit-org.json-schema</groupId>
+			<groupId>org.everit.json</groupId>
 			<artifactId>org.everit.json.schema</artifactId>
 			<version>${org.everit.json.schema.version}</version>
 			<exclusions>
@@ -70,7 +70,7 @@
 					<artifactId>*</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency> 
+		</dependency>
 
 		<dependency>
 			<groupId>com.github.fge</groupId>

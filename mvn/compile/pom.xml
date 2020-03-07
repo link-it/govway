@@ -39,13 +39,6 @@
 				</executions>
 				<dependencies>
 					<dependency>
-						<groupId>com.sun</groupId>
-						<artifactId>tools</artifactId>
-						<version>${com-sun-tools}</version>
-						<scope>system</scope>
-						<systemPath>${java.home}/../lib/tools.jar</systemPath>
-					</dependency>
-					<dependency>
 						<groupId>org.apache.ant</groupId>
 						<artifactId>ant</artifactId>
 						<version>${ant.version}</version>

@@ -42,12 +42,15 @@
 	
 	<!-- Jar dipendenti dall'A.S. -->
 	<var name="commons_logging_jar" value="" />
-	<var name="javax.jms-api-2.0.jar" value="" />
+	<var name="javax.jms-api-2.0.1.jar" value="" />
 	<var name="xerces_jar" value=""/>
 	<var name="xml_apis_jar" value=""/>
 	<var name="xalan_jar" value="" />
 	<var name="xalan_serializer_jar" value="" />
+	<var name="jaxb_jar" value=""/>
 	<var name="jaxp_ri_jar" value=""/>
+	<var name="axis_saaj_jar" value=""/>
+	<var name="jackson_jar" value=""/>
 	<var name="jboss_classloading" value="" />
 	<var name="jboss_scanning" value="" />
 	<var name="jboss_deployment_structure" value=""/>
@@ -69,7 +72,7 @@
 			<matches string="${as}" pattern="tomcat.*"/>
 		</or>
 		<then>
-			<var name="javax.jms-api-2.0.jar" value="javax.jms-api-2.0.jar" />
+			<var name="javax.jms-api-2.0.1.jar" value="javax.jms-api-2.0.1.jar" />
 		</then>
 	</if>
 	<!-- xalan -->
@@ -98,6 +101,15 @@
 			<var name="xml_apis_jar" value="xml-apis-1.4.01.jar"/>
 		</then>
 	</if>
+	<!-- jaxb -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jaxb_jar" value="jaxb-*.jar"/>
+		</then>
+	</if>
 	<!-- jaxp_ri -->
 	<if>
 		<or>
@@ -106,6 +118,25 @@
 		</or>
 		<then>
 			<var name="jaxp_ri_jar" value="jaxp-ri-1.4.5-gov4j-1.jar"/>
+		</then>
+	</if>
+	<!-- axis_saaj_jar -->
+	<if>
+		<or>
+			<equals arg1="${as}" arg2="jboss7"/>
+			<matches string="${as}" pattern="wildfly.*"/>
+		</or>
+		<then>
+			<var name="axis_saaj_jar" value="axis-saaj-1.4.jar"/>
+		</then>
+	</if>
+	<!-- jackson_jar -->
+	<if>
+		<or>
+			<matches string="${as}" pattern="tomcat.*"/>
+		</or>
+		<then>
+			<var name="jackson_jar" value="*.jar"/>
 		</then>
 	</if>
 	<!-- jboss_classloading -->

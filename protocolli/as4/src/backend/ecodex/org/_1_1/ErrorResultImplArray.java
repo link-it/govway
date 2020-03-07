@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="errorResultImplArray">
- * 		&lt;sequence>
- * 			&lt;element name="item" type="{http://org.ecodex.backend/1_1/}errorResultImpl" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="errorResultImplArray"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="item" type="{http://org.ecodex.backend/1_1/}errorResultImpl" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class ErrorResultImplArray extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method getItemList
-   * @return List<ErrorResultImpl>
+   * @return List&lt;ErrorResultImpl&gt;
   */
   @Deprecated
   public List<ErrorResultImpl> getItem() {
@@ -102,7 +102,7 @@ public class ErrorResultImplArray extends org.openspcoop2.utils.beans.BaseBean i
 
   /**
    * @deprecated Use method setItemList
-   * @param item List<ErrorResultImpl>
+   * @param item List&lt;ErrorResultImpl&gt;
   */
   @Deprecated
   public void setItem(List<ErrorResultImpl> item) {

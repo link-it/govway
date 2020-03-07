@@ -33,13 +33,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="stato-servizi-pdd">
- * 		&lt;sequence>
- * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-porta-delegata" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-porta-applicativa" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-integration-manager" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="stato-servizi-pdd"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="porta-delegata" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-porta-delegata" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="porta-applicativa" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-porta-applicativa" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="integration-manager" type="{http://www.openspcoop2.org/core/config}stato-servizi-pdd-integration-manager" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

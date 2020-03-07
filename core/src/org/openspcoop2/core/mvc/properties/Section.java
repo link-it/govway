@@ -35,15 +35,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="section">
- * 		&lt;sequence>
- * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/core/mvc/properties}conditions" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="item" type="{http://www.openspcoop2.org/core/mvc/properties}item" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="subsection" type="{http://www.openspcoop2.org/core/mvc/properties}subsection" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="hidden" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/>
- * &lt;/complexType>
+ * &lt;complexType name="section"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="conditions" type="{http://www.openspcoop2.org/core/mvc/properties}conditions" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="item" type="{http://www.openspcoop2.org/core/mvc/properties}item" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="subsection" type="{http://www.openspcoop2.org/core/mvc/properties}subsection" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="label" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="hidden" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -155,7 +155,7 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getItemList
-   * @return List<Item>
+   * @return List&lt;Item&gt;
   */
   @Deprecated
   public List<Item> getItem() {
@@ -164,7 +164,7 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setItemList
-   * @param item List<Item>
+   * @param item List&lt;Item&gt;
   */
   @Deprecated
   public void setItem(List<Item> item) {
@@ -185,7 +185,7 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method getSubsectionList
-   * @return List<Subsection>
+   * @return List&lt;Subsection&gt;
   */
   @Deprecated
   public List<Subsection> getSubsection() {
@@ -194,7 +194,7 @@ public class Section extends org.openspcoop2.utils.beans.BaseBean implements Ser
 
   /**
    * @deprecated Use method setSubsectionList
-   * @param subsection List<Subsection>
+   * @param subsection List&lt;Subsection&gt;
   */
   @Deprecated
   public void setSubsection(List<Subsection> subsection) {

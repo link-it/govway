@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="legs">
- * 		&lt;sequence>
- * 			&lt;element name="leg" type="{http://www.domibus.eu/configuration}leg" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="legs"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="leg" type="{http://www.domibus.eu/configuration}leg" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -93,7 +93,7 @@ public class Legs extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method getLegList
-   * @return List<Leg>
+   * @return List&lt;Leg&gt;
   */
   @Deprecated
   public List<Leg> getLeg() {
@@ -102,7 +102,7 @@ public class Legs extends org.openspcoop2.utils.beans.BaseBean implements Serial
 
   /**
    * @deprecated Use method setLegList
-   * @param leg List<Leg>
+   * @param leg List&lt;Leg&gt;
   */
   @Deprecated
   public void setLeg(List<Leg> leg) {

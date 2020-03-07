@@ -43,6 +43,7 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
 import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticSerializer;
@@ -335,51 +336,58 @@ public class SingleFileExporter implements IExporter{
 					//filter.setIdentificativoPorta(search.getIdentificativoPorta());
 					
 					
-					List<MsgDiagnostico> list = this.diagnosticiService.getMessaggiDiagnostici(filter);
-					// Add ZIP entry to output stream.
-					this.zip.putNextEntry(new ZipEntry(transazioneDir+"diagnostici.xml"));
-					
-					String tail = null;
-					for (int j = 0; j < list.size(); j++) {
-						MsgDiagnostico msg = list.get(j);
-						String newLine = j > 0 ? "\n\n" : "";
+					List<MsgDiagnostico> list = null;
+					try {
+						list = this.diagnosticiService.getMessaggiDiagnostici(filter);
+					}catch(DriverMsgDiagnosticiNotFoundException notFound) {
+						log.debug("[getMessaggiDiagnostici("+t.getIdTransazione()+")] non trovati: " +notFound.getMessage(),notFound);
+					}
+					if(list!=null && !list.isEmpty()) {
+						// Add ZIP entry to output stream.
+						this.zip.putNextEntry(new ZipEntry(transazioneDir+"diagnostici.xml"));
 						
-						IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
-						IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
-						
-						if(j==0){
-							XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
-							if(xmlRootElement!=null){
-								String head = xmlRootElement.getAsStringStartTag();
-								if(head!=null && !"".equals(head)){
-									head = head +"\n\n";
-									this.zip.write(head.getBytes(), 0, head.length());
-									tail = xmlRootElement.getAsStringEndTag();
-	    							if(tail!=null && !"".equals(tail)){
-	    								tail = "\n\n" + tail;
-	    							}
+						String tail = null;
+						for (int j = 0; j < list.size(); j++) {
+							MsgDiagnostico msg = list.get(j);
+							String newLine = j > 0 ? "\n\n" : "";
+							
+							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
+							IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
+							
+							if(j==0){
+								XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
+								if(xmlRootElement!=null){
+									String head = xmlRootElement.getAsStringStartTag();
+									if(head!=null && !"".equals(head)){
+										head = head +"\n\n";
+										this.zip.write(head.getBytes(), 0, head.length());
+										tail = xmlRootElement.getAsStringEndTag();
+		    							if(tail!=null && !"".equals(tail)){
+		    								tail = "\n\n" + tail;
+		    							}
+									}
 								}
 							}
+							
+							String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
+							in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
+							// Transfer bytes from the input stream to the ZIP file
+							int len;
+							while ((len = in.read(buf)) > 0) {
+								this.zip.write(buf, 0, len);
+							}
+	
+						}
+						if(tail!=null && !"".equals(tail)){
+							this.zip.write(tail.getBytes(), 0, tail.length());
 						}
 						
-						String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
-						in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
-						// Transfer bytes from the input stream to the ZIP file
-						int len;
-						while ((len = in.read(buf)) > 0) {
-							this.zip.write(buf, 0, len);
-						}
-
+						// Complete the entry
+						this.zip.flush();
+						this.zip.closeEntry();
+						if(in!=null)
+							in.close();
 					}
-					if(tail!=null && !"".equals(tail)){
-						this.zip.write(tail.getBytes(), 0, tail.length());
-					}
-					
-					// Complete the entry
-					this.zip.flush();
-					this.zip.closeEntry();
-					if(in!=null)
-						in.close();
 				}catch(Exception e){
 					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
 					msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
@@ -637,7 +645,7 @@ public class SingleFileExporter implements IExporter{
 
 		DumpMessaggio dump=null;
 		try {
-			dump = service.getDumpMessaggio(t.getIdTransazione(), tipo);
+			dump = service.getDumpMessaggio(t.getIdTransazione(), null, null, tipo);
 		} catch (Exception e) {
 			String msg = "Si e' verificato un errore durante l'esportazione dei contenuti ("+tipo.toString()+") della transazione con id:"+t.getIdTransazione();
 			msg+=" Non sono riuscito a recuperare il messaggio di dump ("+e.getMessage()+")";
@@ -746,7 +754,7 @@ public class SingleFileExporter implements IExporter{
 			}
 			
 			//header trasporto
-			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpHeaderTrasporto> headers = service.getHeaderTrasporto(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(headers.size()>0){
 				try{
 					String name = "headers.";
@@ -769,7 +777,7 @@ public class SingleFileExporter implements IExporter{
 
 			}
 			//contenuti
-			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpContenuto> contenuti = service.getContenutiSpecifici(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(), dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(contenuti.size()>0){
 				try{
 					String name = "contents.";
@@ -793,7 +801,7 @@ public class SingleFileExporter implements IExporter{
 
 			}
 			//allegati
-			List<DumpAllegato> allegati = service.getAllegatiMessaggio(dump.getIdTransazione(), dump.getTipoMessaggio(), dump.getId());
+			List<DumpAllegato> allegati = service.getAllegatiMessaggio(dump.getIdTransazione(), dump.getServizioApplicativoErogatore(),  dump.getDataConsegnaErogatore(), dump.getTipoMessaggio(), dump.getId());
 			if(allegati.size()>0){
 				try{
 					for (int i = 0; i < allegati.size(); i++) {

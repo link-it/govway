@@ -37,16 +37,16 @@
 		</fileset>
 		<fileset dir="${openspcoop2_lib}/log" includes="*.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/uddi4j-2.0.5.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.2.jar"/>
-		<pathelement path="${openspcoop2_lib}/shared/activation-1.1.1.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/mailapi-1.6.4.jar"/>
+		<pathelement path="${openspcoop2_lib}/shared/jakarta.activation-1.2.1.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xercesImpl-2.12.0.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/xml-apis-1.4.01.jar"/>
 		<pathelement path="${openspcoop2_lib}/commons/commons-logging-1.2.jar"/>
 		<pathelement path="${openspcoop2_lib}/commons/commons-discovery-0.5.jar"/>
-		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.11.jar"/>
+		<pathelement path="${openspcoop2.lib}/commons/commons-codec-1.14.jar"/>
 		<pathelement path="${openspcoop2_lib}/shared/wsdl4j-1.6.3.jar"/>
 		<pathelement path="${openspcoop2_lib}/stub/cxf/*"/>
-		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.1.2.jar"/>
+		<pathelement path="${openspcoop2_lib}/security/xmlsec-2.1.4.jar"/>
 		<fileset dir="${openspcoop2_dist}" includes="**/*.jar"/>
 		<pathelement path="${jdbc_lib}"/>
 		<pathelement path="${build}"/>

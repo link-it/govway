@@ -36,19 +36,19 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="filtro">
- * 		&lt;sequence>
- * 			&lt;element name="correlazione-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="busta" type="{http://www.openspcoop2.org/pdd/monitor}busta" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="id-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="message-pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="soglia" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="stato" type="{http://www.openspcoop2.org/pdd/monitor}StatoMessaggio" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/pdd/monitor}busta-soggetto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/pdd/monitor}proprieta" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="filtro"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="correlazione-applicativa" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="busta" type="{http://www.openspcoop2.org/pdd/monitor}busta" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="id-messaggio" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="message-pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soglia" type="{http://www.w3.org/2001/XMLSchema}long" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="stato" type="{http://www.openspcoop2.org/pdd/monitor}StatoMessaggio" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/pdd/monitor}busta-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="proprieta" type="{http://www.openspcoop2.org/pdd/monitor}proprieta" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -249,7 +249,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<BustaSoggetto>
+   * @return List&lt;BustaSoggetto&gt;
   */
   @Deprecated
   public List<BustaSoggetto> getSoggetto() {
@@ -258,7 +258,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<BustaSoggetto>
+   * @param soggetto List&lt;BustaSoggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<BustaSoggetto> soggetto) {
@@ -279,7 +279,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method getProprietaList
-   * @return List<Proprieta>
+   * @return List&lt;Proprieta&gt;
   */
   @Deprecated
   public List<Proprieta> getProprieta() {
@@ -288,7 +288,7 @@ public class Filtro extends org.openspcoop2.utils.beans.BaseBean implements Seri
 
   /**
    * @deprecated Use method setProprietaList
-   * @param proprieta List<Proprieta>
+   * @param proprieta List&lt;Proprieta&gt;
   */
   @Deprecated
   public void setProprieta(List<Proprieta> proprieta) {

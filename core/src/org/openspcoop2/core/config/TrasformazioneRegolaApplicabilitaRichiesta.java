@@ -35,15 +35,15 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="trasformazione-regola-applicabilita-richiesta">
- * 		&lt;sequence>
- * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-soggetto" minOccurs="0" maxOccurs="unbounded"/>
- * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="trasformazione-regola-applicabilita-richiesta"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="azione" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="content-type" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="pattern" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="soggetto" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-soggetto" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 			&lt;element name="servizio-applicativo" type="{http://www.openspcoop2.org/core/config}trasformazione-regola-applicabilita-servizio-applicativo" minOccurs="0" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -200,7 +200,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method getAzioneList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getAzione() {
@@ -209,7 +209,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method setAzioneList
-   * @param azione List<java.lang.String>
+   * @param azione List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setAzione(List<java.lang.String> azione) {
@@ -231,7 +231,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method getContentTypeList
-   * @return List<java.lang.String>
+   * @return List&lt;java.lang.String&gt;
   */
   @Deprecated
   public List<java.lang.String> getContentType() {
@@ -240,7 +240,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method setContentTypeList
-   * @param contentType List<java.lang.String>
+   * @param contentType List&lt;java.lang.String&gt;
   */
   @Deprecated
   public void setContentType(List<java.lang.String> contentType) {
@@ -265,7 +265,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method getSoggettoList
-   * @return List<TrasformazioneRegolaApplicabilitaSoggetto>
+   * @return List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
   */
   @Deprecated
   public List<TrasformazioneRegolaApplicabilitaSoggetto> getSoggetto() {
@@ -274,7 +274,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method setSoggettoList
-   * @param soggetto List<TrasformazioneRegolaApplicabilitaSoggetto>
+   * @param soggetto List&lt;TrasformazioneRegolaApplicabilitaSoggetto&gt;
   */
   @Deprecated
   public void setSoggetto(List<TrasformazioneRegolaApplicabilitaSoggetto> soggetto) {
@@ -295,7 +295,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method getServizioApplicativoList
-   * @return List<TrasformazioneRegolaApplicabilitaServizioApplicativo>
+   * @return List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
   */
   @Deprecated
   public List<TrasformazioneRegolaApplicabilitaServizioApplicativo> getServizioApplicativo() {
@@ -304,7 +304,7 @@ public class TrasformazioneRegolaApplicabilitaRichiesta extends org.openspcoop2.
 
   /**
    * @deprecated Use method setServizioApplicativoList
-   * @param servizioApplicativo List<TrasformazioneRegolaApplicabilitaServizioApplicativo>
+   * @param servizioApplicativo List&lt;TrasformazioneRegolaApplicabilitaServizioApplicativo&gt;
   */
   @Deprecated
   public void setServizioApplicativo(List<TrasformazioneRegolaApplicabilitaServizioApplicativo> servizioApplicativo) {

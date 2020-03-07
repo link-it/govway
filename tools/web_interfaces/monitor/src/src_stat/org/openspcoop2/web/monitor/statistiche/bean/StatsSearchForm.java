@@ -139,6 +139,13 @@ public class StatsSearchForm extends BaseSearchForm{
 		return this.dataFineDellaRicerca;
 	}
 
+	public List<SelectItem> getEsitiDettaglio() {
+		return super.getEsitiDettaglio(true);
+	}
+	
+	public List<SelectItem> getEsitiDettagliPersonalizzati() {
+		return super.getEsitiDettagliPersonalizzati(true);
+	}
 	
 	@Override
 	protected String eseguiFiltra() {

@@ -33,14 +33,14 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="CodiceEccezione">
- * 		<xsd:simpleContent>
- * 			<xsd:extension base="{http://www.w3.org/2001/XMLSchema}string">
- * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/>
- * 				&lt;attribute name="sottotipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/>
- * 			</xsd:extension>
- * 		</xsd:simpleContent>
- * &lt;/complexType>
+ * &lt;complexType name="CodiceEccezione"&gt;
+ * 		&lt;xsd:simpleContent&gt;
+ * 			&lt;xsd:extension base="{http://www.w3.org/2001/XMLSchema}string"&gt;
+ * 				&lt;attribute name="tipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="required"/&gt;
+ * 				&lt;attribute name="sottotipo" type="{http://www.w3.org/2001/XMLSchema}integer" use="optional"/&gt;
+ * 			&lt;/xsd:extension&gt;
+ * 		&lt;/xsd:simpleContent&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

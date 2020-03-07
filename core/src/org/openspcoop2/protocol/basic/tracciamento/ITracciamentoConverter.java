@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 /**
  * TracciamentoConverter
  *
- * @author Andrea Poli <poli@link.it>
+ * @author Andrea Poli (poli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

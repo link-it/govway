@@ -17,9 +17,10 @@
 
 		<jar.group.name>saaj</jar.group.name>
 		
-		<mimepull.version>1.9.7</mimepull.version>
-		<saaj-impl.version>1.3.28</saaj-impl.version>
-		<stax-ex.version>1.7.8</stax-ex.version>
+		<mimepull.version>1.9.12</mimepull.version>
+		<saaj-api.version>1.4.0</saaj-api.version>
+		<saaj-impl.gov4j.version>1.5.1-gov4j-2</saaj-impl.gov4j.version>
+		<stax-ex.version>1.8.2</stax-ex.version>
 
 	</properties>
 
@@ -38,9 +39,21 @@
 		</dependency>
 
 		<dependency>
+			<groupId>javax.xml.soap</groupId>
+			<artifactId>javax.xml.soap-api</artifactId>
+			<version>${saaj-api.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
 			<groupId>com.sun.xml.messaging.saaj</groupId>
 			<artifactId>saaj-impl</artifactId>
-			<version>${saaj-impl.version}</version>
+			<version>${saaj-impl.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

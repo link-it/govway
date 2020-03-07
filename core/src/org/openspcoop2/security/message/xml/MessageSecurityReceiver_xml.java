@@ -50,7 +50,7 @@ import org.w3c.dom.Element;
 /**
  * Classe per la gestione della WS-Security (WSDoAllReceiver).
  *
- * @author Lorenzo Nardi <nardi@link.it>
+ * @author Lorenzo Nardi (nardi@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  * 

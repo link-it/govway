@@ -33,12 +33,12 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="route">
- * 		&lt;sequence>
- * 			&lt;element name="registro" type="{http://www.openspcoop2.org/core/config}route-registro" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="gateway" type="{http://www.openspcoop2.org/core/config}route-gateway" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="route"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="registro" type="{http://www.openspcoop2.org/core/config}route-registro" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="gateway" type="{http://www.openspcoop2.org/core/config}route-gateway" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$

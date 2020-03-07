@@ -87,6 +87,8 @@ public final class CostantiDB {
     public static final String SERVIZI_APPLICATIVI_RUOLI = "sa_ruoli";
     public static final String PORTE_APPLICATIVE = "porte_applicative";
     public static final String PORTE_APPLICATIVE_SA = "porte_applicative_sa";
+    public static final String PORTE_APPLICATIVE_SA_PROPS = "pa_sa_properties";
+    public static final String PORTE_APPLICATIVE_BEHAVIOUR_PROPS = "pa_behaviour_props";
     public static final String PORTE_APPLICATIVE_AUTENTICAZIONE_PROP = "pa_auth_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_PROP = "pa_authz_properties";
     public static final String PORTE_APPLICATIVE_AUTORIZZAZIONE_CONTENUTI_PROP = "pa_authzc_properties";
@@ -240,6 +242,11 @@ public final class CostantiDB {
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_1 = "INDEX_TR_FILTROD_RES";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_REQ_2 = "INDEX_TR_FILTROD_REQ_2";
 	public static final String TABLE_TRANSAZIONI_INDEX_FILTRO_RES_2 = "INDEX_TR_FILTROD_RES_2";
+	
+	public static final String TRANSAZIONI_EXTENDED_INFO = "transazione_extended_info";
+	
+	 /*TRANSAZIONI_SERVER_APPLICATIVI*/
+    public static final String TRANSAZIONI_APPLICATIVI_SERVER = "transazioni_sa";
     
     /*EVENTI*/
     public static final String DUMP_EVENTI = "notifiche_eventi";
@@ -406,6 +413,7 @@ public final class CostantiDB {
     public static final String MSG_DIAGNOSTICI_COLUMN_CODICE = "codice";
     public static final String MSG_DIAGNOSTICI_COLUMN_PROTOCOLLO = "protocollo";
     public static final String MSG_DIAGNOSTICI_COLUMN_ID_TRANSAZIONE = "id_transazione";
+    public static final String MSG_DIAGNOSTICI_COLUMN_APPLICATIVO = "applicativo";
     public static final String MSG_DIAGNOSTICI_COLUMN_ID = "id";
     
     /*COLONNE TABELLA PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST */

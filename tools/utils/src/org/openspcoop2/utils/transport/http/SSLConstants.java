@@ -36,5 +36,6 @@ public class SSLConstants {
 	public final static String PROTOCOL_TLS_V1 = "TLSv1";
 	public final static String PROTOCOL_TLS_V1_1 = "TLSv1.1";
 	public final static String PROTOCOL_TLS_V1_2 = "TLSv1.2";
+	public final static String PROTOCOL_TLS_V1_3 = "TLSv1.3";
 	
 }

@@ -35,7 +35,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriCooperazione;
 /**
  * Interfaccia che definisce un processo di autorizzazione per i soggetti.
  *
- * @author Andrea Poli <apoli@link.it>
+ * @author Andrea Poli (apoli@link.it)
  * @author $Author$
  * @version $Rev$, $Date$
  */

@@ -35,16 +35,16 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="party">
- * 		&lt;sequence>
- * 			&lt;element name="identifier" type="{http://www.domibus.eu/configuration}identifier" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/>
- * 		&lt;attribute name="userName" type="{http://www.domibus.eu/configuration}string" use="optional"/>
- * 		&lt;attribute name="password" type="{http://www.domibus.eu/configuration}string" use="optional"/>
- * 		&lt;attribute name="endpoint" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/>
- * 		&lt;attribute name="allowChunking" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/>
- * &lt;/complexType>
+ * &lt;complexType name="party"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="identifier" type="{http://www.domibus.eu/configuration}identifier" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="name" type="{http://www.w3.org/2001/XMLSchema}string" use="required"/&gt;
+ * 		&lt;attribute name="userName" type="{http://www.domibus.eu/configuration}string" use="optional"/&gt;
+ * 		&lt;attribute name="password" type="{http://www.domibus.eu/configuration}string" use="optional"/&gt;
+ * 		&lt;attribute name="endpoint" type="{http://www.w3.org/2001/XMLSchema}anyURI" use="required"/&gt;
+ * 		&lt;attribute name="allowChunking" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -139,7 +139,7 @@ public class Party extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method getIdentifierList
-   * @return List<Identifier>
+   * @return List&lt;Identifier&gt;
   */
   @Deprecated
   public List<Identifier> getIdentifier() {
@@ -148,7 +148,7 @@ public class Party extends org.openspcoop2.utils.beans.BaseBean implements Seria
 
   /**
    * @deprecated Use method setIdentifierList
-   * @param identifier List<Identifier>
+   * @param identifier List&lt;Identifier&gt;
   */
   @Deprecated
   public void setIdentifier(List<Identifier> identifier) {

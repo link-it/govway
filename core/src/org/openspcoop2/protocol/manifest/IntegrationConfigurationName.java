@@ -35,12 +35,12 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="IntegrationConfigurationName">
- * 		&lt;sequence>
- * 			&lt;element name="param" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationElementName" minOccurs="1" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * 		&lt;attribute name="useInUrl" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/>
- * &lt;/complexType>
+ * &lt;complexType name="IntegrationConfigurationName"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="param" type="{http://www.openspcoop2.org/protocol/manifest}IntegrationConfigurationElementName" minOccurs="1" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * 		&lt;attribute name="useInUrl" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -107,7 +107,7 @@ public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method getParamList
-   * @return List<IntegrationConfigurationElementName>
+   * @return List&lt;IntegrationConfigurationElementName&gt;
   */
   @Deprecated
   public List<IntegrationConfigurationElementName> getParam() {
@@ -116,7 +116,7 @@ public class IntegrationConfigurationName extends org.openspcoop2.utils.beans.Ba
 
   /**
    * @deprecated Use method setParamList
-   * @param param List<IntegrationConfigurationElementName>
+   * @param param List&lt;IntegrationConfigurationElementName&gt;
   */
   @Deprecated
   public void setParam(List<IntegrationConfigurationElementName> param) {

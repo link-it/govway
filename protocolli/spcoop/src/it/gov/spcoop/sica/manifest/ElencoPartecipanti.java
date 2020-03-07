@@ -34,11 +34,11 @@ import java.util.List;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="ElencoPartecipanti">
- * 		&lt;sequence>
- * 			&lt;element name="partecipante" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="2" maxOccurs="unbounded"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="ElencoPartecipanti"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="partecipante" type="{http://spcoop.gov.it/sica/manifest}anyURI" minOccurs="2" maxOccurs="unbounded"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
@@ -94,7 +94,7 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method getPartecipanteList
-   * @return List<java.net.URI>
+   * @return List&lt;java.net.URI&gt;
   */
   @Deprecated
   public List<java.net.URI> getPartecipante() {
@@ -103,7 +103,7 @@ public class ElencoPartecipanti extends org.openspcoop2.utils.beans.BaseBean imp
 
   /**
    * @deprecated Use method setPartecipanteList
-   * @param partecipante List<java.net.URI>
+   * @param partecipante List&lt;java.net.URI&gt;
   */
   @Deprecated
   public void setPartecipante(List<java.net.URI> partecipante) {

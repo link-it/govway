@@ -144,7 +144,7 @@ public class ServiceInfoInInterceptor extends org.apache.cxf.ext.logging.Logging
 					
 					int contentLength = httpServletRequest.getContentLength();
 					if(contentLength>=0) {
-						transactionWithClient.getRequest().setSize(new Long(contentLength));
+						transactionWithClient.getRequest().setSize(Long.valueOf(contentLength));
 					}
 				}
 			}

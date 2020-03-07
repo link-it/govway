@@ -32,13 +32,13 @@ import java.io.Serializable;
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SpecificaConversazione">
- * 		&lt;sequence>
- * 			&lt;element name="conversazioneConcettuale" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="conversazioneLogicaLatoFruitore" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/>
- * 			&lt;element name="conversazioneLogicaLatoErogatore" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/>
- * 		&lt;/sequence>
- * &lt;/complexType>
+ * &lt;complexType name="SpecificaConversazione"&gt;
+ * 		&lt;sequence&gt;
+ * 			&lt;element name="conversazioneConcettuale" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="conversazioneLogicaLatoFruitore" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 			&lt;element name="conversazioneLogicaLatoErogatore" type="{http://spcoop.gov.it/sica/manifest}DocumentoConversazione" minOccurs="0" maxOccurs="1"/&gt;
+ * 		&lt;/sequence&gt;
+ * &lt;/complexType&gt;
  * </pre>
  * 
  * @version $Rev$, $Date$
