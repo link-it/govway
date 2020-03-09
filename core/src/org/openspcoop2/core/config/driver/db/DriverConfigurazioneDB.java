@@ -22202,9 +22202,9 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 			sqlQueryObject.addSelectField(CostantiDB.SOGGETTI, "nome_soggetto");
 			sqlQueryObject.addWhereCondition("id_soggetto = ?");
 			sqlQueryObject.addWhereCondition(CostantiDB.SOGGETTI+".id="+CostantiDB.SERVIZI_APPLICATIVI+".id_soggetto");
+			sqlQueryObject.setANDLogicOperator(true);
 			if(tipo != null) {
 				sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
-				sqlQueryObject.setANDLogicOperator(true);
 			}
 			if(checkConnettoreAbilitato) {
 				sqlQueryObject.addFromTable(CostantiDB.CONNETTORI);

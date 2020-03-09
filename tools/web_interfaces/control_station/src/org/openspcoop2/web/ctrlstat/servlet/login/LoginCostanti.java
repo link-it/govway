@@ -69,6 +69,7 @@ public class LoginCostanti {
 	/* LABEL GENERALI */
 	
 	public final static String LABEL_LOGIN = "Login";
+	public final static String LABEL_USERNAME = "Username";
 	public final static String LABEL_LOGOUT = "Logout";
 	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO = "Utente: ";
 	public final static String LABEL_LOGIN_ATTUALMENTE_CONNESSO_WITH_PARAM = "Utente: <b>{0}</b>";

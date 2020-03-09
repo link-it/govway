@@ -34,8 +34,8 @@
 			<param name="stubBuild.buildJar" value="true"/>
 			<param name="stubBuild.jar" value="${dist_soapNonBlockingPull}/openspcoop2_protocol-modipa-soap-nonBlocking-pull-stub-cxf.jar"/>
 			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.modipa.example.soap.non_blocking.pull.stub"/>
-			<param name="serviceFile" value="${build_soapNonBlockingPull}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/pull/stub/SOAPNonBlockingPullImplService.java"/>
-			<param name="className" value="SOAPNonBlockingPullImplService"/>
+			<param name="serviceFile" value="${build_soapNonBlockingPull}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/pull/stub/SOAPPullService.java"/>
+			<param name="className" value="SOAPPullService"/>
 			<param name="wsdlName" value="soap-nonblocking.wsdl"/>
 		</antcall>
 

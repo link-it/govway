@@ -250,7 +250,7 @@ public class GeneralHelper {
 		titoloSezione.setName("");
 
 		DataElement login = new DataElement();
-		login.setLabel(LoginCostanti.LABEL_LOGIN);
+		login.setLabel(LoginCostanti.LABEL_USERNAME);
 		login.setType(DataElementType.TEXT_EDIT);
 		login.setName(UtentiCostanti.PARAMETRO_UTENTE_LOGIN);
 		login.setStyleClass(Costanti.INPUT_CSS_CLASS);

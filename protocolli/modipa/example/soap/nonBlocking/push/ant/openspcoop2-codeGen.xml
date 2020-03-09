@@ -21,9 +21,11 @@
 
 	    	<antcall target="-codegen_from_wsdl_internal">
 			<param name="implType" value="server"/>
+			<param name="implClass" value="SOAPCallbackService"/>
 		</antcall>
 		<antcall target="-codegen_from_wsdl_internal">
 			<param name="implType" value="client"/>
+			<param name="implClass" value="SOAPCallbackClientService"/>
 		</antcall>
 
 	</target>
@@ -45,8 +47,8 @@
 			<param name="stubBuild.buildJar" value="true"/>
 			<param name="stubBuild.jar" value="${dist_soapNonBlockingPush}/openspcoop2_protocol-modipa-soap-nonBlocking-push-${implType}-stub-cxf.jar"/>
 			<param name="stubPackageOverriding" value="org.openspcoop2.protocol.modipa.example.soap.non_blocking.push.${implType}.stub"/>
-			<param name="serviceFile" value="${build_soapNonBlockingPush}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/push/${implType}/stub/SOAPNonBlockingPushImplService.java"/>
-			<param name="className" value="SOAPNonBlockingPushImplService"/>
+			<param name="serviceFile" value="${build_soapNonBlockingPush}/srcStubCXF/org/openspcoop2/protocol/modipa/example/soap/non_blocking/push/${implType}/stub/${implClass}.java"/>
+			<param name="className" value="${implClass}"/>
 			<param name="wsdlName" value="soap-callback-${implType}.wsdl"/>
 		</antcall>
 

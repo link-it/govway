@@ -46,7 +46,7 @@ mancanti.
 La distribuzione GovWay è stata estesamente testata prima del rilascio
 sulla seguente piattaforma di riferimento:
 
--  *Openjdk 11 (version: 11+28)*
+-  *Openjdk 11 (version: 11.0.2+9)*
 
 -  *PostgreSQL 9 (version: 9.5.10)*
 

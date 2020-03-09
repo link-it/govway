@@ -244,11 +244,11 @@ EOCONF
 
 
 ### Verifica versione java (default java6 Oracle)
-MIN_MAJOR=${MIN_MAJOR:-1}
-MAX_MAJOR=${MAX_MAJOR:-1}
-MIN_MINOR=${MIN_MINOR:-8}
-MAX_MINOR=${MAX_MINOR:-8}
-EXPECTED_RUNTIME=${EXPECTED_RUNTIME:-"Java(TM)"}
+MIN_MAJOR=${MIN_MAJOR:-11}
+MAX_MAJOR=${MAX_MAJOR:-11}
+MIN_MINOR=${MIN_MINOR:-0}
+MAX_MINOR=${MAX_MINOR:-0}
+EXPECTED_RUNTIME=${EXPECTED_RUNTIME:-"OpenJDK"}
 JAVA_VERSION=$($JAVA_HOME_CONF/bin/java -version 2>&1 |awk -F '"' '/version/ {print $2}')
 JAVA_RUNTIME=$($JAVA_HOME_CONF/bin/java -version 2>&1 |awk -F ' ' '/Runtime/ {print $1}')
 IFS=. read major minor extra <<<"$JAVA_VERSION"
