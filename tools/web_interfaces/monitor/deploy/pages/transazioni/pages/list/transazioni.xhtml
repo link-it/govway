@@ -243,6 +243,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 							<ui:param value="#{transazioniBean.esportazioniSelezionate}" name="esportazioniSelezionate" />
 							<ui:param value="panelPaginaTransazioniCtr" name="reRenderIds" />
 							<ui:param value="#{searchFormTransazioni.useCount}" name="useCount" />
+							<ui:param value="#{searchFormTransazioni.visualizzaStoricoCustomColonnaRuoloTransazioneEnabled}" name="visualizzaStoricoCustomColonnaRuoloTransazioneEnabled" />
 						</ui:include>
 					</c:if>
 				</a4j:form>
@@ -578,6 +579,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 							<ui:include src="/transazioni/includes/tabellaTransazioniLiveCustom.xhtml">
 								<ui:param value="#{liveBean.liveData}" name="value" />
 								<ui:param value="#{dettagliBean}" name="targetBean" />
+								<ui:param value="#{searchFormTransazioni.visualizzaLiveCustomColonnaRuoloTransazioneEnabled}" name="visualizzaLiveCustomColonnaRuoloTransazioneEnabled" />
 							</ui:include>
 						</c:if>
 					</a4j:form>
