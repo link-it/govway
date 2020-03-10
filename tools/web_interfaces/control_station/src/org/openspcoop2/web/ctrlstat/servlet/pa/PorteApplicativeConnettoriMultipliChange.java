@@ -378,10 +378,121 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 				if(postBackElementName.equalsIgnoreCase(ConnettoriCostanti.PARAMETRO_CONNETTORE_ABILITA_USO_APPLICATIVO_SERVER)){
 					// devo resettare il connettore se passo da SA Server a Default
 					if(!erogazioneServizioApplicativoServerEnabled) {
+						
+						boolean isDefault = oldDatiConnettore != null ? !oldDatiConnettore.isNotifica() : true;
+												
 						// vecchio SA era un Server allora devo fare il reinit del connettore
 						if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(oldTipoSA)) {
-							tipoauthRichiesta = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
-							initConnettore = true;
+							
+							if(isDefault) {
+							
+								//tipoauthRichiesta = ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC;
+								
+								idSA.setNome(pa.getServizioApplicativoDefault());
+								idSADB.setNome(pa.getServizioApplicativoDefault());
+								oldSA = saCore.getServizioApplicativo(idSA);
+								idSADB.setId(oldSA.getId());
+								invocazionePorta = oldSA.getInvocazionePorta();
+								oldIS = oldSA.getInvocazioneServizio();
+								oldCis = oldIS.getCredenziali();
+								oldConnis = oldIS.getConnettore();
+								oldCP = oldConnis.getPropertyList();
+								oldTipoSA = oldSA.getTipo();
+								
+								// reset dei fields
+								erogazioneServizioApplicativoServer = null;
+								
+								sbustamento = null;
+								sbustamentoInformazioniProtocolloRichiesta = null;
+								getmsg = null;
+								getmsgUsername = null;
+								getmsgPassword = null;
+								invrifRichiesta = null;
+								risprif = null;
+								tipoauthRichiesta = null;
+								endpointtype = porteApplicativeHelper.readEndPointType();
+								tipoconn = null;
+								autenticazioneHttp = null;
+								user = null;
+								password = null;
+								connettoreDebug = null;
+	
+								// token policy
+								autenticazioneTokenS = null;
+								autenticazioneToken = ServletUtils.isCheckBoxEnabled(autenticazioneTokenS);
+								token_policy = null;
+	
+								// proxy
+								proxy_enabled = null;
+								proxy_hostname = null;
+								proxy_port = null;
+								proxy_username = null;
+								proxy_password = null;
+	
+								// tempi risposta
+								tempiRisposta_enabled = null;
+								tempiRisposta_connectionTimeout = null;
+								tempiRisposta_readTimeout = null;
+								tempiRisposta_tempoMedioRisposta = null;
+	
+								// opzioni avanzate
+								transfer_mode = null;
+								transfer_mode_chunk_size = null;
+								redirect_mode = null;
+								redirect_max_hop = null;
+								opzioniAvanzate = ConnettoriHelper.getOpzioniAvanzate(porteApplicativeHelper, transfer_mode, redirect_mode);
+	
+								// http
+								url = null;
+	
+								// jms
+								nomeCodaJms = null;
+								tipoJms = null;
+								initcont = null;
+								urlpgk = null;
+								provurl = null;
+								connfact = null;
+								tipoSendas = null;
+	
+								// https
+								httpsurl = url;
+								httpstipologia = null;
+								httpshostverifyS = null;
+								httpshostverify = ServletUtils.isCheckBoxEnabled(httpshostverifyS);
+								httpspath = null;
+								httpstipo = null;
+								httpspwd = null;
+								httpsalgoritmo = null;
+								httpsstatoS = null;
+								httpsstato = ServletUtils.isCheckBoxEnabled(httpsstatoS);
+								httpskeystore = null;
+								httpspwdprivatekeytrust = null;
+								httpspathkey = null;
+								httpstipokey = null;
+								httpspwdkey = null;
+								httpspwdprivatekey = null;
+								httpsalgoritmokey = null;
+								httpsKeyAlias = null;
+								httpsTrustStoreCRLs = null;
+	
+								// file
+								requestOutputFileName = null;
+								requestOutputFileNameHeaders = null;
+								requestOutputParentDirCreateIfNotExists = null;
+								requestOutputOverwriteIfExists = null;
+								responseInputMode = null;
+								responseInputFileName = null;
+								responseInputFileNameHeaders = null;
+								responseInputDeleteAfterRead = null;
+								responseInputWaitTime = null;
+								
+								initConnettoreFromSA = true; // devo rileggerlo dal nuovo SA
+								
+							}
+							else {
+								initConnettore = true;
+							}
+							
 						} else {
 							initConnettoreFromSA = true;
 						}
@@ -1287,13 +1398,15 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 
 				if(erogazioneServizioApplicativoServerEnabled) {
 					if(!erogazioneServizioApplicativoServer.equals(sa.getNome())) {
-
-						paSA.setNome(erogazioneServizioApplicativoServer);
-
+	
 						if(!isDefault) {
+							
+							paSA.setNome(erogazioneServizioApplicativoServer);
+							
 							// se non sono il connettore di default imposto il nome dell SA Server e cancello il SA collegato al connettore definito nella form
 							if(!ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo()))
 								listaOggettiDaEliminare.add(sa);
+							
 						} else {
 
 							// se sono il connettore di defautl allora devo comportarmi come il connettore nel caso non multiplo
@@ -1305,7 +1418,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 									break;
 								}
 							}
-
+	
 							if(paSAtmp!= null) {
 								// se ho modificato il server che sto utilizzando lo rimuovo
 								if(ServiziApplicativiCostanti.VALUE_SERVIZI_APPLICATIVI_TIPO_SERVER.equals(sa.getTipo())){
@@ -1318,6 +1431,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							}
 
 							// nuovo SA da aggiungere
+							paSA.setNome(erogazioneServizioApplicativoServer);
 							pa.getServizioApplicativoList().add(paSA);
 
 							// aggiorno eventuali connettori associati alla conigurazioni non default
@@ -1340,7 +1454,7 @@ public final class PorteApplicativeConnettoriMultipliChange extends Action {
 							// prelevo l'associazione con il vecchio servizio applicativo server
 							PortaApplicativaServizioApplicativo paSAtmp = null;
 							for (PortaApplicativaServizioApplicativo paSA2 : pa.getServizioApplicativoList()) {
-								if(paSA.getNome().equals(sa.getNome())) {
+								if(paSA2.getNome().equals(sa.getNome())) {
 									paSAtmp = paSA2;
 									break;
 								}

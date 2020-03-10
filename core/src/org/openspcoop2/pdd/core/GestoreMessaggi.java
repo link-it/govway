@@ -4398,12 +4398,16 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_SOAP", "sbSoap");
 					sqlQueryObject.addSelectAliasField("sa", "SBUSTAMENTO_INFO_PROTOCOL", "sbProtocol");
 					sqlQueryObject.addSelectAliasField("sa", "NOME_PORTA", "nomePorta");
-					sqlQueryObject.addSelectAliasField("sa", "LOCK_CONSEGNA", "lock");
-					sqlQueryObject.addSelectAliasField("sa", "CLUSTER_ID", "cluster");
+					sqlQueryObject.addSelectAliasField("sa", "LOCK_CONSEGNA", "saLock"); // non usare lock e' una parola riservata di oracle
+					sqlQueryObject.addSelectAliasField("sa", "CLUSTER_ID", "saCluster"); // non usare cluster e' una parola riservata di oracle
 					sqlQueryObject.addSelectAliasField("sa", "ATTESA_ESITO", "attesa");
-					sqlQueryObject.addSelectField("m","ORA_REGISTRAZIONE");
-					sqlQueryObject.addSelectField("m","PROPRIETARIO");
-					sqlQueryObject.addSelectField("m","TIPO");
+					sqlQueryObject.addSelectAliasField("sa", "ID_MESSAGGIO", "saidmess");
+					sqlQueryObject.addSelectAliasField("sa", "TIPO_CONSEGNA", "satipocons");
+					sqlQueryObject.addSelectAliasField("sa", "ERRORE_PROCESSAMENTO_COMPACT", "saerrproccom");
+					sqlQueryObject.addSelectAliasField("sa", "RISPEDIZIONE", "sarisp");
+					sqlQueryObject.addSelectAliasField("m","ORA_REGISTRAZIONE", "oramsg");
+					sqlQueryObject.addSelectAliasField("m","PROPRIETARIO", "propmsg");
+					sqlQueryObject.addSelectAliasField("m","TIPO" , "tipomsg");
 					
 					// join
 					sqlQueryObject.addWhereCondition("m.ID_MESSAGGIO=sa.ID_MESSAGGIO");
@@ -4417,7 +4421,7 @@ public class GestoreMessaggi  {
 					sqlQueryObject.addWhereCondition(false, "sa.ATTESA_ESITO is null", "sa.ATTESA_ESITO <> ?");
 					
 					sqlQueryObject.setANDLogicOperator(true);
-					sqlQueryObject.addOrderBy("m.ORA_REGISTRAZIONE");
+					sqlQueryObject.addOrderBy("oramsg");
 					sqlQueryObject.setSortType(true);
 					
 					sqlQueryObject.setLimit(limit);
@@ -4480,7 +4484,7 @@ public class GestoreMessaggi  {
 				return idMsg;
 
 			} catch(Exception e) {
-				String errorMsg = "[GestoreMessaggi.readMessaggiInutiliIntoBox] errore, queryString["+queryString+"]: "+e.getMessage();
+				String errorMsg = "[GestoreMessaggi.readMessaggiDaRiconsegnareIntoBox] errore, queryString["+queryString+"]: "+e.getMessage();
 				try{
 					if(rs != null)
 						rs.close();
