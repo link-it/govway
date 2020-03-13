@@ -37,6 +37,7 @@ import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.config.MessageSecurity;
 import org.openspcoop2.core.config.MessageSecurityFlow;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.constants.MTOMProcessorType;
 import org.openspcoop2.core.config.constants.StatoFunzionalita;
 import org.openspcoop2.core.mvc.properties.utils.ConfigManager;
@@ -131,7 +132,7 @@ public final class PorteDelegateWS extends Action {
 			
 			AccordoServizioParteSpecifica asps = aspsCore.getAccordoServizioParteSpecifica(Long.parseLong(idAsps));
 			AccordoServizioParteComuneSintetico as = apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
-			ServiceBinding serviceBinding = apcCore.toMessageServiceBinding(as.getServiceBinding()); 
+			ServiceBinding serviceBindingAPI = apcCore.toMessageServiceBinding(as.getServiceBinding()); 
 
 			// Calcolo lo stato MTOM
 			boolean isMTOMAbilitatoReq = false;
@@ -230,7 +231,37 @@ public final class PorteDelegateWS extends Action {
 			ConfigManager configManager = ConfigManager.getinstance(ControlStationCore.getLog());
 			configManager.leggiConfigurazioni(propertiesSourceConfiguration, true);
 			
-			List<String> nomiConfigurazioniReq = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			ServiceBinding serviceBindingSecurityTransformazioni = null;
+			// se ci sono delle trasformazioni abilitate posso dover modificare il binding (Solo nelle fruizioni)
+			if(pde!=null && pde.getTrasformazioni()!=null && pde.getTrasformazioni().sizeRegolaList()>0) {
+				for (int i = 0; i < pde.getTrasformazioni().sizeRegolaList(); i++) {
+					TrasformazioneRegola tr = pde.getTrasformazioni().getRegola(i);
+					if(StatoFunzionalita.ABILITATO.equals(tr.getStato())) {
+						if(tr.getRichiesta()!=null) {
+							if(ServiceBinding.REST.equals(serviceBindingAPI)) {
+								if(tr.getRichiesta().getTrasformazioneSoap()!=null) {
+									serviceBindingSecurityTransformazioni = ServiceBinding.SOAP;
+									break;
+								}
+							}
+							else {
+								if(tr.getRichiesta().getTrasformazioneRest()!=null) {
+									serviceBindingSecurityTransformazioni = ServiceBinding.REST;
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			List<String> nomiConfigurazioniReq = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBindingAPI.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			if(serviceBindingSecurityTransformazioni!=null) {
+				List<String> nomiConfigurazioniReqTrasformazioni = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBindingSecurityTransformazioni.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+				if(nomiConfigurazioniReqTrasformazioni!=null && !nomiConfigurazioniReqTrasformazioni.isEmpty()) {
+					nomiConfigurazioniReq.addAll(nomiConfigurazioniReqTrasformazioni);
+				}
+			}
 			List<String> labelConfigurazioniReq = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniReq);
 			
 			List<String> propConfigReqLabelListTmp = new ArrayList<String>(); 
@@ -247,7 +278,13 @@ public final class PorteDelegateWS extends Action {
 				propConfigReqListTmp.add(PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_MESSAGE_SECURITY_REQUEST_FLOW_PROPERTIES_CONFIG_NAME);
 			
 			
-			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBinding.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			List<String> nomiConfigurazioniRes = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBindingAPI.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+			if(serviceBindingSecurityTransformazioni!=null) {
+				List<String> nomiConfigurazioniResTrasformazioni = configManager.getNomiConfigurazioni(propertiesSourceConfiguration,serviceBindingSecurityTransformazioni.name(),PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_RESPONSE,PorteDelegateCostanti.TAG_PORTE_DELEGATE_MESSAGE_SECURITY_PD);
+				if(nomiConfigurazioniResTrasformazioni!=null && !nomiConfigurazioniResTrasformazioni.isEmpty()) {
+					nomiConfigurazioniRes.addAll(nomiConfigurazioniResTrasformazioni);
+				}
+			}
 			List<String> labelConfigurazioniRes = configManager.convertToLabel(propertiesSourceConfiguration, nomiConfigurazioniRes);
 			
 			List<String>  propConfigResLabelListTmp = new ArrayList<String>(); 

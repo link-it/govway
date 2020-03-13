@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPFault;
 
 import org.openspcoop2.core.config.Connettore;
@@ -57,10 +58,13 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
+import org.openspcoop2.message.OpenSPCoop2RestJsonMessage;
 import org.openspcoop2.message.OpenSPCoop2RestMessage;
+import org.openspcoop2.message.OpenSPCoop2RestXmlMessage;
 import org.openspcoop2.message.OpenSPCoop2SoapMessage;
 import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.message.constants.MessageRole;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.message.soap.SoapUtils;
@@ -165,7 +169,9 @@ import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.digest.IDigestReader;
 import org.openspcoop2.utils.io.notifier.NotifierInputStreamParams;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.utils.rest.problem.JsonDeserializer;
 import org.openspcoop2.utils.rest.problem.ProblemRFC7807;
+import org.openspcoop2.utils.rest.problem.XmlDeserializer;
 import org.openspcoop2.utils.transport.TransportResponseContext;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -2446,7 +2452,40 @@ public class InoltroBuste extends GenericLib{
 						dumpRispostaEffettuato = true;
 					}
 					
+					MessageType messageTypePrimaTrasformazione = responseMessage.getMessageType();
+					
 					responseMessage = gestoreTrasformazioni.trasformazioneRisposta(responseMessage, bustaRichiesta);
+					
+					MessageType messageTypeDopoTrasformazione = (responseMessage!=null)  ? responseMessage.getMessageType() : null;
+					if(messageTypeDopoTrasformazione==null || messageTypePrimaTrasformazione.equals(messageTypeDopoTrasformazione)==false) {
+						soapFault = null;
+						restProblem = null;
+						if(messageTypeDopoTrasformazione!=null) {
+							if(responseMessage instanceof OpenSPCoop2SoapMessage){
+								SOAPBody body = responseMessage.castAsSoap().getSOAPBody();
+								if(body!=null && body.hasFault()){
+									soapFault = body.getFault();
+								}
+							}
+							else {
+								if(responseMessage instanceof OpenSPCoop2RestJsonMessage ){
+									OpenSPCoop2RestJsonMessage msg = responseMessage.castAsRestJson();
+									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+										JsonDeserializer deserializer = new JsonDeserializer();
+										restProblem = deserializer.fromString(msg.getContent());
+									}
+								}
+								else if(responseMessage instanceof OpenSPCoop2RestXmlMessage ){
+									OpenSPCoop2RestXmlMessage msg = responseMessage.castAsRestXml();
+									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+										XmlDeserializer deserializer = new XmlDeserializer();
+										restProblem = deserializer.fromNode(msg.getContent());
+									}
+								}
+							}
+						}
+					}
+
 				}
 				catch(Throwable e) {
 					
