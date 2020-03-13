@@ -1481,7 +1481,7 @@ public class RicezioneContenutiApplicativi {
 					identificativoPortaDelegata = idPD_action;
 					portaDelegata = identificazione.getPortaDelegata(action);
 					nomeUtilizzatoPerErrore = "Configurazione specifica per l'azione '"+action+"', porta '"+ identificativoPortaDelegata.getNome()+"'";
-					
+										
 					// aggiornao dati che possiede la Porta Delegata ID Porta Delegata
 					this.msgContext.getIntegrazione().setIdPD(identificativoPortaDelegata);
 					msgDiag.addKeyword(CostantiPdD.KEY_PORTA_DELEGATA, identificativoPortaDelegata.getNome());
@@ -1489,6 +1489,16 @@ public class RicezioneContenutiApplicativi {
 					richiestaDelegata.setIdPortaDelegata(identificativoPortaDelegata);
 					if(requestMessage.getTransportRequestContext()!=null) {
 						requestMessage.getTransportRequestContext().setInterfaceName(identificativoPortaDelegata.getNome());
+					}
+					
+					pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
+					try {
+						Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(portaDelegata);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			               pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
+			            }
+					}catch(Exception e) {
+						logCore.error("Errore durante la lettura delle proprietà di configurazione della porta delegata [" + portaDelegata.getNome() + "]: " + e.getMessage(), e);
 					}
 				}
 			}else {

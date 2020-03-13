@@ -292,7 +292,7 @@ public class LocalForwardEngine {
 			MTOMProcessor mtomProcessor = null;
 			boolean logDiagnosticError = true;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForSender(this.pd);
+				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPD_MessageSecurityForSender(this.pd, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPDRequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
@@ -477,7 +477,7 @@ public class LocalForwardEngine {
 			messageSecurityContext = null;
 			logDiagnosticError = true;
 			try{
-				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForReceiver(this.pa);
+				securityConfig=this.localForwardParameter.getConfigurazionePdDReader().getPA_MessageSecurityForReceiver(this.pa, this.localForwardParameter.getLog(), requestMessage, this.busta, this.requestInfo, this.localForwardParameter.getPddContext());
 			}catch(Exception e){
 				posizione = "LetturaParametriSicurezzaMessaggioPARequest";
 				erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

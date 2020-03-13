@@ -1494,7 +1494,7 @@ public class InoltroBuste extends GenericLib{
 				
 				if(erroreIntegrazione==null){
 					try{
-						messageSecurityConfig=configurazionePdDManager.getPD_MessageSecurityForSender(pd);
+						messageSecurityConfig=configurazionePdDManager.getPD_MessageSecurityForSender(pd, this.log, requestMessageTrasformato, bustaRichiesta, requestInfo, pddContext);
 					}catch(Exception e){
 						oggetto = "LetturaConfigurazioneMessageSecurityRoleSender";
 						erroreIntegrazione = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.

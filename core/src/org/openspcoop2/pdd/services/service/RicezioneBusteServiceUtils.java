@@ -23,6 +23,7 @@ package org.openspcoop2.pdd.services.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -69,6 +70,7 @@ import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.registry.IRegistryReader;
 import org.openspcoop2.protocol.sdk.registry.RegistryNotFound;
+import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
@@ -83,6 +85,25 @@ import org.slf4j.Logger;
  */
 public class RicezioneBusteServiceUtils {
 
+	public static Map<String, String> readPropertiesConfig(RequestInfo requestInfo, Logger logCore, IState state) {
+		if (requestInfo != null && requestInfo.getProtocolContext() != null && requestInfo.getProtocolContext().getInterfaceName() != null && !"".equals(requestInfo.getProtocolContext().getInterfaceName())) {
+			try {
+				ConfigurazionePdDManager configurazionePdDManager = ConfigurazionePdDManager.getInstance(state);
+				IDPortaApplicativa idPA = new IDPortaApplicativa();
+				idPA.setNome(requestInfo.getProtocolContext().getInterfaceName());
+				PortaApplicativa pa = configurazionePdDManager.getPortaApplicativa_SafeMethod(idPA);
+				if (pa != null) {
+					return configurazionePdDManager.getProprietaConfigurazione(pa);
+				}
+			} catch (Exception e) {
+				logCore.error("Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + requestInfo.getProtocolContext().getInterfaceName() + "]: " + e.getMessage(), e);
+			}
+
+			return null;
+		} else {
+			return null;
+		}
+	}
 	
 	public static ConnectorDispatcherInfo updatePortaApplicativaRequestInfo(RequestInfo requestInfo, Logger logCore, 
 			ConnectorOutMessage res, RicezioneBusteExternalErrorGenerator generatoreErrore,

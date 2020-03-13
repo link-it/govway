@@ -397,6 +397,10 @@ public class GestoreTrasformazioni {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								richiesta.getConversioneTipo(), richiesta.getConversioneTemplate(), "richiesta", dynamicMap, message, element, this.pddContext);
+				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
+					trasformazioneContenuto = false;
+					this.log.debug("Trasformazione contenuto della richiesta disabilitato (Context Injection)");
+				}
 			}
 			
 		} catch(Throwable er) {
@@ -715,6 +719,10 @@ public class GestoreTrasformazioni {
 				risultato = 
 						GestoreTrasformazioniUtilities.trasformazioneContenuto(this.log, 
 								trasformazioneRisposta.getConversioneTipo(), trasformazioneRisposta.getConversioneTemplate(), "risposta", dynamicMap, message, element, this.pddContext);
+				if (risultato != null && risultato.getTipoTrasformazione() != null && risultato.getTipoTrasformazione().isContextInjection()) {
+					trasformazioneContenuto = false;
+					this.log.debug("Trasformazione contenuto della risposta disabilitato (Context Injection)");
+				}
 			}
 			
 		} catch(Throwable er) {

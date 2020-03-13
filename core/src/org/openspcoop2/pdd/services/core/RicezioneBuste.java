@@ -1639,6 +1639,16 @@ public class RicezioneBuste {
 					if(requestMessage.getTransportRequestContext()!=null) {
 						requestMessage.getTransportRequestContext().setInterfaceName(pa.getNome());
 					}
+					
+					pddContext.removeObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
+					try {
+						Map<String, String> configProperties = configurazionePdDReader.getProprietaConfigurazione(pa);
+			            if (configProperties != null && !configProperties.isEmpty()) {
+			               pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
+			            }
+					}catch(Exception e) {
+						logCore.error("Errore durante la lettura delle proprietà di configurazione della porta applicativa [" + pa.getNome() + "]: " + e.getMessage(), e);
+					}
 				}
 			}else {
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.API_NON_INDIVIDUATA, "true");
@@ -4255,12 +4265,12 @@ public class RicezioneBuste {
 			try{
 				
 				// read flow Properties
-				flowPropertiesRequest = this.getFlowPropertiesRequest(bustaRichiesta, configurazionePdDReader, 
+				flowPropertiesRequest = this.getFlowPropertiesRequest(requestMessage, bustaRichiesta, configurazionePdDReader, 
 						((StateMessage)openspcoopstate.getStatoRichiesta()), msgDiag,logCore,propertiesReader,
-						ruoloBustaRicevuta,implementazionePdDMittente,inRequestContext.getPddContext(),pa);				
-				flowPropertiesResponse = this.getFlowPropertiesResponse(bustaRichiesta, configurazionePdDReader, 
+						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa);				
+				flowPropertiesResponse = this.getFlowPropertiesResponse(requestMessage, bustaRichiesta, configurazionePdDReader, 
 						((StateMessage)openspcoopstate.getStatoRichiesta()), msgDiag,logCore,propertiesReader,
-						ruoloBustaRicevuta,implementazionePdDMittente,inRequestContext.getPddContext(),pa);
+						ruoloBustaRicevuta,implementazionePdDMittente,requestInfo, inRequestContext.getPddContext(),pa);
 				parametriGenerazioneBustaErrore.setFlowPropertiesResponse(flowPropertiesResponse);
 				
 				// init message security context
@@ -7873,11 +7883,11 @@ public class RicezioneBuste {
 	 * 
 	 * @return Proprieta' Message-Security relative alla ricezione della busta
 	 */
-	private FlowProperties getFlowPropertiesRequest(Busta bustaRichiesta,
+	private FlowProperties getFlowPropertiesRequest(OpenSPCoop2Message requestMessage, Busta bustaRichiesta,
 			ConfigurazionePdDManager configurazionePdDReader,StateMessage state,
 			MsgDiagnostico msgDiag,Logger logCore,OpenSPCoop2Properties properties,
 			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,
-			PdDContext pddContext,
+			RequestInfo requestInfo, PdDContext pddContext,
 			PortaApplicativa paFind)throws DriverConfigurazioneException{
 
 		// Proprieta' Message-Security relative alla ricezione della busta
@@ -7947,7 +7957,7 @@ public class RicezioneBuste {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
 					}
 				}
@@ -7988,7 +7998,7 @@ public class RicezioneBuste {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
 					}
 
@@ -8002,7 +8012,7 @@ public class RicezioneBuste {
 						IDPortaDelegata idPD = new IDPortaDelegata();
 						idPD.setNome(integrazione.getNomePorta());
 						PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
-						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd);
+						flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 
 					}
@@ -8061,7 +8071,7 @@ public class RicezioneBuste {
 						}
 					}
 					if(pa!=null) {
-						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+						flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 						flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
 					}
 
@@ -8092,7 +8102,7 @@ public class RicezioneBuste {
 							}
 						}
 						if(pa!=null) {
-							flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa);
+							flowProperties.messageSecurity = configurazionePdDReader.getPA_MessageSecurityForReceiver(pa, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 							flowProperties.mtom = configurazionePdDReader.getPA_MTOMProcessorForReceiver(pa);
 						}
 
@@ -8145,11 +8155,11 @@ public class RicezioneBuste {
 	 * 
 	 * @return Proprieta' Message-Security relative alla spedizione della busta
 	 */
-	private FlowProperties getFlowPropertiesResponse(Busta bustaRichiesta,
+	private FlowProperties getFlowPropertiesResponse(OpenSPCoop2Message requestMessage, Busta bustaRichiesta,
 			ConfigurazionePdDManager configurazionePdDReader,StateMessage state,
 			MsgDiagnostico msgDiag,Logger logCore,OpenSPCoop2Properties properties,
 			RuoloBusta ruoloBustaRicevuta,String implementazionePdDMittente,
-			PdDContext pddContext,
+			RequestInfo requestInfo, PdDContext pddContext,
 			PortaApplicativa paFind)throws DriverConfigurazioneException{
 
 		//	Proprieta' Message-Security relative alla spedizione della busta
@@ -8269,7 +8279,7 @@ public class RicezioneBuste {
 					IDPortaDelegata idPD = new IDPortaDelegata();
 					idPD.setNome(integrazione.getNomePorta());
 					PortaDelegata pd = configurazionePdDReader.getPortaDelegata_SafeMethod(idPD);
-					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd);
+					flowProperties.messageSecurity = configurazionePdDReader.getPD_MessageSecurityForSender(pd, logCore, requestMessage, bustaRichiesta, requestInfo, pddContext);
 					flowProperties.mtom = configurazionePdDReader.getPD_MTOMProcessorForSender(pd);
 
 				}

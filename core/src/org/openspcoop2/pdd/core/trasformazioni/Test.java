@@ -82,6 +82,27 @@ public class Test {
 	private static final String QUERY4 = "Query4";
 	private static final String QUERY4_VALORE = "QueryValore4";
 	
+	private static final String CONFIG1 = "Config1";
+	private static final String CONFIG1_VALORE = "ConfigValore1";
+	private static final String CONFIG2 = "Config2";
+	private static final String CONFIG2_VALORE = "ConfigValore2";
+	private static final String CONFIG3 = "Config3";
+	private static final String CONFIG3_VALORE = "ConfigValore3";
+	private static final String CONFIG4 = "Config4";
+	private static final String CONFIG4_VALORE = "ConfigValore4";
+	
+	private static final String PDDCONTEXT_1 = "PDDCONTEXT_1";
+	private static final String PDDCONTEXT_1_VALORE = "PDDCONTEXT_Valore1";
+	private static final String PDDCONTEXT_2 = "PDDCONTEXT_2";
+	private static final String PDDCONTEXT_2_VALORE = "PDDCONTEXT_Valore2";
+	private static final String PDDCONTEXT_3 = "PDDCONTEXT_3";
+	private static final String PDDCONTEXT_3_VALORE = "PDDCONTEXT_Valore3";
+	private static final String PDDCONTEXT_4 = "PDDCONTEXT_4";
+	private static final String PDDCONTEXT_4_VALORE = "PDDCONTEXT_Valore4";
+	
+	private static final String PDDCONTEXT_CONFIG_REQ = "PDDCONTEXT_CONFIG_REQ";
+	private static final String PDDCONTEXT_CONFIG_RES = "PDDCONTEXT_CONFIG_RES";
+	
 	private static final String PATH1 = "elementoPath1";
 	private static final String PATH1_VALORE = "elementoPathValore1";
 	private static final String PATH2 = "elementoPath2";
@@ -321,6 +342,15 @@ public class Test {
 					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_1+
 					XML_TEMPLATE_FREEMARKER_BODY_INCLUDE_2+
 			"\n}";
+		
+	private static final String XML_TEMPLATE_FREEMARKER_REQUEST_CONTEXT = 
+			"<#assign tmp=context?api.put(\""+PDDCONTEXT_1+"\", \""+PDDCONTEXT_1_VALORE+"\")!/>\n"+
+			"<#assign cfg1 = config[\""+CONFIG1+"\"]/>\n" + 
+			"<#assign tmp=context?api.put(\""+PDDCONTEXT_CONFIG_REQ+"\", cfg1)!/>";
+	private static final String XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT = 
+			"<#assign tmp=context?api.put(\""+PDDCONTEXT_3+"\", \""+PDDCONTEXT_3_VALORE+"\")!/>\n"+
+			"<#assign cfg3 = config[\""+CONFIG3+"\"]/>\n" + 
+			"<#assign tmp=context?api.put(\""+PDDCONTEXT_CONFIG_RES+"\", cfg3)!/>";
 	
 	
 	
@@ -441,6 +471,16 @@ public class Test {
 					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_1+
 					XML_TEMPLATE_VELOCITY_BODY_INCLUDE_2+
 			"\n}";
+
+	private static final String XML_TEMPLATE_VELOCITY_REQUEST_CONTEXT = 
+			"${context.put(\""+PDDCONTEXT_1+"\", \""+PDDCONTEXT_1_VALORE+"\")}\n"+
+			"#set ( $cfg1 = ${config[\""+CONFIG1+"\"]} )\n"+
+	        "${context.put(\""+PDDCONTEXT_CONFIG_REQ+"\", ${cfg1})}";
+	private static final String XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT = 
+			"${context.put(\""+PDDCONTEXT_3+"\", \""+PDDCONTEXT_3_VALORE+"\")}\n"+
+			"#set ( $cfg3 = ${config[\""+CONFIG3+"\"]} )\n"+
+	        "${context.put(\""+PDDCONTEXT_CONFIG_RES+"\", ${cfg3})}";
+	
 	
 	
 	// **** Template XSLT *****
@@ -584,6 +624,18 @@ public class Test {
 		parametriUrl.put(QUERY3, QUERY3_VALORE);
 		parametriUrl.put(QUERY4, QUERY4_VALORE);
 		
+		Map<String, String> config = new HashMap<String, String>();
+		config.put(CONFIG1, CONFIG1_VALORE);
+		config.put(CONFIG2, CONFIG2_VALORE);
+		config.put(CONFIG3, CONFIG3_VALORE);
+		config.put(CONFIG4, CONFIG4_VALORE);
+		pddContext.addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, config);
+		
+		pddContext.addObject(PDDCONTEXT_1, PDDCONTEXT_1_VALORE);
+		pddContext.addObject(PDDCONTEXT_2, PDDCONTEXT_2_VALORE);
+		pddContext.addObject(PDDCONTEXT_3, PDDCONTEXT_3_VALORE);
+		pddContext.addObject(PDDCONTEXT_4, PDDCONTEXT_4_VALORE);
+		
 		OpenSPCoop2MessageFactory messageFactory = OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		
 		Element elementRequest = XMLUtils.getInstance(messageFactory).newElement(XML_REQUEST.getBytes());
@@ -667,6 +719,14 @@ public class Test {
 			
 		}
 		
+		if(tipoTest==null || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTest)) {
+			
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE) , "contextVerifica", pddContext, 
+					dynamicMapJsonRequest, null,  XML_TEMPLATE_FREEMARKER_REQUEST_CONTEXT.getBytes(), 
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_FREEMARKER_RESPONSE_CONTEXT.getBytes());
+			
+		}
+		
 		if(tipoTest==null || TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(tipoTest)) {
 			
 			List<Entry> zipEntriesFreeMarkerJsonRequest = new ArrayList<>();
@@ -708,6 +768,14 @@ public class Test {
 			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.VELOCITY_TEMPLATE) , "json", pddContext, 
 					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST.getBytes(), 
 					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE.getBytes());
+			
+		}
+		
+		if(tipoTest==null || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTest)) {
+			
+			test(log, messageFactory, (tipoTest!=null ? tipoTest : TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE) , "contextVerifica", pddContext, 
+					dynamicMapJsonRequest, null,  XML_TEMPLATE_VELOCITY_REQUEST_CONTEXT.getBytes(), 
+					dynamicMapJsonResponse, null,  XML_TEMPLATE_VELOCITY_RESPONSE_CONTEXT.getBytes());
 			
 		}
 		
@@ -826,6 +894,29 @@ public class Test {
 				Utilities.sleep(1000);
 				throw e;
 			}
+		}
+		else if(TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTest)) {
+			try {
+				if(pddContext.containsKey(PDDCONTEXT_1)==false) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_1+"' non presente nel contesto");
+				}
+				if(pddContext.containsKey(PDDCONTEXT_CONFIG_REQ)==false) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_CONFIG_REQ+"' non presente nel contesto");
+				}
+				String valore1 = (String) pddContext.getObject(PDDCONTEXT_1);
+				String valore2 = (String) pddContext.getObject(PDDCONTEXT_CONFIG_REQ);
+				if(!PDDCONTEXT_1_VALORE.equals(valore1)) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_1+"' presente nel contesto con un valore '"+valore1+"' diverso da quello atteso '"+PDDCONTEXT_1_VALORE+"'");
+				}
+				if(!CONFIG1_VALORE.equals(valore2)) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_CONFIG_REQ+"' presente nel contesto con un valore '"+valore2+"' diverso da quello atteso '"+CONFIG1_VALORE+"'");
+				}
+			}catch(Throwable e) {
+				System.out.println("\tTemplate:\n "+new String(templateRequest));
+				Utilities.sleep(1000);
+				throw e;
+			}			
 		}
 		else if(TipoTrasformazione.ZIP.equals(tipoTest) ||
 				TipoTrasformazione.TGZ.equals(tipoTest)  ||
@@ -947,6 +1038,29 @@ public class Test {
 				Utilities.sleep(1000);
 				throw e;
 			}
+		}
+		else if(TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTest) ||
+				TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTest)) {
+			try {
+				if(pddContext.containsKey(PDDCONTEXT_3)==false) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_3+"' non presente nel contesto");
+				}
+				if(pddContext.containsKey(PDDCONTEXT_CONFIG_RES)==false) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_CONFIG_RES+"' non presente nel contesto");
+				}
+				String valore1 = (String) pddContext.getObject(PDDCONTEXT_3);
+				String valore2 = (String) pddContext.getObject(PDDCONTEXT_CONFIG_RES);
+				if(!PDDCONTEXT_3_VALORE.equals(valore1)) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_3+"' presente nel contesto con un valore '"+valore1+"' diverso da quello atteso '"+PDDCONTEXT_3_VALORE+"'");
+				}
+				if(!CONFIG3_VALORE.equals(valore2)) {
+					throw new Exception("Oggetto con chiave '"+PDDCONTEXT_CONFIG_RES+"' presente nel contesto con un valore '"+valore2+"' diverso da quello atteso '"+CONFIG3_VALORE+"'");
+				}
+			}catch(Throwable e) {
+				System.out.println("\tTemplate:\n "+new String(templateResponse));
+				Utilities.sleep(1000);
+				throw e;
+			}			
 		}
 		else if(TipoTrasformazione.ZIP.equals(tipoTest) ||
 				TipoTrasformazione.TGZ.equals(tipoTest)  ||

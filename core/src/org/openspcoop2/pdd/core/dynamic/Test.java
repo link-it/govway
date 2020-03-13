@@ -92,12 +92,15 @@ public class Test {
 		
 		
 		PdDContext pddContext = new PdDContext();
+		pddContext.addObject("TEST1", "VALORE DI ESEMPIO");
 		
 		DynamicInfo dInfo = new DynamicInfo(connettoreMsg, pddContext);
 		
 		
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);
 		
+		System.out.println("TEST PDD CONTEXT: "+DynamicUtils.convertDynamicPropertyValue("testPddContext", prefix + "{context:TEST1}", dynamicMap, pddContext, forceDollaro));
+	      
 		System.out.println("HEADER: "+DynamicUtils.convertDynamicPropertyValue("testHeader", prefix+"{header:Header1}", dynamicMap, pddContext, forceDollaro));
 		
 		System.out.println("URL: "+DynamicUtils.convertDynamicPropertyValue("testUrl", prefix+"{query:P1}", dynamicMap, pddContext, forceDollaro));

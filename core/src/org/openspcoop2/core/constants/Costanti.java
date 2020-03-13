@@ -78,6 +78,7 @@ public class Costanti {
 	public final static String CLIENT_IP_REMOTE_ADDRESS = "CLIENT_IP_REMOTE_ADDRESS";
 	public final static String CLIENT_IP_TRANSPORT_ADDRESS = "CLIENT_IP_TRANSPORT_ADDRESS";	
 	public final static String IDENTIFICATIVO_AUTENTICATO = "IDENTIFICATIVO_AUTENTICATO";
+	public static final String PROPRIETA_CONFIGURAZIONE = "PROPRIETA_CONFIGURAZIONE";
 		
 	public final static String EMESSI_DIAGNOSTICI_ERRORE = "EMESSI_DIAGNOSTICI_ERRORE";
 	public final static String REQUEST_INFO = "REQUEST_INFO";

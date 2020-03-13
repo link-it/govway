@@ -44,14 +44,21 @@ public class Costanti {
     public final static String TYPE_MAP_CTX_OBJECT = "java.util.Map<String, Object>";
     public final static String TYPE_MAP_CTX_OBJECT_HTML_ESCAPED = "java.util.Map&amp;lt;String, Object&amp;gt;";
     
-    public final static String MAP_HEADER = "header";
-    public final static String TYPE_MAP_HEADER = java.util.Properties.class.getName();
+    public static final String MAP_HEADER = "header";
+    public static final String TYPE_MAP_HEADER = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_HEADER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
-    public final static String MAP_QUERY_PARAMETER = "query";
-    public final static String TYPE_MAP_QUERY_PARAMETER = java.util.Properties.class.getName();
+    public static final String MAP_QUERY_PARAMETER = "query";
+    public static final String TYPE_MAP_QUERY_PARAMETER = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_QUERY_PARAMETER_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
-    public final static String MAP_BUSTA_PROPERTY = "property";
-    public final static String TYPE_MAP_BUSTA_PROPERTY = java.util.Properties.class.getName();
+    public static final String MAP_BUSTA_PROPERTY = "property";
+    public static final String TYPE_MAP_BUSTA_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_BUSTA_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
+    
+    public static final String MAP_CONFIG_PROPERTY = "config";
+    public static final String TYPE_MAP_CONFIG_PROPERTY = "java.util.Map<String, String>";
+    public static final String TYPE_MAP_CONFIG_PROPERTY_HTML_ESCAPED = "java.util.Map&amp;lt;String, String&amp;gt;";
     
     // Per ora messi solamente nelle trasformazioni, valutare se poi metterli anche nel connettore
     public final static String MAP_ELEMENT_URL_REGEXP = "urlRegExp";

@@ -212,6 +212,14 @@ public class DynamicUtils {
 	    			dynamicMap.put(Costanti.MAP_TOKEN_INFO.toLowerCase(), informazioniTokenNormalizzate);
 	    		}
 			}
+
+			if (!dynamicMap.containsKey(Costanti.MAP_CONFIG_PROPERTY) && dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
+				@SuppressWarnings("unchecked")
+				Map<String, String> configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
+				if (configProperties != null && !configProperties.isEmpty()) {
+					dynamicMap.put(Costanti.MAP_CONFIG_PROPERTY, configProperties);
+				}
+			}
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {

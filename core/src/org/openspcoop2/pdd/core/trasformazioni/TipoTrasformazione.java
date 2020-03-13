@@ -46,7 +46,9 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	XSLT ("xslt", "XSLT" , null),
 	ZIP ("zip", "ZIP Compressor" , null),
 	TGZ ("tgz", "TGZ Compressor" , null),
-	TAR ("tar", "TAR Compressor" , null);
+	TAR ("tar", "TAR Compressor" , null),
+	CONTEXT_FREEMARKER_TEMPLATE("freemarker-context", "Alimentazione Contesto (Freemarker Template)", null),
+	CONTEXT_VELOCITY_TEMPLATE("velocity-context", "Alimentazione Contesto (Velocity Template)", null);
 //	XML2JSON ("xml2json", ServiceBinding.REST),
 //	JSON2XML ("xml2json", ServiceBinding.REST);
 	
@@ -103,6 +105,10 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 			return ".tgz.gw";
 		case TAR:
 			return ".tar.gw";
+		case CONTEXT_FREEMARKER_TEMPLATE:
+			return ".ctx.ftl";
+		case CONTEXT_VELOCITY_TEMPLATE:
+			return ".ctx.vm";
 		}
 		
 		return null;
@@ -125,7 +131,15 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 				|| 
 				TipoTrasformazione.TGZ.equals(this)
 				|| 
-				TipoTrasformazione.TAR.equals(this);
+				TipoTrasformazione.TAR.equals(this)
+				|| 
+				TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this) 
+				|| 
+				TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
+	}
+	
+	public boolean isContextInjection() {
+		return TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
 	}
 	
 	public boolean isContentTypeEnabled() {
@@ -134,7 +148,8 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 	
 	public boolean isTrasformazioneProtocolloEnabled() {
 		//return !TipoTrasformazione.EMPTY.equals(this);
-		return true; // sempre
+		//return true; // sempre
+		return !TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this) && !TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
 	}
 	
 	public boolean isBinaryMessage() {

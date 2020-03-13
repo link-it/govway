@@ -40,6 +40,7 @@ public class TestSignature {
 	public Object[][] provider(){
 		return new Object[][]{
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JAVA_SIGNATURE},
+				{org.openspcoop2.utils.security.TestSignature.TipoTest.PKCS7_SIGNATURE},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.XML_SIGNATURE},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JKS},
 				{org.openspcoop2.utils.security.TestSignature.TipoTest.JSON_SIGNATURE_PROPERTIES_JCEKS},

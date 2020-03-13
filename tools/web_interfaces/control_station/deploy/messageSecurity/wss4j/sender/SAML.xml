@@ -218,8 +218,9 @@
 						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
 					</condition>
 				</conditions>
-				<property name="action" />
+				<property name="action" append="true" appendSeparator=" " />
 			</item>
+
 			<item type="hidden" name="signatureActionUnsigned" value="SAMLTokenUnsigned">
 				<conditions>
 					<condition not="true">
@@ -230,9 +231,10 @@
 						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
 					</condition>
 				</conditions>
-				<property name="action" />
+				<property name="action" append="true" appendSeparator=" " />
 			</item>
-			<item type="hidden" name="signatureActionSignedConfirmation" value="SAMLTokenUnsigned Signature"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
+
+			<item type="hidden" name="signatureActionSignedConfirmation" value="SAMLTokenUnsigned"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
 				<conditions>
 					<condition>
 						<selected name="signatureActionChoice"/>
@@ -242,9 +244,22 @@
 						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
 					</condition>
 				</conditions>
-				<property name="action" />
+				<property name="action" append="true" appendSeparator=" " />
 			</item>
-			<item type="hidden" name="signatureActionUnsignedConfirmation" value="SAMLTokenUnsigned Signature">
+			<item type="hidden" name="signatureActionSignedConfirmationSignature" value="Signature"> <!--  Devo comunque usare come azione unsigned: value="SAMLTokenSigned" -->
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" append="true" appendSeparator=" " />
+			</item>
+
+			<item type="hidden" name="signatureActionUnsignedConfirmation" value="SAMLTokenUnsigned">
 				<conditions>
 					<condition not="true">
 						<selected name="signatureActionChoice"/>
@@ -254,7 +269,44 @@
 						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
 					</condition>
 				</conditions>
-				<property name="action" />
+				<property name="action" append="true" appendSeparator=" " />
+			</item>
+			<item type="hidden" name="signatureActionUnsignedConfirmationSignature" value="Signature">
+				<conditions>
+					<condition not="true">
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="signatureSamlSubjectConfirmationSenderVouches" value="true"/>
+						<equals name="signatureSamlSubjectConfirmationHolderOfKey" value="true"/>
+					</condition>
+				</conditions>
+				<property name="action" append="true" appendSeparator=" " />
+			</item>
+
+			<item type="checkbox" name="timestampAction" label="Timestamp" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="subjectConfirmationMethod1" value="BEARER"/>
+						<equals name="subjectConfirmationMethod2" value="BEARER"/>
+					</condition>
+				</conditions>
+				<property name="action" append="true" appendSeparator=" " selectedValue="Timestamp" unselectedValue=""/>
+			</item>
+			<item type="checkbox" name="signatureAction" label="External Signature" reloadOnChange="true" defaultSelected="false">
+				<conditions>
+					<condition>
+						<selected name="signatureActionChoice"/>
+					</condition>
+					<condition and="false">
+						<equals name="subjectConfirmationMethod1" value="BEARER"/>
+						<equals name="subjectConfirmationMethod2" value="BEARER"/>
+					</condition>
+				</conditions>
+				<property name="action" append="true" appendSeparator=" " selectedValue="Signature" unselectedValue=""/>
 			</item>
 			
 		</subsection>
@@ -1405,6 +1457,191 @@
 			      	<property name="passwordCallbackRef" />
 			</item>
 			
+
+		</subsection>
+
+	</section>
+
+	<section label="Timestamp">
+		
+		<conditions>
+			<condition>
+				<selected name="timestampAction"/>
+			</condition>
+		</conditions>
+
+		<item type="number" name="timeToLive" label="Time to Live (seconds)" min="1" max="999999999" default="300"
+			note="The time difference between creation and expiry time in seconds ">
+			<property name="timeToLive" />
+		</item>
+	</section>
+
+	<section label="External Signature">
+
+		<conditions>
+			<condition>
+				<selected name="signatureAction"/>
+			</condition>
+			<condition and="false">
+				<equals name="subjectConfirmationMethod1" value="BEARER"/>
+				<equals name="subjectConfirmationMethod2" value="BEARER"/>
+			</condition>
+		</conditions>
+
+		<item type="select" name="signaturePartsSelectWithTimestamp" label="Elementi da firmare" default="timestampBody" reloadOnChange="true">
+			<conditions>
+				<condition>
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="body" label="Body"/>
+				<value value="timestamp" label="Timestamp"/>
+				<value value="timestampBody" label="Timestamp Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="timestampAttachments" label="Timestamp Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="timestampBodyAttachments" label="Timestamp Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsSelectWithTimestamp" />
+		</item>
+		<item type="select" name="signaturePartsSelect" label="Elementi da firmare" default="body" reloadOnChange="true">
+			<conditions>
+				<condition not="true">
+					<selected name="timestampAction"/>
+				</condition>
+			</conditions>
+			<values>
+				<value value="body" label="Body"/>
+				<value value="attachments" label="Attachments"/>
+				<value value="bodyAttachments" label="Body Attachments"/>
+				<value value="custom" label="Configurazione Manuale"/>
+			</values>
+			<property name="signaturePartsSelect" />
+		</item>
+		<item type="hidden" name="signaturePartsBodyExt" value="{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="body"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="body"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestamp" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestamp"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampBody" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampBody"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsAttachments" value="{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="attachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="attachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsBodyAttachments" value="{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="bodyAttachments"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="bodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="hidden" name="signaturePartsTimestampBodyAttachments" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{SOAP_TEMPLATE_NS}Body;{}cid:Attachments">
+			<conditions>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="timestampBodyAttachments"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="textarea" name="signaturePartsCustom" label="Elementi Obbligatori" required="true" >
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="signatureParts" />
+		</item>
+		<item type="textarea" name="optionalSignaturePartsCustom" label="Elementi Opzionali" required="false" note="{Content/Element}{namespace}localname (cid:Attachments in localname for SWA)">
+			<conditions and="false">
+				<condition>
+					<equals name="signaturePartsSelect" value="custom"/>
+				</condition>
+				<condition>
+					<equals name="signaturePartsSelectWithTimestamp" value="custom"/>
+				</condition>
+			</conditions>
+		    <property name="optionalSignatureParts" />
+		</item>	
+
+		<subsection label="Key Identifier">
+
+			<item type="select" name="signatureKeyIdentifierExt" label="Tipo" reloadOnChange="true" default="DirectReference" >
+			<!--   note="Per maggiori dettagli vedi: http://coheigea.blogspot.com/2013/03/signature-and-encryption-key.html"> -->
+				<values>
+					<value value="DirectReference" label="Binary Security Token"/>
+					<value value="IssuerSerial" label="Issuer-Serial Security Token Reference"/>
+					<value value="X509KeyIdentifier" label="X509 Key Identifier"/>
+					<value value="Thumbprint" label="Thumbprint Key Identifier"/>
+					<value value="SKIKeyIdentifier" label="SKI Key Identifier"/>
+					<!-- <value value="EmbeddedKeyName" label="Embedded Key Name"/> NON FUNZIONA -->
+					<!-- <value value="EncryptedKeySHA1" label="EncryptedKeySHA1 Key Identifier"/> SOLO per Encrypt -->
+					<value value="KeyValue" label="Public Key Value"/>
+				</values>
+				<property name="signatureKeyIdentifier" />
+			</item>
+			<item type="checkbox" name="useSingleCertificateExt" label="Certificato Singolo" defaultSelected="true">
+				<conditions>
+				    <condition>
+				    	<equals name="signatureKeyIdentifierExt" value="DirectReference" />
+				    </condition>
+			   	</conditions>
+				<property name="useSingleCertificate" selectedValue="true" unselectedValue="false"/>
+			</item>
+			<item type="checkbox" name="includeSignatureTokenExt" label="Include Signature Token" defaultSelected="false">
+				<conditions>
+		            <condition and="false">
+		            	<equals name="signatureKeyIdentifierExt" value="IssuerSerial" />
+		            	<equals name="signatureKeyIdentifierExt" value="Thumbprint" />
+		            	<equals name="signatureKeyIdentifierExt" value="SKIKeyIdentifier" />
+		            </condition>
+	           	</conditions>
+				<property name="includeSignatureToken" selectedValue="true" unselectedValue="false"/>
+			</item>
 
 		</subsection>
 

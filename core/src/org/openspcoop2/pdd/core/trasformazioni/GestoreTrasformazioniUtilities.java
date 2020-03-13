@@ -240,14 +240,15 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case FREEMARKER_TEMPLATE:
-		case FREEMARKER_TEMPLATE_ZIP:
+		case CONTEXT_FREEMARKER_TEMPLATE:
+	    case FREEMARKER_TEMPLATE_ZIP:
 			if(contenuto==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
-			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
+			if(TipoTrasformazione.FREEMARKER_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(tipoTrasformazione)) {
 				DynamicUtils.convertFreeMarkerTemplate("template.ftl", contenuto, dynamicMap, bout);
 			}
 			else {
@@ -266,14 +267,15 @@ public class GestoreTrasformazioniUtilities {
 			break;
 			
 		case VELOCITY_TEMPLATE:
-		case VELOCITY_TEMPLATE_ZIP:
+		case CONTEXT_VELOCITY_TEMPLATE:
+	    case VELOCITY_TEMPLATE_ZIP:
 			if(contenuto==null) {
 				throw new Exception("Template "+oggetto+" non definito");
 			}
 						
 			log.debug("trasformazione "+oggetto+" ["+tipoTrasformazione+"], risoluzione template ...");
 			bout = new ByteArrayOutputStream();
-			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
+			if(TipoTrasformazione.VELOCITY_TEMPLATE.equals(tipoTrasformazione) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(tipoTrasformazione)) {
 				DynamicUtils.convertVelocityTemplate("template.vm", contenuto, dynamicMap, bout);
 			}
 			else {

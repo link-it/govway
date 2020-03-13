@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.soap.SOAPBody;
 import javax.xml.soap.SOAPElement;
@@ -305,6 +306,10 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 			context.setIdModulo(idModulo);
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROTOCOL_NAME, protocolFactory.getProtocol());
 			context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.REQUEST_INFO, req.getRequestInfo());
+			Map<String, String> configProperties = RicezioneContenutiApplicativiServiceUtils.readPropertiesConfig(req.getRequestInfo(), logCore,null);
+            if (configProperties != null && !configProperties.isEmpty()) {
+               context.getPddContext().addObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE, configProperties);
+            }
 			msgDiag.setPddContext(context.getPddContext(),protocolFactory);		
 			pddContext = context.getPddContext();
 			

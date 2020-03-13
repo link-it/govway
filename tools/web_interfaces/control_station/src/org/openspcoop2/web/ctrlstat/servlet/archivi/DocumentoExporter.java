@@ -387,8 +387,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -448,8 +450,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -509,8 +513,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -576,8 +582,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -644,8 +652,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -701,8 +711,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -762,8 +774,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:
@@ -829,8 +843,10 @@ public class DocumentoExporter extends HttpServlet {
 
 						switch(tipo) {
 						case FREEMARKER_TEMPLATE:
+						case CONTEXT_FREEMARKER_TEMPLATE:
 						case FREEMARKER_TEMPLATE_ZIP:
 						case VELOCITY_TEMPLATE:
+						case CONTEXT_VELOCITY_TEMPLATE:
 						case VELOCITY_TEMPLATE_ZIP:
 						case TEMPLATE:
 						case XSLT:

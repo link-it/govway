@@ -13754,9 +13754,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setInfo(dInfoPatternContenuto);
 			break;
 		case FREEMARKER_TEMPLATE:
+		case CONTEXT_FREEMARKER_TEMPLATE:
 		case FREEMARKER_TEMPLATE_ZIP:
 			dInfoPatternContenuto = new DataElementInfo(label);
-			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.FREEMARKER_TEMPLATE.equals(trasformazioneContenutoTipo)) {
+			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.FREEMARKER_TEMPLATE.equals(trasformazioneContenutoTipo) ||
+					org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(trasformazioneContenutoTipo)) {
 				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_FREEMARKER);
 			}
 			else {
@@ -13781,9 +13783,11 @@ public class ConsoleHelper implements IConsoleHelper {
 			de.setInfo(dInfoPatternContenuto);
 			break;
 		case VELOCITY_TEMPLATE:
+		case CONTEXT_VELOCITY_TEMPLATE:
 		case VELOCITY_TEMPLATE_ZIP:
 			dInfoPatternContenuto = new DataElementInfo(label);
-			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.VELOCITY_TEMPLATE.equals(trasformazioneContenutoTipo)) {
+			if(org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.VELOCITY_TEMPLATE.equals(trasformazioneContenutoTipo) ||
+					org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(trasformazioneContenutoTipo)) {
 				dInfoPatternContenuto.setHeaderBody(CostantiControlStation.LABEL_CONFIGURAZIONE_INFO_OBJECT_TEMPLATE_VELOCITY);
 			}
 			else {

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -418,6 +419,7 @@ public class SAMLBuilderConfig {
 					}
 				}
 			}
+			Collections.sort(attrNames);
 			for (String attrName : attrNames) {
 				SAMLBuilderConfigAttribute attr = new SAMLBuilderConfigAttribute(attrName);
 				

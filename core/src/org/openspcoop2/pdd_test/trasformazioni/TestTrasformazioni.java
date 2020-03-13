@@ -48,7 +48,9 @@ public class TestTrasformazioni {
 				{TipoTrasformazione.XSLT},
 				{TipoTrasformazione.ZIP},
 				{TipoTrasformazione.TGZ},
-				{TipoTrasformazione.TAR}
+				{TipoTrasformazione.TAR},
+				{TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE},
+				{TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE}
 		};
 	}
 	
