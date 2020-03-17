@@ -29,12 +29,14 @@ import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.context.IContext;
+import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.lib.users.dao.InterfaceType;
 import org.openspcoop2.web.lib.users.dao.PermessiUtente;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
@@ -93,9 +95,19 @@ public class SearchFormUtilities {
 		String protocollo = Converter.toProtocollo(profilo);
 		searchForm.setProtocollo(protocollo);
 		String tipoSoggettoLocale = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
-		String nomeSoggettoLocale = soggetto!=null ? soggetto : this.serverProperties.getSoggettoDefault(protocollo);
-		searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
-		searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		String nomeSoggettoLocale = soggetto;
+		if(nomeSoggettoLocale==null) {
+			if(this.serverProperties.useSoggettoDefault()) {
+				nomeSoggettoLocale = this.serverProperties.getSoggettoDefaultIfEnabled(protocollo);
+			}
+		}
+		if(nomeSoggettoLocale!=null) {
+			if(!Utility.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
+			}
+			searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+			searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		}
 		searchForm.saveProtocollo();
 	}
 	
@@ -106,8 +118,18 @@ public class SearchFormUtilities {
 		String protocollo = Converter.toProtocollo(profilo);
 		request.overrideParameter(CostantiExporter.PROTOCOLLO,protocollo);
 		String tipoSoggettoLocale = this.protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
-		String nomeSoggettoLocale = soggetto!=null ? soggetto : this.serverProperties.getSoggettoDefault(protocollo);
-		request.overrideParameter(CostantiExporter.SOGGETTO_LOCALE,tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		String nomeSoggettoLocale = soggetto;
+		if(nomeSoggettoLocale==null) {
+			if(this.serverProperties.useSoggettoDefault()) {
+				nomeSoggettoLocale = this.serverProperties.getSoggettoDefaultIfEnabled(protocollo);
+			}
+		}
+		if(nomeSoggettoLocale!=null) {
+			if(!Utility.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
+			}
+			request.overrideParameter(CostantiExporter.SOGGETTO_LOCALE,tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+		}
 		if(ruolo!=null) {
 			switch (ruolo) {
 			case FRUIZIONE:

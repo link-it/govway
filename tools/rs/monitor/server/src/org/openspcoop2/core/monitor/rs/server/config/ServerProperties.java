@@ -27,6 +27,7 @@ import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.web.monitor.core.config.ApplicationProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 
 /**     
  * ServerProperties
@@ -178,12 +179,26 @@ public class ServerProperties  {
 	}
 	
 	
-	public String getSoggettoDefault(String protocollo) throws UtilsException {
-		String p = this.readProperty(false, protocollo+".soggetto");
-		if(p!=null) {
-			return p;
+	public boolean useSoggettoDefault() throws UtilsException {
+		if(Utility.isMultitenantAbilitato()) {
+			return Boolean.parseBoolean(this.readProperty(true, "multitenant.forzaSoggettoDefault"));
 		}
-		return this.readProperty(true, "soggetto");
+		else {
+			return true; // in caso di multitenant disabilitato, il soggetto di default viene sempre impostato
+		}
+	}
+			
+	public String getSoggettoDefaultIfEnabled(String protocollo) throws UtilsException {
+		if(this.useSoggettoDefault()) {
+			String p = this.readProperty(false, protocollo+".soggetto");
+			if(p!=null) {
+				return p;
+			}
+			return this.readProperty(true, "soggetto");
+		}
+		else {
+			throw new UtilsException("Utilizzo del soggetto di default non abilitato");
+		}
 	}
 
 

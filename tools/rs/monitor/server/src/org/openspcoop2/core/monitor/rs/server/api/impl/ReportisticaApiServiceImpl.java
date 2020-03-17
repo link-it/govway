@@ -46,6 +46,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaConfigurazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaAndamentoTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativo;
+import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneApplicativoRegistrato;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneAzione;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneEsiti;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoLocale;
@@ -332,7 +333,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-	public byte[] getReportDistribuzioneApplicativoByFullSearch(RicercaStatisticaDistribuzioneApplicativo body,
+	public byte[] getReportDistribuzioneApplicativoByFullSearch(RicercaStatisticaDistribuzioneApplicativoRegistrato body,
 			ProfiloEnum profilo, String soggetto) {
 		IContext context = this.getContext();
 		try {
@@ -365,7 +366,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 	 *
 	 */
 	@Override
-    public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
+    public byte[] getReportDistribuzioneApplicativoBySimpleSearch(DateTime dataInizio, DateTime dataFine, FiltroRicercaRuoloTransazioneEnum tipo, FormatoReportEnum formatoReport, ProfiloEnum profilo, String soggetto, String soggettoRemoto, String soggettoErogatore,String soggettoMittente, String tag, String nomeServizio, String tipoServizio, Integer versioneServizio, String azione, EsitoTransazioneSimpleSearchEnum esito, Boolean escludiScartate, UnitaTempoReportEnum unitaTempo, TipoReportEnum tipoReport, TipoInformazioneReportEnum tipoInformazioneReport) {
 
 		IContext context = this.getContext();
 		try {
@@ -375,9 +376,10 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			context.getLogger().debug("Autorizzazione completata con successo");
 
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
-			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
+			RicercaStatisticaDistribuzioneApplicativoRegistrato ricerca = new RicercaStatisticaDistribuzioneApplicativoRegistrato();
 			ricerca.setTipo(tipo);		
 			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setSoggettoMittente(soggettoMittente);
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();

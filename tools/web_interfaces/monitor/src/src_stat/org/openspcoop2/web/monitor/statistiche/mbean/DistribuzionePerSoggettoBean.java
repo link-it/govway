@@ -301,12 +301,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			
 			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
-			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
+				DynamicPdDBean.log.error(e.getMessage(), e);
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
 				return null;
 			}
 			else{
+				DynamicPdDBean.log.debug(e.getMessage(), e);
 				throw e;
 			}
 		}
@@ -397,12 +398,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			}
 			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
-			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
+				DynamicPdDBean.log.error(e.getMessage(), e);
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
 				return null;
 			}
 			else{
+				DynamicPdDBean.log.debug(e.getMessage(), e);
 				throw e;
 			}
 		}
@@ -493,12 +495,13 @@ public class DistribuzionePerSoggettoBean<T extends ResBase> extends BaseStatsMB
 			}
 			list = calcolaLabels(list, this.search.getProtocollo());
 		} catch (Exception e) {
-			DynamicPdDBean.log.error(e.getMessage(), e);
 			if(useFaceContext){
+				DynamicPdDBean.log.error(e.getMessage(), e);
 				MessageUtils.addErrorMsg("Si e' verificato un errore durante il recupero dei dati:"	+ e.getMessage());
 				return null;
 			}
 			else{
+				DynamicPdDBean.log.debug(e.getMessage(), e);
 				throw e;
 			}
 		}

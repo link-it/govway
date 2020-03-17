@@ -797,6 +797,7 @@ paths:
       - $ref: "#/components/parameters/tipo_transazione"
       - $ref: "#/components/parameters/soggetto_remoto"
       - $ref: "#/components/parameters/soggetto_erogatore"
+      - $ref: "#/components/parameters/soggetto_mittente"
       - $ref: "#/components/parameters/tag"
       - $ref: "#/components/parameters/nome_servizio"
       - $ref: "#/components/parameters/tipo_servizio"
@@ -837,7 +838,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
+              $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativoRegistrato"
       responses:
         "200":
           $ref: "#/components/responses/200ReportStatistico"
@@ -1768,6 +1769,14 @@ components:
             $ref: "#/components/schemas/NCName"
           esito:
             $ref: "#/components/schemas/FiltroEsito"
+    RicercaStatisticaDistribuzioneApplicativoRegistrato:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/RicercaStatisticaDistribuzioneApplicativo"
+      - type: "object"
+        properties:
+          soggetto_mittente:
+            $ref: "#/components/schemas/NCName"
     RicercaStatisticaDistribuzioneTokenInfo:
       type: "object"
       allOf:
@@ -2996,6 +3005,13 @@ components:
       name: "soggetto_erogatore"
       in: "query"
       description: "Il soggetto erogatore di una API"
+      required: false
+      schema:
+        $ref: "#/components/schemas/SimpleName"
+    soggetto_mittente:
+      name: "soggetto_mittente"
+      in: "query"
+      description: "Il soggetto mittente che invoca una API"
       required: false
       schema:
         $ref: "#/components/schemas/SimpleName"

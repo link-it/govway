@@ -16,6 +16,8 @@ Configurare l'ambiente di esecuzione dei test:
 		
 	  Alla fine dei test disabilitare tale proprietà
 
+	- Nel file /etc/govway/rs-api-monitor_local.properties abilitare la proprietà 'multitenant.forzaSoggettoDefault'
+
 	- Configurare l'application server in modo tale da supportare connessioni ssl sulla porta 8444 utilizzando le configurazioni presenti nella directory config_https:
           a) un connettore HTTPS che esegue autenticazione client (La configurazione di default della testsuite, assume questo connettore attivo sulla porta 8444)
   	     Esempio in config_https/ConnettoreHTTPS_withClientAuth.xml

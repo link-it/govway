@@ -378,14 +378,18 @@
 			<a4j:outputPanel id="filtriRicercaGroupByDatiMittente" layout="block" rendered="#{sf_bean.showGroupByDatiMittente}">
 			
 					
-				<a4j:outputPanel id="filtriRicercaGroupByDatiMittenteSubtitle" layout="block" styleClass="subtitle" rendered="#{sf_bean.showGroupByDatiMittente and sf_bean.riconoscimento == 'tokenInfo'}">
+				<a4j:outputPanel id="filtriRicercaGroupByDatiMittenteSubtitle" layout="block" styleClass="subtitle" rendered="#{sf_bean.showGroupByDatiMittente and (
+					sf_bean.riconoscimento == 'tokenInfo' or (
+						sf_tipologiaRicerca eq 'ingresso' and sf_bean.riconoscimento == 'applicativo'
+						)
+					)}">
 					<h:outputText id="idGroupByDatiMittente" value="#{msg['stats.search.sezioneFiltroDatiMittente.label']}" styleClass="subtitle"/>
 				</a4j:outputPanel>
 				
 				<h:inputHidden value="#{sf_bean.riconoscimento}" id="riconoscimentoComboGroupBy"/> 
 			
 				<a4j:outputPanel layout="block" id="tipoRiconoscimentoGroupByPnl" rendered="#{not empty sf_bean.riconoscimento}">
-					<a4j:outputPanel layout="block" id="tokenInfoComboGroupByCtr" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
+					<a4j:outputPanel layout="block" id="tokenInfoComboGroupByCtr" rendered="#{(sf_bean.riconoscimento == 'tokenInfo' or sf_bean.riconoscimento == 'applicativo')}">
 					
 						<c:if test="#{sf_bean.showGroupByDatiMittente and sf_tipologiaRicerca eq 'ingresso'}">	
 							<ui:include src="/stat/includes/searchFormStatisticheFiltroSoggetto.xhtml">
@@ -411,7 +415,7 @@
 						 	</ui:include>
 						</c:if>
 					
-						<link:prop label="Claim" required="true">
+						<link:prop label="Claim" required="true" rendered="#{sf_bean.riconoscimento == 'tokenInfo'}">
 							<rich:comboBox id="claimComboGroupBy" value="#{sf_bean.tokenClaim}" defaultLabel="Selezione Claim" 
 									converter="selectItemConverter"	directInputSuggestions="true" width="416" enableManualInput="false">
 								<f:selectItem itemValue="--" itemLabel="--"/>

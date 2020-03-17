@@ -30,6 +30,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -345,28 +346,65 @@ public class Utility {
 		return null;
 	}
 
+	private static Configurazione configurazioneGenerale;
+	public static synchronized void setStaticConfigurazioneGenerale(Configurazione configurazioneGenerale) {
+		Utility.configurazioneGenerale = configurazioneGenerale;
+	}
 	public static Configurazione getConfigurazioneGenerale() {
+		
+		if(Utility.configurazioneGenerale!=null) {
+			return Utility.configurazioneGenerale;
+		}
+		
 		LoginBean lb = getLoginBean();
 
 		if(lb!= null && lb.isLoggedIn()){
+			return lb.getConfigurazioneGenerale();
+		}
+		else if(lb==null){			
+			// is null quando si accede via http get service
+			lb = new LoginBean(true);
 			return lb.getConfigurazioneGenerale();
 		}
 
 		return null;
 	}
 
+	private static Boolean filtroDominioAbilitato;
+	public static synchronized void setStaticFiltroDominioAbilitato(boolean filtroDominioAbilitato) {
+		Utility.filtroDominioAbilitato = filtroDominioAbilitato;
+	}
+	
 	public static boolean isFiltroDominioAbilitato() {
+
+		if(Utility.filtroDominioAbilitato!=null) {
+			return Utility.filtroDominioAbilitato;
+		}
+		
 		if(isMultitenantAbilitato()) {
 			User utente = Utility.getLoggedUtente();
+			if(utente!=null) {
 			
-			String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
-			// utente ha selezionato un soggetto
-			if(soggettoOperativoSelezionato != null) {
-				return true;
+				String soggettoOperativoSelezionato = utente.getSoggettoSelezionatoPddMonitor();
+				// utente ha selezionato un soggetto
+				if(soggettoOperativoSelezionato != null) {
+					return true;
+				}
+			
 			}
 			
 			// uso il filtro solamente se cmq ho piu' di un soggetto locale
-			return getLoginBean().isShowFiltroSoggettoLocale();
+			LoginBean lb = getLoginBean();
+			if(lb!= null && lb.isLoggedIn()){
+				return lb.isShowFiltroSoggettoLocale();
+			}
+			else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				return lb.isShowFiltroSoggettoLocale();
+			}
+			
+			return true; // default non ottimizzato
 		}
 		else {
 			return false;
@@ -374,15 +412,28 @@ public class Utility {
 	}
 	
 	public static boolean isMultitenantAbilitato() {
-		LoginBean lb = getLoginBean();
-
-		if(lb!= null && lb.isLoggedIn()){
-			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
-
-			if(configurazioneGenerale.getMultitenant() != null) {
-				if(configurazioneGenerale.getMultitenant().getStato()!=null) {
-					return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getMultitenant().getStato());
-				}
+		
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
+		}
+		else {
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+			else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+		}
+		
+		if(configurazioneGenerale!=null && configurazioneGenerale.getMultitenant() != null) {
+			if(configurazioneGenerale.getMultitenant().getStato()!=null) {
+				return StatoFunzionalita.ABILITATO.equals(configurazioneGenerale.getMultitenant().getStato());
 			}
 		}
 
@@ -390,28 +441,56 @@ public class Utility {
 	}
 	
 	public static PortaDelegataSoggettiErogatori getMultitenantAbilitato_fruizione_sceltaSoggettiErogatori() {
-		LoginBean lb = getLoginBean();
-
-		if(lb!= null && lb.isLoggedIn()){
-			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
-
-			if(configurazioneGenerale.getMultitenant() != null) {
-				return configurazioneGenerale.getMultitenant().getFruizioneSceltaSoggettiErogatori();
-			}
+		
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
 		}
-
+		else {
+		
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}
+			
+		}
+			
+		if(configurazioneGenerale!=null && configurazioneGenerale.getMultitenant() != null) {
+			return configurazioneGenerale.getMultitenant().getFruizioneSceltaSoggettiErogatori();
+		}
+		
 		return null;
 	}
 	
 	public static PortaApplicativaSoggettiFruitori getMultitenantAbilitato_erogazione_sceltaSoggettiFruitori() {
-		LoginBean lb = getLoginBean();
 
-		if(lb!= null && lb.isLoggedIn()){
-			Configurazione configurazioneGenerale = lb.getConfigurazioneGenerale();
-
-			if(configurazioneGenerale.getMultitenant() != null) {
-				return configurazioneGenerale.getMultitenant().getErogazioneSceltaSoggettiFruitori();
+		Configurazione configurazioneGenerale = null;
+		
+		if(Utility.configurazioneGenerale!=null) {
+			configurazioneGenerale = Utility.configurazioneGenerale;
+		}
+		else {
+		
+			LoginBean lb = getLoginBean();
+	
+			if(lb!= null && lb.isLoggedIn()){
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
+			}else if(lb==null){
+				// is null quando si accede via http get service
+				lb = new LoginBean(true);
+				configurazioneGenerale = lb.getConfigurazioneGenerale();
 			}
+			
+		}
+
+		if(configurazioneGenerale!=null && configurazioneGenerale.getMultitenant() != null) {
+			return configurazioneGenerale.getMultitenant().getErogazioneSceltaSoggettiFruitori();
 		}
 
 		return null;
@@ -596,26 +675,42 @@ public class Utility {
 		return ParseUtility.convertToServizioSoggetto(idServizio);
 	}
 
+	private static Map<String, String> mapIdentificativoPorta = new HashMap<String, String>();
+	public static synchronized void putIdentificativoPorta(String tipoSoggetto,String nomeSoggetto, String idPorta) {
+		String key = tipoSoggetto+"/"+nomeSoggetto;
+		mapIdentificativoPorta.put(key, idPorta);
+	}
+	public static boolean existsIdentificativoPorta(String tipoSoggetto,String nomeSoggetto) {
+		String key = tipoSoggetto+"/"+nomeSoggetto;
+		return mapIdentificativoPorta.containsKey(key);
+	}
 	public static String getIdentificativoPorta(String tipoSoggetto,String nomeSoggetto) throws CoreException{
 		// Recupero identificativoPorta se è stato selezionato un soggetto locale (o un servizio)
 		String idPorta = null;
-		try {	
-			Logger log =  LoggerManager.getPddMonitorSqlLogger();
-			// [TODO] controllare se il tipo di project info e' corretto
-			org.openspcoop2.core.commons.search.utils.ProjectInfo prInfo = org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance();
-			org.openspcoop2.core.commons.search.dao.IServiceManager sm =
-					(org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).getServiceManager(prInfo,log);
-			IdSoggetto idSog = new IdSoggetto();
-			idSog.setTipo(tipoSoggetto);
-			idSog.setNome(nomeSoggetto);
-			org.openspcoop2.core.commons.search.Soggetto soggetto = sm.getSoggettoServiceSearch().get(idSog);
-			idPorta = soggetto.getIdentificativoPorta();
-		} catch (Exception e) {
-			throw new CoreException(
-					"Si e' verificato un errore durante il recupero del soggetto dal registro: tipoSoggetto["
-							+ tipoSoggetto
-							+ "] nomeSoggetto["
-							+ nomeSoggetto + "]");
+		
+		String key = tipoSoggetto+"/"+nomeSoggetto;
+		if(Utility.mapIdentificativoPorta.containsKey(key)) {
+			idPorta = Utility.mapIdentificativoPorta.get(key);
+		}
+		else {
+			try {	
+				Logger log =  LoggerManager.getPddMonitorSqlLogger();
+				// [TODO] controllare se il tipo di project info e' corretto
+				org.openspcoop2.core.commons.search.utils.ProjectInfo prInfo = org.openspcoop2.core.commons.search.utils.ProjectInfo.getInstance();
+				org.openspcoop2.core.commons.search.dao.IServiceManager sm =
+						(org.openspcoop2.core.commons.search.dao.IServiceManager) DAOFactory.getInstance(log).getServiceManager(prInfo,log);
+				IdSoggetto idSog = new IdSoggetto();
+				idSog.setTipo(tipoSoggetto);
+				idSog.setNome(nomeSoggetto);
+				org.openspcoop2.core.commons.search.Soggetto soggetto = sm.getSoggettoServiceSearch().get(idSog);
+				idPorta = soggetto.getIdentificativoPorta();
+			} catch (Exception e) {
+				throw new CoreException(
+						"Si e' verificato un errore durante il recupero del soggetto dal registro: tipoSoggetto["
+								+ tipoSoggetto
+								+ "] nomeSoggetto["
+								+ nomeSoggetto + "]",e);
+			}
 		}
 		return idPorta;
 	}

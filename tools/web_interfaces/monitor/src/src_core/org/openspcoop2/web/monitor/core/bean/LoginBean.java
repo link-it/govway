@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.web.monitor.core.bean;
 
+import java.sql.Connection;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +41,7 @@ import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -113,6 +115,11 @@ public class LoginBean extends AbstractLoginBean {
 		this.caricaProperties();
 	}
 
+	public LoginBean(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
+		super(con,autoCommit,serviceManagerProperties,log);
+		this.caricaProperties();
+	}
+	
 	private void caricaProperties(){
 		try {
 			this.showLogout = PddMonitorProperties.getInstance(this.log).isMostraButtonLogout();

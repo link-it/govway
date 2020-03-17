@@ -4768,7 +4768,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				}
 				if(unionExprErogatore==null || unionExprFruitore==null){
 					// Espressione finta per usare l'ordinamento
-					fakeExpr = this.statGiornaliereSearchDAO.newExpression();
+					fakeExpr = dao.newExpression();
 					unionExprFake = new UnionExpression(fakeExpr);
 					unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 							StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 
@@ -4793,7 +4793,7 @@ public class StatisticheGiornaliereService implements IStatisticheGiornaliere {
 				unionExpr.addSelectField(credenzialeFieldGroupBy, aliasFieldCredenzialeMittente);
 				
 				// Espressione finta per usare l'ordinamento
-				fakeExpr = this.statGiornaliereSearchDAO.newExpression();
+				fakeExpr = dao.newExpression();
 				unionExprFake = new UnionExpression(fakeExpr);
 				unionExprFake.addSelectField(new ConstantField(aliasFieldCredenzialeMittente, 
 						StatisticheGiornaliereService.FALSA_UNION_DEFAULT_VALUE, credenzialeFieldGroupBy.getFieldType()), 

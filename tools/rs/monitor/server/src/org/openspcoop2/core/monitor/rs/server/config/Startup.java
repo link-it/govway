@@ -22,16 +22,29 @@
 package org.openspcoop2.core.monitor.rs.server.config;
 
 import java.io.InputStream;
+import java.sql.Connection;
+import java.util.List;
 import java.util.Properties;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.openspcoop2.core.config.driver.ExtendedInfoManager;
+import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.registry.constants.PddTipologia;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
+import org.openspcoop2.core.registry.driver.FiltroRicerca;
+import org.openspcoop2.core.registry.driver.FiltroRicercaSoggetti;
+import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.resources.Loader;
+import org.openspcoop2.web.monitor.core.bean.LoginBean;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
 /**
  * Questa classe si occupa di inizializzare tutte le risorse necessarie al webService.
@@ -168,6 +181,13 @@ public class Startup implements ServletContextListener {
 			}
 			Startup.log.info("ProtocolFactoryManager DBManager effettuata con successo");
 			
+			Startup.log.info("Inizializzazione Risorse Statiche Console in corso...");
+			try {
+				initResourceConsole();
+			} catch (Exception e) {
+				throw new RuntimeException(e.getMessage(),e);
+			}
+			Startup.log.info("Inizializzazione Risorse Statiche Console effettuata con successo");
 						
 			Startup.initializedResources = true;
 			
@@ -175,4 +195,57 @@ public class Startup implements ServletContextListener {
 		}
 	}
 
+	
+	private static void initResourceConsole() throws UtilsException, DriverRegistroServiziException, DriverRegistroServiziNotFound {
+		DBManager dbManager = DBManager.getInstance();
+		Connection connection = null;
+		try {
+			connection = dbManager.getConnectionConfig();
+			ServiceManagerProperties smp = dbManager.getServiceManagerPropertiesConfig();
+			
+			Logger logSql = LoggerProperties.getLoggerDAO();
+			
+			LoginBean lb = new LoginBean(connection, true, smp, logSql);
+			
+			Utility.setStaticConfigurazioneGenerale(lb.getConfigurazioneGenerale());
+			
+			boolean multitenantAbilitato = Utility.isMultitenantAbilitato();
+			
+			if(multitenantAbilitato) {
+				Utility.setStaticFiltroDominioAbilitato(true); // TODO: logiche piu' complesse vanno viste come realizzarle.
+			}
+			else {
+				Utility.setStaticFiltroDominioAbilitato(false);
+			}
+			
+			DriverRegistroServiziDB driverDB = new DriverRegistroServiziDB(connection, logSql, DatasourceProperties.getInstance().getConfigTipoDatabase());
+			
+			FiltroRicerca filtroRicercaPdd = new FiltroRicerca();
+			filtroRicercaPdd.setTipo(PddTipologia.OPERATIVO.toString());
+			List<String> idsPdd = null;
+			try {
+				idsPdd = driverDB.getAllIdPorteDominio(filtroRicercaPdd);
+			}catch(DriverRegistroServiziNotFound notFound) {		
+			}
+			if(idsPdd!=null && !idsPdd.isEmpty()) {
+				for (String idPdd : idsPdd) {
+					FiltroRicercaSoggetti filtroSoggetti = new FiltroRicercaSoggetti();
+					filtroSoggetti.setNomePdd(idPdd);
+					List<IDSoggetto> idsSoggetti = null;
+					try {
+						idsSoggetti = driverDB.getAllIdSoggetti(filtroSoggetti);
+					}catch(DriverRegistroServiziNotFound notFound) {		
+					}
+					if(idsSoggetti!=null && !idsSoggetti.isEmpty()) {
+						for (IDSoggetto idSoggetto : idsSoggetti) {
+							Utility.putIdentificativoPorta(idSoggetto.getTipo(), idSoggetto.getNome(), driverDB.getSoggetto(idSoggetto).getIdentificativoPorta());
+						}
+					}
+				}
+			}
+			
+		} finally {
+			dbManager.releaseConnectionConfig(connection);
+		}
+	}
 }
