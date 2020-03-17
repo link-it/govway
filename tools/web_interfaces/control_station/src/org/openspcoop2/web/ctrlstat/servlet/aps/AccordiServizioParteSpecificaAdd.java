@@ -653,6 +653,10 @@ public final class AccordiServizioParteSpecificaAdd extends Action {
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_PROVIDER_EROGATORE)){
 					this.erogazioneServizioApplicativoServerEnabled = false;
 				}
+				
+				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
+					this.erogazioneServizioApplicativoServer = null;
+				}
 			}
 
 			// Lista port-type associati all'accordo di servizio

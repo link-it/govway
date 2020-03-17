@@ -389,6 +389,7 @@ public final class AccordiServizioParteSpecificaPorteApplicativeAdd extends Acti
 				}
 				
 				if(postBackElementName.equalsIgnoreCase(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_ABILITA_USO_APPLICATIVO_SERVER)){
+					erogazioneServizioApplicativoServer = null;
 					// devo resettare il connettore se passo da SA Server a Default
 					if(!erogazioneServizioApplicativoServerEnabled) {
 						initConnettore = true;
