@@ -106,6 +106,7 @@ public class SearchFormUtilities {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
 			}
 			searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
+			searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 		}
 		searchForm.saveProtocollo();
 	}

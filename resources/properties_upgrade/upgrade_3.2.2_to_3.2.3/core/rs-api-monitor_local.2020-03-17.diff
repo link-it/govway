@@ -1,0 +1,15 @@
+--- /etc/govway_3.3.0/rs-api-monitor_local.properties	2020-02-19 11:39:06.987753194 +0100
++++ ant/setup/deploy/resources/core/rs-api-monitor_local.properties	2020-03-17 09:59:34.877023623 +0100
+@@ -13,7 +13,11 @@
+ 
+ 
+ # ================================================
+-# Default
++# Indicazione se forzare un soggetto di default, in caso di configurazione multitenant abilitato.
++#multitenant.forzaSoggettoDefault=false
++#
++# Soggetto default 
++# (configurazione ignorata in caso di multitenant abilitato e proprietà multitenant.forzaSoggettoDefault disabilitata)
+ #soggetto=<NomeSoggettoDefault>
+ # Protocollo SPCoop
+ #spcoop.soggetto=<NomeSoggettoDefault>
