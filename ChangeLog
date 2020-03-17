@@ -1,3 +1,21 @@
+2019-03-17  Andrea Poli <apoli@link.it>
+
+	* [ApiRsMonitoraggio]
+	Risolto Bug OP-962
+	- Il parametro 'tipo_informazione_report' non permetteva di recuperare informazioni differenti dal 'numero_transazioni' (es. tempo_medio_risposta)
+	- Nella distribuzione statistica per applicativo, con tipologia erogazione, non poteva essere specificato il soggetto mittente. 
+	  Poichè un soggetto può avere più applicativi, ha invece senso voler fare una distribuzione statistica per tutti gli applicativi di un soggetto.
+	- Se non viene fornito il parametro query 'soggetto', l'api forza l'utilizzo del soggetto di default utilizzandolo nei filtri di ricerca in qualità di 'Soggetto Locale'. 
+	  In una installazione multitenant è invece utile che questa forzatura non avvenga, 
+	  e sia l'utente che usufruisce dell'API ad indicare il soggetto locale desiderato o nessuno per considerarli tutti
+
+2019-02-11  Francesco Scarlato <scarlato@link.it>
+
+	* [ApiRsConfigurazione, ApiRsMonitoraggio]
+	Risolti i seguenti problemi:
+	- L'aggiornamento del soggetto di default, tramite l'api di configurazione, creava una inconsistenza sul database.
+	- La ricerca per 'tag' delle transazioni, tramite l'api di monitoraggio, funzionava solamente nel caso di tipologia='erogazioni'.
+
 2019-02-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.2

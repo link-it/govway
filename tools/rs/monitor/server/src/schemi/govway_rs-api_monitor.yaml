@@ -848,6 +848,7 @@ paths:
         - $ref: '#/components/parameters/tipo_transazione'
         - $ref: '#/components/parameters/soggetto_remoto'
         - $ref: '#/components/parameters/soggetto_erogatore'
+        - $ref: '#/components/parameters/soggetto_mittente'
         - $ref: 'govway_core.yaml#/components/parameters/tag'
         - $ref: 'govway_core.yaml#/components/parameters/nome_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
@@ -888,7 +889,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+              $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativoRegistrato'
       responses:
         200:
           $ref: '#/components/responses/200ReportStatistico'
@@ -1443,6 +1444,15 @@ components:
       name: soggetto_erogatore
       description: >-
         Il soggetto erogatore di una API
+      required: false
+      schema:
+        $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+        
+    soggetto_mittente:
+      in: query
+      name: soggetto_mittente
+      description: >-
+        Il soggetto mittente che invoca una API
       required: false
       schema:
         $ref: 'govway_core.yaml#/components/schemas/SimpleName'
@@ -2103,6 +2113,15 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
+
+    RicercaStatisticaDistribuzioneApplicativoRegistrato:
+       type: object
+       allOf:
+        - $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
+        - type: object
+          properties:
+            soggetto_mittente:
+              $ref: 'govway_core.yaml#/components/schemas/NCName'
 
     #RicercaStatisticaDistribuzioneIdAutenticato:
     #   type: object

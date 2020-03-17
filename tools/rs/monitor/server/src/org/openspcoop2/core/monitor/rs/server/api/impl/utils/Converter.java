@@ -57,6 +57,7 @@ import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
+import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
@@ -377,7 +378,19 @@ public class Converter {
 		ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
 		String tipoSoggetto = protocolFactoryManager.getDefaultOrganizationTypes().get(protocollo);
 		String tipoServizioEffettivo = tipoServizio !=null ? tipoServizio : protocolFactoryManager._getServiceTypes().get(protocollo).get(0);
-		String nomeSoggettoLocale = soggetto!=null ? soggetto : ServerProperties.getInstance().getSoggettoDefault(protocollo);
+		String nomeSoggettoLocale = soggetto;
+		if(nomeSoggettoLocale==null) {
+			ServerProperties serverProperties = ServerProperties.getInstance();
+			if(serverProperties.useSoggettoDefault()) {
+				nomeSoggettoLocale = serverProperties.getSoggettoDefaultIfEnabled(protocollo);
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soggetto locale non indicato; parametro obbligatorio");
+			}
+		}
+		if(!Utility.existsIdentificativoPorta(tipoSoggetto, nomeSoggettoLocale)) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto locale indicato non esiste");
+		}
 		String nomeSoggettoErogatore = null;
 		switch (tipo) {
 		case EROGAZIONE:

@@ -20,6 +20,7 @@
 package org.openspcoop2.web.monitor.core.bean;
 
 import java.io.Serializable;
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,12 +31,13 @@ import javax.servlet.http.HttpSession;
 import org.openspcoop2.core.commons.search.Soggetto;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.exception.ServiceException;
-
+import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.dao.DBLoginDAO;
 import org.openspcoop2.web.monitor.core.dao.ILoginDAO;
 import org.openspcoop2.web.monitor.core.exception.UserInvalidException;
 import org.openspcoop2.web.monitor.core.utils.MessageUtils;
+import org.slf4j.Logger;
 
 /****
  * AbstractLoginBean
@@ -75,6 +77,14 @@ public abstract class AbstractLoginBean implements Serializable{
 	public AbstractLoginBean(boolean initDao) {
 		this.initDao = initDao;
 
+		init();
+	}
+	
+	public AbstractLoginBean(Connection con, boolean autoCommit, ServiceManagerProperties serviceManagerProperties, Logger log) {
+		this.initDao = false;
+
+		this.loginDao = new DBLoginDAO(con, autoCommit, serviceManagerProperties, log);
+		
 		init();
 	}
 

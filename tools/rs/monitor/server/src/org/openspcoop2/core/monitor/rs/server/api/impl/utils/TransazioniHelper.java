@@ -129,7 +129,7 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.tipoSoggetto, filtro.getErogatore()), search, env);
 	}
 	
 	public static final void overrideFiltroQualsiasi(FiltroApiQualsiasi filtro, String azione,
@@ -137,9 +137,9 @@ public class TransazioniHelper {
 		if (filtro == null)
 			return;
 
-		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.soggetto.getTipo(), filtro.getErogatore()), search, env);
+		overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.tipoSoggetto, filtro.getErogatore()), search, env);
 		if (!StringUtils.isEmpty(filtro.getSoggettoRemoto()))
-			search.setTipoNomeTrafficoPerSoggetto(new IDSoggetto(env.soggetto.getTipo(), filtro.getSoggettoRemoto()).toString());	
+			search.setTipoNomeTrafficoPerSoggetto(new IDSoggetto(env.tipoSoggetto, filtro.getSoggettoRemoto()).toString());	
 	}
 	
 	public static final void overrideFiltroRicercaId(FiltroRicercaId filtro, TransazioniSearchForm search,
@@ -226,7 +226,8 @@ public class TransazioniHelper {
 
 		switch (body.getTipo()) {
 		case EROGAZIONE:
-			overrideFiltroApiBase(deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), env.soggetto, search, env);
+			IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);
+			overrideFiltroApiBase(deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), idSoggettoLocale, search, env);
 			break;
 		case FRUIZIONE:
 			overrideFiltroFruizione(deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
@@ -248,7 +249,7 @@ public class TransazioniHelper {
 			return;
 
 		// Filtraggio Mittente
-		final String tipo_soggetto = env.soggetto.getTipo();
+		final String tipo_soggetto = env.tipoSoggetto;
 		switch (body.getTipo()) {
 		case FRUIZIONE: {
 			FiltroMittenteFruizione fMittente = deserialize(body.getMittente(),FiltroMittenteFruizione.class);
@@ -427,7 +428,7 @@ public class TransazioniHelper {
 	
 	public static final ListaTransazioni findAllTransazioniByIdApplicativo(RicercaIdApplicativo body, MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-		TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
+		TransazioniSearchForm search = searchFormUtilities.getIdApplicativoSearchForm(env.context, env.profilo, env.nomeSoggettoLocale, 
 				body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
 		
 		TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
@@ -444,7 +445,7 @@ public class TransazioniHelper {
 	
 	public static final ListaTransazioni findAllTransazioni(RicercaIntervalloTemporale body, MonitoraggioEnv env) throws Exception {
 		SearchFormUtilities searchFormUtilities = new SearchFormUtilities();
-		TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(env.context, env.profilo, env.soggetto.getNome(), 
+		TransazioniSearchForm search = searchFormUtilities.getAndamentoTemporaleSearchForm(env.context, env.profilo, env.nomeSoggettoLocale, 
 				body.getTipo(), body.getIntervalloTemporale().getDataInizio(), body.getIntervalloTemporale().getDataFine());
 		
 		TransazioniHelper.overrideRicercaBaseTransazione(body, search, env);
