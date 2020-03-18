@@ -21,6 +21,7 @@
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.utils.UtilsException;
@@ -29,7 +30,6 @@ import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.slf4j.Logger;
 
 /**
@@ -70,7 +70,7 @@ public class MonitoraggioEnv {
 				
 		if (nome_soggetto != null) {
 			this.nomeSoggettoLocale = nome_soggetto;
-			if(!Utility.existsIdentificativoPorta(this.tipoSoggetto, this.nomeSoggettoLocale)) {
+			if(!SoggettiConfig.existsIdentificativoPorta(this.tipoSoggetto, this.nomeSoggettoLocale)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
 			}
 		}
