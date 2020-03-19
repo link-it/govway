@@ -29,18 +29,20 @@ xmlns="http://www.w3.org/1999/xhtml"
 		<a4j:loadStyle src="resource:///css/transazioni.css" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" />
 		<a4j:loadScript src="resource://scripts/utils.min.js" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
 		<a4j:outputPanel id="panelPaginaTransazioniCtr" layout="block">
-			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live') or (searchFormTransazioni.periodo eq 'Live')}" 
+			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live')}" 
 				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : searchFormTransazioni.tipoStoricoLabel}" switchType="client">
 				<f:facet name="openMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 				<a4j:keepAlive beanName="transazioniBean" />
 				<a4j:outputPanel id="panelTransazioniCtr" ajaxRendered="false">
@@ -82,13 +84,13 @@ xmlns="http://www.w3.org/1999/xhtml"
 								
 								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	
 									<a4j:commandButton id="filtra" value="#{(searchFormTransazioni.aggiornamentoDatiAbilitato and searchFormTransazioni.showButtonNuovaRicerca) ? 
-															'Nuova Ricerca' : 'Filtra'}" 
+															'Nuova Ricerca' : 'Cerca'}" 
 														styleClass="icon-refresh" 
 														process="searchPnl" 
 														reRender="panelPaginaTransazioniCtr"
 														rendered="#{not(searchFormTransazioni.periodo eq 'Live')}"
 														action="#{searchFormTransazioni.filtra}"
-														oncomplete="completa(event)"
+														oncomplete="completaRicerca(event)"
 														/>
 									<a4j:commandButton id="aggiorna" value="Filtra Risultati" 
 														styleClass="icon-refresh" 
@@ -98,7 +100,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 															searchFormTransazioni.aggiornamentoDatiAbilitato and
 															searchFormTransazioni.showButtonNuovaRicerca}"
 														action="#{searchFormTransazioni.aggiorna}"
-														oncomplete="completa(event)"
+														oncomplete="completaRicerca(event)"
 														/>	
 									<a4j:commandButton id="filtraLive" value="Aggiorna Criteri Ricerca" 
 														styleClass="icon-refresh" 
@@ -106,7 +108,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 														reRender="listaTransazioniCtr"
 														rendered="#{searchFormTransazioni.periodo eq 'Live'}"
 														action="#{searchFormTransazioni.validaSezioneDatiMittenteAction}"
-														oncomplete="completa(event)"
+														oncomplete="completaRicerca(event)"
 														/>
 									<a4j:commandButton id="svuotaNotLive" value="Ripulisci"
 											styleClass="icon-refresh" process="searchPnl"
@@ -142,6 +144,14 @@ xmlns="http://www.w3.org/1999/xhtml"
 								   
 					   function completa(evt){   }
 					   
+					   function completaRicerca(evt){   
+						   collapseSearchPanel('panelTransazioni');
+					   }
+					   
+					   function collapseSearchPanel(panelId) {  
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+					 	} 
 						 //]]>	
 					</script>
 				
@@ -198,6 +208,15 @@ xmlns="http://www.w3.org/1999/xhtml"
 					   }
 
 					   function completa(evt){   }
+					   
+					   function completaRicerca(evt){   
+						   collapseSearchPanel('panelTransazioni');
+					   }
+					   
+					   function collapseSearchPanel(panelId) {  
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+					 	} 
 					   
 						 //]]>	
 					</script>
@@ -506,6 +525,16 @@ xmlns="http://www.w3.org/1999/xhtml"
 						<script type="text/javascript">
 						 	function completa(evt){
 						 		restartSessioneLive(true);	
+						 	}
+						 	
+						 	function completaRicerca(evt){   
+						 		restartSessioneLive(true);	
+								collapseSearchPanel('panelTransazioni');
+						   	}
+							   
+						    function collapseSearchPanel(panelId) {  
+						    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+							       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
 						 	}
 						
 							var cdifp = #{searchFormTransazioni.intervalloRefresh};

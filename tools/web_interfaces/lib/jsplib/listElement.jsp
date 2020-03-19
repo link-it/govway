@@ -387,12 +387,18 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	$("#searchForm").removeClass('searchFormOff');
     	$("#searchForm").addClass('searchFormOn');
     	
+    	if($( "#iconaPanelListaSpan" ).length > 0){
+    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
+    	}
 //     	$("#iconaPanelLista").removeClass('icon-down-white');
 //     	$("#iconaPanelLista").addClass('icon-up-white');
     } else {
     	$("#searchForm").removeClass('searchFormOn');
     	$("#searchForm").addClass('searchFormOff');
     	
+    	if($( "#iconaPanelListaSpan" ).length > 0){
+    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
+    	}
 //     	$("#iconaPanelLista").removeClass('icon-up-white');
 //     	$("#iconaPanelLista").addClass('icon-down-white');
     }

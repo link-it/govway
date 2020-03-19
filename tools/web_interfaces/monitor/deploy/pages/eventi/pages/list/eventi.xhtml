@@ -15,15 +15,17 @@
 			<rich:simpleTogglePanel id="panelFiltri1" opened="true"
 				label="Eventi" switchType="client">
 				<f:facet name="openMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 	
 				<div class="form-container noborder">
@@ -140,14 +142,14 @@
 							</a4j:outputPanel>
 						</a4j:region>
 						<div class="buttonrow">
-							<a4j:commandButton id="filtra" value="#{searchFormEventi.aggiornamentoDatiAbilitato ? 'Nuova Ricerca' : 'Filtra'}"
+							<a4j:commandButton id="filtra" value="#{searchFormEventi.aggiornamentoDatiAbilitato ? 'Nuova Ricerca' : 'Cerca'}"
 								styleClass="icon-refresh" process="genSearchPnl"
 								reRender="panelPaginaRicerca" rendered="#{true}"
-								action="#{searchFormEventi.filtra}" oncomplete="completa(event)" />
-							<a4j:commandButton id="aggiorna" value="Aggiorna"
+								action="#{searchFormEventi.filtra}" oncomplete="completaRicerca(event)" />
+							<a4j:commandButton id="aggiorna" value="Filtra Risultati"
 								styleClass="icon-refresh" process="genSearchPnl"
 								reRender="panelPaginaRicerca" rendered="#{searchFormEventi.aggiornamentoDatiAbilitato}"
-								action="#{searchFormEventi.aggiorna}" oncomplete="completa(event)" />
+								action="#{searchFormEventi.aggiorna}" oncomplete="completaRicerca(event)" />
 							<a4j:commandButton id="svuota" value="Ripulisci"
 								styleClass="icon-refresh" process="genSearchPnl"
 								reRender="panelPaginaRicerca" rendered="#{true}"
@@ -173,6 +175,15 @@
 					   }
 					   
 					   function completa(evt){   }
+					   
+					   function completaRicerca(evt){   
+						   collapseSearchPanel('panelFiltri1');
+					   }
+					   
+					   function collapseSearchPanel(panelId) {  
+					    	 if (SimpleTogglePanelManager.panels.get(panelId).status == "true")  
+						       SimpleTogglePanelManager.toggleOnClient('onclick', panelId);  
+					 	}
 					 //]]>	
 				</script>
 				

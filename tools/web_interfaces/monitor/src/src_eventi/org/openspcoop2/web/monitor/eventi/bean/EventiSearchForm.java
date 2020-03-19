@@ -83,6 +83,7 @@ public class EventiSearchForm extends AbstractDateSearchForm {
 
 	@Override
 	public void initSearchListener(ActionEvent ae) {
+		super.initSearchListener(ae);
 		this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 				: "Ultimo mese");
 		_setPeriodo();
