@@ -5,8 +5,8 @@ Creazione di un applicativo
 
 Affinché possano essere utilizzate le funzionalità di autenticazione ed
 autorizzazione, associate alle fruizioni, è necessario che vengano
-censiti gli applicativi, interni al dominio, che inviano le richieste di
-servizio. La registrazione di un applicativo consente di assegnargli
+censiti gli applicativi client, interni al dominio, che inviano le richieste di
+servizio. La registrazione di un applicativo, di tipo client, consente di assegnargli
 delle credenziali che lo identificano ed eventuali ruoli provenienti
 dalla fonte "Registro".
 
@@ -26,6 +26,8 @@ come segue (:numref:`applicativoNew`):
 -  *Nome*: Assegnare un nome all'applicativo. È necessario che il nome
    indicato risulti univoco rispetto ai nomi già presenti per la
    modalità operativa selezionata (in questo caso API Gateway).
+
+-  *Tipo*: Utilizzare il tipo 'Client' per censire un'applicativo allo scopo di identificarlo ed autorizzarlo durante l’invocazione di erogazioni o fruizioni di API.
 
 -  *Modalità di Accesso*: Tramite il campo *Tipo* si
    seleziona il tipo di credenziali richieste per l'autenticazione

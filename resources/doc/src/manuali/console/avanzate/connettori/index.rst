@@ -62,7 +62,7 @@ ulteriori connettori:
 
 Nel seguito vengono descritte alcune funzionalità specifiche dei
 connettori HTTP e HTTPS. Inoltre viene fornita una descrizione del
-connettore built-in JMS.
+connettore built-in JMS e File.
 
 .. toctree::
         :maxdepth: 2

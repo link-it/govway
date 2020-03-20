@@ -31,4 +31,4 @@ nell'intestazione della pagina.
 	correlazione
 	mtom
 	registrazioneMessaggi
-        connettore
+        connettore/index
