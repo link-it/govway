@@ -110,36 +110,46 @@ infoPrintln "BUILD-SETUP: ${REBUILD}"
 infoPrintln "BUILD-DOC: ${UPDATE_DOC}"
 infoPrintln "BUILD-LIB: ${UPDATE_LIB}"
 infoPrintln "READ_GIT_INFO: ${READ_GIT_INFO}"
-infoPrintln "---------------------------------------"
 
 #####################################
 # Versionamento dei sorgenti #######
 #####################################
+if [ -z "${TAG_PDD_MAJOR_VERSION}" ] 
+then
+	errorPrintln "Indicare la Major version di openspcoop nella variabile TAG_PDD_MAJOR_VERSION. (Es: 2.1) "
+	exit 1
+fi
+GOVWAY_FULL_VERSION=${TAG_PDD_MAJOR_VERSION}
+if [ -n "${TAG_PDD_MINOR_VERSION}" ]
+then
+	[ ${TAG_PDD_MINOR_VERSION:0:1} == "." ] && TAG_PDD_MINOR_VERSION=${TAG_PDD_MINOR_VERSION:1}
+	GOVWAY_FULL_VERSION="${GOVWAY_FULL_VERSION}.${TAG_PDD_MINOR_VERSION}"
+fi
+if [ -n "${TAG_PDD_PATCHLEVEL}" ]
+then
+   #       [ ${TAG_PDD_PATCHLEVEL=:0:1} == "." ] && TAG_PDD_PATCHLEVEL=${TAG_PDD_PATCHLEVEL:1} # tenere il separatore nella variabile (puo anche non esserci)
+       GOVWAY_FULL_VERSION="${GOVWAY_FULL_VERSION}.${TAG_PDD_PATCHLEVEL}"
+fi
 if [ $ramo == "tags" ]
 then
-	if [ -z "${TAG_PDD_MAJOR_VERSION}" ] 
-	then
-		errorPrintln "Indicare la Major version di openspcoop nella variabile TAG_PDD_MAJOR_VERSION. (Es: 2.1) "
-		exit 1
-	fi
-	TAG_FULL_VERSION=${TAG_PDD_MAJOR_VERSION}
-	if [ -n "${TAG_PDD_MINOR_VERSION}" ]
-	then
-		[ ${TAG_PDD_MINOR_VERSION:0:1} == "." ] && TAG_PDD_MINOR_VERSION=${TAG_PDD_MINOR_VERSION:1}
-		TAG_FULL_VERSION="${TAG_FULL_VERSION}.${TAG_PDD_MINOR_VERSION}"
-	fi
-        if [ -n "${TAG_PDD_PATCHLEVEL}" ]
-        then
-           #       [ ${TAG_PDD_PATCHLEVEL=:0:1} == "." ] && TAG_PDD_PATCHLEVEL=${TAG_PDD_PATCHLEVEL:1} # tenere il separatore nella variabile (puo anche non esserci)
- 	       TAG_FULL_VERSION="${TAG_FULL_VERSION}.${TAG_PDD_PATCHLEVEL}"
-        fi
+	TAG_FULL_VERSION="${GOVWAY_FULL_VERSION}"
 
 elif [ $ramo == "branches" ]
 then
 	# I sorgenti in sviluppo che stanno sul ramo "branch" hanno una struttura di directory 
-	TAG_FULL_VERSION="MASTER"
-	
+	TAG_FULL_VERSION="${GOVWAY_FULL_VERSION}.build-master"
+	if [ "${READ_GIT_INFO}" == "true" ]
+	then
+		GIT_VERSION=$(git log --pretty=oneline --abbrev-commit  | head -1 | cut -d ' ' -f 1)
+		if [ ! -z "${GIT_VERSION}" ]
+		then
+			TAG_FULL_VERSION="${GOVWAY_FULL_VERSION}.build-${GIT_VERSION}"
+		fi	
+	fi
 fi
+infoPrintln "VERSION: ${TAG_FULL_VERSION}"
+infoPrintln "---------------------------------------"
+
 
 #####################################
 # Riferimenti ai sorgenti ##########
