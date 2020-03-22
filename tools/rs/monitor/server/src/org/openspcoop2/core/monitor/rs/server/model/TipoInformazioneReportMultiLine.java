@@ -30,7 +30,11 @@ public class TipoInformazioneReportMultiLine  {
   private TipoInformazioneReportEnum tipo = null;
   
   @Schema(description = "")
-  private Object valori = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = OccupazioneBandaTipi.class, name = "occupazione_banda"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TempoMedioRispostaTipi.class, name = "tempo_medio_risposta")  })
+  private OneOfTipoInformazioneReportMultiLineValori valori = null;
  /**
    * Get tipo
    * @return tipo
@@ -56,15 +60,15 @@ public class TipoInformazioneReportMultiLine  {
   **/
   @JsonProperty("valori")
   @Valid
-  public Object getValori() {
+  public OneOfTipoInformazioneReportMultiLineValori getValori() {
     return this.valori;
   }
 
-  public void setValori(Object valori) {
+  public void setValori(OneOfTipoInformazioneReportMultiLineValori valori) {
     this.valori = valori;
   }
 
-  public TipoInformazioneReportMultiLine valori(Object valori) {
+  public TipoInformazioneReportMultiLine valori(OneOfTipoInformazioneReportMultiLineValori valori) {
     this.valori = valori;
     return this;
   }

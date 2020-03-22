@@ -34,13 +34,23 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   private OpzioniGenerazioneReport report = null;
   
   @Schema(description = "")
-  private Object api = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiBase.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroFruizione.class, name = "fruizione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiBase.class, name = "qualsiasi")  })
+  private OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api = null;
   
   @Schema(description = "")
   private String azione = null;
   
   @Schema(description = "")
-  private Object mittente = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneDistribuzioneSoggettoRemoto.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+  private OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente mittente = null;
   
   @Schema(description = "")
   private FiltroEsito esito = null;
@@ -70,15 +80,15 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   **/
   @JsonProperty("api")
   @Valid
-  public Object getApi() {
+  public OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi getApi() {
     return this.api;
   }
 
-  public void setApi(Object api) {
+  public void setApi(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api) {
     this.api = api;
   }
 
-  public RicercaStatisticaDistribuzioneSoggettoRemoto api(Object api) {
+  public RicercaStatisticaDistribuzioneSoggettoRemoto api(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api) {
     this.api = api;
     return this;
   }
@@ -108,15 +118,15 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   **/
   @JsonProperty("mittente")
   @Valid
-  public Object getMittente() {
+  public OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(Object mittente) {
+  public void setMittente(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaStatisticaDistribuzioneSoggettoRemoto mittente(Object mittente) {
+  public RicercaStatisticaDistribuzioneSoggettoRemoto mittente(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente mittente) {
     this.mittente = mittente;
     return this;
   }

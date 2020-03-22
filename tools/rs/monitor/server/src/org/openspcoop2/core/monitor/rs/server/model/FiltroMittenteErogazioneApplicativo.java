@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteErogazioneApplicativo  {
+public class FiltroMittenteErogazioneApplicativo  implements OneOfFiltroMittenteErogazioneId {
   
   @Schema(required = true, description = "")
   private String soggetto = null;

@@ -23,7 +23,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class TempoMedioRispostaTipi  {
+public class TempoMedioRispostaTipi  implements OneOfTipoInformazioneReportMultiLineValori {
   
   @Schema(description = "")
   private Boolean latenzaTotale = true;

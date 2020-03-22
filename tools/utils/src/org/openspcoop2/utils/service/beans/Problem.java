@@ -22,12 +22,9 @@ package org.openspcoop2.utils.service.beans;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Problem  {
+public class Problem   {
   
   @Schema(example = "Connection to database timed out", description = "A human readable explanation specific to this occurrence of the problem. ")
  /**

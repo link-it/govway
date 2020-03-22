@@ -23,6 +23,7 @@ package org.openspcoop2.utils.jaxrs;
 import java.util.TimeZone;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -36,6 +37,14 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
  */
 public class JacksonXmlProvider extends com.fasterxml.jackson.jaxrs.xml.JacksonXMLProvider {
 
+	private static boolean failOnMissingExternalTypeIdProperty = false;
+	public static boolean isFailOnMissingExternalTypeIdProperty() {
+		return JacksonXmlProvider.failOnMissingExternalTypeIdProperty;
+	}
+	public static void setFailOnMissingExternalTypeIdProperty(boolean failOnMissingExternalTypeIdProperty) {
+		JacksonXmlProvider.failOnMissingExternalTypeIdProperty = failOnMissingExternalTypeIdProperty;
+	}
+
 	public static XmlMapper getObjectMapper(boolean prettyPrint, TimeZone timeZone) {
 		XmlMapper mapper = new XmlMapper();
 		mapper.setTimeZone(timeZone);
@@ -47,6 +56,7 @@ public class JacksonXmlProvider extends com.fasterxml.jackson.jaxrs.xml.JacksonX
 		if(prettyPrint) {
 			mapper.configure(SerializationFeature.INDENT_OUTPUT, true);
 		}
+		mapper.configure(DeserializationFeature.FAIL_ON_MISSING_EXTERNAL_TYPE_ID_PROPERTY, JacksonXmlProvider.failOnMissingExternalTypeIdProperty);
 		return mapper;
 	}
 	

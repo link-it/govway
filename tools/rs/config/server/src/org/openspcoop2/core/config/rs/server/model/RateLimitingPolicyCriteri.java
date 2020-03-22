@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RateLimitingPolicyCriteri  {
+public class RateLimitingPolicyCriteri  implements OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione {
   
   @Schema(required = true, description = "")
   private RateLimitingCriteriMetricaEnum metrica = null;
@@ -35,10 +35,10 @@ public class RateLimitingPolicyCriteri  {
   @Schema(description = "")
   private RateLimitingCriteriIntervalloEnum intervallo = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean congestione = false;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean degrado = false;
  /**
    * Get metrica

@@ -36,7 +36,7 @@ public class Validazione extends ApiImplConfigurazioneStato {
   @Schema(required = true, description = "")
   private TipoValidazioneEnum tipo = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean mtom = false;
  /**
    * Get stato

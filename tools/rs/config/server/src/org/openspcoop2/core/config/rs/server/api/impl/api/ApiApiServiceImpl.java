@@ -1403,11 +1403,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			switch (ret.getTipo()) {
 			case REST:
-				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()).toString());
+				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
 				ret.setInterfaccia(as.getByteWsdlConcettuale());
 				break;
 			case SOAP:
-				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()).toString());
+				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
 				ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 				break;
 			default:

@@ -41,7 +41,7 @@ import javax.validation.Valid;
 public class Diagnostico  {
   @XmlElement(name="data", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(example = "2017-07-21T17:32:28Z", required = true, description = "")
   private DateTime data = null;
   @XmlElement(name="severita_codice", required = true)
   

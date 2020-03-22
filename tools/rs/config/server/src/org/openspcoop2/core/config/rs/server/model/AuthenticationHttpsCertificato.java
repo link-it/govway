@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class AuthenticationHttpsCertificato  {
+public class AuthenticationHttpsCertificato  implements OneOfAuthenticationHttpsCertificato {
   
   @Schema(required = true, description = "")
   private byte[] archivio = null;
@@ -40,7 +40,7 @@ public class AuthenticationHttpsCertificato  {
   @Schema(required = true, description = "")
   private TipoKeystore tipo = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean strictVerification = false;
  /**
    * Get archivio

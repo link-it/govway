@@ -33,7 +33,10 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
   private TokenClaimEnum claim = null;
   
   @Schema(description = "")
-  private Object soggetto = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = BaseOggettoWithSimpleName.class, name = "erogazione")  })
+  private OneOfRicercaStatisticaDistribuzioneTokenInfoSoggetto soggetto = null;
  /**
    * Get claim
    * @return claim
@@ -60,15 +63,15 @@ public class RicercaStatisticaDistribuzioneTokenInfo extends RicercaStatisticaDi
   **/
   @JsonProperty("soggetto")
   @Valid
-  public Object getSoggetto() {
+  public OneOfRicercaStatisticaDistribuzioneTokenInfoSoggetto getSoggetto() {
     return this.soggetto;
   }
 
-  public void setSoggetto(Object soggetto) {
+  public void setSoggetto(OneOfRicercaStatisticaDistribuzioneTokenInfoSoggetto soggetto) {
     this.soggetto = soggetto;
   }
 
-  public RicercaStatisticaDistribuzioneTokenInfo soggetto(Object soggetto) {
+  public RicercaStatisticaDistribuzioneTokenInfo soggetto(OneOfRicercaStatisticaDistribuzioneTokenInfoSoggetto soggetto) {
     this.soggetto = soggetto;
     return this;
   }

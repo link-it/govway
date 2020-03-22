@@ -27,7 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutenticazioneConfigurazionePrincipal  {
+public class APIImplAutenticazioneConfigurazionePrincipal  implements OneOfAPIImplAutenticazioneConfigurazione, OneOfAPIImplAutenticazioneNewConfigurazione {
   
   @Schema(required = true, description = "")
   private TipoAutenticazionePrincipal tipo = null;
@@ -44,7 +44,7 @@ public class APIImplAutenticazioneConfigurazionePrincipal  {
   @Schema(example = "indica l'espressione regolare da utilizzare in caso di autenticazione 'url-based'", description = "")
   private String pattern = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean forward = false;
  /**
    * Get tipo

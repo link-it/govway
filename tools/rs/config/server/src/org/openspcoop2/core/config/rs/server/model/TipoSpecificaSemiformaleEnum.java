@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 /**
  * Gets or Sets TipoSpecificaSemiformaleEnum
  */
-public enum TipoSpecificaSemiformaleEnum {
+public enum TipoSpecificaSemiformaleEnum implements OneOfApiAllegatoTipoAllegato, OneOfApiAllegatoItemTipoAllegato, OneOfApiImplAllegatoTipoAllegato, OneOfApiImplAllegatoItemTipoAllegato {
 UML("UML"),
   HTML("HTML"),
   XSD("XSD"),

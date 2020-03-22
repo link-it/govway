@@ -36,7 +36,12 @@ public class RicercaStatisticaDistribuzioneEsiti extends RicercaBaseStatisticaSo
   private String azione = null;
   
   @Schema(description = "")
-  private Object mittente = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazione.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+  private OneOfRicercaStatisticaDistribuzioneEsitiMittente mittente = null;
  /**
    * Get report
    * @return report
@@ -82,15 +87,15 @@ public class RicercaStatisticaDistribuzioneEsiti extends RicercaBaseStatisticaSo
   **/
   @JsonProperty("mittente")
   @Valid
-  public Object getMittente() {
+  public OneOfRicercaStatisticaDistribuzioneEsitiMittente getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(Object mittente) {
+  public void setMittente(OneOfRicercaStatisticaDistribuzioneEsitiMittente mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaStatisticaDistribuzioneEsiti mittente(Object mittente) {
+  public RicercaStatisticaDistribuzioneEsiti mittente(OneOfRicercaStatisticaDistribuzioneEsitiMittente mittente) {
     this.mittente = mittente;
     return this;
   }

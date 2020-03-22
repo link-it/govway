@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 /**
  * Gets or Sets OccupazioneBandaEnum
  */
-public enum OccupazioneBandaEnum {
+public enum OccupazioneBandaEnum implements OneOfTipoInformazioneReportValori {
 COMPLESSIVA("banda_complessiva"),
   INTERNA("banda_interna"),
   ESTERNA("banda_esterna");

@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 /**
  * Gets or Sets TipoSpecificaSicurezzaEnum
  */
-public enum TipoSpecificaSicurezzaEnum {
+public enum TipoSpecificaSicurezzaEnum implements OneOfApiImplAllegatoTipoAllegato, OneOfApiImplAllegatoItemTipoAllegato {
 WS_POLICY("WS-Policy"),
   XACML_POLICY("XACML-Policy"),
   LINGUAGGIO_NATURALE("Linguaggio Naturale");

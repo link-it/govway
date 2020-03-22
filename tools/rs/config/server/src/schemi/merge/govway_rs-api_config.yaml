@@ -51,23 +51,23 @@ paths:
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -85,19 +85,19 @@ paths:
               $ref: "#/components/schemas/Api"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -113,23 +113,23 @@ paths:
         \ dal nome e dalla versione"
       operationId: "getApi"
       responses:
-        200:
+        "200":
           description: "Dettagli di una API restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiViewItem"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -141,19 +141,19 @@ paths:
         \ nome e dalla versione"
       operationId: "deleteApi"
       responses:
-        204:
+        "204":
           description: "API eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -171,23 +171,23 @@ paths:
         \ di una API identificata dal nome e dalla versione"
       operationId: "getApiInformazioniGenerali"
       responses:
-        200:
+        "200":
           description: "Informazioni generali restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiInformazioniGeneraliView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -206,19 +206,19 @@ paths:
               $ref: "#/components/schemas/ApiInformazioniGenerali"
         required: true
       responses:
-        204:
+        "204":
           description: "API aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -236,23 +236,23 @@ paths:
         \ dell'API identificata dal nome e dalla versione"
       operationId: "getApiReferente"
       responses:
-        200:
+        "200":
           description: "Nome del soggetto referente restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiReferenteView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -270,23 +270,23 @@ paths:
         \ di una API identificata dal nome e dalla versione"
       operationId: "getApiInterfaccia"
       responses:
-        200:
+        "200":
           description: "Interfaccia dell'API restituita con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiInterfacciaView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -305,19 +305,19 @@ paths:
               $ref: "#/components/schemas/ApiInterfaccia"
         required: true
       responses:
-        204:
+        "204":
           description: "L'interfaccia è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -335,7 +335,7 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "downloadApiInterfaccia"
       responses:
-        200:
+        "200":
           description: "Interfaccia dell'API restituita con successo"
           content:
             application/*:
@@ -346,17 +346,17 @@ paths:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -374,23 +374,23 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "getApiDescrizione"
       responses:
-        200:
+        "200":
           description: "Dati della descrizione restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiDescrizione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -409,19 +409,19 @@ paths:
               $ref: "#/components/schemas/ApiDescrizione"
         required: true
       responses:
-        204:
+        "204":
           description: "La descrizione è stato aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -439,23 +439,23 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "getApiTags"
       responses:
-        200:
+        "200":
           description: "Tags restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiTags"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -474,19 +474,19 @@ paths:
               $ref: "#/components/schemas/ApiTags"
         required: true
       responses:
-        204:
+        "204":
           description: "I tags sono stati aggiornati correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -508,23 +508,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiAllegati"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -543,19 +543,19 @@ paths:
               $ref: "#/components/schemas/ApiAllegato"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -573,23 +573,23 @@ paths:
         \ della API identificata dal nome e dalla versione"
       operationId: "getApiAllegato"
       responses:
-        200:
+        "200":
           description: "Dati dell'allegato restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiAllegato"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -608,19 +608,19 @@ paths:
               $ref: "#/components/schemas/ApiAllegato"
         required: true
       responses:
-        204:
+        "204":
           description: "L'allegato è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -632,19 +632,19 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "deleteApiAllegato"
       responses:
-        204:
+        "204":
           description: "Allegato eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -663,7 +663,7 @@ paths:
         \ dal nome e dalla versione"
       operationId: "downloadApiAllegato"
       responses:
-        200:
+        "200":
           description: "Allegato dell'API restituito con successo"
           content:
             application/*:
@@ -674,17 +674,17 @@ paths:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -708,23 +708,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/http_method"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiRisorse"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -743,19 +743,19 @@ paths:
               $ref: "#/components/schemas/ApiRisorsa"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -773,23 +773,23 @@ paths:
         \ della API identificata dal nome e dalla versione"
       operationId: "getApiRisorsa"
       responses:
-        200:
+        "200":
           description: "Dati della risorsa restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiRisorsa"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -808,19 +808,19 @@ paths:
               $ref: "#/components/schemas/ApiRisorsa"
         required: true
       responses:
-        204:
+        "204":
           description: "La risorsa è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -832,19 +832,19 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "deleteApiRisorsa"
       responses:
-        204:
+        "204":
           description: "Risorsa eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -867,23 +867,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiServizi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -902,19 +902,19 @@ paths:
               $ref: "#/components/schemas/ApiServizio"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -932,23 +932,23 @@ paths:
         \ della API identificata dal nome e dalla versione"
       operationId: "getApiServizio"
       responses:
-        200:
+        "200":
           description: "Dati del servizio restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiServizio"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -967,19 +967,19 @@ paths:
               $ref: "#/components/schemas/ApiServizio"
         required: true
       responses:
-        204:
+        "204":
           description: "Il servizio è stata aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -991,19 +991,19 @@ paths:
         \ identificata dal nome e dalla versione"
       operationId: "deleteApiServizio"
       responses:
-        204:
+        "204":
           description: "Servizio eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1026,23 +1026,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiAzioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1061,19 +1061,19 @@ paths:
               $ref: "#/components/schemas/ApiAzione"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1092,23 +1092,23 @@ paths:
         \ nel servizio della API identificata dal nome e dalla versione"
       operationId: "getApiAzione"
       responses:
-        200:
+        "200":
           description: "Dati dell'azione restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiAzione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1127,19 +1127,19 @@ paths:
               $ref: "#/components/schemas/ApiAzione"
         required: true
       responses:
-        204:
+        "204":
           description: "L'azione è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1151,19 +1151,19 @@ paths:
         \ della API identificata dal nome e dalla versione"
       operationId: "deleteApiAzione"
       responses:
-        204:
+        "204":
           description: "Azione eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1188,23 +1188,23 @@ paths:
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaErogazioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1222,19 +1222,19 @@ paths:
               $ref: "#/components/schemas/Erogazione"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1250,23 +1250,23 @@ paths:
         \ di API identificata dal nome e dalla versione"
       operationId: "getErogazione"
       responses:
-        200:
+        "200":
           description: "Dettagli di un'erogazione di API restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErogazioneViewItem"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1278,19 +1278,19 @@ paths:
         \ dal nome e dalla versione"
       operationId: "deleteErogazione"
       responses:
-        204:
+        "204":
           description: "Erogazione di API eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1309,23 +1309,23 @@ paths:
         \ di un'erogazione di API identificata dal nome e dalla versione"
       operationId: "getErogazioneInformazioniGenerali"
       responses:
-        200:
+        "200":
           description: "Informazioni generali restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplInformazioniGeneraliView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1345,19 +1345,19 @@ paths:
               $ref: "#/components/schemas/ApiImplInformazioniGenerali"
         required: true
       responses:
-        204:
+        "204":
           description: "Erogazione di API aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1376,23 +1376,23 @@ paths:
         \ implementata dall'erogazione identificata dal nome e dalla versione"
       operationId: "getErogazioneAPI"
       responses:
-        200:
+        "200":
           description: "Informazioni sull'API restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplVersioneApiView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1411,19 +1411,19 @@ paths:
               $ref: "#/components/schemas/ApiImplVersioneApi"
         required: true
       responses:
-        204:
+        "204":
           description: "Erogazione di API aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1446,23 +1446,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiImplAllegati"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1481,19 +1481,19 @@ paths:
               $ref: "#/components/schemas/ApiImplAllegato"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1512,23 +1512,23 @@ paths:
         \ dell'erogazione di API identificata dal nome e dalla versione"
       operationId: "getErogazioneAllegato"
       responses:
-        200:
+        "200":
           description: "Dati dell'allegato restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplAllegato"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1547,19 +1547,19 @@ paths:
               $ref: "#/components/schemas/ApiImplAllegato"
         required: true
       responses:
-        204:
+        "204":
           description: "L'allegato è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1571,19 +1571,19 @@ paths:
         \ di API identificata dal nome e dalla versione"
       operationId: "deleteErogazioneAllegato"
       responses:
-        204:
+        "204":
           description: "Allegato eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1603,7 +1603,7 @@ paths:
         \ di API identificata dal nome e dalla versione"
       operationId: "downloadErogazioneAllegato"
       responses:
-        200:
+        "200":
           description: "Allegato dell'erogazione restituito con successo"
           content:
             application/*:
@@ -1614,17 +1614,17 @@ paths:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1646,23 +1646,23 @@ paths:
         \ e dalla versione"
       operationId: "getErogazioneUrlInvocazione"
       responses:
-        200:
+        "200":
           description: "Informazioni sull'url di invocazione restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplUrlInvocazioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1682,19 +1682,19 @@ paths:
               $ref: "#/components/schemas/ApiImplUrlInvocazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione dell'erogazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1713,23 +1713,23 @@ paths:
         \ associato all'erogazione identificata dal nome e dalla versione"
       operationId: "getErogazioneConnettore"
       responses:
-        200:
+        "200":
           description: "Informazioni sul connettore restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Connettore"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1749,19 +1749,19 @@ paths:
               $ref: "#/components/schemas/Connettore"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione dell'erogazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1780,23 +1780,23 @@ paths:
         \ CORS associata all'erogazione identificata dal nome e dalla versione"
       operationId: "getErogazioneGestioneCORS"
       responses:
-        200:
+        "200":
           description: "Informazioni sulla configurazione CORS restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GestioneCors"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1815,19 +1815,19 @@ paths:
               $ref: "#/components/schemas/GestioneCors"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione dell'erogazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1851,23 +1851,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/azione"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaGruppi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1886,19 +1886,19 @@ paths:
               $ref: "#/components/schemas/Gruppo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1917,23 +1917,23 @@ paths:
         \ gruppo identificato dal nome"
       operationId: "getErogazioneGruppoAzioni"
       responses:
-        200:
+        "200":
           description: "Elenco di azioni/risorse restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GruppoAzioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1951,19 +1951,19 @@ paths:
               $ref: "#/components/schemas/GruppoNome"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione del gruppo aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -1975,19 +1975,19 @@ paths:
         \ dal nome"
       operationId: "deleteErogazioneGruppo"
       responses:
-        204:
+        "204":
           description: "Gruppo eliminate con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2014,19 +2014,19 @@ paths:
               $ref: "#/components/schemas/GruppoAzioni"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2046,19 +2046,19 @@ paths:
         \ dell'API associate al gruppo"
       operationId: "deleteErogazioneGruppoAzione"
       responses:
-        204:
+        "204":
           description: "Azione eliminate con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2078,23 +2078,23 @@ paths:
       description: "Questa operazione consente di ottenere lo stato attuale del gruppo"
       operationId: "getErogazioneStato"
       responses:
-        200:
+        "200":
           description: "Dettaglio dello stato restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplStato"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2112,19 +2112,19 @@ paths:
               $ref: "#/components/schemas/ApiImplStato"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione del gruppo aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2145,23 +2145,23 @@ paths:
         \ alla gestione dei token per quanto concerne il controllo degli accessi"
       operationId: "getErogazioneControlloAccessiGestioneToken"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiGestioneToken"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2181,19 +2181,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiGestioneToken"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2214,23 +2214,23 @@ paths:
         \ all'autenticazione per quanto concerne il controllo degli accessi"
       operationId: "getErogazioneControlloAccessiAutenticazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutenticazione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2250,19 +2250,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutenticazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2283,23 +2283,23 @@ paths:
         \ all'autorizzazione per quanto concerne il controllo degli accessi"
       operationId: "getErogazioneControlloAccessiAutorizzazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2319,19 +2319,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2351,24 +2351,24 @@ paths:
         \ all'autorizzazione"
       operationId: "downloadErogazioneControlloAccessiAutorizzazioneXacmlPolicy"
       responses:
-        200:
+        "200":
           description: "Interfaccia dell'API restituita con successo"
           content:
             application/xml:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2387,23 +2387,23 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco dei soggetti autorizzati"
       operationId: "getErogazioneControlloAccessiAutorizzazioneSoggetti"
       responses:
-        200:
+        "200":
           description: "Elenco soggetti autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneSoggetti"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2422,19 +2422,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneSoggetto"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2454,19 +2454,19 @@ paths:
         \ soggetti autorizzati"
       operationId: "deleteErogazioneControlloAccessiAutorizzazioneSoggetti"
       responses:
-        204:
+        "204":
           description: "Soggetti eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2487,23 +2487,23 @@ paths:
         \ autorizzati"
       operationId: "getErogazioneControlloAccessiAutorizzazioneApplicativi"
       responses:
-        200:
+        "200":
           description: "Elenco applicativi autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2522,19 +2522,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiErogazioneAutorizzazioneApplicativo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2554,19 +2554,19 @@ paths:
         \ degli applicativi autorizzati"
       operationId: "deleteErogazioneControlloAccessiAutorizzazioneApplicativi"
       responses:
-        204:
+        "204":
           description: "Applicativi eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2587,23 +2587,23 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco dei ruoli autorizzati"
       operationId: "getErogazioneControlloAccessiAutorizzazioneRuoli"
       responses:
-        200:
+        "200":
           description: "Elenco ruoli autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuoli"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2622,19 +2622,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuolo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2654,19 +2654,19 @@ paths:
         \ ruoli autorizzati"
       operationId: "deleteErogazioneControlloAccessiAutorizzazioneRuoli"
       responses:
-        204:
+        "204":
           description: "Ruoli eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2686,23 +2686,23 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco degli scope autorizzati"
       operationId: "getErogazioneControlloAccessiAutorizzazioneScope"
       responses:
-        200:
+        "200":
           description: "Elenco scope autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneScopes"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2721,19 +2721,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneScope"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2753,19 +2753,19 @@ paths:
         \ scope autorizzati"
       operationId: "deleteErogazioneControlloAccessiAutorizzazioneScope"
       responses:
-        204:
+        "204":
           description: "Scope eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2791,23 +2791,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/metrica"
       responses:
-        200:
+        "200":
           description: "Elenco policy di rate limiting restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaRateLimitingPolicy"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2825,19 +2825,19 @@ paths:
               $ref: "#/components/schemas/RateLimitingPolicyErogazione"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2857,23 +2857,23 @@ paths:
         \ di rate limiting"
       operationId: "getErogazioneRateLimitingPolicy"
       responses:
-        200:
+        "200":
           description: "Dati della policy restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RateLimitingPolicyErogazioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2892,19 +2892,19 @@ paths:
               $ref: "#/components/schemas/RateLimitingPolicyErogazioneUpdate"
         required: true
       responses:
-        204:
+        "204":
           description: "La policy è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2916,19 +2916,19 @@ paths:
         \ delle policies attive"
       operationId: "deleteErogazioneRateLimitingPolicy"
       responses:
-        204:
+        "204":
           description: "Policy eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2950,23 +2950,23 @@ paths:
         \ alla validazione dei contenuti applicativi"
       operationId: "getErogazioneValidazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Validazione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -2986,19 +2986,19 @@ paths:
               $ref: "#/components/schemas/Validazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3018,23 +3018,23 @@ paths:
         \ al caching delle risposte"
       operationId: "getErogazioneCachingRisposta"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CachingRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3054,19 +3054,19 @@ paths:
               $ref: "#/components/schemas/CachingRisposta"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3091,23 +3091,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Elenco regole di correlazione applicativa restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaCorrelazioneApplicativaRichiesta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3126,19 +3126,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3159,23 +3159,23 @@ paths:
         \ di correlazione applicativa per la richiesta"
       operationId: "getErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
       responses:
-        200:
+        "200":
           description: "Dati della regola restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3194,19 +3194,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
         required: true
       responses:
-        204:
+        "204":
           description: "La regola è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3219,19 +3219,19 @@ paths:
         \ applicativa dall'elenco di quelle attivate per la richiesta"
       operationId: "deleteErogazioneTracciamentoCorrelazioneApplicativaRichiesta"
       responses:
-        204:
+        "204":
           description: "Regola eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3257,23 +3257,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Elenco regole di correlazione applicativa restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaCorrelazioneApplicativaRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3292,19 +3292,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3325,23 +3325,23 @@ paths:
         \ di correlazione applicativa per la risposta"
       operationId: "getErogazioneTracciamentoCorrelazioneApplicativaRisposta"
       responses:
-        200:
+        "200":
           description: "Dati della regola restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3360,19 +3360,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
         required: true
       responses:
-        204:
+        "204":
           description: "La regola è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3385,19 +3385,19 @@ paths:
         \ applicativa dall'elenco di quelle attivate per la risposta"
       operationId: "deleteErogazioneTracciamentoCorrelazioneApplicativaRisposta"
       responses:
-        204:
+        "204":
           description: "Regola eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3418,23 +3418,23 @@ paths:
         \ alla registrazione dei messaggi"
       operationId: "getErogazioneRegistrazioneMessaggi"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RegistrazioneMessaggi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3454,19 +3454,19 @@ paths:
               $ref: "#/components/schemas/RegistrazioneMessaggi"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3491,23 +3491,23 @@ paths:
       - $ref: "#/components/parameters/tipo_api"
       - $ref: "#/components/parameters/tag"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaFruizioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3525,19 +3525,19 @@ paths:
               $ref: "#/components/schemas/Fruizione"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3553,23 +3553,23 @@ paths:
         \ di API identificata dall'erogatore, dal nome e dalla versione"
       operationId: "getFruizione"
       responses:
-        200:
+        "200":
           description: "Dettagli di una fruizione di API restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/FruizioneViewItem"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3581,19 +3581,19 @@ paths:
         \ dall'erogatore, dal nome e dalla versione"
       operationId: "deleteFruizione"
       responses:
-        204:
+        "204":
           description: "Fruizione di API eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3613,23 +3613,23 @@ paths:
         \ di una fruizione di API identificata dall'erogatore, dal nome e dalla versione"
       operationId: "getFruizioneInformazioniGenerali"
       responses:
-        200:
+        "200":
           description: "Informazioni generali restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplInformazioniGeneraliView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3649,19 +3649,19 @@ paths:
               $ref: "#/components/schemas/ApiImplInformazioniGenerali"
         required: true
       responses:
-        204:
+        "204":
           description: "Fruizione di API aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3682,23 +3682,23 @@ paths:
         \ versione"
       operationId: "getFruizioneAPI"
       responses:
-        200:
+        "200":
           description: "Informazioni sull'API restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplVersioneApiView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3718,19 +3718,19 @@ paths:
               $ref: "#/components/schemas/ApiImplVersioneApi"
         required: true
       responses:
-        204:
+        "204":
           description: "Fruizione di API aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3754,23 +3754,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApiImplAllegati"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3789,19 +3789,19 @@ paths:
               $ref: "#/components/schemas/ApiImplAllegato"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3821,23 +3821,23 @@ paths:
         \ della fruizione di API identificata dall'erogatore, dal nome e dalla versione"
       operationId: "getFruizioneAllegato"
       responses:
-        200:
+        "200":
           description: "Dati dell'allegato restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplAllegato"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3856,19 +3856,19 @@ paths:
               $ref: "#/components/schemas/ApiImplAllegato"
         required: true
       responses:
-        204:
+        "204":
           description: "L'allegato è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3880,19 +3880,19 @@ paths:
         \ di API identificata dall'erogatore, dal nome e dalla versione"
       operationId: "deleteFruizioneAllegato"
       responses:
-        204:
+        "204":
           description: "Allegato eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3913,7 +3913,7 @@ paths:
         \ di API identificata dall'erogatore, dal nome e dalla versione"
       operationId: "downloadFruizioneAllegato"
       responses:
-        200:
+        "200":
           description: "Allegato della fruizione restituito con successo"
           content:
             application/*:
@@ -3924,17 +3924,17 @@ paths:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3957,23 +3957,23 @@ paths:
         \ dal nome e dalla versione"
       operationId: "getFruizioneUrlInvocazione"
       responses:
-        200:
+        "200":
           description: "Informazioni sull'url di invocazione restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplUrlInvocazioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -3993,19 +3993,19 @@ paths:
               $ref: "#/components/schemas/ApiImplUrlInvocazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione della fruizione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4025,23 +4025,23 @@ paths:
         \ associato alla fruizione identificata dall'erogatore, dal nome e dalla versione"
       operationId: "getFruizioneConnettore"
       responses:
-        200:
+        "200":
           description: "Informazioni sul connettore restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Connettore"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4062,19 +4062,19 @@ paths:
               $ref: "#/components/schemas/Connettore"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione della fruizione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4096,23 +4096,23 @@ paths:
         \ versione"
       operationId: "getFruizioneGestioneCORS"
       responses:
-        200:
+        "200":
           description: "Informazioni sulla configurazione CORS restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GestioneCors"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4131,19 +4131,19 @@ paths:
               $ref: "#/components/schemas/GestioneCors"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione della fruizione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4168,23 +4168,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/azione"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaGruppi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4203,19 +4203,19 @@ paths:
               $ref: "#/components/schemas/Gruppo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4235,23 +4235,23 @@ paths:
         \ gruppo identificato dal nome"
       operationId: "getFruizioneGruppoAzioni"
       responses:
-        200:
+        "200":
           description: "Elenco di azioni/risorse restituite con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/GruppoAzioni"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4269,19 +4269,19 @@ paths:
               $ref: "#/components/schemas/GruppoNome"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione del gruppo aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4293,19 +4293,19 @@ paths:
         \ dal nome"
       operationId: "deleteFruizioneGruppo"
       responses:
-        204:
+        "204":
           description: "Gruppo eliminate con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4333,19 +4333,19 @@ paths:
               $ref: "#/components/schemas/GruppoAzioni"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4366,19 +4366,19 @@ paths:
         \ dell'API associata al gruppo"
       operationId: "deleteFruizioneGruppoAzione"
       responses:
-        204:
+        "204":
           description: "Azione eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4399,23 +4399,23 @@ paths:
       description: "Questa operazione consente di ottenere lo stato attuale del gruppo"
       operationId: "getFruizioneStato"
       responses:
-        200:
+        "200":
           description: "Dettaglio dello stato restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ApiImplStato"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4433,19 +4433,19 @@ paths:
               $ref: "#/components/schemas/ApiImplStato"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione del gruppo aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4467,23 +4467,23 @@ paths:
         \ alla gestione dei token"
       operationId: "getFruizioneControlloAccessiGestioneToken"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiGestioneToken"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4503,19 +4503,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiGestioneToken"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4537,23 +4537,23 @@ paths:
         \ all'autenticazione per quanto concerne il controllo degli accessi"
       operationId: "getFruizioneControlloAccessiAutenticazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutenticazione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4573,19 +4573,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutenticazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4607,23 +4607,23 @@ paths:
         \ all'autorizzazione per quanto concerne il controllo degli accessi"
       operationId: "getFruizioneControlloAccessiAutorizzazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4643,19 +4643,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4676,24 +4676,24 @@ paths:
         \ all'autorizzazione"
       operationId: "downloadFruizioneControlloAccessiAutorizzazioneXacmlPolicy"
       responses:
-        200:
+        "200":
           description: "Interfaccia dell'API restituita con successo"
           content:
             application/xml:
               schema:
                 type: "string"
                 format: "binary"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4714,23 +4714,23 @@ paths:
         \ autorizzati"
       operationId: "getFruizioneControlloAccessiAutorizzazioneApplicativi"
       responses:
-        200:
+        "200":
           description: "Elenco applicativi autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4749,19 +4749,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneApplicativo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4782,19 +4782,19 @@ paths:
         \ degli applicativi autorizzati"
       operationId: "deleteFruizioneControlloAccessiAutorizzazioneApplicativi"
       responses:
-        204:
+        "204":
           description: "Applicativi eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4815,23 +4815,23 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco dei ruoli autorizzati"
       operationId: "getFruizioneControlloAccessiAutorizzazioneRuoli"
       responses:
-        200:
+        "200":
           description: "Elenco ruoli autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuoli"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4850,19 +4850,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneRuolo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4883,19 +4883,19 @@ paths:
         \ ruoli autorizzati"
       operationId: "deleteFruizioneControlloAccessiAutorizzazioneRuoli"
       responses:
-        204:
+        "204":
           description: "Ruoli eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4916,23 +4916,23 @@ paths:
       description: "Questa operazione consente di ottenere l'elenco degli scope autorizzati"
       operationId: "getFruizioneControlloAccessiAutorizzazioneScope"
       responses:
-        200:
+        "200":
           description: "Elenco scope autorizzati restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ControlloAccessiAutorizzazioneScopes"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4951,19 +4951,19 @@ paths:
               $ref: "#/components/schemas/ControlloAccessiAutorizzazioneScope"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -4984,19 +4984,19 @@ paths:
         \ scope autorizzati"
       operationId: "deleteFruizioneControlloAccessiAutorizzazioneScope"
       responses:
-        204:
+        "204":
           description: "Scope eliminati con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5023,23 +5023,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/metrica"
       responses:
-        200:
+        "200":
           description: "Elenco policy di rate limiting restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaRateLimitingPolicy"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5057,19 +5057,19 @@ paths:
               $ref: "#/components/schemas/RateLimitingPolicyFruizione"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5090,23 +5090,23 @@ paths:
         \ di rate limiting"
       operationId: "getFruizioneRateLimitingPolicy"
       responses:
-        200:
+        "200":
           description: "Dati della policy restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RateLimitingPolicyFruizioneView"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5125,19 +5125,19 @@ paths:
               $ref: "#/components/schemas/RateLimitingPolicyFruizioneUpdate"
         required: true
       responses:
-        204:
+        "204":
           description: "La policy è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5149,19 +5149,19 @@ paths:
         \ delle policies attive"
       operationId: "deleteFruizioneRateLimitingPolicy"
       responses:
-        204:
+        "204":
           description: "Policy eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5184,23 +5184,23 @@ paths:
         \ alla validazione dei contenuti applicativi"
       operationId: "getFruizioneValidazione"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Validazione"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5220,19 +5220,19 @@ paths:
               $ref: "#/components/schemas/Validazione"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5253,23 +5253,23 @@ paths:
         \ al caching delle risposte"
       operationId: "getFruizioneCachingRisposta"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CachingRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5289,19 +5289,19 @@ paths:
               $ref: "#/components/schemas/CachingRisposta"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5327,23 +5327,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Elenco regole di correlazione applicativa restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaCorrelazioneApplicativaRichiesta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5362,19 +5362,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5396,23 +5396,23 @@ paths:
         \ di correlazione applicativa per la richiesta"
       operationId: "getFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
       responses:
-        200:
+        "200":
           description: "Dati della regola restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5431,19 +5431,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRichiesta"
         required: true
       responses:
-        204:
+        "204":
           description: "La regola è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5456,19 +5456,19 @@ paths:
         \ applicativa dall'elenco di quelle attivate per la richiesta"
       operationId: "deleteFruizioneTracciamentoCorrelazioneApplicativaRichiesta"
       responses:
-        204:
+        "204":
           description: "Regola eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5495,23 +5495,23 @@ paths:
       - $ref: "#/components/parameters/limit"
       - $ref: "#/components/parameters/offset"
       responses:
-        200:
+        "200":
           description: "Elenco regole di correlazione applicativa restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaCorrelazioneApplicativaRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5530,19 +5530,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5564,23 +5564,23 @@ paths:
         \ di correlazione applicativa per la risposta"
       operationId: "getFruizioneTracciamentoCorrelazioneApplicativaRisposta"
       responses:
-        200:
+        "200":
           description: "Dati della regola restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5599,19 +5599,19 @@ paths:
               $ref: "#/components/schemas/CorrelazioneApplicativaRisposta"
         required: true
       responses:
-        204:
+        "204":
           description: "La regola è stata aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5624,19 +5624,19 @@ paths:
         \ applicativa dall'elenco di quelle attivate per la risposta"
       operationId: "deleteFruizioneTracciamentoCorrelazioneApplicativaRisposta"
       responses:
-        204:
+        "204":
           description: "Regola eliminata con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5658,23 +5658,23 @@ paths:
         \ alla registrazione dei messaggi"
       operationId: "getFruizioneRegistrazioneMessaggi"
       responses:
-        200:
+        "200":
           description: "Dettaglio della configurazione restituito con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/RegistrazioneMessaggi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5694,19 +5694,19 @@ paths:
               $ref: "#/components/schemas/RegistrazioneMessaggi"
         required: true
       responses:
-        204:
+        "204":
           description: "Configurazione aggiornata correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5732,23 +5732,23 @@ paths:
       - $ref: "#/components/parameters/dominio"
       - $ref: "#/components/parameters/ruolo"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaSoggetti"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5766,19 +5766,19 @@ paths:
               $ref: "#/components/schemas/Soggetto"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5793,23 +5793,23 @@ paths:
         \ identificato dal nome"
       operationId: "getSoggetto"
       responses:
-        200:
+        "200":
           description: "Dati del soggetto restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Soggetto"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5828,19 +5828,19 @@ paths:
               $ref: "#/components/schemas/Soggetto"
         required: true
       responses:
-        204:
+        "204":
           description: "Il soggetto è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5852,19 +5852,19 @@ paths:
         \ dal nome"
       operationId: "deleteSoggetto"
       responses:
-        204:
+        "204":
           description: "Soggetto eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5884,23 +5884,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/ruolo"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaApplicativi"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5919,19 +5919,19 @@ paths:
               $ref: "#/components/schemas/Applicativo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5947,23 +5947,23 @@ paths:
         \ identificato dal nome e dal soggetto di riferimento"
       operationId: "getApplicativo"
       responses:
-        200:
+        "200":
           description: "Dati dell'applicativo restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Applicativo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -5982,19 +5982,19 @@ paths:
               $ref: "#/components/schemas/Applicativo"
         required: true
       responses:
-        204:
+        "204":
           description: "L'applicativo è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6006,19 +6006,19 @@ paths:
         \ dal nome e dal soggetto di riferimento"
       operationId: "deleteApplicativo"
       responses:
-        204:
+        "204":
           description: "Applicativo eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6040,23 +6040,23 @@ paths:
       - $ref: "#/components/parameters/fonte"
       - $ref: "#/components/parameters/contesto"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaRuoli"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6074,19 +6074,19 @@ paths:
               $ref: "#/components/schemas/Ruolo"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6099,23 +6099,23 @@ paths:
         \ identificato dal nome"
       operationId: "getRuolo"
       responses:
-        200:
+        "200":
           description: "Dati del ruolo restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Ruolo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6134,19 +6134,19 @@ paths:
               $ref: "#/components/schemas/Ruolo"
         required: true
       responses:
-        204:
+        "204":
           description: "Il Ruolo è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6158,19 +6158,19 @@ paths:
         \ dal nome"
       operationId: "deleteRuolo"
       responses:
-        204:
+        "204":
           description: "Ruolo eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6189,23 +6189,23 @@ paths:
       - $ref: "#/components/parameters/offset"
       - $ref: "#/components/parameters/contesto"
       responses:
-        200:
+        "200":
           description: "Ricerca eseguita correttamente"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/ListaScope"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6223,19 +6223,19 @@ paths:
               $ref: "#/components/schemas/Scope"
         required: true
       responses:
-        201:
+        "201":
           $ref: "#/components/responses/201Created"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        409:
+        "409":
           $ref: "#/components/responses/409Conflict"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6248,23 +6248,23 @@ paths:
         \ identificato dal nome"
       operationId: "getScope"
       responses:
-        200:
+        "200":
           description: "Dati dello scope restituiti con successo"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Scope"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6283,19 +6283,19 @@ paths:
               $ref: "#/components/schemas/Scope"
         required: true
       responses:
-        204:
+        "204":
           description: "Lo scope è stato aggiornato correttamente"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6307,19 +6307,19 @@ paths:
         \ dal nome"
       operationId: "deleteScope"
       responses:
-        204:
+        "204":
           description: "Scope eliminato con successo"
-        400:
+        "400":
           $ref: "#/components/responses/400BadRequest"
-        401:
+        "401":
           $ref: "#/components/responses/401Unauthorized"
-        403:
+        "403":
           $ref: "#/components/responses/403Forbidden"
-        404:
+        "404":
           $ref: "#/components/responses/404NotFound"
-        429:
+        "429":
           $ref: "#/components/responses/429TooManyRequests"
-        503:
+        "503":
           $ref: "#/components/responses/503ServiceUnavailable"
         default:
           $ref: "#/components/responses/default"
@@ -6516,9 +6516,11 @@ components:
           type: "string"
         id_collaborazione:
           type: "boolean"
+          example: false
           default: false
         riferimento_id_richiesta:
           type: "boolean"
+          example: false
     ListaApiRisorse:
       type: "object"
       allOf:
@@ -6546,9 +6548,11 @@ components:
           $ref: "#/components/schemas/ProfiloCollaborazioneEnum"
         id_collaborazione:
           type: "boolean"
+          example: false
           default: false
         riferimento_id_richiesta:
           type: "boolean"
+          example: false
     ListaApiServizi:
       type: "object"
       allOf:
@@ -6576,9 +6580,11 @@ components:
           $ref: "#/components/schemas/ProfiloCollaborazioneEnum"
         id_collaborazione:
           type: "boolean"
+          example: false
           default: false
         riferimento_id_richiesta:
           type: "boolean"
+          example: false
     ListaApiAzioni:
       type: "object"
       allOf:
@@ -6875,6 +6881,20 @@ components:
         properties:
           soggetto:
             $ref: "#/components/schemas/SimpleName"
+    BaseOggettoWithSimpleName:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/SimpleName"
+    BaseOggettoWithNCName:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
     Versione:
       minimum: 1
       type: "integer"
@@ -6935,22 +6955,24 @@ components:
       properties:
         ricerca_esatta:
           type: "boolean"
+          example: false
           default: true
         case_sensitive:
           type: "boolean"
+          example: false
           default: true
         id:
           type: "string"
           example: "abc123"
     ProfiloEnum:
       type: "string"
+      default: "APIGateway"
       enum:
       - "APIGateway"
       - "ModIPA"
       - "SPCoop"
       - "FatturaPA"
       - "eDelivery"
-      default: "APIGateway"
     ProfiloCollaborazioneEnum:
       type: "string"
       example: "sincrono"
@@ -7104,6 +7126,7 @@ components:
           $ref: "#/components/schemas/TipoKeystore"
         strict_verification:
           type: "boolean"
+          example: false
           default: false
       additionalProperties: false
     AuthenticationHttpsConfigurazioneManuale:
@@ -7160,6 +7183,7 @@ components:
           $ref: "#/components/schemas/SslTipologiaEnum"
         hostname_verifier:
           type: "boolean"
+          example: false
           default: true
         server:
           $ref: "#/components/schemas/ConnettoreConfigurazioneHttpsServer"
@@ -7341,19 +7365,21 @@ components:
           discriminator:
             propertyName: "tipo"
             mapping:
-              basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+              http-basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
               principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
           oneOf:
           - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
           - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
         opzionale:
           type: "boolean"
+          example: false
           default: false
     APIImplAutenticazioneConfigurazioneBasic:
       type: "object"
       properties:
         forward:
           type: "boolean"
+          example: false
           default: false
       additionalProperties: false
     APIImplAutenticazioneConfigurazionePrincipal:
@@ -7378,6 +7404,7 @@ components:
             \ 'url-based'"
         forward:
           type: "boolean"
+          example: false
           default: false
       additionalProperties: false
     APIImplAutenticazioneConfigurazioneCustom:
@@ -7400,7 +7427,7 @@ components:
           discriminator:
             propertyName: "tipo"
             mapping:
-              basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
+              http-basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
               principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
               custom: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
           oneOf:
@@ -7409,6 +7436,7 @@ components:
           - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
         opzionale:
           type: "boolean"
+          example: false
           default: false
     APIImplAutorizzazioneNew:
       required:
@@ -7461,11 +7489,13 @@ components:
       properties:
         richiedente:
           type: "boolean"
+          example: false
           default: true
         soggetto:
           $ref: "#/components/schemas/SimpleName"
         ruoli:
           type: "boolean"
+          example: false
           default: false
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
@@ -7484,9 +7514,11 @@ components:
       properties:
         richiedente:
           type: "boolean"
+          example: false
           default: true
         ruoli:
           type: "boolean"
+          example: false
           default: false
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
@@ -7494,11 +7526,13 @@ components:
           $ref: "#/components/schemas/AllAnyEnum"
         scope:
           type: "boolean"
+          example: false
           default: false
         scope_richiesti:
           $ref: "#/components/schemas/AllAnyEnum"
         token:
           type: "boolean"
+          example: false
           default: false
         token_claims:
           maxLength: 4000
@@ -8059,9 +8093,11 @@ components:
           $ref: "#/components/schemas/RateLimitingCriteriIntervalloEnum"
         congestione:
           type: "boolean"
+          example: false
           default: false
         degrado:
           type: "boolean"
+          example: false
           default: false
     RateLimitingPolicyIdentificativo:
       required:
@@ -8103,7 +8139,7 @@ components:
           configurazione:
             type: "object"
             discriminator:
-              propertyName: "modalita"
+              propertyName: "identificazione"
               mapping:
                 criteri: "#/components/schemas/RateLimitingPolicyCriteri"
                 policy: "#/components/schemas/RateLimitingPolicyIdentificativo"
@@ -8252,6 +8288,7 @@ components:
             $ref: "#/components/schemas/TipoValidazioneEnum"
           mtom:
             type: "boolean"
+            example: false
             default: false
     CachingRisposta:
       type: "object"
@@ -8453,16 +8490,16 @@ components:
           type: "boolean"
     FormatoSoapEnum:
       type: "string"
+      default: "Wsdl1.1"
       enum:
       - "Wsdl1.1"
-      default: "Wsdl1.1"
     FormatoRestEnum:
       type: "string"
+      default: "OpenApi3.0"
       enum:
       - "Wadl"
       - "Swagger2.0"
       - "OpenApi3.0"
-      default: "OpenApi3.0"
     TipoApiEnum:
       type: "string"
       example: "rest"
@@ -8491,35 +8528,35 @@ components:
     ContestoEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "erogazione"
       - "fruizione"
-      default: "qualsiasi"
     FonteEnum:
       type: "string"
       example: "qualsiasi"
+      default: "qualsiasi"
       enum:
       - "qualsiasi"
       - "registro"
       - "esterna"
-      default: "qualsiasi"
     RuoloAllegatoAPI:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
-      default: "allegato"
     RuoloAllegatoAPIImpl:
       type: "string"
       example: "specificaSemiFormale"
+      default: "allegato"
       enum:
       - "allegato"
       - "specificaSemiFormale"
       - "specificaSicurezza"
       - "specificaLivelloServizio"
-      default: "allegato"
     TipoSpecificaSemiformaleEnum:
       type: "string"
       example: "XML"
@@ -8547,13 +8584,13 @@ components:
     SslTipologiaEnum:
       type: "string"
       example: "TLSv1.2"
+      default: "TLSv1.2"
       enum:
       - "SSLv2Hello"
       - "SSLv3"
       - "TLSv1"
       - "TLSv1.1"
       - "TLSv1.2"
-      default: "TLSv1.2"
     KeystoreEnum:
       type: "string"
       example: "jks"
@@ -8632,10 +8669,10 @@ components:
     AllAnyEnum:
       type: "string"
       example: "all"
+      default: "all"
       enum:
       - "all"
       - "any"
-      default: "all"
     ModalitaIdentificazioneAzioneEnum:
       type: "string"
       example: "interface-based"
@@ -8805,19 +8842,19 @@ components:
       externalDocs:
         url: "https://w3id.org/italia/onto/CPV/taxCode"
   responses:
-    400BadRequest:
+    "400BadRequest":
       description: "Bad Request"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    404NotFound:
+    "404NotFound":
       description: "Not Found"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    429TooManyRequests:
+    "429TooManyRequests":
       description: "Too many requests"
       headers:
         Retry-After:
@@ -8832,7 +8869,7 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    503ServiceUnavailable:
+    "503ServiceUnavailable":
       description: "Service Unavailable"
       headers:
         Retry-After:
@@ -8847,25 +8884,25 @@ components:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    401Unauthorized:
+    "401Unauthorized":
       description: "Non sono state fornite le credenziali necessarie"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    403Forbidden:
+    "403Forbidden":
       description: "Autorizzazione non concessa per l'operazione richiesta"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    409Conflict:
+    "409Conflict":
       description: "Conflict (L'entità che si vuole creare risulta già esistente)"
       content:
         application/problem+json:
           schema:
             $ref: "#/components/schemas/Problem"
-    201Created:
+    "201Created":
       description: "Resource created"
       headers:
         Location:
@@ -9004,6 +9041,24 @@ components:
       schema:
         type: "string"
         format: "date-time"
+        example:
+          offset:
+            totalSeconds: 0
+            id: "Z"
+            rules:
+              fixedOffset: true
+              transitions: []
+              transitionRules: []
+          nano: 0
+          year: 2017
+          monthValue: 7
+          dayOfMonth: 21
+          hour: 17
+          minute: 32
+          second: 28
+          month: "JULY"
+          dayOfWeek: "FRIDAY"
+          dayOfYear: 202
     data_fine:
       name: "data_fine"
       in: "query"
@@ -9012,6 +9067,24 @@ components:
       schema:
         type: "string"
         format: "date-time"
+        example:
+          offset:
+            totalSeconds: 0
+            id: "Z"
+            rules:
+              fixedOffset: true
+              transitions: []
+              transitionRules: []
+          nano: 0
+          year: 2017
+          monthValue: 7
+          dayOfMonth: 21
+          hour: 17
+          minute: 32
+          second: 28
+          month: "JULY"
+          dayOfWeek: "FRIDAY"
+          dayOfYear: 202
     nome_servizio_obbligatorio:
       name: "nome_servizio"
       in: "query"

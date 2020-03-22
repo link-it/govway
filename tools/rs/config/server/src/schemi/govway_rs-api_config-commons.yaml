@@ -492,7 +492,7 @@ components:
           discriminator:
             propertyName: tipo
             mapping:
-              'basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+              'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
               'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
         opzionale:
           type: boolean
@@ -554,7 +554,7 @@ components:
           discriminator:
             propertyName: tipo
             mapping:
-              'basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
+              'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
               'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
               'custom': '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
         opzionale:
@@ -1255,7 +1255,7 @@ components:
                     - $ref: '#/components/schemas/RateLimitingPolicyCriteri'
                     - $ref: '#/components/schemas/RateLimitingPolicyIdentificativo'
                   discriminator:
-                    propertyName: modalita
+                    propertyName: identificazione
                     mapping:
                       'criteri': '#/components/schemas/RateLimitingPolicyCriteri'
                       'policy': '#/components/schemas/RateLimitingPolicyIdentificativo'

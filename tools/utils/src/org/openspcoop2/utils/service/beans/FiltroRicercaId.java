@@ -27,10 +27,10 @@ import javax.validation.Valid;
 
 public class FiltroRicercaId  {
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean ricercaEsatta = true;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean caseSensitive = true;
   
   @Schema(example = "abc123", required = true, description = "")

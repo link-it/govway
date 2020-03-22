@@ -28,13 +28,18 @@ import javax.validation.Valid;
   * Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
  **/
 @Schema(description="Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio")
-public class FiltroMittenteErogazioneDistribuzioneSoggettoRemoto  {
+public class FiltroMittenteErogazioneDistribuzioneSoggettoRemoto  implements OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
   
   @Schema(description = "")
   private TipoFiltroMittenteErogazioneSoggettoRemotoEnum tipo = null;
   
   @Schema(description = "")
-  private Object id = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIdAutenticato.class, name = "identificativo_autenticato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneTokenClaim.class, name = "token_info"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIndirizzoIP.class, name = "indirizzo_ip")  })
+  private OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId id = null;
  /**
    * Get tipo
    * @return tipo
@@ -60,15 +65,15 @@ public class FiltroMittenteErogazioneDistribuzioneSoggettoRemoto  {
   **/
   @JsonProperty("id")
   @Valid
-  public Object getId() {
+  public OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId getId() {
     return this.id;
   }
 
-  public void setId(Object id) {
+  public void setId(OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId id) {
     this.id = id;
   }
 
-  public FiltroMittenteErogazioneDistribuzioneSoggettoRemoto id(Object id) {
+  public FiltroMittenteErogazioneDistribuzioneSoggettoRemoto id(OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId id) {
     this.id = id;
     return this;
   }

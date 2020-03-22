@@ -26,12 +26,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase {
+public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase implements OneOfFiltroMittenteFruizioneId, OneOfFiltroMittenteQualsiasiId {
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean ricercaEsatta = true;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean caseSensitive = true;
   
   @Schema(example = "abc123", required = true, description = "")

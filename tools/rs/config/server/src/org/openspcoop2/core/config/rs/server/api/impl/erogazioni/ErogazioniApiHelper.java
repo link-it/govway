@@ -137,6 +137,7 @@ import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
 import org.openspcoop2.core.config.rs.server.model.KeystoreEnum;
 import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
 import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfApiImplAllegatoItemTipoAllegato;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriIntervalloEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
@@ -1711,7 +1712,8 @@ public class ErogazioniApiHelper {
 					documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
 				}
 				else {
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(TipoSpecificaSemiformaleEnum.fromValue(body.getTipoAllegato())).toString()) );
+					TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) body.getTipoAllegato();
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato).toString()) );
 				}
 				break;
 			}
@@ -1720,7 +1722,8 @@ public class ErogazioniApiHelper {
 					documento.setTipo(TipiDocumentoLivelloServizio.WSLA.toString()); // default
 				}
 				else {
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(TipoSpecificaLivelloServizioEnum.fromValue(body.getTipoAllegato())).toString()) );
+					TipoSpecificaLivelloServizioEnum tipoAllegato = (TipoSpecificaLivelloServizioEnum) body.getTipoAllegato();
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(tipoAllegato).toString()) );
 				}
 				break;
 			}
@@ -1729,7 +1732,8 @@ public class ErogazioniApiHelper {
 					documento.setTipo(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()); // default
 				}
 				else {
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(TipoSpecificaSicurezzaEnum.fromValue(body.getTipoAllegato())).toString()) );
+					TipoSpecificaSicurezzaEnum tipoAllegato = (TipoSpecificaSicurezzaEnum) body.getTipoAllegato();
+					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(tipoAllegato).toString()) );
 				}
 				break;
 			}
@@ -1756,17 +1760,17 @@ public class ErogazioniApiHelper {
 	    }
 	    case SPECIFICASEMIFORMALE: {
 	    	TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)).toString());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
 	    	break;
 	    }
 	    case SPECIFICALIVELLOSERVIZIO: {
 	    	TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)).toString());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
 	    	break;
 	    }
 	    case SPECIFICASICUREZZA: {
 	    	TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)).toString());
+			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
 	    	break;
 	    }
 	    }
@@ -1784,7 +1788,7 @@ public class ErogazioniApiHelper {
 		a.setNome(allegato.getAllegato().getNome());
 		ret.setAllegato(a);
 		
-		ret.setTipoAllegato(allegato.getTipoAllegato());
+		ret.setTipoAllegato((OneOfApiImplAllegatoItemTipoAllegato) allegato.getTipoAllegato());
 		
 		return ret;
 		

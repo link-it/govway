@@ -33,7 +33,7 @@ public class ConnettoreConfigurazioneHttps  {
   @Schema(required = true, description = "")
   private SslTipologiaEnum tipologia = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean hostnameVerifier = true;
   
   @Schema(required = true, description = "")

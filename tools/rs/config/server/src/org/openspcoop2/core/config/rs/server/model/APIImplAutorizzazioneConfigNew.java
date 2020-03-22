@@ -27,15 +27,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutorizzazioneConfigNew  {
+public class APIImplAutorizzazioneConfigNew  implements OneOfAPIImplAutorizzazioneNewConfigurazione {
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean richiedente = true;
   
   @Schema(description = "")
   private String soggetto = null;
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean ruoli = false;
   
   @Schema(description = "")

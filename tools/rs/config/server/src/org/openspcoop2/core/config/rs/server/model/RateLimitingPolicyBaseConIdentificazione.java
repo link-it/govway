@@ -33,7 +33,11 @@ public class RateLimitingPolicyBaseConIdentificazione extends RateLimitingPolicy
   private RateLimitingIdentificazionePolicyEnum identificazione = null;
   
   @Schema(description = "")
-  private Object configurazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "identificazione", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = RateLimitingPolicyCriteri.class, name = "criteri"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = RateLimitingPolicyIdentificativo.class, name = "policy")  })
+  private OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione configurazione = null;
  /**
    * Get identificazione
    * @return identificazione
@@ -60,15 +64,15 @@ public class RateLimitingPolicyBaseConIdentificazione extends RateLimitingPolicy
   **/
   @JsonProperty("configurazione")
   @Valid
-  public Object getConfigurazione() {
+  public OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(Object configurazione) {
+  public void setConfigurazione(OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione configurazione) {
     this.configurazione = configurazione;
   }
 
-  public RateLimitingPolicyBaseConIdentificazione configurazione(Object configurazione) {
+  public RateLimitingPolicyBaseConIdentificazione configurazione(OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione configurazione) {
     this.configurazione = configurazione;
     return this;
   }

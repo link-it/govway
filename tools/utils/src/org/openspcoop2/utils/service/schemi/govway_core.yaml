@@ -230,6 +230,24 @@ components:
               $ref: '#/components/schemas/SimpleName'
 
 
+    # Base: Oggetto con nome SimpleName e NCName
+    
+    BaseOggettoWithSimpleName:
+      type: object
+      required:
+         - nome
+      properties:
+          nome:
+            $ref: '#/components/schemas/SimpleName'
+    BaseOggettoWithNCName:
+      type: object
+      required:
+         - nome
+      properties:
+          nome:
+            $ref: '#/components/schemas/NCName'
+
+
     # Base: Versione
     
     Versione:

@@ -21,7 +21,7 @@
 
 		<jar.group.name>swagger-codegen</jar.group.name>
 		
-		<swagger.codegen.cli.version>3.0.4</swagger.codegen.cli.version>
+		<swagger.codegen.cli.version>3.0.18</swagger.codegen.cli.version>
 
 	</properties>
 

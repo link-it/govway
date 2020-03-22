@@ -84,6 +84,8 @@
 				<include name="FiltroRicercaId.java"/>
 				<include name="BaseItem.java"/>
 				<include name="BaseSoggettoItem.java"/>
+				<include name="BaseOggettoWithSimpleName.java"/>
+				<include name="BaseOggettoWithNCName.java"/>
 				<!-- <include name="HttpMethodEnum.java"/> Modificato: aggiunto Qualsiasi come valore -->
 				<include name="ProfiloCollaborazioneEnum.java"/>	
 				<include name="ProfiloEnum.java"/>

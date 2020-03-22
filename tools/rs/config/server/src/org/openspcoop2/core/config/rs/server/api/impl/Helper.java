@@ -23,7 +23,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,6 +37,7 @@ import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsCertificat
 import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpsConfigurazioneManuale;
 import org.openspcoop2.core.config.rs.server.model.AuthenticationPrincipal;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -51,7 +51,6 @@ import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
-import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.mime.MimeTypes;
 import org.openspcoop2.utils.service.beans.Lista;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
@@ -224,14 +223,14 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object translateCredenziali(Object creds, ModalitaAccessoEnum tipoAuth) {
-		Object ret = null;
+	public static OneOfBaseCredenzialiCredenziali translateCredenziali(OneOfBaseCredenzialiCredenziali creds, ModalitaAccessoEnum tipoAuth) {
+		OneOfBaseCredenzialiCredenziali ret = null;
 	
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
-			if(creds!=null && creds instanceof AuthenticationHttpBasic) {
-				ret = (AuthenticationHttpBasic) creds;
-			}			
+			//if(creds!=null && creds instanceof AuthenticationHttpBasic) {
+			ret = (AuthenticationHttpBasic) creds;
+			/*}			
 			else {
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
@@ -239,13 +238,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				c.setPassword((String) map_creds.get("password"));
 				c.setUsername((String) map_creds.get("username"));
 				ret = c;					
-			}
+			}*/
 			break;
 		}
 		case HTTPS: {
-			if(creds!=null && creds instanceof AuthenticationHttps) {
-				ret = (AuthenticationHttps) creds;
-			}
+			//if(creds!=null && creds instanceof AuthenticationHttps) {
+			ret = (AuthenticationHttps) creds;
+			/*}
 			else {
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
@@ -282,12 +281,13 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				}
 				ret = c;
 			}
+			*/
 			break;
 		}
 		case PRINCIPAL: {
-			if(creds!=null && creds instanceof AuthenticationPrincipal) {
-				ret = (AuthenticationPrincipal) creds;
-			}
+			//if(creds!=null && creds instanceof AuthenticationPrincipal) {
+			ret = (AuthenticationPrincipal) creds;
+			/*}
 			else {
 				@SuppressWarnings("unchecked")
 				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
@@ -295,6 +295,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 				c.setUserid((String) map_creds.get("userid"));
 				ret = c;
 			}
+			*/
 			break;
 		}
 		default:
@@ -375,12 +376,12 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	}
 
 	
-	public static final <T,E> Object govwayCredenzialiToApi(Object govwayCreds, Class<T> credClass, Class<E> enumClass) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static final <T,E> OneOfBaseCredenzialiCredenziali govwayCredenzialiToApi(Object govwayCreds, Class<T> credClass, Class<E> enumClass) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
 		if (!enumClass.isEnum())
 			throw new IllegalArgumentException("Il parametro enumClass deve essere un'enumerazione");
 		
-		Object ret = null;		
+		OneOfBaseCredenzialiCredenziali ret = null;		
 		
 		// Questo è il caso di autenticazione di tipo NESSUNO.
 		if (govwayCreds == null)

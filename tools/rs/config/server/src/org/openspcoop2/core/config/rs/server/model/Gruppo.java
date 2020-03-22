@@ -33,7 +33,11 @@ public class Gruppo extends GruppoBase {
   private ModalitaConfigurazioneGruppoEnum modalita = null;
   
   @Schema(description = "")
-  private Object configurazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "modalita", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = GruppoEreditaConfigurazione.class, name = "eredita"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = GruppoNuovaConfigurazione.class, name = "nuova")  })
+  private OneOfGruppoConfigurazione configurazione = null;
  /**
    * Get modalita
    * @return modalita
@@ -60,15 +64,15 @@ public class Gruppo extends GruppoBase {
   **/
   @JsonProperty("configurazione")
   @Valid
-  public Object getConfigurazione() {
+  public OneOfGruppoConfigurazione getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(Object configurazione) {
+  public void setConfigurazione(OneOfGruppoConfigurazione configurazione) {
     this.configurazione = configurazione;
   }
 
-  public Gruppo configurazione(Object configurazione) {
+  public Gruppo configurazione(OneOfGruppoConfigurazione configurazione) {
     this.configurazione = configurazione;
     return this;
   }

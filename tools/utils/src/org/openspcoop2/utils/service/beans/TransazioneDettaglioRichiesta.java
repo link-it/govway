@@ -42,11 +42,11 @@ import javax.validation.Valid;
 public class TransazioneDettaglioRichiesta extends TransazioneDettaglioMessaggio {
   @XmlElement(name="data_ricezione", required = true)
   
-  @Schema(required = true, description = "")
+  @Schema(example = "2017-07-21T17:32:28Z", required = true, description = "")
   private DateTime dataRicezione = null;
   @XmlElement(name="data_consegna")
   
-  @Schema(description = "")
+  @Schema(example = "2017-07-21T17:32:28Z", description = "")
   private DateTime dataConsegna = null;
   @XmlElement(name="tipo", required = true)
   

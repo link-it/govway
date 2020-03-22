@@ -26,7 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroFruizione extends FiltroApiBase {
+public class FiltroFruizione extends FiltroApiBase implements OneOfRicercaBaseStatisticaSoggettiApi, OneOfRicercaBaseTransazioneApi, OneOfRicercaConfigurazioneApiApi, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi {
   
   @Schema(description = "")
   private String erogatore = null;

@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroApiBase  {
+public class FiltroApiBase  implements OneOfRicercaConfigurazioneApiApi, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi {
   
   @Schema(description = "")
   private String tipo = null;

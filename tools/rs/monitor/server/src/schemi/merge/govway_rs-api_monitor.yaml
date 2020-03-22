@@ -1281,6 +1281,24 @@ components:
           data:
             type: "string"
             format: "date-time"
+            example:
+              offset:
+                totalSeconds: 0
+                id: "Z"
+                rules:
+                  fixedOffset: true
+                  transitions: []
+                  transitionRules: []
+              nano: 0
+              year: 2017
+              monthValue: 7
+              dayOfMonth: 21
+              hour: 17
+              minute: 32
+              second: 28
+              month: "JULY"
+              dayOfWeek: "FRIDAY"
+              dayOfYear: 202
           latenza_servizio:
             type: "integer"
             format: "int64"
@@ -1318,6 +1336,24 @@ components:
         ora_registrazione:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         severita:
           $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
         tipo:
@@ -1716,9 +1752,9 @@ components:
             discriminator:
               propertyName: "tipo"
               mapping:
-                fruizione: "govway_core.yaml#/components/schemas/SimpleName"
+                fruizione: "govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName"
             oneOf:
-            - $ref: "#/components/schemas/SimpleName"
+            - $ref: "#/components/schemas/BaseOggettoWithSimpleName"
           mittente:
             discriminator:
               propertyName: "tipo"
@@ -1791,9 +1827,9 @@ components:
             discriminator:
               propertyName: "tipo"
               mapping:
-                erogazione: "govway_core.yaml#/components/schemas/SimpleName"
+                erogazione: "govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName"
             oneOf:
-            - $ref: "#/components/schemas/SimpleName"
+            - $ref: "#/components/schemas/BaseOggettoWithSimpleName"
     RicercaConfigurazioneApi:
       required:
       - "tipo"
@@ -1819,9 +1855,45 @@ components:
         data_inizio:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         data_fine:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
     FiltroApiBase:
       type: "object"
       properties:
@@ -1870,23 +1942,30 @@ components:
           discriminator:
             propertyName: "tipo"
             mapping:
-              qualsiasi: "#/components/schemas/DettaglioEsitoCode"
-              ok: "#/components/schemas/DettaglioEsitoCode"
-              fallite: "#/components/schemas/DettaglioEsitoCode"
-              fallite_e_fault: "#/components/schemas/DettaglioEsitoCode"
-              errori_consegna: "#/components/schemas/DettaglioEsitoCode"
-              richieste_scartate: "#/components/schemas/DettaglioEsitoCode"
-              personalizzato: "#/components/schemas/DettaglioEsitoList"
+              qualsiasi: "#/components/schemas/DettaglioEsitoSingleCode"
+              ok: "#/components/schemas/DettaglioEsitoSingleCode"
+              fallite: "#/components/schemas/DettaglioEsitoSingleCode"
+              fallite_e_fault: "#/components/schemas/DettaglioEsitoSingleCode"
+              errori_consegna: "#/components/schemas/DettaglioEsitoSingleCode"
+              richieste_scartate: "#/components/schemas/DettaglioEsitoSingleCode"
+              personalizzato: "#/components/schemas/DettaglioEsitoListCode"
           oneOf:
-          - $ref: "#/components/schemas/DettaglioEsitoCode"
-          - $ref: "#/components/schemas/DettaglioEsitoList"
-    DettaglioEsitoCode:
-      type: "integer"
-      format: "int32"
-    DettaglioEsitoList:
-      type: "array"
-      items:
-        $ref: "#/components/schemas/DettaglioEsitoCode"
+          - $ref: "#/components/schemas/DettaglioEsitoSingleCode"
+          - $ref: "#/components/schemas/DettaglioEsitoListCode"
+    DettaglioEsitoSingleCode:
+      type: "object"
+      properties:
+        codice:
+          type: "integer"
+          format: "int32"
+    DettaglioEsitoListCode:
+      type: "object"
+      properties:
+        codici:
+          type: "array"
+          items:
+            type: "integer"
+            format: "int32"
     FiltroMittenteFruizione:
       type: "object"
       properties:
@@ -2223,6 +2302,24 @@ components:
           data_accettazione:
             type: "string"
             format: "date-time"
+            example:
+              offset:
+                totalSeconds: 0
+                id: "Z"
+                rules:
+                  fixedOffset: true
+                  transitions: []
+                  transitionRules: []
+              nano: 0
+              year: 2017
+              monthValue: 7
+              dayOfMonth: 21
+              hour: 17
+              minute: 32
+              second: 28
+              month: "JULY"
+              dayOfWeek: "FRIDAY"
+              dayOfYear: 202
           bytes_ingresso:
             type: "integer"
             format: "int64"
@@ -2391,6 +2488,24 @@ components:
         data:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         severita_codice:
           type: "string"
         severita:
@@ -2473,6 +2588,20 @@ components:
         properties:
           soggetto:
             $ref: "#/components/schemas/SimpleName"
+    BaseOggettoWithSimpleName:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/SimpleName"
+    BaseOggettoWithNCName:
+      required:
+      - "nome"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
     Versione:
       minimum: 1
       type: "integer"
@@ -2533,9 +2662,11 @@ components:
       properties:
         ricerca_esatta:
           type: "boolean"
+          example: false
           default: true
         case_sensitive:
           type: "boolean"
+          example: false
           default: true
         id:
           type: "string"
@@ -2708,9 +2839,45 @@ components:
         data_ricezione:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         data_consegna:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         tipo:
           $ref: "#/components/schemas/HttpMethodEnum"
         url_invocazione:
@@ -2732,9 +2899,45 @@ components:
         data_ricezione:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         data_consegna:
           type: "string"
           format: "date-time"
+          example:
+            offset:
+              totalSeconds: 0
+              id: "Z"
+              rules:
+                fixedOffset: true
+                transitions: []
+                transitionRules: []
+            nano: 0
+            year: 2017
+            monthValue: 7
+            dayOfMonth: 21
+            hour: 17
+            minute: 32
+            second: 28
+            month: "JULY"
+            dayOfWeek: "FRIDAY"
+            dayOfYear: 202
         esito_ricezione:
           type: "string"
           description: "Codice associato alla risposta.\nPuò essere un http status\
@@ -3237,6 +3440,24 @@ components:
       schema:
         type: "string"
         format: "date-time"
+        example:
+          offset:
+            totalSeconds: 0
+            id: "Z"
+            rules:
+              fixedOffset: true
+              transitions: []
+              transitionRules: []
+          nano: 0
+          year: 2017
+          monthValue: 7
+          dayOfMonth: 21
+          hour: 17
+          minute: 32
+          second: 28
+          month: "JULY"
+          dayOfWeek: "FRIDAY"
+          dayOfYear: 202
     data_fine:
       name: "data_fine"
       in: "query"
@@ -3245,6 +3466,24 @@ components:
       schema:
         type: "string"
         format: "date-time"
+        example:
+          offset:
+            totalSeconds: 0
+            id: "Z"
+            rules:
+              fixedOffset: true
+              transitions: []
+              transitionRules: []
+          nano: 0
+          year: 2017
+          monthValue: 7
+          dayOfMonth: 21
+          hour: 17
+          minute: 32
+          second: 28
+          month: "JULY"
+          dayOfWeek: "FRIDAY"
+          dayOfYear: 202
     nome_servizio_obbligatorio:
       name: "nome_servizio"
       in: "query"

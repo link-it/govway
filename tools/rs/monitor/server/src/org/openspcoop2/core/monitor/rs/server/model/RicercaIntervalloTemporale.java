@@ -27,22 +27,27 @@ import javax.validation.Valid;
 public class RicercaIntervalloTemporale extends RicercaBaseTransazione {
   
   @Schema(description = "")
-  private Object mittente = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazione.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+  private OneOfRicercaIntervalloTemporaleMittente mittente = null;
  /**
    * Get mittente
    * @return mittente
   **/
   @JsonProperty("mittente")
   @Valid
-  public Object getMittente() {
+  public OneOfRicercaIntervalloTemporaleMittente getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(Object mittente) {
+  public void setMittente(OneOfRicercaIntervalloTemporaleMittente mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaIntervalloTemporale mittente(Object mittente) {
+  public RicercaIntervalloTemporale mittente(OneOfRicercaIntervalloTemporaleMittente mittente) {
     this.mittente = mittente;
     return this;
   }

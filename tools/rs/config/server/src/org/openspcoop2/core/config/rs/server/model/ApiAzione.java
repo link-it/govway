@@ -37,10 +37,10 @@ public class ApiAzione  {
   @Schema(description = "")
   private ProfiloCollaborazioneEnum profiloCollaborazione = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean idCollaborazione = false;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean riferimentoIdRichiesta = null;
  /**
    * Get nome

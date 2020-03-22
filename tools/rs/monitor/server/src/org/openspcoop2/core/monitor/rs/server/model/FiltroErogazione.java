@@ -21,7 +21,7 @@ package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 
-public class FiltroErogazione extends FiltroApiBase {
+public class FiltroErogazione extends FiltroApiBase implements OneOfRicercaBaseStatisticaSoggettiApi, OneOfRicercaBaseTransazioneApi {
 
   @Override
   public String toString() {

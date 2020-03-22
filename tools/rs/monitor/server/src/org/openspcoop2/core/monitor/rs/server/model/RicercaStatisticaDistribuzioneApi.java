@@ -34,10 +34,18 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   private OpzioniGenerazioneReport report = null;
   
   @Schema(description = "")
-  private Object soggettoErogatore = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = BaseOggettoWithSimpleName.class, name = "fruizione")  })
+  private OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore = null;
   
   @Schema(description = "")
-  private Object mittente = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazione.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+  private OneOfRicercaStatisticaDistribuzioneApiMittente mittente = null;
   
   @Schema(description = "")
   private FiltroEsito esito = null;
@@ -67,15 +75,15 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   **/
   @JsonProperty("soggetto_erogatore")
   @Valid
-  public Object getSoggettoErogatore() {
+  public OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore getSoggettoErogatore() {
     return this.soggettoErogatore;
   }
 
-  public void setSoggettoErogatore(Object soggettoErogatore) {
+  public void setSoggettoErogatore(OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore) {
     this.soggettoErogatore = soggettoErogatore;
   }
 
-  public RicercaStatisticaDistribuzioneApi soggettoErogatore(Object soggettoErogatore) {
+  public RicercaStatisticaDistribuzioneApi soggettoErogatore(OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore) {
     this.soggettoErogatore = soggettoErogatore;
     return this;
   }
@@ -86,15 +94,15 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   **/
   @JsonProperty("mittente")
   @Valid
-  public Object getMittente() {
+  public OneOfRicercaStatisticaDistribuzioneApiMittente getMittente() {
     return this.mittente;
   }
 
-  public void setMittente(Object mittente) {
+  public void setMittente(OneOfRicercaStatisticaDistribuzioneApiMittente mittente) {
     this.mittente = mittente;
   }
 
-  public RicercaStatisticaDistribuzioneApi mittente(Object mittente) {
+  public RicercaStatisticaDistribuzioneApi mittente(OneOfRicercaStatisticaDistribuzioneApiMittente mittente) {
     this.mittente = mittente;
     return this;
   }

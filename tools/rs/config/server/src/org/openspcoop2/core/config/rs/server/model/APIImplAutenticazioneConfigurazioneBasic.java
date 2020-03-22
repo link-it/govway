@@ -23,9 +23,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutenticazioneConfigurazioneBasic  {
+public class APIImplAutenticazioneConfigurazioneBasic  implements OneOfAPIImplAutenticazioneConfigurazione, OneOfAPIImplAutenticazioneNewConfigurazione {
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean forward = false;
  /**
    * Get forward

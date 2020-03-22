@@ -51,6 +51,7 @@ import org.openspcoop2.core.config.rs.server.config.ServerProperties;
 import org.openspcoop2.core.config.rs.server.model.Applicativo;
 import org.openspcoop2.core.config.rs.server.model.ApplicativoItem;
 import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
+import org.openspcoop2.core.config.rs.server.model.OneOfBaseCredenzialiCredenziali;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.core.id.IDPortaDelegata;
@@ -281,8 +282,8 @@ public class ApplicativiApiHelper {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Object translateCredenzialiApplicativo(Applicativo applicativo) {
-		Object creds = null;
+	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(Applicativo applicativo) {
+		OneOfBaseCredenzialiCredenziali creds = null;
 		String  tipoauthSA = Helper.tipoAuthSAFromModalita.get(applicativo.getModalitaAccesso().toString());
 		
 		if (tipoauthSA == null)
@@ -345,7 +346,7 @@ public class ApplicativiApiHelper {
 	 * @throws InvocationTargetException 
 	 * @throws IllegalAccessException 
 	 */
-	public static Object authFromCredenziali(Credenziali cred) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	public static OneOfBaseCredenzialiCredenziali authFromCredenziali(Credenziali cred) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		
 		return Helper.govwayCredenzialiToApi(
 				cred,

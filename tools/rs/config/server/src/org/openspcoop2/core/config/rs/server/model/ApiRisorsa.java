@@ -40,10 +40,10 @@ public class ApiRisorsa  {
   @Schema(description = "")
   private String descrizione = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean idCollaborazione = false;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean riferimentoIdRichiesta = null;
  /**
    * Get httpMethod

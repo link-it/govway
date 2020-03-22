@@ -2076,9 +2076,9 @@ components:
               discriminator:
                 propertyName: tipo
                 mapping:
-                  fruizione: 'govway_core.yaml#/components/schemas/SimpleName'
+                  fruizione: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
               oneOf:
-                - $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+                - $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
             mittente:
               discriminator:
                 propertyName: tipo
@@ -2165,9 +2165,9 @@ components:
               discriminator:
                 propertyName: tipo
                 mapping:
-                  erogazione: 'govway_core.yaml#/components/schemas/SimpleName'
+                  erogazione: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
               oneOf:
-                - $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+                - $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
 
     # Ricerche Report Configurazione
 
@@ -2256,23 +2256,30 @@ components:
           discriminator:
             propertyName: tipo
             mapping:
-              qualsiasi: '#/components/schemas/DettaglioEsitoCode'
-              ok: '#/components/schemas/DettaglioEsitoCode'
-              fallite: '#/components/schemas/DettaglioEsitoCode'
-              fallite_e_fault: '#/components/schemas/DettaglioEsitoCode'
-              errori_consegna: '#/components/schemas/DettaglioEsitoCode'
-              richieste_scartate: '#/components/schemas/DettaglioEsitoCode'
-              personalizzato: '#/components/schemas/DettaglioEsitoList'
+              qualsiasi: '#/components/schemas/DettaglioEsitoSingleCode'
+              ok: '#/components/schemas/DettaglioEsitoSingleCode'
+              fallite: '#/components/schemas/DettaglioEsitoSingleCode'
+              fallite_e_fault: '#/components/schemas/DettaglioEsitoSingleCode'
+              errori_consegna: '#/components/schemas/DettaglioEsitoSingleCode'
+              richieste_scartate: '#/components/schemas/DettaglioEsitoSingleCode'
+              personalizzato: '#/components/schemas/DettaglioEsitoListCode'
           oneOf: 
-            - $ref: '#/components/schemas/DettaglioEsitoCode' 
-            - $ref: '#/components/schemas/DettaglioEsitoList'
-    DettaglioEsitoCode:
-      type: integer
-      format: int32   
-    DettaglioEsitoList:
-      type: array
-      items:
-          $ref: '#/components/schemas/DettaglioEsitoCode'
+            - $ref: '#/components/schemas/DettaglioEsitoSingleCode' 
+            - $ref: '#/components/schemas/DettaglioEsitoListCode'
+    DettaglioEsitoSingleCode:
+      type: object
+      properties:
+        codice: 
+          type: integer
+          format: int32   
+    DettaglioEsitoListCode:
+      type: object
+      properties:
+        codici: 
+           type: array
+           items:
+             type: integer
+             format: int32
 
     FiltroMittenteFruizione:
       type: object

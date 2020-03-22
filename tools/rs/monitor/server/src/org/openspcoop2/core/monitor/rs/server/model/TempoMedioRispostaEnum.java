@@ -25,7 +25,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 /**
  * Gets or Sets TempoMedioRispostaEnum
  */
-public enum TempoMedioRispostaEnum {
+public enum TempoMedioRispostaEnum implements OneOfTipoInformazioneReportValori {
 TOTALE("latenza_totale"),
   SERVIZIO("latenza_servizio"),
   GATEWAY("latenza_gateway");

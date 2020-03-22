@@ -32,7 +32,11 @@ public class APIImplAutorizzazioneNew  {
   private TipoAutorizzazioneNewEnum tipo = null;
   
   @Schema(description = "")
-  private Object configurazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneConfigNew.class, name = "abilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneXACMLConfig.class, name = "xacml-Policy")  })
+  private OneOfAPIImplAutorizzazioneNewConfigurazione configurazione = null;
  /**
    * Get tipo
    * @return tipo
@@ -59,15 +63,15 @@ public class APIImplAutorizzazioneNew  {
   **/
   @JsonProperty("configurazione")
   @Valid
-  public Object getConfigurazione() {
+  public OneOfAPIImplAutorizzazioneNewConfigurazione getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(Object configurazione) {
+  public void setConfigurazione(OneOfAPIImplAutorizzazioneNewConfigurazione configurazione) {
     this.configurazione = configurazione;
   }
 
-  public APIImplAutorizzazioneNew configurazione(Object configurazione) {
+  public APIImplAutorizzazioneNew configurazione(OneOfAPIImplAutorizzazioneNewConfigurazione configurazione) {
     this.configurazione = configurazione;
     return this;
   }

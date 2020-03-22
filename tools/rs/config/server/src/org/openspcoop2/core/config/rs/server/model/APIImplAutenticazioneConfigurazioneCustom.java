@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutenticazioneConfigurazioneCustom  {
+public class APIImplAutenticazioneConfigurazioneCustom  implements OneOfAPIImplAutenticazioneConfigurazione {
   
   @Schema(description = "nome autenticazione 'custom', set tipo='custom'")
  /**

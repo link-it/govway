@@ -22,7 +22,6 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 
 import java.sql.Connection;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,6 +31,8 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.DettaglioEsitoListCode;
+import org.openspcoop2.core.monitor.rs.server.model.DettaglioEsitoSingleCode;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
@@ -174,7 +175,6 @@ public class TransazioniHelper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	public static final void overrideFiltroEsito(FiltroEsito filtro, TransazioniSearchForm search,
 			MonitoraggioEnv env) {
 		if (filtro == null)
@@ -187,49 +187,73 @@ public class TransazioniHelper {
 			switch (tipo) {
 			case QUALSIASI:
 				search.setEsitoGruppo(EsitoUtils.ALL_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case OK:
 				search.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				break;
 			case FAULT:
 				search.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				break;
 			case FALLITE:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case FALLITE_E_FAULT:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case ERRORI_CONSEGNA:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				break;
 			case RICHIESTE_SCARTATE:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE);
-				search.setEsitoDettaglio((Integer) filtro.getDettaglio());
+				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
+					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
+				}
 				break;
 			case PERSONALIZZATO:
 				search.setEsitoGruppo(EsitoUtils.ALL_PERSONALIZZATO_VALUE);
 				
 				try {
-					ArrayList<Integer> dettaglioEsito = (ArrayList<Integer>) filtro.getDettaglio();
+					if(filtro.getDettaglio()==null) {
+						throw new Exception("Codici non forniti");
+					}
+					if(! (filtro.getDettaglio() instanceof DettaglioEsitoListCode)) {
+						throw new Exception("Codici forniti in una struttura dati sconosciuta ("+filtro.getDettaglio().getClass().getName()+")");
+					}
+					DettaglioEsitoListCode esiti = (DettaglioEsitoListCode) filtro.getDettaglio();
+					List<Integer> dettaglioEsito = esiti.getCodici();
+					if(dettaglioEsito==null || dettaglioEsito.isEmpty()) {
+						throw new Exception("Codici non indicati");
+					}
 					search.setEsitoDettaglioPersonalizzato(dettaglioEsito.toArray(new Integer[1]));
 				} catch (Exception e) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroEsito.class.getName() + ":Formato del campo 'dettaglio' errato: " + e.toString());
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroEsito.class.getName() + "; Formato del campo 'dettaglio' errato: " + e.toString());
 				}
 				break;
 			}

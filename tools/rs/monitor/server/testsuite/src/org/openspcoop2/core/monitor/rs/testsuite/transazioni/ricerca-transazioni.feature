@@ -156,7 +156,7 @@ Scenario Outline: Ricerca per FiltroApi Errato
 
 Examples:
     | ruolo_transazione | nome                   | versione | erogatore | azione            | tipo         |
-    | 'erogazione'      | null                   | 1        | null      | null              | null         |
+    | 'erogazione'      | null                   | 1        | null      | null              | 'gw'         |
     | 'erogazione'      | null                   | null     | null      | null              | 'solo_tipo'  |
     | 'erogazione'      | null                   | null     | null      | 'solo_azione'     | null         |
     | 'fruizione'       | 'nome_senza_erogatore' | null     | null      | null              | null         |
@@ -186,7 +186,7 @@ Scenario Outline: Filtro Api Errato Simple Search
 
 Examples:
     | ruolo_transazione | nome                   | versione | erogatore                     | azione            | tipo         | soggetto_remoto |
-    | 'erogazione'      | null                   | 1        | null                          | null              | null         |null             |
+    | 'erogazione'      | null                   | 1        | null                          | null              | 'gw'         |null             |
     | 'erogazione'      | null                   | null     | null                          | null              | 'solotipo'  |null             |
     | 'erogazione'      | null                   | null     | null                          | 'solo_azione'     | null         |null             |
     | 'erogazione'      | 'petstore'             | 1        | 'danonspecificare'          | 'azione'          | 'tipo1'      |null             |
@@ -232,7 +232,7 @@ Scenario: Ricerca per Filtro Mittente Applicativo
     And match each response.items contains { mittente: '#(^expected_mittente)' }
 
     * set filtro.tipo = "fruizione"
-    * set filtro.mittente.id.soggetto = null
+    * remove filtro.mittente.id.soggetto
     Given request filtro
     When method post
     Then status 200

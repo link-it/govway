@@ -38,7 +38,16 @@ public class FiltroEsito  {
   private Boolean escludiScartate = true;
   
   @Schema(description = "")
-  private Object dettaglio = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "qualsiasi"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "ok"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "fallite"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "fallite_e_fault"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "errori_consegna"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "richieste_scartate"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoListCode.class, name = "personalizzato")  })
+  private OneOfFiltroEsitoDettaglio dettaglio = null;
  /**
    * Get tipo
    * @return tipo
@@ -84,15 +93,15 @@ public class FiltroEsito  {
   **/
   @JsonProperty("dettaglio")
   @Valid
-  public Object getDettaglio() {
+  public OneOfFiltroEsitoDettaglio getDettaglio() {
     return this.dettaglio;
   }
 
-  public void setDettaglio(Object dettaglio) {
+  public void setDettaglio(OneOfFiltroEsitoDettaglio dettaglio) {
     this.dettaglio = dettaglio;
   }
 
-  public FiltroEsito dettaglio(Object dettaglio) {
+  public FiltroEsito dettaglio(OneOfFiltroEsitoDettaglio dettaglio) {
     this.dettaglio = dettaglio;
     return this;
   }

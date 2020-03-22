@@ -26,13 +26,17 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class AuthenticationHttps  {
+public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
   
   @Schema(required = true, description = "")
   private TipoAutenticazioneHttps tipo = null;
   
   @Schema(description = "")
-  private Object certificato = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsCertificato.class, name = "certificato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsConfigurazioneManuale.class, name = "configurazione-manuale")  })
+  private OneOfAuthenticationHttpsCertificato certificato = null;
  /**
    * Get tipo
    * @return tipo
@@ -59,15 +63,15 @@ public class AuthenticationHttps  {
   **/
   @JsonProperty("certificato")
   @Valid
-  public Object getCertificato() {
+  public OneOfAuthenticationHttpsCertificato getCertificato() {
     return this.certificato;
   }
 
-  public void setCertificato(Object certificato) {
+  public void setCertificato(OneOfAuthenticationHttpsCertificato certificato) {
     this.certificato = certificato;
   }
 
-  public AuthenticationHttps certificato(Object certificato) {
+  public AuthenticationHttps certificato(OneOfAuthenticationHttpsCertificato certificato) {
     this.certificato = certificato;
     return this;
   }

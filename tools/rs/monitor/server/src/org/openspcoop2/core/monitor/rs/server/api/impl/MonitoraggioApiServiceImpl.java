@@ -43,6 +43,7 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazion
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.ListaEventi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
+import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaBaseTransazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.TipoMessaggioEnum;
@@ -243,7 +244,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 			
 			RicercaIdApplicativo bodyRicerca = new RicercaIdApplicativo();
 			bodyRicerca.setTipo(tipo);
-			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));			
+			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseTransazioneApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));			
 			FiltroTemporale iTemporale = new FiltroTemporale();
 			iTemporale.setDataInizio(dataInizio);
 			iTemporale.setDataFine(dataFine);
@@ -374,7 +375,7 @@ public class MonitoraggioApiServiceImpl extends BaseImpl implements Monitoraggio
 				}
 				bodyRicerca.setEsito(filtroEsito);
 			}
-			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio,
+			bodyRicerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseTransazioneApi.class, tipo, nomeServizio, tipoServizio, versioneServizio,
 					soggettoRemoto,soggettoErogatore));
 
 			ListaTransazioni ret = TransazioniHelper.findAllTransazioni(bodyRicerca, env);

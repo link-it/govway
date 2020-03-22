@@ -32,6 +32,7 @@ import org.openspcoop2.core.monitor.rs.server.api.impl.utils.SearchFormUtilities
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
@@ -40,6 +41,9 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
+import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaBaseStatisticaSoggettiApi;
+import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaConfigurazioneApiApi;
+import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaConfigurazioneApi;
@@ -140,7 +144,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			
 			RicercaConfigurazioneApi ricerca = new RicercaConfigurazioneApi();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto));
+			ricerca.setApi((OneOfRicercaConfigurazioneApiApi) ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto));
 						
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			byte[] ret = ReportisticaHelper.exportConfigurazioneApi(ricerca, env);
@@ -277,7 +281,13 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 
 			RicercaStatisticaDistribuzioneApi ricerca = new RicercaStatisticaDistribuzioneApi();
-			ricerca.setSoggettoErogatore(soggettoRemoto);
+			
+			BaseOggettoWithSimpleName soggettoRemotoBase = null;
+			if(soggettoRemoto!=null) {
+				soggettoRemotoBase = new BaseOggettoWithSimpleName();
+				soggettoRemotoBase.setNome(soggettoRemoto);
+			}
+			ricerca.setSoggettoErogatore(soggettoRemotoBase);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
 			intervallo.setDataInizio(dataInizio);
@@ -378,7 +388,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativoRegistrato ricerca = new RicercaStatisticaDistribuzioneApplicativoRegistrato();
 			ricerca.setTipo(tipo);		
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setSoggettoMittente(soggettoMittente);
 			ricerca.setAzione(azione);
 
@@ -481,7 +491,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneAzione ricerca = new RicercaStatisticaDistribuzioneAzione();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			FiltroTemporale intervallo = new FiltroTemporale();
 			intervallo.setDataInizio(dataInizio);
 			intervallo.setDataFine(dataFine);
@@ -582,7 +592,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneEsiti ricerca = new RicercaStatisticaDistribuzioneEsiti();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -672,7 +682,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -774,7 +784,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			RicercaStatisticaDistribuzioneSoggettoLocale ricerca = new RicercaStatisticaDistribuzioneSoggettoLocale();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			FiltroTemporale intervallo = new FiltroTemporale();
 			intervallo.setDataInizio(dataInizio);
 			intervallo.setDataFine(dataFine);
@@ -873,7 +883,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneSoggettoRemoto ricerca = new RicercaStatisticaDistribuzioneSoggettoRemoto();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoErogatore, null));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoErogatore, null));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -976,7 +986,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaAndamentoTemporale ricerca = new RicercaStatisticaAndamentoTemporale();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -1077,7 +1087,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneTokenInfo ricerca = new RicercaStatisticaDistribuzioneTokenInfo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -1177,7 +1187,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();

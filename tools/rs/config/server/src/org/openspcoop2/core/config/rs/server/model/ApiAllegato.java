@@ -36,7 +36,10 @@ public class ApiAllegato  {
   private Allegato allegato = null;
   
   @Schema(description = "")
-  private String tipoAllegato = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "ruolo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSemiformaleEnum.class, name = "specificaSemiFormale")  })
+  private OneOfApiAllegatoTipoAllegato tipoAllegato = null;
  /**
    * Get ruolo
    * @return ruolo
@@ -83,15 +86,15 @@ public class ApiAllegato  {
   **/
   @JsonProperty("tipo_allegato")
   @Valid
-  public String getTipoAllegato() {
+  public OneOfApiAllegatoTipoAllegato getTipoAllegato() {
     return this.tipoAllegato;
   }
 
-  public void setTipoAllegato(String tipoAllegato) {
+  public void setTipoAllegato(OneOfApiAllegatoTipoAllegato tipoAllegato) {
     this.tipoAllegato = tipoAllegato;
   }
 
-  public ApiAllegato tipoAllegato(String tipoAllegato) {
+  public ApiAllegato tipoAllegato(OneOfApiAllegatoTipoAllegato tipoAllegato) {
     this.tipoAllegato = tipoAllegato;
     return this;
   }

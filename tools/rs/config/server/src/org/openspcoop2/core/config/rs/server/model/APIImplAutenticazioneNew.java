@@ -32,9 +32,13 @@ public class APIImplAutenticazioneNew  {
   private TipoAutenticazioneNewEnum tipo = null;
   
   @Schema(description = "")
-  private Object configurazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneConfigurazioneBasic.class, name = "http-basic"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneConfigurazionePrincipal.class, name = "principal")  })
+  private OneOfAPIImplAutenticazioneNewConfigurazione configurazione = null;
   
-  @Schema(description = "")
+  @Schema(example = "false", description = "")
   private Boolean opzionale = false;
  /**
    * Get tipo
@@ -62,15 +66,15 @@ public class APIImplAutenticazioneNew  {
   **/
   @JsonProperty("configurazione")
   @Valid
-  public Object getConfigurazione() {
+  public OneOfAPIImplAutenticazioneNewConfigurazione getConfigurazione() {
     return this.configurazione;
   }
 
-  public void setConfigurazione(Object configurazione) {
+  public void setConfigurazione(OneOfAPIImplAutenticazioneNewConfigurazione configurazione) {
     this.configurazione = configurazione;
   }
 
-  public APIImplAutenticazioneNew configurazione(Object configurazione) {
+  public APIImplAutenticazioneNew configurazione(OneOfAPIImplAutenticazioneNewConfigurazione configurazione) {
     this.configurazione = configurazione;
     return this;
   }

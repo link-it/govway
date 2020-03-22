@@ -25,7 +25,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteIndirizzoIP extends FiltroRicercaId {
+public class FiltroMittenteIndirizzoIP extends FiltroRicercaId implements OneOfFiltroMittenteErogazioneId, OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId, OneOfFiltroMittenteFruizioneId, OneOfFiltroMittenteQualsiasiId {
   
   @Schema(description = "")
   private TipoFiltroMittenteIndirizzoIPEnum tipo = null;

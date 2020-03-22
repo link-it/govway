@@ -28,13 +28,19 @@ import javax.validation.Valid;
   * Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni di servizio
  **/
 @Schema(description="Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni di servizio")
-public class FiltroMittenteFruizione  {
+public class FiltroMittenteFruizione  implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
   
   @Schema(description = "")
   private TipoFiltroMittenteFruizioneEnum tipo = null;
   
   @Schema(description = "")
-  private Object id = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizioneApplicativo.class, name = "applicativo"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIdAutenticato.class, name = "identificativo_autenticato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizioneTokenClaim.class, name = "token_info"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIndirizzoIP.class, name = "indirizzo_ip")  })
+  private OneOfFiltroMittenteFruizioneId id = null;
  /**
    * Get tipo
    * @return tipo
@@ -60,15 +66,15 @@ public class FiltroMittenteFruizione  {
   **/
   @JsonProperty("id")
   @Valid
-  public Object getId() {
+  public OneOfFiltroMittenteFruizioneId getId() {
     return this.id;
   }
 
-  public void setId(Object id) {
+  public void setId(OneOfFiltroMittenteFruizioneId id) {
     this.id = id;
   }
 
-  public FiltroMittenteFruizione id(Object id) {
+  public FiltroMittenteFruizione id(OneOfFiltroMittenteFruizioneId id) {
     this.id = id;
     return this;
   }

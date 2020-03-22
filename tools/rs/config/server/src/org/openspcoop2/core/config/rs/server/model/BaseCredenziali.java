@@ -30,7 +30,12 @@ public class BaseCredenziali  {
   private ModalitaAccessoEnum modalitaAccesso = null;
   
   @Schema(example = "{\"username\":\"user\",\"password\":\"pwd\"}", description = "")
-  private Object credenziali = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "modalita_accesso", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpBasic.class, name = "http-basic"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttps.class, name = "https"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationPrincipal.class, name = "principal")  })
+  private OneOfBaseCredenzialiCredenziali credenziali = null;
  /**
    * Get modalitaAccesso
    * @return modalitaAccesso
@@ -56,15 +61,15 @@ public class BaseCredenziali  {
   **/
   @JsonProperty("credenziali")
   @Valid
-  public Object getCredenziali() {
+  public OneOfBaseCredenzialiCredenziali getCredenziali() {
     return this.credenziali;
   }
 
-  public void setCredenziali(Object credenziali) {
+  public void setCredenziali(OneOfBaseCredenzialiCredenziali credenziali) {
     this.credenziali = credenziali;
   }
 
-  public BaseCredenziali credenziali(Object credenziali) {
+  public BaseCredenziali credenziali(OneOfBaseCredenzialiCredenziali credenziali) {
     this.credenziali = credenziali;
     return this;
   }

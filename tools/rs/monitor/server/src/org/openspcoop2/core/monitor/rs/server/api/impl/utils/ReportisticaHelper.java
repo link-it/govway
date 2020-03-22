@@ -23,14 +23,13 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
+import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
@@ -451,7 +450,10 @@ public class ReportisticaHelper {
 		case NUMERO_TRANSAZIONI:
 			break;
 		case OCCUPAZIONE_BANDA: {
-			OccupazioneBandaEnum val = OccupazioneBandaEnum.fromValue((String) body.getTipoInformazione().getValori());
+			OccupazioneBandaEnum val = null;
+			if(body.getTipoInformazione().getValori()!=null && body.getTipoInformazione().getValori() instanceof OccupazioneBandaEnum) {
+				val = ((OccupazioneBandaEnum)body.getTipoInformazione().getValori());
+			}
 			if(val==null) {
 				val = OccupazioneBandaEnum.COMPLESSIVA;
 			}
@@ -459,7 +461,10 @@ public class ReportisticaHelper {
 			break;
 		}
 		case TEMPO_MEDIO_RISPOSTA: {
-			TempoMedioRispostaEnum val = TempoMedioRispostaEnum.fromValue((String) body.getTipoInformazione().getValori());
+			TempoMedioRispostaEnum val = null;
+			if(body.getTipoInformazione().getValori()!=null && body.getTipoInformazione().getValori() instanceof TempoMedioRispostaEnum) {
+				val = ((TempoMedioRispostaEnum)body.getTipoInformazione().getValori());
+			}
 			if(val==null) {
 				val = TempoMedioRispostaEnum.TOTALE;
 			}
@@ -673,8 +678,12 @@ public class ReportisticaHelper {
 		// FiltroEsito
 		ReportisticaHelper.overrideFiltroEsito(body.getEsito(), request, env);
 		// Soggetto Erogatore
-		if ( FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.equals(body.getTipo()) && body.getSoggettoErogatore() != null) {
-			request.overrideParameter(CostantiExporter.DESTINATARIO, new IDSoggetto(env.tipoSoggetto,BaseHelper.deserialize(body.getSoggettoErogatore(), String.class)));
+		if ( FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.equals(body.getTipo()) && body.getSoggettoErogatore() != null  &&
+				body.getSoggettoErogatore() instanceof BaseOggettoWithSimpleName) {
+			BaseOggettoWithSimpleName base = (BaseOggettoWithSimpleName) body.getSoggettoErogatore();
+			if(base.getNome()!=null) {
+				request.overrideParameter(CostantiExporter.DESTINATARIO, new IDSoggetto(env.tipoSoggetto,base.getNome()));
+			}
 		}
 		// Opzioni Report
 		ReportisticaHelper.overrideOpzioniGenerazioneReport(body.getReport(), request, env);
@@ -801,7 +810,13 @@ public class ReportisticaHelper {
 		switch (body.getTipo()) {
 		case EROGAZIONE:
 			ReportisticaHelper.overrideFiltroMittenteErogazioneDistribuzioneSoggettoRemoto(BaseHelper.deserialize(body.getMittente(), FiltroMittenteErogazioneDistribuzioneSoggettoRemoto.class), wrap, env); 
-			ReportisticaHelper.overrideFiltroErogazione(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroErogazione.class), wrap,env);
+			if(body.getApi()!=null && body.getApi() instanceof FiltroApiBase) {
+				IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);
+				ReportisticaHelper.overrideFiltroApiBase(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroApiBase.class), idSoggettoLocale, wrap,env);
+			}
+			else {
+				ReportisticaHelper.overrideFiltroErogazione(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroErogazione.class), wrap,env);
+			}
 			break;
 		case FRUIZIONE:
 			ReportisticaHelper.overrideFiltroMittenteFruizione(BaseHelper.deserialize(body.getMittente(), FiltroMittenteFruizione.class), wrap, env);
@@ -809,7 +824,13 @@ public class ReportisticaHelper {
 			break;
 		case QUALSIASI:
 			ReportisticaHelper.overrideFiltroMittenteQualsiasi(BaseHelper.deserialize(body.getMittente(), FiltroMittenteQualsiasi.class), wrap, env);
-			ReportisticaHelper.overrideFiltroQualsiasi(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroApiQualsiasi.class), wrap, env);
+			if(body.getApi()!=null && body.getApi() instanceof FiltroApiBase) {
+				IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);
+				ReportisticaHelper.overrideFiltroApiBase(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroApiBase.class), idSoggettoLocale, wrap,env);
+			}
+			else{
+				ReportisticaHelper.overrideFiltroQualsiasi(body.getTag(), BaseHelper.deserialize(body.getApi(), FiltroApiQualsiasi.class), wrap, env);
+			}
 			break;
 		}
 		ReportisticaHelper.overrideFiltroEsito(body.getEsito(), wrap, env);
@@ -856,9 +877,12 @@ public class ReportisticaHelper {
 		ReportisticaHelper.overrideRicercaStatisticaDistribuzioneApplicativo(body, wrap, env);
 		wrap.overrideParameter(CostantiExporter.CLAIM, Enums.toClaim.get(body.getClaim()).toString());
 
-		if (FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.equals(body.getTipo()) && body.getSoggetto() != null) {
-			String nomeMittente = BaseHelper.deserialize(body.getSoggetto(), String.class);
-			wrap.overrideParameter(CostantiExporter.MITTENTE,new IDSoggetto(env.tipoSoggetto, nomeMittente).toString());
+		if (FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.equals(body.getTipo()) && body.getSoggetto() != null &&
+				body.getSoggetto() instanceof BaseOggettoWithSimpleName) {
+			BaseOggettoWithSimpleName base = (BaseOggettoWithSimpleName) body.getSoggetto();
+			if(base.getNome()!=null) {
+				wrap.overrideParameter(CostantiExporter.MITTENTE,new IDSoggetto(env.tipoSoggetto, base.getNome()).toString());
+			}
 		}
 
 		return ReportisticaHelper.generateReport(wrap, env.context);
@@ -971,7 +995,14 @@ public class ReportisticaHelper {
 		}
 	}
 	
-	public static final Map<String, Object> parseFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo,
+	@SuppressWarnings("unchecked")
+	public static final <T> T parseFiltroApiMapT(Class<T> classType, FiltroRicercaRuoloTransazioneEnum tipo,
+			String nomeServizio, String tipoServizio, Integer versioneServizio, String soggettoRemoto,
+			String soggettoErogatore) {
+		return (T) parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore);
+	}
+	
+	private static final FiltroApiBase parseFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo,
 			String nomeServizio, String tipoServizio, Integer versioneServizio, String soggettoRemoto,
 			String soggettoErogatore) {
 		
@@ -1002,7 +1033,9 @@ public class ReportisticaHelper {
 
 		// Se specifico un pezzo del filtroAPI, allora devo avere un filtro completo.
 		// (meno i defaults)
-		if (nomeServizio != null || tipoServizio != null || versioneServizio != null || soggettoErogatore != null) {
+		if (nomeServizio != null || tipoServizio != null || soggettoErogatore != null
+				// || versioneServizio != null  default value is 1
+				) {
 		
 			if (nomeServizio == null) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare il nome_servizio");
@@ -1023,27 +1056,48 @@ public class ReportisticaHelper {
 		return ReportisticaHelper.buildFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static final <T extends FiltroApiBase> T parseFiltroApiMapT(Class<T> classType, TransazioneRuoloEnum tipo,
+			String nomeServizio, String tipoServizio, Integer versioneServizio, String soggettoRemoto) {
+		return (T) parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto);
+	}
 	 
-	public static final Map<String, Object> parseFiltroApiMap(TransazioneRuoloEnum tipo, String nomeServizio,
+	public static final FiltroApiBase parseFiltroApiMap(TransazioneRuoloEnum tipo, String nomeServizio,
 			String tipoServizio, Integer versioneServizio, String soggettoRemoto) {
 		// In Questo caso non abbiamo il tipo QUALSIASI, quindi parsiamo il filtro senza il soggettoErogatore (ultimo parametro a null)
 		FiltroRicercaRuoloTransazioneEnum newTipo = tipo == TransazioneRuoloEnum.EROGAZIONE ? FiltroRicercaRuoloTransazioneEnum.EROGAZIONE : FiltroRicercaRuoloTransazioneEnum.FRUIZIONE;
 		return ReportisticaHelper.parseFiltroApiMap(newTipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,null);
 	}
 	
-	private static final Map<String, Object> buildFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo, String nomeServizio,
+	private static final FiltroApiBase buildFiltroApiMap(FiltroRicercaRuoloTransazioneEnum tipo, String nomeServizio,
 			String tipoServizio, Integer versioneServizio, String soggettoRemoto, String soggettoErogatore) {
 		
 		// Se non ho specificato nessun pezzo del filtro api, allora per le versioni full è come aver passato un FiltroApi a null.
-		if (StringUtils.isEmpty(nomeServizio) && StringUtils.isEmpty(tipoServizio) && StringUtils.isEmpty(soggettoRemoto) && StringUtils.isEmpty(soggettoErogatore) && versioneServizio == null) {
+		if (StringUtils.isEmpty(nomeServizio) && StringUtils.isEmpty(tipoServizio) && StringUtils.isEmpty(soggettoRemoto) && StringUtils.isEmpty(soggettoErogatore) 
+				//&& versioneServizio == null default value is 1
+				) {
 			return null;
 		}
 		
-		LinkedHashMap<String, Object> filtroApi = new LinkedHashMap<>();
-		filtroApi.put("nome", nomeServizio);
-		filtroApi.put("tipo", tipoServizio);
-		filtroApi.put("versione", versioneServizio);
-		// Filtro Api
+		FiltroApiBase filtroApiBase = null;
+		switch (tipo) {
+		case EROGAZIONE:
+			filtroApiBase = new FiltroErogazione();
+			break;
+		case FRUIZIONE:
+			filtroApiBase = new FiltroFruizione();
+			break;
+		case QUALSIASI:
+			filtroApiBase = new FiltroApiQualsiasi();
+			break;
+		}
+		
+		filtroApiBase.setNome(nomeServizio);
+		filtroApiBase.setTipo(tipoServizio);
+		if(nomeServizio!=null || tipoServizio!=null) {
+			filtroApiBase.setVersione(versioneServizio!=null ? versioneServizio : 1);
+		}
+		
 		switch (tipo) {
 		case EROGAZIONE:
 			break;
@@ -1051,15 +1105,15 @@ public class ReportisticaHelper {
 			if (!StringUtils.isEmpty(soggettoErogatore)) {
 				soggettoRemoto = soggettoErogatore;
 			}
-			filtroApi.put("erogatore", soggettoRemoto);
+			((FiltroFruizione)filtroApiBase).setErogatore(soggettoRemoto);
 			break;
 		case QUALSIASI:
-			filtroApi.put("erogatore", soggettoErogatore);
-			filtroApi.put("soggetto_remoto", soggettoRemoto);
+			((FiltroApiQualsiasi)filtroApiBase).setErogatore(soggettoErogatore);
+			((FiltroApiQualsiasi)filtroApiBase).setSoggettoRemoto(soggettoRemoto);
 			break;
 		}
 
-		return filtroApi;
+		return filtroApiBase;
 	}
 	
 }

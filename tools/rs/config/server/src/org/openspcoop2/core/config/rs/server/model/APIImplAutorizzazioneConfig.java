@@ -29,10 +29,10 @@ import javax.validation.Valid;
 
 public class APIImplAutorizzazioneConfig  {
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean richiedente = true;
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean ruoli = false;
   
   @Schema(description = "")
@@ -41,13 +41,13 @@ public class APIImplAutorizzazioneConfig  {
   @Schema(description = "")
   private AllAnyEnum ruoliRichiesti = null;
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean scope = false;
   
   @Schema(description = "")
   private AllAnyEnum scopeRichiesti = null;
   
-  @Schema(required = true, description = "")
+  @Schema(example = "false", required = true, description = "")
   private Boolean token = false;
   
   @Schema(description = "Indicare per riga i claims richiesti (nome=valore); è possibile elencare differenti valori ammissibili separandoli con la virgola")

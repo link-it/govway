@@ -32,7 +32,11 @@ public class RicercaConfigurazioneApi  {
   private TransazioneRuoloEnum tipo = null;
   
   @Schema(description = "")
-  private Object api = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiBase.class, name = "erogazione"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroFruizione.class, name = "fruizione")  })
+  private OneOfRicercaConfigurazioneApiApi api = null;
  /**
    * Get tipo
    * @return tipo
@@ -59,15 +63,15 @@ public class RicercaConfigurazioneApi  {
   **/
   @JsonProperty("api")
   @Valid
-  public Object getApi() {
+  public OneOfRicercaConfigurazioneApiApi getApi() {
     return this.api;
   }
 
-  public void setApi(Object api) {
+  public void setApi(OneOfRicercaConfigurazioneApiApi api) {
     this.api = api;
   }
 
-  public RicercaConfigurazioneApi api(Object api) {
+  public RicercaConfigurazioneApi api(OneOfRicercaConfigurazioneApiApi api) {
     this.api = api;
     return this;
   }

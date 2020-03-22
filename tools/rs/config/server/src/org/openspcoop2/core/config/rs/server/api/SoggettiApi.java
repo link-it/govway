@@ -105,7 +105,7 @@ public interface SoggettiApi  {
         @ApiResponse(responseCode = "429", description = "Too many requests", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "503", description = "Service Unavailable", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "200", description = "Unexpected error", content = @Content(schema = @Schema(implementation = Problem.class))) })
-    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo);
+    public ListaSoggetti findAllSoggetti(@QueryParam("profilo") ProfiloEnum profilo, @QueryParam("q") String q, @QueryParam("limit") Integer limit, @QueryParam("offset") @DefaultValue("0") Integer offset, @QueryParam("dominio") DominioEnum dominio, @QueryParam("ruolo") @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255) String ruolo);
 
     /**
      * Restituisce il dettaglio di un soggetto

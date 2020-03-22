@@ -45,7 +45,11 @@ public class ApiBase  {
   private Integer versione = null;
   
   @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
-  private String formato = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoSoapEnum.class, name = "soap"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoRestEnum.class, name = "rest")  })
+  private OneOfApiBaseFormato formato = null;
   
   @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
   private List<String> tags = null;
@@ -154,15 +158,15 @@ public class ApiBase  {
   @JsonProperty("formato")
   @NotNull
   @Valid
-  public String getFormato() {
+  public OneOfApiBaseFormato getFormato() {
     return this.formato;
   }
 
-  public void setFormato(String formato) {
+  public void setFormato(OneOfApiBaseFormato formato) {
     this.formato = formato;
   }
 
-  public ApiBase formato(String formato) {
+  public ApiBase formato(OneOfApiBaseFormato formato) {
     this.formato = formato;
     return this;
   }
