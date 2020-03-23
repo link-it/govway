@@ -1,14 +1,25 @@
-openapi: 3.0.0
-servers: []
+openapi: 3.0.3
+servers:
+  - url: https://{hostname}/govway/{soggetto}/api-monitor/v1
+    description: l'accesso all'API è protetta dai controlli di accesso configurati su GovWay 
+    variables:
+      hostname:
+        default: localhost
+      soggetto:
+        description: soggetto con cui è stato dispiegato il software GovWay
+        default: EnteGenerico
 info:
-  description: Servizi per il monitoraggio di GovWay
-  version: 1.0.0
+  x-api-id: https://govway.org/apiMonitor
   title: GovWay Monitor API
+  x-summary: Servizi per il monitoraggio di GovWay
+  description: Servizi per il monitoraggio di GovWay
+  version: "3.3.0"
   contact:
     email: info@link.it
   license:
     name: GPL v3.0
     url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+    
 tags:
   - name: Monitoraggio
     description: >-
@@ -18,6 +29,7 @@ tags:
     description: >-
       Fornisce operazioni che consentono di recuperare i report statistici
       riguardanti le transazioni gestite su GovWay
+      
 paths:
   
   # Transazioni
@@ -111,7 +123,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
 
-  /monitoraggio/transazioni/id_applicativo:
+  /monitoraggio/transazioni/id-applicativo:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
@@ -207,7 +219,7 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
 
 
-  /monitoraggio/transazioni/id_messaggio:
+  /monitoraggio/transazioni/id-messaggio:
     parameters:
       - $ref: 'govway_core.yaml#/components/parameters/profilo'
       - $ref: 'govway_core.yaml#/components/parameters/soggetto'
@@ -1598,7 +1610,6 @@ components:
             data:
               type: string
               format: date-time
-              example: '2017-07-21T17:32:28Z'
             latenza_servizio:
               type: integer
               format: int64
@@ -1641,7 +1652,6 @@ components:
         ora_registrazione:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         severita:
           $ref: 'govway_trace-ext.yaml#/components/schemas/DiagnosticoSeveritaEnum'
         tipo:
@@ -2200,11 +2210,9 @@ components:
         data_inizio:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         data_fine:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
 
     FiltroApiBase:
       type: object
@@ -2508,7 +2516,7 @@ components:
         - pie
         - bar
         - table
-      example: Line
+      example: line
       default: table
       
     FormatoReportEnum:

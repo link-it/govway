@@ -60,11 +60,9 @@ components:
         data_ricezione:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         data_consegna:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         tipo:
           $ref: 'govway_core.yaml#/components/schemas/HttpMethodEnum'
         url_invocazione:
@@ -88,11 +86,9 @@ components:
         data_ricezione:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         data_consegna:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         esito_ricezione:
           type: string
           description: |-

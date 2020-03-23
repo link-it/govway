@@ -35,7 +35,7 @@ public class ApiInterfacciaView extends BaseItem {
   @Schema(required = true, description = "")
   private TipoApiEnum tipo = null;
   
-  @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
+  @Schema(example = "OpenApi3.0", required = true, description = "")
   @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoSoapEnum.class, name = "soap"),

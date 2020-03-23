@@ -90,7 +90,6 @@ components:
             data_accettazione:
               type: string
               format: date-time
-              example: '2017-07-21T17:32:28Z'
             bytes_ingresso:
               type: integer
               format: int64
@@ -276,7 +275,6 @@ components:
         data:
           type: string
           format: date-time
-          example: '2017-07-21T17:32:28Z'
         severita_codice:
           type: string
         severita:
@@ -338,4 +336,4 @@ components:
         - info
         - debug
         - trace
-      example: infoIntegration
+      example: info

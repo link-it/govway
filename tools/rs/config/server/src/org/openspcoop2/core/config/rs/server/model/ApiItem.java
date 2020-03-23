@@ -46,7 +46,7 @@ public class ApiItem extends BaseSoggettoItem {
   @Schema(required = true, description = "")
   private Integer versione = null;
   
-  @Schema(example = "{\"formato\":\"OpenApi3.0\"}", required = true, description = "")
+  @Schema(example = "OpenApi3.0", required = true, description = "")
   private String formato = null;
   
   @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")

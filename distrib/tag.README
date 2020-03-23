@@ -29,9 +29,11 @@ Per creare una tag version:
 10. Sistemare la documentazione e soprattutto il documento di ReleaseNotes
       Inoltre aggiungere la corretta versione. 
 
-11. Sistemare migratore delle configurazioni da OpenSPCoop
+11. Aggiungere la versione in rilascio come versione delle interfacce OpenAPI dei servizi in tools/rs/*
 
-12. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
+12. Sistemare migratore delle configurazioni da OpenSPCoop
+
+13. Sistemare docker-compose.yml e database presente in resources/scenari/scenari.zip
    Per farlo, ad esempio se stiamo rilasciando la versione 3.2.1:
    - fare il clone di govway-docker
    - generare una versione dell'installer semi-definitiva e copiarla dentro la directory compose_bin/ di govway-docker
@@ -82,6 +84,6 @@ Per creare una tag version:
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 
-13. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
+14. Riportazione indicazione di backwardCompatibility e hotUpgrade sul wiki (per indicare le info sull'aggiornamento della base dati)
 
-14. Creazione versione tag
+15. Creazione versione tag

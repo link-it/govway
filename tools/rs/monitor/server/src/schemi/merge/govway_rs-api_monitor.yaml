@@ -1,5 +1,4 @@
----
-openapi: "3.0.0"
+openapi: "3.0.3"
 info:
   title: "GovWay Monitor API"
   description: "Servizi per il monitoraggio di GovWay"
@@ -8,9 +7,19 @@ info:
   license:
     name: "GPL v3.0"
     url: "https://www.gnu.org/licenses/gpl-3.0.txt"
-  version: "1.0.0"
+  version: "3.3.0"
+  x-api-id: "https://govway.org/apiMonitor"
+  x-summary: "Servizi per il monitoraggio di GovWay"
 servers:
-- url: "/"
+- url: "https://{hostname}/govway/{soggetto}/api-monitor/v1"
+  description: "l'accesso all'API è protetta dai controlli di accesso configurati\
+    \ su GovWay"
+  variables:
+    hostname:
+      default: "localhost"
+    soggetto:
+      description: "soggetto con cui è stato dispiegato il software GovWay"
+      default: "EnteGenerico"
 tags:
 - name: "Monitoraggio"
   description: "Fornisce operazioni che consentono di recuperare i dettagli diagnostici\
@@ -102,7 +111,7 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-  /monitoraggio/transazioni/id_applicativo:
+  /monitoraggio/transazioni/id-applicativo:
     get:
       tags:
       - "Monitoraggio"
@@ -190,7 +199,7 @@ paths:
     parameters:
     - $ref: "#/components/parameters/profilo"
     - $ref: "#/components/parameters/soggetto"
-  /monitoraggio/transazioni/id_messaggio:
+  /monitoraggio/transazioni/id-messaggio:
     get:
       tags:
       - "Monitoraggio"
@@ -1281,24 +1290,6 @@ components:
           data:
             type: "string"
             format: "date-time"
-            example:
-              offset:
-                totalSeconds: 0
-                id: "Z"
-                rules:
-                  fixedOffset: true
-                  transitions: []
-                  transitionRules: []
-              nano: 0
-              year: 2017
-              monthValue: 7
-              dayOfMonth: 21
-              hour: 17
-              minute: 32
-              second: 28
-              month: "JULY"
-              dayOfWeek: "FRIDAY"
-              dayOfYear: 202
           latenza_servizio:
             type: "integer"
             format: "int64"
@@ -1336,24 +1327,6 @@ components:
         ora_registrazione:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         severita:
           $ref: "#/components/schemas/DiagnosticoSeveritaEnum"
         tipo:
@@ -1855,45 +1828,9 @@ components:
         data_inizio:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         data_fine:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
     FiltroApiBase:
       type: "object"
       properties:
@@ -2176,7 +2113,7 @@ components:
       - "risposta"
     TipoReportEnum:
       type: "string"
-      example: "Line"
+      example: "line"
       default: "table"
       enum:
       - "line"
@@ -2302,24 +2239,6 @@ components:
           data_accettazione:
             type: "string"
             format: "date-time"
-            example:
-              offset:
-                totalSeconds: 0
-                id: "Z"
-                rules:
-                  fixedOffset: true
-                  transitions: []
-                  transitionRules: []
-              nano: 0
-              year: 2017
-              monthValue: 7
-              dayOfMonth: 21
-              hour: 17
-              minute: 32
-              second: 28
-              month: "JULY"
-              dayOfWeek: "FRIDAY"
-              dayOfYear: 202
           bytes_ingresso:
             type: "integer"
             format: "int64"
@@ -2488,24 +2407,6 @@ components:
         data:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         severita_codice:
           type: "string"
         severita:
@@ -2548,7 +2449,7 @@ components:
       - "binary"
     DiagnosticoSeveritaEnum:
       type: "string"
-      example: "infoIntegration"
+      example: "info"
       enum:
       - "fatal"
       - "error"
@@ -2571,23 +2472,6 @@ components:
       maxLength: 20
       type: "string"
       description: "Indica un tipo assegnato ad un soggetto o ad un servizio"
-    BaseItem:
-      required:
-      - "profilo"
-      type: "object"
-      properties:
-        profilo:
-          $ref: "#/components/schemas/ProfiloEnum"
-    BaseSoggettoItem:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/BaseItem"
-      - required:
-        - "soggetto"
-        type: "object"
-        properties:
-          soggetto:
-            $ref: "#/components/schemas/SimpleName"
     BaseOggettoWithSimpleName:
       required:
       - "nome"
@@ -2595,25 +2479,12 @@ components:
       properties:
         nome:
           $ref: "#/components/schemas/SimpleName"
-    BaseOggettoWithNCName:
-      required:
-      - "nome"
-      type: "object"
-      properties:
-        nome:
-          $ref: "#/components/schemas/NCName"
     Versione:
       minimum: 1
       type: "integer"
       format: "int32"
       example: 1
       default: 1
-    HttpStatusCode:
-      maximum: 599
-      minimum: 100
-      type: "integer"
-      format: "int32"
-      example: 200
     Lista:
       type: "object"
       allOf:
@@ -2717,45 +2588,22 @@ components:
       - "fruizione"
       - "erogazione"
       - "qualsiasi"
-    Money:
-      required:
-      - "amount"
-      - "currency"
-      type: "object"
-      properties:
-        amount:
-          type: "number"
-          description: "Amount expressed as a decimal number of major currency units"
-          format: "decimal"
-          example: 99.95
-        currency:
-          type: "string"
-          description: "3 letter currency code as defined by ISO-4217"
-          format: "iso-4217"
-          example: "EUR"
-    Person:
-      properties:
-        family_name:
-          type: "string"
-        given_name:
-          type: "string"
-        tax_code:
-          $ref: "#/components/schemas/TaxCode"
-      externalDocs:
-        url: "https://w3id.org/italia/onto/CPV"
     Problem:
       type: "object"
       properties:
-        detail:
+        type:
           type: "string"
-          description: "A human readable explanation specific to this occurrence of\
-            \ the\nproblem.\n"
-          example: "Connection to database timed out"
-        instance:
-          type: "string"
-          description: "An absolute URI that identifies the specific occurrence of\
-            \ the problem.\nIt may or may not yield further information if dereferenced.\n"
+          description: "An absolute URI that identifies the problem type.  When dereferenced,\n\
+            it SHOULD provide human-readable documentation for the problem type\n\
+            (e.g., using HTML).\n"
           format: "uri"
+          example: "https://tools.ietf.org/html/rfc7231#section-6.6.4"
+          default: "about:blank"
+        title:
+          type: "string"
+          description: "A short, summary of the problem type. Written in english and\
+            \ readable\nfor engineers (usually not suited for non technical stakeholders\
+            \ and\nnot localized); example: Service Unavailable\n"
         status:
           maximum: 600
           exclusiveMaximum: true
@@ -2765,28 +2613,17 @@ components:
             \ occurrence\nof the problem.\n"
           format: "int32"
           example: 503
-        title:
+        detail:
           type: "string"
-          description: "A short, summary of the problem type. Written in english and\
-            \ readable\nfor engineers (usually not suited for non technical stakeholders\
-            \ and\nnot localized); example: Service Unavailable\n"
-        type:
+          description: "A human readable explanation specific to this occurrence of\
+            \ the\nproblem. You MUST NOT expose internal informations, personal\n\
+            data or implementation details through this field.\n"
+          example: "Request took too long to complete."
+        instance:
           type: "string"
-          description: "An absolute URI that identifies the problem type.  When dereferenced,\n\
-            it SHOULD provide human-readable documentation for the problem type\n\
-            (e.g., using HTML).\n"
+          description: "An absolute URI that identifies the specific occurrence of\
+            \ the problem.\nIt may or may not yield further information if dereferenced.\n"
           format: "uri"
-          example: "https://tools.ietf.org/html/rfc7231#section-6.6.4"
-          default: "about:blank"
-    TaxCode:
-      pattern: "/^(?:(?:[B-DF-HJ-NP-TV-Z]|[AEIOU])[AEIOU][AEIOUX]|[B-DF-HJ-NP-TV-Z]{2}[A-Z]){2}[\\\
-        dLMNP-V]{2}(?:[A-EHLMPR-T](?:[04LQ][1-9MNP-V]|[1256LMRS][\\dLMNP-V])|[DHPS][37PT][0L]|[ACELMRT][37PT][01LM])(?:[A-MZ][1-9MNP-V][\\\
-        dLMNP-V]{2}|[A-M][0L](?:[1-9MNP-V][\\dLMNP-V]|[0L][1-9MNP-V]))[A-Z]$/i"
-      type: "string"
-      description: "Il codice fiscale."
-      example: "RSSMRA75L01H501A"
-      externalDocs:
-        url: "https://w3id.org/italia/onto/CPV/taxCode"
     TransazioneBase:
       required:
       - "data_emissione"
@@ -2810,26 +2647,6 @@ components:
           $ref: "#/components/schemas/TransazioneRuoloEnum"
         esito:
           $ref: "#/components/schemas/TransazioneEsito"
-    Transazione:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/TransazioneBase"
-      - type: "object"
-        properties:
-          richiesta:
-            $ref: "#/components/schemas/TransazioneDettaglioRichiesta"
-          risposta:
-            $ref: "#/components/schemas/TransazioneDettaglioRisposta"
-          api:
-            $ref: "#/components/schemas/TransazioneInformazioniApi"
-          mittente:
-            $ref: "#/components/schemas/TransazioneInformazioniMittente"
-    TransazioneDettaglioRichiesta:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/TransazioneDettaglioMessaggio"
-      - $ref: "#/components/schemas/TransazioneDettaglioRichiestaDatiTrasporto"
-      - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
     TransazioneDettaglioRichiestaDatiTrasporto:
       required:
       - "data_ricezione"
@@ -2839,57 +2656,14 @@ components:
         data_ricezione:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         data_consegna:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         tipo:
           $ref: "#/components/schemas/HttpMethodEnum"
         url_invocazione:
           type: "string"
           example: "/govway/in/Ente/PetStore/v2/pet"
-    TransazioneDettaglioRisposta:
-      type: "object"
-      allOf:
-      - $ref: "#/components/schemas/TransazioneDettaglioMessaggio"
-      - $ref: "#/components/schemas/TransazioneDettaglioRispostaDatiTrasporto"
-      - $ref: "#/components/schemas/TransazioneDettaglioRispostaErrore"
-      - $ref: "#/components/schemas/TransazioneDettaglioMessaggioContenuti"
     TransazioneDettaglioRispostaDatiTrasporto:
       required:
       - "data_consegna"
@@ -2899,45 +2673,9 @@ components:
         data_ricezione:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         data_consegna:
           type: "string"
           format: "date-time"
-          example:
-            offset:
-              totalSeconds: 0
-              id: "Z"
-              rules:
-                fixedOffset: true
-                transitions: []
-                transitionRules: []
-            nano: 0
-            year: 2017
-            monthValue: 7
-            dayOfMonth: 21
-            hour: 17
-            minute: 32
-            second: 28
-            month: "JULY"
-            dayOfWeek: "FRIDAY"
-            dayOfYear: 202
         esito_ricezione:
           type: "string"
           description: "Codice associato alla risposta.\nPuò essere un http status\
@@ -3143,6 +2881,12 @@ components:
       headers:
         Location:
           $ref: "#/components/headers/Location"
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
   parameters:
     id_transazione:
       name: "id"
@@ -3440,24 +3184,6 @@ components:
       schema:
         type: "string"
         format: "date-time"
-        example:
-          offset:
-            totalSeconds: 0
-            id: "Z"
-            rules:
-              fixedOffset: true
-              transitions: []
-              transitionRules: []
-          nano: 0
-          year: 2017
-          monthValue: 7
-          dayOfMonth: 21
-          hour: 17
-          minute: 32
-          second: 28
-          month: "JULY"
-          dayOfWeek: "FRIDAY"
-          dayOfYear: 202
     data_fine:
       name: "data_fine"
       in: "query"
@@ -3466,24 +3192,6 @@ components:
       schema:
         type: "string"
         format: "date-time"
-        example:
-          offset:
-            totalSeconds: 0
-            id: "Z"
-            rules:
-              fixedOffset: true
-              transitions: []
-              transitionRules: []
-          nano: 0
-          year: 2017
-          monthValue: 7
-          dayOfMonth: 21
-          hour: 17
-          minute: 32
-          second: 28
-          month: "JULY"
-          dayOfWeek: "FRIDAY"
-          dayOfYear: 202
     nome_servizio_obbligatorio:
       name: "nome_servizio"
       in: "query"
@@ -3506,47 +3214,6 @@ components:
       schema:
         type: "boolean"
         default: true
-    Etag:
-      name: "Etag"
-      in: "header"
-      description: "The RFC7232 ETag header field in a response provides the current\
-        \ entity-\ntag for the selected resource. An entity-tag is an opaque identifier\
-        \ for\ndifferent versions of a resource over time, regardless whether multiple\n\
-        versions are valid at the same time. An entity-tag consists of an opaque\n\
-        quoted string, possibly prefixed by a weakness indicator.\n"
-      required: false
-      schema:
-        type: "string"
-      example: "W/\"xy\", \"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
-    IfMatch:
-      name: "If-Match"
-      in: "header"
-      description: "The RFC7232 If-Match header field in a request requires the server\
-        \ to\nonly operate on the resource that matches at least one of the provided\n\
-        entity-tags. This allows clients express a precondition that prevent\nthe\
-        \ method from being applied if there have been any changes to the\nresource.\n"
-      required: false
-      schema:
-        type: "string"
-      example: "\"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
-    IfNoneMatch:
-      name: "If-None-Match"
-      in: "header"
-      description: "The RFC7232 If-None-Match header field in a request requires the\
-        \ server\nto only operate on the resource if it does not match any of the\
-        \ provided\nentity-tags. If the provided entity-tag is `*`, it is required\
-        \ that the\nresource does not exist at all.\n"
-      required: false
-      schema:
-        type: "string"
-      example: "\"7da7a728-f910-11e6-942a-68f728c1ba70\", *"
-    citizen:
-      name: "citizen"
-      in: "query"
-      description: "testme"
-      required: false
-      schema:
-        $ref: "#/components/schemas/Person"
     cursor:
       name: "cursor"
       in: "query"
@@ -3594,12 +3261,41 @@ components:
       schema:
         type: "string"
         example: "+name"
-  headers:
-    Retry-After:
-      description: "Retry contacting the endpoint *at least* after seconds.\nSee https://tools.ietf.org/html/rfc7231#section-7.1.3"
+    Etag:
+      name: "Etag"
+      in: "header"
+      description: "The RFC7232 ETag header field in a response provides the current\
+        \ entity-\ntag for the selected resource. An entity-tag is an opaque identifier\
+        \ for\ndifferent versions of a resource over time, regardless whether multiple\n\
+        versions are valid at the same time. An entity-tag consists of an opaque\n\
+        quoted string, possibly prefixed by a weakness indicator.\n"
+      required: false
       schema:
-        type: "integer"
-        format: "int32"
+        type: "string"
+      example: "W/\"xy\", \"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
+    IfMatch:
+      name: "If-Match"
+      in: "header"
+      description: "The RFC7232 If-Match header field in a request requires the server\
+        \ to\nonly operate on the resource that matches at least one of the provided\n\
+        entity-tags. This allows clients express a precondition that prevent\nthe\
+        \ method from being applied if there have been any changes to the\nresource.\n"
+      required: false
+      schema:
+        type: "string"
+      example: "\"5\", \"7da7a728-f910-11e6-942a-68f728c1ba70\""
+    IfNoneMatch:
+      name: "If-None-Match"
+      in: "header"
+      description: "The RFC7232 If-None-Match header field in a request requires the\
+        \ server\nto only operate on the resource if it does not match any of the\
+        \ provided\nentity-tags. If the provided entity-tag is `*`, it is required\
+        \ that the\nresource does not exist at all.\n"
+      required: false
+      schema:
+        type: "string"
+      example: "\"7da7a728-f910-11e6-942a-68f728c1ba70\", *"
+  headers:
     X-RateLimit-Limit:
       description: "The number of allowed requests in the current period"
       schema:
@@ -3615,8 +3311,16 @@ components:
       schema:
         type: "integer"
         format: "int32"
+    Retry-After:
+      description: "Retry contacting the endpoint *at least* after seconds.\nSee https://tools.ietf.org/html/rfc7231#section-7.1.3"
+      schema:
+        type: "integer"
+        format: "int32"
     Location:
-      description: "Header Location inserito in una risposta ad una richiesta POST,\
-        \ terminata con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
+      description: "In some responses, this header references the\nprimary resource\
+        \ created. \n\nIt is used for redirections too.\n\nSee https://tools.ietf.org/html/rfc7231#section-7.1.2\n\
+        \nHeader Location inserito in una risposta ad una richiesta POST, terminata\
+        \ con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
       schema:
         type: "string"
+        format: "url"

@@ -1,3 +1,10 @@
+2019-03-23  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayConsole ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiornate interfacce OpenAPI delle API di configurazione e monitoraggio al fine di superare la validazione del team digitale 
+	effettuata tramite il tool presente nel progetto https://github.com/teamdigitale/api-oas-checker ed essere compatibile con le linee guida del modello di interoperabilità.
+	Risolto inoltre problema, presente nelle utils.wsdl, che non consentiva di caricare interfacce wsdl contenenti wsdl:message che non includevano wsdl:parts.
+
 2019-03-17  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]

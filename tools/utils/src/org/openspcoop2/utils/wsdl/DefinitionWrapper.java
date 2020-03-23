@@ -59,8 +59,13 @@ import javax.wsdl.extensions.soap12.SOAP12Address;
 import javax.xml.namespace.QName;
 
 import org.openspcoop2.utils.xml.AbstractXMLUtils;
+import org.openspcoop2.utils.xml.DynamicNamespaceContext;
+import org.openspcoop2.utils.xml.XPathExpressionEngine;
+import org.openspcoop2.utils.xml.XPathReturnType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -82,6 +87,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 	
 	/** WSDL Definitorio */
 	private javax.wsdl.Definition wsdlDefinition = null; 
+	private Document wsdlDefinitionNode = null;
 	
 	/** Eventuale Path del wsdl caricato */
 	private String path;
@@ -105,6 +111,9 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		if (file != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromFile(file,verbose,importsDocument);
 			this.path = file.getAbsolutePath();
+			try {
+				this.wsdlDefinitionNode = xmlUtils.newDocument(file);
+			}catch(Throwable t) {}
 		}else{
 			throw new WSDLException("WSDL(File file)","File wsdl non fornitp");
 		}
@@ -123,6 +132,9 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		if (path != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromLocation(path,verbose,importsDocument);
 			this.path = path;
+			try {
+				this.wsdlDefinitionNode = xmlUtils.newDocument(new File(path));
+			}catch(Throwable t) {}
 		}else{
 			throw new WSDLException("WSDL(String path)","Location del wsdl non fornita");
 		}
@@ -140,6 +152,9 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		if (bytes != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromBytes(bytes,verbose,importsDocument);
+			try {
+				this.wsdlDefinitionNode = xmlUtils.newDocument(bytes);
+			}catch(Throwable t) {}
 		}else{
 			throw new WSDLException("WSDL(byte[] bytes)","Bytes del wsdl non forniti");
 		}
@@ -157,6 +172,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		if (doc != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromDocument(doc,verbose,importsDocument);
+			this.wsdlDefinitionNode = doc;
 		}else{
 			throw new WSDLException("WSDL(Document doc)","Document del wsdl non fornito");
 		}
@@ -174,6 +190,7 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 		this.wsdlUtilities = WSDLUtilities.getInstance(this.xmlUtils);
 		if (el != null){
 			this.wsdlDefinition = this.wsdlUtilities.readWSDLFromElement(el,verbose,importsDocument);
+			this.wsdlDefinitionNode = el.getOwnerDocument();
 		}else{
 			throw new WSDLException("WSDL(Element el)","Element del wsdl non fornito");
 		}
@@ -1057,7 +1074,40 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 					}
 				}
 				if(!findMessageInput){
-					throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageInput+")  all'input dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
+					
+					// BUG: vengono generati come messaggi anche quelli definiti negli input/output delle operations, anche se poi non definite realmente come messages nel wsdl.
+					// Per evitare il bug, controllo che siano definite le parts nel metodo Map<?, ?> messages = this.getMessages();
+					// Purtroppo nel caso esistano davvero dei messaggi che però sono senza parts, questi non vengono trovati e si lancia l'errore seguente.
+					// Per sopperire all'errore si fa un controllo ulteriore tramite xpath
+					if(this.wsdlDefinitionNode!=null) {
+						XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+						DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+						dnc.findPrefixNamespace(this.wsdlDefinitionNode);
+						try {
+							Object object = xpathEngine.getMatchPattern((Document)this.wsdlDefinitionNode, dnc, "//{http://schemas.xmlsoap.org/wsdl/}message", XPathReturnType.NODESET);
+							if(object instanceof NodeList) {
+								NodeList nList = (NodeList) object;
+								for (int j = 0; j < nList.getLength(); j++) {
+									Node n = nList.item(j);
+									if(n.getAttributes()!=null && n.getAttributes().getLength()>0) {
+										Node nn = n.getAttributes().getNamedItem("name");
+										if(nn!=null) {
+											String value = nn.getNodeValue();
+											//System.out.println("DDDDDD localName["+nn.getLocalName()+"] namespace["+nn.getNamespaceURI()+"] value["+nn.getNodeValue()+"] ["+nn.getClass().getName()+"]");
+											if(messageInput.getLocalPart()!=null && messageInput.getLocalPart().equals(value)) {
+												findMessageInput = true;
+												break;
+											}
+										}
+									}
+								}
+							}
+						}catch(Throwable t) {}
+					}
+					
+					if(!findMessageInput){
+						throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageInput+")  all'input dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
+					}
 				}
 				
 				// OUTPUT
@@ -1089,7 +1139,40 @@ public class DefinitionWrapper implements javax.wsdl.Definition{
 						}
 					}
 					if(!findMessageOutput){
-						throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageOutput+") all'output dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
+						
+						// BUG: vengono generati come messaggi anche quelli definiti negli input/output delle operations, anche se poi non definite realmente come messages nel wsdl.
+						// Per evitare il bug, controllo che siano definite le parts nel metodo Map<?, ?> messages = this.getMessages();
+						// Purtroppo nel caso esistano davvero dei messaggi che però sono senza parts, questi non vengono trovati e si lancia l'errore seguente.
+						// Per sopperire all'errore si fa un controllo ulteriore tramite xpath
+						if(this.wsdlDefinitionNode!=null) {
+							XPathExpressionEngine xpathEngine = new XPathExpressionEngine();
+							DynamicNamespaceContext dnc = new DynamicNamespaceContext();
+							dnc.findPrefixNamespace(this.wsdlDefinitionNode);
+							try {
+								Object object = xpathEngine.getMatchPattern((Document)this.wsdlDefinitionNode, dnc, "//{http://schemas.xmlsoap.org/wsdl/}message", XPathReturnType.NODESET);
+								if(object instanceof NodeList) {
+									NodeList nList = (NodeList) object;
+									for (int j = 0; j < nList.getLength(); j++) {
+										Node n = nList.item(j);
+										if(n.getAttributes()!=null && n.getAttributes().getLength()>0) {
+											Node nn = n.getAttributes().getNamedItem("name");
+											if(nn!=null) {
+												String value = nn.getNodeValue();
+												//System.out.println("DDDDDD localName["+nn.getLocalName()+"] namespace["+nn.getNamespaceURI()+"] value["+nn.getNodeValue()+"] ["+nn.getClass().getName()+"]");
+												if(messageOutput.getLocalPart()!=null && messageOutput.getLocalPart().equals(value)) {
+													findMessageOutput = true;
+													break;
+												}
+											}
+										}
+									}
+								}
+							}catch(Throwable t) {}
+						}
+						
+						if(!findMessageOutput){
+							throw new org.openspcoop2.utils.wsdl.WSDLException("E' stato associato un wsdl:message inesistente ("+messageOutput+") all'output dell'operation "+op.getName()+" (Port type "+key+")"+bindingWarning);
+						}
 					}
 				}
 			}

@@ -7,7 +7,7 @@ Background:
     * def setup = callonce read('classpath:prepare_tests.feature')
     * configure afterFeature = function(){ karate.call('classpath:cleanup_tests.feature'); }
 
-    * def ricercaUrl = monitorUrl + '/monitoraggio/transazioni/id_applicativo'    
+    * def ricercaUrl = monitorUrl + '/monitoraggio/transazioni/id-applicativo'    
     * def intervallo_temporale = ({ data_inizio: setup.dataInizio, data_fine: setup.dataFine })
 
     * def filtro = read('classpath:bodies/ricerca-identificativo-applicativo.json')

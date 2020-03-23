@@ -23,6 +23,7 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
@@ -144,7 +145,7 @@ public class ReportisticaHelper {
 				break;
 			case PERSONALIZZATO:
 				if (filtro.getDettaglio() != null) {
-					Iterable<String> esiti = ((ArrayList<Integer>) filtro.getDettaglio()).stream()
+					Iterable<String> esiti = ((List<Integer>) filtro.getDettaglio()).stream()
 							.map(e -> e.toString())::iterator;
 
 					wrap.overrideParameter(CostantiExporter.ESITO, String.join(",", esiti));

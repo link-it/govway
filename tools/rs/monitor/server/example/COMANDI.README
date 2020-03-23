@@ -4,12 +4,12 @@ curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAP
 
 curl -v -H "Content-Type: application/json" -X POST --data @request.json --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni"
 
-curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni/id_messaggio?tipo_messaggio=richiesta&id=0dd517b0-e924-4e11-8321-329c63b47cd7
+curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni/id-messaggio?tipo_messaggio=richiesta&id=0dd517b0-e924-4e11-8321-329c63b47cd7
 
 curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione"
 
 #TODO: Prova più campi
-curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni/id_applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione"
+curl --user operatore:123456 --noproxy localhost "http://localhost:8080/govwayAPIMonitor/monitoraggio/transazioni/id-applicativo?data_inizio=2012-07-21T17:32:28Z&data_fine=2022-07-21T17:32:28Z&tipo=erogazione"
 
 
 

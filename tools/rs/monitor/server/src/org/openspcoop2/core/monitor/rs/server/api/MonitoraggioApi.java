@@ -102,7 +102,7 @@ public interface MonitoraggioApi  {
      *
      */
     @POST
-    @Path("/monitoraggio/transazioni/id_applicativo")
+    @Path("/monitoraggio/transazioni/id-applicativo")
     @Consumes({ "application/json" })
     @Produces({ "application/json", "application/problem+json" })
     @Operation(summary = "Ricerca completa delle transazioni in base all'identificativo applicativo", tags={ "Monitoraggio" })
@@ -124,7 +124,7 @@ public interface MonitoraggioApi  {
      *
      */
     @GET
-    @Path("/monitoraggio/transazioni/id_applicativo")
+    @Path("/monitoraggio/transazioni/id-applicativo")
     @Produces({ "application/json", "application/problem+json" })
     @Operation(summary = "Ricerca semplificata delle transazioni in base all'identificativo applicativo", tags={ "Monitoraggio" })
     @ApiResponses(value = { 
@@ -145,7 +145,7 @@ public interface MonitoraggioApi  {
      *
      */
     @GET
-    @Path("/monitoraggio/transazioni/id_messaggio")
+    @Path("/monitoraggio/transazioni/id-messaggio")
     @Produces({ "application/json", "application/problem+json" })
     @Operation(summary = "Ricerca semplificata delle transazioni in base all'identificativo messaggio", tags={ "Monitoraggio" })
     @ApiResponses(value = { 

@@ -30,7 +30,8 @@ SSLV2HELLO("SSLv2Hello"),
   SSLV3("SSLv3"),
   TLSV1("TLSv1"),
   TLSV1_1("TLSv1.1"),
-  TLSV1_2("TLSv1.2");
+  TLSV1_2("TLSv1.2"),
+  TLSV1_3("TLSv1.3");
 
   private String value;
 

@@ -44,6 +44,8 @@
 			<arg value="${src_govwayMonitorApiRS}/schemi/merge/govway_rs-api_monitor.yaml" /> <!-- dest -->
 			<arg value="${src_govwayMonitorApiRS}/schemi/merge/tmp/govway_rs-api_monitor.yaml" /> <!-- master -->
 			<arg value="${src_govwayMonitorApiRS}/schemi/merge/tmp" />  <!-- attach dir -->
+			<arg value="citizen" /> <!-- blackList parameters -->
+			<arg value="Longitude,Latitude,LongitudeString,LatitudeString,Coordinates,Money,CurrencyCode,Person,TaxCode,BaseItem,BaseSoggettoItem,BaseOggettoWithNCName,HttpStatusCode,Transazione,TransazioneDettaglioRichiesta,TransazioneDettaglioRisposta" /> <!-- blackList components -->
 		        <classpath>
 	        		<path refid="classpath_compile" />
 				<path refid="classpath_dist" />
@@ -69,6 +71,11 @@
 			<fileset dir="${src_govwayMonitorApiRS}/org/openspcoop2/core/monitor/rs/server/model">
 
 				<!-- team -->
+				<include name="Longitude.java"/>
+				<include name="Latitude.java"/>
+				<include name="LongitudeString.java"/>
+				<include name="LatitudeString.java"/>
+				<include name="Coordinates.java"/>
 				<include name="Person.java"/>
 				<include name="Money.java"/>
 				<include name="TaxCode.java"/>

@@ -160,8 +160,7 @@ components:
             mapping:
               'soap': '#/components/schemas/FormatoSoapEnum'
               'rest': '#/components/schemas/FormatoRestEnum'
-          example:
-            formato: 'OpenApi3.0' 
+          example: 'OpenApi3.0' 
         tags:
           type: array
           items:
@@ -1678,9 +1677,9 @@ components:
       example: 'POST'
     SslTipologiaEnum:
       type: string
-      enum: ['SSLv2Hello', 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2']
+      enum: ['SSLv2Hello', 'SSLv3', 'TLSv1', 'TLSv1.1', 'TLSv1.2', 'TLSv1.3']
       example: 'TLSv1.2'
-      default: 'TLSv1.2'
+      default: 'TLSv1.3'
     KeystoreEnum:
       type: string
       enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
@@ -1704,7 +1703,7 @@ components:
     TipoAutenticazionePrincipalToken:
       type: string
       enum: ['subject', 'clientId', 'username', 'eMail', 'custom']
-      example: 'container'  
+      example: 'clientId'  
     TipoKeystore:
       type: string
       enum: ['JKS', 'PKCS12', 'CER']
@@ -1766,7 +1765,7 @@ components:
     RateLimitingCriteriIntervalloEnum:
       type: string
       enum: ['minuti', 'orario', 'giornaliero']
-      example: 'ok'
+      example: 'giornaliero'
     RateLimitingChiaveEnum:
       type: string
       enum: ['content-based', 'header-based', 'soap-action-based', 'url-based', 'form-based', 'indirizzo-ip', 'indirizzo-ip-forwarded', 'plugin-based']

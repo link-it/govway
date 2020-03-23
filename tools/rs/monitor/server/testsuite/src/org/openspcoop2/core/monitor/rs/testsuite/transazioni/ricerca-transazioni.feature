@@ -536,7 +536,7 @@ Scenario: Ricerca singola transazione per Id Messaggio (Risposta)
     * def transazione = response.items[0]
     * def id_messaggio = transazione.risposta.id
 
-    Given path 'id_messaggio'
+    Given path 'id-messaggio'
     And params ({ tipo_messaggio: 'risposta', id: id_messaggio })
     When method get
     Then status 200

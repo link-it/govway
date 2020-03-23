@@ -22,6 +22,7 @@ package org.openspcoop2.utils.openapi;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -101,10 +102,43 @@ public class UniqueInterfaceGenerator {
 		}
 		config.attachments = attachments;
 		
-		generate(fileDest, config);
+		List<String> blackListParameters = null;
+		List<String> blackListComponents = null;
+		if(args.length>5) {
+			
+			String blackListParametersArgs = args[4].trim();
+			if(blackListParametersArgs!=null) {
+				blackListParameters = new ArrayList<String>();
+				if(blackListParametersArgs.contains(",")) {
+					String [] tmp = blackListParametersArgs.split(",");
+					for (String s : tmp) {
+						blackListParameters.add(s);
+					}
+				}else {
+					blackListParameters.add(blackListParametersArgs);
+				}
+			}
+			
+			String blackListComponentsArgs = args[5].trim();
+			if(blackListComponentsArgs!=null) {
+				blackListComponents = new ArrayList<String>();
+				if(blackListComponentsArgs.contains(",")) {
+					String [] tmp = blackListComponentsArgs.split(",");
+					for (String s : tmp) {
+						blackListComponents.add(s);
+					}
+				}else {
+					blackListComponents.add(blackListComponentsArgs);
+				}
+			}
+			
+		}
+		
+		generate(fileDest, config, blackListParameters, blackListComponents);
 	}
 
-	private static void generate(String fileDest, UniqueInterfaceGeneratorConfig config) throws Exception {
+	private static void generate(String fileDest, UniqueInterfaceGeneratorConfig config, 
+			List<String> blackListParameters, List<String> blackListComponents) throws Exception {
 		
 		SwaggerParseResult pr = null;
 		ParseOptions parseOptions = new ParseOptions();
@@ -201,6 +235,10 @@ public class UniqueInterfaceGenerator {
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
+							if(blackListParameters!=null && blackListParameters.contains(key)) {
+								System.out.println("Parameter '"+key+"' skipped");
+								continue;
+							}
 							Parameter value = maps.get(key);
 							api.getComponents().addParameters(key, value);
 						}
@@ -238,6 +276,10 @@ public class UniqueInterfaceGenerator {
 						Iterator<String> keys = maps.keySet().iterator();
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
+							if(blackListComponents!=null && blackListComponents.contains(key)) {
+								System.out.println("Component '"+key+"' skipped");
+								continue;
+							}
 							Schema<?> value = maps.get(key);
 							api.getComponents().addSchemas(key, value);
 						}
@@ -284,6 +326,27 @@ public class UniqueInterfaceGenerator {
 					Parameter value = maps.get(key);
 					value.setExplode(null);
 					value.setStyle(null);
+					//System.out.println("PARAMETRO *"+key+"* ["+value.getName()+"] ["+value.getExample()+"] ["+value.getExamples()+"] ref["+value.get$ref()+"] tipo["+value.getClass().getName()+"]");
+					checkSchema(0,"Parameter-"+key, value.getSchema());
+				}
+			}
+		}
+		if(api.getComponents().getSchemas()!=null) {
+			@SuppressWarnings("rawtypes")
+			Map<String, Schema> maps = api.getComponents().getSchemas();
+			if(maps!=null && !maps.isEmpty()) {
+				Iterator<String> keys = maps.keySet().iterator();
+				while (keys.hasNext()) {
+					String key = (String) keys.next();
+					Schema<?> value = maps.get(key);
+					String sorgente = "";
+					if(value.getName()!=null) {
+						sorgente = sorgente + value.getName();
+					}
+					else {
+						sorgente = sorgente + "RootSchema";
+					}
+					checkSchema(0, sorgente, value);	
 				}
 			}
 		}
@@ -314,12 +377,78 @@ public class UniqueInterfaceGenerator {
 				}
 			}
 		}
-			
+	
+		/*
+		Object oDescr = engine.getMatchPattern(jsonNode, "$.info.description", JsonPathReturnType.NODE);
+		if(oDescr!=null) {
+			String descr = null;
+			if(oDescr instanceof List<?>) {
+				@SuppressWarnings("unchecked")
+				List<String> l = (List<String>) oDescr;
+				if(!l.isEmpty()) {
+					descr = l.get(0);
+				}
+			}
+			else if(oDescr instanceof String) {
+				descr = (String) oDescr;
+			}
+			else if(oDescr instanceof JsonNode) {
+				JsonNode jN = (JsonNode) oDescr;
+				descr = jN.asText();
+			}
+			else {
+				System.out.println("Description type unknown ["+oDescr.getClass().getName()+"]");
+			}
+			if(descr!=null && org.apache.commons.lang.StringUtils.isNotEmpty(descr)) {
+				schemaRebuild = schemaRebuild.replace("info:", "info:\n  x-summary: \""+descr+"\"");
+			}
+		}
+		*/
+		
+		if(schemaRebuild.startsWith("---")) {
+			schemaRebuild = schemaRebuild.substring("---".length());
+		}
+		if(schemaRebuild.startsWith("\n")) {
+			schemaRebuild = schemaRebuild.substring("\n".length());
+		}
+		
+		String extensions = "extensions:\n" +"    ";
+		schemaRebuild = schemaRebuild.replace(extensions, "");
+		String ext = "    x-";
+		String extCorrect = "  x-";
+		while(schemaRebuild.contains(ext)) {
+			schemaRebuild = schemaRebuild.replace(ext, extCorrect);
+		}
+		
 		try(FileOutputStream fout = new FileOutputStream(fileDest)){
 			fout.write(schemaRebuild.getBytes());
 			fout.flush();
 		}
 		
+	}
+	
+	private static void checkSchema(int profondita, String sorgente, Schema<?> schema) {
+		
+		if(profondita>1000) {
+			return; // evitare stack overflow
+		}
+		
+		@SuppressWarnings("rawtypes")
+		Map<String, Schema> properties = schema.getProperties();
+		if(properties!=null && !properties.isEmpty()) {
+			for (String key : properties.keySet()) {
+				Schema<?> value = properties.get(key);
+				String sorgenteInterno = sorgente+".";
+				if(value.getName()!=null) {
+					sorgenteInterno = sorgenteInterno + value.getName();
+				}
+				else {
+					sorgenteInterno = sorgenteInterno + "schemaProfondita"+profondita;
+				}
+				//System.out.println("SCHEMA ("+sorgente+") *"+key+"* ["+value.getName()+"] ["+value.getType()+"] ["+value.getFormat()+"] ["+value.getExample()+"] ref["+value.get$ref()+"] schema["+value.getClass().getName()+"]");
+				checkSchema((profondita+1),sorgenteInterno,value);
+			}
+		}
 	}
 }
 
