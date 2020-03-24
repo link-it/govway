@@ -1,3 +1,16 @@
+2020-03-24  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Sono stati realizzati i seguenti miglioramenti:
+	- Aggiunta selezione del soggetto di dominio interno tramite widget con autocompletamento, se il numero di soggetti è maggiore di 10.
+	- Modificata icona di espansione dei filtri di ricerca: viene utilizzata la lente.
+	- Aggiunto Tooltip sull'icona di espansione per indicare l'azione disponibile all'utente.
+	- Modificato aspetto dei tag, sono stati eliminati i colori e si e' inserito una visualizzazione comune per tutti.
+	- Allineati colori degli esiti transazioni alle ultime specifiche grafiche.
+	- Modificato colore della label dei tab inattivi.
+	- Modificato aspetto della lista delle transazioni; la visualizzazione della colonna Icona 'Ruolo Transazione' 
+	  viene controllata dalle properties di configurazione ed è disabilitata per default.
+
 2019-03-23  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayConsole ApiRsConfigurazione, ApiRsMonitoraggio]
