@@ -4351,8 +4351,8 @@ public class GestoreMessaggi  {
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_SOAP as sbSoap, ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".SBUSTAMENTO_INFO_PROTOCOL as sbProtocol ");
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".NOME_PORTA as nomePorta ");
-					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".LOCK_CONSEGNA as lock ");
-					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".CLUSTER_ID as cluster ");
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".LOCK_CONSEGNA as saLock "); // non usare lock e' una parola riservata di oracle
+					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".CLUSTER_ID as saCluster "); // non usare cluster e' una parola riservata di oracle
 					query.append(" "+GestoreMessaggi.MSG_SERVIZI_APPLICATIVI+".ATTESA_ESITO as attesa ");
 					
 					query.append(" FROM ");
@@ -4464,9 +4464,9 @@ public class GestoreMessaggi  {
 					msg.setSbustamentoInformazioniProtocollo(sbInfoProt==CostantiDB.TRUE);
 					msg.setNomePorta(rs.getString("nomePorta"));
 					
-					Timestamp dataPresaInConsegna = rs.getTimestamp("lock");
+					Timestamp dataPresaInConsegna = rs.getTimestamp("saLock");
 					msg.setDataPresaInConsegna(dataPresaInConsegna);
-					msg.setClusterIdPresaInConsegna(rs.getString("cluster"));
+					msg.setClusterIdPresaInConsegna(rs.getString("saCluster"));
 					int attesaTransazioneCapostipite = rs.getInt("attesa");
 					msg.setAttesaEsitoTransazioneCapostipite(attesaTransazioneCapostipite==CostantiDB.TRUE);
 					

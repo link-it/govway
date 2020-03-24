@@ -23,6 +23,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -7734,9 +7735,7 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			
 			// preparo i dati
 			Vector<Vector<DataElement>> dati = new Vector<Vector<DataElement>>();
-			Iterator<PortaApplicativaServizioApplicativo> it = lista.iterator();
 			
-			PortaApplicativaServizioApplicativo paSA = null;
 			int idTab = 0;
 			
 			
@@ -7749,8 +7748,37 @@ public class PorteApplicativeHelper extends ServiziApplicativiHelper {
 			Parameter pConfigurazioneFiltro = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_FILTRO, Costanti.CHECK_BOX_ENABLED_TRUE);
 			Parameter pConfigurazioneConnettore = new Parameter(PorteApplicativeCostanti.PARAMETRO_PORTE_APPLICATIVE_CONNETTORI_MULTIPLI_CONFIGURAZIONE_CONNETTORE, Costanti.CHECK_BOX_ENABLED_TRUE);
 			
+			// Colleziono prima i nomi dei connettori per ordinarli in ordine alfatebito, lasciando in testa il connettore di default
+			HashMap<String, PortaApplicativaServizioApplicativo> paList = new HashMap<String, PortaApplicativaServizioApplicativo>();
+			PortaApplicativaServizioApplicativo paDefault = null;
+			Iterator<PortaApplicativaServizioApplicativo> it = lista.iterator();
 			while (it.hasNext()) {
-				paSA = it.next();
+				PortaApplicativaServizioApplicativo paSA = it.next();
+				boolean connettoreDefault = this.isConnettoreDefault(paSA);
+				if(connettoreDefault) {
+					paDefault = paSA;
+				}
+				else {
+					String nomeConnettore =  this.getLabelNomePortaApplicativaServizioApplicativo(paSA);
+					paList.put(nomeConnettore, paSA);
+				}
+			}
+			List<PortaApplicativaServizioApplicativo> listOrdinata = new ArrayList<PortaApplicativaServizioApplicativo>();
+			if(paDefault!=null) {
+				listOrdinata.add(paDefault);
+			}	
+			if(!paList.isEmpty()) {
+				List<String> keysOrdinate = new ArrayList<String>();
+				keysOrdinate.addAll(paList.keySet());
+				Collections.sort(keysOrdinate);
+				for (String key : keysOrdinate) {
+					PortaApplicativaServizioApplicativo paSA = paList.get(key);
+					listOrdinata.add(paSA);
+				}
+			}
+			
+			for(PortaApplicativaServizioApplicativo paSA: listOrdinata) {
+				
 				PortaApplicativaServizioApplicativoConnettore datiConnettore = paSA.getDatiConnettore();
 				
 				Vector<DataElement> e = new Vector<DataElement>();
