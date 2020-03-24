@@ -180,6 +180,7 @@ public class DynamicUtils {
 		DynamicUtils.fillDynamicMap(log, dynamicMap, dInfo);		
     }
 	
+	@SuppressWarnings("unchecked")
 	public static void fillDynamicMap(Logger log, Map<String, Object> dynamicMap, DynamicInfo dynamicInfo) {
 		if(dynamicMap.containsKey(Costanti.MAP_DATE_OBJECT)==false) {
 			dynamicMap.put(Costanti.MAP_DATE_OBJECT, DateManager.getDate());
@@ -213,13 +214,17 @@ public class DynamicUtils {
 	    		}
 			}
 
-			if (!dynamicMap.containsKey(Costanti.MAP_CONFIG_PROPERTY) && dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
-				@SuppressWarnings("unchecked")
-				Map<String, String> configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
-				if (configProperties != null && !configProperties.isEmpty()) {
-					dynamicMap.put(Costanti.MAP_CONFIG_PROPERTY, configProperties);
+			if (!dynamicMap.containsKey(Costanti.MAP_CONFIG_PROPERTY)) {
+				Map<String, String> configProperties = null; // aggiungo sempre, piu' pratico il controllo nei template engine
+				if (dynamicInfo.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE)) {
+					configProperties = (Map<String, String>)dynamicInfo.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.PROPRIETA_CONFIGURAZIONE);
 				}
+				if(configProperties==null) {
+					configProperties = new HashMap<String, String>();
+				}
+				dynamicMap.put(Costanti.MAP_CONFIG_PROPERTY, configProperties);
 			}
+			
 		}
 		
 		if(dynamicMap.containsKey(Costanti.MAP_BUSTA_OBJECT)==false && dynamicInfo!=null && dynamicInfo.getBusta()!=null) {
@@ -243,14 +248,22 @@ public class DynamicUtils {
 			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_HEADER)==false && dynamicInfo!=null && 
-				dynamicInfo.getTrasporto()!=null && !dynamicInfo.getTrasporto().isEmpty()) {
-			dynamicMap.put(Costanti.MAP_HEADER, dynamicInfo.getTrasporto());
+		if(dynamicMap.containsKey(Costanti.MAP_HEADER)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getTrasporto()!=null) {
+				dynamicMap.put(Costanti.MAP_HEADER, dynamicInfo.getTrasporto());
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_HEADER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
 		}
 		
-		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER)==false && dynamicInfo!=null && 
-				dynamicInfo.getQueryParameters()!=null && !dynamicInfo.getQueryParameters().isEmpty()) {
-			dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, dynamicInfo.getQueryParameters());
+		if(dynamicMap.containsKey(Costanti.MAP_QUERY_PARAMETER)==false) {
+			if(dynamicInfo!=null && dynamicInfo.getQueryParameters()!=null) {
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, dynamicInfo.getQueryParameters());
+			}
+			else {
+				dynamicMap.put(Costanti.MAP_QUERY_PARAMETER, new HashMap<String, String>()); // aggiungo sempre, piu' pratico il controllo nei template engine
+			}
 		}
 		
 		// questi sottostanti, non sono disponnibili sul connettore

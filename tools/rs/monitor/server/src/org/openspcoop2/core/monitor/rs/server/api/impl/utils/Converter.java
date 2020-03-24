@@ -29,6 +29,7 @@ import org.openspcoop2.core.eventi.constants.TipoSeverita;
 import org.openspcoop2.core.eventi.utils.SeveritaConverter;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
 import org.openspcoop2.core.monitor.rs.server.model.Evento;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ItemTransazione;
@@ -57,7 +58,6 @@ import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
 import org.openspcoop2.utils.service.beans.utils.ProfiloUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.eventi.bean.EventoBean;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioneGenerale;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiConfigurazioni;
@@ -388,7 +388,7 @@ public class Converter {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Soggetto locale non indicato; parametro obbligatorio");
 			}
 		}
-		if(!Utility.existsIdentificativoPorta(tipoSoggetto, nomeSoggettoLocale)) {
+		if(!SoggettiConfig.existsIdentificativoPorta(tipoSoggetto, nomeSoggettoLocale)) {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto locale indicato non esiste");
 		}
 		String nomeSoggettoErogatore = null;

@@ -22,6 +22,7 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
+import org.openspcoop2.core.monitor.rs.server.config.SoggettiConfig;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.transazioni.constants.PddRuolo;
@@ -36,7 +37,6 @@ import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.bean.BaseSearchForm;
 import org.openspcoop2.web.monitor.core.constants.ModalitaRicercaTransazioni;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
-import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.eventi.bean.EventiSearchForm;
 import org.openspcoop2.web.monitor.statistiche.bean.ConfigurazioniGeneraliSearchForm;
 import org.openspcoop2.web.monitor.statistiche.constants.CostantiExporter;
@@ -102,7 +102,7 @@ public class SearchFormUtilities {
 			}
 		}
 		if(nomeSoggettoLocale!=null) {
-			if(!Utility.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
+			if(!SoggettiConfig.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
 			}
 			searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
@@ -125,7 +125,7 @@ public class SearchFormUtilities {
 			}
 		}
 		if(nomeSoggettoLocale!=null) {
-			if(!Utility.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
+			if(!SoggettiConfig.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
 			}
 			request.overrideParameter(CostantiExporter.SOGGETTO_LOCALE,tipoSoggettoLocale+"/"+nomeSoggettoLocale);
