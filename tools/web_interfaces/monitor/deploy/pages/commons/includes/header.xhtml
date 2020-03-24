@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:link="http://www.link.it">
 	
 	<h:panelGroup layout="block" id="headerContentParent">
 		<h:panelGroup layout="block" id="headerLogo" styleClass="stileLogo" rendered="#{not empty loginBean.logoHeaderImage}">
@@ -100,20 +101,41 @@
 											<h:panelGrid columns="#{loginBean.colonneUserInfo}">
 												<c:if test="#{loginBean.visualizzaSezioneSoggetto}">
 													<c:if test="#{loginBean.visualizzaMenuSoggetto}">
-														<rich:dropDownMenu id="menuSoggetto" direction="bottom-right" jointPoint="br" horizontalOffset="#{-(loginBean.widthVociMenuSoggetto + 8)}" popupWidth="#{loginBean.widthVociMenuSoggetto}">
-											                <f:facet name="label"> 
-											                    <h:panelGroup>
-											                        <h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto" id="labelSoggetto"/>
-											                        <h:outputText styleClass="soggettoImg" value=""/>
-											                    </h:panelGroup>
-											                </f:facet>
-											                <c:forEach items="#{loginBean.vociMenuSoggetto}" var="voce">
-											                	<rich:menuItem submitMode="server" value="#{voce.label}" action="#{loginBean.cambiaSoggetto}" disabled="#{voce.disabled}" id="#{voce.id}">
-											                		<f:setPropertyActionListener value="#{voce.value}" target="#{loginBean.soggettoPddMonitor}"></f:setPropertyActionListener>
-											                		<rich:toolTip id="toolLabel_#{voce.id}" for="#{voce.id}" mode="client" value="#{voce.tooltip}" rendered="#{not empty voce.tooltip}"/>
-											              	  	</rich:menuItem>
-											                </c:forEach>
-											            </rich:dropDownMenu>
+														<c:if test="#{not loginBean.visualizzaLinkSelezioneSoggetto}">
+															<rich:dropDownMenu id="menuSoggetto" direction="bottom-right" jointPoint="br" horizontalOffset="#{-(loginBean.widthVociMenuSoggetto + 8)}" popupWidth="#{loginBean.widthVociMenuSoggetto}">
+												                <f:facet name="label"> 
+												                    <h:panelGroup>
+												                        <h:outputText value="#{not empty loginBean.labelSoggettoNormalized ? loginBean.labelSoggettoNormalized : loginBean.labelSoggetto}" styleClass="soggetto" id="labelSoggetto"/>
+												                        <h:outputText styleClass="soggettoImg" value=""/>
+												                    </h:panelGroup>
+												                </f:facet>
+												                <c:forEach items="#{loginBean.vociMenuSoggetto}" var="voce">
+												                	<rich:menuItem submitMode="server" value="#{voce.label}" action="#{loginBean.cambiaSoggetto}" disabled="#{voce.disabled}" id="#{voce.id}">
+												                		<f:setPropertyActionListener value="#{voce.value}" target="#{loginBean.soggettoPddMonitor}"></f:setPropertyActionListener>
+												                		<rich:toolTip id="toolLabel_#{voce.id}" for="#{voce.id}" mode="client" value="#{voce.tooltip}" rendered="#{not empty voce.tooltip}"/>
+												              	  	</rich:menuItem>
+												                </c:forEach>
+												            </rich:dropDownMenu>
+											            </c:if>
+											            <c:if test="#{loginBean.visualizzaLinkSelezioneSoggetto}">
+											            	<a4j:outputPanel layout="block" id="menuSoggettoAutocomplete">
+											            		<h:outputText styleClass="soggettoAutocomplete" id="labelSoggettoAutocomplete" value="Soggetto:" rendered="#{true}" />
+																	<h:inputText id="menuSoggetto_menuAutocomplete" value="#{not empty loginBean.labelSoggettoNormalizedSenzaPrefisso ? loginBean.labelSoggettoNormalizedSenzaPrefisso : loginBean.labelSoggettoSenzaPrefisso}" styleClass="inputLink" />
+																	<rich:suggestionbox id="menuSoggettoAutocompleteSuggestion" width="300"
+																		for="menuSoggetto_menuAutocomplete" listWidth="300"
+																		suggestionAction="#{loginBean.soggettoPddMonitorAutoComplete}" var="selectItem" fetchValue="#{selectItem.label}"
+																		ajaxSingle="true" nothingLabel="--" param="menuSoggettoAutocompleteCombo" entryClass="autocomplete-item" popupClass="autocomplete-items">
+																		<h:column>
+																			<h:outputText value="#{selectItem.label}" rendered="true" />
+																		</h:column>
+																		<a4j:support status="mainStatus" event="onselect" action="#{loginBean.cambiaSoggetto}" 
+																				reRender="menuSoggettoAutocomplete" limitToList="true">
+																			<f:setPropertyActionListener value="#{selectItem.value}" target="#{loginBean.soggettoPddMonitor}" /> 
+																		</a4j:support>
+																	</rich:suggestionbox>
+																	<h:inputHidden id="menuSoggettoAutocompleteInputHidden" value="#{loginBean.soggettoPddMonitor}" />
+															</a4j:outputPanel>
+											            </c:if>
 										            </c:if>
 										            <c:if test="#{not loginBean.visualizzaMenuSoggetto}">
 										            	<c:if test="#{not loginBean.visualizzaLinkSelezioneSoggetto}">

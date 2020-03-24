@@ -30,6 +30,7 @@ import java.util.Map;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
@@ -677,8 +678,39 @@ public class LoginBean extends AbstractLoginBean {
 		return "soggettoPddMonitor";
 	}
 	
+	public void soggettoAutocompleteSelected(ActionEvent ae) {}
+	
+	public void setSoggettoPddMonitorAutocomplete(String modalita) {
+		this.soggettoPddMonitor = modalita;
+		
+		if(Costanti.VALUE_PARAMETRO_MODALITA_ALL.equals(this.soggettoPddMonitor))
+			this.soggettoPddMonitor = null;
+		
+		this.getLoggedUser().getUtente().setSoggettoSelezionatoPddMonitor(this.soggettoPddMonitor);
+		
+		try {
+			this.loginDao.salvaSoggettoPddMonitor(this.getLoggedUser().getUtente());
+		} catch (NotFoundException | ServiceException e) {
+			String errorMessage = "Si e' verificato un errore durante il cambio del soggetto, si prega di riprovare piu' tardi.";
+			this.log.error(e.getMessage(),e);
+			MessageUtils.addErrorMsg(errorMessage);
+		}
+		
+		this.visualizzaSezioneSoggetto = null;
+		this.visualizzaMenuSoggetto = null;	
+		this.visualizzaLinkSelezioneSoggetto = null;
+	}
+	
 	public String getLabelSoggettoNormalized() throws Exception {
-		String label = _getLabelSoggetto(true);
+		return _getLabelSoggettoNormalized(true);
+	}
+	
+	public String getLabelSoggettoNormalizedSenzaPrefisso() throws Exception {
+		return _getLabelSoggettoNormalized(false);
+	}
+	
+	public String _getLabelSoggettoNormalized(boolean addPrefix) throws Exception {
+		String label = _getLabelSoggetto(addPrefix);
 		
 //		if(label.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente()) {
 //			return Utility.normalizeLabel(label, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelButtonSoggettiOperativiMenuUtente());
@@ -732,6 +764,9 @@ public class LoginBean extends AbstractLoginBean {
 	public void setLabelSoggetto(String labelSoggetto) {
 	}
 	
+	public void setLabelSoggettoSenzaPrefisso(String labelSoggetto) {
+	}
+	
 	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
 		User utente = this.getUtente();
 		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
@@ -753,6 +788,33 @@ public class LoginBean extends AbstractLoginBean {
 				return soggettiAssociatiUtente;
 		}
 		return soggettiOperativiDisponibiliUtente;
+	}
+	
+	public List<org.openspcoop2.web.monitor.core.bean.SelectItem> soggettoPddMonitorAutoComplete(Object val) throws Exception{
+		List<org.openspcoop2.web.monitor.core.bean.SelectItem> listaGruppi = new ArrayList<org.openspcoop2.web.monitor.core.bean.SelectItem>();
+//		List<SelectItem> listaGruppiTmp = new ArrayList<>();
+		if(val==null || StringUtils.isEmpty((String)val)) {
+			
+		}else{
+			List<MenuModalitaItem>  vociMenuSoggetto  = this.getVociMenuSoggetto();
+			
+			for (MenuModalitaItem menuModalitaItem : vociMenuSoggetto) {
+				if(menuModalitaItem.getLabel().toUpperCase().contains(((String)val).toUpperCase())) {
+					listaGruppi.add(new org.openspcoop2.web.monitor.core.bean.SelectItem(menuModalitaItem.getValue(), menuModalitaItem.getLabel()));
+				}
+			}
+			
+//			listaGruppi.add(0, new org.openspcoop2.web.monitor.core.bean.SelectItem("--", "--"));
+			
+//			for (SelectItem selectItem : listaGruppiTmp) {
+//				String label = selectItem.getLabel();
+//				String value = (String) selectItem.getValue();
+//				
+//				org.openspcoop2.web.monitor.core.bean.SelectItem newItem = new org.openspcoop2.web.monitor.core.bean.SelectItem(value, label);
+//				listaGruppi.add(newItem);
+//			}
+		}
+		return listaGruppi;
 	}
 
 	public List<MenuModalitaItem> getVociMenuSoggetto() {
@@ -788,68 +850,68 @@ public class LoginBean extends AbstractLoginBean {
 					soggettoOperativoSelezionato = idSoggetto.toString(); // forzo
 				}
 
-				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
+				//Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = PddMonitorProperties.getInstance(this.log).getNumeroMassimoSoggettiOperativiMenuUtente();
 				
-				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
+//				if(soggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
 					
-					if(soggettiOperativi.size()>1) {
-						List<String> listaLabel = new ArrayList<>();
-						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
-						for (Soggetto soggetto : soggettiOperativi) {
-							IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
-							String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
-							if(!listaLabel.contains(labelSoggetto)) {
-								listaLabel.add(labelSoggetto);
-								mapLabelIds.put(labelSoggetto, idSoggetto);
-							}
+				if(soggettiOperativi.size()>1) {
+					List<String> listaLabel = new ArrayList<>();
+					Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+					for (Soggetto soggetto : soggettiOperativi) {
+						IDSoggetto idSoggetto = new IDSoggetto(soggetto.getTipoSoggetto(), soggetto.getNomeSoggetto()); 
+						String labelSoggetto = NamingUtils.getLabelSoggetto(idSoggetto);
+						if(!listaLabel.contains(labelSoggetto)) {
+							listaLabel.add(labelSoggetto);
+							mapLabelIds.put(labelSoggetto, idSoggetto);
 						}
+					}
+					
+					// Per ordinare in maniera case insensistive
+					Collections.sort(listaLabel, new Comparator<String>() {
+						 @Override
+						public int compare(String o1, String o2) {
+					           return o1.toLowerCase().compareTo(o2.toLowerCase());
+					        }
+						});
+					
+					int i = 1;
+					for (String label : listaLabel) {
+						String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
+						MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
 						
-						// Per ordinare in maniera case insensistive
-						Collections.sort(listaLabel, new Comparator<String>() {
-							 @Override
-							public int compare(String o1, String o2) {
-						           return o1.toLowerCase().compareTo(o2.toLowerCase());
-						        }
-							});
-						
-						int i = 1;
-						for (String label : listaLabel) {
-							String labelSoggetto = NamingUtils.getLabelSoggetto(mapLabelIds.get(label)); 
-							MenuModalitaItem menuItem = new MenuModalitaItem(mapLabelIds.get(label).toString(), labelSoggetto, null); 
-							
-							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
-								menuItem.setDisabled(true);
-							
-							Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
-							if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
-								menuItem.setTooltip(labelSoggetto);
-								menuItem.setLabel(Utility.normalizeLabel(labelSoggetto, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()));
-								// per misurare la dimensione utilizzo solo la prima linea
-								labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
-										PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
-							}
-							
-							menuItem.setLabelWidth(labelSoggettoWidth); 
-							
-							menuItem.setId("voceSoggetto_"+ (i++));
-							
-							this.vociMenuSoggetto.add(menuItem);
-						}
-						
-						// seleziona tutti
-						// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
-						String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
-						Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
-						MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
-						menuItem.setLabelWidth(labelTuttiWidth); 
-						if((soggettoOperativoSelezionato == null)) 
+						if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString()))
 							menuItem.setDisabled(true);
+						
+						Integer labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(menuItem.getLabel()); 
+						if(labelSoggetto.length() > PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()) {
+							menuItem.setTooltip(labelSoggetto);
+							menuItem.setLabel(Utility.normalizeLabel(labelSoggetto, PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente()));
+							// per misurare la dimensione utilizzo solo la prima linea
+							labelSoggettoWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(Utility.normalizeLabel(labelSoggetto, 
+									PddMonitorProperties.getInstance(this.log).getLunghezzaMassimaLabelSelectListSoggettiOperativiMenuUtente())); 
+						}
+						
+						menuItem.setLabelWidth(labelSoggettoWidth); 
 						
 						menuItem.setId("voceSoggetto_"+ (i++));
 						
 						this.vociMenuSoggetto.add(menuItem);
 					}
-				} 		
+					
+					// seleziona tutti
+					// (this.modalita == null) ? Costanti.ICONA_MENU_UTENTE_CHECKED : Costanti.ICONA_MENU_UTENTE_UNCHECKED
+					String labelTutti = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
+					Integer labelTuttiWidth = DynamicPdDBeanUtils.getInstance(this.log).getFontWidth(labelTutti); 
+					MenuModalitaItem menuItem = new MenuModalitaItem(Costanti.VALUE_PARAMETRO_MODALITA_ALL, labelTutti, null);
+					menuItem.setLabelWidth(labelTuttiWidth); 
+					if((soggettoOperativoSelezionato == null)) 
+						menuItem.setDisabled(true);
+					
+					menuItem.setId("voceSoggetto_"+ (i++));
+					
+					this.vociMenuSoggetto.add(menuItem);
+				}
+//				} 		
 			}
 
 		}catch(Throwable e) {

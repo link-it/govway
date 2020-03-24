@@ -85,21 +85,19 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 							 				GeneralLink soggettoTitoloLink = soggetti.get(0);
 									 		%>
 									 		<td>
-										 		<div id="menuSoggetto" class="ddmenu-label">
-													<div class="text-decor"> 
-														<% if(soggettoTitoloLink.getUrl().equals("")){%>
+									 			<% if(soggettoTitoloLink.getUrl().equals("")){ %>
+										 			<div id="menuSoggetto" class="ddmenu-label">
+														<div class="text-decor"> 
 															<span class="soggetto"><%=soggettoTitoloLink.getLabel() %></span>
 															<% if(soggetti.size() > 1){%>
 																<span class="soggettoImg"></span>
 															<%
 																}
-															}else {%>
-															<span class="soggetto">
-																<a class="td2PageHeader" onClick="<%= Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS %>return true;" href="<%= soggettoTitoloLink.getUrl() %>"><%= soggettoTitoloLink.getLabel() %></a>
-															 </span>
-														<% }%>
-													</div>
-													<% if(soggetti.size() > 1){%>
+															%>
+														</div>
+														<% 
+														if(soggetti.size() > 1){
+														%>
 														<div style="margin: 0px; padding: 0px; border: 0px; position: relative; z-index: 100;">
 															<div id="menuSoggetto_menu">
 											 				<% 
@@ -159,18 +157,63 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 															    		</span>					    					    
 														    		</div>
 															    	<%
-																}
-													  		}
+																	}
+														  		}
+														    	%>
+												 				</div>
+														  	</div>
+													  	<% } %>
+													</div>
+												<%
+									 			} else {
+													// Autocomplete
+													%>
+													<div id="menuSoggettoAutocomplete" class=""> 
+														<script type="text/javascript">
+													  
+													 		 /*An array containing all the country names in the world:*/
+													  		var soggettiSuggestionList = [];
+													  		
+														  	
+													  		<% 
+													  		String labelSelezionato = "";
+										  					GeneralLink l;
+										  					for (int i = 1; i < soggetti.size(); i++) {
+																l = (GeneralLink) soggetti.elementAt(i);
+																
+																String label = l.getLabel();
+																String value = l.getUrl();
+																String selected = "false";
+																if(l.getUrl().equals("")){
+																	selected = "true";
+																	labelSelezionato = l.getLabel();
+														  		}
+																
+																%>
+																	var soggettoItem_<%=i %> = {};
+																	soggettoItem_<%=i %>.value = '<%= value %>';
+																	soggettoItem_<%=i %>.label = '<%= label %>';
+																	soggettoItem_<%=i %>.selected = <%= selected %>;
+																
+																	soggettiSuggestionList.push(soggettoItem_<%=i %>);
+																<%
+										  					}
 													    	%>
-											 				</div>
-													  	</div>
-												  	<% } %>
-												</div>
+												  		</script>
+													
+														<div class="autocomplete">
+															<span class="soggettoAutocomplete">Soggetto:</span>
+														    <input id="menuSoggetto_menuAutocomplete" type="text" name="soggettoAutoComplete" value="<%=labelSelezionato %>">
+														  </div>
+													
+													  <script type="text/javascript" src="js/autocomplete.js"></script>
+													  <script type="text/javascript">
+														  autocomplete(document.getElementById("menuSoggetto_menuAutocomplete"), soggettiSuggestionList);
+													  </script>
+													</div>
+												<% } %>
 									 		</td>
-				 						<%
-							 			}
-										%>
-				 				
+				 						<% } %>
 				 					<%
 										Vector<GeneralLink> modalita = gd.getModalitaLinks();
 							 			if(modalita!= null && modalita.size() > 0) {
@@ -254,9 +297,7 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 												  	<% }%>
 												</div>
 									 		</td>
-				 						<%
-							 			}
-										%>
+				 						<% }%>
 				 					<td>
 								 		<%
 										Vector<GeneralLink> v = gd.getHeaderLinks();
