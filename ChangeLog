@@ -13,6 +13,13 @@
 
 2019-03-23  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, ApiRsConfigurazione]
+	Se veniva creato un nuovo soggetto di dominio interno (multitenant) tramite la console di gestione, 
+	le API di configurazione "vedevano" il nuovo soggetto solamente dopo il riavvio dell'applicazione. Il problema è stato risolto.
+	Nel contesto delle trasformazioni vengono inoltre sempre create le mappe 'query', 'header' e 'config' in modo da non doverne verificare l'esistenza nei template engine.
+
+2019-03-23  Andrea Poli <apoli@link.it>
+
 	* [Utils, GovWayConsole ApiRsConfigurazione, ApiRsMonitoraggio]
 	Aggiornate interfacce OpenAPI delle API di configurazione e monitoraggio al fine di superare la validazione del team digitale 
 	effettuata tramite il tool presente nel progetto https://github.com/teamdigitale/api-oas-checker ed essere compatibile con le linee guida del modello di interoperabilità.
