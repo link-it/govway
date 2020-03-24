@@ -18,15 +18,17 @@
 			<rich:simpleTogglePanel id="configurazioniGeneraliSearch" switchType="client"
 				label="#{msg['configurazioniGenerali.nomeSezione']}" opened="true">
 				<f:facet name="openMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="openMarkerPnl" value="#{msg['commons.search.filtroRicerca.visualizza.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 				
 				<f:facet name="closeMarker">
-					<span class="icon-search-box">
-						<i class="material-icons md-24" id="iconaSearchOpen">&#xE152;</i>
-					</span>
+					<a4j:outputPanel id="closeMarkerPnl" stuleClass="icon-search-box">
+						<i class="material-icons md-24" id="iconaSearchOpen">&#xE8B6;</i>
+						<rich:toolTip for="closeMarkerPnl" value="#{msg['commons.search.filtroRicerca.nascondi.tooltip']}" />
+					</a4j:outputPanel>
 				</f:facet>
 	
 				<div class="form-container noborder">
@@ -80,7 +82,7 @@
 	
 						</a4j:outputPanel>
 						<div class="buttonrow">
-							<a4j:commandButton styleClass="icon-refresh" value="Filtra"
+							<a4j:commandButton styleClass="icon-refresh" value="Cerca"
 								reRender="panelPaginaRicerca" 
 								action="#{configurazioniGeneraliBean.filtra}"
 								/>

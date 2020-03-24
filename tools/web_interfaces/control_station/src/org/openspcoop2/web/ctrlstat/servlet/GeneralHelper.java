@@ -391,74 +391,74 @@ public class GeneralHelper {
 				
 				Integer numeroMassimoSoggettiSelectListSoggettiOperatiti = this.core.getNumeroMassimoSoggettiSelectListSoggettiOperatiti();
 				
-				if(idSoggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {
-					
-					if(idSoggettiOperativi.size()>1) {
-						List<String> listaLabel = new ArrayList<>();
-						Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
-						for (IDSoggetto idSoggetto : idSoggettiOperativi) {
-							String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
-							if(!listaLabel.contains(labelSoggetto)) {
-								listaLabel.add(labelSoggetto);
-								mapLabelIds.put(labelSoggetto, idSoggetto);
-							}
+				if(idSoggettiOperativi.size()>1) {
+					List<String> listaLabel = new ArrayList<>();
+					Map<String, IDSoggetto> mapLabelIds = new HashMap<>();
+					for (IDSoggetto idSoggetto : idSoggettiOperativi) {
+						String labelSoggetto = ConsoleHelper._getLabelNomeSoggetto(idSoggetto);
+						if(!listaLabel.contains(labelSoggetto)) {
+							listaLabel.add(labelSoggetto);
+							mapLabelIds.put(labelSoggetto, idSoggetto);
 						}
-						
-						// Per ordinare in maniera case insensistive
-						Collections.sort(listaLabel, new Comparator<String>() {
-							 @Override
-							public int compare(String o1, String o2) {
-						           return o1.toLowerCase().compareTo(o2.toLowerCase());
-						        }
-							});
-						
-						for (String label : listaLabel) {
-							GeneralLink glSoggetto = new GeneralLink();
-							
-							glSoggetto.setLabel(label);
-	//						String iconProt = labelSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED :
-	//							(label.equals(labelSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-	//						glSoggetto.setIcon(iconProt);
-							if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString())) {
-								glSoggetto.setUrl("");
-							} else {
-								glSoggetto.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-										new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, NamingUtils.getSoggettoFromLabel(protocolloSelezionato, label).toString()),
-										new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
-										new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO,Costanti.CHECK_BOX_ENABLED)
-										);
-							}
-							
-							if(label.length() > this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()) {
-								glSoggetto.setLabel(ConsoleHelper.normalizeLabel(label, this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()));
-								glSoggetto.setTooltip(label); 
-							}
-							
-							glSoggetto.setLabelWidth(this.core.getFontWidth(glSoggetto.getLabel(), 14)); 
-							link.addElement(glSoggetto);
-						}
+					}
 					
+					// Per ordinare in maniera case insensistive
+					Collections.sort(listaLabel, new Comparator<String>() {
+						 @Override
+						public int compare(String o1, String o2) {
+					           return o1.toLowerCase().compareTo(o2.toLowerCase());
+					        }
+						});
 					
-						// seleziona tutti 
-						GeneralLink glAll = new GeneralLink();
-						glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
-	//					glAll.setIcon((labelSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
-						if((soggettoOperativoSelezionato == null)) {
-							glAll.setUrl("");
+					for (String label : listaLabel) {
+						GeneralLink glSoggetto = new GeneralLink();
+						
+						glSoggetto.setLabel(label);
+//						String iconProt = labelSelezionato == null ? LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED :
+//							(label.equals(labelSelezionato) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+//						glSoggetto.setIcon(iconProt);
+						if(soggettoOperativoSelezionato != null && mapLabelIds.get(label).toString().equals(idSoggettoOperativo.toString())) {
+							glSoggetto.setUrl("");
 						} else {
-							glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
-									new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
+							glSoggetto.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+									new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, NamingUtils.getSoggettoFromLabel(protocolloSelezionato, label).toString()),
 									new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
 									new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO,Costanti.CHECK_BOX_ENABLED)
 									);
 						}
-						glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
-						link.addElement(glAll);
+						
+						if(label.length() > this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()) {
+							glSoggetto.setLabel(ConsoleHelper.normalizeLabel(label, this.core.getLunghezzaMassimaLabelSoggettiOperativiMenuUtente()));
+							glSoggetto.setTooltip(label); 
+						}
+						
+						glSoggetto.setLabelWidth(this.core.getFontWidth(glSoggetto.getLabel(), 14)); 
+						link.addElement(glSoggetto);
 					}
+				
+				
+					// seleziona tutti 
+					GeneralLink glAll = new GeneralLink();
+					glAll.setLabel(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL);
+//					glAll.setIcon((labelSelezionato == null) ? LoginCostanti.ICONA_MENU_UTENTE_CHECKED : LoginCostanti.ICONA_MENU_UTENTE_UNCHECKED);
+					if((soggettoOperativoSelezionato == null)) {
+						glAll.setUrl("");
+					} else {
+						glAll.setUrl(UtentiCostanti.SERVLET_NAME_UTENTE_CHANGE,
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_ID_SOGGETTO, UtentiCostanti.VALORE_PARAMETRO_MODALITA_ALL),
+								new Parameter(Costanti.DATA_ELEMENT_EDIT_MODE_NAME,Costanti.DATA_ELEMENT_EDIT_MODE_VALUE_EDIT_END),
+								new Parameter(UtentiCostanti.PARAMETRO_UTENTE_CHANGE_SOGGETTO,Costanti.CHECK_BOX_ENABLED)
+								);
+					}
+					glAll.setLabelWidth(this.core.getFontWidth(UtentiCostanti.LABEL_PARAMETRO_MODALITA_ALL, 14));
+					link.addElement(glAll);
+				}
+				
+				if(idSoggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {	
 					
 				} else {
-					// TODO
-					glSoggettoCorrente.setUrl("urlModifica");
+					// Abilita l visualizzazione autocomplete
+					glSoggettoCorrente.setUrl("abilitaAutocomplete");
 				}
 			}
 		} catch (Exception e) {

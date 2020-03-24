@@ -134,7 +134,9 @@ Context, Cloneable {
 	private boolean integrationManagerEnabled = false;
 	
 	private boolean visualizzaStoricoCustomEnabled = false;
+	private boolean visualizzaStoricoCustomColonnaRuoloTransazioneEnabled = false;
 	private boolean visualizzaLiveCustomEnabled = false;
+	private boolean visualizzaLiveCustomColonnaRuoloTransazioneEnabled = false;
 	private boolean visualizzaConsegneMultipleCustomEnabled = false;
 	
 	public TransazioniSearchForm(){
@@ -164,7 +166,9 @@ Context, Cloneable {
 			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
 			
 			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaStoricoCustomColonnaRuoloTransazioneEnabled = this.visualizzaStoricoCustomEnabled && pddMonitorProperties.isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomTransazioni();
 			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomColonnaRuoloTransazioneEnabled = this.visualizzaLiveCustomEnabled && pddMonitorProperties.isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomLive();
 			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
@@ -193,7 +197,9 @@ Context, Cloneable {
 			BrowserInfo browserInfo = ApplicationBean.getInstance().getBrowserInfo();
 			
 			this.visualizzaStoricoCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomTransazioni() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaStoricoCustomColonnaRuoloTransazioneEnabled = this.visualizzaStoricoCustomEnabled && pddMonitorProperties.isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomTransazioni();
 			this.visualizzaLiveCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomLive() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
+			this.visualizzaLiveCustomColonnaRuoloTransazioneEnabled = this.visualizzaLiveCustomEnabled && pddMonitorProperties.isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomLive();
 			this.visualizzaConsegneMultipleCustomEnabled = pddMonitorProperties.isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() && BrowserFilter.abilitaVisualizzazioneTransazioniCustom(browserInfo);
 			
 		}catch(Exception e){
@@ -1400,5 +1406,21 @@ Context, Cloneable {
 
 	public void setVisualizzaConsegneMultipleCustomEnabled(boolean visualizzaConsegneMultipleCustomEnabled) {
 		this.visualizzaConsegneMultipleCustomEnabled = visualizzaConsegneMultipleCustomEnabled;
+	}
+
+	public boolean isVisualizzaStoricoCustomColonnaRuoloTransazioneEnabled() {
+		return this.visualizzaStoricoCustomColonnaRuoloTransazioneEnabled;
+	}
+
+	public void setVisualizzaStoricoCustomColonnaRuoloTransazioneEnabled(boolean visualizzaStoricoCustomColonnaRuoloTransazioneEnabled) {
+		this.visualizzaStoricoCustomColonnaRuoloTransazioneEnabled = visualizzaStoricoCustomColonnaRuoloTransazioneEnabled;
+	}
+
+	public boolean isVisualizzaLiveCustomColonnaRuoloTransazioneEnabled() {
+		return this.visualizzaLiveCustomColonnaRuoloTransazioneEnabled;
+	}
+
+	public void setVisualizzaLiveCustomColonnaRuoloTransazioneEnabled(boolean visualizzaLiveCustomColonnaRuoloTransazioneEnabled) {
+		this.visualizzaLiveCustomColonnaRuoloTransazioneEnabled = visualizzaLiveCustomColonnaRuoloTransazioneEnabled;
 	}
 }

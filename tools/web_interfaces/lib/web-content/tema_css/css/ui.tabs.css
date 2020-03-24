@@ -19,7 +19,7 @@ overflow: hidden; white-space: nowrap;  padding-bottom: 16px;
 }
 
 .ui-state-active a { color: ${body.color};}
-.ui-state-default a { color: ${table.thead.background.color};}
+.ui-state-default a { color: ${body.color};}
 
 a.mover { padding: 0px 0px 0px 0px; display: inline; color: ${table.thead.background.color}; font-weight: bold; text-decoration: none; }
 .next-tab { }

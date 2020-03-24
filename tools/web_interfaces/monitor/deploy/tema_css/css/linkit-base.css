@@ -484,20 +484,20 @@ span.iconLinkie{
 }
 
 .entryDatiTransazioneRiga1 .divTitoloEntry {
-	padding: 16px 20px 8px 20px;
+	padding: 12px 20px 4px 20px;
     font-size: 16px;
     white-space: nowrap;
 }
 
 .titoloIconaRuolo {
-	padding: 4px 8px 4px 8px;
+	padding: 0px 8px 4px 8px;
 	float: left;
 }
 
 .titoloSX {
 	padding: 0px 0px 0px 0px;
 	float: left;
-	line-height: 32px;
+	line-height: 24px;
 }
 
 .titoloSX > span,
@@ -508,11 +508,11 @@ span.iconLinkie{
 .titoloDX {
 	padding: 0px 8px 0px 0px;
 	float: left;
-	line-height: 32px;
+	line-height: 24px;
 }
 
 .titoloDXAnonimo {
-	padding: 6px 8px 4px 0px;
+	padding: 2px 8px 4px 0px;
 	float: left;
 }
 
@@ -523,7 +523,7 @@ span.iconLinkie{
 .entryDatiTransazioneRiga1 .titoloTags {
 	padding: 0px 0px 0px 0px;
 	float: left;
-    line-height: 32px;
+    line-height: 24px;
 }
 
 .infoColDXTransazioneRiga1 {
@@ -532,8 +532,8 @@ span.iconLinkie{
 }
 
 .infoColDXTransazioneRiga1 .entryInfoEsitoTransazione{
-	padding: 16px 20px 8px 20px;
-	line-height: 32px;
+	padding: 12px 20px 4px 20px;
+	line-height: 24px;
 }
 
 .infoColDXTransazioneRiga1 .entryInfoEsitoTransazione .titoloEntry {
@@ -542,8 +542,8 @@ span.iconLinkie{
 }
 
 .infoColDXTransazioneRiga1 .entryInfoLatenzaTransazione{
-	padding: 16px 20px 8px 20px;
-	line-height: 32px;
+	padding: 12px 20px 4px 20px;
+	line-height: 24px;
 }
 
 .infoColDXTransazioneRiga1 .entryInfoLatenzaTransazione .titoloEntry {
@@ -560,7 +560,7 @@ span.iconLinkie{
 	color: ${body.secondary.color};
 	display: flex;
     flex-wrap: wrap;
-    line-height: 32px;
+    line-height: 24px;
 }
 
 .entryDatiTransazioneRiga2 .metadatiEntry {
@@ -573,7 +573,7 @@ span.iconLinkie{
 
 .infoColDXTransazioneRiga2 .entryInfoEsitoTransazione{
 	padding: 8px 20px 8px 20px;
-	line-height: 32px;
+	line-height: 24px;
 }
 
 .infoColDXTransazioneRiga2 .entryInfoEsitoTransazione .metadatiEntry {
@@ -583,7 +583,7 @@ span.iconLinkie{
 
 .infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione{
 	padding: 8px 20px 8px 20px;
-	line-height: 32px;
+	line-height: 24px;
 }
 
 .infoColDXTransazioneRiga2 .entryInfoLatenzaTransazione .metadatiEntry {

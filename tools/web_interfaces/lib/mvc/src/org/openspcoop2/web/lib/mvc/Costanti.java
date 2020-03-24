@@ -233,6 +233,9 @@ public class Costanti {
 	
 	public final static String LABEL_TITOLO_SEZIONE_DEFAULT = "Filtri di Ricerca";
 	
+	public final static String TOOLTIP_VISUALIZZA_FILTRI_RICERCA = "Visualizza Filtri di Ricerca";
+	public final static String TOOLTIP_NASCONDI_FILTRI_RICERCA = "Nascondi Filtri di Ricerca";
+	
 	public final static String INFO_BUTTON_ICON = "&#xE88E;";
 	public final static String INFO_BUTTON_ICON_WHITE = "&#xE88F;";
 	
@@ -241,4 +244,6 @@ public class Costanti {
 	
 	// Indica il numero delle possibili classi CSS per i tag dei gruppi, modificare questo valore se si vuole modificare il numero delle classi disponibili
 	public final static Integer NUMERO_GRUPPI_CSS = 30;
+	
+	public final static String SA_TIPO_DEFAULT_VALUE = "clientORserver";	
 }

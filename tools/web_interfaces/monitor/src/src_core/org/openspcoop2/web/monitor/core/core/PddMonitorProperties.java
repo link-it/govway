@@ -820,8 +820,16 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.enabled", true, true));
 	}
 	
+	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomTransazioni() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.storico.utilizzaVisualizzazioneCustom.visualizzaColonnaRuoloTransazione.enabled", true, true));
+	}
+	
 	public boolean isAttivoUtilizzaVisualizzazioneCustomLive() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.enabled", true, true));
+	}
+	
+	public boolean isAttivoVisualizzaColonnaRuoloTransazioneVisualizzazioneCustomLive() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.live.utilizzaVisualizzazioneCustom.visualizzaColonnaRuoloTransazione.enabled", true, true));
 	}
 	
 	public boolean isAttivoUtilizzaVisualizzazioneCustomConsegneMultiple() throws Exception{

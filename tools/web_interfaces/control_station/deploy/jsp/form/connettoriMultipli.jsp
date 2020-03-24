@@ -405,9 +405,17 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 	if(panelListaRicercaOpen) {
     	$("#searchForm").removeClass('searchFormOff');
     	$("#searchForm").addClass('searchFormOn');
+    	
+    	if($( "#iconaPanelListaSpan" ).length > 0){
+    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
+    	}
     } else {
     	$("#searchForm").removeClass('searchFormOn');
     	$("#searchForm").addClass('searchFormOff');
+    	
+    	if($( "#iconaPanelListaSpan" ).length > 0){
+    		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_VISUALIZZA_FILTRI_RICERCA %>');
+    	}
     }
 }
 
@@ -437,7 +445,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 							<% if(mostraFormHeader) { %>
 								<td class="titoloSezione titoloSezione-right">
 									<span class="icon-box" id="iconaPanelListaSpan">
-										<i class="material-icons md-24" id="iconaPanelLista">&#xE152;</i>
+										<i class="material-icons md-24" id="iconaPanelLista">&#xE8B6;</i>
 									</span>
 								</td>
 							<% }%>
