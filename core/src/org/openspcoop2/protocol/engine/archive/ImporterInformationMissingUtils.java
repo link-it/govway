@@ -1679,9 +1679,10 @@ public class ImporterInformationMissingUtils {
 				
 				// *** Verifica portType riferito ***
 				if(importInformationMissing!=null && importInformationMissing.getPortTypeImplemented()!=null){
-					if(asps.getPortType()!=null && asps.getPortType().equals(asps.getNome())){
-						asps.setNome(importInformationMissing.getPortTypeImplemented());
-					}
+					// Il nome deve essere gia' corretto dentro l'archivio. Altrimenti tutti i riferimenti poi (mapping.id, porte applicative ....) sono sbagliati.
+//					if(asps.getPortType()!=null && asps.getPortType().equals(asps.getNome())){
+//						asps.setNome(importInformationMissing.getPortTypeImplemented());
+//					}
 					asps.setPortType(importInformationMissing.getPortTypeImplemented());
 				}
 				if(asps.getPortType()!=null){
