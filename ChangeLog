@@ -1,3 +1,11 @@
+2019-03-24  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Corretta impostazione del servizio soap (port-type) selezionabile durante l'importazione di una GovLet: 
+	   il nome del servizio veniva erroneamente utilizzato per sovracrivere il nome dell'API.
+	Corretto inoltre problema presente nell'esportazione delle erogazioni e fruizioni: 
+	  non venivano inclusi gli applicativi e i soggetti presenti nel controllo degli accessi e nelle trasformazioni.
+
 2020-03-24  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]

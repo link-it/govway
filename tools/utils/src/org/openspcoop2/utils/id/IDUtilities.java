@@ -22,6 +22,11 @@ package org.openspcoop2.utils.id;
 import java.util.Hashtable;
 import java.util.Random;
 
+import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.date.DateEngineType;
+import org.openspcoop2.utils.date.DateManager;
+import org.openspcoop2.utils.date.DateUtils;
+
 /**
  * Identity
  *
@@ -67,5 +72,20 @@ public class IDUtilities {
 		for (int idx = 0; idx < buf.length; ++idx) 
 			buf[idx] = symbols[random.nextInt(symbols.length)];
 		return new String(buf);
+	}
+	
+	public static synchronized String generateDateTime(String format, int syncMs) {
+		return generateDateTime(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
+	}
+	public static synchronized String generateDateTime(DateEngineType type, String format, int syncMs) {
+		Utilities.sleep(syncMs);
+		return DateUtils.getTimeFormatter(type, format).format(DateManager.getDate());
+	}
+	public static synchronized String getDateTimeFormatter_ISO_8601_TZ(String format, int syncMs) {
+		return getDateTimeFormatter_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
+	}
+	public static synchronized String getDateTimeFormatter_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
+		Utilities.sleep(syncMs);
+		return DateUtils.getDateTimeFormatter_ISO_8601_TZ(type, format).format(DateManager.getDate());
 	}
 }

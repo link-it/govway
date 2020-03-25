@@ -4454,13 +4454,15 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			this.log.error("Errore durante la lettura della message factory (jmxResourcePdD): "+e.getMessage(),e);
 			messageFactory = ConfigurazioneCostanti.LABEL_INFORMAZIONE_NON_DISPONIBILE;
 		}
-		if(messageFactory!=null){
-			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
-		}
+//		if(messageFactory!=null){
+//			messageFactory = StringEscapeUtils.escapeHtml(messageFactory);
+//		}
 		de = newDataElementStyleRuntime();
 		de.setLabel(ConfigurazioneCostanti.LABEL_PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
-		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "<br/>") : messageFactory);
-		de.setType(DataElementType.TEXT);
+		de.setValue(messageFactory.trim().contains(" ") ? messageFactory.trim().replaceAll(" ", "\n") : messageFactory);
+		de.setType(DataElementType.TEXT_AREA_NO_EDIT);
+		de.setRows(2);
+		de.setCols(60);
 		de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_SISTEMA_MESSAGE_FACTORY);
 		de.setSize(this.getSize());
 		dati.addElement(de);

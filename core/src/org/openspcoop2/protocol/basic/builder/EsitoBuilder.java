@@ -628,7 +628,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 					if(childNode instanceof Element) {
 						try{
 							XmlDeserializer xmlDeserializer = new XmlDeserializer();
-							ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) childNode);
+							ProblemRFC7807 problem = xmlDeserializer.fromNode((Element) childNode, false);
 							Integer status = problem.getStatus();
 							if(status!=null) {
 								int valueInt = status.intValue();
@@ -712,7 +712,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 		if(org.openspcoop2.message.constants.Costanti.TIPO_RFC7807.equals(erroreGovway)) {
 			try{
 				JsonDeserializer jsonDeserializer = new JsonDeserializer();
-				ProblemRFC7807 problem = jsonDeserializer.fromString(jsonBody);
+				ProblemRFC7807 problem = jsonDeserializer.fromString(jsonBody, false);
 				Integer status = problem.getStatus();
 				if(status!=null) {
 					int valueInt = status.intValue();

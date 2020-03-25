@@ -71,6 +71,9 @@ public class XmlDeserializer extends AbstractDeserializer {
 	}
 	
 	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
+		return fromString(problemString, false);
+	}
+	public ProblemRFC7807 fromString(String problemString, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		Element problemNode = null;
 		try {
 			problemNode = this.xmlUtils.newElement(problemString.getBytes());
@@ -79,9 +82,12 @@ public class XmlDeserializer extends AbstractDeserializer {
 		}
 		ProblemRFC7807 p = new ProblemRFC7807();
 		p.setRaw(problemString);
-		return this._fromNode(p, problemNode, true);
+		return this._fromNode(p, problemNode, true, throwExceptionIfUnsupportedCustomClaim);
 	}
 	public ProblemRFC7807 fromByteArray(byte[] problemByteArray) throws UtilsException {
+		return fromByteArray(problemByteArray, false);
+	}
+	public ProblemRFC7807 fromByteArray(byte[] problemByteArray, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		Element problemNode = null;
 		try {
 			problemNode = this.xmlUtils.newElement(problemByteArray);
@@ -90,15 +96,18 @@ public class XmlDeserializer extends AbstractDeserializer {
 		}
 		ProblemRFC7807 p = new ProblemRFC7807();
 		p.setRaw(new String(problemByteArray));
-		return this._fromNode(p, problemNode, true);
+		return this._fromNode(p, problemNode, true, throwExceptionIfUnsupportedCustomClaim);
 	}
 	public ProblemRFC7807 fromNode(Node problemNode) throws UtilsException {
-		return this._fromNode(null, problemNode, true);
+		return this._fromNode(null, problemNode, true, false);
 	}
-	public ProblemRFC7807 fromNode(Node problemNode, boolean setRaw) throws UtilsException {
-		return this._fromNode(null, problemNode, setRaw);
+	public ProblemRFC7807 fromNode(Node problemNode, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
+		return this._fromNode(null, problemNode, true, throwExceptionIfUnsupportedCustomClaim);
 	}
-	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, Node problemNode, boolean setRaw) throws UtilsException {
+	public ProblemRFC7807 fromNode(Node problemNode, boolean setRaw, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
+		return this._fromNode(null, problemNode, setRaw, throwExceptionIfUnsupportedCustomClaim);
+	}
+	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, Node problemNode, boolean setRaw,  boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		
 		ProblemRFC7807 problem = null;
 		if(problemParam!=null) {
@@ -132,7 +141,7 @@ public class XmlDeserializer extends AbstractDeserializer {
 				}
 			}
 			
-			super.set(problem, name, value);
+			super.set(problem, name, value,  throwExceptionIfUnsupportedCustomClaim);
 		}
 
 		if(setRaw && problem.getRaw()==null) {

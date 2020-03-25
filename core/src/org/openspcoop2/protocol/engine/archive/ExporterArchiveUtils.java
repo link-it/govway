@@ -27,7 +27,12 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.TrasformazioneRegola;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
+import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
+import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
@@ -1652,6 +1657,38 @@ public class ExporterArchiveUtils {
 					if(pd!=null && pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null && !"".equals(pd.getGestioneToken().getPolicy())) {
 						this.readTokenPolicy_validation(archive, pd.getGestioneToken().getPolicy());
 					}
+					
+					// trasformazioni
+					if(pd!=null && pd.getTrasformazioni()!=null &&
+							pd.getTrasformazioni().sizeRegolaList()>0) {
+						for (int i = 0; i < pd.getTrasformazioni().sizeRegolaList(); i++) {
+							TrasformazioneRegola regola = pd.getTrasformazioni().getRegola(i);
+							if(regola.getApplicabilita()!=null) {
+								
+								if(regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+									for (int j = 0; j < regola.getApplicabilita().sizeServizioApplicativoList(); j++) {
+										TrasformazioneRegolaApplicabilitaServizioApplicativo trSa = regola.getApplicabilita().getServizioApplicativo(j);
+										if(trSa.getTipoSoggettoProprietario()!=null && trSa.getNomeSoggettoProprietario()!=null && trSa.getNome()!=null) {
+											IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+											idServizioApplicativo.setNome(trSa.getNome());
+											idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(trSa.getTipoSoggettoProprietario(), trSa.getNomeSoggettoProprietario()));
+											this.readServizioApplicativo(archive, idServizioApplicativo, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+										}
+									}
+								}	
+								
+								if(regola.getApplicabilita().sizeSoggettoList()>0) {
+									for (int j = 0; j < regola.getApplicabilita().sizeSoggettoList(); j++) {
+										TrasformazioneRegolaApplicabilitaSoggetto trSoggetto = regola.getApplicabilita().getSoggetto(j);
+										if(trSoggetto.getTipo()!=null && trSoggetto.getNome()!=null) {
+											IDSoggetto idSoggetto = new IDSoggetto(trSoggetto.getTipo(), trSoggetto.getNome());
+											this.readSoggetto(archive, idSoggetto, cascadeConfig, false, ArchiveType.PORTA_DELEGATA); // per evitare loop
+										}
+									}
+								}
+							}
+						}
+					}
 				}
 					
 			}catch(Exception e){
@@ -1795,6 +1832,64 @@ public class ExporterArchiveUtils {
 					// token policy di validazione
 					if(pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy())) {
 						this.readTokenPolicy_validation(archive, pa.getGestioneToken().getPolicy());
+					}
+					
+					// serviziApplicativi autorizzati
+					if(pa!=null && pa.getServiziApplicativiAutorizzati()!=null && 
+							pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0) {
+						for (int i = 0; i < pa.getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); i++) {
+							PortaApplicativaAutorizzazioneServizioApplicativo paSa = pa.getServiziApplicativiAutorizzati().getServizioApplicativo(i);
+							if(paSa.getTipoSoggettoProprietario()!=null && paSa.getNomeSoggettoProprietario()!=null && paSa.getNome()!=null) {
+								IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+								idServizioApplicativo.setNome(paSa.getNome());
+								idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(paSa.getTipoSoggettoProprietario(), paSa.getNomeSoggettoProprietario()));
+								this.readServizioApplicativo(archive, idServizioApplicativo, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
+							}
+						}
+					}
+					
+					// soggetti autorizzati
+					if(pa!=null && pa.getSoggetti()!=null && 
+							pa.getSoggetti().sizeSoggettoList()>0) {
+						for (int i = 0; i < pa.getSoggetti().sizeSoggettoList(); i++) {
+							PortaApplicativaAutorizzazioneSoggetto paSoggetto = pa.getSoggetti().getSoggetto(i);
+							if(paSoggetto.getTipo()!=null && paSoggetto.getNome()!=null) {
+								IDSoggetto idSoggetto = new IDSoggetto(paSoggetto.getTipo(), paSoggetto.getNome());
+								this.readSoggetto(archive, idSoggetto, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
+							}
+						}
+					}
+					
+					// trasformazioni
+					if(pa!=null && pa.getTrasformazioni()!=null &&
+							pa.getTrasformazioni().sizeRegolaList()>0) {
+						for (int i = 0; i < pa.getTrasformazioni().sizeRegolaList(); i++) {
+							TrasformazioneRegola regola = pa.getTrasformazioni().getRegola(i);
+							if(regola.getApplicabilita()!=null) {
+								
+								if(regola.getApplicabilita().sizeServizioApplicativoList()>0) {
+									for (int j = 0; j < regola.getApplicabilita().sizeServizioApplicativoList(); j++) {
+										TrasformazioneRegolaApplicabilitaServizioApplicativo trSa = regola.getApplicabilita().getServizioApplicativo(j);
+										if(trSa.getTipoSoggettoProprietario()!=null && trSa.getNomeSoggettoProprietario()!=null && trSa.getNome()!=null) {
+											IDServizioApplicativo idServizioApplicativo = new IDServizioApplicativo();
+											idServizioApplicativo.setNome(trSa.getNome());
+											idServizioApplicativo.setIdSoggettoProprietario(new IDSoggetto(trSa.getTipoSoggettoProprietario(), trSa.getNomeSoggettoProprietario()));
+											this.readServizioApplicativo(archive, idServizioApplicativo, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
+										}
+									}
+								}	
+								
+								if(regola.getApplicabilita().sizeSoggettoList()>0) {
+									for (int j = 0; j < regola.getApplicabilita().sizeSoggettoList(); j++) {
+										TrasformazioneRegolaApplicabilitaSoggetto trSoggetto = regola.getApplicabilita().getSoggetto(j);
+										if(trSoggetto.getTipo()!=null && trSoggetto.getNome()!=null) {
+											IDSoggetto idSoggetto = new IDSoggetto(trSoggetto.getTipo(), trSoggetto.getNome());
+											this.readSoggetto(archive, idSoggetto, cascadeConfig, false, ArchiveType.PORTA_APPLICATIVA); // per evitare loop
+										}
+									}
+								}
+							}
+						}
 					}
 
 				}

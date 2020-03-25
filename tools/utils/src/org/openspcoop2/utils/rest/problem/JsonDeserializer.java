@@ -47,21 +47,30 @@ public class JsonDeserializer extends AbstractDeserializer {
 	}
 	
 	public ProblemRFC7807 fromString(String problemString) throws UtilsException {
+		return fromString(problemString, false);
+	}
+	public ProblemRFC7807 fromString(String problemString, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		ObjectNode problemNode = (ObjectNode) this.jsonUtils.getAsNode(problemString);
 		ProblemRFC7807 p = new ProblemRFC7807();
 		p.setRaw(problemString);
-		return this._fromNode(p, problemNode);
+		return this._fromNode(p, problemNode, throwExceptionIfUnsupportedCustomClaim);
 	}
 	public ProblemRFC7807 fromByteArray(byte[] problemByteArray) throws UtilsException {
+		return fromByteArray(problemByteArray, false);
+	}
+	public ProblemRFC7807 fromByteArray(byte[] problemByteArray, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		ObjectNode problemNode = (ObjectNode) this.jsonUtils.getAsNode(problemByteArray);
 		ProblemRFC7807 p = new ProblemRFC7807();
 		p.setRaw(new String(problemByteArray));
-		return this._fromNode(p, problemNode);
+		return this._fromNode(p, problemNode, throwExceptionIfUnsupportedCustomClaim);
 	}
 	public ProblemRFC7807 fromNode(ObjectNode problemNode) throws UtilsException {
-		return this._fromNode(null, problemNode);
+		return this._fromNode(null, problemNode, false);
 	}
-	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, ObjectNode problemNode) throws UtilsException {
+	public ProblemRFC7807 fromNode(ObjectNode problemNode, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
+		return this._fromNode(null, problemNode, throwExceptionIfUnsupportedCustomClaim);
+	}
+	private ProblemRFC7807 _fromNode(ProblemRFC7807 problemParam, ObjectNode problemNode,  boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		
 		ProblemRFC7807 problem = null;
 		if(problemParam!=null) {
@@ -76,7 +85,7 @@ public class JsonDeserializer extends AbstractDeserializer {
 			String name = (String) it.next();
 			Object value = problemNode.get(name);
 			
-			super.set(problem, name, value);
+			super.set(problem, name, value, throwExceptionIfUnsupportedCustomClaim);
 		}
 
 		if(problem.getRaw()==null) {

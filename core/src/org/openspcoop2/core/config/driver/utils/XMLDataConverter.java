@@ -1766,12 +1766,16 @@ public class XMLDataConverter {
 		// **** altre info per driver DB ***
 		if(CostantiConfigurazione.REGISTRO_DB.equals(tipoBEDestinazione)){
 			
+			boolean isClient = false;
+			boolean isServer = false;
+			
 			if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getConnettore()!=null){
 				// I nomi dei connettorivengono autogenerati dal driver
 				servizioApplicativo.getInvocazioneServizio().getConnettore().setNome(null);
 				String tipoConnettore = servizioApplicativo.getInvocazioneServizio().getConnettore().getTipo();
 				if(!TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore)) {
 					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
+					isServer = true;
 				}
 				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
@@ -1806,6 +1810,7 @@ public class XMLDataConverter {
 				if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getGetMessage()!=null &&
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getInvocazioneServizio().getGetMessage())) {
 					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.MESSAGE_BOX.getValue());
+					isServer = true;
 				}
 			}
 			
@@ -1821,7 +1826,18 @@ public class XMLDataConverter {
 				}
 				if(found) {
 					servizioApplicativo.setTipologiaFruizione(TipologiaFruizione.NORMALE.getValue());
+					isClient = true;
 				}
+			}
+			
+			if(isClient && isServer) {
+				servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT_OR_SERVER);
+			}
+			else if(isClient) {
+				servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT);
+			}
+			else if(isServer) {
+				servizioApplicativo.setTipo(CostantiConfigurazione.SERVER);
 			}
 		}
 	}

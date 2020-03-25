@@ -47,7 +47,7 @@ public abstract class AbstractDeserializer {
 		this.generateTypeBlank = generateTypeBlank;
 	}
 	
-	protected void set(ProblemRFC7807 problem, String name, Object value) throws UtilsException {
+	protected void set(ProblemRFC7807 problem, String name, Object value, boolean throwExceptionIfUnsupportedCustomClaim) throws UtilsException {
 		
 		if(ProblemConstants.CLAIM_TYPE.equals(name)) {
 			String type = this.getAsString(value);
@@ -103,7 +103,9 @@ public abstract class AbstractDeserializer {
 					problem.getCustom().put(name, booleanNode.asBoolean());
 				}
 				else {
-					throw new UtilsException("Custom claim with type ["+value.getClass().getName()+"] unsupported");
+					if(throwExceptionIfUnsupportedCustomClaim) {
+						throw new UtilsException("Custom claim with type ["+value.getClass().getName()+"] unsupported");
+					}
 				}
 			}
 			else {
