@@ -13,7 +13,7 @@ diversi da HTTP e HTTPS sono descritti nella sezione :ref:`avanzate_connettori`.
 
 La sezione :ref:`verificaConnettivitaConnettore` descrive uno strumento per verificare la raggiungibilità dell'indirizzo impostato.
 
-La sezione :ref:`applicativoServerConnettore` descrive invece come censire un applicazione di backend in modo da poterla utilizzare su più connettori relativi ad erogazioni di API.
+La sezione :ref:`applicativoServerConnettore` descrive invece come censire un'applicazione di backend in modo da poterla riferire su diversi connettori relativi ad erogazioni di API.
 
 Le sezioni successive, infine, descrivono le funzionalità inerenti l'utilizzo di endpoint multipli allo scopo di bilanciare il carico o differenziarlo rispetto a variabili presenti nella richiesta, sempre relativamente ad erogazioni di API.
 

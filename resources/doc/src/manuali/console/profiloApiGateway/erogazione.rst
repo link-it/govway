@@ -47,6 +47,8 @@ Compilare il form (:numref:`erogazioneNewFig`) inserendo i seguenti dati:
 
    Le informazioni da fornire sono:
 
+   -  *Utilizza Applicativo Server:* flag che consente di selezionare un applicativo di tipo "Server" invece di fornire tutte le informazioni relative al connettore. Per i dettagli consultare la sezione :ref:`configSpecificaConnettore`.
+
    -  *Endpoint:* la url per la consegna delle richieste al servizio.
 
    -  *Autenticazione Http:* credenziali da fornire nel caso in cui il

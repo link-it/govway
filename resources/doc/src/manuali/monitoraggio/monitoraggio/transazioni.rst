@@ -96,6 +96,15 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
       -  *Fallite - Fault Applicativo*: sono tutte le transazioni che
          rientrano nei due gruppi descritti in precedenza.
 
+      -  *Errori di Consegna*: identifica le transazioni con esiti che
+         individuano un errore generato dal backend applicativo (Fault Applicativi
+         e/o codici di ritorno 4xx e 5xx) o un errore di connettività verso il backend.
+
+      -  *Richieste Scartate*: identifica le transazioni le cui richieste non
+         sono state accettate dal gateway e che quindi hanno comportato un'interruzione
+         dell'elaborazione nella fase iniziale (invocazione malformata, credenziali errate,
+         servizio non esistente, ecc.)
+
       -  *Personalizzato*: permette di selezionare puntualmente tutti
          gli esiti delle transazioni che si desidera visualizzare. La
          selezione potrà essere effettuata tramite l'elemento 'Dettaglio
@@ -136,15 +145,11 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          quelle descritti in precedenza dove però il CORS è stato
          gestito dall'applicazione.
 
-      Nel caso esito = "Fallite":
+      Nel caso esito = "Richieste Scartate" o "Fallite" con la checbox "Escludi Scartate" non selezionata:
 
-      -  *Risposta HTTP 4XX*: le transazioni che hanno prodotto una
-         regolare risposta di errore applicativo dal dominio esterno con
-         un codice HTTP 4XX.
+      -  *Token non Presente:* la richiesta non presenta un token;
 
-      -  *Risposta HTTP 5XX*: le transazioni che hanno prodotto una
-         regolare risposta di errore applicativo dal dominio esterno con
-         un codice HTTP 5XX.
+      -  *Autenticazione Token Fallita:* nel token ricevuto non sono presenti dei claim configurati come obbligatori per l’accesso alla API;
 
       -  *Gestione Token Fallita*: le transazioni che hanno riportato un
          fallimento relativo alle politiche di accesso basate
@@ -154,12 +159,39 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          errore dovuto al fallimento del processo di autenticazione del
          chiamante (es. credenziali fornite errate);
 
-      -  *Autorizzazione Negata*: transazioni terminate con un
-         errore dovuto al fallimento del processo di autorizzazione del
-         chiamante;
+      -  *API non Individuata:* la richiesta non indirizza una API registrata sul Gateway;
+
+      -  *Operazione non Individuata:* la richiesta non indirizza un’operazione prevista sulla API invocata.
+
+      -  *Contenuto Richiesta Malformato:* transazioni la cui
+         richiesta applicativa pervenuta non è risultata processabile
+         (es. xml non valido sintatticamente)
+
+      -  *Richiesta Malformata:* la richiesta non è processabile per un'errata formulazione dell'invocazione;
+
+      Nel caso esito = "Errori di Consegna" o "Fallite":
+
+      -  *Risposta HTTP 4XX*: le transazioni che hanno prodotto una
+         regolare risposta di errore applicativo dal dominio esterno con
+         un codice HTTP 4XX.
+
+      -  *Risposta HTTP 5XX*: le transazioni che hanno prodotto una
+         regolare risposta di errore applicativo dal dominio esterno con
+         un codice HTTP 5XX.
 
       -  *Errore di Connessione*: transazioni che hanno ottenuto un
          errore legato a problemi di connessione al servizio remoto;
+
+      -  *Fault PdD Esterna:* (Solo per il profilo SPCoop) transazioni
+         che hanno ottenuto un fault non applicativo nel quale non è
+         presente l'intestazione di protocollo. L'errore potrebbe essere
+         stato generato dalla PdD Esterna come anche da un firewall xml;
+
+      Nel caso esito = "Fallite" sono presenti anche i seguenti dettagli di esito:
+
+      -  *Autorizzazione Negata*: transazioni terminate con un
+         errore dovuto al fallimento del processo di autorizzazione del
+         chiamante;
 
       -  *Errore SPCoop/SDI/eDelivery*: Errore specifico per ciascun profilo di interoperabilità che indica le transazioni che hanno generato
          errori a livello del protocollo (es. SPCoop) specifico della
@@ -187,7 +219,7 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          i cui controlli di sicurezza a livello del messaggio di
          risposta hanno riportato un errore.
 
-      -  *Validazione RichfiltroIntervalloTemporaleiesta Fallita*: Esito della transazioni i cui
+      -  *Validazione Richiesta Fallita*: Esito della transazioni i cui
          controlli di validazione del messaggio di richiesta hanno
          riportato un errore.
 
@@ -215,22 +247,9 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
          applicativa, prevista sul messaggio di risposta, ha prodotto un
          fallimento.
 
-      -  *Fault PdD Esterna:* (Solo per il profilo SPCoop) transazioni
-         che hanno ottenuto un fault non applicativo nel quale non è
-         presente l'intestazione di protocollo. L'errore potrebbe essere
-         stato generato dalla PdD Esterna come anche da un firewall xml;
-
-      -  *Contenuto Richiesta non Riconosciuto:*\ transazioni la cui
-         richiesta applicativa pervenuta non è risultata processabile
-         (es. xml non valido sintatticamente)
-
-      -  *Contenuto Risposta non Riconosciuto:*\ transazioni la cui
+      -  *Contenuto Risposta Malformato:*\ transazioni la cui
          risposta applicativa ritornata dal servizio remoto non è
          risultata processabile (es. xml non valido sintatticamente)
-
-      -  *Richiesta Client Rifiutata da GovWay:*\ transazioni sulle
-         quali il gateway ha rifiutato la richiesta inviata
-         dall'applicativo mittente a causa di un errore di invocazione;
 
       -  *Connessione Client Interrotta:*\ rientrano in questa casistica
          le transazioni per cui il gateway non è riuscito a restituire
@@ -246,8 +265,11 @@ Vediamo in dettaglio quali elementi contiene il form di ricerca:
    -  **Evento**: Seleziona le sole transazioni associate ad un
       determinato evento.
 
+   -  **Escludi Scartate**: Permette di escludere dall'elenco dei risultati le richieste di erogazione o fruizione scartate dal gateway (richieste malformate, api non individuate, operazioni non individuate, errori di autenticazione,…)
+
+
 Una volta impostati i criteri di ricerca desiderati, per procedere con
-la ricerca si deve utilizzare il pulsante **Filtra**. Se si vogliono
+la ricerca si deve utilizzare il pulsante **Cerca**. Se si vogliono
 riportare i criteri di ricerca ai valori iniziali è possibile utilizzare
 il pulsante **Ripulisci**.
 
@@ -258,38 +280,34 @@ saranno disponibili due nuovi pulsanti:
 
 -  **Filtra Risultati**: per effettuare una ricerca usando come insieme di partenza le transazioni restituite dalla precedente ricerca.
 
-Le colonne visualizzate nella tabella sottostante delle transazioni risultanti sono personalizzabili.
-È possibile configurare le colonne che si desidera visualizzare
-accedendo al menù dedicato sull'header di una qualsiasi
-colonna come visualizzato nella :numref:`mon_colonne_fig`.
+L'elenco delle transazioni risultato di una ricerca comprende una rappresentazione sintetica delle informazioni principali (:numref:`mon_ElencoTransazioni_fig`):
 
-.. figure:: ../_figure_monitoraggio/Colonne.png
+- API, nome e versione
+
+- Tipo Erogazione o Fruizione
+
+- Identità del chiamante
+
+- Tags
+
+- Data Ingresso Richiesta
+
+- Operazione/Risorsa coinvolta
+
+- Tempo di latenza totale
+
+- Esito
+
+Ciascuna delle informazioni visualizzate in elenco, al passaggio del mouse, causa l'apertura di un tooltip che riporta ulteriori informazioni ad integrazione.
+
+In fondo all'elenco, nell'area dedicata alla gestione delle pagine, è possibile selezionare il numero massimo di elementi visualizzati per singola pagina (valore minimo 25).
+
+.. figure:: ../_figure_monitoraggio/ElencoTransazioni.png
     :scale: 100%
     :align: center
-    :name: mon_colonne_fig
+    :name: mon_ElencoTransazioni_fig
 
-    Modifica delle colonne visualizzate nei risultati della ricerca
-
-La posizione di una colonna, rispetto alle altre, la si può modificare
-trascinandola nella posizione desiderata come visualizzato nelle :numref:`mon_colonnePrima_fig` e :numref:`mon_colonneDopo_fig`.
-
-    Prima:
-
-.. figure:: ../_figure_monitoraggio/ColonnePrima.png
-    :scale: 100%
-    :align: center
-    :name: mon_colonnePrima_fig
-
-    Modifica della posizione di una colonna visualizzata
-
-    Dopo:
-
-.. figure:: ../_figure_monitoraggio/ColonneDopo.png
-    :scale: 100%
-    :align: center
-    :name: mon_colonneDopo_fig
-
-    Modifica della posizione di una colonna visualizzata
+    Elenco delle transazioni esito della ricerca
 
 La **Ricerca Avanzata** è quella che lascia all'utente la massima flessibilità nell'impostazione dei parametri di ricerca (:numref:`mon_RicercaAvanzata_fig`).
 

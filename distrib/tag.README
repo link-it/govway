@@ -75,12 +75,8 @@ Per creare una tag version:
 	. e scommentare facendo l'upgrade di versione dell'immagine ufficiale:
 		image: linkitaly/govway:3.2.1_postgres	
     - Ripulire i log:
-	. rm scenari/data/govway/log/* -f
+	. rm scenari/data/govway/log/* -rf
 	. rm scenari/data/govway/log/tomcat_logs/* -f
-	. rm -rf scenari/data/govway/log/controlloTraffico/
-	. rm -rf scenari/data/govway/log/https/
-	. rm -rf scenari/data/govway/log/resources/
-	. rm -rf scenari/data/govway/log/dumpNonRealTime/
     - !!Come utenza root ricreare l'archivio scenari.zip
 	NOTA: Senza utenza root non viene salvata la parte del database postgresql
 

@@ -4,71 +4,69 @@ Dettaglio Transazione
 ~~~~~~~~~~~~~~~~~~~~~
 
 Dal risutalto di una ricerca transazioni, sia in modalità "live" (:ref:`mon_live`) che
-in modalità "storico" (:ref:`mon_transazioni`), cliccando sulla data di ingresso di una
-specifica transazione si ottiene la pagina con le informazioni di
-dettaglio, suddivisa nelle seguenti sezioni:
+in modalità "storico" (:ref:`mon_transazioni`), cliccando su un qualunque elemento in elenco, si accede
+alla pagina di dettaglio, organizzata quest'ultima in quattro distinte sezioni accessibili su altrettanti tab:
 
 -  Informazioni Generali
 
--  Dettagli Richiesta
+-  Dettagli Messaggio
 
--  Dettagli Risposta
-
--  Informazioni Mittente
+-  Diagnostici
 
 -  Informazioni Avanzate
 
-Le informazioni presenti nel dettaglio cambiano a seconda dell'esito
-della transazione:
+La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`) mostra:
 
--  In :numref:`mon_TransazioneOK_fig` vediamo un esempio di dettaglio di transazione con esito OK.
+- le *Informazioni Generali*, come i riferimenti al servizio invocato, identificativo della transazione e l'esito.
 
--  In :numref:`mon_TransazioneErrore_fig` vediamo un esempio di pagina di dettaglio relativa a una
-   transazione con esito ERRORE.
+- le *Informazioni Mittente*, quindi i dati di riferimento relativi alla provenienza della richiesta:
 
--  In :numref:`mon_TransazioneFault_fig` vediamo un esempio di dettaglio relativo ad una transazione con esito "Fault Applicativo".
+    -  Metodo HTTP: il metodo http relativo alla richiesta inviata dal mittente
 
-.. figure:: ../_figure_monitoraggio/TransazioneOK.png
-    :scale: 40%
-    :align: center
-    :name: mon_TransazioneOK_fig
+    -  URL Invocazione: la url di invocazione utilizzata dal mittente per contattare il gateway
 
-    Dettaglio di una transazione con esito OK
+    -  Indirizzo Client: l'indirizzo di provenienza della richiesta pervenuta
 
-.. figure:: ../_figure_monitoraggio/TransazioneErrore.png
-    :scale: 50%
-    :align: center
-    :name: mon_TransazioneErrore_fig
+    -  Codice Risposta Client: codice http restituito al mittente
 
-    Dettaglio di una transazione con esito Errore
+    -  Applicativo Fruitore: identificativo dell'applicativo mittente
 
-.. figure:: ../_figure_monitoraggio/TransazioneFault.png
-    :scale: 40%
-    :align: center
-    :name: mon_TransazioneFault_fig
+    -  Credenziali: Le credenziali utilizzate dall'applicativo per l'autenticazione
 
-    Dettaglio di una transazione con esito Fault Applicativo
+    -  X-Forwared-For: presente solamente se viene rilevato tra gli header http della richiesta un header tra i seguenti: 'X-Forwared-For', 'Forwared-For', 'Forwarded', 'X-Client-IP', 'Client-IP'
 
-La sezione ***Informazioni Generali*** mostra le proprietà generali
-della transazione ed in particolare i riferimenti al servizio invocato e
-l'esito. Nello stesso riquadro si trova il link per la visualizzazione
-dei messaggi diagnosti o per effettuare un'esportazione degli stessi
-(:numref:`mon_Diagnostici_fig`).
+    -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente
 
-.. figure:: ../_figure_monitoraggio/Diagnostici.png
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Info.png
     :scale: 100%
     :align: center
-    :name: mon_Diagnostici_fig
+    :name: mon_DettaglioTransazioneInfo_fig
 
-    Dettaglio dei messaggi diagnostici relativi ad una transazione
+    Dettaglio Transazione: Informazioni Generali
 
-Nella sezione ***Dettagli Richiesta*** sono visualizzati i dati generali
-della richiesta, quali id del messaggio, dimensioni in KB e timestamp
-del messaggio in ingresso e uscita. Nel medesimo riquadro è possibile
-selezionare Visualizza Traccia per accedere alla pagina di consultazione
-della traccia relativa alla richiesta (:numref:`mon_Traccia_fig`).
+La sezione **Dettagli Messaggio** (:numref:`mon_DettaglioTransazioneMessaggio_fig`) mostra:
 
-Quando prevista la registrazione dei messaggi in configurazione, si
+- i *Dettagli Richiesta*: dati relativi al messaggio di richiesta come i timestamp di ingresso e uscita, le dimensioni del payload.
+
+- i *Dettagli Risposta*: dati relativi al messaggio di risposta come i timestamp di ingresso e uscita e le dimensioni del payload.
+
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Messaggio.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneMessaggio_fig
+
+    Dettaglio Transazione: Dettagli Messaggio
+
+In questa sezione saranno presenti, quando previste, le tracce applicative dei messaggi di richiesta e risposta (:numref:`mon_Traccia_fig`).
+
+.. figure:: ../_figure_monitoraggio/Traccia.png
+    :scale: 100%
+    :align: center
+    :name: mon_Traccia_fig
+
+    Dettaglio della traccia
+
+Quando prevista la registrazione dei messaggi in configurazione, di richiesta e risposta, si
 troveranno in questo riquadro i collegamenti per visualizzare:
 
 -  Contenuti Ingresso/Uscita: i contenuti di entrata ed uscita sul
@@ -84,15 +82,8 @@ troveranno in questo riquadro i collegamenti per visualizzare:
 -  Dati Raw Ingresso/Uscita: la versione raw dei contenuti transitati in
    ingresso/uscita sul gateway
 
-Per tutte queste voci sono presenti i link Esporta che consentono di
+Per tutte queste voci sono presenti i link *Esporta* che consentono di
 salvare tali informazioni sul proprio filesystem.
-
-.. figure:: ../_figure_monitoraggio/Traccia.png
-    :scale: 100%
-    :align: center
-    :name: mon_Traccia_fig
-
-    Dettaglio della traccia
 
 .. figure:: ../_figure_monitoraggio/Contenuti.png
     :scale: 100%
@@ -112,47 +103,28 @@ tramite il link Visualizza Fault (:numref:`mon_Fault_fig`).
 
     Dettaglio di un errore applicativo (fault)
 
-Le medesime funzionalità appena illustrate per la richiesta sono
-disponibili per la risposta nel riquadro **Dettagli Risposta**.
+La sezione **Diagnostici** (:numref:`mon_DettaglioTransazioneDiagnostici_fig`) mostra la sequenza
+cronologica dei messaggi diagnostici emessi dal gateway, nel corso dell'elaborazione della transazione,
+con la possibilità di effettuare un'esportazione degli stessi.
 
-La sezione ***Informazioni Mittente*** riporta dati specifici correlati
-all'interazione tra GovWay e il mittente:
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Diagnostici.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneDiagnostici_fig
 
--  Metodo HTTP: il metodo http relativo alla richiesta inviata dal
-   mittente
+    Dettaglio dei messaggi diagnostici relativi ad una transazione
 
--  URL Invocazione: la url di invocazione utilizzata dal mittente per
-   contattare il gateway
-
--  Indirizzo Client: l'indirizzo di provenienza della richiesta
-   pervenuta
-
--  Codice Risposta Client: codice http restituito al mittente
-
--  Applicativo Fruitore: identificativo dell'applicativo mittente
-
--  Credenziali: Le credenziali utilizzate dall'applicativo per
-   l'autenticazione
-
--  X-Forwared-For: presente solamente se viene rilevato tra gli header
-   http della richiesta un header tra i seguenti: 'X-Forwared-For' ,
-   'Forwared-For', 'Forwarded', 'X-Client-IP', 'Client-IP'
-
--  Token Info: riporta il dettaglio delle informazioni estratte dal
-   token ottenuto in fase di autenticazione della richiesta del mittente
-
-Nel riquadro ***Informazioni Avanzate*** sono visualizzati i seguenti
-dati (:numref:`mon_Avanzate_fig`):
-
--  ID Transazione
+La sezione **Informazioni Avanzate** (:numref:`mon_DettaglioTransazioneAvanzate_fig`) riporta ulteriori dati della transazione
+tra cui:
 
 -  Dominio (ID e Soggetto): dominio del soggetto che ha gestito la
    transazione
 
--  PortaApplicativa o PortaDelegata: indica il nome della porta invocata
-   dal client
+-  Porta InBound o OutBound: indica il nome della porta del gateway invocata dal client (InBound nel caso di erogazione e OutBound per la fruizione)
 
--  URL Inoltro: specifica l'endpoint utilizzato per l'inoltro verso il
+-  Applicativo Fruitore o Erogatore: identità (se disponibile) dell'applicativo coinvolto nell'operazione
+
+-  Connettore: specifica l'endpoint utilizzato per l'inoltro verso il
    dominio esterno (nel caso di fruizione)
 
 -  Codice Risposta: il codice HTTP inviato con il messaggio di risposta
@@ -160,9 +132,9 @@ dati (:numref:`mon_Avanzate_fig`):
 -  Latenza Totale, Servizio e Gateway: indica i tempi di elaborazione
    del messaggi
 
-.. figure:: ../_figure_monitoraggio/Avanzate.png
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Avanzate.png
     :scale: 100%
     :align: center
-    :name: mon_Avanzate_fig
+    :name: mon_DettaglioTransazioneAvanzate_fig
 
     Informazioni Avanzate di una Transazione

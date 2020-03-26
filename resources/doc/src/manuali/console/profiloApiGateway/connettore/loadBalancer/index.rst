@@ -3,7 +3,7 @@
 Load Balancer
 ~~~~~~~~~~~~~
 
-Per le erogazioni di API è possibile definire connettori multipli con finalità di bilanciamento delle richieste in arrivo. 
+Per le erogazioni di API è possibile definire connettori multipli con la finalità di attuare su di essi il bilanciamento delle richieste pervenute.
 
 I contesti in cui l'interfaccia visualizza il valore di un connettore comprendono anche uno strumento per abilitare la gestione dei connettori multipli (:numref:`pulsanteConfigurazioneConnettoriMultipli`).
 
@@ -14,7 +14,7 @@ I contesti in cui l'interfaccia visualizza il valore di un connettore comprendon
 
     Pulsante per la configurazione dei connettori multipli
 
-Dopo aver premuto il pulsante si accede ad una schermata che consente di abilitare una funzionalità relativa ai connettori multipli. In questa sezione, in particolare, viene descritta la funzionalità *Load Balance* che rappresenta la voce di default una volta abilitato lo stato relativo alla configurazione dei connettori multipli (:numref:`LoadBalancerAbilitato`). Per maggiori dettagli si rimanda alla sezione :ref:`loadBalancerConfigurazione`.
+Dopo aver premuto tale pulsante si accede ad una schermata che consente di abilitare e configurare tale funzionalità. In questa sezione, in particolare, viene descritta la funzionalità *Load Balancer* che rappresenta la voce di default una volta abilitato lo stato relativo alla configurazione dei connettori multipli (:numref:`LoadBalancerAbilitato`). Per maggiori dettagli si rimanda alla sezione :ref:`loadBalancerConfigurazione`.
 
 .. figure:: ../../../_figure_console/LoadBalancerAbilitato.png
     :scale: 100%
@@ -37,7 +37,6 @@ Una volta attivata la funzione di Load Balancer, nei contesti in cui l'interfacc
 
    configurazione
    elenco
-   
 
 
 

@@ -3,7 +3,7 @@
 Applicativi Server
 ~~~~~~~~~~~~~~~~~~
 
-Un applicativo di tipo 'Server' consente di censire una applicazione di backend alla quale associare quelle informazioni tipicamente indicate sinora nella sezione “Connettore” dell’erogazione della API (endpoint, credenziali, …). In una erogazione è così possibile riferire un applicativo server già registrato come modalità alternativa a quella di indicare esplicitamente tutte le informazioni richieste.
+Un applicativo di tipo 'Server' consente di censire un'applicazione di backend alla quale associare quelle informazioni tipicamente indicate finora nella sezione “Connettore” dell’erogazione della API (endpoint, credenziali, …). In una erogazione è così possibile riferire un applicativo server già registrato come modalità alternativa a quella di indicare esplicitamente tutte le informazioni richieste.
 
 .. figure:: ../../_figure_console/ApplicativoServer-new.png
     :scale: 100%

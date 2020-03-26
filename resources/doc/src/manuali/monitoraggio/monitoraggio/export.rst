@@ -5,21 +5,55 @@ Export Transazioni
 ~~~~~~~~~~~~~~~~~~~~~
 
 Dopo aver effettuato una ricerca vi è la possibilità di selezionare le
-transazioni desiderate ed effettuare un export su file. Dopo aver
-selezionato le transazioni tramite il checkbox posto a inizio riga
-nell'elenco, si sceglie quali dati includere nell'export tra Tracce,
-Diagnostici e Contenuti.
+transazioni desiderate ed effettuare un export su file.
+Dopo aver selezionato le transazioni tramite il checkbox posto a fine riga
+nell'elenco, si utilizza il pulsante "Esporta" per procedere  (:numref:`mon_elencoTransazioniExport_fig`).
 
-.. figure:: ../_figure_monitoraggio/ElencoTransazioni.png
+.. figure:: ../_figure_monitoraggio/ElencoTransazioniExport.png
     :scale: 100%
     :align: center
-    :name: mon_elencoTransazioni_fig
+    :name: mon_elencoTransazioniExport_fig
 
     Lista delle transazioni risultanti da una ricerca
 
-Il risultato dell'esportazione è un archivio zip contenente una
-directory per ciascuna transazione esportata. A loro volta le directory
-possono contenere una combinazione dei seguenti files, in base al tipo
+Il popup che si apre consente di procedere alla creazione del file di esportazione specificando le seguenti opzioni:
+
+- *Tipologia di Documento*: indica il formato del file di esportazione da produrre. Sono disponibili le seguenti opzioni:
+
+    - *CSV*
+
+    - *XLS*
+
+    - *ZIP*
+
+- *Informazioni Esportate*: indica quali dati devono essere esportati nel file prodotto. Le scelte possibili sono:
+
+    - Nel caso delle tipologie CSV e XLS:
+
+        - *Visualizzate nello Storico*: opzione per includere le informazioni principali di ciascuna transazione, corrispondenti a quelle utilizzate per la visualizzazione in elenco
+
+        - *Tutte*: opzione per includere tutte le informazioni presenti nelle transazioni
+
+        - *Personalizza*: opzione che consente di selezionare puntualmente le proprietà da includere e il relativo ordine di apparizione (:numref:`mon_EsportaCSV_fig`)
+
+    - Nel caso della tipologia ZIP, viene data la possibilità di selezionare cosa includere nell'archivio prodotto, a scelta tra:
+
+        - *Tracce*: dati di tracciamento relativi alla richiesta ed alla risposta
+
+        - *Diagnostici*: messaggi diagnostici emessi dal gateway nelle fasi di elaborazione
+
+        - *Contenuti*: payload scambiati compresi eventuali allegati
+
+.. figure:: ../_figure_monitoraggio/EsportaCSV.png
+    :scale: 100%
+    :align: center
+    :name: mon_EsportaCSV_fig
+
+    Export CSV personalizzato
+
+Il formato di esportazione ZIP produce un archivio compresso zip contenente una
+directory per ciascuna transazione esportata (:numref:`mon_esportaTransazioni_fig`). 
+A loro volta le directory possono contenere una combinazione dei seguenti files, in base al tipo
 dei dati esportati:
 
 -  *manifest.xml*
@@ -71,36 +105,6 @@ dei dati esportati:
     :align: center
     :name: mon_esportaTransazioni_fig
 
-    Struttura dell'archivio di esportazione delle transazioni
+    Struttura dello ZIP di esportazione delle transazioni
 
-Oltre all'export appena descritto è possibile effettuare anche
-un'esportazione dei dati delle transazione in un formato CSV. Per
-ottenere tale tipo di esportazione si deve selezionare le transazioni
-interessate tramite il checkbox posto a inizio riga nell'elenco,
-scegliere se includere nell'export anche le Tracce e Diagnostici (i
-Contenuti non sono esportabili nel formato CSV) e cliccare sul pulsante
-'Export CSV'. Prima di procedere con l'esportazione effettiva vengono
-richiesti all'utente:
 
--  Tipologia di Documento: è possibile indicare un file CSV semplice o
-   un XLS.
-
--  Colonne Esportate: tale opzione permette di decidere quali colonne
-   saranno presenti nel file esportato:
-
-   -  Solamente le colonne visualizzate nello storico delle transazioni
-      (opzione: 'Visualizzate nello Storico')
-
-   -  Tutte le informazioni disponibili per ogni transazione (opzione:
-      Tutte)
-
-   -  Solamente le informazioni che interessano all'utente, modificando
-      anche l'ordine di apparizione di tali informazioni nelle colonne
-      del file CSV (opzione: Personalizza)
-
-.. figure:: ../_figure_monitoraggio/EsportaCSV.png
-    :scale: 100%
-    :align: center
-    :name: mon_EsportaCSV_fig
-
-    Export CSV personalizzato
