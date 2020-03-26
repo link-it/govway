@@ -1,0 +1,15 @@
+--- /etc/govway/spcoop_local.properties	2020-02-19 11:39:06.987753194 +0100
++++ /etc/govway/spcoop_local.properties	2020-03-26 11:27:18.654931807 +0100
+@@ -4,12 +4,6 @@
+ # ================================================
+ 
+ # ================================================
+-# Prefisso dell'identificativo (opzionale)
+-# NOTA: indicare al massimo due cifre (0>=NUMERO<=99)
+-#org.openspcoop2.protocol.spcoop.id.prefix=NUMERO
+-# ================================================
+-
+-# ================================================
+ # Funzionalità di Import/Export dei package SICA 
+ # [.apc, .aps, .adc, .asc]
+ org.openspcoop2.protocol.spcoop.packageSICA=false

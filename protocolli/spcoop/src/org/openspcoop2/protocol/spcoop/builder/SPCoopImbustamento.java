@@ -42,6 +42,7 @@ import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.protocol.sdk.Eccezione;
@@ -190,7 +191,8 @@ public class SPCoopImbustamento {
 			throw new ProtocolException("Creazione ID eGov non riuscita: alcuni parametri di creazione null idPD["+idPD+"] codAmm["+codAmm+"]");
 		}
 		
-		initSerialCounter(this.spcoopProperties.getPrefissoSeriale_IdentificativoBusta());
+		Integer prefix = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		initSerialCounter(prefix==null ? -1 : prefix);
 
 		IDSerialGenerator serialGenerator = null;
 		IDSerialGeneratorParameter serialGeneratorParameter = null;
@@ -233,8 +235,8 @@ public class SPCoopImbustamento {
 	
 			}
 	
-			if(this.spcoopProperties.getPrefissoSeriale_IdentificativoBusta()!=-1){
-				bf.append(this.spcoopProperties.getPrefissoSeriale_IdentificativoBusta());
+			if(prefix!=null){
+				bf.append(prefix.intValue());
 			}
 			
 			String c = Long.toString(counter);

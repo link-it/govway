@@ -1,0 +1,13 @@
+--- /etc/govway/govway_local.properties	2020-03-26 11:29:49.963325619 +0100
++++ /etc/govway/govway_local.properties	2020-03-26 11:28:35.825641669 +0100
+@@ -1,6 +1,10 @@
+ # ================================================
+ # Identificativo univoco della macchina
+ #org.openspcoop2.pdd.cluster_id=IDGW
++
++# Identificativo univoco numerico della macchina
++# NOTA: indicare un numero nel seguente intervallo: 0>=NUMERO<=99
++#org.openspcoop2.pdd.cluster_id.numeric=NUMERO
+ # ================================================
+ 
+ # ================================================

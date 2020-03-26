@@ -1,3 +1,11 @@
+2019-03-26  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, ProtocolloSPCoop]
+	Aggiunta funzionalità OP-966
+	Nella configurazione in load balancer del Gateway è stata aggiunto per ogni nodo del Cluster la possibilità di configurare
+	un identificativo numerico oltre al già presente identificativo testuale.
+	Tale informazione viene utilizzata anche dal protocollo SPCoop, per il quale è quindi stata eliminata la proprietà 'org.openspcoop2.protocol.spcoop.id.prefix'. 
+
 2019-03-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]

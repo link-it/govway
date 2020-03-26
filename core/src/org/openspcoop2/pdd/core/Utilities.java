@@ -24,12 +24,16 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageFactory;
 import org.openspcoop2.message.constants.MessageRole;
 import org.openspcoop2.pdd.config.ClassNameProperties;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.services.connector.ConnectorException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
+import org.openspcoop2.utils.date.DateEngineType;
+import org.openspcoop2.utils.id.IDUtilities;
 import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
@@ -117,5 +121,36 @@ public class Utilities {
 		}
 		log.debug("MessageEngineFactory ["+role+"] ["+useFactory.getClass().getName()+"]");
 		return useFactory;
+	}
+	
+	public static String generateIDDateTime(String format, int syncMs, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
+		return _generateIDDateTime(IDUtilities.generateDateTime(format, syncMs), clusterIdSeparator, clusterIdAsPrefix);
+	}
+	public static String generateIDDateTime(DateEngineType type, String format, int syncMs, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
+		return _generateIDDateTime(IDUtilities.generateDateTime(type, format, syncMs), clusterIdSeparator, clusterIdAsPrefix);
+	}
+	public static String generateIDDateTime_ISO_8601_TZ(String format, int syncMs, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
+		return _generateIDDateTime(IDUtilities.generateDateTime_ISO_8601_TZ(format, syncMs), clusterIdSeparator, clusterIdAsPrefix);
+	}
+	public static String generateIDDateTime_ISO_8601_TZ(DateEngineType type, String format, int syncMs, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
+		return _generateIDDateTime(IDUtilities.generateDateTime_ISO_8601_TZ(type, format, syncMs), clusterIdSeparator, clusterIdAsPrefix);
+	}
+	private static String _generateIDDateTime(String timeId, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
+		Integer prefix = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		String prefixS = "00";
+		if(prefix!=null) {
+			if(prefix<10) {
+				prefixS = "0"+prefix.intValue();
+			}
+			else {
+				prefixS = ""+prefix.intValue();
+			}
+		}
+		if(clusterIdAsPrefix) {
+			return prefixS + clusterIdSeparator + timeId;
+		}
+		else {
+			return timeId + clusterIdSeparator + prefixS;
+		}
 	}
 }

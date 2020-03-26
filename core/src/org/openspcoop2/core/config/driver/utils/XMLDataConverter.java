@@ -1767,7 +1767,6 @@ public class XMLDataConverter {
 		if(CostantiConfigurazione.REGISTRO_DB.equals(tipoBEDestinazione)){
 			
 			boolean isClient = false;
-			boolean isServer = false;
 			
 			if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getConnettore()!=null){
 				// I nomi dei connettorivengono autogenerati dal driver
@@ -1775,7 +1774,6 @@ public class XMLDataConverter {
 				String tipoConnettore = servizioApplicativo.getInvocazioneServizio().getConnettore().getTipo();
 				if(!TipiConnettore.DISABILITATO.getNome().equals(tipoConnettore)) {
 					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.TRASPARENTE.getValue());
-					isServer = true;
 				}
 				// I tipi diversi da disabilitato,http,jms,null,nullEcho sono custom
 				if ( !TipiConnettore.JMS.getNome().equals(tipoConnettore) && !TipiConnettore.HTTP.getNome().equals(tipoConnettore) &&
@@ -1810,7 +1808,6 @@ public class XMLDataConverter {
 				if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getGetMessage()!=null &&
 						StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getInvocazioneServizio().getGetMessage())) {
 					servizioApplicativo.setTipologiaErogazione(TipologiaErogazione.MESSAGE_BOX.getValue());
-					isServer = true;
 				}
 			}
 			
@@ -1830,15 +1827,22 @@ public class XMLDataConverter {
 				}
 			}
 			
-			if(isClient && isServer) {
-				servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT_OR_SERVER);
+			// FIX: il server deve esser impostato solamente se si crea un applicativo server, e non se c'è un connettore abilitato.
+			// Se e' stato esportato, il tipo sarà valorizzato.
+			if(isClient) {
+				if(servizioApplicativo.getTipo()==null) {
+					servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT);
+				}
+				else {
+					if(CostantiConfigurazione.SERVER.equals(servizioApplicativo.getTipo())) {
+						servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT_OR_SERVER);
+					}
+					//else {
+						// se e' client o clientOrServer va gia' bene
+					//}
+				}
 			}
-			else if(isClient) {
-				servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT);
-			}
-			else if(isServer) {
-				servizioApplicativo.setTipo(CostantiConfigurazione.SERVER);
-			}
+			
 		}
 	}
 	

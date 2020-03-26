@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.spcoop.config;
 import java.util.Properties;
 
 import org.slf4j.Logger;
+import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CostantiProtocollo;
 import org.openspcoop2.protocol.spcoop.constants.SPCoopCostanti;
@@ -140,11 +141,13 @@ public class SPCoopProperties {
 				throw new ProtocolException(msg);
 			}
 			if(CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC.equals(tipo)){
-				int prefix = this.getPrefissoSeriale_IdentificativoBusta();
-				if(prefix>99){
-					String msg = "Riscontrato errore durante la lettura della proprieta': 'org.openspcoop2.protocol.spcoop.id.prefix': massima lunghezza del prefisso e' di due cifre";
-					this.log.error(msg);
-					throw new ProtocolException(msg);
+				Integer prefix = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+				if(prefix!=null) {
+					if(prefix<0 || prefix>99){
+						String msg = "La generazione dell'identificativo eGov richiede un identificativo del cluster compreso tra 0 e 99";
+						this.log.error(msg);
+						throw new ProtocolException(msg);
+					}
 				}
 			}
 			this.isHttpEmptyResponseOneWay();
@@ -222,31 +225,6 @@ public class SPCoopProperties {
 		}
 
 		return SPCoopProperties.tipoSeriale_IdentificativoBusta;
-	}
-
-	/**
-	 * Restituisce il prefisso utilizzato per l'identificativo
-	 * 
-	 * @return Restituisce il prefisso utilizzato per l'identificativo 
-	 */
-	private static Integer prefissoSeriale_IdentificativoBusta =null;
-	public int getPrefissoSeriale_IdentificativoBusta() throws ProtocolException {
-		if(SPCoopProperties.prefissoSeriale_IdentificativoBusta==null){
-			try{ 
-				String name = null;
-				name = this.reader.getValue_convertEnvProperties("org.openspcoop2.protocol.spcoop.id.prefix");
-				if(name!=null){
-					SPCoopProperties.prefissoSeriale_IdentificativoBusta = Integer.parseInt(name.trim());
-				}else{
-					SPCoopProperties.prefissoSeriale_IdentificativoBusta = -1;
-				}
-			}catch(java.lang.Exception e) {
-				String msg = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.protocol.spcoop.id.prefix': "+e.getMessage();
-				this.log.error(msg,e);
-				throw new ProtocolException(msg,e);
-			}   
-		}
-		return SPCoopProperties.prefissoSeriale_IdentificativoBusta;
 	}
 
 	/**

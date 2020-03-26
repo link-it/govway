@@ -1286,6 +1286,7 @@ public class OpenSPCoop2Properties {
 
 			// Configurazione Cluster
 			this.getClusterId(false);
+			this.getClusterIdNumerico();
 			if(this.isTimerLockByDatabase()) {
 				this.isTimerLockByDatabaseNotifyLogEnabled();
 			}
@@ -12102,6 +12103,33 @@ public class OpenSPCoop2Properties {
 		}
 
 		return OpenSPCoop2Properties.cluster_id;
+	}
+	
+	private static Integer cluster_id_numerico =null;
+	private static Boolean cluster_id_numerico_read =null;
+	public Integer getClusterIdNumerico() throws ProtocolException {
+		if(OpenSPCoop2Properties.cluster_id_numerico_read==null){
+			try{ 
+				String name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id.numeric");
+				if(name!=null){
+					int numero = Integer.parseInt(name.trim());
+					if(numero<0 || numero>99){
+						String msg = "Riscontrato errore durante la lettura della proprietà 'org.openspcoop2.pdd.cluster_id.numeric': il valore indicato ("+numero+") deve essere compreso tra 0 e 99";
+						this.log.error(msg);
+						throw new ProtocolException(msg);
+					}
+					OpenSPCoop2Properties.cluster_id_numerico = numero;
+				}
+				
+				OpenSPCoop2Properties.cluster_id_numerico_read = true;
+				
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' di openspcoop 'org.openspcoop2.pdd.cluster_id.numeric': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}   
+		}
+		return OpenSPCoop2Properties.cluster_id_numerico;
 	}
 
 	private static Boolean isTimerLockByDatabase = null;

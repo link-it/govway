@@ -1,5 +1,5 @@
---- modipa_local.properties
-+++ modipa_local.properties
+--- /etc/govway/modipa_local.properties
++++ /etc/govway/modipa_local.properties
 @@ -30,6 +30,34 @@
  
  

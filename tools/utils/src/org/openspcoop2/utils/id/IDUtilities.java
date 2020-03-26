@@ -81,10 +81,10 @@ public class IDUtilities {
 		Utilities.sleep(syncMs);
 		return DateUtils.getTimeFormatter(type, format).format(DateManager.getDate());
 	}
-	public static synchronized String getDateTimeFormatter_ISO_8601_TZ(String format, int syncMs) {
-		return getDateTimeFormatter_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
+	public static synchronized String generateDateTime_ISO_8601_TZ(String format, int syncMs) {
+		return generateDateTime_ISO_8601_TZ(DateUtils.getDEFAULT_DATA_ENGINE_TYPE(), format, syncMs);
 	}
-	public static synchronized String getDateTimeFormatter_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
+	public static synchronized String generateDateTime_ISO_8601_TZ(DateEngineType type, String format, int syncMs) {
 		Utilities.sleep(syncMs);
 		return DateUtils.getDateTimeFormatter_ISO_8601_TZ(type, format).format(DateManager.getDate());
 	}

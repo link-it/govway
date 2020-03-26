@@ -50,7 +50,6 @@
 	</path>
 	<path id="classpath_dist" >
 		<fileset dir="${openspcoop2}/core/dist" >
-			<exclude name="openspcoop2_pdd*.jar"/>
 			<exclude name="openspcoop2*protocol_*.jar"/>
 			<include name="*.jar"/>
 		</fileset>

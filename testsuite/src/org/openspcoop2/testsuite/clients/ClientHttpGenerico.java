@@ -620,13 +620,21 @@ public class ClientHttpGenerico extends ClientCore{
 															elementsW3C.add(XMLUtils.DEFAULT.newElement(nByte));
 														}catch(Throwable t) {
 															XmlDeserializer des = new XmlDeserializer();
+															boolean normalizeConflittoLibreriaAxisSaaj = false;
 															if(des.isProblemRFC7807(n)) {
-																ProblemRFC7807 problem = des.fromNode(n, false);
-																XmlSerializer ser = new XmlSerializer();
-																Element nn = ser.toNode(problem);
-																elementsW3C.add(nn);
+																try {
+																	ProblemRFC7807 problem = des.fromNode(n, false);
+																	XmlSerializer ser = new XmlSerializer();
+																	Element nn = ser.toNode(problem);
+																	elementsW3C.add(nn);
+																}catch(Throwable tErr) {
+																	normalizeConflittoLibreriaAxisSaaj = true;
+																}
 															}
 															else {
+																normalizeConflittoLibreriaAxisSaaj = true;
+															}
+															if(normalizeConflittoLibreriaAxisSaaj) {
 																// normalize per conflito di librerie axis - saaj
 																org.w3c.dom.Document d = XMLUtils.DEFAULT.newDocument();
 																n = d.importNode(n, true);

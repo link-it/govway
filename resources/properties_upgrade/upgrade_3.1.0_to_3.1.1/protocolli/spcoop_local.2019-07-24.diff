@@ -1,5 +1,5 @@
---- spcoop_local.properties
-+++ spcoop_local.properties
+--- /etc/govway/spcoop_local.properties
++++ /etc/govway/spcoop_local.properties
 @@ -8,3 +8,9 @@
  # NOTA: indicare al massimo due cifre (0>=NUMERO<=99)
  #org.openspcoop2.protocol.spcoop.id.prefix=NUMERO
