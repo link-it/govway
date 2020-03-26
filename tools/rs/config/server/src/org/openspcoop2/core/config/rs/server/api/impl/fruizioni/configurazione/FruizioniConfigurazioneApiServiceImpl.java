@@ -191,7 +191,7 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 
 			if ( BaseHelper.findFirst(
 						pd.getServizioApplicativoList(),
-						s -> s.getId() == sa.getId()
+						s -> s.getNome().equals(sa.getNome())
 						).isPresent()
 				) {
 				throw FaultCode.CONFLITTO.toException("Servizio Applicativo già associato");

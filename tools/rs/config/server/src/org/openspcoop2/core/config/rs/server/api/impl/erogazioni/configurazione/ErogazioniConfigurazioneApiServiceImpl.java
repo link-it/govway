@@ -212,7 +212,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			
 			if ( BaseHelper.findFirst(
 						pa.getServiziApplicativiAutorizzati().getServizioApplicativoList(),
-						s -> s.getId() == sa.getId()
+						s -> ( (sa.getNome().equals(s.getNome())) && (sa.getTipoSoggettoProprietario().equals(s.getTipoSoggettoProprietario())) && (sa.getNomeSoggettoProprietario().equals(s.getNomeSoggettoProprietario())) )
 						).isPresent()
 				) {
 				throw FaultCode.CONFLITTO.toException("Servizio Applicativo già associato");
@@ -287,7 +287,7 @@ public class ErogazioniConfigurazioneApiServiceImpl extends BaseImpl implements 
 			final List<IDSoggettoDB> soggettiCompatibili = env.soggettiCore.getSoggettiFromTipoAutenticazione(tipiSoggettiGestitiProtocollo, null, tipoAutenticazione, null);
 			if(env.protocolFactory.createProtocolConfiguration().isSupportoAutenticazioneSoggetti()) {
 				if (!BaseHelper.findFirst(soggettiCompatibili, s -> { 
-						return s.getId().equals(daAutenticare.getId()); 
+						return (daAutenticare.getTipo().equals(s.getTipo()) && daAutenticare.getNome().equals(s.getNome()) ); 
 					}).isPresent()) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il tipo di credenziali del Soggetto non sono compatibili con l'autenticazione impostata nell'erogazione selezionata");
 				}
