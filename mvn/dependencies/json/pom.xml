@@ -28,6 +28,7 @@
 		<json-schema-core.version>1.2.8</json-schema-core.version>
 		<json-smart.version>2.3</json-smart.version>
 		<libphonenumber.version>8.11.4</libphonenumber.version>
+		<failureaccess.version>1.0.1</failureaccess.version>
 		<msg-simple.version>1.1</msg-simple.version>
 		<networknt_json-schema-validator.version>1.0.30</networknt_json-schema-validator.version>
 		<org.everit.json.schema.version>1.12.1</org.everit.json.schema.version>
@@ -88,6 +89,18 @@
 			<groupId>com.googlecode.libphonenumber</groupId>
 			<artifactId>libphonenumber</artifactId>
 			<version>${libphonenumber.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>*</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>failureaccess</artifactId>
+			<version>${failureaccess.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>
