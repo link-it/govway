@@ -322,6 +322,7 @@ public class BaseHelper {
 		}
 	}
 	
+	public static boolean validateAfterDeserialize = true;
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T deserialize(Object o, Class<T> dest) {
@@ -342,7 +343,9 @@ public class BaseHelper {
 			}
 		}
 		
-		validateBean(ret);
+		if(validateAfterDeserialize) {
+			validateBean(ret);
+		}
 		return ret;
 	}
 	
