@@ -1,0 +1,145 @@
+# This repository adheres to the publiccode.yml standard by including this 
+# metadata file that makes public software easily discoverable.
+# More info at https://github.com/italia/publiccode.yml
+
+publiccodeYmlVersion: '0.2'
+applicationSuite: GovStar
+categories:
+  - it-security
+  - it-service-management
+dependsOn:
+  open:
+    - name: Java
+      optional: false
+      version: ''
+      versionMax: ''
+      versionMin: '11'
+description:
+  it:
+    apiDocumentation: 'https://govway.org/documentazione/api/index.html'
+    documentation: 'https://govway.org/documentazione/'
+    features:
+      - >-
+        Conformità alle nuove linee guida AGID per l'interoperabilità (profilo
+        Modi PA)
+      - >-
+        Conformità agli standard di mercato SOAP, REST, HTTP (profilo API
+        Gateway)
+      - Conformità alle norme di interoperabilità europee (profilo eDelivery)
+      - Retrocompatibile con il protocollo SPCoop (profilo SPCoop)
+      - >-
+        Registro delle API:  descrittori delle interfacce (OpenAPI 3, WSDL,
+        Swagger 2 e WADL)
+      - >-
+        Gestione token (JWT, OAuth2, OIDC) e integrazione AuthServer (UserInfo,
+        Introspection)
+      - 'Rate Limiting: numero di richieste, banda, tempi medi di elaborazione'
+      - >-
+        Autenticazione: HTTP-Basic, TLS, integrazione di sistemi esterni di
+        Identity Management
+      - >-
+        Autorizzazione: sottoscrizioni puntuali, ruoli, scope, valutazione di
+        policy XACML tramite PdD
+      - >-
+        Validazione: verifica di conformità delle richieste/risposte rispetto ai
+        descrittori delle API
+      - >-
+        Tracciamento: emissione di tracce conformi alle normative per ogni
+        richiesta applicativa gestita
+      - Cache della Risposta
+      - Gestione CORS
+      - >-
+        Sicurezza dei Contenuti: WS-Security, XMLEncryption/XMLSignature, JOSE
+        (JWS/JWE)
+      - Gestione del formato MTOM
+      - >-
+        Trasformazione dei messaggi sia come protocollo (SOAP<->REST) che per
+        header, url o payload
+      - >-
+        Routing: supporto nativo per inoltro al backend tramite http, https, jms
+        o file
+      - >-
+        Console di Gestione per la registrazione di API e delle varie policy che
+        le regolano
+      - >-
+        Console di Monitoraggio rivolto alla diagnostica ed al monitoraggio del
+        traffico gestito da GovWay
+    genericName: GovWay
+    localisedName: GovWay
+    longDescription: >
+      Derivato dall’esperienza della Porta di Dominio italiana, GovWay è un API Gateway conforme
+      alle normative della Pubblica Amministrazione:
+
+      - Conformità agli standard di mercato: gestione protocolli standard di
+      mercato, come SOAP 1.1 e 1.2, API restful serializzate in Json o XML o
+      semplici dati binari su Http.
+
+      - Conformità alle specifiche italiane per l'interoperabilità: supporto
+      delle nuove linee guida per l'interoperabilità di AGID (ModI PA).
+
+      - Conformità alle specifiche dell'interoperabilità europea: supporto
+      del protocollo AS4, tramite integrazione con il Building Block
+      eDelivery del progetto europeo CEF (Connecting European Facilities).
+
+      - Retrocompatibilità con il protocollo SPCoop, ancora
+      ampiamente adottato per i servizi della Pubblica Amministrazione.
+
+      - Conformità alle specifiche per la fatturazione elettronica sul canale
+      SdiCoop.
+
+      - Disponibilità di connettori pronti per l'uso per i principali servizi
+      immateriali della pubblica amministrazione, come PagoPA, ANPR e
+      Fatturazione Elettronica.
+
+    shortDescription: GovWay - API Gateway per la Pubblica Amministrazione
+developmentStatus: stable
+intendedAudience:
+  countries:
+    - it
+  scope:
+    - government
+    - security
+isBasedOn:
+  - OpenSPCoop
+it:
+  conforme:
+    gdpr: true
+    lineeGuidaDesign: false
+    misureMinimeSicurezza: true
+    modelloInteroperabilita: true
+  countryExtensionVersion: '0.2'
+  piattaforme:
+    anpr: true
+    cie: false
+    pagopa: true
+    spid: true
+landingURL: 'https://govway.org'
+legal:
+  license: GPL-3.0-only
+  mainCopyrightOwner: Link.it s.r.l.
+  repoOwner: Link.it s.r.l.
+localisation:
+  availableLanguages:
+    - it
+  localisationReady: false
+logo: >-
+  https://raw.githubusercontent.com/link-it/govway/master/resources/images/logo.png
+maintenance:
+  contacts:
+    - affiliation: Link.it
+      email: poli@link.it
+      name: Andrea Poli
+  contractors:
+    - name: Link.it
+      until: '2021-12-31'
+      website: 'https://www.link.it'
+  type: internal
+name: GovWay
+platforms:
+  - web
+releaseDate: '2020-03-30'
+softwareType: standalone/web
+softwareVersion: 3.3.0
+url: 'https://github.com/link-it/govway'
+usedBy:
+  - MISE - Ministero dello Sviluppo Economico
