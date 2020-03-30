@@ -30,3 +30,12 @@ Dopo aver premuto il pulsante *Verifica* viene presentato l'esito della verifica
     :name: EsitoVerificaConnettore
 
     Esito Verifica del connettore
+
+In presenza di un endpoint https, è possibile effettuare il download dei certificati ritornati dal server cliccando sul link 'Download Certificati Server'. Il formato del file scaricato è un PEM contenente tutti i certificati ritornati dal server.
+
+.. figure:: ../../_figure_console/DownloadCertificatoServer.png
+    :scale: 100%
+    :align: center
+    :name: DownloadCertificatoServer
+
+    Download Certificati Server

@@ -989,6 +989,7 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = new Hashtable<String, String>();
@@ -1209,6 +1210,9 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.get(alias);
 	}
 	public String getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.get(alias);
@@ -1859,6 +1863,7 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump = core.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById = core.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi = core.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD;
 		this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata = core.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata;
@@ -2244,6 +2249,7 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_tracciamento.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jTracciamento(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_log4j_dump.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_log4jDump(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_checkConnettoreById(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getCertificatiConnettoreById(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaAccessoRegistroServizi(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaStatoServiziPdD(alias));
 					this.jmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeAttributo_statoServizioPortaDelegata(alias));

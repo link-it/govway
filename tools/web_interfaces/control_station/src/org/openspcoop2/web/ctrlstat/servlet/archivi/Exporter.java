@@ -35,6 +35,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
@@ -170,6 +171,8 @@ public final class Exporter extends Action {
 				}
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
+			case EROGAZIONE:
+			case FRUIZIONE:
 				
 				String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
 				boolean gestioneFruitori = false;
@@ -196,9 +199,15 @@ public final class Exporter extends Action {
 						provenienza = new Parameter(AccordiServizioParteSpecificaCostanti.LABEL_APS, AccordiServizioParteSpecificaCostanti.SERVLET_NAME_APS_LIST);
 					}
 				}
-				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
+				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport, gestioneFruitori);
 				for (Object id : identificativi) {
-					IDServizio idServizio = (IDServizio) id;
+					IDServizio idServizio = null;
+					if(gestioneFruitori) {
+						idServizio = ((IDFruizione) id).getIdServizio();
+					}
+					else {
+						idServizio = (IDServizio) id;
+					}
 					String protocollo = soggettiCore.getProtocolloAssociatoTipoSoggetto(idServizio.getSoggettoErogatore().getTipo());
 					if(protocolli.contains(protocollo)==false){
 						protocolli.add(protocollo);

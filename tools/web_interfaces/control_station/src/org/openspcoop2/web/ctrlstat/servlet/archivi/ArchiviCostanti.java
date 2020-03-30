@@ -141,6 +141,11 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_ID_ACCORDO = "idAccordo";
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO = "tipoDocumento";
 	public final static String PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO = "tipoDocumentoDaScaricare";
+	
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TIPO_CONNETTORE_REGISTRO = "tipoConn";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE = "aliasConn";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE = "idConn";
+	public final static String PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE = "nomeConn";
 			
 	public final static String PARAMETRO_ARCHIVI_IMPORTER_MODALITA = "modalita";
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE = "theFile";
@@ -311,6 +316,8 @@ public class ArchiviCostanti {
 		
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_SOGGETTO = "sogg";
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_SERVIZIO_APPLICATIVO = "sa";
+	
+	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER = "certServer";
 	
 	public static final String PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_DOCUMENTO_CERTIFICATO_SSL = "sslCert";
 		

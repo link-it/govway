@@ -27,13 +27,16 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.openspcoop2.core.config.Ruolo;
 import org.openspcoop2.core.config.Scope;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegola;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaServizioApplicativo;
 import org.openspcoop2.core.config.TrasformazioneRegolaApplicabilitaSoggetto;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneSoggetto;
 import org.openspcoop2.core.config.PortaApplicativaServizioApplicativo;
+import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.PortaDelegataServizioApplicativo;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.FiltroRicercaPorteApplicative;
@@ -44,6 +47,7 @@ import org.openspcoop2.core.controllo_traffico.IdActivePolicy;
 import org.openspcoop2.core.controllo_traffico.IdPolicy;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGenericProperties;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDPortaApplicativa;
@@ -222,6 +226,16 @@ public class ExporterArchiveUtils {
 		case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
 			for (Object object : listObject) {
 				this.readAccordoServizioParteSpecifica(archive, (IDServizio)object, cascadeConfig, exportSourceArchiveType);
+			}
+			break;
+		case EROGAZIONE:
+			for (Object object : listObject) {
+				this.readErogazione(archive, (IDServizio)object, cascadeConfig);
+			}
+			break;
+		case FRUIZIONE:
+			for (Object object : listObject) {
+				this.readFruizione(archive, (IDFruizione)object, cascadeConfig);
 			}
 			break;
 		case CONFIGURAZIONE:
@@ -1310,7 +1324,10 @@ public class ExporterArchiveUtils {
 		}
 		else{
 			try{
-				if(cascadeConfig.isCascadeAccordoServizioParteSpecifica() || ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.equals(provenienza)){
+				if(cascadeConfig.isCascadeAccordoServizioParteSpecifica() 
+						|| ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA.equals(provenienza) 
+						|| ArchiveType.EROGAZIONE.equals(provenienza)
+						|| ArchiveType.FRUIZIONE.equals(provenienza)){
 					fruitoriList = new ArrayList<Fruitore>();
 				
 					// add
@@ -1329,13 +1346,15 @@ public class ExporterArchiveUtils {
 					
 					
 					// porteApplicative associate
-					List<IDPortaApplicativa> listIDPA = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizio);
-					if(listIDPA!=null && listIDPA.size()>0){
-						if(archiveAs.getMappingPorteApplicativeAssociate()==null) {
-							archiveAs.setMappingPorteApplicativeAssociate(new ArrayList<>());
-						}
-						for (IDPortaApplicativa idPortaApplicativa : listIDPA) {
-							archiveAs.getMappingPorteApplicativeAssociate().add(this.archiveEngine.getMappingErogazionePortaApplicativa(idAccordoServizio, idPortaApplicativa));
+					if(!ArchiveType.FRUIZIONE.equals(provenienza)) {
+						List<IDPortaApplicativa> listIDPA = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizio);
+						if(listIDPA!=null && listIDPA.size()>0){
+							if(archiveAs.getMappingPorteApplicativeAssociate()==null) {
+								archiveAs.setMappingPorteApplicativeAssociate(new ArrayList<>());
+							}
+							for (IDPortaApplicativa idPortaApplicativa : listIDPA) {
+								archiveAs.getMappingPorteApplicativeAssociate().add(this.archiveEngine.getMappingErogazionePortaApplicativa(idAccordoServizio, idPortaApplicativa));
+							}
 						}
 					}
 					
@@ -1559,11 +1578,11 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readPortaDelegata(Archive archive, IDPortaDelegata idPortaDelegata, 
+	private PortaDelegata readPortaDelegata(Archive archive, IDPortaDelegata idPortaDelegata, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
-		this.readPortaDelegata(archive, idPortaDelegata, cascadeConfig, true, provenienza);
+		return this.readPortaDelegata(archive, idPortaDelegata, cascadeConfig, true, provenienza);
 	}
-	private void readPortaDelegata(Archive archive, IDPortaDelegata idPortaDelegata, 
+	private PortaDelegata readPortaDelegata(Archive archive, IDPortaDelegata idPortaDelegata, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 	
 		IDSoggetto idSoggettoFruitore = idPortaDelegata.getIdentificativiFruizione().getSoggettoFruitore();
@@ -1713,14 +1732,15 @@ public class ExporterArchiveUtils {
 			
 		}
 		
+		return pd;
 	}
 	
 	
-	private void readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
+	private PortaApplicativa readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
 			ArchiveCascadeConfiguration cascadeConfig, ArchiveType provenienza) throws Exception{
-		this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, true, provenienza);
+		return this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, true, provenienza);
 	}
-	private void readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
+	private PortaApplicativa readPortaApplicativa(Archive archive, IDPortaApplicativa idPortaApplicativa, 
 			ArchiveCascadeConfiguration cascadeConfig, boolean cascadeAvanti, ArchiveType provenienza) throws Exception{
 	
 		IDSoggetto idSoggettoErogatore = idPortaApplicativa.getIdentificativiErogazione().getIdServizio().getSoggettoErogatore();
@@ -1913,6 +1933,50 @@ public class ExporterArchiveUtils {
 				}
 			}
 			
+		}
+		
+		return pa;
+	}
+	
+	
+	private void readErogazione(Archive archive, IDServizio idServizio, ArchiveCascadeConfiguration cascadeConfig) throws Exception{
+	
+		this.readAccordoServizioParteSpecifica(archive, idServizio, cascadeConfig, ArchiveType.EROGAZIONE);
+		
+		// porteApplicative associate
+		List<IDPortaApplicativa> listIDPA = this.archiveEngine.getIDPorteApplicativeAssociateErogazione(idServizio);
+		if(listIDPA!=null && listIDPA.size()>0){
+			for (IDPortaApplicativa idPortaApplicativa : listIDPA) {
+				PortaApplicativa pa = this.readPortaApplicativa(archive, idPortaApplicativa, cascadeConfig, ArchiveType.PORTA_APPLICATIVA);
+				if(pa!=null && pa.sizeServizioApplicativoList()>0) {
+					for (PortaApplicativaServizioApplicativo pasa : pa.getServizioApplicativoList()) {
+						IDServizioApplicativo idSA = new IDServizioApplicativo();
+						idSA.setNome(pasa.getNome());
+						idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+						ServizioApplicativo sa = this.archiveEngine.getServizioApplicativo(idSA);
+						if(!CostantiConfigurazione.SERVER.equals(sa.getTipo()) && !CostantiConfigurazione.CLIENT_OR_SERVER.equals(sa.getTipo())) {
+							// i server verranno inclusi solamente se viene scelto di includere tutti gli elementi riferiti
+							this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.SERVIZIO_APPLICATIVO);
+						}
+					}
+				}				
+			}
+		}
+		
+	}
+	
+	private void readFruizione(Archive archive, IDFruizione idFruizione, ArchiveCascadeConfiguration cascadeConfig) throws Exception{
+		
+		this.readAccordoServizioParteSpecifica(archive, idFruizione.getIdServizio(), cascadeConfig, ArchiveType.FRUIZIONE);
+		
+		this.readFruitore(archive, idFruizione.getIdServizio(), idFruizione.getIdFruitore(), null, cascadeConfig, ArchiveType.FRUITORE);
+		
+		// porteDelegate associate
+		List<IDPortaDelegata> listIDPD = this.archiveEngine.getIDPorteDelegateAssociateFruizione(idFruizione.getIdServizio(), idFruizione.getIdFruitore());
+		if(listIDPD!=null && listIDPD.size()>0){
+			for (IDPortaDelegata idPortaDelegata : listIDPD) {
+				this.readPortaDelegata(archive, idPortaDelegata, cascadeConfig, ArchiveType.PORTA_DELEGATA);
+			}
 		}
 		
 	}

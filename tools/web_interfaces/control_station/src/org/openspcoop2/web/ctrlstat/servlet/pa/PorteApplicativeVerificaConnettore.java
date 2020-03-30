@@ -277,7 +277,9 @@ public class PorteApplicativeVerificaConnettore extends Action {
 			
 			if(aliases.size()==1 || alias!=null) {
 
-				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, nomeServer, labelConnettore, connettore);
+				porteApplicativeHelper.addDescrizioneVerificaConnettoreToDati(dati, nomeServer, labelConnettore, connettore, false, 
+						(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) ? aliases.get(0) : (alias!=null ? alias : aliases.get(0))
+						);
 				
 				if (!porteApplicativeHelper.isEditModeInProgress()) {
 				

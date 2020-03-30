@@ -64,6 +64,7 @@ public class ConnettoriCostanti {
 
 	public final static String LABEL_SERVER = "Applicativo Server";
 	public final static String LABEL_CONNETTORE = "Connettore";
+	public final static String LABEL_DOWNLOAD_CERTIFICATI_SERVER = "Download Certificati Server";
 	public final static String LABEL_CONNETTORE_ABILITATO = "Abilitato";
 	public final static String LABEL_CONNETTORE_PROXY = "Proxy";
 	public final static String LABEL_CONNETTORE_HTTP = "Autenticazione Http";

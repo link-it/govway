@@ -76,6 +76,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 	/** Nomi metodi' */
 	public final static String CHECK_CONNETTORE_BY_ID = "checkConnettoreById";
 	public final static String CHECK_CONNETTORE_BY_NOME = "checkConnettoreByNome";
+	public final static String GET_CERTIFICATI_CONNETTORE_BY_ID = "getCertificatiConnettoreById";
+	public final static String GET_CERTIFICATI_CONNETTORE_BY_NOME = "getCertificatiConnettoreByNome";
 	
 	/** Attributi */
 	private boolean cacheAbilitata = false;
@@ -355,6 +357,36 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			return this.checkConnettoreByNome(param1);
 		}
 		
+		if(actionName.equals(GET_CERTIFICATI_CONNETTORE_BY_ID)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_ID+"] Lunghezza parametri non corretta: "+params.length));
+			
+			Long param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				if(params[0] instanceof Long) {
+					param1 = (Long)params[0];
+				}
+				else {
+					param1 = Long.valueOf(params[0].toString());
+				}
+				if(param1<0){
+					param1 = null;
+				}
+			}
+			return this.getCertificatiConnettoreById(param1);
+		}
+		
+		if(actionName.equals(GET_CERTIFICATI_CONNETTORE_BY_NOME)){
+			if(params.length != 1)
+				throw new MBeanException(new Exception("["+GET_CERTIFICATI_CONNETTORE_BY_NOME+"] Lunghezza parametri non corretta: "+params.length));
+			
+			String param1 = null;
+			if(params[0]!=null && !"".equals(params[0])){
+				param1 = (String)params[0];
+			}
+			return this.getCertificatiConnettoreByNome(param1);
+		}
+		
 		throw new UnsupportedOperationException("Operazione "+actionName+" sconosciuta");
 	}
 	
@@ -482,6 +514,24 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 			},
 			String.class.getName(),
 			MBeanOperationInfo.ACTION);
+			
+		// MetaData per l'operazione getCertificatiConnettoreById
+		MBeanOperationInfo getCertificatiConnettoreById 
+		= new MBeanOperationInfo(GET_CERTIFICATI_CONNETTORE_BY_ID,"Recupera i certificati server del connettore con id fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("idConnettore",long.class.getName(),"Identificativo del connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
+		
+		// MetaData per l'operazione getCertificatiConnettoreByNome
+		MBeanOperationInfo getCertificatiConnettoreByNome 
+		= new MBeanOperationInfo(GET_CERTIFICATI_CONNETTORE_BY_NOME,"Recupera i certificati server del connettore con nome fornito come parametro",
+			new MBeanParameterInfo[]{
+				new MBeanParameterInfo("nomeConnettore",String.class.getName(),"Nome del connettore"),
+			},
+			String.class.getName(),
+			MBeanOperationInfo.ACTION);
 		
 		// Mbean costruttore
 		MBeanConstructorInfo defaultConstructor = new MBeanConstructorInfo("Default Constructor","Crea e inizializza una nuova istanza del MBean",null);
@@ -511,6 +561,8 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		listOperation.add(removeObjectCacheOP);
 		listOperation.add(checkConnettoreById);
 		listOperation.add(checkConnettoreByNome);
+		listOperation.add(getCertificatiConnettoreById);
+		listOperation.add(getCertificatiConnettoreByNome);
 		MBeanOperationInfo[] operations = listOperation.toArray(new MBeanOperationInfo[1]);
 		
 		return new MBeanInfo(className,description,attributes,constructors,operations,null);
@@ -758,6 +810,24 @@ public class ConfigurazionePdD extends NotificationBroadcasterSupport implements
 		try{
 			ConnettoreCheck.check(nomeConnettore, false);
 			return JMXUtils.MSG_OPERAZIONE_EFFETTUATA_SUCCESSO;
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getCertificatiConnettoreById(long idConnettore) {
+		try{
+			return ConnettoreCheck.getCertificati(idConnettore, true);
+		}catch(Throwable e){
+			this.log.error(e.getMessage(),e);
+			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
+		}
+	}
+	
+	public String getCertificatiConnettoreByNome(String nomeConnettore) {
+		try{
+			return ConnettoreCheck.getCertificati(nomeConnettore, true);
 		}catch(Throwable e){
 			this.log.error(e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();

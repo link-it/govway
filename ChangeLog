@@ -1,3 +1,9 @@
+2019-03-30  Andrea Poli <apoli@link.it>
+
+	* [Utils, GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-968
+	La funzionalità di "Verifica Connettori" è stata estesa con la possibilità di effettuare il download dei certificati ritornati dal server, in caso di endpoint https.
+
 2019-03-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloSPCoop]

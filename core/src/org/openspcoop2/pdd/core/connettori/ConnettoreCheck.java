@@ -269,7 +269,7 @@ public class ConnettoreCheck {
 			}
 		}
 	}
-	
+		
 	private static void _checkHTTP(TipiConnettore tipoConnettore, Connettore connettore) throws Exception {
 		
 		ConnettoreHTTPSProperties sslContextProperties = null;
@@ -465,4 +465,108 @@ public class ConnettoreCheck {
 		}
 	}
 	
+	
+	
+	
+	
+	
+	
+	public static String getCertificati(long idConnettore, boolean registro) throws ConnettoreException{
+		if(registro) {
+			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
+			while (drivers.hasMoreElements()) {
+				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+					try {
+						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(idConnettore);
+						return getCertificati(connettore);
+					}catch(Throwable e) {
+						throw new ConnettoreException(e.getMessage(),e);
+					}
+				}
+			}
+		}
+		else {
+			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+				try {
+					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(idConnettore);
+					return getCertificati(connettore);
+				}catch(Throwable e) {
+					throw new ConnettoreException(e.getMessage(),e);
+				}
+			}
+		}
+		throw new ConnettoreException("Connettore con id '"+idConnettore+"' non trovato");
+	}
+	public static String getCertificati(String nomeConnettore, boolean registro) throws ConnettoreException{
+		if(registro) {
+			Enumeration<IDriverRegistroServiziGet> drivers = RegistroServiziReader.getDriverRegistroServizi().elements();
+			while (drivers.hasMoreElements()) {
+				IDriverRegistroServiziGet iDriverRegistroServiziGet = (IDriverRegistroServiziGet) drivers.nextElement();
+				if(iDriverRegistroServiziGet instanceof DriverRegistroServiziDB) {
+					try {
+						org.openspcoop2.core.registry.Connettore connettore = ((DriverRegistroServiziDB)iDriverRegistroServiziGet).getConnettore(nomeConnettore);
+						return getCertificati(connettore);
+					}catch(Throwable e) {
+						throw new ConnettoreException(e.getMessage(),e);
+					}
+				}
+			}
+		}
+		else {
+			IDriverConfigurazioneGet iDriverConfigurazioneGet = ConfigurazionePdDReader.getDriverConfigurazionePdD();
+			if(iDriverConfigurazioneGet instanceof DriverConfigurazioneDB) {
+				try {
+					Connettore connettore = ((DriverConfigurazioneDB)iDriverConfigurazioneGet).getConnettore(nomeConnettore);
+					return getCertificati(connettore);
+				}catch(Throwable e) {
+					throw new ConnettoreException(e.getMessage(),e);
+				}
+			}
+		}
+		
+		throw new ConnettoreException("Connettore con nome '"+nomeConnettore+"' non trovato");
+	}
+
+	public static String getCertificati(org.openspcoop2.core.registry.Connettore connettore) throws ConnettoreException{
+		return _getCertificati(connettore.mappingIntoConnettoreConfigurazione());
+	}
+	public static String getCertificati(Connettore connettore) throws ConnettoreException{
+		return _getCertificati(connettore);
+	}
+	private static String _getCertificati(Connettore connettore) throws ConnettoreException {
+		
+		try {
+		
+			Map<String,String> properties = connettore.getProperties();
+			String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
+			if(location==null || "".equals(location)) {
+				throw new Exception("Il connettore non possiede un endpoint");
+			}
+			URL url = new URL( location );
+			String host = url.getHost();
+			if(host==null || "".equals(host)) {
+				throw new Exception("L'endpoint '"+host+"' non contiene un host");
+			}
+			int port = url.getPort();
+			if(port<=0) {
+				if("https".equalsIgnoreCase(url.getProtocol())) {
+					port = 443;
+				}
+				else if("http".equalsIgnoreCase(url.getProtocol())) {
+					port = 80;
+				}
+				else {
+					throw new Exception("L'endpoint '"+host+"' contiene un protocollo '"+url.getProtocol()+"' non supportato");
+				}
+			}
+			
+			return SSLUtilities.readPeerCertificates(host, port);
+		
+		}catch(Throwable e) {
+			throw new ConnettoreException(e.getMessage(),e);
+		}
+			
+	}
 }

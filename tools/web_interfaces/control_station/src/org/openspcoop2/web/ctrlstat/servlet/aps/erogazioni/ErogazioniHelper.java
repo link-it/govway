@@ -1090,7 +1090,12 @@ public class ErogazioniHelper extends AccordiServizioParteSpecificaHelper{
 						Vector<DataElement> otherbott = new Vector<DataElement>();
 						DataElement de = new DataElement();
 						de.setValue(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI);
-						de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_APS_ESPORTA_SELEZIONATI_ONCLICK);
+						if(gestioneFruitori) {
+							de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_FRUIZIONI_ESPORTA_SELEZIONATI_ONCLICK);
+						}
+						else {
+							de.setOnClick(AccordiServizioParteSpecificaCostanti.LABEL_EROGAZIONI_ESPORTA_SELEZIONATI_ONCLICK);
+						}
 						de.setDisabilitaAjaxStatus();
 						otherbott.addElement(de);
 						ab.setBottoni(otherbott);

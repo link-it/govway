@@ -30,6 +30,7 @@ import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,6 +108,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.config.driver.db.IDServizioApplicativoDB;
 import org.openspcoop2.core.constants.CostantiConnettori;
+import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.controllo_traffico.constants.RuoloPolicy;
@@ -11148,7 +11150,8 @@ public class ConsoleHelper implements IConsoleHelper {
 		return true;
 	}
 	
-	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, Connettore connettore) throws Exception {
+	public void addDescrizioneVerificaConnettoreToDati(Vector<DataElement> dati, String server, String labelConnettore, 
+			Connettore connettore, boolean registro, String aliasConnettore) throws Exception {
 		
 		if(server!=null && !"".equals(server)) {
 			DataElement de = new DataElement();
@@ -11163,6 +11166,44 @@ public class ConsoleHelper implements IConsoleHelper {
 		de.setLabel(ConnettoriCostanti.LABEL_CONNETTORE);
 		de.setValue(labelConnettore);
 		dati.add(de);
+		
+		if(aliasConnettore!=null && !"".equals(aliasConnettore) &&
+				(TipiConnettore.HTTP.getNome().equalsIgnoreCase(connettore.getTipo()) ||
+				TipiConnettore.HTTPS.getNome().equalsIgnoreCase(connettore.getTipo()))
+				){
+			Map<String,String> properties = connettore.getProperties();
+			String location = properties!=null ? properties.get(CostantiConnettori.CONNETTORE_LOCATION) : null;	
+			if(location!=null && !"".equals(location) && location.toLowerCase().startsWith("https")) {
+				String nomeConnettore = null;
+				try {
+					URL url = new URL( location );
+					String host = url.getHost();
+					if(host==null || "".equals(host)) {
+						throw new Exception("L'endpoint '"+host+"' non contiene un host");
+					}
+					nomeConnettore = host;
+					int port = url.getPort();
+					if(port>0 && port!=443) {
+						nomeConnettore=nomeConnettore+"_"+port;
+					}
+					
+					de = new DataElement();
+					de.setType(DataElementType.LINK);
+					de.setValue(ConnettoriCostanti.LABEL_DOWNLOAD_CERTIFICATI_SERVER);
+					de.setUrl(ArchiviCostanti.SERVLET_NAME_DOCUMENTI_EXPORT, 
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_ALLEGATO_TIPO_ACCORDO_TIPO_DOCUMENTO, ArchiviCostanti.PARAMETRO_VALORE_ARCHIVI_ALLEGATO_TIPO_CONNETTORE_CERTIFICATO_SERVER),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ID_CONNETTORE, connettore.getId().longValue()+""),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_TIPO_CONNETTORE_REGISTRO, registro ? Costanti.CHECK_BOX_ENABLED : Costanti.CHECK_BOX_DISABLED),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_ALIAS_CONNETTORE, aliasConnettore),
+							new Parameter(ArchiviCostanti.PARAMETRO_ARCHIVI_CERTIFICATI_SERVER_NOME_CONNETTORE, nomeConnettore));
+					dati.add(de);
+					
+				}catch(Exception e) {
+					this.log.error("Errore durante la comprensione dell'endpoint: "+e.getMessage(),e);
+				}
+			}
+		}
 		
 		if(connettore.getProperties().containsKey(CostantiConnettori.CONNETTORE_CONNECTION_TIMEOUT)) {
 			

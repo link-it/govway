@@ -21,6 +21,8 @@
 
 package org.openspcoop2.utils.io;
 
+import org.apache.commons.codec.binary.StringUtils;
+
 /**	
  * Base64Utilities
  *
@@ -41,9 +43,36 @@ public class Base64Utilities {
 	public static byte[] encode(byte [] data){
 		return org.apache.commons.codec.binary.Base64.encodeBase64(data);
 	}
+	public static byte[] encodeChunked(byte [] data){
+		return org.apache.commons.codec.binary.Base64.encodeBase64Chunked(data);
+	}
+	public static byte[] encode(byte [] data, boolean isChunked){
+		return org.apache.commons.codec.binary.Base64.encodeBase64(data, isChunked);
+	}
+	public static byte[] encode(byte [] data, boolean isChunked, boolean urlSafe){
+		return org.apache.commons.codec.binary.Base64.encodeBase64(data, isChunked, urlSafe);
+	}
+	public static byte[] encode(byte [] data, boolean isChunked, boolean urlSafe, int maxResultSize){
+		return org.apache.commons.codec.binary.Base64.encodeBase64(data, isChunked, urlSafe, maxResultSize);
+	}
+	
 	public static String encodeAsString(byte [] data){
 		return org.apache.commons.codec.binary.Base64.encodeBase64String(data);
 	}
-	
+	public static String encodeChunkedAsString(byte [] data){
+		return StringUtils.newStringUsAscii(encodeChunked(data));
+	}
+	public static String encodeBase64URLSafeString(byte [] data){
+		return org.apache.commons.codec.binary.Base64.encodeBase64URLSafeString(data);
+	}
+	public static String encodeAsString(byte [] data, boolean isChunked){
+		return StringUtils.newStringUsAscii(encode(data, isChunked));
+	}
+	public static String encodeAsString(byte [] data, boolean isChunked, boolean urlSafe){
+		return StringUtils.newStringUsAscii(encode(data, isChunked, urlSafe));
+	}
+	public static String encodeAsString(byte [] data, boolean isChunked, boolean urlSafe, int maxResultSize){
+		return StringUtils.newStringUsAscii(encode(data, isChunked, urlSafe, maxResultSize));
+	}
 	
 }

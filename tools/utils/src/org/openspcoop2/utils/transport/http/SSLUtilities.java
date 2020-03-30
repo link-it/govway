@@ -24,12 +24,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.Provider;
 import java.security.Provider.Service;
 import java.security.Security;
 import java.security.cert.CertStore;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.CollectionCertStoreParameters;
 import java.security.cert.PKIXBuilderParameters;
@@ -45,9 +47,12 @@ import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
 
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
@@ -589,5 +594,52 @@ public class SSLUtilities {
 			throw new UtilsException(e.getMessage(), e);
 		}
 
+	}
+	
+	public static String readPeerCertificates(String host, int port) throws UtilsException{
+		try {
+			
+			SSLContext sslContext = SSLContext.getInstance(SSLUtilities.getDefaultProtocol());
+			KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
+			TrustManagerFactory tmf =
+                    TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init(ks);
+            X509TrustManager defaultTrustManager = (X509TrustManager)tmf.getTrustManagers()[0];
+            SSLSavingTrustManager   tm = new SSLSavingTrustManager(defaultTrustManager);
+            sslContext.init(null, new TrustManager[] {tm}, null);
+			
+            SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+            
+            SSLSocket sslSocket = (SSLSocket) sslSocketFactory.createSocket(host, port);
+    		sslSocket.setSoTimeout(10000);
+    		sslSocket.setWantClientAuth(false);
+    		try {
+    			sslSocket.startHandshake();
+    			sslSocket.close();
+    		}catch(Throwable t) {
+    			// ignore
+    		}
+    		//Certificate [] certs = sslSocket.getSession().getPeerCertificates();
+    		Certificate [] certs = tm.getPeerCertificates();
+    		if(certs == null || certs.length<=0) {
+    			throw new Exception("Peer Certificates not found");
+    		}
+    		StringBuilder sb = new StringBuilder();
+    		for (Certificate certificate : certs) {
+
+    			StringWriter sw = new StringWriter();
+    			JcaPEMWriter pemWriter = new JcaPEMWriter(sw);
+    			pemWriter.writeObject(certificate);
+    			pemWriter.close();
+    			sw.close();
+    			sb.append(sw.toString());
+
+    		}
+    		
+    		return sb.toString();
+            
+		}catch(Exception e){
+			throw new UtilsException(e.getMessage(), e);
+		}
 	}
 }

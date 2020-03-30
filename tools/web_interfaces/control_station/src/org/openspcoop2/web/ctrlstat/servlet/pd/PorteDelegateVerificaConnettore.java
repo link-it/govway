@@ -173,7 +173,9 @@ public class PorteDelegateVerificaConnettore extends Action {
 			
 			if(aliases.size()==1 || alias!=null) {
 
-				porteDelegateHelper.addDescrizioneVerificaConnettoreToDati(dati, null, labelConnettore, connettore);
+				porteDelegateHelper.addDescrizioneVerificaConnettoreToDati(dati, null, labelConnettore, connettore, true, 
+						(CostantiControlStation.LABEL_VERIFICA_CONNETTORE_TUTTI_I_NODI.equals(alias)) ? aliases.get(0) : (alias!=null ? alias : aliases.get(0))
+						);
 				
 				if (!porteDelegateHelper.isEditModeInProgress()) {
 				

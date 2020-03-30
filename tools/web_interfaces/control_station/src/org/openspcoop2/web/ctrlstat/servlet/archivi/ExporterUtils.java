@@ -35,6 +35,7 @@ import org.openspcoop2.core.config.driver.DriverConfigurazioneException;
 import org.openspcoop2.core.config.driver.DriverConfigurazioneNotFound;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
@@ -207,18 +208,43 @@ public class ExporterUtils {
 		return idsAccordi;
 	}
 	
-	public List<?> getIdsAccordiServizioParteSpecifica(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
+	public List<?> getIdsAccordiServizioParteSpecifica(String ids, boolean isFruizione) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{
 		List<IDServizio> idsAccordi = new ArrayList<IDServizio>();
+		List<IDFruizione> fruizioni = new ArrayList<IDFruizione>();
 		ArrayList<String> idsToExport = Utilities.parseIdsToRemove(ids);
 		for (String id : idsToExport) {
-			if(id.contains("@")) {
-				// fruizioni
-				id = id.split("@")[0];
+			try {
+				if(isFruizione) {
+					if(id.contains("@")==false) {
+						throw new DriverRegistroServiziException("atteso @");
+					}
+					String idServ = id.split("@")[0];
+					IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromUri(idServ);
+					String idFruitore = id.split("@")[1];
+					IDSoggetto fruitore = new IDSoggetto(idFruitore.split("/")[0], idFruitore.split("/")[1]);
+					IDFruizione idFruizione = new IDFruizione();
+					idFruizione.setIdFruitore(fruitore);
+					idFruizione.setIdServizio(idS);
+					fruizioni.add(idFruizione);
+				}
+				else {
+					if(id.contains("@")) {
+						// fruizioni
+						id = id.split("@")[0];
+					}
+					IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromUri(id);
+					idsAccordi.add(idS);
+				}
+			}catch (Exception e) {
+				throw new DriverRegistroServiziException("Formato id '"+id+"' non valido: "+e.getMessage(),e);
 			}
-			IDServizio idS = IDServizioFactory.getInstance().getIDServizioFromUri(id);
-			idsAccordi.add(idS);
 		}
-		return idsAccordi;
+		if(isFruizione) {
+			return fruizioni;
+		}
+		else {
+			return idsAccordi;
+		}
 	}
 	
 	public List<?> getIdsAccordiCooperazione(String ids) throws DriverRegistroServiziNotFound, DriverRegistroServiziException{

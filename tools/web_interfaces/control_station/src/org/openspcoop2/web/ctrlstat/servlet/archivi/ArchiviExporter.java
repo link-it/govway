@@ -34,6 +34,7 @@ import javax.servlet.http.HttpSession;
 
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDAccordoCooperazione;
+import org.openspcoop2.core.id.IDFruizione;
 import org.openspcoop2.core.id.IDGruppo;
 import org.openspcoop2.core.id.IDRuolo;
 import org.openspcoop2.core.id.IDScope;
@@ -243,7 +244,18 @@ public class ArchiviExporter extends HttpServlet {
 						AccordiServizioParteComuneCostanti.PARAMETRO_VALORE_APC_TIPO_ACCORDO_SERVIZIO_COMPOSTO;
 				break;
 			case ACCORDO_SERVIZIO_PARTE_SPECIFICA:
-				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport);
+			case EROGAZIONE:
+			case FRUIZIONE:
+				
+				String tipologia = ServletUtils.getObjectFromSession(session, String.class, AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE);
+				boolean gestioneFruitori = false;
+				if(tipologia!=null) {
+					if(AccordiServizioParteSpecificaCostanti.PARAMETRO_APS_TIPO_EROGAZIONE_VALUE_FRUIZIONE.equals(tipologia)) {
+						gestioneFruitori = true;
+					}
+				}
+				
+				identificativi = exporterUtils.getIdsAccordiServizioParteSpecifica(objToExport, gestioneFruitori);
 				Boolean vistaErogazioni = ServletUtils.getBooleanAttributeFromSession(ErogazioniCostanti.ASPS_EROGAZIONI_ATTRIBUTO_VISTA_EROGAZIONI, session);
 				if(vistaErogazioni != null && vistaErogazioni.booleanValue()) {
 					redirect = ErogazioniCostanti.SERVLET_NAME_ASPS_EROGAZIONI_LIST;
@@ -395,6 +407,36 @@ public class ArchiviExporter extends HttpServlet {
 	                }
 	                if(idAccordo.getVersione()!=null && !"".equals(idAccordo.getVersione())){
 	                	fileName+="_"+idAccordo.getVersione();
+	                }
+					fileName +="."+extSingleArchive;
+				}
+				break;
+			case EROGAZIONE:
+				if(identificativi.size()>1){
+					fileName = prefix+"Erogazioni."+ext;
+				}
+				else{
+					IDServizio idServizio = ((IDServizio)identificativi.get(0));
+					fileName = idServizio.getTipo()+idServizio.getNome();
+					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
+	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
+	                	fileName+="_"+idServizio.getVersione();
+	                }
+					fileName +="."+extSingleArchive;
+				}
+				break;
+			case FRUIZIONE:
+				if(identificativi.size()>1){
+					fileName = prefix+"Fruizioni."+ext;
+				}
+				else{
+					IDFruizione idFruizione = ((IDFruizione)identificativi.get(0));
+					IDServizio idServizio = idFruizione.getIdServizio();
+					fileName = idFruizione.getIdFruitore().getTipo()+idFruizione.getIdFruitore().getNome();
+					fileName+="_"+idServizio.getTipo()+idServizio.getNome();
+					fileName+="_"+idServizio.getSoggettoErogatore().getTipo()+idServizio.getSoggettoErogatore().getNome();
+	                if(idServizio.getVersione()!=null && !"".equals(idServizio.getVersione())){
+	                	fileName+="_"+idServizio.getVersione();
 	                }
 					fileName +="."+extSingleArchive;
 				}
