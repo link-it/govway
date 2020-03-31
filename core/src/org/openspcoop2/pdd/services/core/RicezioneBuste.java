@@ -5629,8 +5629,13 @@ public class RicezioneBuste {
 	
 					}catch(ValidatoreMessaggiApplicativiException ex){
 						msgDiag.addKeywordErroreProcessamento(ex);
-						msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 						logCore.error("[ValidazioneContenutiApplicativi Richiesta] "+ex.getMessage(),ex);
+						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
+							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
+						}
+						else {
+							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
+						}
 						if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 							
 							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");
@@ -5653,8 +5658,13 @@ public class RicezioneBuste {
 						}
 					}catch(Exception ex){
 						msgDiag.addKeywordErroreProcessamento(ex);
-						msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
 						logCore.error("Riscontrato errore durante la validazione dei contenuti applicativi (richiesta applicativa)",ex);
+						if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
+							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly");
+						}
+						else {
+							msgDiag.logPersonalizzato("validazioneContenutiApplicativiRichiestaNonRiuscita");
+						}
 						if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 							
 							pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RICHIESTA, "true");

@@ -4574,8 +4574,13 @@ public class InoltroBuste extends GenericLib{
 
 							}catch(ValidatoreMessaggiApplicativiException ex){
 								msgDiag.addKeywordErroreProcessamento(ex);
-								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("[ValidazioneContenutiApplicativi Risposta] "+ex.getMessage(),ex);
+								if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly");
+								}
+								else {
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
+								}
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									
 									pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RISPOSTA, "true");
@@ -4597,8 +4602,13 @@ public class InoltroBuste extends GenericLib{
 								}
 							}catch(Exception ex){
 								msgDiag.addKeywordErroreProcessamento(ex);
-								msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
 								this.log.error("Riscontrato errore durante la validazione xsd della risposta applicativa",ex);
+								if (CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato())) {
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly");
+								}
+								else {
+									msgDiag.logPersonalizzato("validazioneContenutiApplicativiRispostaNonRiuscita");
+								}
 								if(CostantiConfigurazione.STATO_CON_WARNING_WARNING_ONLY.equals(validazioneContenutoApplicativoApplicativo.getStato()) == false){
 									
 									pddContext.addObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_RISPOSTA, "true");

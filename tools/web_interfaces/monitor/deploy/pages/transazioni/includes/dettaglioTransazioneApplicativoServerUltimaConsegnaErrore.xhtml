@@ -18,7 +18,7 @@
 			</h:panelGroup>
  		
 			<h:panelGroup layout="block" styleClass="outputFieldLabel" rendered="#{true}">
-				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaUltimoErroreConsegna}</i>
+				<i class="material-icons md-18 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaUltimoErroreConsegna}</i>
  				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.esitoUltimoErroreLabelDescription}" />
@@ -37,8 +37,8 @@
 			<h:inputTextarea value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationUltimoErrore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationUltimoErrore}" />
 			
-			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" />
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" />			
+			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore>0}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRispostaUltimoErrore>0}" />			
 			
 			<h:outputText styleClass="outputFieldLabel" value="Errore"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.ultimoErrore}"/>

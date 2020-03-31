@@ -122,6 +122,18 @@ public enum EsitoTransazioneName implements Serializable{
 		}
 		return false;
 	}
+	
+	public static boolean isErroreRisposta(EsitoTransazioneName esitoTransactionName){
+		if(EsitoTransazioneName.CONTENUTO_RISPOSTA_NON_RICONOSCIUTO.equals(esitoTransactionName) || 
+				EsitoTransazioneName.ERRORE_ALLEGATI_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.ERRORE_CORRELAZIONE_APPLICATIVA_RISPOSTA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.ERRORE_SICUREZZA_MESSAGGIO_RISPOSTA.equals(esitoTransactionName) || 
+				EsitoTransazioneName.ERRORE_VALIDAZIONE_RISPOSTA.equals(esitoTransactionName)
+				){
+			return true;
+		}
+		return false;
+	}
 
 	public static EsitoTransazioneName convertoTo(String name){
 		EsitoTransazioneName esitoTransactionName = null;

@@ -333,8 +333,7 @@ Rispetto alla ricerca base sono previsti i seguenti ulteriori elementi di filtro
 
     - **Applicativo**: elemento per filtrare rispetto all'applicativo mittente da cui proviene la richiesta.
 
-    - **Principal**: elemento per filtrare rispetto all'identità del mittente ricavata dal processo di autenticazione livello
-         trasporto.
+    - **Principal**: elemento per filtrare rispetto all'identità del mittente ricavata dal processo di autenticazione livello trasporto.
 
     - **Indirizzo IP**: elemento per filtrare rispetto all'indirizzo IP di provenienza della richiesta associata alla transazione.
 

@@ -9,6 +9,8 @@ alla pagina di dettaglio, organizzata quest'ultima in quattro distinte sezioni a
 
 -  Informazioni Generali
 
+-  Informazioni Mittente
+
 -  Dettagli Messaggio
 
 -  Diagnostici
@@ -17,25 +19,47 @@ alla pagina di dettaglio, organizzata quest'ultima in quattro distinte sezioni a
 
 La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`) mostra:
 
-- le *Informazioni Generali*, come i riferimenti al servizio invocato, identificativo della transazione e l'esito.
+- le *Informazioni Generali*, contenente i dati principali relativi alla richiesta comprensivi di identificativo della transazione ed esito:
 
-- le *Informazioni Mittente*, quindi i dati di riferimento relativi alla provenienza della richiesta:
+    -  Data: data della richiesta
 
-    -  Metodo HTTP: il metodo http relativo alla richiesta inviata dal mittente
+    -  ID Transazione: identificativo univoco associato alla richiesta dal Gateway
+ 
+    -  ID Cluster: identificativo del nodo che ha gestito la richiesta
 
-    -  URL Invocazione: la url di invocazione utilizzata dal mittente per contattare il gateway
+    -  Tipologia: indica se l'API invocata riguarda una erogazione o fruizione, e riporta il profilo di utilizzo
 
-    -  Indirizzo Client: l'indirizzo di provenienza della richiesta pervenuta
+    -  Esito: indica se la richiesta è stata gestite con successo dal Gateway, ed in caso di anomalie viene riportato l'errore principale che ha causato il fallimento della gestione
 
-    -  Codice Risposta Client: codice http restituito al mittente
+    -  Fruitore: soggetto mittente della richiesta; rappresenta il dominio di appartenenza del client che ha generato la richiesta verso il gateway
 
-    -  Applicativo Fruitore: identificativo dell'applicativo mittente
+    -  Richiedente: indica l'identità del client che ha effettuato la richiesta
 
-    -  Credenziali: Le credenziali utilizzate dall'applicativo per l'autenticazione
+    -  IP Richiedente: indirizzo IP del client che ha effettuato la richiesta
 
-    -  X-Forwared-For: presente solamente se viene rilevato tra gli header http della richiesta un header tra i seguenti: 'X-Forwared-For', 'Forwared-For', 'Forwarded', 'X-Client-IP', 'Client-IP'
+    -  Profilo di Collaborazione: per api SOAP viene indicato il profilo di gestione (oneway o sincrono)
 
-    -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente
+    -  ID Collaborazione e/o Riferimento ID Richiesta: informazioni opzionali presenti solamente se attivati nella API
+
+    -  ID Applicativo Richiesta e/o Risposta: contiene l'identificativo di correlazione applicativa estratto dal Gateway, se configurato nella API
+
+    -  Latenza Totale: rappresenta l'intervallo temporale trascorso dalla ricezione della richiesta alla consegna della risposta al client
+
+- la sezione *Invocazione API* riporta i dati relativi all'API invocata:
+
+    -  Tags: se associati all'API vengono riportati i tags
+
+    -  Erogatore: soggetto erogatore; rappresenta il dominio che eroga l'API
+
+    -  API: identificativo dell'API invocata
+
+    -  Azione o Risorsa: rappresenta l'identificativo dell'operazione invocata
+
+    -  Connettore: specifica l'endpoint utilizzato per l'inoltro verso il backend applicativo (nel caso di erogazione) o verso il dominio esterno (nel caso di fruizione)
+
+    -  Codice Risposta: il codice HTTP ricevuto dal connettore invocato
+
+    -  Tempo Risposta: intervallo temporale trascorso dall'invocazione dell'endpoint indicato nel connettore, prima di ricevere una risposta
 
 .. figure:: ../_figure_monitoraggio/DettaglioTransazione_Info.png
     :scale: 100%
@@ -43,6 +67,45 @@ La sezione **Informazioni Generali** (:numref:`mon_DettaglioTransazioneInfo_fig`
     :name: mon_DettaglioTransazioneInfo_fig
 
     Dettaglio Transazione: Informazioni Generali
+
+La sezione **Informazioni Mittente** (:numref:`mon_DettaglioTransazioneMittente_fig`) mostra:
+
+- le *Informazioni Mittente* contengono i dati di riferimento relativi alla provenienza della richiesta
+
+    -  Applicativo Fruitore: identificativo dell'applicativo mittente
+
+    -  ID Autenticato: credenziali presentate nella richiesta ed utilizzate per completare il processo di autenticazione
+
+    -  Metodo HTTP: il metodo http relativo alla richiesta inviata dal mittente
+
+    -  URL Invocazione: la url di invocazione utilizzata dal mittente per contattare il gateway
+
+    -  Client IP: l'indirizzo di provenienza della richiesta pervenuta
+
+    -  X-Forwared-For: presente solamente se viene rilevato tra gli header http della richiesta un header tra i seguenti: 'X-Forwared-For', 'Forwared-For', 'Forwarded', 'X-Client-IP', 'Client-IP'
+
+    -  Codice Risposta Client: codice http restituito al mittente
+
+    -  Credenziali: Le credenziali presenti nella richiesta pervenuta al gateway
+
+- la sezione *Token Info* è presente solamente se nella richiesta è presente un token e riporta:
+
+    -  Issuer: rappresenta il dominio che ha emesso il token
+
+    -  ClientId: indica l'identificativo del client che ha richiesto ed ottenuto il token
+
+    -  Subject e/o Username: rappresenta l'utente, all'interno del dominio dell'Issuer, che ha richiesto il token
+
+    -  eMail: indirizzo eMail dell'utente 
+
+    -  Token Info: riporta il dettaglio delle informazioni estratte dal token ottenuto in fase di autenticazione della richiesta del mittente
+
+.. figure:: ../_figure_monitoraggio/DettaglioTransazione_Mittente.png
+    :scale: 100%
+    :align: center
+    :name: mon_DettaglioTransazioneMittente_fig
+
+    Dettaglio Transazione: Informazioni Mittente
 
 La sezione **Dettagli Messaggio** (:numref:`mon_DettaglioTransazioneMessaggio_fig`) mostra:
 
@@ -122,15 +185,7 @@ tra cui:
 
 -  Porta InBound o OutBound: indica il nome della porta del gateway invocata dal client (InBound nel caso di erogazione e OutBound per la fruizione)
 
--  Applicativo Fruitore o Erogatore: identità (se disponibile) dell'applicativo coinvolto nell'operazione
-
--  Connettore: specifica l'endpoint utilizzato per l'inoltro verso il
-   dominio esterno (nel caso di fruizione)
-
--  Codice Risposta: il codice HTTP inviato con il messaggio di risposta
-
--  Latenza Totale, Servizio e Gateway: indica i tempi di elaborazione
-   del messaggi
+-  Applicativo Erogatore: indica il nome dell'applicativo interno del gateway che contiene i dati di smistamento verso il backend
 
 .. figure:: ../_figure_monitoraggio/DettaglioTransazione_Avanzate.png
     :scale: 100%

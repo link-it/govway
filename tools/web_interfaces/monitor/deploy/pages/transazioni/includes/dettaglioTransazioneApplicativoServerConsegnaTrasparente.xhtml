@@ -19,7 +19,7 @@
  		
  			<h:panelGroup layout="block" styleClass="outputFieldLabel" 
  				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi == 0}">
-				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
+				<i class="material-icons md-18 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaSX}</i>
  				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.tooltipIconaColonnaSX}" 
@@ -27,7 +27,7 @@
  		
 			<h:panelGroup layout="block" styleClass="outputFieldLabel" 
 				rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 0}">
-				<i class="material-icons md-24 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
+				<i class="material-icons md-18 v-align-middle">#{dettagliTransazioneApplicativoServerBean.dettaglio.iconaColonnaEsito}</i>
  				<h:outputLabel value="Esito" styleClass="outputFieldLabel v-align-middle"  />
 			</h:panelGroup>
  			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.esitoDescription}" 
@@ -40,6 +40,9 @@
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataPrimoTentativo}" rendered="#{dettagliTransazioneApplicativoServerBean.dettaglio.numeroTentativi > 1}">
 				<f:convertDateTime  pattern="yyyy-MM-dd HH:mm:ss.SSS" timeZone="Europe/Rome" />
 			</h:outputText>
+			
+			<h:outputLabel styleClass="outputFieldLabel" value="Tempo Risposta Servizio" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna and dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna>0}"/>
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna}" converter="latenzaConverter" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna and dettagliTransazioneApplicativoServerBean.dettaglio.latenzaConsegna>0}"/>
 			
 		</h:panelGrid>
 		
@@ -63,8 +66,8 @@
 			<h:inputTextarea id="outUrlInvocazioneTextArea" value="#{dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore}" readonly="true"  cols="60" rows="6" styleClass="inputLinkLong" style="width:auto;"
 					rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.locationConnettore and dettagliTransazioneApplicativoServerBean.visualizzaTextAreaLocationConnettore}" />
 		
-			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" />
-			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" />
+			<h:outputLabel styleClass="outputFieldLabel" value="Codice Risposta" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta>0}" />
+			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta}" rendered="#{not empty dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta and dettagliTransazioneApplicativoServerBean.dettaglio.codiceRisposta>0}" />
 		
 			<h:outputLabel styleClass="outputFieldLabel icon-date"  value="Data Accettazione" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}"/>
 			<h:outputText value="#{dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}" rendered="#{dettagliTransazioneApplicativoServerBean.visualizzaDataAccettazione and not empty dettagliTransazioneApplicativoServerBean.dettaglio.dataAccettazioneRichiesta}">

@@ -43,15 +43,22 @@ import org.openspcoop2.generic_project.exception.MultipleResultException;
 import org.openspcoop2.generic_project.exception.NotImplementedException;
 import org.openspcoop2.generic_project.exception.ServiceException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.pdd.logger.LogLevels;
+import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.utils.NamingUtils;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
+import org.openspcoop2.protocol.sdk.diagnostica.DriverMsgDiagnosticiNotFoundException;
+import org.openspcoop2.protocol.sdk.diagnostica.FiltroRicercaDiagnosticiConPaginazione;
+import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticDriver;
+import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
 import org.openspcoop2.utils.beans.BlackListElement;
 import org.openspcoop2.utils.certificate.CertificateUtils;
 import org.openspcoop2.utils.certificate.PrincipalType;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.BeanUtils;
@@ -434,6 +441,17 @@ public class TransazioneBean extends Transazione{
 		return this.gruppi;
 	}
 	
+	/*
+	 * Il metodo getGruppiHTML serve nel dettaglio della transazione per far vedere i tag testuali:
+	 * <h:outputText id="outGruppi" value="#{dettagliBean.dettaglio.gruppiHTML}" escape="false" rendered="#{not empty dettagliBean.dettaglio.gruppiHTML}" />
+	 * 
+	 * invece che tramite il seguente metodo:
+	 *		<a4j:outputPanel layout="block" id="outGruppi" styleClass="titoloTags" rendered="#{not empty dettagliBean.dettaglio.listaGruppi}">
+	 *		<a4j:repeat value="#{dettagliBean.dettaglio.listaGruppi}" var="gruppo">
+	 *			<h:outputText id="outCustomContentTag" value="#{gruppo.label}"  styleClass="tag label label-info #{gruppo.value}"/>
+	 *		</a4j:repeat>
+	 *		</a4j:outputPanel>
+	 */
 	public String getGruppiHTML(){
 		String tmp = this.getGruppi();
 		if(tmp!=null){
@@ -662,6 +680,15 @@ public class TransazioneBean extends Transazione{
 
 	}
 	
+	public boolean isVisualizzaTextAreaRichiedente() {
+		String de = this.getRichiedente();
+		if(StringUtils.isNotEmpty(de)) {
+			if(de.length() > 150)
+				return true;
+		} 
+		return false;
+	}
+	
 	public String getRichiedente() {
 				
 		// 1) Username del Token
@@ -734,6 +761,22 @@ public class TransazioneBean extends Transazione{
 		String sTokenClientId = getTokenClientIdLabel();
 		if(StringUtils.isNotEmpty(sTokenClientId)) {
 			return sTokenClientId;
+		}
+		
+		return null;
+		
+	}
+	
+	public String getIpRichiedente() {
+		
+		String t = this.getTransportClientAddress();
+		if(StringUtils.isNotEmpty(t)) {
+			return t;
+		}
+		
+		String s = this.getSocketClientAddress();
+		if(StringUtils.isNotEmpty(s)) {
+			return s;
 		}
 		
 		return null;
@@ -929,4 +972,161 @@ public class TransazioneBean extends Transazione{
 	}
 
 	public void setConsegnaMultipla(boolean consegnaMultipla) {}
+	
+	public String getLabelDettaglioErrore() {
+		return this.isEsitoOk() ? "Dettaglio Anomalia" : "Dettaglio Errore";
+	}
+	
+	public boolean isVisualizzaTextAreaDettaglioErrore() {
+		String de = this.getDettaglioErrore();
+		if(StringUtils.isNotEmpty(de)) {
+			if(de.length() > 150)
+				return true;
+		} 
+		return false;
+	}
+
+	private String dettaglioErrore;
+	public String getDettaglioErrore() {
+		
+		if(this.dettaglioErrore!=null) {
+			return this.dettaglioErrore;
+		}
+		
+		return _getDettaglioErrore();
+	}
+	private synchronized String _getDettaglioErrore() {
+		
+		if(this.dettaglioErrore!=null) {
+			return this.dettaglioErrore;
+		}
+		
+		if(this.isEsitoFaultApplicativo()) {
+			
+			if(PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
+				if(this.isVisualizzaFaultIntegrazione()) {
+					this.dettaglioErrore = this.getFaultIntegrazionePretty();
+					return this.dettaglioErrore;
+				}
+				else if(this.isVisualizzaFaultCooperazione()) {
+					this.dettaglioErrore = this.getFaultCooperazionePretty();
+					return this.dettaglioErrore;
+				}
+			}
+			else if(PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+				if(this.isVisualizzaFaultCooperazione()) {
+					this.dettaglioErrore = this.getFaultCooperazionePretty();
+					return this.dettaglioErrore;
+				}
+				else if(this.isVisualizzaFaultIntegrazione()) {
+					this.dettaglioErrore = this.getFaultIntegrazionePretty();
+					return this.dettaglioErrore;
+				}
+			}
+			
+		}
+		
+		// lista diagnostici
+		try{
+			Logger log = LoggerManager.getPddMonitorCoreLogger();
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(log);
+			IDiagnosticDriver driver = govwayMonitorProperties.getDriverMsgDiagnostici();
+			
+			FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
+			
+			Hashtable<String, String> properties = new Hashtable<String, String>();
+			properties.put("id_transazione",
+					this.getIdTransazione());
+			filter.setProperties(properties);
+			
+			EsitiProperties esitiProperties = EsitiProperties.getInstance(log, this.getProtocollo());
+			EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(this.getEsito());
+			filter.setApplicativo(null);
+			if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+				filter.setCheckApplicativoIsNull(true);
+			}
+			else {
+				filter.setCheckApplicativoIsNull(false);
+			}
+			filter.setSeverita(LogLevels.SEVERITA_ERROR_INTEGRATION);
+			filter.setAsc(true);
+			
+			List<MsgDiagnostico> msgs = null;
+			try {
+				msgs = driver.getMessaggiDiagnostici(filter);
+			}catch(DriverMsgDiagnosticiNotFoundException notFound){
+				msgs = new ArrayList<MsgDiagnostico>();
+				log.debug(notFound.getMessage(), notFound);
+			}
+			
+			StringBuilder sb = new StringBuilder();
+			StringBuilder erroreConnessone = new StringBuilder();
+			if(msgs!=null && !msgs.isEmpty()) {
+				for (MsgDiagnostico msgDiagnostico : msgs) {
+					String codice = msgDiagnostico.getCodice();
+					
+					if(this.isEsitoKo()) {
+						// salto gli errori 'warning'
+						if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_WARNING.contains(codice)) {
+							continue;
+						}
+					}
+					
+					if(EsitoTransazioneName.isErroreRisposta(esitoTransactionName) && MsgDiagnosticiProperties.MSG_DIAGNOSTICI_ERRORE_CONNETTORE.contains(codice)) {
+						if(erroreConnessone.length()>0) {
+							erroreConnessone.append("\n");
+						}
+						erroreConnessone.append(msgDiagnostico.getMessaggio());
+					}
+					else {
+						if(sb.length()>0) {
+							sb.append("\n");
+						}
+						sb.append(msgDiagnostico.getMessaggio());
+						
+						break; // serializzo solo il primo diagnostico
+					}
+				}
+			}
+			if(sb.length()>0) {
+				this.dettaglioErrore = sb.toString();
+				return this.dettaglioErrore;
+			}
+			if(erroreConnessone.length()>0) {
+				this.dettaglioErrore = erroreConnessone.toString();
+				return this.dettaglioErrore;
+			}
+			
+		}catch(Exception e){
+			LoggerManager.getPddMonitorCoreLogger().error("Errore durante il recupero dell'errore: "+e.getMessage(),e);
+		}
+		
+		if(!this.isEsitoFaultApplicativo()) {
+			
+			if(PddRuolo.APPLICATIVA.equals(this.getPddRuolo())) {
+				if(this.isVisualizzaFaultIntegrazione()) {
+					this.dettaglioErrore = this.getFaultIntegrazionePretty();
+					return this.dettaglioErrore;
+				}
+				else if(this.isVisualizzaFaultCooperazione()) {
+					this.dettaglioErrore = this.getFaultCooperazionePretty();
+					return this.dettaglioErrore;
+				}
+			}
+			else if(PddRuolo.DELEGATA.equals(this.getPddRuolo())) {
+				if(this.isVisualizzaFaultCooperazione()) {
+					this.dettaglioErrore = this.getFaultCooperazionePretty();
+					return this.dettaglioErrore;
+				}
+				else if(this.isVisualizzaFaultIntegrazione()) {
+					this.dettaglioErrore = this.getFaultIntegrazionePretty();
+					return this.dettaglioErrore;
+				}
+			}
+			
+		}
+		
+		this.dettaglioErrore = "";
+		return this.dettaglioErrore;
+	}
 }

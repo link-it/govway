@@ -24,7 +24,9 @@ package org.openspcoop2.pdd.logger;
 
 
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 
 import org.slf4j.Logger;
@@ -649,9 +651,36 @@ public class MsgDiagnosticiProperties {
 	
 	
 	
+	/*---------- Codici Warning -------------*/
+	public static List<String> MSG_DIAGNOSTICI_WARNING = new ArrayList<String>();
+	static {
+		MSG_DIAGNOSTICI_WARNING.add("001069"); // ricezioneContenutiApplicativi.controlloTraffico.policy.violataWarningOnly
+		MSG_DIAGNOSTICI_WARNING.add("001072"); // ricezioneContenutiApplicativi.controlloTraffico.maxRequestsViolatedWarningOnly
+		MSG_DIAGNOSTICI_WARNING.add("001084"); // ricezioneContenutiApplicativi.gestioneTokenInCorso.validazioneToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("001091"); // ricezioneContenutiApplicativi.gestioneTokenInCorso.introspectionToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("001098"); // ricezioneContenutiApplicativi.gestioneTokenInCorso.userInfoToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("001108"); // ricezioneContenutiApplicativi.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
+		
+		MSG_DIAGNOSTICI_WARNING.add("003060"); // inoltroBuste.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
+		
+		MSG_DIAGNOSTICI_WARNING.add("004092"); // ricezioneBuste.controlloTraffico.policy.violataWarningOnly
+		MSG_DIAGNOSTICI_WARNING.add("004095"); // ricezioneBuste.controlloTraffico.maxRequestsViolatedWarningOnly
+		MSG_DIAGNOSTICI_WARNING.add("004107"); // ricezioneBuste.gestioneTokenInCorso.validazioneToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("004114"); // ricezioneBuste.gestioneTokenInCorso.introspectionToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("004121"); // ricezioneBuste.gestioneTokenInCorso.userInfoToken.warningOnly.fallita
+		MSG_DIAGNOSTICI_WARNING.add("004131"); // ricezioneBuste.validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly
+		
+		MSG_DIAGNOSTICI_WARNING.add("007059"); // consegnaContenutiApplicativi.validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly
+	}
 	
-	
-	
+	/*---------- Codici Consegna Fallita -------------*/
+	public static List<String> MSG_DIAGNOSTICI_ERRORE_CONNETTORE = new ArrayList<String>();
+	static {
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003008"); // inoltroBuste.inoltroConErrore
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("003013"); // inoltroBuste.ricezioneSoapFault 
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007013"); // consegnaContenutiApplicativi.consegnaConErrore
+		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007014"); // consegnaContenutiApplicativi.ricezioneSoapFault
+	}
 	
 	/*---------- Keyword attese -------------*/
 	public final static String MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI="ricezioneContenutiApplicativi.";
@@ -784,6 +813,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"autenticazioneTokenInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"autenticazioneTokenEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"autenticazioneTokenFallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_IMBUSTAMENTO+"registroServizi.ricercaServizioFallita",
@@ -860,6 +890,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"trasformazione.processamentoRispostaEffettuato",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"trasformazione.processamentoRispostaInErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"ricezioneRestProblem",
+		MsgDiagnosticiProperties.MSG_DIAG_INOLTRO_BUSTE+"validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggio",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"ricezioneMessaggioErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autorizzazioneBusteInCorso",
@@ -990,6 +1021,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autenticazioneTokenInCorso",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autenticazioneTokenEffettuata",
 		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"autenticazioneTokenFallita",
+		MsgDiagnosticiProperties.MSG_DIAG_RICEZIONE_BUSTE+"validazioneContenutiApplicativiRichiestaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBustaErrore",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"ricezioneBusta.eccezioniNonGravi",
 		MsgDiagnosticiProperties.MSG_DIAG_SBUSTAMENTO+"validazioneNonRiuscita",
@@ -1089,6 +1121,7 @@ public class MsgDiagnosticiProperties {
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.loadBalancer.sticky.identificazioneRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"connettoriMultipli.consegnaCondizionale.identificazioneRiuscita",
 		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"ricezioneRestProblem",
+		MsgDiagnosticiProperties.MSG_DIAG_CONSEGNA_CONTENUTI_APPLICATIVI+"validazioneContenutiApplicativiRispostaNonRiuscita.warningOnly",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"logInvocazioneOperazione",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"autenticazioneNonImpostata",
 		MsgDiagnosticiProperties.MSG_DIAG_INTEGRATION_MANAGER+"servizioApplicativo.identificazioneTramiteCredenziali",

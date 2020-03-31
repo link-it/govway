@@ -1,3 +1,17 @@
+2020-03-31  Andrea Poli <apoli@link.it>
+
+	* Rilasciata versione 3.3.0
+
+2019-03-31  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta funzionalità OP-971
+	È stato riportato nel dettaglio delle informazioni generali di una transazione l'eventuale errore avvenuto durante la gestione della richiesta.
+	Poichè gli errori emersi possono essere molteplici, l'errore viene selezionato secondo l'algoritmo:
+	- il primo messaggio diagnostico di livello errore, escludendo i diagnostici emessi per le funzionalità 'warning only', nel caso di transazioni con esito 'Fallite'
+	- il fault ritornato al gateway nel caso di transazioni con esito 'Fault Applicativo'
+	- il primo diagnostico di livello errore, nel caso di transazioni completate con successo che presentano delle anomalie (es. validazione dei contenuti fallita ma impostata in warning only mode)
+
 2019-03-30  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore, GovWayConsole]

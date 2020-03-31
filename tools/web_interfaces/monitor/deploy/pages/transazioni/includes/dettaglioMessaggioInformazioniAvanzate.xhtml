@@ -22,22 +22,6 @@
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelSoggettoPdD" value="Dominio (Soggetto)" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 			<h:outputText id="outPdDSoggetto" value="#{dettagliBean.dettaglio.soggettoPdd}" rendered="#{loginBean.loggedUser.sizeSoggetti!=1}"/>
 														
-			<h:outputText styleClass="outputFieldLabel" id="outLabelConnettore" value="#{dettagliBean.dettaglio.pddRuolo=='DELEGATA' ? 'Connettore' : dettagliBean.dettaglio.pddRuolo=='APPLICATIVA' ? 'Connettore' : dettagliBean.dettaglio.pddRuolo=='ROUTER' ? 'Connettore' : 'Connettore'}"
-			rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
-			<h:outputText id="outConnettore" value="#{dettagliBean.dettaglio.locationConnettore}" rendered="#{not empty dettagliBean.dettaglio.pddRuolo and not empty dettagliBean.dettaglio.locationConnettore}"/>
-
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelCodiceRispostaIngresso" value="Codice Risposta" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso and dettagliBean.dettaglio.codiceRispostaIngresso != '0'}"/>
-			<h:outputText id="outCodiceRispostaIngresso" value="#{dettagliBean.dettaglio.codiceRispostaIngresso}" rendered="#{not empty dettagliBean.dettaglio.locationConnettore and not empty dettagliBean.dettaglio.codiceRispostaIngresso and dettagliBean.dettaglio.codiceRispostaIngresso != '0'}"/>
-			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaTotale" value="Latenza Totale" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" />
-			<h:outputText id="outLatenzaTotale" value="#{dettagliBean.dettaglio.latenzaTotale}" rendered="#{not empty dettagliBean.dettaglio.latenzaTotale}" converter="latenzaConverter" />
-			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaServizio" value="Latenza Servizio" rendered="#{not empty dettagliBean.dettaglio.latenzaServizio}" />
-			<h:outputText id="outLatenzaServizio" value="#{dettagliBean.dettaglio.latenzaServizio}" rendered="#{not empty dettagliBean.dettaglio.latenzaServizio}" converter="latenzaConverter" />
-			
-			<h:outputLabel styleClass="outputFieldLabel" id="outLabelLatenzaPorta" value="Latenza Gateway" rendered="#{not empty dettagliBean.dettaglio.latenzaPorta}" />
-			<h:outputText id="outLatenzaPorta" value="#{dettagliBean.dettaglio.latenzaPorta}" rendered="#{not empty dettagliBean.dettaglio.latenzaPorta}" converter="latenzaConverter" />
-			
 			<h:outputLabel styleClass="outputFieldLabel" id="outLabelEventiGestione" value="Eventi" rendered="#{not empty dettagliBean.dettaglio.eventiGestioneHTML}" />
 			<h:outputText id="outEventiGestione" value="#{dettagliBean.dettaglio.eventiGestioneHTML}" escape="false" rendered="#{not empty dettagliBean.dettaglio.eventiGestioneHTML}" />
 		
