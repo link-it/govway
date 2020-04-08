@@ -223,6 +223,18 @@ components:
         X-RateLimit-Reset:
           $ref: '#/components/headers/X-RateLimit-Reset'
           
+    202Accepted:
+      description: Request accepted
+      headers:
+        Location:
+          $ref: '#/components/headers/Location'
+        X-RateLimit-Limit:
+          $ref: '#/components/headers/X-RateLimit-Limit'
+        X-RateLimit-Remaining:
+          $ref: '#/components/headers/X-RateLimit-Remaining'
+        X-RateLimit-Reset:
+          $ref: '#/components/headers/X-RateLimit-Reset'
+          
   schemas:
 
     # https://raw.githubusercontent.com/teamdigitale/openapi/0.0.6/docs/schemas/geometry.yaml

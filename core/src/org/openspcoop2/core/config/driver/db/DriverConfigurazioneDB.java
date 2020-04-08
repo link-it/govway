@@ -25714,7 +25714,7 @@ implements IDriverConfigurazioneGet, IDriverConfigurazioneCRUD, IDriverWS, IMoni
 				if(filtroRicerca.getIdRuolo()!=null)
 					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".ruolo = ?");
 				if(filtroRicerca.getTipo()!=null)
-					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI_RUOLI+".tipo = ?");
+					sqlQueryObject.addWhereCondition(CostantiDB.SERVIZI_APPLICATIVI+".tipo = ?");
 				setProtocolPropertiesForSearch(sqlQueryObject, filtroRicerca, CostantiDB.SERVIZI_APPLICATIVI);
 			}
 
