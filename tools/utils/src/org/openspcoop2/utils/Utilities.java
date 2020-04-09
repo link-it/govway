@@ -37,7 +37,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
@@ -63,6 +70,26 @@ public class Utilities {
 			Thread.sleep(ms);
 		}catch(Throwable t) {
 			// ignore
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static <T> T execute(int secondsTimeout, Callable<?> callable) throws TimeoutException, UtilsException {
+		ExecutorService executor = Executors.newSingleThreadExecutor();
+		try {
+			Future<?> future = executor.submit(callable);
+			return (T) future.get(secondsTimeout, TimeUnit.SECONDS); //timeout is in 2 seconds
+		} catch (TimeoutException e) {
+		    //System.err.println("Timeout");
+		    throw e;
+		} catch (InterruptedException e) {
+			//System.err.println("Interrupted");
+			throw new UtilsException(e.getMessage(),e);
+		} catch (ExecutionException e) {
+			//System.err.println("ExecutionException");
+			throw new UtilsException(e.getMessage(),e);
+		}finally {
+			executor.shutdownNow();
 		}
 	}
 	

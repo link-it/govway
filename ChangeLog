@@ -1,8 +1,21 @@
+2020-04-09  Andrea Poli <apoli@link.it>
+
+	[GovWayCore]
+	Risolti i seguenti problemi:
+	- La validazione dei contenuti non funzionava su API REST se abilitata su gruppi differenti dal Predefinito.
+	- La consegna multipla richiedeva più di una connessione verso il database per thread. 
+
+2020-04-09  Andrea Poli <apoli@link.it>
+
+	[GovWayConsole]
+	Risolto problema presente sulla console di configurazione, per quanto concerne il profilo 'ModI PA', 
+	che non consentiva di aggiungere applicativi autorizzati puntualmente su una API quando era abilitato il Multi-Tenant.
+
 2020-03-31  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.3.0
 
-2019-03-31  Andrea Poli <apoli@link.it>
+2020-03-31  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayMonitor]
 	Aggiunta funzionalità OP-971
@@ -12,13 +25,13 @@
 	- il fault ritornato al gateway nel caso di transazioni con esito 'Fault Applicativo'
 	- il primo diagnostico di livello errore, nel caso di transazioni completate con successo che presentano delle anomalie (es. validazione dei contenuti fallita ma impostata in warning only mode)
 
-2019-03-30  Andrea Poli <apoli@link.it>
+2020-03-30  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-968
 	La funzionalità di "Verifica Connettori" è stata estesa con la possibilità di effettuare il download dei certificati ritornati dal server, in caso di endpoint https.
 
-2019-03-26  Andrea Poli <apoli@link.it>
+2020-03-26  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloSPCoop]
 	Aggiunta funzionalità OP-966
@@ -26,7 +39,7 @@
 	un identificativo numerico oltre al già presente identificativo testuale.
 	Tale informazione viene utilizzata anche dal protocollo SPCoop, per il quale è quindi stata eliminata la proprietà 'org.openspcoop2.protocol.spcoop.id.prefix'. 
 
-2019-03-24  Andrea Poli <apoli@link.it>
+2020-03-24  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
 	Corretta impostazione del servizio soap (port-type) selezionabile durante l'importazione di una GovLet: 
@@ -47,21 +60,21 @@
 	- Modificato aspetto della lista delle transazioni; la visualizzazione della colonna Icona 'Ruolo Transazione' 
 	  viene controllata dalle properties di configurazione ed è disabilitata per default.
 
-2019-03-23  Andrea Poli <apoli@link.it>
+2020-03-23  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ApiRsConfigurazione]
 	Se veniva creato un nuovo soggetto di dominio interno (multitenant) tramite la console di gestione, 
 	le API di configurazione "vedevano" il nuovo soggetto solamente dopo il riavvio dell'applicazione. Il problema è stato risolto.
 	Nel contesto delle trasformazioni vengono inoltre sempre create le mappe 'query', 'header' e 'config' in modo da non doverne verificare l'esistenza nei template engine.
 
-2019-03-23  Andrea Poli <apoli@link.it>
+2020-03-23  Andrea Poli <apoli@link.it>
 
 	* [Utils, GovWayConsole ApiRsConfigurazione, ApiRsMonitoraggio]
 	Aggiornate interfacce OpenAPI delle API di configurazione e monitoraggio al fine di superare la validazione del team digitale 
 	effettuata tramite il tool presente nel progetto https://github.com/teamdigitale/api-oas-checker ed essere compatibile con le linee guida del modello di interoperabilità.
 	Risolto inoltre problema, presente nelle utils.wsdl, che non consentiva di caricare interfacce wsdl contenenti wsdl:message che non includevano wsdl:parts.
 
-2019-03-17  Andrea Poli <apoli@link.it>
+2020-03-17  Andrea Poli <apoli@link.it>
 
 	* [ApiRsMonitoraggio]
 	Risolto Bug OP-962
@@ -411,14 +424,14 @@
 		  In una erogazione è quindi possibile riferire l'applicativo server precedentemente registrato 
 		  come modalità alternativa a quella di indicare tutte le informazioni di backend.
 
-2019-02-11  Francesco Scarlato <scarlato@link.it>
+2020-02-11  Francesco Scarlato <scarlato@link.it>
 
 	* [ApiRsConfigurazione, ApiRsMonitoraggio]
 	Risolti i seguenti problemi:
 	- L'aggiornamento del soggetto di default, tramite l'api di configurazione, creava una inconsistenza sul database.
 	- La ricerca per 'tag' delle transazioni, tramite l'api di monitoraggio, funzionava solamente nel caso di tipologia='erogazioni'.
 
-2019-02-05  Andrea Poli <apoli@link.it>
+2020-02-05  Andrea Poli <apoli@link.it>
 
 	* Rilasciata versione 3.2.2
 

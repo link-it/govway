@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Callable;
 
 import javax.crypto.Cipher;
 import javax.management.Attribute;
@@ -484,82 +485,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getVersioneBaseDati(){
 		try{
-			if(DBManager.isInitialized()==false){
-				throw new Exception("Inizializzazione DBManager non effettuata");
-			}
-			DBManager dbManager = DBManager.getInstance();
-			Resource resource = null;
-			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
-			String modulo = this.getClass().getName();
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
-			try{
-				resource = dbManager.getResource(dominio, modulo, null);
-				Connection c = (Connection) resource.getResource();
-				String sql = "select * from "+CostantiDB.DB_INFO_CONSOLE +" order by id DESC";
-				StringBuilder bf = new StringBuilder();
-				pstmt = c.prepareStatement(sql);
-				try {
-					rs = pstmt.executeQuery();
-					while (rs.next()) {
-						int major_version = rs.getInt("major_version");
-						int minor_version = rs.getInt("minor_version");
-						String details = rs.getString("notes");
-						if(bf.length()>0){
-							bf.append("\n");
-						}
-						bf.append("["+major_version+"."+minor_version+"] "+details);
-					}
-				}catch(Throwable t) {
-					
-					try{
-						if(rs!=null)
-							rs.close();
-					}catch(Exception eClose){}
-					try{
-						if(pstmt!=null)
-							pstmt.close();
-					}catch(Exception eClose){}
-					
-					sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
-					pstmt = c.prepareStatement(sql);
-					rs = pstmt.executeQuery();
-					try {
-						while (rs.next()) {
-							int major_version = rs.getInt("major_version");
-							int minor_version = rs.getInt("minor_version");
-							String details = rs.getString("notes");
-							if(bf.length()>0){
-								bf.append("\n");
-							}
-							bf.append("["+major_version+"."+minor_version+"] "+details);
-						}
-					}catch(Throwable tInternal) {
-						throw new UtilsMultiException(t,tInternal);
-					}
-				}
-
-				if(bf.length()<=0){
-					throw new Exception("BaseDati non possiede informazioni sul versionamento");
-				}else{
-					return bf.toString();
-				}
-
-			}finally{
-				try{
-					if(rs!=null)
-						rs.close();
-				}catch(Exception eClose){}
-				try{
-					if(pstmt!=null)
-						pstmt.close();
-				}catch(Exception eClose){}
-				try{
-					if(dbManager!=null)
-						dbManager.releaseResource(dominio, modulo, resource);
-				}catch(Exception eClose){}
-			}
-
+			VersioneBaseDatiChecker versioneBaseDatiChecker = new VersioneBaseDatiChecker(this.openspcoopProperties);
+			return Utilities.execute(5, versioneBaseDatiChecker);
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -628,41 +555,8 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 
 	public String getInformazioniDatabase(){
 		try{
-			if(DBManager.isInitialized()==false){
-				throw new Exception("Inizializzazione DBManager non effettuata");
-			}
-			DBManager dbManager = DBManager.getInstance();
-			Resource resource = null;
-			IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
-			String modulo = this.getClass().getName();
-			StringBuilder bf = new StringBuilder();
-
-			if(this.openspcoopProperties!=null){
-				bf.append("TipoDatabase: "+this.openspcoopProperties.getDatabaseType());
-			}
-			else{
-				throw new Exception("Tipo di Database non disponibile");
-			}
-
-			try{
-				resource = dbManager.getResource(dominio, modulo, null);
-				Connection c = (Connection) resource.getResource();
-
-				JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
-				
-				if(bf.length()<=0){
-					throw new Exception("Non sono disponibili informazioni sul database");
-				}else{
-					return bf.toString();
-				}
-
-			}finally{
-				try{
-					if(dbManager!=null)
-						dbManager.releaseResource(dominio, modulo, resource);
-				}catch(Exception eClose){}
-			}
-
+			InformazioniDatabaseChecker versioneBaseDatiChecker = new InformazioniDatabaseChecker(this.openspcoopProperties);
+			return Utilities.execute(5, versioneBaseDatiChecker);
 		}catch(Throwable e){
 			this.log.error(JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage(),e);
 			return JMXUtils.MSG_OPERAZIONE_NON_EFFETTUATA+e.getMessage();
@@ -1218,4 +1112,141 @@ public class ConfigurazioneSistema extends NotificationBroadcasterSupport implem
 	}
 	
 
+}
+
+class VersioneBaseDatiChecker implements Callable<String>{
+
+	private OpenSPCoop2Properties openspcoopProperties;
+	public VersioneBaseDatiChecker(OpenSPCoop2Properties openspcoopProperties) {
+		this.openspcoopProperties = openspcoopProperties;
+	}
+	
+	@Override
+	public String call() throws Exception {
+		
+		if(DBManager.isInitialized()==false){
+			throw new Exception("Inizializzazione DBManager non effettuata");
+		}
+		DBManager dbManager = DBManager.getInstance();
+		Resource resource = null;
+		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+		String modulo = this.getClass().getName();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		try{
+			resource = dbManager.getResource(dominio, modulo, null);
+			Connection c = (Connection) resource.getResource();
+			String sql = "select * from "+CostantiDB.DB_INFO_CONSOLE +" order by id DESC";
+			StringBuilder bf = new StringBuilder();
+			pstmt = c.prepareStatement(sql);
+			try {
+				rs = pstmt.executeQuery();
+				while (rs.next()) {
+					int major_version = rs.getInt("major_version");
+					int minor_version = rs.getInt("minor_version");
+					String details = rs.getString("notes");
+					if(bf.length()>0){
+						bf.append("\n");
+					}
+					bf.append("["+major_version+"."+minor_version+"] "+details);
+				}
+			}catch(Throwable t) {
+				
+				try{
+					if(rs!=null)
+						rs.close();
+				}catch(Exception eClose){}
+				try{
+					if(pstmt!=null)
+						pstmt.close();
+				}catch(Exception eClose){}
+				
+				sql = "select * from "+CostantiDB.DB_INFO +" order by id DESC";
+				pstmt = c.prepareStatement(sql);
+				rs = pstmt.executeQuery();
+				try {
+					while (rs.next()) {
+						int major_version = rs.getInt("major_version");
+						int minor_version = rs.getInt("minor_version");
+						String details = rs.getString("notes");
+						if(bf.length()>0){
+							bf.append("\n");
+						}
+						bf.append("["+major_version+"."+minor_version+"] "+details);
+					}
+				}catch(Throwable tInternal) {
+					throw new UtilsMultiException(t,tInternal);
+				}
+			}
+
+			if(bf.length()<=0){
+				throw new Exception("BaseDati non possiede informazioni sul versionamento");
+			}else{
+				return bf.toString();
+			}
+
+		}finally{
+			try{
+				if(rs!=null)
+					rs.close();
+			}catch(Exception eClose){}
+			try{
+				if(pstmt!=null)
+					pstmt.close();
+			}catch(Exception eClose){}
+			try{
+				if(dbManager!=null)
+					dbManager.releaseResource(dominio, modulo, resource);
+			}catch(Exception eClose){}
+		}
+		
+	}
+	
+}
+
+class InformazioniDatabaseChecker implements Callable<String>{
+
+	private OpenSPCoop2Properties openspcoopProperties;
+	public InformazioniDatabaseChecker(OpenSPCoop2Properties openspcoopProperties) {
+		this.openspcoopProperties = openspcoopProperties;
+	}
+	
+	@Override
+	public String call() throws Exception {
+		if(DBManager.isInitialized()==false){
+			throw new Exception("Inizializzazione DBManager non effettuata");
+		}
+		DBManager dbManager = DBManager.getInstance();
+		Resource resource = null;
+		IDSoggetto dominio = this.openspcoopProperties.getIdentitaPortaDefault(null);
+		String modulo = this.getClass().getName();
+		StringBuilder bf = new StringBuilder();
+
+		if(this.openspcoopProperties!=null){
+			bf.append("TipoDatabase: "+this.openspcoopProperties.getDatabaseType());
+		}
+		else{
+			throw new Exception("Tipo di Database non disponibile");
+		}
+
+		try{
+			resource = dbManager.getResource(dominio, modulo, null);
+			Connection c = (Connection) resource.getResource();
+
+			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sul database");
+			}else{
+				return bf.toString();
+			}
+
+		}finally{
+			try{
+				if(dbManager!=null)
+					dbManager.releaseResource(dominio, modulo, resource);
+			}catch(Exception eClose){}
+		}
+	}
+	
 }

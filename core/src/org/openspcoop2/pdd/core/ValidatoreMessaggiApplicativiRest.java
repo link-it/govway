@@ -89,6 +89,8 @@ public class ValidatoreMessaggiApplicativiRest {
 	private Logger logger = null;
 	/** ProtocolFactory */
 	private IProtocolFactory<?> protocolFactory;
+	/** PddContext */
+	private PdDContext pddContext;
 
 	
 	
@@ -96,7 +98,7 @@ public class ValidatoreMessaggiApplicativiRest {
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativiRest(RegistroServiziManager registro,IDServizio idServizio,
-			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio, IProtocolFactory<?> protocolFactory)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio, IProtocolFactory<?> protocolFactory, PdDContext pddContext)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -120,6 +122,8 @@ public class ValidatoreMessaggiApplicativiRest {
 		this.logger = OpenSPCoop2Logger.getLoggerOpenSPCoopCore();
 		
 		this.protocolFactory = protocolFactory;
+		
+		this.pddContext = pddContext;
 		
 		try{
 			if(readInterfaceAccordoServizio){
@@ -307,13 +311,20 @@ public class ValidatoreMessaggiApplicativiRest {
 			}
 			String normalizedInterfaceName = null;
 			try {
+				String interfaceName = null;
+				if(this.pddContext!=null && this.pddContext.containsKey(CostantiPdD.NOME_PORTA_INVOCATA)) {
+					interfaceName = (String) this.pddContext.getObject(CostantiPdD.NOME_PORTA_INVOCATA);
+				}
+				else {
+					interfaceName = transportContext.getInterfaceName();
+				}
 				if(transportContext.getInterfaceName()!=null) {
 					PorteNamingUtils namingUtils = new PorteNamingUtils(this.protocolFactory);
 					if(portaApplicativa){
-						normalizedInterfaceName = namingUtils.normalizePA(transportContext.getInterfaceName());
+						normalizedInterfaceName = namingUtils.normalizePA(interfaceName);
 					}
 					else {
-						normalizedInterfaceName = namingUtils.normalizePD(transportContext.getInterfaceName());
+						normalizedInterfaceName = namingUtils.normalizePD(interfaceName);
 					}
 				}
 			}catch(Exception e) {

@@ -1696,7 +1696,7 @@ public class EJBUtils {
 			if(behaviour_idSA_SyncResponder==null && (behaviour==null || !registraNuoviMessaggiViaBehaviour)){
 				_sendMessageToServiziApplicativi(serviziApplicativiAbilitati, soggettiRealiMappatiInUnSoggettoVirtuale, 
 						richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
-						null,null,stateless,this.openSPCoopState,
+						null,null,stateless,this.openSPCoopState,false,
 						null,
 						EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
 						behaviour!=null ? behaviour.getLoadBalancer() : null, false);
@@ -1717,7 +1717,7 @@ public class EJBUtils {
 					sa_list.add(behaviour_idSA_SyncResponder.getNome());
 					_sendMessageToServiziApplicativi(sa_list, soggettiRealiMappatiInUnSoggettoVirtuale, 
 							richiestaApplicativa, localForwardRichiestaDelegata, gestoreMessaggi, busta, pa, repositoryBuste,
-							null,null,stateless,this.openSPCoopState,
+							null,null,stateless,this.openSPCoopState,false,
 							null,
 							EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI,!ATTENDI_ESITO_TRANSAZIONE_SINCRONA_PRIMA_DI_SPEDIRE,
 							null, false);
@@ -1747,17 +1747,32 @@ public class EJBUtils {
 					this.pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI, serviziApplicativiAbilitatiForwardTo.size());
 										
 					String idTransazione = (String) this.pddContext.getObject(org.openspcoop2.core.constants.Costanti.ID_TRANSAZIONE);
-					OpenSPCoopStateless stateBehaviour = null;
+					OpenSPCoopStateless stateBehaviour_newConnection = null;
+					OpenSPCoopStateless stateBehaviour_onlyUseConnectionFalse = null;
+					boolean oldUseConnection = false;
 					try{
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
-							stateBehaviour = new OpenSPCoopStateless();
-							stateBehaviour.setUseConnection(true);
-							stateBehaviour.setTempiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getTempiAttraversamentoPDD());
-							stateBehaviour.setDimensioneMessaggiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getDimensioneMessaggiAttraversamentoPDD());
-							stateBehaviour.setIDCorrelazioneApplicativa(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativa());
-							stateBehaviour.setIDCorrelazioneApplicativaRisposta(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativaRisposta());
-							stateBehaviour.setPddContext(((OpenSPCoopStateless)this.openSPCoopState).getPddContext());
-							stateBehaviour.initResource(this.identitaPdD, "EJBUtils.behaviour_"+pa.getBehaviour().getNome(), idTransazione);
+							boolean createNew = true;
+							if( (this.openSPCoopState instanceof OpenSPCoopStateless)) {
+								OpenSPCoopStateless check = (OpenSPCoopStateless) this.openSPCoopState;
+								if(check.getConnectionDB()!=null && check.getConnectionDB().isClosed()==false) {
+									createNew = false;
+									stateBehaviour_onlyUseConnectionFalse = (OpenSPCoopStateless) this.openSPCoopState;
+									oldUseConnection = check.isUseConnection();
+									stateBehaviour_onlyUseConnectionFalse.setUseConnection(true);
+								}
+							}
+							
+							if(createNew) {
+								stateBehaviour_newConnection = new OpenSPCoopStateless();
+								stateBehaviour_newConnection.setUseConnection(true);
+								stateBehaviour_newConnection.setTempiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getTempiAttraversamentoPDD());
+								stateBehaviour_newConnection.setDimensioneMessaggiAttraversamentoPDD(((OpenSPCoopStateless)this.openSPCoopState).getDimensioneMessaggiAttraversamentoPDD());
+								stateBehaviour_newConnection.setIDCorrelazioneApplicativa(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativa());
+								stateBehaviour_newConnection.setIDCorrelazioneApplicativaRisposta(((OpenSPCoopStateless)this.openSPCoopState).getIDCorrelazioneApplicativaRisposta());
+								stateBehaviour_newConnection.setPddContext(((OpenSPCoopStateless)this.openSPCoopState).getPddContext());
+								stateBehaviour_newConnection.initResource(this.identitaPdD, "EJBUtils.behaviour_"+pa.getBehaviour().getNome(), idTransazione);
+							}
 						}
 					
 						// registrazione messaggio
@@ -1770,8 +1785,11 @@ public class EJBUtils {
 						bustaNewMessaggio.setRiferimentoMessaggio(busta.getID()); // per il timer
 						bustaNewMessaggio.addProperty(CostantiPdD.KEY_DESCRIZIONE_BEHAVIOUR, behaviourForwardTo.getDescription());
 						IOpenSPCoopState stateNuoviMessaggi = this.openSPCoopState;
-						if(stateBehaviour!=null){
-							stateNuoviMessaggi = stateBehaviour;
+						if(stateBehaviour_newConnection!=null){
+							stateNuoviMessaggi = stateBehaviour_newConnection;
+						}
+						else if(stateBehaviour_onlyUseConnectionFalse!=null) {
+							stateNuoviMessaggi = stateBehaviour_onlyUseConnectionFalse;
 						}
 						GestoreMessaggi gestoreNewMessaggio = new GestoreMessaggi(stateNuoviMessaggi,true, bustaNewMessaggio.getID(),
 								Costanti.INBOX,this.msgDiag,this.pddContext);
@@ -1785,24 +1803,32 @@ public class EJBUtils {
 						// Inoltro messaggio
 						_sendMessageToServiziApplicativi(serviziApplicativiAbilitatiForwardTo, soggettiRealiMappatiInUnSoggettoVirtuale, 
 								richiestaApplicativa, localForwardRichiestaDelegata, gestoreNewMessaggio, bustaNewMessaggio, pa, repositoryBusteNewMessaggio,
-								busta.getID(),behaviourForwardTo.getConfig(),stateless,stateNuoviMessaggi,
+								busta.getID(),behaviourForwardTo.getConfig(), stateless, stateNuoviMessaggi, (stateBehaviour_newConnection!=null),
 								behaviourForwardTo.getMessage(),
 								!EFFETTUA_SPEDIZIONE_CONSEGNA_CONTENUTI, attendiEsitoTransazioneSincronaPrimaDiSpedire,
 								null, true);
 						
 						// Applico modifiche effettuate dal modulo Consegna
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
-							if(stateBehaviour.resourceReleased()){
-								// il modulo di consegna rilascia la risorsa
-								stateBehaviour.updateResource(idTransazione);
+							if(stateBehaviour_newConnection!=null) {
+								if(stateBehaviour_newConnection.resourceReleased()){
+									// il modulo di consegna rilascia la risorsa
+									stateBehaviour_newConnection.updateResource(idTransazione);
+								}
+								stateBehaviour_newConnection.commit();
 							}
-							stateBehaviour.commit();
+							else if(stateBehaviour_onlyUseConnectionFalse!=null) {
+								stateBehaviour_onlyUseConnectionFalse.commit();
+							}
 						}
 						
 					}finally{
 						if (stateless && !this.propertiesReader.isServerJ2EE() ) {
-							if(stateBehaviour!=null){
-								stateBehaviour.releaseResource();
+							if(stateBehaviour_newConnection!=null){
+								stateBehaviour_newConnection.releaseResource();
+							}
+							else if(stateBehaviour_onlyUseConnectionFalse!=null) {
+								stateBehaviour_onlyUseConnectionFalse.setUseConnection(oldUseConnection);
 							}
 						}
 					}
@@ -1833,7 +1859,7 @@ public class EJBUtils {
 			RichiestaApplicativa richiestaApplicativaParam, RichiestaDelegata localForwardRichiestaDelegata,
 			GestoreMessaggi gestoreMessaggi, Busta busta, PortaApplicativa pa, RepositoryBuste repositoryBuste,
 			String idBustaPreBehaviourNewMessage,BehaviourForwardToConfiguration behaviourForwardToConfiguration,
-			boolean stateless,IOpenSPCoopState state,
+			boolean stateless,IOpenSPCoopState state,boolean releseaResource,
 			OpenSPCoop2Message requestMessageNullable,
 			boolean spedizioneConsegnaContenuti, boolean attendiEsitoTransazioneSincronaPrimaDiSpedire,
 			BehaviourLoadBalancer loadBalancer, boolean presaInCarico) throws Exception{
@@ -2041,7 +2067,9 @@ public class EJBUtils {
 		if(idBustaPreBehaviourNewMessage!=null){
 			if (stateless && !this.propertiesReader.isServerJ2EE() ) {
 				state.commit();
-				state.releaseResource();
+				if(releseaResource) {
+					state.releaseResource();
+				}
 				registrazioneDestinatarioEffettuataPerViaBehaviour = true;
 			}
 		}
@@ -2175,7 +2203,7 @@ public class EJBUtils {
 				if(transazioneApplicativoServer!=null) {
 					
 					try {
-						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa());
+						GestoreConsegnaMultipla.getInstance().safeCreate(transazioneApplicativoServer, richiestaApplicativa.getIdPortaApplicativa(), state);
 					}catch(Throwable t) {
 						log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}

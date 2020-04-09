@@ -4540,7 +4540,7 @@ public class InoltroBuste extends GenericLib{
 										// Init Validatore
 										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
 										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface, protocolFactory);
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface, protocolFactory, pddContext);
 										
 										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 												responseMessage.castAsRest().hasContent()) {

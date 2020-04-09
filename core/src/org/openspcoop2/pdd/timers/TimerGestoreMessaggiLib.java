@@ -414,7 +414,7 @@ public class TimerGestoreMessaggiLib  {
 											IDPortaApplicativa idPA = new IDPortaApplicativa();
 											idPA.setNome(messaggioServizioApplicativo.getNomePorta());
 											try {
-												GestoreConsegnaMultipla.getInstance().safeUpdateMessaggioScaduto(transazioneApplicativoServer, idPA);
+												GestoreConsegnaMultipla.getInstance().safeUpdateMessaggioScaduto(transazioneApplicativoServer, idPA, openspcoopstate);
 											}catch(Throwable t) {
 												this.logTimer.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 											}

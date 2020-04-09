@@ -122,6 +122,7 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 		String idTransazione = this.messaggioServizioApplicativo.getIdTransazione();
 		String servizioApplicativo = this.messaggioServizioApplicativo.getServizioApplicativo();
 		String idMsgDaInoltrare = this.messaggioServizioApplicativo.getIdMessaggio();
+		String identificativo = "redelivery_"+idTransazione+"_"+servizioApplicativo+"_"+idMsgDaInoltrare;
 		
 		MsgDiagnostico msgDiag = MsgDiagnostico.newInstance(TimerConsegnaContenutiApplicativiThread.ID_MODULO);
 		PdDContext pddContext = new PdDContext();
@@ -136,12 +137,13 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 
 			this.log.debug("Riconsegna in corso del messaggio '"+idMsgDaInoltrare+"' per l'applicativo '"+servizioApplicativo+"' ...");
 			
-			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, null);
+			openspcoopstateGestore.initResource(this.propertiesReader.getIdentitaPortaDefault(null),TimerConsegnaContenutiApplicativiThread.ID_MODULO, identificativo);
 				
 			GestoreMessaggi messaggioDaInviare = null;
-			OpenSPCoopStateful openspcoopstateMesssaggio = null;
 			try{
 	
+				// FASE 1 PREPARAZIONE
+				
 				RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopstateGestore.getStatoRichiesta(), true,null);
 				Busta bustaToSend = repositoryBuste.getBustaFromInBox(idMsgDaInoltrare);
 				msgDiag.addKeywords(bustaToSend, true);
@@ -234,13 +236,36 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				behaviourMsg.setIdTransazioneApplicativoServer(idTransazioneApplicativoServer);
 				consegnaMSG.setBehaviour(behaviourMsg);
 	
-	
-				ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
-				openspcoopstateMesssaggio = new OpenSPCoopStateful();
-				// viene inizializzata dentro il modulo ConsegnaContenutiApplicativi
-				//openspcoopstateMesssaggio.initResource(identitaPdD,TimerConsegnaContenutiApplicativiThread.ID_MODULO, bustaToSend.getID());
-				openspcoopstateMesssaggio.setMessageLib(consegnaMSG);
-				EsitoLib result = lib.onMessage(openspcoopstateMesssaggio);
+				
+				
+				// FASE 2 SPEDIZIONE
+				
+				// rilasco connessione gestore
+				openspcoopstateGestore.releaseResource();
+				
+				EsitoLib result = null;
+				OpenSPCoopStateful openspcoopstateMessaggio = null;
+				try {
+					ConsegnaContenutiApplicativi lib = new ConsegnaContenutiApplicativi(OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+					openspcoopstateMessaggio = new OpenSPCoopStateful();
+					// viene inizializzata dentro il modulo ConsegnaContenutiApplicativi
+					//openspcoopstateMessaggio.initResource(identitaPdD,TimerConsegnaContenutiApplicativiThread.ID_MODULO, bustaToSend.getID());
+					openspcoopstateMessaggio.setMessageLib(consegnaMSG);
+					result = lib.onMessage(openspcoopstateMessaggio);
+				}finally {
+					try{
+						if(openspcoopstateMessaggio!=null && !openspcoopstateMessaggio.resourceReleased()){
+							openspcoopstateMessaggio.releaseResource();
+						}
+					}catch(Exception e){}
+					
+					// riprendo connessione gestore
+					openspcoopstateGestore.updateResource(identificativo);
+					messaggioDaInviare.updateOpenSPCoopState(openspcoopstateGestore);
+				}
+				
+				
+				
 				if(this.debug)
 					this.log.debug("Invocato ConsegnaContenutiApplicativi per ["+bustaToSend.getID()+
 							"] con esito: "+result.getStatoInvocazione(),result.getErroreNonGestito());
@@ -278,15 +303,14 @@ public class TimerConsegnaContenutiApplicativiSender implements IRunnableInstanc
 				msgDiag.logErroreGenerico(e,"InoltroMessaggioInbox("+idMsgDaInoltrare+")");
 				this.log.error("ErroreInoltroMessaggioInbox("+idMsgDaInoltrare+"): "+e.getMessage(),e);
 				// per evitare i loop infinito
-				messaggioDaInviare.aggiornaDataRispedizione(new Timestamp(DateManager.getTimeMillis()+(this.minTimeoutResend*1000)), servizioApplicativo);
-				messaggioDaInviare.aggiornaErroreProcessamentoMessaggio("["+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"] "+e.getMessage(), servizioApplicativo);
+				if(openspcoopstateGestore!=null && !openspcoopstateGestore.resourceReleased()){
+					messaggioDaInviare.aggiornaDataRispedizione(new Timestamp(DateManager.getTimeMillis()+(this.minTimeoutResend*1000)), servizioApplicativo);
+					messaggioDaInviare.aggiornaErroreProcessamentoMessaggio("["+TimerConsegnaContenutiApplicativiThread.ID_MODULO+"] "+e.getMessage(), servizioApplicativo);
+				}
 			}finally{
-				messaggioDaInviare.releaseMessaggioPresaInCosegna(servizioApplicativo, this.clusterId, this.debug, this.logSql); // può già essere stato eliminato
-				try{
-					if(openspcoopstateMesssaggio!=null && !openspcoopstateMesssaggio.resourceReleased()){
-						openspcoopstateMesssaggio.releaseResource();
-					}
-				}catch(Exception e){}
+				if(openspcoopstateGestore!=null && !openspcoopstateGestore.resourceReleased()){
+					messaggioDaInviare.releaseMessaggioPresaInCosegna(servizioApplicativo, this.clusterId, this.debug, this.logSql); // può già essere stato eliminato
+				}
 			}
 			
 			this.log.debug("Riconsegna in corso del messaggio '"+idMsgDaInoltrare+"' per l'applicativo '"+servizioApplicativo+"' terminata");

@@ -5606,7 +5606,7 @@ public class RicezioneBuste {
 							// Init Validatore
 							msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 							ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-								new ValidatoreMessaggiApplicativiRest(registroServiziReader, idServizio, requestMessage, readInterface, protocolFactory);
+								new ValidatoreMessaggiApplicativiRest(registroServiziReader, idServizio, requestMessage, readInterface, protocolFactory, pddContext);
 							
 							if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 									requestMessage.castAsRest().hasContent()) {

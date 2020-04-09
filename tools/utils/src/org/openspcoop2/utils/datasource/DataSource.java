@@ -32,9 +32,11 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.logging.Logger;
 
 import org.openspcoop2.utils.TipiDatabase;
+import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.date.DateManager;
 import org.openspcoop2.utils.date.DateUtils;
@@ -105,33 +107,8 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	}
 	
 	public String getInformazioniDatabase() throws Exception{
-		StringBuilder bf = new StringBuilder();
-
-		if(this.getTipoDatabase()!=null){
-			bf.append("TipoDatabase: "+this.getTipoDatabase().getNome());
-		}
-		else{
-			throw new Exception("Tipo di Database non disponibile");
-		}
-
-		Connection c = null; 
-		try{
-			c = (Connection) this.getConnection();
-
-			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
-			
-			if(bf.length()<=0){
-				throw new Exception("Non sono disponibili informazioni sul database");
-			}else{
-				return bf.toString();
-			}
-
-		}finally{
-			try{
-				if(c!=null)
-					this.closeConnection(c);
-			}catch(Exception eClose){}
-		}
+		InformazioniDatabaseChecker versioneBaseDatiChecker = new InformazioniDatabaseChecker(this);
+		return Utilities.execute(5, versioneBaseDatiChecker);
 	}
 	
 	protected DataSource(javax.sql.DataSource datasource, TipiDatabase tipoDatabase, boolean wrapOriginalMethods, String jndiName, String applicativeIdDatasource) throws SQLException{
@@ -322,4 +299,45 @@ public class DataSource implements javax.sql.DataSource,java.sql.Wrapper {
 	
 
 
+}
+
+class InformazioniDatabaseChecker implements Callable<String>{
+
+	private DataSource dataSource;
+	
+	public InformazioniDatabaseChecker(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	
+	@Override
+	public String call() throws Exception {
+		StringBuilder bf = new StringBuilder();
+
+		if(this.dataSource.getTipoDatabase()!=null){
+			bf.append("TipoDatabase: "+this.dataSource.getTipoDatabase().getNome());
+		}
+		else{
+			throw new Exception("Tipo di Database non disponibile");
+		}
+
+		Connection c = null; 
+		try{
+			c = (Connection) this.dataSource.getConnection();
+
+			JDBCUtilities.addInformazioniDatabaseFromMetaData(c, bf);
+			
+			if(bf.length()<=0){
+				throw new Exception("Non sono disponibili informazioni sul database");
+			}else{
+				return bf.toString();
+			}
+
+		}finally{
+			try{
+				if(c!=null)
+					this.dataSource.closeConnection(c);
+			}catch(Exception eClose){}
+		}
+	}
+	
 }

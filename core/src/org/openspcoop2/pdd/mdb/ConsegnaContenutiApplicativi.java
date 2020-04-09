@@ -401,7 +401,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			}
 			
 			try {
-				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa);
+				GestoreConsegnaMultipla.getInstance().safeUpdateConsegna(transazioneApplicativoServer, idApplicativa, openspcoopstate);
 			}catch(Throwable t) {
 				this.log.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 			}
@@ -3092,7 +3092,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										// Init Validatore
 										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
 										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-											new ValidatoreMessaggiApplicativiRest(registroServiziManager, idSValidazioneXSD, responseMessage, readInterface, protocolFactory);
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, idSValidazioneXSD, responseMessage, readInterface, protocolFactory, pddContext);
 										
 										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 												responseMessage.castAsRest().hasContent()) {

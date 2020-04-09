@@ -3612,7 +3612,7 @@ public class RicezioneContenutiApplicativi {
 					// Init Validatore
 					msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 					ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, protocolFactory);
+						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, protocolFactory, pddContext);
 					
 					if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 							requestMessage.castAsRest().hasContent()) {

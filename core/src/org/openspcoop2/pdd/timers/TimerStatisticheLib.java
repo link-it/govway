@@ -326,6 +326,9 @@ public class TimerStatisticheLib {
 			if(this.op2Properties.isStatisticheUseTransazioniDatasource()) {
 				conStatistiche = conTransazioni; // non prendo due connessioni per "atterrare" sul solito database
 			}
+			else if(this.op2Properties.isStatisticheUsePddRuntimeDatasource() && this.op2Properties.isTransazioniUsePddRuntimeDatasource()) {
+				conStatistiche = conTransazioni; // non prendo due connessioni per "atterrare" sul solito database
+			}
 			else {
 				dbStatisticheManager = DBStatisticheManager.getInstance();
 				rStatistiche = dbStatisticheManager.getResource(this.op2Properties.getIdentitaPortaDefault(null), TimerStatisticheThread.ID_MODULO, null);

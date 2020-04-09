@@ -1066,7 +1066,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(info.getNomePorta());
 					try {
-						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA);
+						GestoreConsegnaMultipla.getInstance().safeUpdatePrelievoIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
 						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
@@ -1332,7 +1332,7 @@ public abstract class IntegrationManager implements IntegrationManagerMessageBox
 					IDPortaApplicativa idPA = new IDPortaApplicativa();
 					idPA.setNome(info.getNomePorta());
 					try {
-						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA);
+						GestoreConsegnaMultipla.getInstance().safeUpdateEliminazioneIM(transazioneApplicativoServer, idPA, stato);
 					}catch(Throwable t) {
 						logCore.error("["+transazioneApplicativoServer.getIdTransazione()+"]["+transazioneApplicativoServer.getServizioApplicativoErogatore()+"] Errore durante il salvataggio delle informazioni relative al servizio applicativo: "+t.getMessage(),t);
 					}
