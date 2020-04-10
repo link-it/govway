@@ -2222,7 +2222,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			/* ------------ Trasformazione Risposta  -------------- */
 			
 			boolean dumpRispostaEffettuato = false;
-			if(trasformazioni!=null && responseMessage!=null) {
+			if(trasformazioni!=null && responseMessage!=null
+					&& transazioneApplicativoServer==null // non ha senso per le notifiche asincrone
+					) {
 				try {
 					
 					// prima effettuo dump applicativo
@@ -2237,9 +2239,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								soggettoFruitore,idServizio,TipoPdD.APPLICATIVA,msgDiag.getPorta(),pddContext,
 								openspcoopstate.getStatoRichiesta(),openspcoopstate.getStatoRisposta(),
 								dumpConfig);
-						if(transazioneApplicativoServer!=null) {
+						/*if(transazioneApplicativoServer!=null) {
 							dumpApplicativo.setTransazioneApplicativoServer(transazioneApplicativoServer, idPA, dataConsegna);
-						}
+						}*/
 						InfoConnettoreUscita infoConnettoreUscita = outRequestContext.getConnettore();
 						if(infoConnettoreUscita!=null){
 							infoConnettoreUscita.setLocation(location); // aggiorno location ottenuta dal connettore utilizzato
@@ -2338,16 +2340,18 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			/* -------- OpenSPCoop2Message Update ------------- */
 			try {
-				msgDiag.mediumDebug("Aggiornamento del messaggio");
-				// NOTA la versione SOAP capirla da consegnaMessage, la risposta puo' essere null
-				NotifierInputStreamParams nParams = null;
-				if(invokerNonSupportato==false){
-					nParams = connectorSender.getNotifierInputStreamParamsResponse();
+				if(transazioneApplicativoServer==null) { // non ha senso per le notifiche asincrone
+					msgDiag.mediumDebug("Aggiornamento del messaggio");
+					// NOTA la versione SOAP capirla da consegnaMessage, la risposta puo' essere null
+					NotifierInputStreamParams nParams = null;
+					if(invokerNonSupportato==false){
+						nParams = connectorSender.getNotifierInputStreamParamsResponse();
+					}
+					responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
+							bustaRichiesta, nParams,
+							consegnaMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
+							protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 				}
-				responseMessage = protocolFactory.createProtocolManager().updateOpenSPCoop2MessageResponse(responseMessage, 
-						bustaRichiesta, nParams,
-						consegnaMessagePrimaTrasformazione.getTransportRequestContext(),transportResponseContext,
-						protocolFactory.getCachedRegistryReader(openspcoopstate.getStatoRichiesta()));
 			} catch (Exception e) {
 				msgDiag.addKeywordErroreProcessamento(e, "Aggiornamento messaggio fallito");
 				msgDiag.logErroreGenerico(e,"ProtocolManager.updateOpenSPCoop2Message");
@@ -2993,7 +2997,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 
 					}
 					
-					if(rispostaVuotaValidaPerAsincroniStateless_modalitaAsincrona==false){
+					if(rispostaVuotaValidaPerAsincroniStateless_modalitaAsincrona==false
+							&& transazioneApplicativoServer==null // non ha senso per le notifiche asincrone tutte le operazioni presenti in questo corpo (validazione, correlazione, header di integrazione)
+							){
 						
 						if(validazioneContenutoApplicativoApplicativo!=null && validazioneContenutoApplicativoApplicativo.getTipo()!=null){
 							String tipo = ValidatoreMessaggiApplicativi.getTipo(validazioneContenutoApplicativoApplicativo);

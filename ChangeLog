@@ -1,3 +1,11 @@
+2020-04-10  Andrea Poli <apoli@link.it>
+
+	[GovWayCore]
+	Risolti i seguenti problemi:
+	- Nella consegna multipla, sulle eventuali risposte ottenute in seguito alla consegna della notifica venivano applicate 
+          inutilmente le funzionalità di gestione della risposta quali le trasformazioni, la validazione dei contenuti e la correlazione applicativa.
+	- Non era possibile definire più di una regola di correlazione applicativa per i messaggi JSON e non era possibile definire una regola di match tramite un'espressione JSONPath
+
 2020-04-09  Andrea Poli <apoli@link.it>
 
 	[GovWayCore]

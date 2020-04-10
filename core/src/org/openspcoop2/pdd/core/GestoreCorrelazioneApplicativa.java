@@ -255,7 +255,8 @@ public class GestoreCorrelazioneApplicativa {
 						}
 					}
 					else{
-						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+						//throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+						checkElementoInTransito = false;
 					}
 				}
 			}catch(Exception e){
@@ -718,7 +719,8 @@ public class GestoreCorrelazioneApplicativa {
 						}
 					}
 					else{
-						throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+						//throw new GestoreMessaggiException("MessageType ["+message.getMessageType()+"] non supportato in presenza di specifici elementi");
+						checkElementiInTransito = false;
 					}
 				}
 			}catch(Exception e){

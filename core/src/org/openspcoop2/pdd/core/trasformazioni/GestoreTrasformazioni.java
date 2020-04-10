@@ -746,7 +746,7 @@ public class GestoreTrasformazioni {
 		try {
 			
 			// conversione header
-			Map<String, String> trasporto = parametriTrasporto;
+			Map<String, String> trasporto = parametriTrasporto!=null ? parametriTrasporto : new HashMap<String, String>();
 			Map<String, String> forceAddTrasporto = new HashMap<String, String>();
 			GestoreTrasformazioniUtilities.trasformazione(this.log, trasformazioneRisposta.getHeaderList(), trasporto, forceAddTrasporto, "Header", dynamicMap, this.pddContext);
 			if(trasformazioneRisposta.getContentType()!=null) {
