@@ -3349,11 +3349,11 @@ public class RicezioneBuste {
 				try{
 				
 					if(credenzialeTrasporto!=null) {
-						GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente);
+						GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, openspcoopstate);
 					}
 					
 					if(informazioniTokenNormalizzate!=null) {
-						GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente);
+						GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente, openspcoopstate);
 					}
 					
 					transaction.setCredenzialiMittente(credenzialiMittente);
@@ -3845,6 +3845,12 @@ public class RicezioneBuste {
 			
 			properties.setValidazioneConSchema(configurazionePdDReader.isLivelloValidazioneRigido(implementazionePdDMittente));
 			properties.setValidazioneProfiloCollaborazione(configurazionePdDReader.isValidazioneProfiloCollaborazione(implementazionePdDMittente));
+			if(openspcoopstate!=null) {
+				properties.setRuntimeState(openspcoopstate.getStatoRichiesta());
+				if(propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
+					properties.setTracceState(openspcoopstate.getStatoRichiesta());
+				}
+			}
 			validatore.setProprietaValidazione(properties); // update
 			
 			MessageSecurityContextParameters contextParameters = new MessageSecurityContextParameters();

@@ -22,6 +22,7 @@
 
 package org.openspcoop2.protocol.sdk.validator;
 
+import org.openspcoop2.protocol.sdk.state.IState;
 
 /**
  * Classe utilizzata per raccogliere le informazioni sul tipo di validazione desiderata.
@@ -50,6 +51,10 @@ public class ProprietaValidazione {
     private String versioneProtocollo;
     /** validazioneID completa */
     private boolean validazioneIDCompleta;
+    /** State */
+    private IState runtimeState;
+	/** State */
+    private IState tracceState;
 
 
   
@@ -160,6 +165,19 @@ public class ProprietaValidazione {
 	}
 	public void setValidazioneIDCompleta(boolean validazioneIDCompleta) {
 		this.validazioneIDCompleta = validazioneIDCompleta;
+	}
+	
+    public IState getRuntimeState() {
+		return this.runtimeState;
+	}
+	public void setRuntimeState(IState runtimeState) {
+		this.runtimeState = runtimeState;
+	}
+	public IState getTracceState() {
+		return this.tracceState;
+	}
+	public void setTracceState(IState tracceState) {
+		this.tracceState = tracceState;
 	}
 }
 

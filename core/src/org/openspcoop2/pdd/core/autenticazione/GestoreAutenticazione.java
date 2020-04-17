@@ -69,6 +69,8 @@ import org.openspcoop2.pdd.core.autenticazione.pd.DatiInvocazionePortaDelegata;
 import org.openspcoop2.pdd.core.autenticazione.pd.EsitoAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.autenticazione.pd.IAutenticazionePortaDelegata;
 import org.openspcoop2.pdd.core.connettori.InfoConnettoreIngresso;
+import org.openspcoop2.pdd.core.state.IOpenSPCoopState;
+import org.openspcoop2.pdd.core.state.OpenSPCoopState;
 import org.openspcoop2.pdd.core.token.Costanti;
 import org.openspcoop2.pdd.core.token.InformazioniToken;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
@@ -784,83 +786,86 @@ public class GestoreAutenticazione {
     
     
     public static void updateCredenzialiTrasporto(IDSoggetto dominio, String modulo, String idTransazione, 
-    		String tipoAutenticazione, String credential, CredenzialiMittente credenzialiMittente) throws Exception{
+    		String tipoAutenticazione, String credential, CredenzialiMittente credenzialiMittente,
+    		IOpenSPCoopState openspcoopState) throws Exception{
     	
     	CredenzialeSearchTrasporto trasportoSearch = new CredenzialeSearchTrasporto(tipoAutenticazione);
     	trasportoSearch.disableConvertToDBValue();
 		CredenzialeTrasporto trasporto = new CredenzialeTrasporto(tipoAutenticazione, credential);
     	credenzialiMittente.setTrasporto(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    			trasportoSearch, trasporto));
+    			trasportoSearch, trasporto, openspcoopState));
     	
     }
     
     public static void updateCredenzialiToken(IDSoggetto dominio, String modulo, String idTransazione, 
-    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente) throws Exception{
+    		InformazioniToken informazioniTokenNormalizzate, CredenzialiMittente credenzialiMittente, 
+    		IOpenSPCoopState openspcoopState) throws Exception{
     	
     	if(informazioniTokenNormalizzate.getIss()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_issuer);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_issuer, informazioniTokenNormalizzate.getIss());
     		credenzialiMittente.setToken_issuer(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token));
+    				tokenSearch, token, openspcoopState));
     	}
     	if(informazioniTokenNormalizzate.getClientId()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_clientId);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_clientId, informazioniTokenNormalizzate.getClientId());
     		credenzialiMittente.setToken_clientId(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token));
+    				tokenSearch, token, openspcoopState));
     	}
     	if(informazioniTokenNormalizzate.getSub()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_subject);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_subject, informazioniTokenNormalizzate.getSub());
     		credenzialiMittente.setToken_subject(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token));
+    				tokenSearch, token, openspcoopState));
     	}
     	if(informazioniTokenNormalizzate.getUsername()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_username);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_username, informazioniTokenNormalizzate.getUsername());
     		credenzialiMittente.setToken_username(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token));
+    				tokenSearch, token, openspcoopState));
     	}
     	if(informazioniTokenNormalizzate.getUserInfo()!=null && informazioniTokenNormalizzate.getUserInfo().getEMail()!=null) {
     		CredenzialeSearchToken tokenSearch = new CredenzialeSearchToken(TipoCredenzialeMittente.token_eMail);
     		tokenSearch.disableConvertToDBValue();
     		CredenzialeToken token = new CredenzialeToken(TipoCredenzialeMittente.token_eMail, informazioniTokenNormalizzate.getUserInfo().getEMail());
     		credenzialiMittente.setToken_eMail(getCredenzialeMittente(dominio, modulo, idTransazione, 
-    				tokenSearch, token));
+    				tokenSearch, token, openspcoopState));
     	}
     	
     }
     
     public static CredenzialeMittente convertGruppiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
-    		List<String> gruppiList) throws Exception{
+    		List<String> gruppiList, IOpenSPCoopState openspcoopState) throws Exception{
     	if(gruppiList!=null && !gruppiList.isEmpty()) {
 	    	CredenzialeSearchGruppo gruppiSearch = new CredenzialeSearchGruppo();
 	    	gruppiSearch.disableConvertToDBValue();
 	    	CredenzialeGruppi gruppi = new CredenzialeGruppi(gruppiList);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
-	    			gruppiSearch, gruppi);
+	    			gruppiSearch, gruppi, openspcoopState);
     	}
     	return null;
     }
     
     public static CredenzialeMittente convertEventiToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
-    		List<String> eventiList) throws Exception{
+    		List<String> eventiList, IOpenSPCoopState openspcoopState) throws Exception{
     	if(eventiList!=null && !eventiList.isEmpty()) {
 	    	CredenzialeSearchEvento eventiSearch = new CredenzialeSearchEvento();
 	    	eventiSearch.disableConvertToDBValue();
 	    	CredenzialeEventi eventi = new CredenzialeEventi(eventiList);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
-	    			eventiSearch, eventi);
+	    			eventiSearch, eventi, openspcoopState);
     	}
     	return null;
     }
     
     public static CredenzialeMittente convertClientCredentialToCredenzialiMittenti(IDSoggetto dominio, String modulo, String idTransazione,
-    		String socketAddress, String transportAddress) throws Exception{
+    		String socketAddress, String transportAddress, 
+    		IOpenSPCoopState openspcoopState) throws Exception{
     	boolean socketAddressDefined = socketAddress!=null && !"".equals(socketAddress);
 		boolean transportAddressDefined = transportAddress!=null && !"".equals(transportAddress);
     	if(socketAddressDefined || transportAddressDefined) {
@@ -868,13 +873,14 @@ public class GestoreAutenticazione {
 	    	clientAddressSearch.disableConvertToDBValue();
 	    	CredenzialeClientAddress clientAddress = new CredenzialeClientAddress(socketAddress, transportAddress);
 	    	return getCredenzialeMittente(dominio, modulo, idTransazione, 
-	    			clientAddressSearch, clientAddress);
+	    			clientAddressSearch, clientAddress, openspcoopState);
     	}
     	return null;
     }
     
     private static CredenzialeMittente getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
-    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credentialParam) throws Exception{
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credentialParam,
+    		IOpenSPCoopState openspcoopState) throws Exception{
       	
     	if(dominio==null)
 			throw new AutenticazioneException("(Parametri) dominio non definito");
@@ -902,7 +908,7 @@ public class GestoreAutenticazione {
 		}
 		
     	if(GestoreAutenticazione.cacheAutenticazione==null){
-    		return _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam);
+    		return _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam, openspcoopState);
 		}
     	else{
     		String keyCache = buildCacheKey(searchCredential, credential);
@@ -946,7 +952,7 @@ public class GestoreAutenticazione {
 
 				// Effettuo la query
 				GestoreAutenticazione.logger.debug("oggetto con chiave ["+keyCache+"] (method:getCredenzialeMittente) ricerco nella configurazione...");
-				CredenzialeMittente credenziale = _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam);
+				CredenzialeMittente credenziale = _getCredenzialeMittente(dominio, modulo, idTransazione, scadenzaEntry, searchCredential, credentialParam, openspcoopState);
 
 				// Aggiungo la risposta in cache (se esiste una cache)	
 				// Sempre. Se la risposta non deve essere cachata l'implementazione può in alternativa:
@@ -981,16 +987,36 @@ public class GestoreAutenticazione {
     
     private static CredenzialeMittente _getCredenzialeMittente(IDSoggetto dominio, String modulo, String idTransazione, 
     		Date scadenzaEntry,
-    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential) throws Exception {
+    		AbstractSearchCredenziale searchCredential, AbstractCredenziale credential,
+    		IOpenSPCoopState openspcoopState) throws Exception {
     	DBTransazioniManager dbManager = null;
     	Resource r = null;
-    	try{
-			dbManager = DBTransazioniManager.getInstance();
-			r = dbManager.getResource(dominio, modulo+".credenzialeMittente", idTransazione);
-			if(r==null){
-				throw new Exception("Risorsa al database non disponibile");
+    	boolean useConnectionRuntime = false;
+		try{
+			Connection con = null;
+			
+			OpenSPCoop2Properties openspcoopProperties = OpenSPCoop2Properties.getInstance();
+			if(openspcoopProperties.isTransazioniUsePddRuntimeDatasource()) {
+				if(openspcoopState!=null) {
+					if(openspcoopState instanceof OpenSPCoopState) {
+						OpenSPCoopState s = (OpenSPCoopState) openspcoopState;
+						if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+							con = s.getConnectionDB();
+							useConnectionRuntime = true;
+						}
+					}
+				}
 			}
-			Connection con = (Connection) r.getResource();
+			
+			if(useConnectionRuntime==false){
+				dbManager = DBTransazioniManager.getInstance();
+				r = dbManager.getResource(dominio, modulo+".credenzialeMittente", idTransazione);
+				if(r==null){
+					throw new Exception("Risorsa al database non disponibile");
+				}
+				con = (Connection) r.getResource();
+			}
+			
 			if(con == null)
 				throw new Exception("Connessione non disponibile");	
 
@@ -1029,10 +1055,12 @@ public class GestoreAutenticazione {
 			}
 			
 		}finally{
-			try{
-				if(r!=null)
-					dbManager.releaseResource(dominio, modulo, r);
-			}catch(Exception eClose){}
+			if(useConnectionRuntime==false) {
+				try{
+					if(r!=null)
+						dbManager.releaseResource(dominio, modulo, r);
+				}catch(Exception eClose){}
+			}
 		}
     }
     

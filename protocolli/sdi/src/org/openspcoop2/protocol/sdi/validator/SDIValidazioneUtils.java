@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.protocol.sdi.validator;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
@@ -39,6 +40,8 @@ import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
 import org.openspcoop2.protocol.sdk.constants.LivelloRilevanza;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
+import org.openspcoop2.protocol.sdk.state.IState;
+import org.openspcoop2.protocol.sdk.state.StateMessage;
 import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundException;
 import org.openspcoop2.protocol.sdk.tracciamento.FiltroRicercaTracceConPaginazione;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
@@ -62,7 +65,7 @@ public class SDIValidazioneUtils {
 		this.protocolFactory = protocolFactory;
 		this.sdiProperties = SDIProperties.getInstance(protocolFactory.getLogger());
 	}
-	private synchronized ITracciaDriver getDriverTracciamento() throws ProtocolException {
+	private ITracciaDriver getDriverTracciamento() throws ProtocolException {
 		if(this._tracciaDriver==null) {
 			this._initDriverTracciamento();
 		}
@@ -70,28 +73,53 @@ public class SDIValidazioneUtils {
 	}
 	private synchronized void _initDriverTracciamento() throws ProtocolException {
 		if(this._tracciaDriver==null) {
-			if(this.sdiProperties.isTracciamentoRequiredFromConfiguration()) {
-				try {
-					this._tracciaDriver = this.protocolFactory.createTracciaDriver();
-					if(this._tracciaDriver instanceof TracciaDriver) {
-						TracciaDriver tracciaDriverBasic = (TracciaDriver) this._tracciaDriver;
-						ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
+			this._tracciaDriver = newDriverTracciamento(null);
+		}
+	}
+	private ITracciaDriver getDriverTracciamento(Connection con) throws ProtocolException {
+		if(con!=null) {
+			return newDriverTracciamento(con);
+		}
+		else {
+			return getDriverTracciamento();
+		}
+	}
+	private TracciaDriver newDriverTracciamento(Connection con) throws ProtocolException {
+		if(this.sdiProperties.isTracciamentoRequiredFromConfiguration()) {
+			try {
+				ProtocolliRegistrati pRegistrati = new ProtocolliRegistrati(ProtocolFactoryManager.getInstance().getProtocolFactories());
+				
+				String tipoDatabase = this.sdiProperties.getTracciamentoTipoDatabase();
+				if(tipoDatabase==null) {
+					tipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
+				}
+			
+				ITracciaDriver tracciaDriver = this.protocolFactory.createTracciaDriver();
+				if(tracciaDriver instanceof TracciaDriver) {
+				
+					TracciaDriver tracciaDriverBasic = (TracciaDriver) tracciaDriver;
+					
+					if(con==null) {
 						String datasource = this.sdiProperties.getTracciamentoDatasource();
 						Properties datasourceJndiContext = this.sdiProperties.getTracciamentoDatasource_jndiContext();
-						String tipoDatabase = this.sdiProperties.getTracciamentoTipoDatabase();
-						if(tipoDatabase==null) {
-							tipoDatabase = OpenSPCoop2Properties.getInstance().getDatabaseType();
-						}
 						tracciaDriverBasic.init(pRegistrati, datasource, tipoDatabase, datasourceJndiContext, this.protocolFactory.getLogger());
 					}
 					else {
-						throw new Exception("Unexpected traccciamento driver '"+this._tracciaDriver.getClass().getName()+"'");
+						tracciaDriverBasic.init(pRegistrati, con, tipoDatabase, this.protocolFactory.getLogger());
 					}
-				}catch(Exception e) {
-					throw new ProtocolException(e.getMessage(),e);
+					
+					return tracciaDriverBasic;
+					
 				}
+				else {
+					throw new Exception("Unexpected traccciamento driver '"+this._tracciaDriver.getClass().getName()+"'");
+				}
+				
+			}catch(Exception e) {
+				throw new ProtocolException(e.getMessage(),e);
 			}
 		}
+		return null;
 	}
 	
 	
@@ -168,9 +196,22 @@ public class SDIValidazioneUtils {
 	
 	public void readInformazioniFatturaRiferita(Busta busta, String identificativoSdI,
 			String servizio, String azione,
-			boolean applicativoMittente, boolean fatturazioneAttiva) throws ProtocolException {
+			boolean applicativoMittente, boolean fatturazioneAttiva,
+			IState state) throws ProtocolException {
 		
-		ITracciaDriver tracciaDriver = this.getDriverTracciamento();
+		Connection con = null;
+		if(state!=null) {
+			if(state instanceof StateMessage) {
+				StateMessage s = (StateMessage) state;
+				try {
+					if(s.getConnectionDB()!=null && !s.getConnectionDB().isClosed()) {
+						con = s.getConnectionDB();
+					}
+				}catch(Exception e) {} // ignore
+			}
+		}
+		
+		ITracciaDriver tracciaDriver = this.getDriverTracciamento(con);
 		if(tracciaDriver==null) {
 			throw new ProtocolException("Accesso al database delle tracce non attivo");
 		}
@@ -187,6 +228,7 @@ public class SDIValidazioneUtils {
 			filtro.getInformazioniProtocollo().setAzione(azione);
 			filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
 			filtro.setAsc(false);
+			filtro.setLimit(1);
 			List<Traccia> list = null;
 			try {
 				list = tracciaDriver.getTracce(filtro);
@@ -230,6 +272,7 @@ public class SDIValidazioneUtils {
 			filtro.getInformazioniProtocollo().setAzione(azione);
 			filtro.getInformazioniProtocollo().addProprietaProtocollo(SDICostanti.SDI_BUSTA_EXT_IDENTIFICATIVO_SDI, identificativoSdI);
 			filtro.setAsc(false);
+			filtro.setLimit(1);
 			List<Traccia> list = null;
 			try {
 				list = tracciaDriver.getTracce(filtro);

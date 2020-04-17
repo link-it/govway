@@ -2477,6 +2477,7 @@ public class OpenSPCoop2Properties {
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_APPLICATIVO);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_SERVIZIO_APPLICATIVO);
 		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_ID_TRANSAZIONE);
+		keywords.add(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
 		return keywords;
 	}
 
@@ -2624,6 +2625,11 @@ public class OpenSPCoop2Properties {
 				
 				List<String> keywords = this.getKeywordsIntegrazione();
 				for (String keyword : keywords) {
+					
+					if(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO.equals(keyword)) {
+						continue; // gestito sotto come caso eccezionale
+					}
+					
 					if( propGovWay.get(keyword) == null){
 						this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.integrazione."+tipo+".keyword."+
 								keyword+"'.");

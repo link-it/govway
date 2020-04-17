@@ -85,7 +85,7 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 			throw new ProtocolException(e.getMessage(),e);
 		}
 		
-		this.valida(soapMsg,busta,tipoBusta);
+		this.valida(proprietaValidazione, soapMsg,busta,tipoBusta);
 		
 		java.util.List<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
@@ -100,16 +100,16 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		
 	}
 
-	private void valida(OpenSPCoop2SoapMessage msg,Busta busta, RuoloBusta tipoBusta) throws ProtocolException{
+	private void valida(ProprietaValidazione proprietaValidazione, OpenSPCoop2SoapMessage msg,Busta busta, RuoloBusta tipoBusta) throws ProtocolException{
 		try{
 			
 			boolean isRichiesta = RuoloBusta.RICHIESTA.equals(tipoBusta);
 			
 			if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE.equals(busta.getServizio())){
-				this.validaServizioTrasmissione(msg, busta,isRichiesta,SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody()));
+				this.validaServizioTrasmissione(proprietaValidazione, msg, busta,isRichiesta,SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody()));
 			}
 			else if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE.equals(busta.getServizio())){
-				this.validaServizioRicezione(msg, busta,isRichiesta,SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody()));			
+				this.validaServizioRicezione(proprietaValidazione, msg, busta,isRichiesta,SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody()));			
 			}
 			else if(SDICostantiServizioRiceviNotifica.SDI_SERVIZIO_RICEVI_NOTIFICA.equals(busta.getServizio())){
 				this.validaServizioRiceviNotifica(msg, busta,isRichiesta,SoapUtils.getNotEmptyFirstChildSOAPElement(msg.getSOAPBody()));			
@@ -125,11 +125,11 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
-	private void validaServizioTrasmissione(OpenSPCoop2Message msg, Busta busta, boolean isRichiesta,SOAPElement sdiMessage) throws Exception{
+	private void validaServizioTrasmissione(ProprietaValidazione proprietaValidazione, OpenSPCoop2Message msg, Busta busta, boolean isRichiesta,SOAPElement sdiMessage) throws Exception{
 		
 		String azione = busta.getAzione();
 		
-		SDIValidatoreServizioTrasmissioneFatture validatore = new SDIValidatoreServizioTrasmissioneFatture(this,msg,isRichiesta,sdiMessage,busta);
+		SDIValidatoreServizioTrasmissioneFatture validatore = new SDIValidatoreServizioTrasmissioneFatture(this,proprietaValidazione, msg,isRichiesta,sdiMessage,busta);
 		
 		if(SDICostantiServizioTrasmissioneFatture.TRASMISSIONE_SERVIZIO_TRASMISSIONE_FATTURE_AZIONE_RICEVUTA_CONSEGNA.equals(azione)){
 			validatore.validaRicevutaConsegna();
@@ -155,11 +155,11 @@ public class SDIValidazioneSemantica extends ValidazioneSemantica {
 		}
 	}
 	
-	private void validaServizioRicezione(OpenSPCoop2Message msg, Busta busta, boolean isRichiesta, SOAPElement sdiMessage) throws Exception{
+	private void validaServizioRicezione(ProprietaValidazione proprietaValidazione, OpenSPCoop2Message msg, Busta busta, boolean isRichiesta, SOAPElement sdiMessage) throws Exception{
 		
 		String azione = busta.getAzione();
 		
-		SDIValidatoreServizioRicezioneFatture validatore = new SDIValidatoreServizioRicezioneFatture(this, msg, isRichiesta,sdiMessage,busta);
+		SDIValidatoreServizioRicezioneFatture validatore = new SDIValidatoreServizioRicezioneFatture(this, proprietaValidazione, msg, isRichiesta,sdiMessage,busta);
 		
 		if(SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE.equals(azione)){
 			validatore.validaRiceviFatture();

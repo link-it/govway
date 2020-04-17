@@ -139,6 +139,7 @@ public class SDIProperties {
 			this.isEnableValidazioneXsdFatturaDaInviare();
 			this.isEnable_fatturazioneAttiva_notifiche_enrichInfoFromFattura();
 			this.isEnable_fatturazioneAttiva_generazioneNomeFileFattura();
+			this.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale();
 			
 			this.isEnableValidazioneXsdNotificaDaInviare();
 			this.isEnableAccessoNotificaDaInviare();
@@ -458,6 +459,32 @@ public class SDIProperties {
 		}
 
 		return SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFattura;
+	}
+	
+	private static Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = null;
+	public Boolean isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale() throws ProtocolException{
+		if(SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale==null){
+			
+			String propertyName = "org.openspcoop2.protocol.sdi.fatturazioneAttiva.nomeFile.gestioneOpzionale";
+			
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(propertyName); 
+
+				if (value != null){
+					value = value.trim();
+					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = Boolean.parseBoolean(value);
+				}else{
+					SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				String msg = "Riscontrato errore durante la lettura della proprieta' '"+propertyName+"': "+e.getMessage();
+				this.log.error(msg,e);
+				throw new ProtocolException(msg,e);
+			}
+		}
+
+		return SDIProperties.isEnable_fatturazioneAttiva_generazioneNomeFileFatturaOpzionale;
 	}
 	
 	/**

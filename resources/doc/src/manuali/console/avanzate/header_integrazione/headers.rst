@@ -37,35 +37,35 @@ virgola:
 -  *urlBased* o *urlBasedExt*: le informazioni precedentemente descritte
    vengono aggiunte alla url tramite i parametri descritti nella :numref:`headerGw2SrvUrlTab`.
 
-.. table:: Informazioni generate dal gateway nella url della richiesta inoltrata al server
-   :widths: auto
-   :name: headerGw2SrvUrlTab
+   .. table:: Informazioni generate dal gateway nella url della richiesta inoltrata al server
+      :widths: auto
+      :name: headerGw2SrvUrlTab
 
-   ==================================  =========================================================
-   Nome Query URL Parameter            Descrizione
-   ==================================  =========================================================
-   govway_message_id                  	Identificativo del messaggio assegnato da GovWay
-   govway_relates_to                  	Identificativo del messaggio riferito
-   govway_conversation_id             	Identificativo della conversazione
-   govway_transaction_id              	Identificativo della transazione assegnato da GovWay
-   govway_sender_type                 	Codice che identifica il tipo del mittente
-   govway_sender                       	Identificativo del mittente
-   govway_provider_type               	Codice che identifica il tipo del destinatario
-   govway_provider                     	Identificativo del destinatario
-   govway_service_type                	Codice che identifica il tipo del servizio
-   govway_service                      	Identificativo del servizio
-   govway_service_version             	Progressivo di versione del servizio
-   govway_action                       	Identificativo dell'azione
-   govway_application_message_id     	Identificativo del messaggio assegnato dall'applicativo
-   govway_application                  	Identificativo dell'applicativo
-   ==================================  =========================================================
+      ==================================  =========================================================
+      Nome Query URL Parameter            Descrizione
+      ==================================  =========================================================
+      govway_message_id                  	Identificativo del messaggio assegnato da GovWay
+      govway_relates_to                  	Identificativo del messaggio riferito
+      govway_conversation_id             	Identificativo della conversazione
+      govway_transaction_id              	Identificativo della transazione assegnato da GovWay
+      govway_sender_type                 	Codice che identifica il tipo del mittente
+      govway_sender                       	Identificativo del mittente
+      govway_provider_type               	Codice che identifica il tipo del destinatario
+      govway_provider                     	Identificativo del destinatario
+      govway_service_type                	Codice che identifica il tipo del servizio
+      govway_service                      	Identificativo del servizio
+      govway_service_version             	Progressivo di versione del servizio
+      govway_action                       	Identificativo dell'azione
+      govway_application_message_id     	Identificativo del messaggio assegnato dall'applicativo
+      govway_application                  	Identificativo dell'applicativo
+      ==================================  =========================================================
 
-.. _notaUrlBased:
+   .. _notaUrlBased:
 
-.. note::
-   Esiste una terza versione *urlBasedOnlyRead* che permette di
-   attivare la lettura delle informazioni impostate dall'applicativo
-   client ma non genera header verso l'applicativo server.
+   .. note::
+      Esiste una terza versione *urlBasedOnlyRead* che permette di
+      attivare la lettura delle informazioni impostate dall'applicativo
+      client ma non genera header verso l'applicativo server.
 
 -  *soap* o *soapExt*: le informazioni precedentemente descritte vengono
    incluse come attributi in uno specifico header SOAP proprietario di
@@ -85,33 +85,33 @@ virgola:
 
    Nella tabella :numref:`headerGwSoapTab` vengono descritti i nome degli attributi.
 
-.. table:: Informazioni generate dal gateway nell'header soap proprietario di GovWay
-   :widths: auto
-   :name: headerGwSoapTab
+   .. table:: Informazioni generate dal gateway nell'header soap proprietario di GovWay
+      :widths: auto
+      :name: headerGwSoapTab
 
-   ========================     ===============
-   Nome Attributo               Descrizione
-   ========================     ===============
-   messageId                    Identificativo del messaggio assegnato da GovWay
-   relatesTo                    Identificativo del messaggio riferito
-   conversationId               Identificativo della conversazione
-   transactionId                Identificativo della transazione assegnato da GovWay
-   senderType                   Codice che identifica il tipo del mittente
-   sender                       Identificativo del mittente
-   providerType                 Codice che identifica il tipo del destinatario
-   provider                     Identificativo del destinatario
-   serviceType                  Codice che identifica il tipo del servizio
-   service                      Identificativo del servizio
-   serviceVersion               Progressivo di versione del servizio
-   action                       Identificativo dell'azione
-   applicationMessageId         Identificativo del messaggio assegnato dall'applicativo
-   application                  Identificativo dell'applicativo
-   ========================     ===============
+      ========================     ===============
+      Nome Attributo               Descrizione
+      ========================     ===============
+      messageId                    Identificativo del messaggio assegnato da GovWay
+      relatesTo                    Identificativo del messaggio riferito
+      conversationId               Identificativo della conversazione
+      transactionId                Identificativo della transazione assegnato da GovWay
+      senderType                   Codice che identifica il tipo del mittente
+      sender                       Identificativo del mittente
+      providerType                 Codice che identifica il tipo del destinatario
+      provider                     Identificativo del destinatario
+      serviceType                  Codice che identifica il tipo del servizio
+      service                      Identificativo del servizio
+      serviceVersion               Progressivo di versione del servizio
+      action                       Identificativo dell'azione
+      applicationMessageId         Identificativo del messaggio assegnato dall'applicativo
+      application                  Identificativo dell'applicativo
+      ========================     ===============
 
-.. _notaHeaderGwSoapTab:
+   .. _notaHeaderGwSoapTab:
 
-.. note::
-   Utilizzabile solamente con API di tipologia SOAP
+   .. note::
+      Utilizzabile solamente con API di tipologia SOAP
 
 -  *wsa* o *wsaExt*: all'interno del messaggio Soap vengono generati gli
    header *To*, *From*, *Action*, *MessageID* e *RelatesTo* associati al
@@ -134,8 +134,8 @@ virgola:
 
    -  *RelatesTo*, uuid:<relatesTo>
 
-.. note::
-   Utilizzabile solamente con API di tipologia SOAP
+   .. note::
+      Utilizzabile solamente con API di tipologia SOAP
 
 -  *openspcoop2-<tipo>* o *openspcoop1-<tipo>*: sono disponibili header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:
 

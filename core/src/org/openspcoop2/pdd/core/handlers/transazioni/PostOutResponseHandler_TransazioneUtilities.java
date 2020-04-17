@@ -681,7 +681,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							}
 						}
 						if(gruppi.size()>0){
-							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi);
+							CredenzialeMittente credGruppi = GestoreAutenticazione.convertGruppiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, gruppi, null);
 							if(credGruppi!=null) {
 								transactionDTO.setGruppi(credGruppi.getId()+"");
 							}
@@ -1018,7 +1018,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			if(transactionDTO.getSocketClientAddress()!=null || transactionDTO.getTransportClientAddress()!=null) {
 				try {
 					CredenzialeMittente credClientAddress =GestoreAutenticazione.convertClientCredentialToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, 
-							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress()); 
+							transactionDTO.getSocketClientAddress(), transactionDTO.getTransportClientAddress(), null); 
 					if(credClientAddress!=null) {
 						transactionDTO.setClientAddress(credClientAddress.getId()+"");
 					}
@@ -1059,7 +1059,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			}
 			if(eventiGestione.size()>0){
 				try {
-					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione);
+					CredenzialeMittente credEventi = GestoreAutenticazione.convertEventiToCredenzialiMittenti(idDominio, context.getIdModulo(), idTransazione, eventiGestione, null);
 					if(credEventi!=null) {
 						transactionDTO.setEventiGestione(credEventi.getId()+"");
 					}

@@ -2884,6 +2884,12 @@ public class InoltroBuste extends GenericLib{
 				if(openspcoopstate.getStatoRisposta() instanceof StatelessMessage){
 					((StatelessMessage) openspcoopstate.getStatoRisposta()).setBustaCorrelata(bustaRichiesta);
 				}
+				if(openspcoopstate!=null) {
+					property.setRuntimeState(openspcoopstate.getStatoRisposta());
+					if(this.propertiesReader.isTransazioniUsePddRuntimeDatasource()) {
+						property.setTracceState(openspcoopstate.getStatoRisposta());
+					}
+				}
 				validatore = new Validatore(responseMessage,pddContext.getContext(),property,openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
 						
 				msgDiag.logPersonalizzato("validazioneSintattica");

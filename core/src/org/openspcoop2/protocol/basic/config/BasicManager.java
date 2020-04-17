@@ -171,7 +171,9 @@ public abstract class BasicManager extends BasicComponentFactory implements IPro
 				if(TipoIntegrazione.TRASPORTO.equals(tipoIntegrazione)){
 					// X- e' deprecato
 					//map.put("X-"+busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
-					map.put("GovWay-"+busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
+					// Il prefisso viene deciso da files di properties
+					//map.put("GovWay-"+busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
+					map.put(busta.getProtocollo().toUpperCase()+"-"+nomeProprieta, valoreProprieta);
 				}else if(TipoIntegrazione.URL.equals(tipoIntegrazione)){
 					map.put(busta.getProtocollo().toUpperCase()+nomeProprieta, valoreProprieta);
 				}else{

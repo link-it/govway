@@ -2398,11 +2398,11 @@ public class RicezioneContenutiApplicativi {
 			try{
 
 				if(credenzialeTrasporto!=null) {
-					GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente);
+					GestoreAutenticazione.updateCredenzialiTrasporto(identitaPdD, ID_MODULO, idTransazione, tipoAutenticazione, credenzialeTrasporto, credenzialiMittente, openspcoopstate);
 				}
 				
 				if(informazioniTokenNormalizzate!=null) {
-					GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente);
+					GestoreAutenticazione.updateCredenzialiToken(identitaPdD, ID_MODULO, idTransazione, informazioniTokenNormalizzate, credenzialiMittente, openspcoopstate);
 				}
 				
 				transaction.setCredenzialiMittente(credenzialiMittente);

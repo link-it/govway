@@ -815,11 +815,15 @@ public class UtilitiesIntegrazioneBC {
 				if(this.openspcoop2 && this.keySetEnabled_HeaderIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO)) {
 					// protocol info
 					if(protocolInfos!=null && protocolInfos.size()>0){
+						
+						String prefixProtocolInfo = this.keyValueIntegrazioneUrlBased.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
+						
 						Iterator<String> itProtocolInfos = protocolInfos.keySet().iterator();
 						while (itProtocolInfos.hasNext()) {
 							String name = (String) itProtocolInfos.next();
 							String value = protocolInfos.get(name);
-							properties.put(name,value);
+							String nameWithPrefix = (prefixProtocolInfo!=null) ? prefixProtocolInfo.trim()+name : name;
+							properties.put(nameWithPrefix,value);
 						}
 					}
 				}
@@ -952,11 +956,15 @@ public class UtilitiesIntegrazioneBC {
 				
 				if(this.openspcoop2 && this.keySetEnabled_HeaderIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO)) {
 					if(protocolInfos!=null && protocolInfos.size()>0){
+						
+						String prefixProtocolInfo = this.keyValueIntegrazioneTrasporto.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
+
 						Iterator<String> itProtocolInfos = protocolInfos.keySet().iterator();
 						while (itProtocolInfos.hasNext()) {
 							String name = (String) itProtocolInfos.next();
 							String value = protocolInfos.get(name);
-							properties.put(name,value);
+							String nameWithPrefix = (prefixProtocolInfo!=null) ? prefixProtocolInfo.trim()+name : name;
+							properties.put(normalizeX_(nameWithPrefix),value);
 						}
 					}
 				}
@@ -1291,14 +1299,18 @@ public class UtilitiesIntegrazioneBC {
 			
 			if(this.openspcoop2 && this.keySetEnabled_HeaderIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO)) {
 				if(protocolInfos!=null && protocolInfos.size()>0){
+					
+					String prefixProtocolInfo = this.keyValueIntegrazioneSoap.get(CostantiPdD.HEADER_INTEGRAZIONE_PROTOCOL_INFO);
+					
 					Iterator<String> itProtocolInfos = protocolInfos.keySet().iterator();
 					while (itProtocolInfos.hasNext()) {
 						String name = (String) itProtocolInfos.next();
 						String value = protocolInfos.get(name);
+						String nameWithPrefix = (prefixProtocolInfo!=null) ? prefixProtocolInfo.trim()+name : name;
 						SOAPElement element = header.addChildElement(new QName(namespace,proprietaProtocolloNomeElemento,prefix));
 						element.setTextContent(value);
 						@SuppressWarnings("unused")
-						SOAPElement attribute = element.addAttribute(new QName(proprietaProtocolloNomeTipoElemento),name);
+						SOAPElement attribute = element.addAttribute(new QName(proprietaProtocolloNomeTipoElemento),nameWithPrefix);
 					}
 				}
 			}

@@ -1,14 +1,26 @@
+2020-04-17  Andrea Poli <apoli@link.it>
+
+	[GovWayCore, ProtocolloSDI]
+	Aggiunta funzionalità OP-977
+	Se vengono configurati 'metadati' di backward compatibility con lo scopo di generare header di integrazione uguali a quelli generati da 'OpenSPCoop2' (es. x-openspcoop2-trasporto)
+	adesso anche gli header specifici del profilo di fatturazione sono stati allineati per essere retrocompatibili (X-SDI-*)
+	Sono inoltre stati corretti i seguenti problemi emersi quando il database del runtime e quello delle tracce coincidono (installazione di default):
+	- La funzionalità di arricchimento delle tracce richiedeva più di una connessione al database per richiesta
+	- La funzionalità di registrazione delle credenziali (trasporto, token), insieme ai tags/eventi richiedeva più di una connessione.
+
 2020-04-10  Andrea Poli <apoli@link.it>
 
 	[GovWayCore]
+	Risolto Bug OP-975
 	Risolti i seguenti problemi:
 	- Nella consegna multipla, sulle eventuali risposte ottenute in seguito alla consegna della notifica venivano applicate 
-          inutilmente le funzionalità di gestione della risposta quali le trasformazioni, la validazione dei contenuti e la correlazione applicativa.
+	  inutilmente le funzionalità di gestione della risposta quali le trasformazioni, la validazione dei contenuti e la correlazione applicativa.
 	- Non era possibile definire più di una regola di correlazione applicativa per i messaggi JSON e non era possibile definire una regola di match tramite un'espressione JSONPath
 
 2020-04-09  Andrea Poli <apoli@link.it>
 
 	[GovWayCore]
+	Risolto Bug OP-975
 	Risolti i seguenti problemi:
 	- La validazione dei contenuti non funzionava su API REST se abilitata su gruppi differenti dal Predefinito.
 	- La consegna multipla richiedeva più di una connessione verso il database per thread. 
@@ -58,6 +70,7 @@
 2020-03-24  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità OP-904
 	Sono stati realizzati i seguenti miglioramenti:
 	- Aggiunta selezione del soggetto di dominio interno tramite widget con autocompletamento, se il numero di soggetti è maggiore di 10.
 	- Modificata icona di espansione dei filtri di ricerca: viene utilizzata la lente.
@@ -521,7 +534,7 @@
 	Migliorata gestione delle liste paginate e delle liste senza totali in ListaUtils:
 	- Le liste adesso vengono correttamente valorizzate con gli elementi 'next', 'prev', 'last' e 'first'.
 	- Gli elementi 'next', 'prev', 'last' e 'first' vengono adesso valorizzati con url relative 
-          che preservano i parametri della query e non contengono la base url.
+	 che preservano i parametri della query e non contengono la base url.
 
 2019-12-17  Giovanni Bussu <bussu@link.it>
 

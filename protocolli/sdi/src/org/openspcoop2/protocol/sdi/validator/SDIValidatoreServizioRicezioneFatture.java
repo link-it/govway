@@ -41,6 +41,7 @@ import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.CodiceErroreCooperazione;
+import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.utils.Utilities;
 import org.openspcoop2.utils.io.Base64Utilities;
 import org.openspcoop2.utils.xml.AbstractValidatoreXSD;
@@ -64,6 +65,7 @@ public class SDIValidatoreServizioRicezioneFatture {
 
 	private SDIValidazioneSintattica sdiValidazioneSintattica;
 	private SDIValidazioneSemantica sdiValidazioneSemantica;
+	private ProprietaValidazione proprietaValidazioneSemantica;
 	private OpenSPCoop2Message msg;
 	private OpenSPCoop2MessageFactory messageFactory;
 	private boolean isRichiesta;
@@ -83,10 +85,11 @@ public class SDIValidatoreServizioRicezioneFatture {
 		this.namespace = ProjectInfo.getInstance().getProjectNamespace();
 		this.busta = busta;
 	}
-	public SDIValidatoreServizioRicezioneFatture(SDIValidazioneSemantica sdiValidazioneSemantica,
+	public SDIValidatoreServizioRicezioneFatture(SDIValidazioneSemantica sdiValidazioneSemantica, ProprietaValidazione proprietaValidazione,
 			OpenSPCoop2Message msg,boolean isRichiesta,
 			SOAPElement sdiMessage,Busta busta){
 		this.sdiValidazioneSemantica = sdiValidazioneSemantica;
+		this.proprietaValidazioneSemantica = proprietaValidazione;
 		this.msg = msg;
 		this.messageFactory = this.msg!=null ? this.msg.getFactory() : OpenSPCoop2MessageFactory.getDefaultMessageFactory();
 		this.isRichiesta = isRichiesta;
@@ -973,7 +976,8 @@ public class SDIValidatoreServizioRicezioneFatture {
 					this.sdiValidazioneSemantica.validazioneUtils.readInformazioniFatturaRiferita(this.busta, identificativoSdI, 
 							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE, 
 							SDICostantiServizioRicezioneFatture.RICEZIONE_SERVIZIO_RICEZIONE_FATTURE_AZIONE_RICEVI_FATTURE,
-							false, SDICostanti.SDI_FATTURAZIONE_PASSIVA);
+							false, SDICostanti.SDI_FATTURAZIONE_PASSIVA,
+							(this.proprietaValidazioneSemantica!=null) ? this.proprietaValidazioneSemantica.getTracceState() : null);
 				}catch(Exception e){
 					this.sdiValidazioneSemantica.getLog().error("Traccia di una precedente fattura ricevuta, con identificativo SDI ["+identificativoSdI+"], non rilevata: "+e.getMessage(),e);
 					this.sdiValidazioneSemantica.erroriValidazione.add(this.sdiValidazioneSemantica.
