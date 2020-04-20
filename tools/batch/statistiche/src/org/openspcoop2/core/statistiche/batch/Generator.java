@@ -28,7 +28,10 @@ import org.openspcoop2.core.commons.dao.DAOFactory;
 import org.openspcoop2.core.statistiche.constants.TipoIntervalloStatistico;
 import org.openspcoop2.monitor.engine.statistic.StatisticsConfig;
 import org.openspcoop2.monitor.engine.statistic.StatisticsLibrary;
+import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
+import org.openspcoop2.protocol.sdk.ConfigurazionePdD;
 import org.openspcoop2.utils.LoggerWrapperFactory;
+import org.openspcoop2.utils.resources.Loader;
 import org.slf4j.Logger;
 
 /**
@@ -74,6 +77,18 @@ public class Generator {
 		if(generatorProperties.isStatisticheGenerazioneDebug()) {
 			logCore = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione");
 			logSql = LoggerWrapperFactory.getLogger("govway.batch.statistiche.generazione.sql");
+		}
+		
+		try {
+			ConfigurazionePdD configPdD = new ConfigurazionePdD();
+			configPdD.setAttesaAttivaJDBC(-1);
+			configPdD.setCheckIntervalJDBC(-1);
+			configPdD.setLoader(new Loader(Generator.class.getClassLoader()));
+			configPdD.setLog(logCore);
+			ProtocolFactoryManager.initialize(logCore, configPdD,
+					generatorProperties.getProtocolloDefault());
+		} catch (Exception e) {
+			throw new Exception("Errore durante la generazione delle statistiche (InitConfigurazione - ProtocolFactoryManager): "+e.getMessage(),e);
 		}
 		
 		StatisticsConfig statisticsConfig = null;

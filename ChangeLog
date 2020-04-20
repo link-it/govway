@@ -1,3 +1,9 @@
+2020-04-20  Andrea Poli <apoli@link.it>
+
+	[BatchStatistiche]
+	Risolto Bug OP-979
+	Il batch delle statistiche non si avviava correttamente sul nuovo stack tecnologico (java 11)
+
 2020-04-17  Andrea Poli <apoli@link.it>
 
 	[GovWayCore, ProtocolloSDI]

@@ -27,6 +27,66 @@
 			<param name="token" value="statistiche.generazione.debug"/>
 			<param name="value" value="true"/>
 		</antcall>
+
+		<!-- 
+		  PROTOCOL DEFAULT
+		  se abilitati verrano scelto nell'ordine:
+		  - trasparente
+		  - modipa
+		  - spcoop
+		  - as4
+		  - sdi
+		-->
+		<if>
+			<istrue value="${antinstaller_protocollo_trasparente}"/>
+			<then>
+				<antcall target="set_property">
+				    <param name="file" value="${file}"/>
+					<param name="token" value="protocolloDefault"/>
+					<param name="value" value="trasparente"/>
+				</antcall>
+			</then>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_modipa}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="modipa"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_spcoop}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="spcoop"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_as4}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="as4"/>
+					</antcall>
+				</then>
+			</elseif>
+			<elseif>
+				<istrue value="${antinstaller_protocollo_sdi}"/>
+				<then>
+					<antcall target="set_property">
+					    <param name="file" value="${file}"/>
+						<param name="token" value="protocolloDefault"/>
+						<param name="value" value="sdi"/>
+					</antcall>
+				</then>
+			</elseif>
+		</if>
 		
 	</target>
 	

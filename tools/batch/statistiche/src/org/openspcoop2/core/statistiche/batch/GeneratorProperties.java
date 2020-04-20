@@ -53,7 +53,9 @@ public class GeneratorProperties {
 	
 	
 	private static String PROPERTIES_FILE = "/batch-statistiche.properties";
-		
+	
+	private String protocolloDefault = null;
+	
 	private boolean statisticheGenerazioneDebug=false;
 	
 	private boolean statisticheGenerazioneBaseOrariaGestioneUltimaOra=false;
@@ -83,6 +85,8 @@ public class GeneratorProperties {
 		
 		// PROPERTIES
 				
+		this.protocolloDefault = this.getProperty(props, "protocolloDefault", true);
+		
 		this.statisticheGenerazioneDebug = this.getBooleanProperty(props, "statistiche.generazione.debug", true);
 		
 		this.statisticheGenerazioneBaseOrariaGestioneUltimaOra = this.getBooleanProperty(props, "statistiche.generazione.baseOraria.gestioneUltimaOra", true);
@@ -127,6 +131,11 @@ public class GeneratorProperties {
 		else{
 			return false;
 		}
+	}
+	
+	
+	public String getProtocolloDefault() {
+		return this.protocolloDefault;
 	}
 	
 	public boolean isStatisticheGenerazioneDebug() {

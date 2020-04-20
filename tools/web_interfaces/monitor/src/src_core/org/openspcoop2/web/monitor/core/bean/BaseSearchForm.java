@@ -1400,7 +1400,11 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			List<Integer> escludiEsiti = null;
 			
 			if(this.escludiRichiesteScartate && (EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE != this.esitoGruppo)){
-				escludiEsiti = esitiProperties.getEsitiCodeRichiestaScartate();
+				List<Integer> escludiEsiti_tmp = esitiProperties.getEsitiCodeRichiestaScartate();
+				if(escludiEsiti_tmp!=null && !escludiEsiti_tmp.isEmpty()) {
+					escludiEsiti = new ArrayList<Integer>();
+					escludiEsiti.addAll(escludiEsiti_tmp);
+				}
 			}
 
 			if(!this.isSearchFormEsitoConsegnaMultiplaEnabled) {
