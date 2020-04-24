@@ -48,6 +48,8 @@ public class TestSwagger2 {
 				tipo = args[0];
 			}
 			
+			boolean useOpenApi4j = false;
+			
 			String baseUri = "http://petstore.swagger.io/v2";
 			
 			if(tipo==null || "json".equalsIgnoreCase(tipo)) {
@@ -58,7 +60,7 @@ public class TestSwagger2 {
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import.json")), ApiSchemaType.JSON);
 				ApiSchema apiSchemaJson2 = new ApiSchema("test_import2.json", 
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.json")), ApiSchemaType.JSON);
-				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.SWAGGER_2, 
+				Test.testValidation(jsonUri, baseUri, "json", ApiFormats.SWAGGER_2, useOpenApi4j,
 						apiSchemaJson, apiSchemaJson2);
 				
 			}
@@ -76,7 +78,7 @@ public class TestSwagger2 {
 				ApiSchema apiSchemaYaml2 = new ApiSchema("test_import2.yaml", 
 						Utilities.getAsByteArray(TestOpenApi3.class.getResourceAsStream("/org/openspcoop2/utils/openapi/test_import2.yaml")), ApiSchemaType.YAML);
 				
-				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.SWAGGER_2, 
+				Test.testValidation(yamlUri, baseUri, "yaml", ApiFormats.SWAGGER_2, useOpenApi4j,
 						apiSchemaYaml, apiSchemaYaml2);
 				
 			}

@@ -1831,10 +1831,10 @@ public class RegistroServiziReader {
 	 * @return l'oggetto di tipo {@link org.openspcoop2.core.registry.wsdl.AccordoServizioWrapper} se la ricerca nel registro ha successo,
 	 *         null altrimenti.
 	 */
-	protected org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+	protected org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
-		return this.registroServizi.getRestAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD);
+		return this.registroServizi.getRestAccordoServizio(connectionPdD, null, idService,infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi);
 	}
 	
 	/**

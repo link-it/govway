@@ -80,6 +80,7 @@
 			<include name="spring-security/*"/>
 			<include name="stub/*"/>
 			<include name="swagger/*"/>
+			<include name="openapi4j/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>
 			<include name="testsuite/*"/>

@@ -46,12 +46,14 @@ public class OpenapiApi extends Api {
 	
 	private transient OpenAPI api;
 	private transient Map<String, Schema<?>> definitions;
+	private String apiRaw;
 
 	// struttura una volta che l'api è stata inizializzata per la validazione (e' serializzabile e cachabile)
 	private OpenapiApiValidatorStructure validationStructure;
 
-	public OpenapiApi(OpenAPI swagger) {
+	public OpenapiApi(OpenAPI swagger, String apiRaw) {
 		this.api = swagger;
+		this.apiRaw = apiRaw;
 		this.definitions = new HashMap<String, Schema<?>>();
 	}
 	
@@ -63,6 +65,14 @@ public class OpenapiApi extends Api {
 		this.api = swagger;
 	}
 
+	public String getApiRaw() {
+		return this.apiRaw;
+	}
+
+	public void setApiRaw(String apiRaw) {
+		this.apiRaw = apiRaw;
+	}
+	
 	public Map<String, Schema<?>> getDefinitions() {
 		return this.definitions;
 	}

@@ -40,6 +40,7 @@ import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
+import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
 
@@ -53,7 +54,7 @@ import org.openspcoop2.utils.transport.http.HttpRequestMethod;
  */
 public class Test {
 
-	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, ApiSchema ...apiSchemas) throws Exception {
+	public static void testValidation(URI uri, String baseUrl, String testName, ApiFormats format, boolean useOpenApi4j, ApiSchema ...apiSchemas) throws Exception {
 		try {
 	
 			boolean testAdditionalProperties = !ApiFormats.SWAGGER_2.equals(format); // il parser dello swagger non legge l'additiona properties
@@ -68,6 +69,10 @@ public class Test {
 			IApiValidator apiValidator = ApiFactory.newApiValidator(format);
 			OpenapiApiValidatorConfig config = new OpenapiApiValidatorConfig();
 			config.setJsonValidatorAPI(ApiName.NETWORK_NT);
+			if(useOpenApi4j) {
+				config.setOpenApi4JConfig(new OpenapiApi4jValidatorConfig());
+				config.getOpenApi4JConfig().setUseOpenApi4J(true);
+			}
 			apiValidator.init(LoggerWrapperFactory.getLogger(Test.class), api, config);
 			try {
 			
@@ -283,7 +288,7 @@ public class Test {
 				httpEntity4.setMethod(HttpRequestMethod.POST);
 				httpEntity4.setUrl("/pets");
 				httpEntity4.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity4.setContentType("application/json");
+				setContentType("application/json",httpEntity4);
 				apiValidator.validate(httpEntity4);	
 				System.out.println("["+testName+"] Test #4 completato\n\n");
 				
@@ -291,7 +296,7 @@ public class Test {
 				TextHttpRequestEntity httpEntity4_empty = new TextHttpRequestEntity();
 				httpEntity4_empty.setMethod(HttpRequestMethod.POST);
 				httpEntity4_empty.setUrl("/pets");
-				httpEntity4_empty.setContentType("application/json");
+				setContentType("application/json",httpEntity4_empty);
 				try {
 					apiValidator.validate(httpEntity4_empty);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -309,15 +314,23 @@ public class Test {
 				httpEntity4_contentTypeSconosciuto.setMethod(HttpRequestMethod.POST);
 				httpEntity4_contentTypeSconosciuto.setUrl("/pets");
 				httpEntity4_contentTypeSconosciuto.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity4_contentTypeSconosciuto.setContentType("application/ERRORE");
+				setContentType("application/ERRORE",httpEntity4_contentTypeSconosciuto);
 				try {
 					apiValidator.validate(httpEntity4_contentTypeSconosciuto);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Content-Type [application/ERRORE] unsupported";
-					if(!e.getMessage().equals(msgErroreAtteso)) {
-						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Content-Type [application/ERRORE] unsupported";
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+						}
 					}
 					System.out.println("["+testName+"] Test #4-contentTypeSconosciuto completato\n\n");
 				}
@@ -328,16 +341,24 @@ public class Test {
 					httpEntity5_additionalProperties.setMethod(HttpRequestMethod.POST);
 					httpEntity5_additionalProperties.setUrl("/pets");
 					httpEntity5_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
-					httpEntity5_additionalProperties.setContentType("application/json");
+					setContentType("application/json",httpEntity5_additionalProperties);
 					try {
 						apiValidator.validate(httpEntity5_additionalProperties);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #5-additionalProperties completato\n\n");
@@ -349,16 +370,24 @@ public class Test {
 				httpEntity5_required.setMethod(HttpRequestMethod.POST);
 				httpEntity5_required.setUrl("/pets");
 				httpEntity5_required.setContent("{\"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity5_required.setContentType("application/json");
+				setContentType("application/json",httpEntity5_required);
 				try {
 					apiValidator.validate(httpEntity5_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #5-required completato\n\n");
@@ -371,7 +400,7 @@ public class Test {
 				httpEntity6.setMethod(HttpRequestMethod.POST);
 				httpEntity6.setUrl("/pets");
 				httpEntity6.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 }");
-				httpEntity6.setContentType("application/json");
+				setContentType("application/json",httpEntity6);
 				httpEntity6.setStatus(200);
 				apiValidator.validate(httpEntity6);	
 				System.out.println("["+testName+"] Test #6 completato\n\n");
@@ -380,7 +409,7 @@ public class Test {
 				TextHttpResponseEntity httpEntity6_empty = new TextHttpResponseEntity();
 				httpEntity6_empty.setMethod(HttpRequestMethod.POST);
 				httpEntity6_empty.setUrl("/pets");
-				httpEntity6_empty.setContentType("application/json");
+				setContentType("application/json",httpEntity6_empty);
 				httpEntity6_empty.setStatus(200);
 				try{
 					apiValidator.validate(httpEntity6_empty);	
@@ -398,15 +427,23 @@ public class Test {
 				httpEntity6_contentTypeSconosciuto.setMethod(HttpRequestMethod.POST);
 				httpEntity6_contentTypeSconosciuto.setUrl("/pets");
 				httpEntity6_contentTypeSconosciuto.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 }");
-				httpEntity6_contentTypeSconosciuto.setContentType("application/ERRORE");
+				setContentType("application/ERRORE",httpEntity6_contentTypeSconosciuto);
 				httpEntity6_contentTypeSconosciuto.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity6_contentTypeSconosciuto);
 				}catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					String msgErroreAtteso = "Content-Type [application/ERRORE] (http response with status '200') unsupported";
-					if(!e.getMessage().equals(msgErroreAtteso)) {
-						throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "Content type 'application/ERRORE' is not allowed for body content.";
+						if(!e.getMessage().contains(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						String msgErroreAtteso = "Content-Type [application/ERRORE] (http response with status '200') unsupported";
+						if(!e.getMessage().equals(msgErroreAtteso)) {
+							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+						}
 					}
 					System.out.println("["+testName+"] Test #6-empty completato\n\n");
 				}
@@ -416,7 +453,7 @@ public class Test {
 				TextHttpResponseEntity httpEntity6_empty_ok = new TextHttpResponseEntity();
 				httpEntity6_empty_ok.setMethod(HttpRequestMethod.POST);
 				httpEntity6_empty_ok.setUrl("/pets");
-				httpEntity6_empty_ok.setContentType("application/json");
+				setContentType("application/json",httpEntity6_empty_ok);
 				httpEntity6_empty_ok.setStatus(405);
 				apiValidator.validate(httpEntity6_empty_ok);	
 				System.out.println("["+testName+"] Test #6 completato\n\n");
@@ -426,7 +463,12 @@ public class Test {
 				httpEntity6_error.setMethod(HttpRequestMethod.POST);
 				httpEntity6_error.setUrl("/pets");
 				httpEntity6_error.setContent("{\"code\" : 345,  \"message\": \"esempio di errore\" }");
-				httpEntity6_error.setContentType("application/json");
+				if(ApiFormats.OPEN_API_3.equals(format)) {
+					setContentType("application/problem+json",httpEntity6_error);
+				}
+				else {
+					setContentType("application/json",httpEntity6_error);
+				}
 				httpEntity6_error.setStatus(500);
 				apiValidator.validate(httpEntity6_error);	
 				System.out.println("["+testName+"] Test #6-error completato\n\n");
@@ -435,7 +477,7 @@ public class Test {
 				TextHttpResponseEntity httpEntity6_error_empty = new TextHttpResponseEntity();
 				httpEntity6_error_empty.setMethod(HttpRequestMethod.POST);
 				httpEntity6_error_empty.setUrl("/pets");
-				httpEntity6_error_empty.setContentType("application/json");
+				setContentType("application/json",httpEntity6_error_empty);
 				httpEntity6_error_empty.setStatus(500);
 				try{
 					apiValidator.validate(httpEntity6_error_empty);	
@@ -454,17 +496,25 @@ public class Test {
 					httpEntity7_additionalProperties.setMethod(HttpRequestMethod.POST);
 					httpEntity7_additionalProperties.setUrl("/pets");
 					httpEntity7_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\", \"id\": 23}");
-					httpEntity7_additionalProperties.setContentType("application/json");
+					setContentType("application/json",httpEntity7_additionalProperties);
 					httpEntity7_additionalProperties.setStatus(200);
 					try {
 						apiValidator.validate(httpEntity7_additionalProperties);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #7-additionalProperties completato\n\n");
@@ -476,17 +526,25 @@ public class Test {
 				httpEntity7_required.setMethod(HttpRequestMethod.POST);
 				httpEntity7_required.setUrl("/pets");
 				httpEntity7_required.setContent("{\"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\": 23}");
-				httpEntity7_required.setContentType("application/json");
+				setContentType("application/json",httpEntity7_required);
 				httpEntity7_required.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity7_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #7-required completato\n\n");
@@ -498,17 +556,25 @@ public class Test {
 					httpEntity7_error_additionalProperties.setMethod(HttpRequestMethod.POST);
 					httpEntity7_error_additionalProperties.setUrl("/pets");
 					httpEntity7_error_additionalProperties.setContent("{\"code\" : 345, \"message\": \"Esempio di errore\", \"a\":\"b\"}");
-					httpEntity7_error_additionalProperties.setContentType("application/json");
+					setContentType("application/json",httpEntity7_error_additionalProperties);
 					httpEntity7_error_additionalProperties.setStatus(400);
 					try {
 						apiValidator.validate(httpEntity7_error_additionalProperties);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 					} catch(ValidatorException e) {
 						System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+						if(useOpenApi4j) {
+							String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 							if(!e.getMessage().contains(msgErroreAtteso)) {
-								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+							}
+						}
+						else {
+							if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+								String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+								if(!e.getMessage().contains(msgErroreAtteso)) {
+									throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+								}
 							}
 						}
 						System.out.println("["+testName+"] Test #7-error-additionalProperties completato\n\n");
@@ -520,17 +586,25 @@ public class Test {
 				httpEntity7_error_required.setMethod(HttpRequestMethod.POST);
 				httpEntity7_error_required.setUrl("/pets");
 				httpEntity7_error_required.setContent("{\"message\": \"Esempio di errore\"}");
-				httpEntity7_error_required.setContentType("application/json");
+				setContentType("application/json",httpEntity7_error_required);
 				httpEntity7_error_required.setStatus(400);
 				try {
 					apiValidator.validate(httpEntity7_error_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.code: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.code: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #7-error-required completato\n\n");
@@ -544,7 +618,7 @@ public class Test {
 				httpEntity9.setMethod(HttpRequestMethod.PUT);
 				httpEntity9.setUrl("/pets");
 				httpEntity9.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity9.setContentType("application/json");
+				setContentType("application/json",httpEntity9);
 				apiValidator.validate(httpEntity9);
 				System.out.println("["+testName+"] Test #9 completato\n\n");
 				
@@ -553,16 +627,24 @@ public class Test {
 				httpEntity10_additionalProperties.setMethod(HttpRequestMethod.PUT);
 				httpEntity10_additionalProperties.setUrl("/pets");
 				httpEntity10_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
-				httpEntity10_additionalProperties.setContentType("application/json");
+				setContentType("application/json",httpEntity10_additionalProperties);
 				try {
 					apiValidator.validate(httpEntity10_additionalProperties);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #10-additionalProperties completato\n\n");
@@ -573,16 +655,24 @@ public class Test {
 				httpEntity10_required.setMethod(HttpRequestMethod.PUT);
 				httpEntity10_required.setUrl("/pets");
 				httpEntity10_required.setContent("{ \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-				httpEntity10_required.setContentType("application/json");
+				setContentType("application/json",httpEntity10_required);
 				try {
 					apiValidator.validate(httpEntity10_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #10-required completato\n\n");
@@ -595,7 +685,7 @@ public class Test {
 				httpEntity11.setMethod(HttpRequestMethod.PUT);
 				httpEntity11.setUrl("/pets");
 				httpEntity11.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 }");
-				httpEntity11.setContentType("application/json");
+				setContentType("application/json",httpEntity11);
 				httpEntity11.setStatus(200);
 				apiValidator.validate(httpEntity11);
 				System.out.println("["+testName+"] Test #11 completato\n\n");
@@ -605,7 +695,7 @@ public class Test {
 				httpEntity11_error.setMethod(HttpRequestMethod.PUT);
 				httpEntity11_error.setUrl("/pets");
 				httpEntity11_error.setContent("{\"code\" : 234,  \"message\": \"Esempio di errore\" }");
-				httpEntity11_error.setContentType("application/json");
+				setContentType("application/json",httpEntity11_error);
 				httpEntity11_error.setStatus(400);
 				apiValidator.validate(httpEntity11_error);	
 				System.out.println("["+testName+"] Test #11-error completato\n\n");
@@ -615,17 +705,25 @@ public class Test {
 				httpEntity12_additionalProperties.setMethod(HttpRequestMethod.PUT);
 				httpEntity12_additionalProperties.setUrl("/pets");
 				httpEntity12_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 , \"a\":\"b\"}");
-				httpEntity12_additionalProperties.setContentType("application/json");
+				setContentType("application/json",httpEntity12_additionalProperties);
 				httpEntity12_additionalProperties.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity12_additionalProperties);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #12-additionalProperties completato\n\n");
@@ -636,17 +734,25 @@ public class Test {
 				httpEntity12_required.setMethod(HttpRequestMethod.PUT);
 				httpEntity12_required.setUrl("/pets");
 				httpEntity12_required.setContent("{\"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1}");
-				httpEntity12_required.setContentType("application/json");
+				setContentType("application/json",httpEntity12_required);
 				httpEntity12_required.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity12_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #12-required completato\n\n");
@@ -657,17 +763,25 @@ public class Test {
 				httpEntity12_error_additionalProperties.setMethod(HttpRequestMethod.PUT);
 				httpEntity12_error_additionalProperties.setUrl("/pets");
 				httpEntity12_error_additionalProperties.setContent("{\"code\" : 234, \"message\": \"Esempio di errore\", \"a\":\"b\"}");
-				httpEntity12_error_additionalProperties.setContentType("application/json");
+				setContentType("application/json",httpEntity12_error_additionalProperties);
 				httpEntity12_error_additionalProperties.setStatus(400);
 				try {
 					apiValidator.validate(httpEntity12_error_additionalProperties);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #12-error-additionalProperties completato\n\n");
@@ -678,17 +792,25 @@ public class Test {
 				httpEntity12_error_required.setMethod(HttpRequestMethod.PUT);
 				httpEntity12_error_required.setUrl("/pets");
 				httpEntity12_error_required.setContent("{\"message\": \"Esempio di errore\"}");
-				httpEntity12_error_required.setContentType("application/json");
+				setContentType("application/json",httpEntity12_error_required);
 				httpEntity12_error_required.setStatus(400);
 				try {
 					apiValidator.validate(httpEntity12_error_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.code: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.code: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #12-error-required completato\n\n");
@@ -704,7 +826,7 @@ public class Test {
 				// La delete non puo' avere una richiesta in openapi3
 				if(bodyInDelete) {
 					httpEntity13.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"] }");
-					httpEntity13.setContentType("application/json");
+					setContentType("application/json",httpEntity13);
 				}
 				apiValidator.validate(httpEntity13);	
 				System.out.println("["+testName+"] Test #13 completato\n\n");
@@ -716,7 +838,7 @@ public class Test {
 					httpEntity14_additionalProperties.setMethod(HttpRequestMethod.DELETE);
 					httpEntity14_additionalProperties.setUrl("/pets");
 					httpEntity14_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"a\":\"b\"}");
-					httpEntity14_additionalProperties.setContentType("application/json");
+					setContentType("application/json",httpEntity14_additionalProperties);
 					try {
 						apiValidator.validate(httpEntity14_additionalProperties);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -736,7 +858,7 @@ public class Test {
 					httpEntity14_required.setMethod(HttpRequestMethod.DELETE);
 					httpEntity14_required.setUrl("/pets");
 					httpEntity14_required.setContent("{ \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"]}");
-					httpEntity14_required.setContentType("application/json");
+					setContentType("application/json",httpEntity14_required);
 					try {
 						apiValidator.validate(httpEntity14_required);
 						throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
@@ -759,7 +881,7 @@ public class Test {
 				httpEntity15.setMethod(HttpRequestMethod.DELETE);
 				httpEntity15.setUrl("/pets");
 				httpEntity15.setContent("{\"name\" : \"aaa\",  \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 }");
-				httpEntity15.setContentType("application/json");
+				setContentType("application/json",httpEntity15);
 				httpEntity15.setStatus(200);
 				apiValidator.validate(httpEntity15);	
 				System.out.println("["+testName+"] Test #15 completato\n\n");
@@ -769,7 +891,7 @@ public class Test {
 				httpEntity15_error.setMethod(HttpRequestMethod.DELETE);
 				httpEntity15_error.setUrl("/pets");
 				httpEntity15_error.setContent("{\"code\" : 234,  \"message\": \"Esempio di errore\" }");
-				httpEntity15_error.setContentType("application/json");
+				setContentType("application/json",httpEntity15_error);
 				httpEntity15_error.setStatus(400);
 				apiValidator.validate(httpEntity15_error);	
 				System.out.println("["+testName+"] Test #15-error completato\n\n");
@@ -779,17 +901,25 @@ public class Test {
 				httpEntity16_additionalProperties.setMethod(HttpRequestMethod.DELETE);
 				httpEntity16_additionalProperties.setUrl("/pets");
 				httpEntity16_additionalProperties.setContent("{\"name\" : \"aaa\", \"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1 , \"a\":\"b\"}");
-				httpEntity16_additionalProperties.setContentType("application/json");
+				setContentType("application/json",httpEntity16_additionalProperties);
 				httpEntity16_additionalProperties.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity16_additionalProperties);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #16 -additionalProperties completato\n\n");
@@ -800,17 +930,25 @@ public class Test {
 				httpEntity16_required.setMethod(HttpRequestMethod.DELETE);
 				httpEntity16_required.setUrl("/pets");
 				httpEntity16_required.setContent("{\"photoUrls\": [\"http:localhost:8080/a\",\"http:localhost:8080/b\"], \"id\" : 1}");
-				httpEntity16_required.setContentType("application/json");
+				setContentType("application/json",httpEntity16_required);
 				httpEntity16_required.setStatus(200);
 				try {
 					apiValidator.validate(httpEntity16_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.name: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'name' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.name: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #16 -required completato\n\n");
@@ -821,17 +959,25 @@ public class Test {
 				httpEntity16_error_additionalProperties.setMethod(HttpRequestMethod.DELETE);
 				httpEntity16_error_additionalProperties.setUrl("/pets");
 				httpEntity16_error_additionalProperties.setContent("{\"code\" : 234, \"message\": \"Esempio di errore\", \"a\":\"b\"}");
-				httpEntity16_error_additionalProperties.setContentType("application/json");
+				setContentType("application/json",httpEntity16_error_additionalProperties);
 				httpEntity16_error_additionalProperties.setStatus(400);
 				try {
 					apiValidator.validate(httpEntity16_error_additionalProperties);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Additional property 'a' is not allowed.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.a: is not defined in the schema and the schema does not allow additional properties";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #16-error-additionalProperties completato\n\n");
@@ -842,44 +988,30 @@ public class Test {
 				httpEntity16_error_required.setMethod(HttpRequestMethod.DELETE);
 				httpEntity16_error_required.setUrl("/pets");
 				httpEntity16_error_required.setContent("{\"message\": \"Esempio di errore\"}");
-				httpEntity16_error_required.setContentType("application/json");
+				setContentType("application/json",httpEntity16_error_required);
 				httpEntity16_error_required.setStatus(400);
 				try {
 					apiValidator.validate(httpEntity16_error_required);
 					throw new Exception("Errore: Attesa " + ValidatorException.class.getName());
 				} catch(ValidatorException e) {
 					System.out.println("["+testName+"] Errore trovato: " + e.getMessage());
-					if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
-						String msgErroreAtteso = "$.code: is missing but it is required";
+					if(useOpenApi4j) {
+						String msgErroreAtteso = "body: Field 'code' is required.";
 						if(!e.getMessage().contains(msgErroreAtteso)) {
-							throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							throw new Exception("Errore: atteso messaggio di errore che contenga '"+msgErroreAtteso+"'");
+						}
+					}
+					else {
+						if(ApiName.NETWORK_NT.equals(config.getJsonValidatorAPI())) {
+							String msgErroreAtteso = "$.code: is missing but it is required";
+							if(!e.getMessage().contains(msgErroreAtteso)) {
+								throw new Exception("Errore: atteso messaggio di errore '"+msgErroreAtteso+"'");
+							}
 						}
 					}
 					System.out.println("["+testName+"] Test #16-error-required completato\n\n");
 				}
 				
-
-	//			
-	//	1)		COMUNQUE SIA c'E' da trovare un validatore differente se vogliamo supportare anche xml!!
-	//			
-	//			Oppure provare a fare xml2json ?? mmm ma come ?? quale è lo standard di conversione openapi ???
-	//			
-			
-	// 2)	VEDERE DI USARE ANCHE IL NOT
-				
-				// Test xml
-				
-	//			System.out.println("Test #6 (Richiesta POST con body xml corretto)");
-	//			TextHttpRequestEntity httpEntity6 = new TextHttpRequestEntity();
-	//			httpEntity6.setMethod(HttpRequestMethod.POST);
-	//			httpEntity6.setUrl("/pets");
-	//			String content = "<Pet><name>aaaa</name><photoUrls><photoUrl>http:localhost:8080/a</photoUrl><photoUrl>http:localhost:8080/b</photoUrl></photoUrls></Pet>";
-	//			
-	//			httpEntity6.setContent(content);
-	//			httpEntity6.setContentType("application/xml");
-	//			apiValidator.validate(httpEntity6);
-	//	
-	//			System.out.println("Test #6 completato");
 
 			}finally {
 				apiValidator.close(LoggerWrapperFactory.getLogger(Test.class), api, config);
@@ -892,4 +1024,14 @@ public class Test {
 		}
 	}
 	
+	private static void setContentType(String contentType, HttpBaseEntity<?> httpEntity) {
+		httpEntity.setContentType(contentType);
+		if(httpEntity.getParametersTrasporto()==null) {
+			httpEntity.setParametersTrasporto(new HashMap<String, String>());
+		}
+		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE);
+		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toUpperCase());
+		httpEntity.getParametersTrasporto().remove(HttpConstants.CONTENT_TYPE.toLowerCase());
+		httpEntity.getParametersTrasporto().put(HttpConstants.CONTENT_TYPE, contentType);
+	}
 }

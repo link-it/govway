@@ -410,6 +410,9 @@
 			<lib dir="${required_lib}/swagger">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${required_lib}/openapi4j">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${dist_govwayConsole}">
 				<include name="openspcoop2*.jar" />
 			</lib>

@@ -39,6 +39,7 @@ import org.openspcoop2.core.config.Connettore;
 import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneErrore;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.Trasformazioni;
@@ -4429,8 +4430,10 @@ public class InoltroBuste extends GenericLib{
 							erroriProcessamento.size()<=0){
 						msgDiag.mediumDebug("Controllo validazione xsd abilitata/disabilitata...");
 						ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo =  null;
+						List<Proprieta> proprietaValidazioneContenutoApplicativoApplicativo = null;
 						try{ 
 							validazioneContenutoApplicativoApplicativo = configurazionePdDManager.getTipoValidazioneContenutoApplicativo(pd,implementazionePdDDestinatario);
+							proprietaValidazioneContenutoApplicativoApplicativo = pd.getProprietaList();
 						}catch(Exception ex){
 							msgDiag.logErroreGenerico(ex,"getTipoValidazioneContenutoApplicativo(pd)");
 							if(msgResponse!=null){
@@ -4546,7 +4549,8 @@ public class InoltroBuste extends GenericLib{
 										// Init Validatore
 										msgDiag.mediumDebug("Validazione della risposta (initValidator)...");
 										ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface, protocolFactory, pddContext);
+											new ValidatoreMessaggiApplicativiRest(registroServiziManager, richiestaDelegata.getIdServizio(), responseMessage, readInterface, proprietaValidazioneContenutoApplicativoApplicativo, 
+													protocolFactory, pddContext);
 										
 										if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 												responseMessage.castAsRest().hasContent()) {

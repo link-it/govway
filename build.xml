@@ -281,6 +281,7 @@
 			<include name="spring-security/*"/>
 			<include name="stub/cxf/*"/>
 			<include name="swagger/*"/>
+			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>

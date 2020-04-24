@@ -35,22 +35,36 @@ import org.testng.annotations.Test;
 public class TestOpenApiValidator {
 
 	private static final String ID_TEST = "OpenAPI-Validator";
+	private static final boolean useOpenApi4j = true;
 	
 	@DataProvider(name="openAPIValidatorProvider")
 	public Object[][] provider(){
 		return new Object[][]{
-				{"json"},
-				{"yaml"}
+				{"json", !useOpenApi4j},
+				{"yaml", !useOpenApi4j},
+				{"json", useOpenApi4j},
+				{"yaml", useOpenApi4j}
 		};
 	}
 	
 	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST},dataProvider="openAPIValidatorProvider")
-	public void testOpenApiValidator(String tipoInterfaccia) throws Exception{
+	public void testOpenApiValidator(String tipoInterfaccia, boolean useOpenApi4j) throws Exception{
 		
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ...");
-		org.openspcoop2.utils.openapi.validator.TestOpenApi3.main(new String[] {tipoInterfaccia});
-		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+") ok");
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" useOpenApi4j:"+useOpenApi4j+") ...");
+		org.openspcoop2.utils.openapi.validator.TestOpenApi3.main(new String[] {tipoInterfaccia, useOpenApi4j+""});
+		TestLogger.info("Run test '"+ID_TEST+"' (interfaccia:"+tipoInterfaccia+" useOpenApi4j:"+useOpenApi4j+") ok");
 		
 	}
+	
+	@Test(groups={Costanti.GRUPPO_UTILS,Costanti.GRUPPO_UTILS+"."+ID_TEST})
+	public void testOpenApi4jValidator() throws Exception{
+		
+		TestLogger.info("Run test '"+ID_TEST+"' (openapi4j) ...");
+		org.openspcoop2.utils.openapi.validator.TestOpenApi4j.main(new String[] {});
+		TestLogger.info("Run test '"+ID_TEST+"' (openapi4j) ok");
+		
+	}
+	
+	
 	
 }

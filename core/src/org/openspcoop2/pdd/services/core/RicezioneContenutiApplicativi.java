@@ -40,6 +40,7 @@ import org.openspcoop2.core.config.DumpConfigurazione;
 import org.openspcoop2.core.config.GestioneTokenAutenticazione;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.ValidazioneContenutiApplicativi;
@@ -3529,8 +3530,10 @@ public class RicezioneContenutiApplicativi {
 		/* ------------ Validazione Contenuti Applicativi ------------- */
 		msgDiag.mediumDebug("Controllo validazione xsd abilitata/disabilitata...");
 		ValidazioneContenutiApplicativi validazioneContenutoApplicativoApplicativo = null;
+		List<Proprieta> proprietaValidazioneContenutoApplicativoApplicativo = null;
 		try {
 			validazioneContenutoApplicativoApplicativo = configurazionePdDReader.getTipoValidazioneContenutoApplicativo(portaDelegata,implementazionePdDDestinatario);
+			proprietaValidazioneContenutoApplicativoApplicativo = portaDelegata.getProprietaList();
 		} catch (Exception e) {
 			msgDiag.logErroreGenerico(e,"getTipoValidazioneContenutoApplicativo(pd,"+implementazionePdDDestinatario+")");
 			openspcoopstate.releaseResource();
@@ -3612,7 +3615,8 @@ public class RicezioneContenutiApplicativi {
 					// Init Validatore
 					msgDiag.mediumDebug("Validazione della richiesta (initValidator)...");
 					ValidatoreMessaggiApplicativiRest validatoreMessaggiApplicativi = 
-						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, protocolFactory, pddContext);
+						new ValidatoreMessaggiApplicativiRest(registroServiziReader, richiestaDelegata.getIdServizio(), requestMessage, readInterface, proprietaValidazioneContenutoApplicativoApplicativo,
+								protocolFactory, pddContext);
 					
 					if(CostantiConfigurazione.VALIDAZIONE_CONTENUTI_APPLICATIVI_XSD.equals(validazioneContenutoApplicativoApplicativo.getTipo()) &&
 							requestMessage.castAsRest().hasContent()) {

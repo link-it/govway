@@ -89,6 +89,7 @@
 			<include name="stub/cxf/openspcoop2_monitorStub_cxf.jar"/>
 			<include name="stub/cxf/openspcoop2_as4-protocol_ecodexBackendStub_cxf.jar"/>
 			<include name="swagger/*"/>
+			<include name="openapi4j/*"/>
 			<include name="reports/*"/>
 			<include name="httpcore/*"/>
 			<include name="wadl/*"/>

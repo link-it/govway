@@ -370,14 +370,24 @@ public class UniqueInterfaceGenerator {
 				if(schemaRebuild.contains(ref)) {
 					if(ref.startsWith("#")==false) {
 						String destra = ref.substring(ref.indexOf("#"));
-						while(schemaRebuild.contains(ref)) {
-							schemaRebuild = schemaRebuild.replace(ref, destra);
+						String refForReplace = ref;
+						
+						while(schemaRebuild.contains(refForReplace)) {
+							schemaRebuild = schemaRebuild.replace(refForReplace, destra);
 						}
+						
+						if(refForReplace.startsWith("./") && refForReplace.length()>2) {
+							refForReplace = refForReplace.substring(2);
+							while(schemaRebuild.contains(refForReplace)) {
+								schemaRebuild = schemaRebuild.replace(refForReplace, destra);
+							}
+						}
+						
 					}
 				}
 			}
 		}
-	
+			
 		/*
 		Object oDescr = engine.getMatchPattern(jsonNode, "$.info.description", JsonPathReturnType.NODE);
 		if(oDescr!=null) {

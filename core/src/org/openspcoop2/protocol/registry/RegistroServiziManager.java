@@ -203,9 +203,9 @@ public class RegistroServiziManager {
 		return this.registroServiziReader.getWsdlAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
 	}
 	
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
 			throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
-		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD);
+		return this.registroServiziReader.getRestAccordoServizio(this.getConnection(), idService, infoWsdlSource,buildSchemaXSD, processIncludeForOpenApi);
 	}
 	
 	public org.openspcoop2.core.registry.constants.ServiceBinding getServiceBinding(IDServizio idService)

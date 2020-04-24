@@ -84,9 +84,11 @@ import io.swagger.v3.parser.core.models.SwaggerParseResult;
 public abstract class AbstractOpenapiApiReader implements IApiReader {
 
 	private OpenAPI openApi;
+	private String openApiRaw;
 	private ApiFormats format;
 	private ParseOptions parseOptions;
 	private List<ApiSchema> schemas;
+	private boolean resolveExternalRef = true;
 	
 	private boolean debug;
 	public void setDebug(boolean debug) {
@@ -149,12 +151,16 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				pr = new OpenAPIV3Parser().readContents(content, null, this.parseOptions);
 			}
 			this.openApi = parseResult(log, pr);
+			
+			this.openApiRaw = content;
 					
 			if(schema!=null && schema.length>0) {
 				for (int i = 0; i < schema.length; i++) {
 					this.schemas.add(schema[i]);
 				}
 			}
+			
+			this.resolveExternalRef = config.isProcessInclude();
 			
 		} catch(Exception e) {
 			throw new ProcessingException(e);
@@ -257,7 +263,7 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		if(this.openApi == null)
 			throw new ProcessingException("Api non correttamente inizializzata");
 		try {
-			OpenapiApi api = new OpenapiApi(this.openApi);
+			OpenapiApi api = new OpenapiApi(this.openApi, this.openApiRaw);
 			if(!this.schemas.isEmpty()) {
 				for (ApiSchema apiSchema : this.schemas) {
 					api.addSchema(apiSchema);
@@ -365,7 +371,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		if(requestBody.get$ref()!=null) {
 			
 			String ref = requestBody.get$ref();
+			boolean external = false;
 			if(ref.contains("#")) {
+				external = !ref.trim().startsWith("#");
 				ref = ref.substring(ref.indexOf("#"));
 			}
 			ref = ref.trim().replaceAll("#/components/requestBodies/", "").replaceAll("#/definitions/", "");
@@ -374,23 +382,33 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				throw new RuntimeException("Richiesta non corretta: api da cui risolvere la ref '"+requestBody.get$ref()+"' non trovata");
 			}
 			if(api.getApi().getComponents()==null) {
-				throw new RuntimeException("Richiesta non corretta: componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
-			}
-			if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
-				throw new RuntimeException("Richiesta non corretta: richieste definite come componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
-			}
-			boolean find = false;
-			Iterator<String> itKeys = api.getApi().getComponents().getRequestBodies().keySet().iterator();
-			while (itKeys.hasNext()) {
-				String key = (String) itKeys.next();
-				if(key.equals(ref)) {
-					requestBody = api.getApi().getComponents().getRequestBodies().get(key);
-					find = true;
-					break;
+				if(!external || this.resolveExternalRef) {
+					throw new RuntimeException("Richiesta non corretta: componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
 				}
 			}
-			if(!find) {
-				throw new RuntimeException("Richiesta non corretta: ref '"+requestBody.get$ref()+"' non presente tra le richieste definite come componenti");
+			else {
+				if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
+					if(!external || this.resolveExternalRef) {
+						throw new RuntimeException("Richiesta non corretta: richieste definite come componenti, sui cui risolvere la ref '"+requestBody.get$ref()+"', non presenti");
+					}
+				}
+				else {
+					boolean find = false;
+					Iterator<String> itKeys = api.getApi().getComponents().getRequestBodies().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(ref)) {
+							requestBody = api.getApi().getComponents().getRequestBodies().get(key);
+							find = true;
+							break;
+						}
+					}
+					if(!find) {
+						if(!external || this.resolveExternalRef) {
+							throw new RuntimeException("Richiesta non corretta: ref '"+requestBody.get$ref()+"' non presente tra le richieste definite come componenti");
+						}
+					}
+				}
 			}
 		}
 		
@@ -442,6 +460,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		
 		// resolve ref parameter
 		Parameter param = this.resolveParameterRef(paramP, api);
+		if(param==null) {
+			param = paramP;
+		}
 		
 		AbstractApiParameter abstractParam = null;
 		String name = param.getName();
@@ -508,7 +529,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		}
 		
 		String ref = p.get$ref();
+		boolean external = false;
 		if(ref.contains("#")) {
+			external = !ref.trim().startsWith("#");
 			ref = ref.substring(ref.indexOf("#"));
 		}
 		boolean refParameters = ref.startsWith("#/components/parameters/");
@@ -517,29 +540,39 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		}
 		
 		if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
-			throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-		}
-		String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
-		Parameter param = null;
-		Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
-		while (itKeys.hasNext()) {
-			String key = (String) itKeys.next();
-			if(key.equals(checkRef)) {
-				param = api.getApi().getComponents().getParameters().get(key);
-				break;
+			if(!external || this.resolveExternalRef) {
+				throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+			}
+			else {
+				return null;
 			}
 		}
-		if(param==null) {
-			throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
-		}
 		else {
+			String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+			Parameter param = null;
+			Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+			while (itKeys.hasNext()) {
+				String key = (String) itKeys.next();
+				if(key.equals(checkRef)) {
+					param = api.getApi().getComponents().getParameters().get(key);
+					break;
+				}
+			}
+			if(param==null) {
+				if(!external || this.resolveExternalRef) {
+					throw new RuntimeException("Parametro '"+p.getName()+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+				}
+			}
 			return param;
 		}
 	}
 	
-	private String getRefParameterName(String ref, OpenapiApi api) {
-		if(ref != null) {
+	private String getRefParameterName(String refParam, OpenapiApi api) {
+		if(refParam != null) {
+			String ref = refParam;
+			boolean external = false;
 			if(ref.contains("#")) {
+				external = !ref.trim().startsWith("#");
 				ref = ref.substring(ref.indexOf("#"));
 			}
 			
@@ -549,38 +582,58 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 					throw new RuntimeException("Parametro non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
 				}
 				if(api.getApi().getComponents()==null) {
-					throw new RuntimeException("Parametro non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-				}
-
-				if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
-					throw new RuntimeException("Parametro non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-				}
-				String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
-				Parameter param = null;
-				Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
-				while (itKeys.hasNext()) {
-					String key = (String) itKeys.next();
-					if(key.equals(checkRef)) {
-						param = api.getApi().getComponents().getParameters().get(key);
-						break;
+					if(!external || this.resolveExternalRef) {
+						throw new RuntimeException("Parametro non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+					}
+					else {
+						return refParam;
 					}
 				}
-				if(param==null) {
-					throw new RuntimeException("Parametro  non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
-				}
 				else {
-					return param.getName();
+					if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+						if(!external || this.resolveExternalRef) {
+							throw new RuntimeException("Parametro non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+						}
+						else {
+							return refParam;
+						}
+					}
+					else {
+						String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+						Parameter param = null;
+						Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+						while (itKeys.hasNext()) {
+							String key = (String) itKeys.next();
+							if(key.equals(checkRef)) {
+								param = api.getApi().getComponents().getParameters().get(key);
+								break;
+							}
+						}
+						if(param==null) {
+							if(!external || this.resolveExternalRef) {
+								throw new RuntimeException("Parametro  non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+							}
+							else {
+								return refParam;
+							}
+						}
+						else {
+							return param.getName();
+						}
+					}
 				}
-			
 			}					
 		}
 
 		return null;
 	}
 	
-	private String getParameterType(Schema<?> schema, String ref, String name, OpenapiApi api) {
-		if(ref != null) {
+	private String getParameterType(Schema<?> schema, String refParam, String name, OpenapiApi api) {
+		if(refParam != null) {
+			String ref = refParam;
+			boolean external = false;
 			if(ref.contains("#")) {
+				external = !ref.trim().startsWith("#");
 				ref = ref.substring(ref.indexOf("#"));
 			}
 			
@@ -591,73 +644,112 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				if(api.getApi()==null) {
 					throw new RuntimeException("Parametro '"+name+"' non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
 				}
-				if(api.getApi().getComponents()==null) {
-					throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-				}
-				if(refHeaders) {
-					if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/headers/", "");
-					Header hdr = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							hdr = api.getApi().getComponents().getHeaders().get(key);
-							break;
-						}
-					}
-					if(hdr==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
-					}
-					else {
-						return getParameterType(hdr.getSchema(), hdr.get$ref(), name, api);
-					}
-				}
-				else if(refParameters) {
-					if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
-					Parameter param = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							param = api.getApi().getComponents().getParameters().get(key);
-							break;
-						}
-					}
-					if(param==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
-					}
-					else {
-						if(name==null && param.getName()!=null) {
-							name = param.getName();
-						}
-						return getParameterType(param.getSchema(), param.get$ref(), name, api);
-					}
-				}
 				else {
-					if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
-					Schema<?> schemaRiferito = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
-							break;
+					if(api.getApi().getComponents()==null) {
+						if(!external || this.resolveExternalRef) {
+							throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+						}
+						else {
+							return refParam;
 						}
 					}
-					if(schemaRiferito==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
-					}
 					else {
-						return getParameterType(schemaRiferito, null, name, api);
+						if(refHeaders) {
+							if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/headers/", "");
+							Header hdr = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									hdr = api.getApi().getComponents().getHeaders().get(key);
+									break;
+								}
+							}
+							if(hdr==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							else {
+								return getParameterType(hdr.getSchema(), hdr.get$ref(), name, api);
+							}
+						}
+						else if(refParameters) {
+							if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+							Parameter param = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									param = api.getApi().getComponents().getParameters().get(key);
+									break;
+								}
+							}
+							if(param==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							else {
+								if(name==null && param.getName()!=null) {
+									name = param.getName();
+								}
+								return getParameterType(param.getSchema(), param.get$ref(), name, api);
+							}
+						}
+						else {
+							if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
+							Schema<?> schemaRiferito = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
+									break;
+								}
+							}
+							if(schemaRiferito==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
+								}
+								else {
+									return refParam;
+								}
+							}
+							else {
+								return getParameterType(schemaRiferito, null, name, api);
+							}
+						}
 					}
 				}
 			}
@@ -685,7 +777,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 	
 	private ApiSchemaTypeRestriction getParameterSchemaTypeRestriction(Schema<?> schema, String ref, String name, OpenapiApi api) {
 		if(ref != null) {
+			boolean external = false;
 			if(ref.contains("#")) {
+				external = !ref.trim().startsWith("#");
 				ref = ref.substring(ref.indexOf("#"));
 			}
 			
@@ -696,73 +790,112 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				if(api.getApi()==null) {
 					throw new RuntimeException("Parametro '"+name+"' non corretto: api da cui risolvere la ref '"+ref+"' non trovata");
 				}
-				if(api.getApi().getComponents()==null) {
-					throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-				}
-				if(refHeaders) {
-					if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/headers/", "");
-					Header hdr = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							hdr = api.getApi().getComponents().getHeaders().get(key);
-							break;
-						}
-					}
-					if(hdr==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
-					}
-					else {
-						return getParameterSchemaTypeRestriction(hdr.getSchema(), hdr.get$ref(), name, api);
-					}
-				}
-				else if(refParameters) {
-					if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
-					Parameter param = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							param = api.getApi().getComponents().getParameters().get(key);
-							break;
-						}
-					}
-					if(param==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
-					}
-					else {
-						if(name==null && param.getName()!=null) {
-							name = param.getName();
-						}
-						return getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
-					}
-				}
 				else {
-					if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
-					}
-					String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
-					Schema<?> schemaRiferito = null;
-					Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
-					while (itKeys.hasNext()) {
-						String key = (String) itKeys.next();
-						if(key.equals(checkRef)) {
-							schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
-							break;
+					if(api.getApi().getComponents()==null) {
+						if(!external || this.resolveExternalRef) {
+							throw new RuntimeException("Parametro '"+name+"' non corretto: componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+						}
+						else {
+							return null;
 						}
 					}
-					if(schemaRiferito==null) {
-						throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
-					}
 					else {
-						return getParameterSchemaTypeRestriction(schemaRiferito, null, name, api);
+						if(refHeaders) {
+							if(api.getApi().getComponents().getHeaders()==null || api.getApi().getComponents().getHeaders().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: headers definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return null;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/headers/", "");
+							Header hdr = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getHeaders().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									hdr = api.getApi().getComponents().getHeaders().get(key);
+									break;
+								}
+							}
+							if(hdr==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli headers definiti come componenti");
+								}
+								else {
+									return null;
+								}
+							}
+							else {
+								return getParameterSchemaTypeRestriction(hdr.getSchema(), hdr.get$ref(), name, api);
+							}
+						}
+						else if(refParameters) {
+							if(api.getApi().getComponents().getParameters()==null || api.getApi().getComponents().getParameters().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: parametri definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return null;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/parameters/", "");
+							Parameter param = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getParameters().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									param = api.getApi().getComponents().getParameters().get(key);
+									break;
+								}
+							}
+							if(param==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra i parametri definiti come componenti");
+								}
+								else {
+									return null;
+								}
+							}
+							else {
+								if(name==null && param.getName()!=null) {
+									name = param.getName();
+								}
+								return getParameterSchemaTypeRestriction(param.getSchema(), param.get$ref(), name, api);
+							}
+						}
+						else {
+							if(api.getApi().getComponents().getSchemas()==null || api.getApi().getComponents().getSchemas().size()<=0) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: schemi definiti come componenti, sui cui risolvere la ref '"+ref+"', non presenti");
+								}
+								else {
+									return null;
+								}
+							}
+							String checkRef = ref.trim().replaceAll("#/components/schemas/", "");
+							Schema<?> schemaRiferito = null;
+							Iterator<String> itKeys = api.getApi().getComponents().getSchemas().keySet().iterator();
+							while (itKeys.hasNext()) {
+								String key = (String) itKeys.next();
+								if(key.equals(checkRef)) {
+									schemaRiferito = api.getApi().getComponents().getSchemas().get(key);
+									break;
+								}
+							}
+							if(schemaRiferito==null) {
+								if(!external || this.resolveExternalRef) {
+									throw new RuntimeException("Parametro '"+name+"' non corretto: ref '"+ref+"' non presente tra gli schemi definiti come componenti");
+								}
+								else {
+									return null;
+								}
+							}
+							else {
+								return getParameterSchemaTypeRestriction(schemaRiferito, null, name, api);
+							}
+						}
 					}
 				}
 			}
@@ -829,7 +962,9 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 		if(response.get$ref()!=null) {
 			
 			String ref = response.get$ref();
+			boolean external = false;
 			if(ref.contains("#")) {
+				external = !ref.trim().startsWith("#");
 				ref = ref.substring(ref.indexOf("#"));
 			}
 			ref = ref.trim().replaceAll("#/components/responses/", "").replaceAll("#/definitions/", "");
@@ -838,23 +973,33 @@ public abstract class AbstractOpenapiApiReader implements IApiReader {
 				throw new RuntimeException("Stato non corretto ["+responseK+"]: api da cui risolvere la ref '"+response.get$ref()+"' non trovata");
 			}
 			if(api.getApi().getComponents()==null) {
-				throw new RuntimeException("Stato non corretto ["+responseK+"]: componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
-			}
-			if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
-				throw new RuntimeException("Stato non corretto ["+responseK+"]: risposte definite come componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
-			}
-			boolean find = false;
-			Iterator<String> itKeys = api.getApi().getComponents().getResponses().keySet().iterator();
-			while (itKeys.hasNext()) {
-				String key = (String) itKeys.next();
-				if(key.equals(ref)) {
-					response = api.getApi().getComponents().getResponses().get(key);
-					find = true;
-					break;
+				if(!external || this.resolveExternalRef) {
+					throw new RuntimeException("Stato non corretto ["+responseK+"]: componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
 				}
 			}
-			if(!find) {
-				throw new RuntimeException("Stato non corretto ["+responseK+"]: ref '"+response.get$ref()+"' non presente tra le risposte definite come componenti");
+			else {
+				if(api.getApi().getComponents().getResponses()==null || api.getApi().getComponents().getResponses().size()<=0) {
+					if(!external || this.resolveExternalRef) {
+						throw new RuntimeException("Stato non corretto ["+responseK+"]: risposte definite come componenti, sui cui risolvere la ref '"+response.get$ref()+"', non presenti");
+					}
+				}
+				else {
+					boolean find = false;
+					Iterator<String> itKeys = api.getApi().getComponents().getResponses().keySet().iterator();
+					while (itKeys.hasNext()) {
+						String key = (String) itKeys.next();
+						if(key.equals(ref)) {
+							response = api.getApi().getComponents().getResponses().get(key);
+							find = true;
+							break;
+						}
+					}
+					if(!find) {
+						if(!external || this.resolveExternalRef) {
+							throw new RuntimeException("Stato non corretto ["+responseK+"]: ref '"+response.get$ref()+"' non presente tra le risposte definite come componenti");
+						}
+					}
+				}
 			}
 		}
 		

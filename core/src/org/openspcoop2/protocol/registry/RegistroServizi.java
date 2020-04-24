@@ -59,6 +59,7 @@ import org.openspcoop2.core.registry.Scope;
 import org.openspcoop2.core.registry.Soggetto;
 import org.openspcoop2.core.registry.constants.CostantiRegistroServizi;
 import org.openspcoop2.core.registry.constants.CredenzialeTipo;
+import org.openspcoop2.core.registry.constants.FormatoSpecifica;
 import org.openspcoop2.core.registry.constants.ProfiloCollaborazione;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
@@ -2867,7 +2868,7 @@ public class RegistroServizi  {
 	 *         null altrimenti.
 	 */
 	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getRestAccordoServizio(Connection connectionPdD,String nomeRegistro,
-			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD)
+			IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchemaXSD, boolean processIncludeForOpenApi)
 	throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		// Raccolta dati
@@ -2888,7 +2889,8 @@ public class RegistroServizi  {
 		if(this.cache!=null){
 			key = "getRestAccordoServizio_"+infoWsdlSource.name()+"_"+ tipoSogg +"/" + nomeSogg +
 			"_" + tipoServizio + "/" + servizio+"/"+versioneServizio.intValue()
-			+"_schema_"+buildSchemaXSD;
+			+"_schema_"+buildSchemaXSD
+			+"_processInclude_"+processIncludeForOpenApi;
 			org.openspcoop2.utils.cache.CacheResponse response = 
 				(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
 			if(response != null){
@@ -2906,9 +2908,9 @@ public class RegistroServizi  {
 		// Algoritmo CACHE
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper restAS = null;
 		if(this.cache!=null){
-			restAS = this.getAccordoServizioRestCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD);
+			restAS = this.getAccordoServizioRestCache(key, idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
 		}else{
-			restAS = this.getAccordoServizioRestEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD);
+			restAS = this.getAccordoServizioRestEngine(idService, infoWsdlSource, nomeRegistro, connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
 		}
 
 		if(restAS!=null)
@@ -2929,7 +2931,7 @@ public class RegistroServizi  {
 	 * 
 	 */
 	private synchronized org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestCache(String keyCache,IDServizio idService,
-			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			InformationApiSource infoWsdlSource,String nomeRegistro,Connection connectionPdD,boolean buildSchemaXSD, boolean processIncludeForOpenApi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 		DriverRegistroServiziNotFound dNotFound = null;
 		org.openspcoop2.core.registry.rest.AccordoServizioWrapper obj = null;
@@ -2962,7 +2964,7 @@ public class RegistroServizi  {
 			// Effettuo le query nella mia gerarchia di registri.
 			this.log.debug("oggetto con chiave ["+keyCache+"] (method:getRestAccordoServizio) nel registro["+nomeRegistro+"] non in cache, ricerco nel registro...");
 			try{
-				obj = getAccordoServizioRestEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD);
+				obj = getAccordoServizioRestEngine(idService, infoWsdlSource,nomeRegistro,connectionPdD,buildSchemaXSD, processIncludeForOpenApi);
 			}catch(DriverRegistroServiziNotFound e){
 				dNotFound = e;
 			}
@@ -3017,7 +3019,7 @@ public class RegistroServizi  {
 	 * 
 	 */
 	private org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioRestEngine(IDServizio idService,InformationApiSource infoWsdlSource,
-			String nomeRegistro,Connection connectionPdD,boolean buildSchemi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
+			String nomeRegistro,Connection connectionPdD,boolean buildSchemi,boolean processIncludeForOpenApi) throws DriverRegistroServiziException,DriverRegistroServiziNotFound{
 
 
 		_ASWrapperDati asWrapper = this.buildASWrapperDati(nomeRegistro, idService, connectionPdD);
@@ -3038,6 +3040,10 @@ public class RegistroServizi  {
 		accordoServizioWrapper.setIdAccordoServizio(idAccordo);
 		
 		accordoServizioWrapper.setAccordoServizio(as);
+		boolean processInclude = buildSchemi;
+		if(buildSchemi && as!=null && FormatoSpecifica.OPEN_API_3.equals(as.getFormatoSpecifica())) {
+			processInclude = processIncludeForOpenApi;
+		}
 		
 		accordoServizioWrapper.setLocationSpecifica(as.getWsdlConcettuale());
 		accordoServizioWrapper.setBytesSpecifica(as.getByteWsdlConcettuale());
@@ -3054,7 +3060,7 @@ public class RegistroServizi  {
 			if(InformationApiSource.SPECIFIC.equals(infoWsdlSource)){
 				
 				this.log.debug("Costruisco API tramite la specifica...");
-				wsdlWrapperUtilities.buildApiFromSpecific(registroServiziDB, buildSchemi);
+				wsdlWrapperUtilities.buildApiFromSpecific(registroServiziDB, buildSchemi, processInclude);
 				
 			}else if(InformationApiSource.REGISTRY.equals(infoWsdlSource)){
 				
@@ -3067,7 +3073,7 @@ public class RegistroServizi  {
 			
 				this.log.debug("Costruisco API tramite la specifica (Step1)...");
 				try{
-					wsdlWrapperUtilities.buildApiFromSpecific(registroServiziDB, buildSchemi);
+					wsdlWrapperUtilities.buildApiFromSpecific(registroServiziDB, buildSchemi, processInclude);
 				}catch(DriverRegistroServiziException e){
 					if(InformationApiSource.SPECIFIC_REGISTRY.equals(infoWsdlSource)){
 						throw e;
@@ -3107,7 +3113,7 @@ public class RegistroServizi  {
 				org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities wsdlWrapperUtilitiesStep2 = 
 						new org.openspcoop2.core.registry.rest.AccordoServizioWrapperUtilities(defaultMessageFactory, this.log, accordoServizioWrapperStep2);
 				try{
-					wsdlWrapperUtilitiesStep2.buildApiFromSpecific(registroServiziDB, buildSchemi);
+					wsdlWrapperUtilitiesStep2.buildApiFromSpecific(registroServiziDB, buildSchemi, processInclude);
 				}catch(DriverRegistroServiziException e){
 					if(InformationApiSource.REGISTRY_SPECIFIC.equals(infoWsdlSource)){
 						throw e;

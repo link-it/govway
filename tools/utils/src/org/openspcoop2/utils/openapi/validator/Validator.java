@@ -20,8 +20,10 @@
 
 package org.openspcoop2.utils.openapi.validator;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
@@ -33,6 +35,21 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.openapi4j.core.model.v3.OAI3Context;
+import org.openapi4j.core.model.v3.OAI3SchemaKeywords;
+import org.openapi4j.core.util.TreeUtil;
+import org.openapi4j.core.validation.ValidationResults;
+import org.openapi4j.operation.validator.model.Request;
+import org.openapi4j.operation.validator.model.Response;
+import org.openapi4j.operation.validator.model.impl.Body;
+import org.openapi4j.operation.validator.model.impl.DefaultRequest;
+import org.openapi4j.operation.validator.model.impl.DefaultResponse;
+import org.openapi4j.operation.validator.validation.OperationValidator;
+import org.openapi4j.parser.model.v3.OpenApi3;
+import org.openapi4j.parser.model.v3.Operation;
+import org.openapi4j.parser.model.v3.Path;
+import org.openapi4j.parser.validation.v3.OpenApi3Validator;
+import org.openapi4j.schema.validator.ValidationData;
 import org.openspcoop2.utils.date.DateUtils;
 import org.openspcoop2.utils.json.AbstractUtils;
 import org.openspcoop2.utils.json.IJsonSchemaValidator;
@@ -64,9 +81,11 @@ import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
+import org.openspcoop2.utils.rest.entity.Cookie;
 import org.openspcoop2.utils.rest.entity.HttpBaseEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseRequestEntity;
 import org.openspcoop2.utils.rest.entity.HttpBaseResponseEntity;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -87,8 +106,12 @@ import io.swagger.v3.oas.models.media.Schema;
 public class Validator extends AbstractApiValidator implements IApiValidator {
 
 	private Api api;
+	// JSONSchema Validation
 	private Map<String, IJsonSchemaValidator> validatorMap;
 	private Map<String, File> fileSchema;
+	// OpenAPI4j Validation
+	private OpenApi3 openApi4j;
+	private OpenapiApi4jValidatorConfig openApi4jConfig;
 	
 	boolean onlySchemas = false;
 	
@@ -121,15 +144,136 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 				this.onlySchemas = true;
 			}
 			
-			ApiName jsonValidatorAPI;
+			ApiName jsonValidatorAPI = null;
+			boolean useOpenApi4j = false; // ottimizzazione per OpenAPI
 			ADDITIONAL policyAdditionalProperties = config.getPolicyAdditionalProperties();
 			if(config instanceof OpenapiApiValidatorConfig) {
 				jsonValidatorAPI = ((OpenapiApiValidatorConfig)config).getJsonValidatorAPI();
-			} else {
+				if(openapiApi!=null) {
+					OpenapiApiValidatorConfig c = (OpenapiApiValidatorConfig) config;
+					if(c.getOpenApi4JConfig()!=null) {
+						useOpenApi4j = c.getOpenApi4JConfig().isUseOpenApi4J();
+						if(useOpenApi4j) {
+							this.openApi4jConfig = c.getOpenApi4JConfig();
+						}
+					}
+				}
+			} 
+			if(jsonValidatorAPI==null) {
 				jsonValidatorAPI = ApiName.NETWORK_NT;
 			}
 			
 			try {
+			
+				if(useOpenApi4j) {
+					
+					// leggo JSON Node degli schemi
+					
+					JsonNode schemaNodeRoot = null;
+					URL uriSchemaNodeRoot = null;
+					Map<URL, JsonNode> schemaMap = null;
+					String root = "file:/";
+					if(apiValidatorStructure!=null && apiValidatorStructure.getNodeValidatorePrincipale()!=null && !apiValidatorStructure.getNodeValidatorePrincipale().isEmpty()) {
+						for (String nome : apiValidatorStructure.getNodeValidatorePrincipale().keySet()) {
+							if(root.equals(nome)) {
+								schemaNodeRoot = apiValidatorStructure.getNodeValidatorePrincipale().get(nome);
+								uriSchemaNodeRoot = new URL(root);
+							}
+							else {
+								if(schemaMap==null) {
+									schemaMap = new HashMap<URL, JsonNode>();
+								}
+								schemaMap.put(new URL(nome), apiValidatorStructure.getNodeValidatorePrincipale().get(nome));
+							}
+						}
+					}
+					else {
+						
+						YAMLUtils yamlUtils = YAMLUtils.getInstance();
+						JSONUtils jsonUtils = JSONUtils.getInstance();
+						if(yamlUtils.isYaml(openapiApi.getApiRaw())) {
+							schemaNodeRoot = yamlUtils.getAsNode(openapiApi.getApiRaw());
+						}
+						else {
+							schemaNodeRoot = jsonUtils.getAsNode(openapiApi.getApiRaw());
+						}
+						normalizeRefs(schemaNodeRoot);
+						uriSchemaNodeRoot = new URL(root);
+						
+						if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+							
+							for (ApiSchema apiSchema : api.getSchemas()) {
+								
+								if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
+									continue;
+								}
+								byte [] schema = apiSchema.getContent();
+								JsonNode schemaNodeInternal = null;
+								if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
+									if(jsonUtils.isJson(schema)) {
+										schemaNodeInternal = jsonUtils.getAsNode(schema);
+									}
+								}
+								else {
+									if(yamlUtils.isYaml(schema)) {
+										schemaNodeInternal = yamlUtils.getAsNode(schema);
+									}
+								}
+								if(schemaNodeInternal==null) {
+									continue;
+								}
+								normalizeRefs(schemaNodeInternal);
+								if(schemaMap==null) {
+									schemaMap = new HashMap<URL, JsonNode>();
+								}
+								schemaMap.put(new URL(root+apiSchema.getName()), schemaNodeInternal);
+								
+							}
+							
+						}
+					}
+					
+					// Costruisco OpenAPI3					
+					OAI3Context context = new OAI3Context(uriSchemaNodeRoot, schemaNodeRoot, schemaMap);
+					this.openApi4j = TreeUtil.json.convertValue(context.getBaseDocument(), OpenApi3.class);
+					this.openApi4j.setContext(context);
+					
+					// Explicit validation of the API spec
+					
+					if(this.openApi4jConfig.isValidateAPISpec()) {
+						try {
+							ValidationResults results = OpenApi3Validator.instance().validate(this.openApi4j);
+							if(!results.isValid()) {
+								throw new ProcessingException("OpenAPI3 not valid: "+results.toString());
+							}
+						}catch(org.openapi4j.core.validation.ValidationException valExc) {
+							if(valExc.getResults()!=null) {
+								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getResults().toString());
+							}
+							else {
+								throw new ProcessingException("OpenAPI3 not valid: "+valExc.getMessage());
+							}
+						}
+					}
+					
+					// Salvo informazioni ricostruite
+					if(apiValidatorStructure==null) {
+						OpenapiApiValidatorStructure validationStructure = new OpenapiApiValidatorStructure();
+						Map<String, JsonNode> nodeValidatorePrincipale = new HashMap<String, JsonNode>();
+						nodeValidatorePrincipale.put(root, schemaNodeRoot);
+						if(schemaMap!=null && !schemaMap.isEmpty()) {
+							for (URL url : schemaMap.keySet()) {
+								nodeValidatorePrincipale.put(url.toString(), schemaMap.get(url));
+							}
+						}
+						validationStructure.setNodeValidatorePrincipale(nodeValidatorePrincipale);
+						openapiApi.setValidationStructure(validationStructure);
+					}
+					
+					return; // finish
+				}
+				
+				
 				
 				this.validatorMap = new HashMap<>();
 				
@@ -152,9 +296,9 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 					nodeValidatorePrincipale = apiValidatorStructure.getNodeValidatorePrincipale();
 				}
 				else {
-				
+
 					if(openapiApi!=null) {
-									
+
 						Map<String, Schema<?>> definitions = openapiApi.getAllDefinitions();
 						String definitionString = Json.mapper().writeValueAsString(definitions);
 						definitionString = definitionString.replaceAll("#/components/schemas", "#/definitions");
@@ -582,8 +726,14 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 		return ref.trim().substring(0, ref.indexOf("#"));
 	}
+	private static String getRefType(String ref) {
+		if(ref.trim().startsWith("#")) {
+			return ref;
+		}
+		return ref.trim().substring(ref.indexOf("#"), ref.length());
+	}
 	private String normalizePath(String path) throws ProcessingException {
-		if(path.startsWith("http://") || path.startsWith("file://")){	
+		if(path.startsWith("http://") || path.startsWith("https://") || path.startsWith("file://")){	
 			try {
 				URL url = new URL(path);
 				File fileUrl = new File(url.getFile());
@@ -595,6 +745,29 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		else{
 			File f = new File(path);
 			return f.getName();
+		}
+	}
+	private void normalizeRefs(JsonNode node) throws ProcessingException {
+		List<JsonNode> listRef = node.findParents(OAI3SchemaKeywords.$REF);
+		if(listRef!=null) {
+			for (JsonNode jsonNodeRef : listRef) {
+				//System.out.println("REF ("+jsonNodeRef.getClass().getName()+") : "+jsonNodeRef);
+				if(jsonNodeRef instanceof ObjectNode) {
+					ObjectNode oNode = (ObjectNode) jsonNodeRef;
+					JsonNode valore = oNode.get(OAI3SchemaKeywords.$REF);
+					String ref = valore.asText();
+					//System.out.println("VALORE:"+v);
+					String path = getRefPath(ref);
+					if(path!=null) {
+						String normalizePath = normalizePath(path);
+						String refType = getRefType(ref);
+						//System.out.println("REF ("+jsonNodeRef.getClass().getName()+") : "+jsonNodeRef);
+						//System.out.println("Tipo ("+refType+") VALORE:"+normalizePath);
+						oNode.remove(OAI3SchemaKeywords.$REF);
+						oNode.put(OAI3SchemaKeywords.$REF, normalizePath+refType);
+					}
+				}
+			}
 		}
 	}
 	
@@ -679,37 +852,45 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		}
 		
 		if(bodyParameters!=null && !bodyParameters.isEmpty()) {
-			try {
-				boolean isJson =  httpEntity.getContentType()!=null && httpEntity.getContentType().toLowerCase().contains("json"); // supporta per adesso solo json, la validazione xml non è funzionante
-				if(isJson) {
-				
-					//System.out.println("==================== ("+httpEntity.getClass().getName()+") ====================");
-					List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
-					//System.out.println("SIZE: "+validatorLst.size());
-					boolean valid = false;
-					Exception exc = null;
-					if(httpEntity.getContent()!=null) {
-						byte[] bytes = httpEntity.getContent().toString().getBytes();
-						for(IJsonSchemaValidator validator: validatorLst) {
-							ValidationResponse response = validator.validate(bytes);
-							if(!ESITO.OK.equals(response.getEsito())) {
-								exc = response.getException();
-							} else {
-								valid = true;
+			
+			if(this.openApi4j!=null) {
+				validateWithOpenApi4j(httpEntity, operation);
+			}
+			else {
+				try {
+					
+					boolean isJson =  httpEntity.getContentType()!=null && httpEntity.getContentType().toLowerCase().contains("json"); // supporta per adesso solo json, la validazione xml non è funzionante
+					if(isJson) {
+					
+						//System.out.println("==================== ("+httpEntity.getClass().getName()+") ====================");
+						List<IJsonSchemaValidator> validatorLst = getValidatorList(operation, httpEntity);
+						//System.out.println("SIZE: "+validatorLst.size());
+						boolean valid = false;
+						Exception exc = null;
+						if(httpEntity.getContent()!=null) {
+							byte[] bytes = httpEntity.getContent().toString().getBytes();
+							for(IJsonSchemaValidator validator: validatorLst) {
+								ValidationResponse response = validator.validate(bytes);
+								if(!ESITO.OK.equals(response.getEsito())) {
+									exc = response.getException();
+								} else {
+									valid = true;
+								}
 							}
 						}
-					}
-					else {
-						throw new ValidatorException("Contenuto non presente");
+						else {
+							throw new ValidatorException("Contenuto non presente");
+						}
+						
+						if(!valid) {
+							throw new ValidatorException(exc);
+						}
+						
 					}
 					
-					if(!valid) {
-						throw new ValidatorException(exc);
-					}
-					
+				} catch (ValidationException e) {
+					throw new ValidatorException(e);
 				}
-			} catch (ValidationException e) {
-				throw new ValidatorException(e);
 			}
 		}
 	}
@@ -757,6 +938,221 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 		
 		return lst;
 	}
+	
+	private void validateWithOpenApi4j(HttpBaseEntity<?> httpEntity, ApiOperation operation) throws ProcessingException, ValidatorException {
+				
+		Operation operationOpenApi4j = null;
+		Path pathOpenApi4j = null;
+		for (String path :this.openApi4j.getPaths().keySet()) {
+			Path pathO = this.openApi4j.getPaths().get(path);
+			for (String method : pathO.getOperations().keySet()) {
+				Operation op = pathO.getOperation(method);
+				//System.out.println("CHECK: ["+method+"] "+path);
+				if(operation.getHttpMethod().toString().equalsIgnoreCase(method) && operation.getPath().equals(path)) {
+					operationOpenApi4j = op;
+					pathOpenApi4j = pathO;
+				}
+			}
+		}
+		if(operationOpenApi4j==null || pathOpenApi4j==null) {
+			throw new ProcessingException("Resource "+operation.getHttpMethod()+" "+operation.getPath()+" not found in OpenAPI 3");
+		}
+		
+		try {
+		
+			ValidationData<Void> vData = new ValidationData<>();
+			OperationValidator val = new OperationValidator(this.openApi4j, pathOpenApi4j, operationOpenApi4j);
+			
+			if(httpEntity instanceof HttpBaseRequestEntity) {
+				
+				HttpBaseRequestEntity<?> httpRequest = (HttpBaseRequestEntity<?>) httpEntity;
+				Request requestOpenApi4j = buildRequestOpenApi4j(httpRequest.getUrl(), httpRequest.getMethod().toString(), 
+						httpRequest.getParametersQuery(), httpRequest.getCookies(), httpRequest.getParametersTrasporto(),
+						httpRequest.getContent());
+				//val.validatePath(requestOpenApi4j, vData); LA URL deve corrispondere al base path del server
+				if(this.openApi4jConfig.isValidateRequestQuery()) {
+					val.validateQuery(requestOpenApi4j, vData);
+				}
+				if(this.openApi4jConfig.isValidateRequestHeaders()) {
+					val.validateHeaders(requestOpenApi4j, vData);
+				}
+				if(this.openApi4jConfig.isValidateRequestCookie()) {
+					val.validateCookies(requestOpenApi4j, vData);
+				}
+				if(this.openApi4jConfig.isValidateRequestBody()) {
+					val.validateBody(requestOpenApi4j, vData);
+				}
+			}
+			else if(httpEntity instanceof HttpBaseResponseEntity<?>) {
+					
+				HttpBaseResponseEntity<?> response = (HttpBaseResponseEntity<?>) httpEntity;
+				Response responseOpenApi4j = buildResponseOpenApi4j(response.getStatus(), response.getParametersTrasporto(), 
+						response.getContent());
+				if(this.openApi4jConfig.isValidateResponseHeaders()) {
+					val.validateHeaders(responseOpenApi4j, vData);
+				}
+				if(this.openApi4jConfig.isValidateResponseBody()) {
+					val.validateBody(responseOpenApi4j, vData);
+				}
+			}
+			
+			if(vData.isValid()==false) {
+				if(vData.results()!=null) {
+					throw new ValidatorException(vData.results().toString());
+				}
+				else {
+					throw new ValidatorException("Validation failed");
+				}
+			}
+			
+		}catch(ValidatorException e) {
+			throw e;
+		}catch(Exception e) {
+			throw new ProcessingException(e.getMessage(),e);
+		}
+	}
+	private Request buildRequestOpenApi4j(String urlInvocazione, String method, 
+			Map<String, String> queryParams, List<Cookie> cookies, Map<String, String> headers, 
+			Object content) throws ProcessingException {
+
+		try {
+		
+			// Method & path
+		    final DefaultRequest.Builder builder = new DefaultRequest.Builder(
+		    		urlInvocazione,
+		    		Request.Method.getMethod(method));
+	
+		    String queryString = null;
+			if(queryParams!=null && !queryParams.isEmpty()) {
+				StringBuilder sb = new StringBuilder();
+				Iterator<String> keys = queryParams.keySet().iterator();
+				while (keys.hasNext()) {
+					if(sb.length()>0) {
+						sb.append("&");
+					}
+					String key = (String) keys.next();
+					String value = (String) queryParams.get(key);
+					sb.append(key);
+					sb.append("=");
+					sb.append(value);
+				}
+				queryString = sb.toString();
+			}
+		    
+		    // Query string or body
+		    if (HttpRequestMethod.GET.toString().equalsIgnoreCase(method)) {
+		    	builder.query(queryString);
+		    } else {
+		    	if(content!=null) {
+		    		String s = null;
+		    		byte[] b = null;
+		    		InputStream is = null;
+		    		if(content instanceof String) {
+		    			s = (String) content;
+		    		}
+		    		else if(content instanceof byte[]) {
+		    			b=(byte[])content;
+		    		}
+		    		else if(content instanceof InputStream) {
+		    			is = (InputStream) content;
+		    		}
+		    		if(s!=null) {
+		    			builder.body(Body.from(s));
+		    		}
+		    		else if(b!=null) {
+		    			try(ByteArrayInputStream bin =new ByteArrayInputStream(b)){
+		    				builder.body(Body.from(bin));
+		    			}
+		    		}
+		    		else if(is!=null) {
+		    			builder.body(Body.from(is));
+		    		}
+		    		else {
+		    			throw new Exception("Type '"+content.getClass().getName()+"' unsupported");
+		    		}
+		    	}
+		    }
+	
+		    // Cookies
+		    if (cookies != null) {
+		    	for (Cookie cookie : cookies) {
+		    		builder.cookie(cookie.getName(), cookie.getValue());
+		    	}
+		    }
+	
+		    // Headers
+		    if(headers!=null) {
+		    	Iterator<String> headerNames = headers.keySet().iterator();
+		    	if (headerNames != null) {
+		    		while (headerNames.hasNext()) {
+		    			String headerName = headerNames.next();
+		    			builder.header(headerName, headers.get(headerName));
+		    		}
+		    	}
+		    }
+	
+		    return builder.build();
+		    
+		}catch(Exception e) {
+			throw new ProcessingException(e.getMessage(),e);
+		}
+	}
+	
+	private static Response buildResponseOpenApi4j(int status, Map<String, String> headers, Object content) throws ProcessingException {
+		
+		try {
+		
+			// status
+			final DefaultResponse.Builder builder = new DefaultResponse.Builder(status);
+			
+			// body
+			if(content!=null) {
+	    		String s = null;
+	    		byte[] b = null;
+	    		InputStream is = null;
+	    		if(content instanceof String) {
+	    			s = (String) content;
+	    		}
+	    		else if(content instanceof byte[]) {
+	    			b=(byte[])content;
+	    		}
+	    		else if(content instanceof InputStream) {
+	    			is = (InputStream) content;
+	    		}
+	    		if(s!=null) {
+	    			builder.body(Body.from(s));
+	    		}
+	    		else if(b!=null) {
+	    			try(ByteArrayInputStream bin =new ByteArrayInputStream(b)){
+	    				builder.body(Body.from(bin));
+	    			}
+	    		}
+	    		else if(is!=null) {
+	    			builder.body(Body.from(is));
+	    		}
+	    		else {
+	    			throw new Exception("Type '"+content.getClass().getName()+"' unsupported");
+	    		}
+	    	}
+			
+		    // Headers
+		    if(headers!=null) {
+			    Iterator<String> headerNames = headers.keySet().iterator();
+			    if (headerNames != null) {
+			      while (headerNames.hasNext()) {
+			        String headerName = headerNames.next();
+			        builder.header(headerName, headers.get(headerName));
+			      }
+			    }
+		    }
+		    
+		    return builder.build();
+		    
+		}catch(Exception e) {
+			throw new ProcessingException(e.getMessage(),e);
+		}
+	}
+
 
 	@Override
 	public void validatePostConformanceCheck(HttpBaseEntity<?> httpEntity,

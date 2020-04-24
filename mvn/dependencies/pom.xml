@@ -42,6 +42,7 @@
 		<module>json</module>
 		<module>log</module>
 		<module>lucene</module>
+		<module>openapi4j</module>
 		<module>opensaml</module>
 		<module>reports</module>
 		<module>saaj</module>

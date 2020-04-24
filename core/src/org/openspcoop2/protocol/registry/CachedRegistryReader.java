@@ -374,9 +374,9 @@ public class CachedRegistryReader implements IRegistryReader {
 	}
 	
 	@Override
-	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema) throws RegistryNotFound,RegistryException{
+	public org.openspcoop2.core.registry.rest.AccordoServizioWrapper getAccordoServizioParteComuneRest(IDServizio idService,InformationApiSource infoWsdlSource,boolean buildSchema, boolean processIncludeForOpenApi) throws RegistryNotFound,RegistryException{
 		try{
-			return this.registroServiziManager.getRestAccordoServizio(idService, infoWsdlSource, buildSchema);
+			return this.registroServiziManager.getRestAccordoServizio(idService, infoWsdlSource, buildSchema, processIncludeForOpenApi);
 		} catch (DriverRegistroServiziNotFound de) {
 			throw new RegistryNotFound(de.getMessage(),de);
 		}catch(Exception e){

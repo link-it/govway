@@ -325,7 +325,7 @@ public class OperationFinder {
 		HttpRequestMethod httpMethod = HttpRequestMethod.valueOf(transportContext.getRequestType());
 		
 		try {
-			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false);
+			org.openspcoop2.core.registry.rest.AccordoServizioWrapper wrapper = registroServiziReader.getRestAccordoServizio(idServizio,InformationApiSource.SAFE_SPECIFIC_REGISTRY,false,false);
 			ApiOperation op = wrapper.getApi().findOperation(httpMethod, path);
 			if(op!=null) {
 				// Il path nella 'ApiOperation è normalizzato come sul registro

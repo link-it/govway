@@ -1725,7 +1725,7 @@ components:
             discriminator:
               propertyName: "tipo"
               mapping:
-                fruizione: "govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName"
+                fruizione: "#/components/schemas/BaseOggettoWithSimpleName"
             oneOf:
             - $ref: "#/components/schemas/BaseOggettoWithSimpleName"
           mittente:
@@ -1800,7 +1800,7 @@ components:
             discriminator:
               propertyName: "tipo"
               mapping:
-                erogazione: "govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName"
+                erogazione: "#/components/schemas/BaseOggettoWithSimpleName"
             oneOf:
             - $ref: "#/components/schemas/BaseOggettoWithSimpleName"
     RicercaConfigurazioneApi:
@@ -2878,6 +2878,17 @@ components:
             $ref: "#/components/schemas/Problem"
     "201Created":
       description: "Resource created"
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
+    "202Accepted":
+      description: "Request accepted"
       headers:
         Location:
           $ref: "#/components/headers/Location"

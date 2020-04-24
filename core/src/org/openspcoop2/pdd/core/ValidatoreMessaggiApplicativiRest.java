@@ -24,7 +24,10 @@
 package org.openspcoop2.pdd.core;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
+import org.apache.cxf.common.util.StringUtils;
+import org.openspcoop2.core.config.Proprieta;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
@@ -47,6 +50,8 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.openapi.validator.OpenapiApi4jValidatorConfig;
+import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
@@ -91,14 +96,20 @@ public class ValidatoreMessaggiApplicativiRest {
 	private IProtocolFactory<?> protocolFactory;
 	/** PddContext */
 	private PdDContext pddContext;
-
+	/** UseInterface */
+	private boolean useInterface;
+	/** OpenApi4j config */
+	private OpenapiApi4jValidatorConfig configOpenApi4j;
+	/** OpenSPCoop2Properties */
+	private OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
 	
 	
 
 	
 	/* ------ Costruttore -------------- */
 	public ValidatoreMessaggiApplicativiRest(RegistroServiziManager registro,IDServizio idServizio,
-			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio, IProtocolFactory<?> protocolFactory, PdDContext pddContext)throws ValidatoreMessaggiApplicativiException{
+			OpenSPCoop2Message message,boolean readInterfaceAccordoServizio, List<Proprieta> proprieta, 
+			IProtocolFactory<?> protocolFactory, PdDContext pddContext)throws ValidatoreMessaggiApplicativiException{
 		
 		if(registro==null){
 			ValidatoreMessaggiApplicativiException ex 
@@ -126,10 +137,29 @@ public class ValidatoreMessaggiApplicativiRest {
 		this.pddContext = pddContext;
 		
 		try{
+			this.useInterface = readInterfaceAccordoServizio;
+			
+			boolean processIncludeForOpenApi = true;
+			if(this.op2Properties.isValidazioneContenutiApplicativi_openApi_useOpenApi4j()) {
+				this.configOpenApi4j = new OpenapiApi4jValidatorConfig();
+				this.configOpenApi4j.setUseOpenApi4J(true);
+				this.configOpenApi4j.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateAPISpec());
+				this.configOpenApi4j.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestQuery());
+				this.configOpenApi4j.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestHeaders());
+				this.configOpenApi4j.setValidateRequestCookie(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestCookie());
+				this.configOpenApi4j.setValidateRequestBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestBody());
+				this.configOpenApi4j.setValidateResponseHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseHeaders());
+				this.configOpenApi4j.setValidateResponseBody(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateResponseBody());
+				updateConfigOpenApi4j(proprieta, this.configOpenApi4j); // aggiorno anche se utilizzarlo o meno
+				if(this.configOpenApi4j.isUseOpenApi4J()) {
+					processIncludeForOpenApi = false;
+				}
+			}
+			
 			if(readInterfaceAccordoServizio){
-				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.SPECIFIC,true,processIncludeForOpenApi);
 			}else{
-				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.REGISTRY,true);
+				this.accordoServizioWrapper = this.registroServiziManager.getRestAccordoServizio(idServizio,InformationApiSource.REGISTRY,true,processIncludeForOpenApi);
 			}
 		}catch(DriverRegistroServiziNotFound e){
 			this.logger.error("Riscontrato errore durante la ricerca del formato di specifica che definisce l'accordo di servizio: "+e.getMessage(),e);
@@ -264,18 +294,31 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		String interfaceType = null;
 		ApiFormats format = null;
+		ApiValidatorConfig validatorConfig = null;
+		boolean openapi4j = false;
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
 		case WADL:
 			interfaceType = "Interfaccia WADL";
 			format=ApiFormats.WADL;
+			validatorConfig = new ApiValidatorConfig();
 			break;
 		case SWAGGER_2:
 			interfaceType = "Interfaccia Swagger 2";
 			format=ApiFormats.SWAGGER_2;
+			validatorConfig = new OpenapiApiValidatorConfig();
+			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
 			break;
 		case OPEN_API_3:
 			interfaceType = "Interfaccia OpenAPI 3";
 			format=ApiFormats.OPEN_API_3;
+			validatorConfig = new OpenapiApiValidatorConfig();
+			((OpenapiApiValidatorConfig)validatorConfig).setJsonValidatorAPI(this.op2Properties.getValidazioneContenutiApplicativi_openApi_jsonValidator());
+			if(this.useInterface && this.configOpenApi4j!=null) {
+				openapi4j = this.configOpenApi4j.isUseOpenApi4J();
+				if(openapi4j) {
+					((OpenapiApiValidatorConfig)validatorConfig).setOpenApi4JConfig(this.configOpenApi4j);
+				}
+			}
 			break;
 		default:
 			// altre interfacce non supportate per rest
@@ -283,14 +326,11 @@ public class ValidatoreMessaggiApplicativiRest {
 		}
 		
 		IApiValidator apiValidator = null;
-		ApiValidatorConfig validatorConfig = null;
 		try {
-			OpenSPCoop2Properties op2PropertieS = OpenSPCoop2Properties.getInstance();
 			apiValidator = ApiFactory.newApiValidator(format);
-			validatorConfig = new ApiValidatorConfig();
 			validatorConfig.setXmlUtils(XMLUtils.getInstance(this.message.getFactory()));
-			validatorConfig.setVerbose(op2PropertieS.isValidazioneContenutiApplicativi_debug());
-			validatorConfig.setPolicyAdditionalProperties(op2PropertieS.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
+			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativi_debug());
+			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
 			apiValidator.init(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);
 		}catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
@@ -339,7 +379,17 @@ public class ValidatoreMessaggiApplicativiRest {
 				case XML:
 					httpRequest = new ElementHttpRequestEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((ElementHttpRequestEntity)httpRequest).setContent(this.message.castAsRestXml().getContent());
+						if(openapi4j) {
+							httpRequest = new BinaryHttpRequestEntity();
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							this.message.writeTo(bout, false);
+							bout.flush();
+							bout.close();
+							((BinaryHttpRequestEntity)httpRequest).setContent(bout.toByteArray());
+						}
+						else {
+							((ElementHttpRequestEntity)httpRequest).setContent(this.message.castAsRestXml().getContent());
+						}
 					}
 					break;
 				case JSON:
@@ -380,7 +430,17 @@ public class ValidatoreMessaggiApplicativiRest {
 				case XML:
 					httpResponse = new ElementHttpResponseEntity();
 					if(this.message.castAsRest().hasContent()) {
-						((ElementHttpResponseEntity)httpResponse).setContent(this.message.castAsRestXml().getContent());
+						if(openapi4j) {
+							httpResponse = new BinaryHttpResponseEntity();
+							ByteArrayOutputStream bout = new ByteArrayOutputStream();
+							this.message.writeTo(bout, false);
+							bout.flush();
+							bout.close();
+							((BinaryHttpResponseEntity)httpResponse).setContent(bout.toByteArray());
+						}
+						else {
+							((ElementHttpResponseEntity)httpResponse).setContent(this.message.castAsRestXml().getContent());
+						}
 					}
 					break;
 				case JSON:
@@ -435,4 +495,106 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 	}
 	
+	private void updateConfigOpenApi4j(List<Proprieta> proprieta, OpenapiApi4jValidatorConfig configOpenApi4j) {
+		if(proprieta==null || proprieta.isEmpty()) {
+			return;
+		}
+		
+		String prefix = "openApi4j.";
+		String useOpenApi4j = this.readValue(proprieta, prefix+"enable");
+		if(useOpenApi4j!=null && !StringUtils.isEmpty(useOpenApi4j)) {
+			if("true".equals(useOpenApi4j.trim())) {
+				configOpenApi4j.setUseOpenApi4J(true);
+			}
+			else if("false".equals(useOpenApi4j.trim())) {
+				configOpenApi4j.setUseOpenApi4J(false);
+			}
+		}
+		
+		if(configOpenApi4j.isUseOpenApi4J()==false) {
+			return;
+		}
+		
+		String validateAPISpec = this.readValue(proprieta, prefix+"validateAPISpec");
+		if(validateAPISpec!=null && !StringUtils.isEmpty(validateAPISpec)) {
+			if("true".equals(validateAPISpec.trim())) {
+				configOpenApi4j.setValidateAPISpec(true);
+			}
+			else if("false".equals(validateAPISpec.trim())) {
+				configOpenApi4j.setValidateAPISpec(false);
+			}
+		}
+		
+		String validateRequestQuery = this.readValue(proprieta, prefix+"validateRequestQuery");
+		if(validateRequestQuery!=null && !StringUtils.isEmpty(validateRequestQuery)) {
+			if("true".equals(validateRequestQuery.trim())) {
+				configOpenApi4j.setValidateRequestQuery(true);
+			}
+			else if("false".equals(validateRequestQuery.trim())) {
+				configOpenApi4j.setValidateRequestQuery(false);
+			}
+		}
+		
+		String validateRequestHeaders = this.readValue(proprieta, prefix+"validateRequestHeaders");
+		if(validateRequestHeaders!=null && !StringUtils.isEmpty(validateRequestHeaders)) {
+			if("true".equals(validateRequestHeaders.trim())) {
+				configOpenApi4j.setValidateRequestHeaders(true);
+			}
+			else if("false".equals(validateRequestHeaders.trim())) {
+				configOpenApi4j.setValidateRequestHeaders(false);
+			}
+		}
+		
+		String validateRequestCookie = this.readValue(proprieta, prefix+"validateRequestCookie");
+		if(validateRequestCookie!=null && !StringUtils.isEmpty(validateRequestCookie)) {
+			if("true".equals(validateRequestCookie.trim())) {
+				configOpenApi4j.setValidateRequestCookie(true);
+			}
+			else if("false".equals(validateRequestCookie.trim())) {
+				configOpenApi4j.setValidateRequestCookie(false);
+			}
+		}
+		
+		String validateRequestBody = this.readValue(proprieta, prefix+"validateRequestBody");
+		if(validateRequestBody!=null && !StringUtils.isEmpty(validateRequestBody)) {
+			if("true".equals(validateRequestBody.trim())) {
+				configOpenApi4j.setValidateRequestBody(true);
+			}
+			else if("false".equals(validateRequestBody.trim())) {
+				configOpenApi4j.setValidateRequestBody(false);
+			}
+		}
+		
+		String validateResponseHeaders = this.readValue(proprieta, prefix+"validateResponseHeaders");
+		if(validateResponseHeaders!=null && !StringUtils.isEmpty(validateResponseHeaders)) {
+			if("true".equals(validateResponseHeaders.trim())) {
+				configOpenApi4j.setValidateResponseHeaders(true);
+			}
+			else if("false".equals(validateResponseHeaders.trim())) {
+				configOpenApi4j.setValidateResponseHeaders(false);
+			}
+		}
+		
+		String validateResponseBody = this.readValue(proprieta, prefix+"validateResponseBody");
+		if(validateResponseBody!=null && !StringUtils.isEmpty(validateResponseBody)) {
+			if("true".equals(validateResponseBody.trim())) {
+				configOpenApi4j.setValidateResponseBody(true);
+			}
+			else if("false".equals(validateResponseBody.trim())) {
+				configOpenApi4j.setValidateResponseBody(false);
+			}
+		}
+		
+	}
+	private String readValue(List<Proprieta> proprieta, String nome) {
+		if(proprieta==null || proprieta.isEmpty()) {
+			return null;
+		}
+		for (Proprieta proprietaCheck : proprieta) {
+			if(nome.equalsIgnoreCase(proprietaCheck.getNome())) {
+				return proprietaCheck.getValore();
+			}
+		}
+		return null;
+	}
 }

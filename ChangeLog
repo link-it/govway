@@ -1,3 +1,10 @@
+2020-04-24  Andrea Poli <apoli@link.it>
+
+	[GovWayCore]
+	Risolto Bug OP-871
+	Aggiunto nuovo engine per la validazione tramite interfaccia OpenAPI 3 che utilizza la libreria openapi4j (https://openapi4j.github.io/openapi4j/).
+	Tramite il nuovo engine è possibile validare correttamente messaggi definiti tramite 'oneOf' che possiedono un discriminator.
+
 2020-04-20  Andrea Poli <apoli@link.it>
 
 	[BatchStatistiche]

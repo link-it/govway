@@ -1,0 +1,550 @@
+openapi: 3.0.3
+servers:
+  - url: http://petstore.swagger.io/api
+    description: esempio
+
+info:
+  x-api-id: https://esempioId
+  title: Document Retrieve
+  x-summary: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  description: Servizio demo che consente di comprendere le varie modalità di scambio degli allegati
+  version: "0.1"
+  contact:
+    email: info@link.it
+  license:
+    name: GPL v3.0
+    url: 'https://www.gnu.org/licenses/gpl-3.0.txt'
+
+tags:
+  - name: in-line
+    description: Consente di inviare o ricevere documenti in-line
+  - name: by-riferimento-id
+    description: Consente di inviare o ricevere documenti per riferimento tramite un id
+  - name: by-riferimento-uri
+    description: Consente di inviare o ricevere documenti per riferimento tramite una uri relativa o assolutata
+  - name: mixed
+    description: Consente di inviare o ricevere documenti sia in-line che per riferimento tramite un id o tramite una uri relativa o assolutata
+  - name: document-retrieve
+    description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+    
+paths:
+          
+  /documenti/in-line/receive:
+    post:
+      tags:
+        - in-line
+      description: Esempio di ricezione dei documenti (in-line) nella risposta
+      operationId: ReceiveDocumentInLine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiInLine'
+        "400":
+          $ref: '/tmp/teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: './teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'file:/teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'file://home/teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'http://prova.org/teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'https://example.org/altroPath/teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'file:/prova/teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/in-line/send:
+    post:
+      tags:
+        - in-line
+      description: Esempio di invio dei documenti (in-line) nella richiesta
+      operationId: SendDocumentInLine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiInLine'
+      responses:
+        "200":
+          description: |-
+            Risposta di esempio
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+
+  /documenti/by-riferimento-id/receive:
+    post:
+      tags:
+        - by-riferimento-id
+      description: Esempio di ricezione dei documenti (by-riferimento-id) nella risposta
+      operationId: ReceiveDocumentByRiferimentoId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoId'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/by-riferimento-id/send:
+    post:
+      tags:
+        - by-riferimento-id
+      description: Esempio di invio dei documenti (by-riferimento-id) nella richiesta
+      operationId: SendDocumentByRiferimentoId
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoId'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+   
+   
+  /documenti/by-riferimento-uri/receive:
+    post:
+      tags:
+        - by-riferimento-uri
+      description: Esempio di ricezione dei documenti (by-riferimento-uri) nella risposta
+      operationId: ReceiveDocumentByRiferimentoUri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoUri'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/by-riferimento-uri/send:
+    post:
+      tags:
+        - by-riferimento-uri
+      description: Esempio di invio dei documenti (by-riferimento-uri) nella richiesta
+      operationId: SendDocumentByRiferimentoUri
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoUri'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'  
+
+
+  /documenti/mixed/receive:
+    post:
+      tags:
+        - mixed
+      description: Esempio di ricezione dei documenti nella risposta
+      operationId: ReceiveDocumentMixed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RichiestaEsempio'
+      responses:
+        "200":
+          description: |-
+            Risposta contenente documenti
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DatiRiferimentoMixed'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+                   
+  /documenti/mixed/send:
+    post:
+      tags:
+        - mixed
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentByRiferimentoMixed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DatiRiferimentoMixed'
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+     
+       
+  /documenti/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    get:
+      tags:
+        - document-retrieve
+      description: Consente di recuperare un documento, per il quale si è ricevuto un riferimento
+      operationId: DownloadDocument
+      parameters:
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
+      - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
+      responses:
+        "200":
+          description: |-
+            Il documento richiesto
+          content:
+            application/*:
+              schema:
+                type: string
+                format: binary
+            text/*:
+              schema:
+                type: string
+                format: binary
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+       
+          
+components:
+
+  parameters:
+    id_documento:
+      name: id_documento
+      in: path
+      required: true
+      schema:
+        type: string
+        format: uuid
+        
+  schemas:
+
+    RichiestaEsempio:
+      type: object
+      required:
+        - datiRichiesta
+      properties:
+        datiRichiesta:
+          type: string
+
+    RispostaEsempio:
+      type: object
+      required:
+        - datiRisposta
+      properties:
+        datiRisposta:
+          type: string
+ 
+    Dati:
+      type: object
+      required:
+        - mittente
+        - destinatario
+        - procedimento
+      properties:
+        mittente:
+          type: string
+        destinatario:
+          type: string
+        procedimento:
+          type: string
+ 
+    Allegato:
+      type: object
+      required:
+        - nome
+        - tipoMIME
+        - dataDocumento
+      properties:
+          nome:
+             type: string
+          descrizione:
+             type: string     
+          tipoMIME:
+             type: string
+          dataDocumento:
+             type: string
+             format: date-time
+ 
+    DatiInLine:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoInLine' 
+  
+    AllegatoInLine:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - documento
+          properties:
+             documento:
+                type: string
+                format: byte
+                
+    DatiRiferimentoId:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoId' 
+  
+    AllegatoRiferimentoId:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - identificativo
+            - impronta
+          properties:
+             id:
+                type: string
+                format: uuid
+             impronta:
+                type: string                
+                                
+    DatiRiferimentoUri:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoUri' 
+  
+    AllegatoRiferimentoUri:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - uri
+            - impronta
+          properties:
+             uri:
+                type: string
+                format: uri
+             impronta:
+                type: string
+ 
+    DatiRiferimentoMixed:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Dati'
+        - type: object      
+          required:
+            - allegati
+          properties:
+             allegati:
+               type: array
+               items:
+                  $ref: '#/components/schemas/AllegatoRiferimentoMixed' 
+  
+    AllegatoRiferimentoMixed:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/Allegato'
+        - type: object      
+          required:
+            - documento
+          properties:
+             documento:
+                type: string
+                oneOf:
+                  - $ref: '#/components/schemas/ContenutoAllegatoInLine'
+                  - $ref: '#/components/schemas/ContenutoAllegatoRiferimentoUri'
+                discriminator:
+                  propertyName: tipoDocumento
+                  mapping:
+                    'inline': '#/components/schemas/ContenutoAllegatoInLine'
+                    'riferimento-uri': '#/components/schemas/ContenutoAllegatoRiferimentoUri'
+
+    TipoAllegatoEnum:
+      type: string
+      enum: ['inline', 'riferimento-uri']
+
+    ContenutoAllegatoInLine:
+      type: object
+      required:
+        - tipoDocumento
+        - contenuto
+      properties:
+          tipoDocumento:
+                $ref: '#/components/schemas/TipoAllegatoEnum'
+          contenuto:
+             type: string
+             format: byte
+                        
+    ContenutoAllegatoRiferimentoUri:
+      type: object
+      required:
+        - tipoDocumento
+        - uri
+        - impronta
+      properties:
+          tipoDocumento:
+                $ref: '#/components/schemas/TipoAllegatoEnum'
+          uri:
+             type: string
+             format: uri
+          impronta:
+             type: string

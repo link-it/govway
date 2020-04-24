@@ -6431,8 +6431,8 @@ components:
             discriminator:
               propertyName: "tipo"
               mapping:
-                soap: "govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum"
-                rest: "govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum"
+                soap: "#/components/schemas/FormatoSoapEnum"
+                rest: "#/components/schemas/FormatoRestEnum"
             oneOf:
             - $ref: "#/components/schemas/FormatoSoapEnum"
             - $ref: "#/components/schemas/FormatoRestEnum"
@@ -6472,7 +6472,7 @@ components:
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum"
+              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
           oneOf:
           - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ApiAllegatoItem:
@@ -6490,7 +6490,7 @@ components:
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum"
+              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
           oneOf:
           - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ListaApiAllegati:
@@ -8841,6 +8841,17 @@ components:
             $ref: "#/components/schemas/Problem"
     "201Created":
       description: "Resource created"
+      headers:
+        Location:
+          $ref: "#/components/headers/Location"
+        X-RateLimit-Limit:
+          $ref: "#/components/headers/X-RateLimit-Limit"
+        X-RateLimit-Remaining:
+          $ref: "#/components/headers/X-RateLimit-Remaining"
+        X-RateLimit-Reset:
+          $ref: "#/components/headers/X-RateLimit-Reset"
+    "202Accepted":
+      description: "Request accepted"
       headers:
         Location:
           $ref: "#/components/headers/Location"

@@ -7386,11 +7386,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					e.addElement(de);
 					
 					de = new DataElement();
-					if(parameter.getRestrizioni().length()<100) {
-						de.setValue(parameter.getRestrizioni());
-					}
-					else {
-						de.setValue(parameter.getRestrizioni().substring(0, 97)+" ...");
+					if(parameter.getRestrizioni()!=null) {
+						if(parameter.getRestrizioni().length()<100) {
+							de.setValue(parameter.getRestrizioni());
+						}
+						else {
+							de.setValue(parameter.getRestrizioni().substring(0, 97)+" ...");
+						}
 					}
 					e.addElement(de);
 

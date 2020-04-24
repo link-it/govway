@@ -97,7 +97,7 @@ public class AccordoServizioWrapperUtilities {
 	
 	
 	
-	public void buildApiFromSpecific(boolean fromBytes,boolean buildSchemi) throws DriverRegistroServiziException {
+	public void buildApiFromSpecific(boolean fromBytes,boolean buildSchemi,boolean processInclude) throws DriverRegistroServiziException {
 		
 		if(this.accordoServizioWrapper==null) {
 			throw new DriverRegistroServiziException("AccordoWrapper non fornito");
@@ -172,7 +172,7 @@ public class AccordoServizioWrapperUtilities {
 		ApiSchema [] s = null;
 		ApiReaderConfig config = new ApiReaderConfig();
 		if(buildSchemi) {
-			config.setProcessInclude(true);
+			config.setProcessInclude(processInclude);
 			config.setProcessInlineSchema(true);
 			s = this.buildSchemas(as, fromBytes);
 		}
@@ -274,13 +274,13 @@ public class AccordoServizioWrapperUtilities {
 						resourcesXSD.put(systemId,resource); 
 					}
 					else if(this.yamlUtils.isYaml(resource)){
-						if(resourcesXSD.containsKey(systemId)){
+						if(resourcesYAML.containsKey(systemId)){
 							throw new Exception("Esiste più di un documento yaml, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesYAML.put(systemId,resource); 
 					}
 					else if(this.jsonUtils.isJson(resource)){
-						if(resourcesXSD.containsKey(systemId)){
+						if(resourcesJSON.containsKey(systemId)){
 							throw new Exception("Esiste più di un documento json, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesJSON.put(systemId,resource); 
@@ -335,13 +335,13 @@ public class AccordoServizioWrapperUtilities {
 						resourcesXSD.put(systemId,resource); 
 					}
 					else if(this.yamlUtils.isYaml(resource)){
-						if(resourcesXSD.containsKey(systemId)){
+						if(resourcesYAML.containsKey(systemId)){
 							throw new Exception("Esiste più di un documento yaml, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesYAML.put(systemId,resource); 
 					}
 					else if(this.jsonUtils.isJson(resource)){
-						if(resourcesXSD.containsKey(systemId)){
+						if(resourcesJSON.containsKey(systemId)){
 							throw new Exception("Esiste più di un documento json, registrato tra allegati e specifiche semiformali, con nome ["+systemId+"] (La validazione di Govway richiede l'utilizzo di nomi diversi)");
 						}
 						resourcesJSON.put(systemId,resource); 

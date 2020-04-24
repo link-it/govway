@@ -239,6 +239,9 @@
 			<lib dir="${required_lib}/swagger">
 				<include name="*.jar"/>
 			</lib>
+			<lib dir="${required_lib}/openapi4j">
+				<include name="*.jar"/>
+			</lib>
 			<lib dir="${required_lib}/stub/cxf">
 				<include name="openspcoop2_registrySearchStub_cxf.jar"/>
 			</lib>
