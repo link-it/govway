@@ -20,15 +20,42 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIndirizzoIPEnum;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteIndirizzoIP extends FiltroRicercaId implements OneOfFiltroMittenteErogazioneId, OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId, OneOfFiltroMittenteFruizioneId, OneOfFiltroMittenteQualsiasiId {
+public class FiltroMittenteIndirizzoIP extends FiltroRicercaId implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
   
   @Schema(description = "")
   private TipoFiltroMittenteIndirizzoIPEnum tipo = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteIndirizzoIP identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get tipo
    * @return tipo
@@ -54,6 +81,7 @@ public class FiltroMittenteIndirizzoIP extends FiltroRicercaId implements OneOfF
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroMittenteIndirizzoIP {\n");
     sb.append("    ").append(FiltroMittenteIndirizzoIP.toIndentedString(super.toString())).append("\n");
+    sb.append("    identificazione: ").append(FiltroMittenteIndirizzoIP.toIndentedString(this.identificazione)).append("\n");
     sb.append("    tipo: ").append(FiltroMittenteIndirizzoIP.toIndentedString(this.tipo)).append("\n");
     sb.append("}");
     return sb.toString();

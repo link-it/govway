@@ -6,17 +6,15 @@
   },
   "tipo": "fruizione",
   "report": {
-    "formato": "csv",
+    "formato": "xml",
     "tipo": "table",
     "tipo_informazione": {
       "tipo": "numero_transazioni"
     }
   },
   "mittente": {
-    "tipo": "token_info",
-    "id": {
-      "id": "email@test2c89d56f05e94088b66010.it",
-      "claim": "email"
-    }
+    "identificazione": "token_info",
+    "id": "email@test2c89d56f05e94088b66010.it",
+    "claim": "email"
   }
 }

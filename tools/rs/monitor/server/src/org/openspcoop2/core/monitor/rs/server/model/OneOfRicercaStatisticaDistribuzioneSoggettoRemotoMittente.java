@@ -23,5 +23,5 @@ package org.openspcoop2.core.monitor.rs.server.model;
 * OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente
 */
 public interface OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
-
+    public TipoFiltroMittenteEnum getIdentificazione();
 }

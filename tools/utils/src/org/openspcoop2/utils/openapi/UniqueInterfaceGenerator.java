@@ -35,6 +35,7 @@ import org.openspcoop2.utils.json.JsonPathExpressionEngine;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.ApiFormats;
+import org.slf4j.Logger;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -76,7 +77,7 @@ public class UniqueInterfaceGenerator {
 		
 		String fileDest = args[1].trim();
 		
-		UniqueInterfaceGeneratorConfig config = new UniqueInterfaceGeneratorConfig();
+		UniqueInterfaceGeneratorConfig config = new UniqueInterfaceGeneratorConfig(); 
 		config.format = format;
 		String fileMaster = args[2].trim();
 		config.master =  FileSystemUtilities.readFile(fileMaster);
@@ -134,11 +135,32 @@ public class UniqueInterfaceGenerator {
 			
 		}
 		
-		generate(fileDest, config, blackListParameters, blackListComponents);
+		generate(fileDest, config, blackListParameters, blackListComponents, true, null);
 	}
 
-	private static void generate(String fileDest, UniqueInterfaceGeneratorConfig config, 
-			List<String> blackListParameters, List<String> blackListComponents) throws Exception {
+	private static void debug(boolean debug, Logger log, String msg) {
+		if(debug) {
+			if(log!=null) {
+				log.debug(msg);	
+			}
+			else {
+				System.out.println(msg);
+			}
+		}
+	}
+	
+	public static void generate(String fileDest, UniqueInterfaceGeneratorConfig config, 
+			List<String> blackListParameters, List<String> blackListComponents,
+			boolean debug, Logger log) throws Exception {
+		String schemaRebuild = generate(config, blackListParameters, blackListComponents, debug, log);
+		try(FileOutputStream fout = new FileOutputStream(fileDest)){
+			fout.write(schemaRebuild.getBytes());
+			fout.flush();
+		}
+	}
+	public static String generate(UniqueInterfaceGeneratorConfig config, 
+			List<String> blackListParameters, List<String> blackListComponents,
+			boolean debug, Logger log) throws Exception {
 		
 		SwaggerParseResult pr = null;
 		ParseOptions parseOptions = new ParseOptions();
@@ -154,13 +176,13 @@ public class UniqueInterfaceGenerator {
 			api.setComponents(new Components());
 		}
 		
-		HashMap<String,String> attachments = config.attachments;
+		Map<String,String> attachments = config.attachments;
 		Iterator<String> attachmentNames = attachments.keySet().iterator();
 		while (attachmentNames.hasNext()) {
 			String attachName = (String) attachmentNames.next();
 			String attach = attachments.get(attachName);
 		
-			System.out.println("Merge ["+attachName+"] ...");
+			debug(debug,log,"Merge ["+attachName+"] ...");
 			if(ApiFormats.SWAGGER_2.equals(config.format)) {
 				pr = new SwaggerConverter().readContents(attach, null, parseOptions);	
 			}
@@ -179,7 +201,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addCallbacks(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" callback");
+					debug(debug,log,"\t"+maps.size()+" callback");
 				}
 				if(apiInternal.getComponents().getExamples()!=null) {
 					Map<String, Example> maps = apiInternal.getComponents().getExamples();
@@ -191,7 +213,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addExamples(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" example");
+					debug(debug,log,"\t"+maps.size()+" example");
 				}
 				if(apiInternal.getComponents().getExtensions()!=null) {
 					Map<String, Object> maps = apiInternal.getComponents().getExtensions();
@@ -203,7 +225,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addExtension(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" extensions");
+					debug(debug,log,"\t"+maps.size()+" extensions");
 				}
 				if(apiInternal.getComponents().getHeaders()!=null) {
 					Map<String, Header> maps = apiInternal.getComponents().getHeaders();
@@ -215,7 +237,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addHeaders(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" header");
+					debug(debug,log,"\t"+maps.size()+" header");
 				}
 				if(apiInternal.getComponents().getLinks()!=null) {
 					Map<String, Link> maps = apiInternal.getComponents().getLinks();
@@ -227,7 +249,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addLinks(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" link");
+					debug(debug,log,"\t"+maps.size()+" link");
 				}
 				if(apiInternal.getComponents().getParameters()!=null) {
 					Map<String, Parameter> maps = apiInternal.getComponents().getParameters();
@@ -236,14 +258,14 @@ public class UniqueInterfaceGenerator {
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
 							if(blackListParameters!=null && blackListParameters.contains(key)) {
-								System.out.println("Parameter '"+key+"' skipped");
+								debug(debug,log,"Parameter '"+key+"' skipped");
 								continue;
 							}
 							Parameter value = maps.get(key);
 							api.getComponents().addParameters(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" parameter");
+					debug(debug,log,"\t"+maps.size()+" parameter");
 				}
 				if(apiInternal.getComponents().getRequestBodies()!=null) {
 					Map<String, RequestBody> maps = apiInternal.getComponents().getRequestBodies();
@@ -255,7 +277,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addRequestBodies(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" requestBody");
+					debug(debug,log,"\t"+maps.size()+" requestBody");
 				}
 				if(apiInternal.getComponents().getResponses()!=null) {
 					Map<String, ApiResponse> maps = apiInternal.getComponents().getResponses();
@@ -267,7 +289,7 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addResponses(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+"] response");
+					debug(debug,log,"\t"+maps.size()+"] response");
 				}
 				if(apiInternal.getComponents().getSchemas()!=null) {
 					@SuppressWarnings("rawtypes")
@@ -277,14 +299,14 @@ public class UniqueInterfaceGenerator {
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
 							if(blackListComponents!=null && blackListComponents.contains(key)) {
-								System.out.println("Component '"+key+"' skipped");
+								debug(debug,log,"Component '"+key+"' skipped");
 								continue;
 							}
 							Schema<?> value = maps.get(key);
 							api.getComponents().addSchemas(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" schema");
+					debug(debug,log,"\t"+maps.size()+" schema");
 				}
 				if(apiInternal.getComponents().getSecuritySchemes()!=null) {
 					Map<String, SecurityScheme> maps = apiInternal.getComponents().getSecuritySchemes();
@@ -296,10 +318,10 @@ public class UniqueInterfaceGenerator {
 							api.getComponents().addSecuritySchemes(key, value);
 						}
 					}
-					System.out.println("\t"+maps.size()+" security schema");
+					debug(debug,log,"\t"+maps.size()+" security schema");
 				}
 			}
-			System.out.println("Merge ["+attachName+"] ok");
+			debug(debug,log,"Merge ["+attachName+"] ok");
 		}
 		
 		// clean attributi non permessi in swagger editor
@@ -326,7 +348,7 @@ public class UniqueInterfaceGenerator {
 					Parameter value = maps.get(key);
 					value.setExplode(null);
 					value.setStyle(null);
-					//System.out.println("PARAMETRO *"+key+"* ["+value.getName()+"] ["+value.getExample()+"] ["+value.getExamples()+"] ref["+value.get$ref()+"] tipo["+value.getClass().getName()+"]");
+					//debug(debug,log,"PARAMETRO *"+key+"* ["+value.getName()+"] ["+value.getExample()+"] ["+value.getExamples()+"] ref["+value.get$ref()+"] tipo["+value.getClass().getName()+"]");
 					checkSchema(0,"Parameter-"+key, value.getSchema());
 				}
 			}
@@ -407,7 +429,7 @@ public class UniqueInterfaceGenerator {
 				descr = jN.asText();
 			}
 			else {
-				System.out.println("Description type unknown ["+oDescr.getClass().getName()+"]");
+				debug(debug,log,"Description type unknown ["+oDescr.getClass().getName()+"]");
 			}
 			if(descr!=null && org.apache.commons.lang.StringUtils.isNotEmpty(descr)) {
 				schemaRebuild = schemaRebuild.replace("info:", "info:\n  x-summary: \""+descr+"\"");
@@ -430,10 +452,7 @@ public class UniqueInterfaceGenerator {
 			schemaRebuild = schemaRebuild.replace(ext, extCorrect);
 		}
 		
-		try(FileOutputStream fout = new FileOutputStream(fileDest)){
-			fout.write(schemaRebuild.getBytes());
-			fout.flush();
-		}
+		return schemaRebuild;
 		
 	}
 	
@@ -455,18 +474,10 @@ public class UniqueInterfaceGenerator {
 				else {
 					sorgenteInterno = sorgenteInterno + "schemaProfondita"+profondita;
 				}
-				//System.out.println("SCHEMA ("+sorgente+") *"+key+"* ["+value.getName()+"] ["+value.getType()+"] ["+value.getFormat()+"] ["+value.getExample()+"] ref["+value.get$ref()+"] schema["+value.getClass().getName()+"]");
+				//debug(debug,log,"SCHEMA ("+sorgente+") *"+key+"* ["+value.getName()+"] ["+value.getType()+"] ["+value.getFormat()+"] ["+value.getExample()+"] ref["+value.get$ref()+"] schema["+value.getClass().getName()+"]");
 				checkSchema((profondita+1),sorgenteInterno,value);
 			}
 		}
 	}
-}
-
-class UniqueInterfaceGeneratorConfig {
-	
-	protected ApiFormats format;
-	protected boolean yaml;
-	protected String master;
-	protected HashMap<String, String> attachments;
 	
 }

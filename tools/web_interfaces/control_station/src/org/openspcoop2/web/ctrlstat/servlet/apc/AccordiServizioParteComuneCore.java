@@ -1543,6 +1543,35 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		try {
 			if(aspcSorgente.sizeResourceList() > 0){
 				for (Resource nuovoResource : aspcSorgente.getResourceList()) {
+					
+					Resource vecchioResourceByMethodPath = null;
+					for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
+						
+						if(vecchioResourceTMP.getMethod()==null) {
+							if(nuovoResource.getMethod()!=null) {
+								continue;
+							}
+						}else {
+							if(!vecchioResourceTMP.getMethod().equals(nuovoResource.getMethod())) {
+								continue;
+							}
+						}
+						
+						if(vecchioResourceTMP.getPath()==null) {
+							if(nuovoResource.getPath()!=null) {
+								continue;
+							}
+						}else {
+							if(!vecchioResourceTMP.getPath().equals(nuovoResource.getPath())) {
+								continue;
+							}
+						}
+						
+						vecchioResourceByMethodPath = vecchioResourceTMP;
+						break;
+					}					
+					
+					/* Fix: search by method e path
 					Resource vecchioResource = null;
 					for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
 						if(vecchioResourceTMP.getNome().equals(nuovoResource.getNome())){
@@ -1550,14 +1579,34 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 							break;
 						}
 					}
+					*/
 					
 					// non ho trovato l'elemento corrente nel aspc destinazione
-					if(vecchioResource == null){
+					if(vecchioResourceByMethodPath == null){
+						
+						// prima di aggiungerlo, avendolo cercato per method/path verifico che lo stesso nome non sia stato utilizzato per unl'altra risorsa
+						boolean foundName = true;
+						int index = 2;
+						while(foundName) {
+							foundName = false;
+							for (Resource vecchioResourceTMP : aspcDestinazione.getResourceList()) {
+								if(vecchioResourceTMP.getNome().equals(nuovoResource.getNome())){
+									foundName = true;
+									break;
+								}
+							}
+							
+							if(foundName) {
+								nuovoResource.setNome(nuovoResource.getNome()+"_"+index);
+								index++;
+							}
+						}
+						
 						aspcDestinazione.addResource(nuovoResource);
 					} else {
 						// ho trovato l'elemento, aggiorno i valori  rimpiazzando la risorsa
 						for (int i = 0; i < aspcDestinazione.sizeResourceList(); i++) {
-							if(aspcDestinazione.getResource(i).getNome().equals(vecchioResource.getNome())) {
+							if(aspcDestinazione.getResource(i).getNome().equals(vecchioResourceByMethodPath.getNome())) {
 								aspcDestinazione.removeResource(i);
 								break;
 							}

@@ -5,13 +5,11 @@
 	},
 	"tipo": "erogazione",
 	"mittente": {
-		"tipo": "indirizzo_ip",
-		"id": {
-			"ricerca_esatta": true,
-			"case_sensitive": true,
-			"id": "localhost",
-			"tipo": "client_ip"
-		}
+		"identificazione": "indirizzo_ip",
+		"ricerca_esatta": true,
+		"case_sensitive": true,
+		"id": "localhost",
+		"tipo": "client_ip"
 	}
 }
 

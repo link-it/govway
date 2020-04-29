@@ -6290,7 +6290,7 @@ components:
                   - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum'
                   - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum'
                 discriminator:
-                  propertyName: tipo
+                  propertyName: x-external-property-tipo
                   mapping:
                     'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum'
                     'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum'
@@ -6331,7 +6331,7 @@ components:
           oneOf:
             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
           discriminator:
-            propertyName: ruolo
+            propertyName: x-external-property-ruolo
             mapping:
               'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
     ApiAllegatoItem:
@@ -6349,7 +6349,7 @@ components:
           oneOf:
             - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
           discriminator:
-            propertyName: ruolo
+            propertyName: x-external-property-ruolo
             mapping:
               'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
     ListaApiAllegati:

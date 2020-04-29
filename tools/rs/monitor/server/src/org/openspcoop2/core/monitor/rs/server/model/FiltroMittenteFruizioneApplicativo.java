@@ -19,16 +19,41 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteFruizioneApplicativo  implements OneOfFiltroMittenteFruizioneId {
+public class FiltroMittenteFruizioneApplicativo  implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
   
   @Schema(required = true, description = "")
   private String applicativo = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteFruizioneApplicativo identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get applicativo
    * @return applicativo
@@ -55,6 +80,7 @@ public class FiltroMittenteFruizioneApplicativo  implements OneOfFiltroMittenteF
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroMittenteFruizioneApplicativo {\n");
     
+    sb.append("    identificazione: ").append(FiltroMittenteFruizioneApplicativo.toIndentedString(this.identificazione)).append("\n");
     sb.append("    applicativo: ").append(FiltroMittenteFruizioneApplicativo.toIndentedString(this.applicativo)).append("\n");
     sb.append("}");
     return sb.toString();

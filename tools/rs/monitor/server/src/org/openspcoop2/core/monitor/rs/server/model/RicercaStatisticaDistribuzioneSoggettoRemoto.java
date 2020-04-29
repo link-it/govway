@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
@@ -34,22 +35,18 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   private OpzioniGenerazioneReport report = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiBase.class, name = "erogazione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroFruizione.class, name = "fruizione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiBase.class, name = "qualsiasi")  })
-  private OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api = null;
+  private FiltroApiSoggetti api = null;
   
   @Schema(description = "")
   private String azione = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "identificazione", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneDistribuzioneSoggettoRemoto.class, name = "erogazione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizioneApplicativo.class, name = "fruizione_applicativo"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIdAutenticato.class, name = "identificativo_autenticato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteTokenClaim.class, name = "token_info"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIndirizzoIP.class, name = "indirizzo_ip")  })
   private OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente mittente = null;
   
   @Schema(description = "")
@@ -80,15 +77,15 @@ public class RicercaStatisticaDistribuzioneSoggettoRemoto extends RicercaBaseSta
   **/
   @JsonProperty("api")
   @Valid
-  public OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi getApi() {
+  public FiltroApiSoggetti getApi() {
     return this.api;
   }
 
-  public void setApi(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api) {
+  public void setApi(FiltroApiSoggetti api) {
     this.api = api;
   }
 
-  public RicercaStatisticaDistribuzioneSoggettoRemoto api(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi api) {
+  public RicercaStatisticaDistribuzioneSoggettoRemoto api(FiltroApiSoggetti api) {
     this.api = api;
     return this;
   }

@@ -20,7 +20,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportBase;
-import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReport;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -28,22 +27,27 @@ import javax.validation.Valid;
 public class OpzioniGenerazioneReport extends OpzioniGenerazioneReportBase {
   
   @Schema(description = "")
-  private TipoInformazioneReport tipoInformazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportNumeroTransazioni.class, name = "numero_transazioni"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportOccupazioneBanda.class, name = "occupazione_banda"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportTempoMedioRisposta.class, name = "tempo_medio_risposta")  })
+  private OneOfOpzioniGenerazioneReportTipoInformazione tipoInformazione = null;
  /**
    * Get tipoInformazione
    * @return tipoInformazione
   **/
   @JsonProperty("tipo_informazione")
   @Valid
-  public TipoInformazioneReport getTipoInformazione() {
+  public OneOfOpzioniGenerazioneReportTipoInformazione getTipoInformazione() {
     return this.tipoInformazione;
   }
 
-  public void setTipoInformazione(TipoInformazioneReport tipoInformazione) {
+  public void setTipoInformazione(OneOfOpzioniGenerazioneReportTipoInformazione tipoInformazione) {
     this.tipoInformazione = tipoInformazione;
   }
 
-  public OpzioniGenerazioneReport tipoInformazione(TipoInformazioneReport tipoInformazione) {
+  public OpzioniGenerazioneReport tipoInformazione(OneOfOpzioniGenerazioneReportTipoInformazione tipoInformazione) {
     this.tipoInformazione = tipoInformazione;
     return this;
   }

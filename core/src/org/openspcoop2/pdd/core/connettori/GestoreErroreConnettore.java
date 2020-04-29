@@ -434,7 +434,7 @@ public class GestoreErroreConnettore {
 			if(messageResponse instanceof OpenSPCoop2RestJsonMessage ){
 				try{
 					OpenSPCoop2RestJsonMessage msg = messageResponse.castAsRestJson();
-					if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+					if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 						JsonDeserializer deserializer = new JsonDeserializer();
 						problem = deserializer.fromString(msg.getContent(), false);
 					}
@@ -445,7 +445,7 @@ public class GestoreErroreConnettore {
 			else if(messageResponse instanceof OpenSPCoop2RestXmlMessage ){
 				try{
 					OpenSPCoop2RestXmlMessage msg = messageResponse.castAsRestXml();
-					if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+					if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 						XmlDeserializer deserializer = new XmlDeserializer();
 						problem = deserializer.fromNode(msg.getContent(), false);
 					}

@@ -23,5 +23,5 @@ package org.openspcoop2.core.monitor.rs.server.model;
 * OneOfRicercaStatisticaAndamentoTemporaleMittente
 */
 public interface OneOfRicercaStatisticaAndamentoTemporaleMittente {
-
+    public TipoFiltroMittenteEnum getIdentificazione();
 }

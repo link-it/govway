@@ -14,10 +14,8 @@
     },
    
     "mittente": {
-		"tipo": "token_info",
-		"id": {
-			"id": "user",
-			"claim": "username"
-		}
+		"identificazione": "token_info",
+		"id": "user",
+		"claim": "username"
 	}
   }

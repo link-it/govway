@@ -14,7 +14,7 @@
     },
     "api": {
       "nome": "PetStore",
-      "versione": "1"
+      "versione": 1
     },
     "azione": "PUT_pet"
   }

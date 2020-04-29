@@ -5,12 +5,10 @@
 	},
 	"tipo": "erogazione",
 	"mittente": {
-		"tipo": "applicativo",
-		"id": {
-			"soggetto": "Ente",
-			"applicativo": "Applicativone"
+		"identificazione": "erogazione_applicativo",
+		"soggetto": "Ente",
+		"applicativo": "Applicativone"
 
-		}
 	}
 }
 

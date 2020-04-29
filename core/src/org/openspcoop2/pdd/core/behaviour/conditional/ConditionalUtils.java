@@ -118,6 +118,9 @@ public class ConditionalUtils  {
 		else {
 			String pattern = "";
 			try {
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, tipoSelettore.getValue());
+				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern); // per eliminare @@ dove non serve
+				
 				Map<String, String> pTrasporto = null;
 				String urlInvocazione = null;
 				Map<String, String> pForm = null;
@@ -144,9 +147,6 @@ public class ConditionalUtils  {
 						}
 					}
 				}
-				
-				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_SELETTORE, tipoSelettore.getValue());
-				msgDiag.addKeyword(CostantiPdD.KEY_PATTERN_SELETTORE, pattern); // per eliminare @@ dove non serve
 				
 				switch (tipoSelettore) {
 				

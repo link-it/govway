@@ -21,6 +21,7 @@ package org.openspcoop2.core.monitor.rs.server.api;
 
 import org.joda.time.DateTime;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneSimpleSearchEnum;
+import java.io.File;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
@@ -74,7 +75,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/problem+json" })
     @Operation(summary = "Recupera la configurazione di un servizio", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -95,7 +96,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/problem+json" })
     @Operation(summary = "Recupera la configurazione di un servizio", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report delle configurazioni generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -138,7 +139,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera per mezzo di una ricerca articolata, un report statistico raggruppato per servizi", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -159,7 +160,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per API utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -181,7 +182,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per applicativo utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -202,7 +203,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Applicativi utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -224,7 +225,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico distribuito per azione utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -245,7 +246,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Azioni utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -267,7 +268,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento esiti per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -288,7 +289,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento esiti per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -310,7 +311,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per identificativo autenticato utilizzando una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -331,7 +332,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Identificativo Autenticato utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -353,7 +354,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Indirizzi IP", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -374,7 +375,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato organizzato per Indirizzo IP utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -396,7 +397,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico raggruppato per soggetto locale per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -417,7 +418,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per soggetto locale per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -439,7 +440,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico raggruppato per soggetto remoto per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -460,7 +461,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per soggetto remoto per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -482,7 +483,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento temporale per mezzo di una ricerca articolata", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -503,7 +504,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico per andamento temporale per mezzo di una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -525,7 +526,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato per Token Info", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),
@@ -546,7 +547,7 @@ public interface ReportisticaApi  {
     @Produces({ "text/csv", "application/pdf", "application/vnd.ms-excel", "text/xml", "application/json", "application/problem+json" })
     @Operation(summary = "Genera un report statistico organizzato organizzato per Token Info utilizzando una ricerca semplice", tags={ "Reportistica" })
     @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = byte[].class))),
+        @ApiResponse(responseCode = "200", description = "Report statistico generato correttamente", content = @Content(schema = @Schema(implementation = File.class))),
         @ApiResponse(responseCode = "400", description = "Bad Request", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "401", description = "Non sono state fornite le credenziali necessarie", content = @Content(schema = @Schema(implementation = Problem.class))),
         @ApiResponse(responseCode = "403", description = "Autorizzazione non concessa per l'operazione richiesta", content = @Content(schema = @Schema(implementation = Problem.class))),

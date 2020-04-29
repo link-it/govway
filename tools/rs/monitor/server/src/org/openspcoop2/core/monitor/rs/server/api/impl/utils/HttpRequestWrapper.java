@@ -43,7 +43,8 @@ public class HttpRequestWrapper extends WrappedHttpServletRequest  {
 			return this.overrides.get(key);
 		}
 		
-		return super.getParameter(key);
+		return null; // senno vengono presi i parametri della query url originale e potrebbero essere stati usati nomi simili
+		//return super.getParameter(key);
 	}
 	
 	public void overrideParameter(String key, Object value) {
@@ -62,7 +63,8 @@ public class HttpRequestWrapper extends WrappedHttpServletRequest  {
 		if ( this.overridesValues.get(arg0) != null)
 			return this.overridesValues.get(arg0);
 		
-		return super.getParameterValues(arg0);
+		return null; // senno vengono presi i parametri della query url originale e potrebbero essere stati usati nomi simili
+		//return super.getParameterValues(arg0);
 	}
 
 	public HttpRequestWrapper(HttpServletRequest httpServletRequest) {

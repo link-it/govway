@@ -17,7 +17,7 @@
 
 		<jar.group.name>swagger-codegen</jar.group.name>
 		
-		<swagger.codegen.cli.gov4j.version>3.0.18-gov4j-1</swagger.codegen.cli.gov4j.version>
+		<swagger.codegen.cli.gov4j.version>3.0.18-gov4j-2</swagger.codegen.cli.gov4j.version>
 
 	</properties>
 

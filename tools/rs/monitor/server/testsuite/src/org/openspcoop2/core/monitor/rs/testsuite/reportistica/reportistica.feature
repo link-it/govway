@@ -84,7 +84,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per autenticazi
     * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-idautenticato.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.id = setup.applicativo.credenziali.username
+    * eval filtro.mittente.id = setup.applicativo.credenziali.username
     
     Given path 'distribuzione-temporale'
     And request filtro
@@ -103,7 +103,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per autenticazi
 Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mittente con autenticazione principal
     * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-idautenticato.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
-    * set filtro.mittente.id = ({ id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' })
+    * set filtro.mittente = ({ identificazione: 'identificativo_autenticato', id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' })
     * set filtro.intervallo_temporale = intervallo_temporale
     Given path 'distribuzione-temporale'
     And request filtro
@@ -122,7 +122,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
     * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-mittente-applicativo.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
-    * set filtro.mittente.id = ({ soggetto: soggettoDefault, applicativo: setup.applicativo.nome})
+    * set filtro.mittente = ({ identificazione: 'erogazione_applicativo', soggetto: soggettoDefault, applicativo: setup.applicativo.nome})
 
     Given path 'distribuzione-temporale'
     And request filtro
@@ -131,7 +131,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
 
     * set filtro.tipo = 'fruizione'
     * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
-    * set filtro.mittente.id = ({ applicativo: setup.applicativo.nome})
+    * set filtro.mittente = ({ identificazione: 'fruizione_applicativo', applicativo: setup.applicativo.nome})
     Given path 'distribuzione-temporale'
     And request filtro
     When method post
@@ -143,8 +143,8 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
     * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-mittente-applicativo.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
-    * set filtro.mittente.id = ({ soggetto: setup.soggetto_http.nome })
-    * eval filtro.mittente.tipo  = 'soggetto'
+    * set filtro.mittente = ({ identificazione: 'erogazione_soggetto', soggetto: setup.soggetto_http.nome })
+    * eval filtro.mittente.identificazione  = 'erogazione_soggetto'
 
     Given path 'distribuzione-temporale'
     And request filtro
@@ -157,7 +157,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
      * def filtro = read('classpath:bodies/reportistica-esiti.json')
      * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
      * set filtro.intervallo_temporale = intervallo_temporale
-     * set filtro.mittente = ({ tipo:'applicativo', id:{ soggetto: soggettoDefault, applicativo: setup.applicativo.nome } } )
+     * set filtro.mittente = ({ identificazione:'erogazione_applicativo', soggetto: soggettoDefault, applicativo: setup.applicativo.nome } )
      Given path 'distribuzione-esiti'
      And request filtro
      When method post
@@ -184,7 +184,7 @@ Scenario: Statistiche Per Distribuzione Temporale con filtraggio per Filtro Mitt
 
     * set filtro.tipo = 'fruizione'
     * set filtro.api.erogatore = setup.fruizione_petstore.erogatore
-    * set filtro.mittente.id = ({ applicativo: setup.applicativo.nome })
+    * set filtro.mittente = ({ identificazione:'fruizione_applicativo', applicativo: setup.applicativo.nome })
     Given path 'distribuzione-esiti'
     And request filtro
     When method post
@@ -293,8 +293,8 @@ Scenario:  Statistiche Per Distribuzione API
     * set filtro.mittente = 
     """
     ({
-        tipo: 'identificativo_autenticato', 
-        id: {id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' } 
+        identificazione: 'identificativo_autenticato', 
+        id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal'
     })
     """
     Given path 'distribuzione-api'
@@ -338,7 +338,7 @@ Scenario:  Statistiche Per Distribuzione Azione
     * def filtro = read('classpath:bodies/reportistica-distribuzione-azione.json')
     * set filtro.api = ({nome: setup.erogazione_petstore.api_nome, versione: setup.erogazione_petstore.api_versione})
     * set filtro.intervallo_temporale = intervallo_temporale
-    * set filtro.mittente = ({ tipo: 'identificativo_autenticato', id: {id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' } })
+    * set filtro.mittente = ({ identificazione: 'identificativo_autenticato', id: setup.applicativo_principal.credenziali.userid, autenticazione: 'principal' })
 
     Given path 'distribuzione-azione'
     And request filtro

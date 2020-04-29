@@ -41,9 +41,6 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.InfoImplementazioneApi;
 import org.openspcoop2.core.monitor.rs.server.model.ListaRiepilogoApi;
-import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaBaseStatisticaSoggettiApi;
-import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaConfigurazioneApiApi;
-import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportMultiLine;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaConfigurazioneApi;
@@ -57,9 +54,7 @@ import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzio
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneSoggettoRemoto;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaStatisticaDistribuzioneTokenInfo;
 import org.openspcoop2.core.monitor.rs.server.model.Riepilogo;
-import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportMultiLine;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
 import org.openspcoop2.core.monitor.rs.server.model.UnitaTempoReportEnum;
@@ -144,7 +139,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			
 			RicercaConfigurazioneApi ricerca = new RicercaConfigurazioneApi();
 			ricerca.setTipo(tipo);
-			ricerca.setApi((OneOfRicercaConfigurazioneApiApi) ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto));
 						
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			byte[] ret = ReportisticaHelper.exportConfigurazioneApi(ricerca, env);
@@ -300,9 +295,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -388,7 +381,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativoRegistrato ricerca = new RicercaStatisticaDistribuzioneApplicativoRegistrato();
 			ricerca.setTipo(tipo);		
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setSoggettoMittente(soggettoMittente);
 			ricerca.setAzione(azione);
 
@@ -403,9 +396,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -491,7 +482,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneAzione ricerca = new RicercaStatisticaDistribuzioneAzione();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			FiltroTemporale intervallo = new FiltroTemporale();
 			intervallo.setDataInizio(dataInizio);
 			intervallo.setDataFine(dataFine);
@@ -503,9 +494,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -592,7 +581,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneEsiti ricerca = new RicercaStatisticaDistribuzioneEsiti();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -606,10 +595,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
-
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -682,7 +668,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -696,9 +682,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -784,7 +768,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 			RicercaStatisticaDistribuzioneSoggettoLocale ricerca = new RicercaStatisticaDistribuzioneSoggettoLocale();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto,soggettoErogatore));
 			FiltroTemporale intervallo = new FiltroTemporale();
 			intervallo.setDataInizio(dataInizio);
 			intervallo.setDataFine(dataFine);
@@ -796,9 +780,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -883,7 +865,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneSoggettoRemoto ricerca = new RicercaStatisticaDistribuzioneSoggettoRemoto();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoErogatore, null));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoErogatore, null));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -897,9 +879,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -986,7 +966,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaAndamentoTemporale ricerca = new RicercaStatisticaAndamentoTemporale();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -1000,9 +980,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReportMultiLine opzioni = new OpzioniGenerazioneReportMultiLine();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReportMultiLine tipo_info_report = new TipoInformazioneReportMultiLine();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReportMultiLine(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -1087,7 +1065,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneTokenInfo ricerca = new RicercaStatisticaDistribuzioneTokenInfo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -1101,9 +1079,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);
@@ -1187,7 +1163,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			MonitoraggioEnv env = new MonitoraggioEnv(context, profilo, soggetto, this.log);
 			RicercaStatisticaDistribuzioneApplicativo ricerca = new RicercaStatisticaDistribuzioneApplicativo();
 			ricerca.setTipo(tipo);
-			ricerca.setApi(ReportisticaHelper.parseFiltroApiMapT(OneOfRicercaBaseStatisticaSoggettiApi.class, tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
+			ricerca.setApi(ReportisticaHelper.parseFiltroApiMap(tipo, nomeServizio, tipoServizio, versioneServizio, soggettoRemoto, soggettoErogatore));
 			ricerca.setAzione(azione);
 
 			FiltroTemporale intervallo = new FiltroTemporale();
@@ -1201,9 +1177,7 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 			OpzioniGenerazioneReport opzioni = new OpzioniGenerazioneReport();
 			opzioni.setFormato(formatoReport);
 			opzioni.setTipo(tipoReport);
-			TipoInformazioneReport tipo_info_report = new TipoInformazioneReport();
-			tipo_info_report.setTipo(tipoInformazioneReport);
-			opzioni.setTipoInformazione(tipo_info_report);
+			ReportisticaHelper.setTipoInformazioneReport(opzioni, tipoInformazioneReport);		
 			ricerca.setReport(opzioni);
 
 			ricerca.setTag(tag);

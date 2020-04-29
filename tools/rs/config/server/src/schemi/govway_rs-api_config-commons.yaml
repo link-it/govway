@@ -156,7 +156,7 @@ components:
             - $ref: '#/components/schemas/FormatoSoapEnum'
             - $ref: '#/components/schemas/FormatoRestEnum'
           discriminator:
-            propertyName: tipo
+            propertyName: x-external-property-tipo
             mapping:
               'soap': '#/components/schemas/FormatoSoapEnum'
               'rest': '#/components/schemas/FormatoRestEnum'
@@ -218,7 +218,7 @@ components:
             - $ref: '#/components/schemas/AuthenticationHttpsCertificato'
             - $ref: '#/components/schemas/AuthenticationHttpsConfigurazioneManuale'
           discriminator:
-            propertyName: tipo
+            propertyName: x-external-property-tipo
             mapping:
               'certificato': '#/components/schemas/AuthenticationHttpsCertificato'
               'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale' 
@@ -283,7 +283,7 @@ components:
             - $ref: '#/components/schemas/AuthenticationHttps'
             - $ref: '#/components/schemas/AuthenticationPrincipal'
           discriminator:
-            propertyName: modalita_accesso
+            propertyName: x-external-property-modalita_accesso
             mapping:
               'http-basic': '#/components/schemas/AuthenticationHttpBasic'
               'https': '#/components/schemas/AuthenticationHttps'
@@ -489,7 +489,7 @@ components:
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
           discriminator:
-            propertyName: tipo
+            propertyName: x-external-property-tipo
             mapping:
               'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
               'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
@@ -551,7 +551,7 @@ components:
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
             - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
           discriminator:
-            propertyName: tipo
+            propertyName: x-external-property-tipo
             mapping:
               'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
               'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
@@ -574,7 +574,7 @@ components:
             - $ref: '#/components/schemas/APIImplAutorizzazioneConfigNew'
             - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
           discriminator:
-            propertyName: tipo
+            propertyName: x-external-property-tipo
             mapping:
               'abilitato': '#/components/schemas/APIImplAutorizzazioneConfigNew'
               'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
@@ -825,7 +825,7 @@ components:
             - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
             - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
           discriminator:
-            propertyName: ruolo
+            propertyName: x-external-property-ruolo
             mapping:
               'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
               'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
@@ -847,7 +847,7 @@ components:
             - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
             - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
           discriminator:
-            propertyName: ruolo
+            propertyName: x-external-property-ruolo
             mapping:
               'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
               'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
@@ -906,7 +906,7 @@ components:
                   - $ref: '#/components/schemas/GruppoEreditaConfigurazione'
                   - $ref: '#/components/schemas/GruppoNuovaConfigurazione'
                 discriminator:
-                  propertyName: modalita
+                  propertyName: x-external-property-modalita
                   mapping:
                     'eredita': '#/components/schemas/GruppoEreditaConfigurazione'
                     'nuova': '#/components/schemas/GruppoNuovaConfigurazione'
@@ -1254,7 +1254,7 @@ components:
                     - $ref: '#/components/schemas/RateLimitingPolicyCriteri'
                     - $ref: '#/components/schemas/RateLimitingPolicyIdentificativo'
                   discriminator:
-                    propertyName: identificazione
+                    propertyName: x-external-property-identificazione
                     mapping:
                       'criteri': '#/components/schemas/RateLimitingPolicyCriteri'
                       'policy': '#/components/schemas/RateLimitingPolicyIdentificativo'

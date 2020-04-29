@@ -45,13 +45,11 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
       }
     },
     "mittente": {
-			"tipo": "indirizzo_ip",
-			"id": {
-				"ricerca_esatta": true,
-				"case_sensitive": true,
-				"id": "127.0.0.1",
-				"tipo": "client_ip"
-			}
+			"identificazione": "indirizzo_ip",
+			"ricerca_esatta": true,
+			"case_sensitive": true,
+			"id": "127.0.0.1",
+			"tipo": "client_ip"
 		}
 })
 """  
@@ -92,13 +90,11 @@ Scenario Outline: Ricerca di report full statistica <nome-statistica> filtrati p
       }
     },
     "mittente": {
-			"tipo": "indirizzo_ip",
-			"id": {
-				"ricerca_esatta": true,
-				"case_sensitive": true,
-				"id": "127.0.0.2",
-				"tipo": "x_forwarded_for"
-			}
+			"identificazione": "indirizzo_ip",
+			"ricerca_esatta": true,
+			"case_sensitive": true,
+			"id": "127.0.0.2",
+			"tipo": "x_forwarded_for"
 		}
 })
 """  

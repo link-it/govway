@@ -5,10 +5,8 @@
 	},
 	"tipo": "erogazione",
 	"mittente": {
-		"tipo": "soggetto",
-		"id": {
-			"soggetto": "SoggettoJson31be7005b74a49a7b038"
-		}
+		"identificazione": "erogazione_soggetto",
+		"soggetto": "SoggettoJson31be7005b74a49a7b038"
 	}
 }
 

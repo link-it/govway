@@ -24,7 +24,9 @@
 package org.openspcoop2.pdd.core;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.cxf.common.util.StringUtils;
 import org.openspcoop2.core.config.Proprieta;
@@ -50,12 +52,22 @@ import org.openspcoop2.protocol.sdk.constants.CodiceErroreIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.ErroriIntegrazione;
 import org.openspcoop2.protocol.sdk.constants.InformationApiSource;
 import org.openspcoop2.protocol.utils.PorteNamingUtils;
+import org.openspcoop2.utils.json.JSONUtils;
+import org.openspcoop2.utils.json.YAMLUtils;
+import org.openspcoop2.utils.openapi.OpenapiApi;
+import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
+import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiApi4jValidatorConfig;
 import org.openspcoop2.utils.openapi.validator.OpenapiApiValidatorConfig;
 import org.openspcoop2.utils.rest.ApiFactory;
 import org.openspcoop2.utils.rest.ApiFormats;
+import org.openspcoop2.utils.rest.ApiReaderConfig;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
+import org.openspcoop2.utils.rest.IApiReader;
 import org.openspcoop2.utils.rest.IApiValidator;
+import org.openspcoop2.utils.rest.api.Api;
+import org.openspcoop2.utils.rest.api.ApiSchema;
+import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.BinaryHttpRequestEntity;
 import org.openspcoop2.utils.rest.entity.BinaryHttpResponseEntity;
 import org.openspcoop2.utils.rest.entity.ElementHttpRequestEntity;
@@ -143,6 +155,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			if(this.op2Properties.isValidazioneContenutiApplicativi_openApi_useOpenApi4j()) {
 				this.configOpenApi4j = new OpenapiApi4jValidatorConfig();
 				this.configOpenApi4j.setUseOpenApi4J(true);
+				this.configOpenApi4j.setMergeAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec());
 				this.configOpenApi4j.setValidateAPISpec(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateAPISpec());
 				this.configOpenApi4j.setValidateRequestQuery(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestQuery());
 				this.configOpenApi4j.setValidateRequestHeaders(this.op2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_validateRequestHeaders());
@@ -296,6 +309,7 @@ public class ValidatoreMessaggiApplicativiRest {
 		ApiFormats format = null;
 		ApiValidatorConfig validatorConfig = null;
 		boolean openapi4j = false;
+		Api api = this.accordoServizioWrapper.getApi();
 		switch (this.accordoServizioWrapper.getAccordoServizio().getFormatoSpecifica()) {
 		case WADL:
 			interfaceType = "Interfaccia WADL";
@@ -317,6 +331,12 @@ public class ValidatoreMessaggiApplicativiRest {
 				openapi4j = this.configOpenApi4j.isUseOpenApi4J();
 				if(openapi4j) {
 					((OpenapiApiValidatorConfig)validatorConfig).setOpenApi4JConfig(this.configOpenApi4j);
+					if(this.configOpenApi4j.isMergeAPISpec() && api instanceof OpenapiApi) {
+						OpenapiApi openapi = (OpenapiApi) api;
+						if(openapi.getValidationStructure()==null) {
+							api = this.mergeApiSpec(openapi, this.accordoServizioWrapper);
+						}
+					}
 				}
 			}
 			break;
@@ -331,7 +351,7 @@ public class ValidatoreMessaggiApplicativiRest {
 			validatorConfig.setXmlUtils(XMLUtils.getInstance(this.message.getFactory()));
 			validatorConfig.setVerbose(this.op2Properties.isValidazioneContenutiApplicativi_debug());
 			validatorConfig.setPolicyAdditionalProperties(this.op2Properties.getValidazioneContenutiApplicativi_json_policyAdditionalProperties());
-			apiValidator.init(this.logger, this.accordoServizioWrapper.getApi(), validatorConfig);
+			apiValidator.init(this.logger, api, validatorConfig);
 		}catch(Exception e){
 			this.logger.error("validateWithInterface failed: "+e.getMessage(),e);
 			ValidatoreMessaggiApplicativiException ex 
@@ -495,6 +515,70 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 	}
 	
+	private Api mergeApiSpec(OpenapiApi api, org.openspcoop2.core.registry.rest.AccordoServizioWrapper accordoServizioWrapper) {
+		
+		YAMLUtils yamlUtils = YAMLUtils.getInstance();
+		JSONUtils jsonUtils = JSONUtils.getInstance();
+								
+		Map<String, String> attachments = new HashMap<String, String>();
+		if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+
+			for (ApiSchema apiSchema : api.getSchemas()) {
+			
+				if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
+					continue;
+				}
+				byte [] schema = apiSchema.getContent();
+				if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
+					if(jsonUtils.isJson(schema)) {
+						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
+					}
+				}
+				else {
+					if(yamlUtils.isYaml(schema)) {
+						attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
+					}
+				}
+				
+			}
+		}
+		
+		if(attachments.isEmpty()) {	
+			return api; // non vi sono attachments da aggiungere
+		}
+		
+		String apiRaw = api.getApiRaw();
+		boolean apiRawIsYaml = yamlUtils.isYaml(apiRaw);
+									
+		UniqueInterfaceGeneratorConfig configUniqueInterfaceGeneratorConfig = new UniqueInterfaceGeneratorConfig();
+		configUniqueInterfaceGeneratorConfig.setFormat(ApiFormats.OPEN_API_3);
+		configUniqueInterfaceGeneratorConfig.setYaml(apiRawIsYaml);
+		configUniqueInterfaceGeneratorConfig.setMaster(apiRaw);
+		configUniqueInterfaceGeneratorConfig.setAttachments(attachments);
+		try {
+			String apiMerged = UniqueInterfaceGenerator.generate(configUniqueInterfaceGeneratorConfig, null, null, true, this.logger);
+			if(apiMerged==null) {
+				throw new Exception("empty ApiSpec");
+			}
+			
+			IApiReader apiReader = ApiFactory.newApiReader(ApiFormats.OPEN_API_3);
+			ApiReaderConfig config = new ApiReaderConfig();
+			config.setProcessInclude(false);
+			config.setProcessInlineSchema(true);
+			apiReader.init(this.logger, apiMerged, config);
+			Api apiMergedObject = apiReader.read();
+			if(apiMergedObject==null) {
+				throw new Exception("empty ApiSpec after read");
+			}
+			accordoServizioWrapper.updateApi(apiMergedObject);
+			return apiMergedObject;
+		}catch(Throwable t) {
+			this.logger.error("Merge API Spec failed: "+t.getMessage(),t);
+			return api; // torno al metodo tradizionale utilizzando l'api non merged
+		}
+
+	}
+	
 	private void updateConfigOpenApi4j(List<Proprieta> proprieta, OpenapiApi4jValidatorConfig configOpenApi4j) {
 		if(proprieta==null || proprieta.isEmpty()) {
 			return;
@@ -513,6 +597,16 @@ public class ValidatoreMessaggiApplicativiRest {
 		
 		if(configOpenApi4j.isUseOpenApi4J()==false) {
 			return;
+		}
+		
+		String mergeAPISpec = this.readValue(proprieta, prefix+"mergeAPISpec");
+		if(mergeAPISpec!=null && !StringUtils.isEmpty(mergeAPISpec)) {
+			if("true".equals(mergeAPISpec.trim())) {
+				configOpenApi4j.setMergeAPISpec(true);
+			}
+			else if("false".equals(mergeAPISpec.trim())) {
+				configOpenApi4j.setMergeAPISpec(false);
+			}
 		}
 		
 		String validateAPISpec = this.readValue(proprieta, prefix+"validateAPISpec");

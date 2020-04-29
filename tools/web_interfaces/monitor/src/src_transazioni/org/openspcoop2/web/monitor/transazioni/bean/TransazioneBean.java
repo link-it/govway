@@ -1061,6 +1061,7 @@ public class TransazioneBean extends Transazione{
 			
 			StringBuilder sb = new StringBuilder();
 			StringBuilder erroreConnessone = new StringBuilder();
+			StringBuilder erroreSegnalaGenerazioneRispostaErrore = new StringBuilder();
 			if(msgs!=null && !msgs.isEmpty()) {
 				for (MsgDiagnostico msgDiagnostico : msgs) {
 					String codice = msgDiagnostico.getCodice();
@@ -1078,6 +1079,12 @@ public class TransazioneBean extends Transazione{
 						}
 						erroreConnessone.append(msgDiagnostico.getMessaggio());
 					}
+					else if(MsgDiagnosticiProperties.MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.contains(codice)) {
+						if(erroreSegnalaGenerazioneRispostaErrore.length()>0) {
+							erroreSegnalaGenerazioneRispostaErrore.append("\n");
+						}
+						erroreSegnalaGenerazioneRispostaErrore.append(msgDiagnostico.getMessaggio());
+					}
 					else {
 						if(sb.length()>0) {
 							sb.append("\n");
@@ -1094,6 +1101,10 @@ public class TransazioneBean extends Transazione{
 			}
 			if(erroreConnessone.length()>0) {
 				this.dettaglioErrore = erroreConnessone.toString();
+				return this.dettaglioErrore;
+			}
+			if(erroreSegnalaGenerazioneRispostaErrore.length()>0) {
+				this.dettaglioErrore = erroreSegnalaGenerazioneRispostaErrore.toString();
 				return this.dettaglioErrore;
 			}
 			

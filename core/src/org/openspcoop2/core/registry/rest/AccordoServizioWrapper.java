@@ -49,6 +49,9 @@ public class AccordoServizioWrapper implements java.io.Serializable{
 	public void setApi(Api api) {
 		this.api = api;
 	}
+	public synchronized void updateApi(Api api) {
+		this.api = api;
+	}
 
 
 	/** Nome accordo di servizio */

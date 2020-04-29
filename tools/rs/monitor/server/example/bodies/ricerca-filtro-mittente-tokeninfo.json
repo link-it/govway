@@ -5,13 +5,11 @@
 	},
 	"tipo": "fruizione",
 	"mittente": {
-		"tipo": "token_info",
-		"id": {
-			"ricerca_esatta": true,
-			"case_sensitive": true,
-			"id": "username9f867c142bf444209bd4ba08",
-			"claim": "username"
-		}
+		"identificazione": "token_info",
+		"ricerca_esatta": true,
+		"case_sensitive": true,
+		"id": "username9f867c142bf444209bd4ba08",
+		"claim": "username"
 	}
 }
 

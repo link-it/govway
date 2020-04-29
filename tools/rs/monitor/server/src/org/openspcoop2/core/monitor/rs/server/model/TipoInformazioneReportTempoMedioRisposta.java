@@ -19,57 +19,58 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RicercaConfigurazioneApi  {
+public class TipoInformazioneReportTempoMedioRisposta  implements OneOfOpzioniGenerazioneReportTipoInformazione {
   
   @Schema(required = true, description = "")
-  private TransazioneRuoloEnum tipo = null;
+  private TipoInformazioneReportEnum tipo = null;
   
   @Schema(description = "")
-  private FiltroApiSoggetti api = null;
+  private TempoMedioRispostaEnum tempoMedioRisposta = null;
  /**
    * Get tipo
    * @return tipo
   **/
-  @JsonProperty("tipo")
+  @Override
+@JsonProperty("tipo")
   @NotNull
   @Valid
-  public TransazioneRuoloEnum getTipo() {
+  public TipoInformazioneReportEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(TransazioneRuoloEnum tipo) {
+  public void setTipo(TipoInformazioneReportEnum tipo) {
     this.tipo = tipo;
   }
 
-  public RicercaConfigurazioneApi tipo(TransazioneRuoloEnum tipo) {
+  public TipoInformazioneReportTempoMedioRisposta tipo(TipoInformazioneReportEnum tipo) {
     this.tipo = tipo;
     return this;
   }
 
  /**
-   * Get api
-   * @return api
+   * Get tempoMedioRisposta
+   * @return tempoMedioRisposta
   **/
-  @JsonProperty("api")
+  @JsonProperty("tempo_medio_risposta")
   @Valid
-  public FiltroApiSoggetti getApi() {
-    return this.api;
+  public TempoMedioRispostaEnum getTempoMedioRisposta() {
+    return this.tempoMedioRisposta;
   }
 
-  public void setApi(FiltroApiSoggetti api) {
-    this.api = api;
+  public void setTempoMedioRisposta(TempoMedioRispostaEnum tempoMedioRisposta) {
+    this.tempoMedioRisposta = tempoMedioRisposta;
   }
 
-  public RicercaConfigurazioneApi api(FiltroApiSoggetti api) {
-    this.api = api;
+  public TipoInformazioneReportTempoMedioRisposta tempoMedioRisposta(TempoMedioRispostaEnum tempoMedioRisposta) {
+    this.tempoMedioRisposta = tempoMedioRisposta;
     return this;
   }
 
@@ -77,10 +78,10 @@ public class RicercaConfigurazioneApi  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RicercaConfigurazioneApi {\n");
+    sb.append("class TipoInformazioneReportTempoMedioRisposta {\n");
     
-    sb.append("    tipo: ").append(RicercaConfigurazioneApi.toIndentedString(this.tipo)).append("\n");
-    sb.append("    api: ").append(RicercaConfigurazioneApi.toIndentedString(this.api)).append("\n");
+    sb.append("    tipo: ").append(TipoInformazioneReportTempoMedioRisposta.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tempoMedioRisposta: ").append(TipoInformazioneReportTempoMedioRisposta.toIndentedString(this.tempoMedioRisposta)).append("\n");
     sb.append("}");
     return sb.toString();
   }

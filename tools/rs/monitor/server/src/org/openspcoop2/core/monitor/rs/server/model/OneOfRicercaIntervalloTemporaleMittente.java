@@ -23,5 +23,5 @@ package org.openspcoop2.core.monitor.rs.server.model;
 * OneOfRicercaIntervalloTemporaleMittente
 */
 public interface OneOfRicercaIntervalloTemporaleMittente {
-
+    public TipoFiltroMittenteEnum getIdentificazione();
 }

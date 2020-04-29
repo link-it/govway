@@ -114,6 +114,28 @@ public class PostOutResponseHandler_TransazioneUtilities {
 		this.transazioniRegistrazioneTempiElaborazione = transazioniRegistrazioneTempiElaborazione;
 	}
 	
+	public static boolean isConsegnaMultipla(PostOutResponseContext context) {
+		int connettoriMultipli = getNumeroConnettoriMultipli(context);
+		return isConsegnaMultipla(connettoriMultipli);
+	}
+	public static boolean isConsegnaMultipla(int connettoriMultipli) {
+		boolean consegnaMultipla = false;
+		if(connettoriMultipli>0) {
+			consegnaMultipla = true;
+		}
+		return consegnaMultipla;
+	}
+	public static int getNumeroConnettoriMultipli(PostOutResponseContext context) {
+		int connettoriMultipli = -1;
+		if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI)) {
+			Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI );
+			if (oConnettori!=null && oConnettori instanceof Integer){
+				connettoriMultipli = (Integer) oConnettori;
+			}
+		}
+		return connettoriMultipli;
+	}
+	
 	public Transazione fillTransaction(PostOutResponseContext context,
 			Transaction transaction,
 			IDSoggetto idDominio) throws HandlerException{
@@ -156,18 +178,9 @@ public class PostOutResponseHandler_TransazioneUtilities {
 			Transazione transactionDTO = new Transazione();
 
 			// ** Consegna Multipla **
-			boolean consegnaMultipla = false;
-			int connettoriMultipli = -1;
-			if(context.getPddContext().containsKey(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI)) {
-				Object oConnettori = context.getPddContext().getObject(org.openspcoop2.core.constants.Costanti.CONSEGNA_MULTIPLA_CONNETTORI );
-				if (oConnettori!=null && oConnettori instanceof Integer){
-					connettoriMultipli = (Integer) oConnettori;
-				}
-				
-				if(connettoriMultipli>0) {
-					consegnaMultipla = true;
-				}
-			}
+			// NOTA: l'esito deve essere compreso solo dopo aver capito se le notifiche devono essere consegna o meno poichè le notifiche stesse si basano sullo stato di come è terminata la transazione sincrona
+			int connettoriMultipli = getNumeroConnettoriMultipli(context);
+			boolean consegnaMultipla = isConsegnaMultipla(connettoriMultipli);
 			
 			ConfigurazioneMultiDeliver configurazione_consegnaMultipla_profiloSincrono = null;
 			EsitiProperties esitiProperties = null;
@@ -1136,7 +1149,7 @@ public class PostOutResponseHandler_TransazioneUtilities {
 							RepositoryBuste repositoryBuste = new RepositoryBuste(openspcoopState.getStatoRichiesta(), true, context.getProtocolFactory());
 						 */
 							
-						// Devo rilasciare l'attenti esito
+						// Devo rilasciare l'attendi esito
 						Logger log = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(op2Properties.isTransazioniDebug());
 						msgRequest.releaseAttesaEsiti(op2Properties.isTransazioniDebug(), log);
 						

@@ -73,8 +73,8 @@ Scenario: Ricerca per FiltroApi con tipo qualsiasi
     * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
     * set filtro.intervallo_temporale = intervallo_temporale
     * set filtro.tipo = 'qualsiasi'
-    * set filtro.api = null
-    * set filtro.azione = null
+    * remove filtro.api
+    * remove filtro.azione
     * set filtro.esito = { 'tipo' : 'ok' }
     * set filtro.limit = 1000
 
@@ -204,8 +204,8 @@ Scenario: Ricerca tramite richiesta POST con tag 'TESTSUITE'
     * def filtro = read('classpath:bodies/ricerca-filtro-api-erogazione.json')
     * set filtro.intervallo_temporale = intervallo_temporale
     * set filtro.tipo = 'qualsiasi'
-    * set filtro.api = null
-    * set filtro.azione = null
+    * remove filtro.api
+    * remove filtro.azione
     * set filtro.esito = { 'tipo' : 'ok' }
     * set filtro.tag = tag
 
@@ -220,10 +220,10 @@ Scenario: Ricerca tramite richiesta POST con tag 'TESTSUITE'
 Scenario: Ricerca per Filtro Mittente Applicativo
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-applicativo.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.soggetto = soggettoDefault
-    * eval filtro.mittente.id.applicativo = setup.applicativo.nome
+    * eval filtro.mittente.soggetto = soggettoDefault
+    * eval filtro.mittente.applicativo = setup.applicativo.nome
 
-    * def expected_mittente = ({ applicativo: filtro.mittente.id.applicativo })
+    * def expected_mittente = ({ applicativo: filtro.mittente.applicativo })
 
     Given request filtro
     When method post
@@ -232,7 +232,8 @@ Scenario: Ricerca per Filtro Mittente Applicativo
     And match each response.items contains { mittente: '#(^expected_mittente)' }
 
     * set filtro.tipo = "fruizione"
-    * remove filtro.mittente.id.soggetto
+    * set filtro.mittente.identificazione = "fruizione_applicativo"
+    * remove filtro.mittente.soggetto
     Given request filtro
     When method post
     Then status 200
@@ -242,7 +243,7 @@ Scenario: Ricerca per Filtro Mittente Applicativo
 @FiltroMittenteIdAutenticatoHttp
 Scenario: Ricerca per Filtro Mittente con autenticazione http
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')
-    * eval filtro.mittente.id.id = setup.applicativo.credenziali.username
+    * eval filtro.mittente.id = setup.applicativo.credenziali.username
     * eval filtro.intervallo_temporale = intervallo_temporale
     * def expected_mittente = ({ applicativo: setup.applicativo.nome })
 
@@ -262,7 +263,7 @@ Scenario: Ricerca per Filtro Mittente con autenticazione http
 @FiltroMittenteIdAutenticatoHttps
 Scenario: Ricerca per Filtro Mittente con autenticazione https
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')
-    * set filtro.mittente.id = ({ ricerca_esatta: false, case_sensitive: false, autenticazione: 'ssl', id: "cn=client"})
+    * set filtro.mittente = ({ identificazione: 'identificativo_autenticato', ricerca_esatta: false, case_sensitive: false, autenticazione: 'ssl', id: "cn=client"})
     * set filtro.intervallo_temporale = intervallo_temporale
     
     * def expected_mittente = ({ fruitore: setup.soggetto_certificato.nome })
@@ -283,9 +284,9 @@ Scenario: Ricerca per Filtro Mittente con autenticazione https
 @FiltroMittenteIdAutenticatoPrincipal
 Scenario: Ricerca per Filtro Mittente con autenticazione principal
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-idautenticato.json')
-    * eval filtro.mittente.id.id = setup.applicativo_principal.credenziali.userid
+    * eval filtro.mittente.id = setup.applicativo_principal.credenziali.userid
     * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.autenticazione = 'principal'
+    * eval filtro.mittente.autenticazione = 'principal'
 
     * def expected_mittente = ({ applicativo: setup.applicativo_principal.nome })
 
@@ -306,9 +307,9 @@ Scenario: Ricerca per Filtro Mittente con autenticazione principal
 Scenario: Ricerca per Filtro Mittente Soggetto
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-soggetto.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.soggetto = setup.soggetto_http.nome
+    * eval filtro.mittente.soggetto = setup.soggetto_http.nome
 
-    * def expected_mittente = ({ fruitore: filtro.mittente.id.soggetto })
+    * def expected_mittente = ({ fruitore: filtro.mittente.soggetto })
 
     Given request filtro
     When method post
@@ -320,10 +321,10 @@ Scenario: Ricerca per Filtro Mittente Soggetto
 Scenario: Ricerca per Filtro Indirizzo IP (Client IP)
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-indirizzo-ip.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.id = "127.0.0.1"
-    * eval filtro.mittente.id.tipo = "client_ip"
+    * eval filtro.mittente.id = "127.0.0.1"
+    * eval filtro.mittente.tipo = "client_ip"
 
-    * def expected_mittente = ({ indirizzo_client: filtro.mittente.id.id })
+    * def expected_mittente = ({ indirizzo_client: filtro.mittente.id })
 
     Given request filtro
     When method post
@@ -342,10 +343,10 @@ Scenario: Ricerca per Filtro Indirizzo IP (Client IP)
 Scenario: Ricerca per Filtro Indirizzo IP (X-Forwarded-For)
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-indirizzo-ip.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
-    * eval filtro.mittente.id.id = "127.0.0.2"
-    * eval filtro.mittente.id.tipo = "x_forwarded_for"
+    * eval filtro.mittente.id = "127.0.0.2"
+    * eval filtro.mittente.tipo = "x_forwarded_for"
 
-    * def expected_mittente = ({ indirizzo_client_inoltrato: filtro.mittente.id.id })
+    * def expected_mittente = ({ indirizzo_client_inoltrato: filtro.mittente.id })
 
     Given request filtro
     When method post
@@ -377,24 +378,42 @@ Scenario: Ricerca per Esito Erroneo
     * eval filtro.intervallo_temporale = intervallo_temporale
 
     * def expected_risposta = { esito_consegna: '401' }
+    * def expected_risposta_validazione_attiva = { esito_consegna: '400' }
+    * def expected_or = function(x) { return x == '401' || x == '400' }
 
     # Controllo che le richieste con esito error siano proprio quelle non autorizzate fatte nei test
     Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
-    And match each response.items contains { risposta: '#(^expected_risposta)' }
+    And match each response.items[*].risposta contains { esito_consegna: '#? expected_or(_)' }
 
     * set filtro.tipo = 'fruizione'
     Given request filtro
     When method post
     Then status 200
     And assert response.items.length > 0
-    And match each response.items contains { risposta: '#(^expected_risposta)' }
+    And match each response.items[*].risposta contains { esito_consegna: '#? expected_or(_)' }
 
 @FiltroEsitoPersonalizzato
 Scenario: Ricerca per Filtro Esito Personalizzato
     * def filtro = read('classpath:bodies/ricerca-filtro-esito-personalizzato.json')
+    * eval filtro.intervallo_temporale = intervallo_temporale
+
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+
+    * set filtro.tipo = 'fruizione'
+    Given request filtro
+    When method post
+    Then status 200
+    And assert response.items.length >= 1
+
+@FiltroEsitoOk
+Scenario: Ricerca per Filtro Esito Ok
+    * def filtro = read('classpath:bodies/ricerca-filtro-esito-ok.json')
     * eval filtro.intervallo_temporale = intervallo_temporale
 
     Given request filtro

@@ -10229,7 +10229,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataOk)) {
 						if(integrationManagerSpecific && this.isModalitaStandard()) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
@@ -10293,7 +10293,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFault)) {
 						de.setType(DataElementType.CHECKBOX);
 						de.setSelected(attivi.contains((esito+"")));
 					}
@@ -10355,7 +10355,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataFallite)) {
 						if(integrationManagerSpecific && this.isModalitaStandard()) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
@@ -10423,7 +10423,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//						de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataScartate)) {
 						if(integrationManagerSpecific && this.isModalitaStandard()) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");
@@ -10528,7 +10528,7 @@ public class ConsoleHelper implements IConsoleHelper {
 					//de.setLabelStyleClass(Costanti.LABEL_LONG_CSS_CLASS);
 	//				de.setNote(esiti.getEsitoLabel(esito));
 					de.setName(ConfigurazioneCostanti.PARAMETRO_CONFIGURAZIONE_REGISTRAZIONE_ESITI_STATO+esito);
-					if(ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
+					if(!selectAll && ConfigurazioneCostanti.TRACCIAMENTO_ESITI_PERSONALIZZATO.equals(tracciamentoEsitiSelezionePersonalizzataCors)) {
 						if(integrationManagerSpecific && this.isModalitaStandard()) {
 							de.setType(DataElementType.HIDDEN);
 							de.setValue(attivi.contains((esito+""))+"");

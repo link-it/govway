@@ -10,8 +10,8 @@ Background:
 @FiltroMittenteTokenInfo
 Scenario Outline: Ricerca di transazioni filtrate per claim <nome>
     * def filtro = read('classpath:bodies/ricerca-filtro-mittente-tokeninfo.json')
-    * eval filtro.mittente.id.id = '<valore>'
-    * eval filtro.mittente.id.claim = '<nome>'
+    * eval filtro.mittente.id = '<valore>'
+    * eval filtro.mittente.claim = '<nome>'
     Given request filtro
     When method post
     Then status 200

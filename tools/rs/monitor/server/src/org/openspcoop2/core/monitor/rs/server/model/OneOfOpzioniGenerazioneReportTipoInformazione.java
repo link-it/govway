@@ -20,8 +20,8 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 /**
-* OneOfFiltroMittenteErogazioneId
+* OneOfOpzioniGenerazioneReportTipoInformazione
 */
-public interface OneOfFiltroMittenteErogazioneId {
-
+public interface OneOfOpzioniGenerazioneReportTipoInformazione {
+    public TipoInformazioneReportEnum getTipo();
 }

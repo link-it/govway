@@ -6,7 +6,7 @@
     },
     "tipo": "erogazione",
     "report": {
-      "formato": "csv",
+      "formato": "pdf",
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
@@ -14,10 +14,8 @@
     },
    
     "mittente": {
-      "tipo": "indirizzo_ip",
-      "id": {
-        "id": "127.0.0.1",
-	"tipo": "client_ip"
-      }
+      "identificazione": "indirizzo_ip",
+      "id": "127.0.0.1",
+      "tipo": "client_ip"
     }
   }

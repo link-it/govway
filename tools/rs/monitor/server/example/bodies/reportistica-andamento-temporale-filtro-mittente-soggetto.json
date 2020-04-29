@@ -6,16 +6,14 @@
     },
     "tipo": "erogazione",
     "report": {
-      "formato": "csv",
+      "formato": "xls",
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
       }
     },
     "mittente": {
-      "tipo": "soggetto",
-      "id": {
-        "soggetto": "SoggettoJson31be7005b74a49a7b038"
-      }
+      "identificazione": "erogazione_soggetto",
+      "soggetto": "SoggettoJson31be7005b74a49a7b038"
     }
   }

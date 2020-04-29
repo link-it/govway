@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import java.util.List;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import javax.validation.constraints.*;
 
@@ -38,16 +39,10 @@ public class FiltroEsito  {
   private Boolean escludiScartate = true;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "qualsiasi"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "ok"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "fallite"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "fallite_e_fault"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "errori_consegna"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoSingleCode.class, name = "richieste_scartate"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = DettaglioEsitoListCode.class, name = "personalizzato")  })
-  private OneOfFiltroEsitoDettaglio dettaglio = null;
+  private Integer codice = null;
+  
+  @Schema(description = "")
+  private List<Integer> codici = null;
  /**
    * Get tipo
    * @return tipo
@@ -88,21 +83,45 @@ public class FiltroEsito  {
   }
 
  /**
-   * Get dettaglio
-   * @return dettaglio
+   * Get codice
+   * @return codice
   **/
-  @JsonProperty("dettaglio")
+  @JsonProperty("codice")
   @Valid
-  public OneOfFiltroEsitoDettaglio getDettaglio() {
-    return this.dettaglio;
+  public Integer getCodice() {
+    return this.codice;
   }
 
-  public void setDettaglio(OneOfFiltroEsitoDettaglio dettaglio) {
-    this.dettaglio = dettaglio;
+  public void setCodice(Integer codice) {
+    this.codice = codice;
   }
 
-  public FiltroEsito dettaglio(OneOfFiltroEsitoDettaglio dettaglio) {
-    this.dettaglio = dettaglio;
+  public FiltroEsito codice(Integer codice) {
+    this.codice = codice;
+    return this;
+  }
+
+ /**
+   * Get codici
+   * @return codici
+  **/
+  @JsonProperty("codici")
+  @Valid
+  public List<Integer> getCodici() {
+    return this.codici;
+  }
+
+  public void setCodici(List<Integer> codici) {
+    this.codici = codici;
+  }
+
+  public FiltroEsito codici(List<Integer> codici) {
+    this.codici = codici;
+    return this;
+  }
+
+  public FiltroEsito addCodiciItem(Integer codiciItem) {
+    this.codici.add(codiciItem);
     return this;
   }
 
@@ -114,7 +133,8 @@ public class FiltroEsito  {
     
     sb.append("    tipo: ").append(FiltroEsito.toIndentedString(this.tipo)).append("\n");
     sb.append("    escludiScartate: ").append(FiltroEsito.toIndentedString(this.escludiScartate)).append("\n");
-    sb.append("    dettaglio: ").append(FiltroEsito.toIndentedString(this.dettaglio)).append("\n");
+    sb.append("    codice: ").append(FiltroEsito.toIndentedString(this.codice)).append("\n");
+    sb.append("    codici: ").append(FiltroEsito.toIndentedString(this.codici)).append("\n");
     sb.append("}");
     return sb.toString();
   }

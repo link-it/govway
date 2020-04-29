@@ -304,6 +304,43 @@ paths:
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
      
+  /documenti/test/{id_documento}:
+    parameters:
+    - $ref: '#/components/parameters/id_documento'
+    post:
+      tags:
+        - document-retrieve
+      description: Esempio di invio dei documenti nella richiesta
+      operationId: SendDocumentDynamicPath
+      requestBody:
+        content:
+          application/json:
+            schema:
+                type: string
+                format: binary
+      responses:
+        "200":
+          description: |-
+            Esempio di Risposta
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RispostaEsempio'
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'     
+     
        
   /documenti/{id_documento}:
     parameters:

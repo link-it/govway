@@ -100,7 +100,7 @@ public class StatsUtils {
 					sb.append("' value='");
 					sb.append(sum);
 					sb.append("' toolText='");
-					sb.append(toolText);
+					sb.append(toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText);
 					sb.append("'/>");
 				} else{
 					altri_sum+=sum.longValue();
@@ -118,7 +118,7 @@ public class StatsUtils {
 				sb.append("<set label='" + CostantiGrafici.ALTRI_LABEL + "' value='");
 				sb.append(v);
 				sb.append("' toolText='");
-				sb.append(toolText); 
+				sb.append(toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText); 
 				sb.append("'/>");
 			}
 		}
@@ -423,7 +423,7 @@ public class StatsUtils {
 						barSB.append("<set value='");
 						barSB.append(value);
 						barSB.append("' toolText='");
-						barSB.append(toolText);
+						barSB.append(toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText);
 						barSB.append("' />");
 
 					} else{
@@ -482,7 +482,7 @@ public class StatsUtils {
 					barSB.append("<set value='");
 					barSB.append(value);
 					barSB.append("' toolText='");
-					barSB.append(toolText);
+					barSB.append(toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText);
 					barSB.append("' />");
 
 				}
@@ -827,7 +827,7 @@ public class StatsUtils {
 
 					String toolText = StatsUtils.getToolText(search,sum);
 					String value = StatsUtils.getValue(search,sum);
-					sb.append( "<set value='"	+ value + "' toolText='" + toolText + "' />");
+					sb.append( "<set value='"	+ value + "' toolText='" + (toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText) + "' />");
 
 				}
 
@@ -912,7 +912,7 @@ public class StatsUtils {
 					Number sum = entry.getSomma();
 					String toolText = StatsUtils.getToolText(search,sum); 
 					String value = StatsUtils.getValue(search,sum);
-					sb.append("<set value='" 	+ value + "' toolText='"	+ toolText + "'/>");
+					sb.append("<set value='" 	+ value + "' toolText='"	+ (toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText) + "'/>");
 				}
 
 				sb.append("</dataset>");
@@ -965,7 +965,7 @@ public class StatsUtils {
 
 				if (++i <= slice) {
 					String toolText = StatsUtils.getToolText(search,sum); 
-					sb.append("<set label='" + StringEscapeUtils.escapeXml(r) + "' value='" + sum + "' toolText='" + toolText + "'/>");
+					sb.append("<set label='" + StringEscapeUtils.escapeXml(r) + "' value='" + sum + "' toolText='" + (toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText) + "'/>");
 				} else{
 					altri_sum += sum.longValue();
 					altri_sum_numeroItem++;
@@ -979,7 +979,7 @@ public class StatsUtils {
 				}
 
 				String toolText = StatsUtils.getToolText(search,v); 
-				sb.append("<set label='"+CostantiGrafici.ALTRI_LABEL+"' value='" + v+ "' toolText='"	+ toolText + "'/>");
+				sb.append("<set label='"+CostantiGrafici.ALTRI_LABEL+"' value='" + v+ "' toolText='"	+ (toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText) + "'/>");
 			}
 		}
 
@@ -1075,7 +1075,7 @@ public class StatsUtils {
 						barSB.append("<set value='");
 						barSB.append(value);
 						barSB.append("' toolText='");
-						barSB.append(toolText);
+						barSB.append((toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText));
 						barSB.append("' />");
 
 					} else{
@@ -1113,7 +1113,7 @@ public class StatsUtils {
 					barSB.append("<set value='");
 					barSB.append(value);
 					barSB.append("' toolText='");
-					barSB.append(toolText);
+					barSB.append((toolText!=null ? StringEscapeUtils.escapeXml(toolText) : toolText));
 					barSB.append("' />");
 
 				}

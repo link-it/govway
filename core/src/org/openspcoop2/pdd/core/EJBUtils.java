@@ -2301,7 +2301,8 @@ public class EJBUtils {
 		gestoreMessaggi.registraInformazioniMessaggio_statelessEngine(oraRegistrazione, 
 				ConsegnaContenutiApplicativi.ID_MODULO,busta.getRiferimentoMessaggio(),
 				richiestaApplicativa.getIdCorrelazioneApplicativa(),null);
-		gestoreMessaggi.registraMessaggio_statelessEngine(message);
+		boolean consumeMessage= true;
+		gestoreMessaggi.registraMessaggio_statelessEngine(message, !consumeMessage); // senno il dump poi successivo non funziona
 		String key = "INSERT RegistrazioneBustaForHistory"+Costanti.INBOX+"_"+busta.getID();
 		if(repositoryBuste.isRegistrataIntoInBox(busta.getID())){
 			repositoryBuste.aggiornaBustaIntoInBox(busta,propertiesReader.getRepositoryIntervalloScadenzaMessaggi());

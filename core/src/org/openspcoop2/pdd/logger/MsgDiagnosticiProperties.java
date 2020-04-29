@@ -682,6 +682,16 @@ public class MsgDiagnosticiProperties {
 		MSG_DIAGNOSTICI_ERRORE_CONNETTORE.add("007014"); // consegnaContenutiApplicativi.ricezioneSoapFault
 	}
 	
+	/*---------- Codici Generazione Messaggio Errore -------------*/
+	public static List<String> MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE = new ArrayList<String>();
+	static {
+		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("001008"); // ricezioneContenutiApplicativi.consegnaRispostaApplicativaFallita
+		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("001033"); // ricezioneContenutiApplicativi.integrationManager.consegnaRispostaApplicativaFallita
+		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("004007"); // ricezioneBuste.generazioneMessaggioErroreRisposta
+		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("004008"); // ricezioneBuste.generazioneMessaggioErroreRisposta.destinatarioSconosciuto 
+		MSG_DIAGNOSTICI_SEGNALA_GENERATA_RISPOSTA_ERRORE.add("004080"); // ricezioneBuste.generazioneMessaggioErroreRisposta.mittenteAnonimo
+	}
+	
 	/*---------- Keyword attese -------------*/
 	public final static String MSG_DIAG_RICEZIONE_CONTENUTI_APPLICATIVI="ricezioneContenutiApplicativi.";
 	public final static String MSG_DIAG_IMBUSTAMENTO="imbustamentoBusta.";

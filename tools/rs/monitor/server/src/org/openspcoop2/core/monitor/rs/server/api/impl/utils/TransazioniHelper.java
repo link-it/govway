@@ -22,6 +22,7 @@ package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
 
 import java.sql.Connection;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,24 +32,20 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.monitor.rs.server.config.DBManager;
 import org.openspcoop2.core.monitor.rs.server.config.LoggerProperties;
 import org.openspcoop2.core.monitor.rs.server.config.ServerProperties;
-import org.openspcoop2.core.monitor.rs.server.model.DettaglioEsitoListCode;
-import org.openspcoop2.core.monitor.rs.server.model.DettaglioEsitoSingleCode;
 import org.openspcoop2.core.monitor.rs.server.model.EsitoTransazioneFullSearchEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiQualsiasi;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroFruizione;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneSoggetto;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteErogazioneTokenClaim;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizione;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneApplicativo;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteFruizioneTokenClaim;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIdAutenticato;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteIndirizzoIP;
-import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteQualsiasi;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteTokenClaim;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroMittenteTokenClaimSoggetto;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.ListaTransazioni;
+import org.openspcoop2.core.monitor.rs.server.model.OneOfRicercaIntervalloTemporaleMittente;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseTransazione;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIdApplicativo;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaIntervalloTemporale;
@@ -58,7 +55,6 @@ import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.protocol.sdk.config.IProtocolConfiguration;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
-import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
 import org.openspcoop2.utils.service.fault.jaxrs.FaultCode;
 import org.openspcoop2.web.monitor.core.constants.CaseSensitiveMatch;
@@ -125,7 +121,7 @@ public class TransazioniHelper {
 		}
 	}
 
-	public static final void overrideFiltroFruizione(FiltroFruizione filtro, String azione,
+	public static final void overrideFiltroFruizione(FiltroApiSoggetti filtro, String azione,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
@@ -133,7 +129,7 @@ public class TransazioniHelper {
 		TransazioniHelper.overrideFiltroApiBase(filtro, azione, new IDSoggetto(env.tipoSoggetto, filtro.getErogatore()), search, env);
 	}
 	
-	public static final void overrideFiltroQualsiasi(FiltroApiQualsiasi filtro, String azione,
+	public static final void overrideFiltroQualsiasi(FiltroApiSoggetti filtro, String azione,
 			TransazioniSearchForm search, MonitoraggioEnv env) {
 		if (filtro == null)
 			return;
@@ -175,6 +171,19 @@ public class TransazioniHelper {
 		}
 	}
 
+	private static void setEsitoCodice(EsitoTransazioneFullSearchEnum tipo , FiltroEsito filtro, TransazioniSearchForm search) {
+		if(filtro.getCodice()!=null) {
+			search.setEsitoDettaglio(filtro.getCodice());
+		}
+		else if(filtro.getCodici()!=null && !filtro.getCodici().isEmpty()) {
+			if(filtro.getCodici().size()==1) {
+				search.setEsitoDettaglio(filtro.getCodici().get(0));
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Con il tipo di esito indicato '"+tipo.toString()+"' può essere indicato solamente un codice");
+			}
+		}
+	}
 	public static final void overrideFiltroEsito(FiltroEsito filtro, TransazioniSearchForm search,
 			MonitoraggioEnv env) {
 		if (filtro == null)
@@ -187,74 +196,54 @@ public class TransazioniHelper {
 			switch (tipo) {
 			case QUALSIASI:
 				search.setEsitoGruppo(EsitoUtils.ALL_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case OK:
 				search.setEsitoGruppo(EsitoUtils.ALL_OK_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				break;
 			case FAULT:
 				search.setEsitoGruppo(EsitoUtils.ALL_FAULT_APPLICATIVO_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				break;
 			case FALLITE:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case FALLITE_E_FAULT:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_FAULT_APPLICATIVO_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				if(filtro.isEscludiScartate()!=null) {
 					search.setEscludiRichiesteScartate(filtro.isEscludiScartate());
 				}
 				break;
 			case ERRORI_CONSEGNA:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_CONSEGNA_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				break;
 			case RICHIESTE_SCARTATE:
 				search.setEsitoGruppo(EsitoUtils.ALL_ERROR_RICHIESTE_SCARTATE_VALUE);
-				if(filtro.getDettaglio()!=null && filtro.getDettaglio() instanceof DettaglioEsitoSingleCode) {
-					search.setEsitoDettaglio(((DettaglioEsitoSingleCode)filtro.getDettaglio()).getCodice());
-				}
+				setEsitoCodice(tipo, filtro, search);
 				break;
 			case PERSONALIZZATO:
 				search.setEsitoGruppo(EsitoUtils.ALL_PERSONALIZZATO_VALUE);
 				
-				try {
-					if(filtro.getDettaglio()==null) {
-						throw new Exception("Codici non forniti");
-					}
-					if(! (filtro.getDettaglio() instanceof DettaglioEsitoListCode)) {
-						throw new Exception("Codici forniti in una struttura dati sconosciuta ("+filtro.getDettaglio().getClass().getName()+")");
-					}
-					DettaglioEsitoListCode esiti = (DettaglioEsitoListCode) filtro.getDettaglio();
-					List<Integer> dettaglioEsito = esiti.getCodici();
-					if(dettaglioEsito==null || dettaglioEsito.isEmpty()) {
-						throw new Exception("Codici non indicati");
-					}
-					search.setEsitoDettaglioPersonalizzato(dettaglioEsito.toArray(new Integer[1]));
-				} catch (Exception e) {
-					throw FaultCode.RICHIESTA_NON_VALIDA.toException(FiltroEsito.class.getName() + "; Formato del campo 'dettaglio' errato: " + e.toString());
+				if(filtro.getCodice()==null && (filtro.getCodici()==null || filtro.getCodici().isEmpty())) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Con il tipo di esito indicato '"+tipo.toString()+"' deve essere indicato almeno un codice");
 				}
+				List<Integer> dettaglioEsito = filtro.getCodici();
+				if(dettaglioEsito==null || dettaglioEsito.isEmpty()) {
+					dettaglioEsito = new ArrayList<Integer>();
+					dettaglioEsito.add(filtro.getCodice());
+				}
+				search.setEsitoDettaglioPersonalizzato(dettaglioEsito.toArray(new Integer[1]));
+
 				break;
 			}
 		}
@@ -275,13 +264,13 @@ public class TransazioniHelper {
 		switch (body.getTipo()) {
 		case EROGAZIONE:
 			IDSoggetto idSoggettoLocale = new IDSoggetto(env.tipoSoggetto, env.nomeSoggettoLocale);
-			TransazioniHelper.overrideFiltroApiBase(BaseHelper.deserialize(body.getApi(), FiltroApiBase.class), body.getAzione(), idSoggettoLocale, search, env);
+			TransazioniHelper.overrideFiltroApiBase(body.getApi(), body.getAzione(), idSoggettoLocale, search, env);
 			break;
 		case FRUIZIONE:
-			TransazioniHelper.overrideFiltroFruizione(BaseHelper.deserialize(body.getApi(), FiltroFruizione.class),body.getAzione(), search, env);
+			TransazioniHelper.overrideFiltroFruizione(body.getApi(),body.getAzione(), search, env);
 			break;
 		case QUALSIASI:
-			TransazioniHelper.overrideFiltroQualsiasi(BaseHelper.deserialize(body.getApi(), FiltroApiQualsiasi.class), body.getAzione(), search, env);
+			TransazioniHelper.overrideFiltroQualsiasi(body.getApi(), body.getAzione(), search, env);
 			break;
 		}
 
@@ -297,36 +286,84 @@ public class TransazioniHelper {
 			return;
 
 		// Filtraggio Mittente
+		
+		OneOfRicercaIntervalloTemporaleMittente fMittente = body.getMittente();
+		if (fMittente == null)
+			return;
+		
 		final String tipo_soggetto = env.tipoSoggetto;
 		switch (body.getTipo()) {
 		case FRUIZIONE: {
-			FiltroMittenteFruizione fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteFruizione.class);
-			if (fMittente == null)
-				break;
-
-			switch (fMittente.getTipo()) {
-			case APPLICATIVO: {
-				FiltroMittenteFruizioneApplicativo fAppl = ReportisticaHelper.deserializeFiltroMittenteFruizioneApplicativo(fMittente.getId());
+			
+			switch (fMittente.getIdentificazione()) {
+			
+			case EROGAZIONE_SOGGETTO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.toString()+"'");
+			}
+			
+			case FRUIZIONE_APPLICATIVO: {
+				
+				if(! (fMittente instanceof FiltroMittenteFruizioneApplicativo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteFruizioneApplicativo.class.getName()+")");
+				}
+				FiltroMittenteFruizioneApplicativo fAppl = (FiltroMittenteFruizioneApplicativo) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
 				search.setServizioApplicativo(fAppl.getApplicativo());
 				break;
 			}
+			
+			case EROGAZIONE_APPLICATIVO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.toString()+"'");
+			}
+			
 			case IDENTIFICATIVO_AUTENTICATO: {
-				TransazioniHelper.overrideFiltroMittenteIdApplicativo(ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId()), search, env);
+				
+				if(! (fMittente instanceof FiltroMittenteIdAutenticato)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIdAutenticato.class.getName()+")");
+				}
+				FiltroMittenteIdAutenticato fIdAutenticato = (FiltroMittenteIdAutenticato) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdAutenticato, search, env);
 				break;
 			}
 
-			case TOKEN_INFO:
-				FiltroMittenteFruizioneTokenClaim fClaim = ReportisticaHelper.deserializeFiltroMittenteFruizioneTokenClaim(fMittente.getId());
+			case EROGAZIONE_TOKEN_INFO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.FRUIZIONE.toString()+"'");
+			}
+			
+			case TOKEN_INFO: {
+				if(! (fMittente instanceof FiltroMittenteTokenClaim)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
+				}
+				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
 				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
 				break;
+			}
 				
 			case INDIRIZZO_IP: {
-				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+				
+				if(! (fMittente instanceof FiltroMittenteIndirizzoIP)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIndirizzoIP.class.getName()+")");
+				}
+				FiltroMittenteIndirizzoIP fIndirizzoIP = (FiltroMittenteIndirizzoIP) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(fIndirizzoIP, search, env);
 				break;
 			}
 				
@@ -336,32 +373,61 @@ public class TransazioniHelper {
 		}
 
 		case EROGAZIONE: {
-			FiltroMittenteErogazione fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteErogazione.class);
 			
-			if (fMittente == null)
-				break;
+			switch (fMittente.getIdentificazione()) {
 
-			switch (fMittente.getTipo()) {
-			case APPLICATIVO: {
+			case EROGAZIONE_SOGGETTO: {
+				
+				if(! (fMittente instanceof FiltroMittenteErogazioneSoggetto)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteErogazioneSoggetto.class.getName()+")");
+				}
+				FiltroMittenteErogazioneSoggetto fSogg = (FiltroMittenteErogazioneSoggetto) fMittente;
+				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO);
+				search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fSogg.getSoggetto()).toString());
+				break;
+			}
+			
+			case FRUIZIONE_APPLICATIVO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.EROGAZIONE.toString()+"'");
+			}
+			
+			case EROGAZIONE_APPLICATIVO: {
+				
+				if(! (fMittente instanceof FiltroMittenteErogazioneApplicativo)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteErogazioneApplicativo.class.getName()+")");
+				}
+				FiltroMittenteErogazioneApplicativo fAppl = (FiltroMittenteErogazioneApplicativo) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_APPLICATIVO);
-				FiltroMittenteErogazioneApplicativo fAppl = ReportisticaHelper.deserializeFiltroMittenteErogazioneApplicativo(fMittente.getId());
 				search.setServizioApplicativo(fAppl.getApplicativo());
 				search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fAppl.getSoggetto()).toString());
 				break;
 			}
 			case IDENTIFICATIVO_AUTENTICATO: {
-				FiltroMittenteIdAutenticato fIdent = ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId());
-				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdent, search, env);
+				
+				if(! (fMittente instanceof FiltroMittenteIdAutenticato)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIdAutenticato.class.getName()+")");
+				}
+				FiltroMittenteIdAutenticato fIdAutenticato = (FiltroMittenteIdAutenticato) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdAutenticato, search, env);
 				break;
 			}
-			case SOGGETTO: {
-				FiltroMittenteErogazioneSoggetto fSogg = ReportisticaHelper.deserializeFiltroMittenteErogazioneSoggetto(fMittente.getId());
-				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_SOGGETTO);
-				search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fSogg.getSoggetto()).toString());
-				break;
-			}
-			case TOKEN_INFO: {
-				FiltroMittenteErogazioneTokenClaim fClaim = ReportisticaHelper.deserializeFiltroMittenteErogazioneTokenClaim(fMittente.getId());
+
+			case EROGAZIONE_TOKEN_INFO: {
+				
+				if(! (fMittente instanceof FiltroMittenteTokenClaimSoggetto)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaimSoggetto.class.getName()+")");
+				}
+				FiltroMittenteTokenClaimSoggetto fClaim = (FiltroMittenteTokenClaimSoggetto) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
 				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
@@ -372,8 +438,31 @@ public class TransazioniHelper {
 				break;
 			}
 			
+			case TOKEN_INFO: {
+				
+				if(! (fMittente instanceof FiltroMittenteTokenClaim)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
+				}
+				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
+				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
+				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
+				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
+				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
+				search.setValoreRiconoscimento(fClaim.getId());
+				break;
+			}
+			
 			case INDIRIZZO_IP: {
-				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+
+				if(! (fMittente instanceof FiltroMittenteIndirizzoIP)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIndirizzoIP.class.getName()+")");
+				}
+				FiltroMittenteIndirizzoIP fIndirizzoIP = (FiltroMittenteIndirizzoIP) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(fIndirizzoIP, search, env);
 				break;
 			}
 			
@@ -382,33 +471,70 @@ public class TransazioniHelper {
 		}
 		
 		case QUALSIASI: {
-			FiltroMittenteQualsiasi fMittente = BaseHelper.deserialize(body.getMittente(),FiltroMittenteQualsiasi.class);
-			
-			if (fMittente == null)
-				break;
 
-			switch (fMittente.getTipo()) {
+			switch (fMittente.getIdentificazione()) {
+			
+			case EROGAZIONE_SOGGETTO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.QUALSIASI.toString()+"'");
+			}
+			
+			case FRUIZIONE_APPLICATIVO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.QUALSIASI.toString()+"'");
+			}
+			
+			case EROGAZIONE_APPLICATIVO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.QUALSIASI.toString()+"'");
+			}
 			
 			case IDENTIFICATIVO_AUTENTICATO: {
-				FiltroMittenteIdAutenticato fIdent = ReportisticaHelper.deserializeFiltroMittenteIdAutenticato(fMittente.getId());
-				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdent, search, env);
+				
+				if(! (fMittente instanceof FiltroMittenteIdAutenticato)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIdAutenticato.class.getName()+")");
+				}
+				FiltroMittenteIdAutenticato fIdAutenticato = (FiltroMittenteIdAutenticato) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIdApplicativo(fIdAutenticato, search, env);
 				break;
 			}
 
+			case EROGAZIONE_TOKEN_INFO: {
+				throw FaultCode.RICHIESTA_NON_VALIDA
+				.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+						+ "non utilizzabile in una ricerca di transazioni con il criterio ruolo impostato al valore '"+FiltroRicercaRuoloTransazioneEnum.QUALSIASI.toString()+"'");
+			}
+			
 			case TOKEN_INFO: {
-				FiltroMittenteErogazioneTokenClaim fClaim = ReportisticaHelper.deserializeFiltroMittenteErogazioneTokenClaim(fMittente.getId());
+				
+				if(! (fMittente instanceof FiltroMittenteTokenClaim)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteTokenClaim.class.getName()+")");
+				}
+				FiltroMittenteTokenClaim fClaim = (FiltroMittenteTokenClaim) fMittente;
 				search.setRiconoscimento(Costanti.VALUE_TIPO_RICONOSCIMENTO_TOKEN_INFO);
 				search.setTokenClaim(Enums.toTipoCredenzialeMittente(fClaim.getClaim()).toString());
 				search.setMittenteMatchingType( (BooleanUtils.isTrue(fClaim.isRicercaEsatta()) ? TipoMatch.EQUALS : TipoMatch.LIKE).toString());
 				search.setMittenteCaseSensitiveType( (BooleanUtils.isTrue(fClaim.isCaseSensitive()) ? CaseSensitiveMatch.SENSITIVE : CaseSensitiveMatch.INSENSITIVE).toString());
 				search.setValoreRiconoscimento(fClaim.getId());
-				if (!StringUtils.isEmpty(fClaim.getSoggetto()))
-					search.setTipoNomeMittente(new IDSoggetto(tipo_soggetto, fClaim.getSoggetto()).toString());
 				break;
 			}
 			
 			case INDIRIZZO_IP: {
-				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(ReportisticaHelper.deserializeFiltroMittenteIndirizzoIP(fMittente.getId()), search, env);
+				
+				if(! (fMittente instanceof FiltroMittenteIndirizzoIP)) {
+					throw FaultCode.RICHIESTA_NON_VALIDA
+					.toException("Identificazione '"+fMittente.getIdentificazione().toString()+"' "
+							+ "non utilizzabile con il tipo di filtro mittente utilizzato '"+fMittente.getClass().getName()+"' (atteso: "+FiltroMittenteIndirizzoIP.class.getName()+")");
+				}
+				FiltroMittenteIndirizzoIP fIndirizzoIP = (FiltroMittenteIndirizzoIP) fMittente;
+				TransazioniHelper.overrideFiltroMittenteIndirizzoIP(fIndirizzoIP, search, env);
 				break;
 			}
 			

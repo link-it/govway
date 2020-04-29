@@ -2471,14 +2471,14 @@ public class InoltroBuste extends GenericLib{
 							else {
 								if(responseMessage instanceof OpenSPCoop2RestJsonMessage ){
 									OpenSPCoop2RestJsonMessage msg = responseMessage.castAsRestJson();
-									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 										JsonDeserializer deserializer = new JsonDeserializer();
 										restProblem = deserializer.fromString(msg.getContent(), false);
 									}
 								}
 								else if(responseMessage instanceof OpenSPCoop2RestXmlMessage ){
 									OpenSPCoop2RestXmlMessage msg = responseMessage.castAsRestXml();
-									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 										XmlDeserializer deserializer = new XmlDeserializer();
 										restProblem = deserializer.fromNode(msg.getContent(), false);
 									}

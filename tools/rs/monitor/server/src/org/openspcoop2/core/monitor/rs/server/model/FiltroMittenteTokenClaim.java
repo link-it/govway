@@ -20,13 +20,14 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTokenClaimBase;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase implements OneOfFiltroMittenteFruizioneId, OneOfFiltroMittenteQualsiasiId {
+public class FiltroMittenteTokenClaim extends FiltroTokenClaimBase implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
   
   @Schema(example = "false", description = "")
   private Boolean ricercaEsatta = true;
@@ -36,6 +37,9 @@ public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase impl
   
   @Schema(example = "abc123", required = true, description = "")
   private String id = null;
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
  /**
    * Get ricercaEsatta
    * @return ricercaEsatta
@@ -50,7 +54,7 @@ public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase impl
     this.ricercaEsatta = ricercaEsatta;
   }
 
-  public FiltroMittenteFruizioneTokenClaim ricercaEsatta(Boolean ricercaEsatta) {
+  public FiltroMittenteTokenClaim ricercaEsatta(Boolean ricercaEsatta) {
     this.ricercaEsatta = ricercaEsatta;
     return this;
   }
@@ -69,7 +73,7 @@ public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase impl
     this.caseSensitive = caseSensitive;
   }
 
-  public FiltroMittenteFruizioneTokenClaim caseSensitive(Boolean caseSensitive) {
+  public FiltroMittenteTokenClaim caseSensitive(Boolean caseSensitive) {
     this.caseSensitive = caseSensitive;
     return this;
   }
@@ -89,8 +93,29 @@ public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase impl
     this.id = id;
   }
 
-  public FiltroMittenteFruizioneTokenClaim id(String id) {
+  public FiltroMittenteTokenClaim id(String id) {
     this.id = id;
+    return this;
+  }
+
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteTokenClaim identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
     return this;
   }
 
@@ -98,11 +123,12 @@ public class FiltroMittenteFruizioneTokenClaim extends FiltroTokenClaimBase impl
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroMittenteFruizioneTokenClaim {\n");
-    sb.append("    ").append(FiltroMittenteFruizioneTokenClaim.toIndentedString(super.toString())).append("\n");
-    sb.append("    ricercaEsatta: ").append(FiltroMittenteFruizioneTokenClaim.toIndentedString(this.ricercaEsatta)).append("\n");
-    sb.append("    caseSensitive: ").append(FiltroMittenteFruizioneTokenClaim.toIndentedString(this.caseSensitive)).append("\n");
-    sb.append("    id: ").append(FiltroMittenteFruizioneTokenClaim.toIndentedString(this.id)).append("\n");
+    sb.append("class FiltroMittenteTokenClaim {\n");
+    sb.append("    ").append(FiltroMittenteTokenClaim.toIndentedString(super.toString())).append("\n");
+    sb.append("    ricercaEsatta: ").append(FiltroMittenteTokenClaim.toIndentedString(this.ricercaEsatta)).append("\n");
+    sb.append("    caseSensitive: ").append(FiltroMittenteTokenClaim.toIndentedString(this.caseSensitive)).append("\n");
+    sb.append("    id: ").append(FiltroMittenteTokenClaim.toIndentedString(this.id)).append("\n");
+    sb.append("    identificazione: ").append(FiltroMittenteTokenClaim.toIndentedString(this.identificazione)).append("\n");
     sb.append("}");
     return sb.toString();
   }

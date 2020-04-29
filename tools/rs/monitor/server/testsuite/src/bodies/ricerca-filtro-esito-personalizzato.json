@@ -6,9 +6,7 @@
     	"tipo": "erogazione",
 	"esito": {
 		"tipo": "personalizzato",
-		"dettaglio": {
-			"codici": [ 0, 10]
-		}
+		"codici": [ 0, 10 ]
 	}
 }
 

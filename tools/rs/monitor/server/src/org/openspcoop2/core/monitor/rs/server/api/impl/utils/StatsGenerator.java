@@ -20,6 +20,8 @@
 
 package org.openspcoop2.core.monitor.rs.server.api.impl.utils;
 
+import org.openspcoop2.core.commons.CoreException;
+import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.utils.service.context.IContext;
 import org.openspcoop2.web.monitor.core.bean.UserDetailsBean;
 import org.openspcoop2.web.monitor.statistiche.dao.ConfigurazioniGeneraliService;
@@ -35,30 +37,54 @@ import org.openspcoop2.web.monitor.statistiche.servlet.ReportExporter;
  */
 public class StatsGenerator {
 
-	public static byte[] generateReport(HttpRequestWrapper request, IContext context, StatisticheGiornaliereService statisticheService) throws Exception {
+	public static byte[] generateReport(HttpRequestWrapper request, IContext context, StatisticheGiornaliereService statisticheService) throws CoreException, NotFoundException {
 		
 		HttpResponseWrapper wrapper = new HttpResponseWrapper(context.getServletResponse());
 		
-		UserDetailsBean user = new UserDetailsBean(); 
-		SearchFormUtilities utilities = new SearchFormUtilities();
-		user.setUtente(utilities.getUtente(context));
-		
-		ReportExporter.generaStatistiche(request, wrapper, user, statisticheService);
+		try {
+			UserDetailsBean user = new UserDetailsBean(); 
+			SearchFormUtilities utilities = new SearchFormUtilities();
+			user.setUtente(utilities.getUtente(context));
+			
+			ReportExporter.generaStatistiche(request, wrapper, user, statisticheService);
+		}
+		catch(NotFoundException notFound) {
+			throw notFound;
+		}
+		catch(Exception e) {
+			throw new CoreException(e.getMessage(), e);
+		}
 	
-		return wrapper.toByteArray();
+		byte[] report = wrapper.toByteArray();
+		if(report==null || report.length<=0) {
+			throw new NotFoundException("Empty Report");
+		}
+		return report;
 	}
 	
-	public static byte[] generateReport(HttpRequestWrapper request, IContext context, ConfigurazioniGeneraliService configurazioniService) throws Exception {
+	public static byte[] generateReport(HttpRequestWrapper request, IContext context, ConfigurazioniGeneraliService configurazioniService) throws CoreException, NotFoundException {
 		
 		HttpResponseWrapper wrapper = new HttpResponseWrapper(context.getServletResponse());
 		
-		UserDetailsBean user = new UserDetailsBean(); 
-		SearchFormUtilities utilities = new SearchFormUtilities();
-		user.setUtente(utilities.getUtente(context));
-		
-		ReportExporter.generaConfigurazione(request, wrapper, user, configurazioniService);
+		try {
+			UserDetailsBean user = new UserDetailsBean(); 
+			SearchFormUtilities utilities = new SearchFormUtilities();
+			user.setUtente(utilities.getUtente(context));
+			
+			ReportExporter.generaConfigurazione(request, wrapper, user, configurazioniService);
+		}
+		catch(NotFoundException notFound) {
+			throw notFound;
+		}
+		catch(Exception e) {
+			throw new CoreException(e.getMessage(), e);
+		}
 	
-		return wrapper.toByteArray();
+		byte[] report = wrapper.toByteArray();
+		if(report==null || report.length<=0) {
+			throw new NotFoundException("Empty Report");
+		}
+		return report;
 	}
 	
 }

@@ -66,9 +66,12 @@ import org.openspcoop2.utils.json.ValidatorFactory;
 import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.openapi.OpenapiApi;
 import org.openspcoop2.utils.openapi.OpenapiApiValidatorStructure;
+import org.openspcoop2.utils.openapi.UniqueInterfaceGenerator;
+import org.openspcoop2.utils.openapi.UniqueInterfaceGeneratorConfig;
 import org.openspcoop2.utils.regexp.RegularExpressionEngine;
 import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.openspcoop2.utils.rest.AbstractApiValidator;
+import org.openspcoop2.utils.rest.ApiFormats;
 import org.openspcoop2.utils.rest.ApiValidatorConfig;
 import org.openspcoop2.utils.rest.IApiValidator;
 import org.openspcoop2.utils.rest.ProcessingException;
@@ -191,16 +194,66 @@ public class Validator extends AbstractApiValidator implements IApiValidator {
 						
 						YAMLUtils yamlUtils = YAMLUtils.getInstance();
 						JSONUtils jsonUtils = JSONUtils.getInstance();
-						if(yamlUtils.isYaml(openapiApi.getApiRaw())) {
-							schemaNodeRoot = yamlUtils.getAsNode(openapiApi.getApiRaw());
+												
+						String apiRaw = openapiApi.getApiRaw();
+						boolean apiRawIsYaml = yamlUtils.isYaml(apiRaw);
+						boolean readApiSchemas = true;
+						if(this.openApi4jConfig.isMergeAPISpec()) {
+							
+							readApiSchemas = false;
+							
+							Map<String, String> attachments = new HashMap<String, String>();
+							if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+
+								for (ApiSchema apiSchema : api.getSchemas()) {
+								
+									if(!ApiSchemaType.JSON.equals(apiSchema.getType()) && !ApiSchemaType.YAML.equals(apiSchema.getType())) {
+										continue;
+									}
+									byte [] schema = apiSchema.getContent();
+									if(ApiSchemaType.JSON.equals(apiSchema.getType())) {
+										if(jsonUtils.isJson(schema)) {
+											attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
+										}
+									}
+									else {
+										if(yamlUtils.isYaml(schema)) {
+											attachments.put(apiSchema.getName(), new String(apiSchema.getContent()));
+										}
+									}
+									
+								}
+							}
+							
+							if(!attachments.isEmpty()) {							
+								UniqueInterfaceGeneratorConfig configUniqueInterfaceGeneratorConfig = new UniqueInterfaceGeneratorConfig();
+								configUniqueInterfaceGeneratorConfig.setFormat(ApiFormats.OPEN_API_3);
+								configUniqueInterfaceGeneratorConfig.setYaml(apiRawIsYaml);
+								configUniqueInterfaceGeneratorConfig.setMaster(apiRaw);
+								configUniqueInterfaceGeneratorConfig.setAttachments(attachments);
+								try {
+									String apiMerged = UniqueInterfaceGenerator.generate(configUniqueInterfaceGeneratorConfig, null, null, true, log);
+									if(apiMerged==null) {
+										throw new Exception("empty ApiSpec");
+									}
+									apiRaw = apiMerged;
+								}catch(Throwable t) {
+									log.error("Merge API Spec failed: "+t.getMessage(),t);
+									readApiSchemas = true; // torno al metodo tradizionale
+								}
+							}
+						}
+						
+						if(apiRawIsYaml) {
+							schemaNodeRoot = yamlUtils.getAsNode(apiRaw);
 						}
 						else {
-							schemaNodeRoot = jsonUtils.getAsNode(openapiApi.getApiRaw());
+							schemaNodeRoot = jsonUtils.getAsNode(apiRaw);
 						}
 						normalizeRefs(schemaNodeRoot);
 						uriSchemaNodeRoot = new URL(root);
 						
-						if(api.getSchemas()!=null && api.getSchemas().size()>0) {
+						if(readApiSchemas && api.getSchemas()!=null && api.getSchemas().size()>0) {
 							
 							for (ApiSchema apiSchema : api.getSchemas()) {
 								

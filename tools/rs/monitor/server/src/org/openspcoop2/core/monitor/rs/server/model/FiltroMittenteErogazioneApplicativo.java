@@ -19,19 +19,44 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteErogazioneApplicativo  implements OneOfFiltroMittenteErogazioneId {
+public class FiltroMittenteErogazioneApplicativo  implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente {
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
   
   @Schema(required = true, description = "")
   private String soggetto = null;
   
   @Schema(required = true, description = "")
   private String applicativo = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteErogazioneApplicativo identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get soggetto
    * @return soggetto
@@ -78,6 +103,7 @@ public class FiltroMittenteErogazioneApplicativo  implements OneOfFiltroMittente
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroMittenteErogazioneApplicativo {\n");
     
+    sb.append("    identificazione: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.identificazione)).append("\n");
     sb.append("    soggetto: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.soggetto)).append("\n");
     sb.append("    applicativo: ").append(FiltroMittenteErogazioneApplicativo.toIndentedString(this.applicativo)).append("\n");
     sb.append("}");

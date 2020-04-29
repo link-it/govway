@@ -52,7 +52,6 @@ components:
           properties:
              connettore:
                 type: string
-                format: uri
                 example: http://backend.api
 
     TransazioneExtDettaglioRichiesta:

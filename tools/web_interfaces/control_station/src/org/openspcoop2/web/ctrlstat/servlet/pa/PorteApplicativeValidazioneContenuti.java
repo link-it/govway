@@ -160,7 +160,7 @@ public class PorteApplicativeValidazioneContenuti extends Action {
 					if (vx == null) {
 						tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE;
 					} else {
-						if(vx.getTipo()!=null)
+						if(vx.getTipo()!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(vx.getStato()))
 							tipoValidazione = vx.getTipo().toString();
 						if (tipoValidazione == null || "".equals(tipoValidazione)) {
 							tipoValidazione = PorteApplicativeCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_APPLICATIVE_TIPO_VALIDAZIONE_INTERFACE ;

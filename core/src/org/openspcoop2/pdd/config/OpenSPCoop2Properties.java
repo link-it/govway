@@ -15232,6 +15232,32 @@ public class OpenSPCoop2Properties {
 
 		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_useOpenApi4j;
 	}
+
+	private static Boolean isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec = null;
+	public boolean isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec(){
+
+		String pName = "org.openspcoop2.pdd.validazioneContenutiApplicativi.openApi.openApi4j.mergeAPISpec";
+		
+		if(OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isValidazioneContenutiApplicativi_openApi_openApi4j_mergeAPISpec;
+	}
 	
 	private static Boolean isValidazioneContenutiApplicativi_openApi_openApi4j_validateAPISpec = null;
 	public boolean isValidazioneContenutiApplicativi_openApi_openApi4j_validateAPISpec(){

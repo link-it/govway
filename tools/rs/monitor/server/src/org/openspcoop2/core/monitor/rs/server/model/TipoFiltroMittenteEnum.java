@@ -23,18 +23,20 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Gets or Sets TipoFiltroMittenteErogazioneEnum
+ * Gets or Sets TipoFiltroMittenteEnum
  */
-public enum TipoFiltroMittenteErogazioneEnum {
-SOGGETTO("soggetto"),
-  APPLICATIVO("applicativo"),
+public enum TipoFiltroMittenteEnum {
+EROGAZIONE_SOGGETTO("erogazione_soggetto"),
+  FRUIZIONE_APPLICATIVO("fruizione_applicativo"),
+  EROGAZIONE_APPLICATIVO("erogazione_applicativo"),
   IDENTIFICATIVO_AUTENTICATO("identificativo_autenticato"),
+  EROGAZIONE_TOKEN_INFO("erogazione_token_info"),
   TOKEN_INFO("token_info"),
   INDIRIZZO_IP("indirizzo_ip");
 
   private String value;
 
-  TipoFiltroMittenteErogazioneEnum(String value) {
+  TipoFiltroMittenteEnum(String value) {
     this.value = value;
   }
 
@@ -45,8 +47,8 @@ SOGGETTO("soggetto"),
   }
 
   @JsonCreator
-  public static TipoFiltroMittenteErogazioneEnum fromValue(String text) {
-    for (TipoFiltroMittenteErogazioneEnum b : TipoFiltroMittenteErogazioneEnum.values()) {
+  public static TipoFiltroMittenteEnum fromValue(String text) {
+    for (TipoFiltroMittenteEnum b : TipoFiltroMittenteEnum.values()) {
       if (String.valueOf(b.value).equals(text)) {
         return b;
       }

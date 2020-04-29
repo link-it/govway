@@ -19,27 +19,28 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaTipi;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class TipoInformazioneReport  {
+public class TipoInformazioneReportMultiLineOccupazioneBanda  implements OneOfOpzioniGenerazioneReportMultiLineTipoInformazione {
   
-  @Schema(description = "")
+  @Schema(required = true, description = "")
   private TipoInformazioneReportEnum tipo = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = OccupazioneBandaEnum.class, name = "occupazione_banda"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TempoMedioRispostaEnum.class, name = "tempo_medio_risposta")  })
-  private OneOfTipoInformazioneReportValori valori = null;
+  private OccupazioneBandaTipi occupazioneBanda = null;
  /**
    * Get tipo
    * @return tipo
   **/
-  @JsonProperty("tipo")
+  @Override
+@JsonProperty("tipo")
+  @NotNull
   @Valid
   public TipoInformazioneReportEnum getTipo() {
     return this.tipo;
@@ -49,27 +50,27 @@ public class TipoInformazioneReport  {
     this.tipo = tipo;
   }
 
-  public TipoInformazioneReport tipo(TipoInformazioneReportEnum tipo) {
+  public TipoInformazioneReportMultiLineOccupazioneBanda tipo(TipoInformazioneReportEnum tipo) {
     this.tipo = tipo;
     return this;
   }
 
  /**
-   * Get valori
-   * @return valori
+   * Get occupazioneBanda
+   * @return occupazioneBanda
   **/
-  @JsonProperty("valori")
+  @JsonProperty("occupazione_banda")
   @Valid
-  public OneOfTipoInformazioneReportValori getValori() {
-    return this.valori;
+  public OccupazioneBandaTipi getOccupazioneBanda() {
+    return this.occupazioneBanda;
   }
 
-  public void setValori(OneOfTipoInformazioneReportValori valori) {
-    this.valori = valori;
+  public void setOccupazioneBanda(OccupazioneBandaTipi occupazioneBanda) {
+    this.occupazioneBanda = occupazioneBanda;
   }
 
-  public TipoInformazioneReport valori(OneOfTipoInformazioneReportValori valori) {
-    this.valori = valori;
+  public TipoInformazioneReportMultiLineOccupazioneBanda occupazioneBanda(OccupazioneBandaTipi occupazioneBanda) {
+    this.occupazioneBanda = occupazioneBanda;
     return this;
   }
 
@@ -77,10 +78,10 @@ public class TipoInformazioneReport  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class TipoInformazioneReport {\n");
+    sb.append("class TipoInformazioneReportMultiLineOccupazioneBanda {\n");
     
-    sb.append("    tipo: ").append(TipoInformazioneReport.toIndentedString(this.tipo)).append("\n");
-    sb.append("    valori: ").append(TipoInformazioneReport.toIndentedString(this.valori)).append("\n");
+    sb.append("    tipo: ").append(TipoInformazioneReportMultiLineOccupazioneBanda.toIndentedString(this.tipo)).append("\n");
+    sb.append("    occupazioneBanda: ").append(TipoInformazioneReportMultiLineOccupazioneBanda.toIndentedString(this.occupazioneBanda)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -4320,12 +4320,12 @@ public class DriverRegistroServiziDB_LIB {
 	}
 
 	
-	public static long CRUDResource(int type, AccordoServizioParteComune as,Resource resource, Connection con, long idAccordo) throws DriverRegistroServiziException {
+	public static int CRUDResource(int type, AccordoServizioParteComune as,Resource resource, Connection con, long idAccordo) throws DriverRegistroServiziException {
 		PreparedStatement updateStmt = null;
 		String updateQuery;
 		PreparedStatement selectStmt = null;
 		ResultSet selectRS = null;
-		long n = 0;
+		int n = 0;
 		if (idAccordo <= 0)
 			new Exception("[DriverRegistroServiziDB_LIB::CRUDResource] ID Accordo non valido.");
 

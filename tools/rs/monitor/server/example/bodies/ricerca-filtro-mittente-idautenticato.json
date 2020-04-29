@@ -5,13 +5,11 @@
 	},
 	"tipo": "erogazione",
 	"mittente": {
-		"tipo": "identificativo_autenticato",
-		"id": {
-			"ricerca_esatta": false,
-			"case_sensitive": false,
-			"id": "Applicativo",
-			"autenticazione": "basic"
-		}
+		"identificazione": "identificativo_autenticato",
+		"ricerca_esatta": false,
+		"case_sensitive": false,
+		"id": "Applicativo",
+		"autenticazione": "basic"
 	}
 }
 

@@ -1138,7 +1138,8 @@ public class GestoreMessaggi  {
 			SavedMessage msgSoap = null;
 			try {
 				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
-				msgSoap.save(message, this.isRichiesta, salvaNelloStateless);
+				boolean consume = true;
+				msgSoap.save(message, this.isRichiesta, salvaNelloStateless, consume);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
 				if (msgSoap != null) {
@@ -1270,7 +1271,7 @@ public class GestoreMessaggi  {
 
 	}
 
-	public void registraMessaggio_statelessEngine(OpenSPCoop2Message message) throws GestoreMessaggiException {
+	public void registraMessaggio_statelessEngine(OpenSPCoop2Message message, boolean consumeMessage) throws GestoreMessaggiException {
 		// Salvo contenuto messaggio 
 		if (message != null) {
 
@@ -1281,7 +1282,7 @@ public class GestoreMessaggi  {
 			SavedMessage msgSoap = null;
 			try {
 				msgSoap = new SavedMessage(this.idBusta, this.openspcoopstate, this.tipo, this.workDir, GestoreMessaggi.adapter, this.log);
-				msgSoap.save(message, this.isRichiesta, false);
+				msgSoap.save(message, this.isRichiesta, false, consumeMessage);
 			} catch (Exception e) {
 				String errorMsg = "GESTORE_MESSAGGI, Errore di registrazione (SoapMessage) " + this.tipo + "/" + this.idBusta + ": " + e.getMessage();
 				if (msgSoap != null) {

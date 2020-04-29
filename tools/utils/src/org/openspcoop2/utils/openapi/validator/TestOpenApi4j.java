@@ -24,6 +24,7 @@ import java.io.File;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import org.openspcoop2.utils.LoggerWrapperFactory;
 import org.openspcoop2.utils.Utilities;
@@ -37,6 +38,7 @@ import org.openspcoop2.utils.rest.api.Api;
 import org.openspcoop2.utils.rest.api.ApiSchema;
 import org.openspcoop2.utils.rest.api.ApiSchemaType;
 import org.openspcoop2.utils.rest.entity.TextHttpRequestEntity;
+import org.openspcoop2.utils.rest.entity.TextHttpResponseEntity;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 
@@ -189,6 +191,46 @@ public class TestOpenApi4j {
 			}
 			System.out.println("Test #4 completato\n\n");
 		}
+		
+		
+		System.out.println("Test #5 (Richiesta POST con parametro dinamico /documenti/XYZ)");
+		String testUrl5 = baseUri+"/documenti/test/"+UUID.randomUUID().toString();
+		
+		TextHttpRequestEntity httpEntityDynamicPath = new TextHttpRequestEntity();
+		httpEntityDynamicPath.setMethod(HttpRequestMethod.POST);
+		httpEntityDynamicPath.setUrl(testUrl5);	
+		Map<String, String> parametersTrasportoDynamicPath = new HashMap<>();
+		parametersTrasportoDynamicPath.put("api_key", "aaa");
+		parametersTrasportoDynamicPath.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityDynamicPath.setParametersTrasporto(parametersTrasportoDynamicPath);
+		httpEntityDynamicPath.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityDynamicPath.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
+		apiValidator.validate(httpEntityDynamicPath);
+			
+		System.out.println("Test #5 completato\n\n");
+		
+		
+		
+		System.out.println("Test #6 (Risposta GET con parametro dinamico /documenti/XYZ)");
+		testUrl5 = baseUri+"/documenti/"+UUID.randomUUID().toString();
+		
+		TextHttpRequestEntity httpEntityGET = new TextHttpRequestEntity();
+		httpEntityGET.setMethod(HttpRequestMethod.GET);
+		httpEntityGET.setUrl(testUrl5);	
+		apiValidator.validate(httpEntityGET);	
+		
+		TextHttpResponseEntity httpEntityResponse = new TextHttpResponseEntity();
+		httpEntityResponse.setStatus(200);
+		httpEntityResponse.setMethod(HttpRequestMethod.GET);
+		httpEntityResponse.setUrl(testUrl5);	
+		Map<String, String> parametersTrasportoRisposta = new HashMap<>();
+		parametersTrasportoRisposta.put("api_key", "aaa");
+		parametersTrasportoRisposta.put(HttpConstants.CONTENT_TYPE, HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityResponse.setParametersTrasporto(parametersTrasportoRisposta);
+		httpEntityResponse.setContentType(HttpConstants.CONTENT_TYPE_JSON);
+		httpEntityResponse.setContent(json); // volutamente metto un json che comunque dovrebbe trattare come binario!
+		apiValidator.validate(httpEntityResponse);	
+		System.out.println("Test #6 completato\n\n");
 	}
 
 }

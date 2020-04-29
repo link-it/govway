@@ -5,13 +5,11 @@
 	},
 	"tipo": "erogazione",
 	"mittente": {
-		"tipo": "token_info",
-		"id": {
-			"ricerca_esatta": true,
-			"case_sensitive": true,
-			"id": "pippo",
-			"claim": "subject"
-		}
+		"identificazione": "token_info",
+		"ricerca_esatta": true,
+		"case_sensitive": true,
+		"id": "pippo",
+		"claim": "subject"
 	}
 }
 

@@ -19,33 +19,35 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroFruizione extends FiltroApiBase implements OneOfRicercaBaseStatisticaSoggettiApi, OneOfRicercaBaseTransazioneApi, OneOfRicercaConfigurazioneApiApi, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoApi {
+public class TipoInformazioneReportMultiLineNumeroTransazioni  implements OneOfOpzioniGenerazioneReportMultiLineTipoInformazione {
   
-  @Schema(description = "")
-  private String erogatore = null;
+  @Schema(required = true, description = "")
+  private TipoInformazioneReportEnum tipo = null;
  /**
-   * Get erogatore
-   * @return erogatore
+   * Get tipo
+   * @return tipo
   **/
-  @JsonProperty("erogatore")
+  @Override
+@JsonProperty("tipo")
+  @NotNull
   @Valid
- @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
-    return this.erogatore;
+  public TipoInformazioneReportEnum getTipo() {
+    return this.tipo;
   }
 
-  public void setErogatore(String erogatore) {
-    this.erogatore = erogatore;
+  public void setTipo(TipoInformazioneReportEnum tipo) {
+    this.tipo = tipo;
   }
 
-  public FiltroFruizione erogatore(String erogatore) {
-    this.erogatore = erogatore;
+  public TipoInformazioneReportMultiLineNumeroTransazioni tipo(TipoInformazioneReportEnum tipo) {
+    this.tipo = tipo;
     return this;
   }
 
@@ -53,9 +55,9 @@ public class FiltroFruizione extends FiltroApiBase implements OneOfRicercaBaseSt
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroFruizione {\n");
-    sb.append("    ").append(FiltroFruizione.toIndentedString(super.toString())).append("\n");
-    sb.append("    erogatore: ").append(FiltroFruizione.toIndentedString(this.erogatore)).append("\n");
+    sb.append("class TipoInformazioneReportMultiLineNumeroTransazioni {\n");
+    
+    sb.append("    tipo: ").append(TipoInformazioneReportMultiLineNumeroTransazioni.toIndentedString(this.tipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

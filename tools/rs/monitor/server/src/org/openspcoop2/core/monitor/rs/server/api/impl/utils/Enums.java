@@ -31,12 +31,9 @@ import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazion
 import org.openspcoop2.core.monitor.rs.server.model.FormatoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.OccupazioneBandaEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteErogazioneSoggettoRemotoEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteFruizioneEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIndirizzoIPEnum;
-import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteQualsiasiEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoReportEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TokenClaimEnum;
@@ -186,53 +183,21 @@ public class Enums {
 		Enums.toTipologiaFiltroRicercaRuoloTransazioneEnum.put(FiltroRicercaRuoloTransazioneEnum.QUALSIASI, CostantiExporter.TIPOLOGIA_EROGAZIONE_FRUIZIONE);
 	}
 	
-	public static final String toTipoRicercaMittente(TipoFiltroMittenteErogazioneSoggettoRemotoEnum v) {
+	public static final String toTipoRicercaMittente(TipoFiltroMittenteEnum v) {
 		if (v == null) return null;
 		
 		switch (v) {
+		case EROGAZIONE_SOGGETTO: return CostantiExporter.TIPO_RICERCA_MITTENTE_SOGGETTO;
+		case FRUIZIONE_APPLICATIVO: return CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO;
+		case EROGAZIONE_APPLICATIVO: return CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO;
 		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
+		case EROGAZIONE_TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
 		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
 		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
 		default: return null;
 		}
 	}
-	
-	public static final String toTipoRicercaMittente(TipoFiltroMittenteErogazioneEnum v) {
-		if (v == null) return null;
-		
-		switch (v) {
-		case APPLICATIVO: return CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO;
-		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
-		case SOGGETTO: return CostantiExporter.TIPO_RICERCA_MITTENTE_SOGGETTO;
-		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
-		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
-		default: return null;
-		}
-	}
-	
-	public static final String toTipoRicercaMittente(TipoFiltroMittenteQualsiasiEnum v) {
-		if (v == null) return null;
-		
-		switch (v) {
-		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
-		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
-		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
-		default: return null;
-		}
-	}
-	
-	public static final String toTipoRicercaMittente(TipoFiltroMittenteFruizioneEnum v) {
-		if (v == null) return null;
-		
-		switch (v) {
-		case APPLICATIVO: return CostantiExporter.TIPO_RICERCA_MITTENTE_APPLICATIVO;
-		case IDENTIFICATIVO_AUTENTICATO: return CostantiExporter.TIPO_RICERCA_MITTENTE_IDENTIFICATIVO_AUTENTICATO;
-		case TOKEN_INFO: return CostantiExporter.TIPO_RICERCA_MITTENTE_TOKEN_INFO;
-		case INDIRIZZO_IP: return CostantiExporter.TIPO_RICERCA_MITTENTE_INDIRIZZO_IP;
-		default: return null;
-		}
-	}
-	
+
 	public static final TipoCredenzialeMittente toTipoCredenzialeMittente(TokenClaimEnum v) {
 		if (v==null) return null;
 		switch (v) {

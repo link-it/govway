@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.BaseOggettoWithSimpleName;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReport;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
@@ -34,17 +35,18 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   private OpzioniGenerazioneReport report = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = BaseOggettoWithSimpleName.class, name = "fruizione")  })
-  private OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore = null;
+  private BaseOggettoWithSimpleName soggettoErogatore = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "identificazione", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazione.class, name = "erogazione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizione.class, name = "fruizione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteQualsiasi.class, name = "qualsiasi")  })
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneSoggetto.class, name = "erogazione_soggetto"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteFruizioneApplicativo.class, name = "fruizione_applicativo"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteErogazioneApplicativo.class, name = "erogazione_applicativo"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIdAutenticato.class, name = "identificativo_autenticato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteTokenClaimSoggetto.class, name = "erogazione_token_info"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteTokenClaim.class, name = "token_info"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroMittenteIndirizzoIP.class, name = "indirizzo_ip")  })
   private OneOfRicercaStatisticaDistribuzioneApiMittente mittente = null;
   
   @Schema(description = "")
@@ -75,15 +77,15 @@ public class RicercaStatisticaDistribuzioneApi extends RicercaBaseStatistica {
   **/
   @JsonProperty("soggetto_erogatore")
   @Valid
-  public OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore getSoggettoErogatore() {
+  public BaseOggettoWithSimpleName getSoggettoErogatore() {
     return this.soggettoErogatore;
   }
 
-  public void setSoggettoErogatore(OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore) {
+  public void setSoggettoErogatore(BaseOggettoWithSimpleName soggettoErogatore) {
     this.soggettoErogatore = soggettoErogatore;
   }
 
-  public RicercaStatisticaDistribuzioneApi soggettoErogatore(OneOfRicercaStatisticaDistribuzioneApiSoggettoErogatore soggettoErogatore) {
+  public RicercaStatisticaDistribuzioneApi soggettoErogatore(BaseOggettoWithSimpleName soggettoErogatore) {
     this.soggettoErogatore = soggettoErogatore;
     return this;
   }

@@ -5236,11 +5236,12 @@ IDriverWS ,IMonitoraggioRisorsa{
 			rs.close();
 			stm.close();
 	
+			n=0;
 			while(idResources.size()>0){
 				Long idR = idResources.remove(0);
 				Resource resource = new Resource();
 				resource.setId(idR);
-				DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, connection, idAccordoLong);
+				n = n + DriverRegistroServiziDB_LIB.CRUDResource(CostantiDB.DELETE, accordoServizio, resource, connection, idAccordoLong);
 			}
 			this.log.debug("Cancellate "+n+" resources associate all'accordo :" + nome + " id :" + idAccordoLong);
 			

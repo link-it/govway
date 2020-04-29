@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.core.monitor.rs.server.model.RicercaBaseStatistica;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -27,27 +28,22 @@ import javax.validation.Valid;
 public class RicercaBaseStatisticaSoggetti extends RicercaBaseStatistica {
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroErogazione.class, name = "erogazione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroFruizione.class, name = "fruizione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiQualsiasi.class, name = "qualsiasi")  })
-  private OneOfRicercaBaseStatisticaSoggettiApi api = null;
+  private FiltroApiSoggetti api = null;
  /**
    * Get api
    * @return api
   **/
   @JsonProperty("api")
   @Valid
-  public OneOfRicercaBaseStatisticaSoggettiApi getApi() {
+  public FiltroApiSoggetti getApi() {
     return this.api;
   }
 
-  public void setApi(OneOfRicercaBaseStatisticaSoggettiApi api) {
+  public void setApi(FiltroApiSoggetti api) {
     this.api = api;
   }
 
-  public RicercaBaseStatisticaSoggetti api(OneOfRicercaBaseStatisticaSoggettiApi api) {
+  public RicercaBaseStatisticaSoggetti api(FiltroApiSoggetti api) {
     this.api = api;
     return this;
   }

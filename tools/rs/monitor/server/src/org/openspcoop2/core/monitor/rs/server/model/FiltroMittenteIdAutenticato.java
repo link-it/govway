@@ -20,6 +20,7 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.utils.service.beans.FiltroRicercaId;
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteIdentificativoAutenticatoEnum;
 import javax.validation.constraints.*;
 
@@ -27,10 +28,34 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteIdAutenticato extends FiltroRicercaId implements OneOfFiltroMittenteErogazioneId, OneOfFiltroMittenteErogazioneDistribuzioneSoggettoRemotoId, OneOfFiltroMittenteFruizioneId, OneOfFiltroMittenteQualsiasiId {
+public class FiltroMittenteIdAutenticato extends FiltroRicercaId implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente, OneOfRicercaStatisticaDistribuzioneSoggettoRemotoMittente {
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
   
   @Schema(required = true, description = "")
   private TipoFiltroMittenteIdentificativoAutenticatoEnum autenticazione = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteIdAutenticato identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get autenticazione
    * @return autenticazione
@@ -57,6 +82,7 @@ public class FiltroMittenteIdAutenticato extends FiltroRicercaId implements OneO
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroMittenteIdAutenticato {\n");
     sb.append("    ").append(FiltroMittenteIdAutenticato.toIndentedString(super.toString())).append("\n");
+    sb.append("    identificazione: ").append(FiltroMittenteIdAutenticato.toIndentedString(this.identificazione)).append("\n");
     sb.append("    autenticazione: ").append(FiltroMittenteIdAutenticato.toIndentedString(this.autenticazione)).append("\n");
     sb.append("}");
     return sb.toString();

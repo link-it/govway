@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroEsito;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroRicercaRuoloTransazioneEnum;
 import org.openspcoop2.core.monitor.rs.server.model.FiltroTemporale;
@@ -55,12 +56,7 @@ public class RicercaBaseTransazione  {
   private String tag = null;
   
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroErogazione.class, name = "erogazione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroFruizione.class, name = "fruizione"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FiltroApiQualsiasi.class, name = "qualsiasi")  })
-  private OneOfRicercaBaseTransazioneApi api = null;
+  private FiltroApiSoggetti api = null;
   
   @Schema(description = "")
   private String azione = null;
@@ -214,15 +210,15 @@ public class RicercaBaseTransazione  {
   **/
   @JsonProperty("api")
   @Valid
-  public OneOfRicercaBaseTransazioneApi getApi() {
+  public FiltroApiSoggetti getApi() {
     return this.api;
   }
 
-  public void setApi(OneOfRicercaBaseTransazioneApi api) {
+  public void setApi(FiltroApiSoggetti api) {
     this.api = api;
   }
 
-  public RicercaBaseTransazione api(OneOfRicercaBaseTransazioneApi api) {
+  public RicercaBaseTransazione api(FiltroApiSoggetti api) {
     this.api = api;
     return this;
   }

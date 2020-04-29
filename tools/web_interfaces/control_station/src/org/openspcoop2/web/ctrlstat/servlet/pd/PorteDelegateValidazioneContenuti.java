@@ -162,7 +162,7 @@ public class PorteDelegateValidazioneContenuti extends Action {
 					if (vx == null) {
 						tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE;
 					} else {
-						if(vx.getTipo()!=null)
+						if(vx.getTipo()!=null && !StatoFunzionalitaConWarning.DISABILITATO.equals(vx.getStato()))
 							tipoValidazione = vx.getTipo().toString();
 						if (tipoValidazione == null || "".equals(tipoValidazione)) {
 							tipoValidazione = PorteDelegateCostanti.DEFAULT_VALUE_PARAMETRO_PORTE_DELEGATE_TIPO_VALIDAZIONE_INTERFACE ;

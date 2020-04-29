@@ -1360,23 +1360,23 @@ components:
         text/csv:
           schema:
             type: string
-            format: byte
+            format: binary
         application/pdf:
           schema:
             type: string
-            format: byte
+            format: binary
         application/vnd.ms-excel:
           schema:
             type: string
-            format: byte
+            format: binary
         text/xml:
           schema:
             type: string
-            format: byte
+            format: binary
         application/json:
           schema:
             type: string
-            format: byte
+            format: binary
 
     200ReportConfigurazioni:
       description: Report delle configurazioni generato correttamente
@@ -1384,7 +1384,7 @@ components:
         text/csv:
           schema:
             type: string
-            format: byte
+            format: binary
 
   parameters:
 
@@ -1674,14 +1674,6 @@ components:
         tipo:
           $ref: '#/components/schemas/TipoReportEnum' 
 
-    OpzioniGenerazioneReportMultiLine:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/OpzioniGenerazioneReportBase'
-        - type: object
-          properties:  
-            tipo_informazione:
-              $ref: '#/components/schemas/TipoInformazioneReportMultiLine'
 
     OpzioniGenerazioneReport:
       type: object
@@ -1690,37 +1682,91 @@ components:
         - type: object
           properties:  
             tipo_informazione:
-              $ref: '#/components/schemas/TipoInformazioneReport'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 numero_transazioni: '#/components/schemas/TipoInformazioneReportNumeroTransazioni'   
+                 occupazione_banda:  '#/components/schemas/TipoInformazioneReportOccupazioneBanda' 
+                 tempo_medio_risposta: '#/components/schemas/TipoInformazioneReportTempoMedioRisposta'
+             oneOf:
+               - $ref: '#/components/schemas/TipoInformazioneReportNumeroTransazioni'  
+               - $ref: '#/components/schemas/TipoInformazioneReportOccupazioneBanda'  
+               - $ref: '#/components/schemas/TipoInformazioneReportTempoMedioRisposta'
 
-    TipoInformazioneReport:
+    TipoInformazioneReportNumeroTransazioni:
       type: object
+      required:
+      - tipo
       properties:
         tipo:
           $ref: '#/components/schemas/TipoInformazioneReportEnum'
-        valori:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              occupazione_banda:  '#/components/schemas/OccupazioneBandaEnum' 
-              tempo_medio_risposta: '#/components/schemas/TempoMedioRispostaEnum'
-          oneOf:
-            - $ref: '#/components/schemas/OccupazioneBandaEnum'  
-            - $ref: '#/components/schemas/TempoMedioRispostaEnum'
 
-    TipoInformazioneReportMultiLine:
+    TipoInformazioneReportOccupazioneBanda:
       type: object
+      required:
+      - tipo
       properties:
         tipo:
           $ref: '#/components/schemas/TipoInformazioneReportEnum'
-        valori:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              occupazione_banda:  '#/components/schemas/OccupazioneBandaTipi' 
-              tempo_medio_risposta: '#/components/schemas/TempoMedioRispostaTipi'
-          oneOf:
-            - $ref: '#/components/schemas/OccupazioneBandaTipi'  
-            - $ref: '#/components/schemas/TempoMedioRispostaTipi'
+        occupazione_banda:
+          $ref: '#/components/schemas/OccupazioneBandaEnum'
+
+    TipoInformazioneReportTempoMedioRisposta:
+      type: object
+      required:
+      - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
+        tempo_medio_risposta:
+          $ref: '#/components/schemas/TempoMedioRispostaEnum'
+
+
+    OpzioniGenerazioneReportMultiLine:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/OpzioniGenerazioneReportBase'
+        - type: object
+          properties:  
+            tipo_informazione:
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 numero_transazioni: '#/components/schemas/TipoInformazioneReportMultiLineNumeroTransazioni'   
+                 occupazione_banda:  '#/components/schemas/TipoInformazioneReportMultiLineOccupazioneBanda' 
+                 tempo_medio_risposta: '#/components/schemas/TipoInformazioneReportMultiLineTempoMedioRisposta'
+             oneOf:
+               - $ref: '#/components/schemas/TipoInformazioneReportMultiLineNumeroTransazioni'  
+               - $ref: '#/components/schemas/TipoInformazioneReportMultiLineOccupazioneBanda'  
+               - $ref: '#/components/schemas/TipoInformazioneReportMultiLineTempoMedioRisposta'
+
+    TipoInformazioneReportMultiLineNumeroTransazioni:
+      type: object
+      required:
+      - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
+
+    TipoInformazioneReportMultiLineOccupazioneBanda:
+      type: object
+      required:
+      - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
+        occupazione_banda:
+          $ref: '#/components/schemas/OccupazioneBandaTipi'
+
+    TipoInformazioneReportMultiLineTempoMedioRisposta:
+      type: object
+      required:
+      - tipo
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoInformazioneReportEnum'
+        tempo_medio_risposta:
+          $ref: '#/components/schemas/TempoMedioRispostaTipi'
 
     OccupazioneBandaTipi:
       type: object
@@ -1875,16 +1921,7 @@ components:
         tag:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         api:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              erogazione: '#/components/schemas/FiltroErogazione'
-              fruizione: '#/components/schemas/FiltroFruizione'
-              qualsiasi: '#/components/schemas/FiltroApiQualsiasi'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroErogazione'
-            - $ref: '#/components/schemas/FiltroFruizione'
-            - $ref: '#/components/schemas/FiltroApiQualsiasi'
+          $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
         azione:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         esito:
@@ -1899,18 +1936,28 @@ components:
       allOf:
         - $ref: '#/components/schemas/RicercaBaseTransazione'
         - type: object
+          description: >-
+            Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni e statistiche relative a fruizioni di servizio
           properties:
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
               
     RicercaIdApplicativo:
       type: object
@@ -1948,16 +1995,7 @@ components:
         - type: object
           properties:
             api:
-              discriminator:
-                propertyName: tipo
-                mapping:
-                  erogazione: '#/components/schemas/FiltroErogazione'
-                  fruizione: '#/components/schemas/FiltroFruizione'
-                  qualsiasi: '#/components/schemas/FiltroApiQualsiasi'
-              oneOf:
-                - $ref: '#/components/schemas/FiltroErogazione'
-                - $ref: '#/components/schemas/FiltroFruizione'
-                - $ref: '#/components/schemas/FiltroApiQualsiasi'
+               $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
 
     RicercaStatisticaAndamentoTemporale:
        type: object
@@ -1973,15 +2011,23 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -1999,15 +2045,23 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
 
     RicercaStatisticaDistribuzioneSoggettoRemoto:
        type: object
@@ -2020,29 +2074,22 @@ components:
             report:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             api:
-              discriminator:
-                propertyName: tipo
-                mapping:
-                  erogazione: '#/components/schemas/FiltroApiBase'
-                  fruizione: '#/components/schemas/FiltroFruizione'
-                  qualsiasi: '#/components/schemas/FiltroApiBase'
-              oneOf:
-                - $ref: '#/components/schemas/FiltroApiBase'
-                - $ref: '#/components/schemas/FiltroFruizione'
-                - $ref: '#/components/schemas/FiltroApiBase'
+               $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazioneDistribuzioneSoggettoRemoto'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -2060,15 +2107,23 @@ components:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -2083,23 +2138,26 @@ components:
             report:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             soggetto_erogatore:
-              discriminator:
-                propertyName: tipo
-                mapping:
-                  fruizione: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
-              oneOf:
-                - $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
  
@@ -2115,15 +2173,23 @@ components:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             mittente:
               discriminator:
-                propertyName: tipo
+                propertyName: identificazione
                 mapping:
-                  erogazione: '#/components/schemas/FiltroMittenteErogazione'
-                  fruizione: '#/components/schemas/FiltroMittenteFruizione'
-                  qualsiasi: '#/components/schemas/FiltroMittenteQualsiasi'
+                  erogazione_soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  fruizione_applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'fruizioni'
+                  erogazione_applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'        
+                  erogazione_token_info: '#/components/schemas/FiltroMittenteTokenClaimSoggetto' # utilizzabile solamente in filtri con tipologia transazioni 'erogazioni'
+                  token_info: '#/components/schemas/FiltroMittenteTokenClaim'
+                  indirizzo_ip:  '#/components/schemas/FiltroMittenteIndirizzoIP'           
               oneOf:
-                - $ref: '#/components/schemas/FiltroMittenteErogazione'
-                - $ref: '#/components/schemas/FiltroMittenteFruizione'
-                - $ref: '#/components/schemas/FiltroMittenteQualsiasi'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
+                - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo'
+                - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaim' 
+                - $ref: '#/components/schemas/FiltroMittenteTokenClaimSoggetto'
+                - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
             esito:
               $ref: '#/components/schemas/FiltroEsito'
 
@@ -2172,12 +2238,8 @@ components:
             claim:
               $ref: 'govway_core.yaml#/components/schemas/TokenClaimEnum'
             soggetto:
-              discriminator:
-                propertyName: tipo
-                mapping:
-                  erogazione: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
-              oneOf:
-                - $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName'
+              $ref: 'govway_core.yaml#/components/schemas/BaseOggettoWithSimpleName' # utilizzabile solamente con tipologia di ricerca 'erogazioni'
+
 
     # Ricerche Report Configurazione
 
@@ -2189,14 +2251,7 @@ components:
         tipo:
           $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
         api:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              erogazione: '#/components/schemas/FiltroApiBase'
-              fruizione: '#/components/schemas/FiltroFruizione'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroApiBase'
-            - $ref: '#/components/schemas/FiltroFruizione'
+          $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
 
 
     # Filtri
@@ -2224,29 +2279,15 @@ components:
         versione:
           $ref: 'govway_core.yaml#/components/schemas/Versione'
 
-    FiltroFruizione:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroApiBase'
-        - type: object
-          properties:
-            erogatore:
-              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
-    
-    FiltroErogazione:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroApiBase'
-
-    FiltroApiQualsiasi:
+    FiltroApiSoggetti:
       type: object
       allOf:
       - $ref: '#/components/schemas/FiltroApiBase'
       - type: object
         properties:
-          erogatore:
+          erogatore: # utilizzabile solamente in filtri con tipologia transazioni 'qualsiasi' o 'fruizioni'
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
-          soggetto_remoto:
+          soggetto_remoto: # utilizzabile solamente in filtri con tipologia transazioni 'qualsiasi'
             $ref: 'govway_core.yaml#/components/schemas/SimpleName'
            
     FiltroEsito:
@@ -2260,129 +2301,34 @@ components:
           type: boolean
           default: true
           description: 'informazione utilizzata per escludere le richieste scartate; viene utilizzata solamente nel caso il tipo sia: qualsiasi, fallite, fallite_e_fault'
-        dettaglio:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              qualsiasi: '#/components/schemas/DettaglioEsitoSingleCode'
-              ok: '#/components/schemas/DettaglioEsitoSingleCode'
-              fallite: '#/components/schemas/DettaglioEsitoSingleCode'
-              fallite_e_fault: '#/components/schemas/DettaglioEsitoSingleCode'
-              errori_consegna: '#/components/schemas/DettaglioEsitoSingleCode'
-              richieste_scartate: '#/components/schemas/DettaglioEsitoSingleCode'
-              personalizzato: '#/components/schemas/DettaglioEsitoListCode'
-          oneOf: 
-            - $ref: '#/components/schemas/DettaglioEsitoSingleCode' 
-            - $ref: '#/components/schemas/DettaglioEsitoListCode'
-    DettaglioEsitoSingleCode:
-      type: object
-      properties:
-        codice: 
+        codice: # da utilizzare solamente se il tipo di ricerca e' diverso da personalizzato
           type: integer
-          format: int32   
-    DettaglioEsitoListCode:
-      type: object
-      properties:
-        codici: 
+          format: int32 
+        codici: # da utilizzare solamente se il tipo di ricerca e' personalizzato
            type: array
            items:
              type: integer
              format: int32
 
-    FiltroMittenteFruizione:
-      type: object
-      description: >-
-        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni di servizio
-      properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteFruizioneEnum'
-        id:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              applicativo:  '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
-              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
-              indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteFruizioneApplicativo' 
-            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
-            - $ref: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
-            - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
-    FiltroMittenteErogazione:
-      type: object
-      description: >-
-        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
-      properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneEnum'
-        id:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              soggetto:  '#/components/schemas/FiltroMittenteErogazioneSoggetto' 
-              applicativo:  '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
-              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
-              indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteErogazioneSoggetto'
-            - $ref: '#/components/schemas/FiltroMittenteErogazioneApplicativo' 
-            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
-            - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
-            - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
-    FiltroMittenteQualsiasi:
-      type: object
-      description: >-
-        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative a fruizioni o erogazioni di servizio
-      required:
-        - tipo
-        - id
-      properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteQualsiasiEnum'
-        id:
-          discriminator:
-            propertyName: tipo
-            mapping:
-              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
-              indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
-            - $ref: '#/components/schemas/FiltroMittenteFruizioneTokenClaim'
-            - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
-    FiltroMittenteErogazioneDistribuzioneSoggettoRemoto:
-      type: object
-      description: >-
-        Descrive le informazioni di filtraggio relative al mittente per la ricerca di transazioni relative ad erogazioni di servizio
-      properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoFiltroMittenteErogazioneSoggettoRemotoEnum'
-        id:
-          discriminator:
-            propertyName: tipo
-            mapping: 
-              identificativo_autenticato: '#/components/schemas/FiltroMittenteIdAutenticato'
-              token_info: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
-              indirizzo_ip: '#/components/schemas/FiltroMittenteIndirizzoIP'
-          oneOf:
-            - $ref: '#/components/schemas/FiltroMittenteIdAutenticato'
-            - $ref: '#/components/schemas/FiltroMittenteErogazioneTokenClaim'
-            - $ref: '#/components/schemas/FiltroMittenteIndirizzoIP'
     FiltroMittenteErogazioneSoggetto:
       type: object
       required:
+      - identificazione
       - soggetto
       properties:
+        identificazione:
+          $ref: '#/components/schemas/TipoFiltroMittenteEnum'
         soggetto:
-         $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+          $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     FiltroMittenteErogazioneApplicativo:
       type: object
       required:
+      - identificazione
       - soggetto
       - applicativo
       properties:
+        identificazione:
+          $ref: '#/components/schemas/TipoFiltroMittenteEnum'
         soggetto:
           $ref: 'govway_core.yaml#/components/schemas/SimpleName'
         applicativo:
@@ -2390,8 +2336,11 @@ components:
     FiltroMittenteFruizioneApplicativo:
       type: object
       required:
+      - identificazione
       - applicativo
       properties:
+        identificazione:
+          $ref: '#/components/schemas/TipoFiltroMittenteEnum'
         applicativo:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
     FiltroMittenteIdAutenticato:
@@ -2400,24 +2349,32 @@ components:
         - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
         - type: object
           required:
-            - autenticazione
+          - identificazione
+          - autenticazione
           properties:
+            identificazione:
+              $ref: '#/components/schemas/TipoFiltroMittenteEnum'
             autenticazione:
               $ref: '#/components/schemas/TipoFiltroMittenteIdentificativoAutenticatoEnum' 
-    FiltroMittenteErogazioneTokenClaim:
+    FiltroMittenteTokenClaimSoggetto:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/FiltroMittenteTokenClaim'
+        - type: object
+          properties:
+            soggetto:
+              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+    FiltroMittenteTokenClaim:
       type: object
       allOf:
         - $ref: '#/components/schemas/FiltroTokenClaimBase'
         - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
         - type: object
+          required:
+          - identificazione
           properties:
-            soggetto:
-              $ref: 'govway_core.yaml#/components/schemas/SimpleName'
-    FiltroMittenteFruizioneTokenClaim:
-      type: object
-      allOf:
-        - $ref: '#/components/schemas/FiltroTokenClaimBase'
-        - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'    
+            identificazione:
+              $ref: '#/components/schemas/TipoFiltroMittenteEnum'
     FiltroTokenClaimBase:
       type: object
       required:
@@ -2430,7 +2387,11 @@ components:
       allOf:
         - $ref: 'govway_core.yaml#/components/schemas/FiltroRicercaId'
         - type: object
+          required:
+          - identificazione
           properties:
+            identificazione:
+              $ref: '#/components/schemas/TipoFiltroMittenteEnum'
             tipo:
               $ref: '#/components/schemas/TipoFiltroMittenteIndirizzoIPEnum' 
       
@@ -2457,35 +2418,15 @@ components:
         - errori_consegna
         - richieste_scartate
         - personalizzato
- 
-    TipoFiltroMittenteFruizioneEnum:
-      type: string
-      enum:
-        - applicativo
-        - identificativo_autenticato
-        - token_info
-        - indirizzo_ip
-        
-    TipoFiltroMittenteErogazioneEnum:
-      type: string
-      enum:
-        - soggetto
-        - applicativo
-        - identificativo_autenticato
-        - token_info
-        - indirizzo_ip
 
-    TipoFiltroMittenteErogazioneSoggettoRemotoEnum:
+    TipoFiltroMittenteEnum:
       type: string
       enum:
-        - identificativo_autenticato
-        - token_info
-        - indirizzo_ip
-        
-    TipoFiltroMittenteQualsiasiEnum:
-      type: string
-      enum:
-        - identificativo_autenticato
+        - erogazione_soggetto     
+        - fruizione_applicativo
+        - erogazione_applicativo
+        - identificativo_autenticato       
+        - erogazione_token_info
         - token_info
         - indirizzo_ip
 

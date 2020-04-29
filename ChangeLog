@@ -1,3 +1,11 @@
+2020-04-29  Andrea Poli <apoli@link.it>
+
+	[ApiRsMonitoraggio]
+	Aggiunta funzionalità OP-982
+	Riviste interfacce OpenAPI 3 dei servizi di configurazione e monitoraggio per utilizzare un discriminator interno agli oggetti elencati nelle strutture oneOf,
+	come richiesto dalla specifica OpenAPI "https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/".
+	Nella precedente versione il discriminator utilizzato era un claim esterno agli oggetti riferiti nella struttura oneOf.
+
 2020-04-24  Andrea Poli <apoli@link.it>
 
 	[GovWayCore]

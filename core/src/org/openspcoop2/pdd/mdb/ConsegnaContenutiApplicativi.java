@@ -647,7 +647,9 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		}else{
 			msgDiag.setServizio(idServizio);
 		}
-		msgDiag.setServizioApplicativo(servizioApplicativo);
+		if(transazioneApplicativoServer!=null) {
+			msgDiag.setServizioApplicativo(servizioApplicativo);
+		}
 
 		// Calcolo Profilo di Collaborazione
 		msgDiag.mediumDebug("Calcolo profilo di collaborazione...");
@@ -2273,14 +2275,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							else {
 								if(responseMessage instanceof OpenSPCoop2RestJsonMessage ){
 									OpenSPCoop2RestJsonMessage msg = responseMessage.castAsRestJson();
-									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 										JsonDeserializer deserializer = new JsonDeserializer();
 										restProblem = deserializer.fromString(msg.getContent(), false);
 									}
 								}
 								else if(responseMessage instanceof OpenSPCoop2RestXmlMessage ){
 									OpenSPCoop2RestXmlMessage msg = responseMessage.castAsRestXml();
-									if(msg.isProblemDetailsForHttpApis_RFC7807()) {
+									if(msg.hasContent() && msg.isProblemDetailsForHttpApis_RFC7807()) {
 										XmlDeserializer deserializer = new XmlDeserializer();
 										restProblem = deserializer.fromNode(msg.getContent(), false);
 									}

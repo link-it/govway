@@ -5,11 +5,9 @@
 	},
 	"tipo": "qualsiasi",
 	"mittente": {
-		"tipo": "indirizzo_ip",
-		"id": {
-			"id": "127.0.0.1",
-			"tipo": "client_ip"
-		}
+		"identificazione": "indirizzo_ip",
+		"id": "127.0.0.1",
+		"tipo": "client_ip"
 	}
 }
 

@@ -71,7 +71,7 @@ public class MonitoraggioEnv {
 		if (nome_soggetto != null) {
 			this.nomeSoggettoLocale = nome_soggetto;
 			if(!SoggettiConfig.existsIdentificativoPorta(this.tipoSoggetto, this.nomeSoggettoLocale)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto '"+this.nomeSoggettoLocale+"' indicato non esiste");
 			}
 		}
 		else {

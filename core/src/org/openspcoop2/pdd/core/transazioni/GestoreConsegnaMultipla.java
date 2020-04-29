@@ -626,6 +626,11 @@ public class GestoreConsegnaMultipla {
 								transazioneService.updateFields(transazioneApplicativoServer.getIdTransazione(), uFieldConsegneMultipleInCorso);
 							}
 						}
+						else if(esitoConsegnaMultiplaCompletata == esito) {
+							if(this.log!=null) {
+								this.log.debug("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' (ConsegnaMultiplaCompletata) già gestita da un altro nodo");
+							}
+						}
 						else {
 							coreException = new CoreException("Trovata transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"', con un esito '"+esito+"' non atteso");
 						}

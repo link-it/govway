@@ -6,8 +6,8 @@ Background:
 @DistribuzioneTemporaleFiltroMittenteTokenInfo
 Scenario Outline: Statistiche Per Distribuzione Temporale con filtraggio per Token claim <nome>
     * def filtro = read('classpath:bodies/reportistica-andamento-temporale-filtro-mittente-token-info.json')
-    * eval filtro.mittente.id.id = '<valore>'
-    * eval filtro.mittente.id.claim = '<nome>'
+    * eval filtro.mittente.id = '<valore>'
+    * eval filtro.mittente.claim = '<nome>'
 
     Given path 'distribuzione-temporale'
     And request filtro

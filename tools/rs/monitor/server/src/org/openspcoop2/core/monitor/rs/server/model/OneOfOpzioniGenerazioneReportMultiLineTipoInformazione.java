@@ -20,8 +20,8 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 /**
-* OneOfTipoInformazioneReportMultiLineValori
+* OneOfOpzioniGenerazioneReportMultiLineTipoInformazione
 */
-public interface OneOfTipoInformazioneReportMultiLineValori {
-
+public interface OneOfOpzioniGenerazioneReportMultiLineTipoInformazione {
+    public TipoInformazioneReportEnum getTipo();
 }

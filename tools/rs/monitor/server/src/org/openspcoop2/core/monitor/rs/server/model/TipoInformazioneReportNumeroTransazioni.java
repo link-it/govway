@@ -19,15 +19,45 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
+import javax.validation.constraints.*;
 
-public class FiltroErogazione extends FiltroApiBase implements OneOfRicercaBaseStatisticaSoggettiApi, OneOfRicercaBaseTransazioneApi {
+import io.swagger.v3.oas.annotations.media.Schema;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.validation.Valid;
+
+public class TipoInformazioneReportNumeroTransazioni  implements OneOfOpzioniGenerazioneReportTipoInformazione {
+  
+  @Schema(required = true, description = "")
+  private TipoInformazioneReportEnum tipo = null;
+ /**
+   * Get tipo
+   * @return tipo
+  **/
+  @Override
+@JsonProperty("tipo")
+  @NotNull
+  @Valid
+  public TipoInformazioneReportEnum getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(TipoInformazioneReportEnum tipo) {
+    this.tipo = tipo;
+  }
+
+  public TipoInformazioneReportNumeroTransazioni tipo(TipoInformazioneReportEnum tipo) {
+    this.tipo = tipo;
+    return this;
+  }
+
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class FiltroErogazione {\n");
-    sb.append("    ").append(FiltroErogazione.toIndentedString(super.toString())).append("\n");
+    sb.append("class TipoInformazioneReportNumeroTransazioni {\n");
+    
+    sb.append("    tipo: ").append(TipoInformazioneReportNumeroTransazioni.toIndentedString(this.tipo)).append("\n");
     sb.append("}");
     return sb.toString();
   }

@@ -19,16 +19,41 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
+import org.openspcoop2.core.monitor.rs.server.model.TipoFiltroMittenteEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class FiltroMittenteErogazioneSoggetto  implements OneOfFiltroMittenteErogazioneId {
+public class FiltroMittenteErogazioneSoggetto  implements OneOfRicercaIntervalloTemporaleMittente, OneOfRicercaStatisticaAndamentoTemporaleMittente, OneOfRicercaStatisticaDistribuzioneApiMittente, OneOfRicercaStatisticaDistribuzioneAzioneMittente, OneOfRicercaStatisticaDistribuzioneEsitiMittente, OneOfRicercaStatisticaDistribuzioneSoggettoLocaleMittente {
+  
+  @Schema(required = true, description = "")
+  private TipoFiltroMittenteEnum identificazione = null;
   
   @Schema(required = true, description = "")
   private String soggetto = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public TipoFiltroMittenteEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public FiltroMittenteErogazioneSoggetto identificazione(TipoFiltroMittenteEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get soggetto
    * @return soggetto
@@ -55,6 +80,7 @@ public class FiltroMittenteErogazioneSoggetto  implements OneOfFiltroMittenteEro
     StringBuilder sb = new StringBuilder();
     sb.append("class FiltroMittenteErogazioneSoggetto {\n");
     
+    sb.append("    identificazione: ").append(FiltroMittenteErogazioneSoggetto.toIndentedString(this.identificazione)).append("\n");
     sb.append("    soggetto: ").append(FiltroMittenteErogazioneSoggetto.toIndentedString(this.soggetto)).append("\n");
     sb.append("}");
     return sb.toString();

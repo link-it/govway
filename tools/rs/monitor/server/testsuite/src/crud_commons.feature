@@ -31,8 +31,8 @@ return formatDateTime;
 * def getDateMinuteZero =
 """
 function() {
-var now = java.time.ZonedDateTime.now().withMinute(0);
-var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mmXXX");
+var now = java.time.ZonedDateTime.now().withMinute(0).withSecond(0);
+var formatter = java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ssXXX");
 var formatDateTime = now.format(formatter);
 return formatDateTime;
 } 

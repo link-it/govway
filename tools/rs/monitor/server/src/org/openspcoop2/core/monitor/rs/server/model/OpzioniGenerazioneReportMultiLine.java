@@ -20,7 +20,6 @@
 package org.openspcoop2.core.monitor.rs.server.model;
 
 import org.openspcoop2.core.monitor.rs.server.model.OpzioniGenerazioneReportBase;
-import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportMultiLine;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -28,22 +27,27 @@ import javax.validation.Valid;
 public class OpzioniGenerazioneReportMultiLine extends OpzioniGenerazioneReportBase {
   
   @Schema(description = "")
-  private TipoInformazioneReportMultiLine tipoInformazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportMultiLineNumeroTransazioni.class, name = "numero_transazioni"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportMultiLineOccupazioneBanda.class, name = "occupazione_banda"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoInformazioneReportMultiLineTempoMedioRisposta.class, name = "tempo_medio_risposta")  })
+  private OneOfOpzioniGenerazioneReportMultiLineTipoInformazione tipoInformazione = null;
  /**
    * Get tipoInformazione
    * @return tipoInformazione
   **/
   @JsonProperty("tipo_informazione")
   @Valid
-  public TipoInformazioneReportMultiLine getTipoInformazione() {
+  public OneOfOpzioniGenerazioneReportMultiLineTipoInformazione getTipoInformazione() {
     return this.tipoInformazione;
   }
 
-  public void setTipoInformazione(TipoInformazioneReportMultiLine tipoInformazione) {
+  public void setTipoInformazione(OneOfOpzioniGenerazioneReportMultiLineTipoInformazione tipoInformazione) {
     this.tipoInformazione = tipoInformazione;
   }
 
-  public OpzioniGenerazioneReportMultiLine tipoInformazione(TipoInformazioneReportMultiLine tipoInformazione) {
+  public OpzioniGenerazioneReportMultiLine tipoInformazione(OneOfOpzioniGenerazioneReportMultiLineTipoInformazione tipoInformazione) {
     this.tipoInformazione = tipoInformazione;
     return this;
   }

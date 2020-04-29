@@ -5,8 +5,8 @@
 	},
     "tipo": "erogazione",
 	"esito": {
-		"tipo": "error",
-		"dettaglio": 10
+		"tipo": "fallite",
+		"codice": 10
 	}
 }
 

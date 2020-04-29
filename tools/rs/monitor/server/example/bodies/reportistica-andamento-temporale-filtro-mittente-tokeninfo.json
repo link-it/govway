@@ -6,19 +6,17 @@
     },
     "tipo": "erogazione",
     "report": {
-      "formato": "csv",
+      "formato": "pdf",
       "tipo": "table",
       "tipo_informazione": {
         "tipo": "numero_transazioni"
       }
     },
     "mittente": {
-      "tipo": "token_info",
-      "id": {
-        "ricerca_esatta": false,
-        "case_sensitive": false,
-        "id": "user",
-        "claim": "username"
-      }
+      "identificazione": "token_info",
+      "ricerca_esatta": false,
+      "case_sensitive": false,
+      "id": "user",
+      "claim": "username"
     }
   }

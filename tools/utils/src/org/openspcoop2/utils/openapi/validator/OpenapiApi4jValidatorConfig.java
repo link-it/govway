@@ -31,6 +31,8 @@ public class OpenapiApi4jValidatorConfig {
 
 	private boolean useOpenApi4J = false;
 	
+	private boolean mergeAPISpec = false;
+	
 	private boolean validateAPISpec = true;
 	
 	private boolean validateRequestQuery = true;
@@ -49,6 +51,14 @@ public class OpenapiApi4jValidatorConfig {
 		this.useOpenApi4J = useOpenApi4J;
 	}
 
+	public boolean isMergeAPISpec() {
+		return this.mergeAPISpec;
+	}
+
+	public void setMergeAPISpec(boolean mergeAPISpec) {
+		this.mergeAPISpec = mergeAPISpec;
+	}
+	
 	public boolean isValidateAPISpec() {
 		return this.validateAPISpec;
 	}

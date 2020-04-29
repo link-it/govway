@@ -19,36 +19,55 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import java.util.List;
+import org.openspcoop2.core.monitor.rs.server.model.FiltroApiBase;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class DettaglioEsitoListCode  implements OneOfFiltroEsitoDettaglio {
+public class FiltroApiSoggetti extends FiltroApiBase {
   
   @Schema(description = "")
-  private List<Integer> codici = null;
+  private String erogatore = null;
+  
+  @Schema(description = "")
+  private String soggettoRemoto = null;
  /**
-   * Get codici
-   * @return codici
+   * Get erogatore
+   * @return erogatore
   **/
-  @JsonProperty("codici")
+  @JsonProperty("erogatore")
   @Valid
-  public List<Integer> getCodici() {
-    return this.codici;
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getErogatore() {
+    return this.erogatore;
   }
 
-  public void setCodici(List<Integer> codici) {
-    this.codici = codici;
+  public void setErogatore(String erogatore) {
+    this.erogatore = erogatore;
   }
 
-  public DettaglioEsitoListCode codici(List<Integer> codici) {
-    this.codici = codici;
+  public FiltroApiSoggetti erogatore(String erogatore) {
+    this.erogatore = erogatore;
     return this;
   }
 
-  public DettaglioEsitoListCode addCodiciItem(Integer codiciItem) {
-    this.codici.add(codiciItem);
+ /**
+   * Get soggettoRemoto
+   * @return soggettoRemoto
+  **/
+  @JsonProperty("soggetto_remoto")
+  @Valid
+ @Pattern(regexp="^[0-9A-Za-z]+$") @Size(max=255)  public String getSoggettoRemoto() {
+    return this.soggettoRemoto;
+  }
+
+  public void setSoggettoRemoto(String soggettoRemoto) {
+    this.soggettoRemoto = soggettoRemoto;
+  }
+
+  public FiltroApiSoggetti soggettoRemoto(String soggettoRemoto) {
+    this.soggettoRemoto = soggettoRemoto;
     return this;
   }
 
@@ -56,9 +75,10 @@ public class DettaglioEsitoListCode  implements OneOfFiltroEsitoDettaglio {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class DettaglioEsitoListCode {\n");
-    
-    sb.append("    codici: ").append(DettaglioEsitoListCode.toIndentedString(this.codici)).append("\n");
+    sb.append("class FiltroApiSoggetti {\n");
+    sb.append("    ").append(FiltroApiSoggetti.toIndentedString(super.toString())).append("\n");
+    sb.append("    erogatore: ").append(FiltroApiSoggetti.toIndentedString(this.erogatore)).append("\n");
+    sb.append("    soggettoRemoto: ").append(FiltroApiSoggetti.toIndentedString(this.soggettoRemoto)).append("\n");
     sb.append("}");
     return sb.toString();
   }

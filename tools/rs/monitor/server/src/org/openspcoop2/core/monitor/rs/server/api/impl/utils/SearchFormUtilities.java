@@ -103,7 +103,7 @@ public class SearchFormUtilities {
 		}
 		if(nomeSoggettoLocale!=null) {
 			if(!SoggettiConfig.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto '"+nomeSoggettoLocale+"' indicato non esiste");
 			}
 			searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 			searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
@@ -126,7 +126,7 @@ public class SearchFormUtilities {
 		}
 		if(nomeSoggettoLocale!=null) {
 			if(!SoggettiConfig.existsIdentificativoPorta(tipoSoggettoLocale, nomeSoggettoLocale)) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto indicato non esiste");
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto '"+nomeSoggettoLocale+"' indicato non esiste");
 			}
 			request.overrideParameter(CostantiExporter.SOGGETTO_LOCALE,tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 		}

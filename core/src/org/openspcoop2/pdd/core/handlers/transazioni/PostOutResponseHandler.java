@@ -57,6 +57,7 @@ import org.openspcoop2.pdd.core.transazioni.Transaction;
 import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.protocol.engine.RequestInfo;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.diagnostica.IDiagnosticProducer;
 import org.openspcoop2.protocol.sdk.diagnostica.MsgDiagnostico;
 import org.openspcoop2.protocol.sdk.dump.IDumpProducer;
@@ -385,6 +386,14 @@ public class PostOutResponseHandler extends LastPositionHandler implements  org.
 					}
 					
 					int code = context.getEsito().getCode();
+					
+					// ** Consegna Multipla **
+					// NOTA: l'esito deve essere compreso solo dopo aver capito se le notifiche devono essere consegna o meno poichè le notifiche stesse si basano sullo stato di come è terminata la transazione sincrona
+					boolean consegnaMultipla = PostOutResponseHandler_TransazioneUtilities.isConsegnaMultipla(context);
+					if(consegnaMultipla) {
+						code = esitiProperties.convertoToCode(EsitoTransazioneName.CONSEGNA_MULTIPLA);
+					}
+					
 					String codeAsString = code+"";
 					if(esitiDaRegistrare.contains(codeAsString)==false){
 						String msg = "Transazione ID["+idTransazione+"] non salvata nello storico come richiesto dalla configurazione del tracciamento: esito [name:"+esitiProperties.getEsitoName(context.getEsito().getCode())+" code:"+codeAsString+"]";

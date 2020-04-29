@@ -333,10 +333,10 @@ public class Converter {
 				((TransazioneExtDettaglioRichiesta)richiesta).setTipo(methodEnum);
 			}
 			if(this.richiesta_urlInvocazione) {
-				((TransazioneExtDettaglioRichiesta)richiesta).setUrlInvocazione(transazioneDB.getUrlInvocazione());
+				((TransazioneExtDettaglioRichiesta)richiesta).setUrlInvocazione(normalizeUrl(transazioneDB.getUrlInvocazione()));
 			}
 			if(this.richiesta_connettore) {
-				((TransazioneExtDettaglioRichiesta)richiesta).setConnettore(transazioneDB.getLocationConnettore());
+				((TransazioneExtDettaglioRichiesta)richiesta).setConnettore(normalizeUrl(transazioneDB.getLocationConnettore()));
 			}
 			if(this.messaggi_duplicati) {
 				((TransazioneExtDettaglioRichiesta)richiesta).setDuplicatiMessaggio(transazioneDB.getDuplicatiRichiesta());
@@ -369,10 +369,10 @@ public class Converter {
 			}
 			if(this.richiesta_urlInvocazione) {
 				if(TransazioneRuoloEnum.FRUIZIONE.equals(ruoloTraccia)){
-					((TransazioneDettaglioRichiesta)richiesta).setUrlInvocazione(transazioneDB.getLocationConnettore());
+					((TransazioneDettaglioRichiesta)richiesta).setUrlInvocazione(normalizeUrl(transazioneDB.getLocationConnettore()));
 				}
 				else {
-					((TransazioneDettaglioRichiesta)richiesta).setUrlInvocazione(transazioneDB.getUrlInvocazione());
+					((TransazioneDettaglioRichiesta)richiesta).setUrlInvocazione(normalizeUrl(transazioneDB.getUrlInvocazione()));
 				}
 			}
 			if(this.messaggi_contenuti) {
@@ -714,6 +714,15 @@ public class Converter {
 		
 		return transazione;
 
+	}
+	
+	private String normalizeUrl(String url) {
+		if(url!=null) {
+			if(url.startsWith("[") && url.contains("] ") && !url.endsWith("] ")) {
+				return url.substring(url.indexOf("] ")+2);
+			}
+		}
+		return url;
 	}
 	
 	private TransazioneExtInformazioniSoggetto _newTransazioneSoggetto(String tipo, String codice, String indirizzo) {

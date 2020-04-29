@@ -285,7 +285,7 @@ public class SavedMessage implements java.io.Serializable {
 	 * @param msg Messaggio.
 	 * 
 	 */
-	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless) throws UtilsException{
+	public void save(OpenSPCoop2Message msg, boolean isRichiesta, boolean portaDiTipoStateless, boolean consumeMessage) throws UtilsException{
 
 		if( !portaDiTipoStateless ) {
 			StateMessage stateMsg = (isRichiesta) ?  
@@ -325,7 +325,7 @@ public class SavedMessage implements java.io.Serializable {
 					
 					// Save bytes message
 					String pathBytes = saveDir + this.keyMsgBytes;
-					this.saveMessageBytes(pathBytes,msg);
+					this.saveMessageBytes(pathBytes,msg, consumeMessage);
 					
 					// Save message context
 					String pathContext = saveDir + this.keyMsgContext;
@@ -336,7 +336,7 @@ public class SavedMessage implements java.io.Serializable {
 					
 					// Save bytes message
 					java.io.ByteArrayOutputStream bout = new java.io.ByteArrayOutputStream();
-					msg.writeTo(bout,true);
+					msg.writeTo(bout,consumeMessage);
 					bout.flush();
 					bout.close();
 					//System.out.println("---------SALVO RISPOSTA: "+msgByte.toString());
@@ -377,7 +377,7 @@ public class SavedMessage implements java.io.Serializable {
 		}
 
 	}     
-	private void saveMessageBytes(String path,OpenSPCoop2Message msg) throws UtilsException{
+	private void saveMessageBytes(String path,OpenSPCoop2Message msg, boolean consumeMessage) throws UtilsException{
 
 		FileOutputStream fos = null;
 		try{
@@ -389,7 +389,7 @@ public class SavedMessage implements java.io.Serializable {
 
 			fos = new FileOutputStream(path);
 			// Scrittura Messaggio su FileSystem
-			msg.writeTo(fos,true);
+			msg.writeTo(fos,consumeMessage);
 			fos.close();
 
 		}catch(Exception e){

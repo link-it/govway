@@ -7,7 +7,7 @@
 	
 	"api": {
 		"nome": "PetStorebd1445b7aaef414ec6b8fd8991",
-		"versione": "1"
+		"versione": 1
 	},
 	"azione": "PUT_pet"
 	

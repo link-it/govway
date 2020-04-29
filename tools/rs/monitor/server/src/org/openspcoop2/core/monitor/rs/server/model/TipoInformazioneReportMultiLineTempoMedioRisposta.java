@@ -19,57 +19,58 @@
  */
 package org.openspcoop2.core.monitor.rs.server.model;
 
-import org.openspcoop2.core.monitor.rs.server.model.FiltroApiSoggetti;
-import org.openspcoop2.utils.service.beans.TransazioneRuoloEnum;
+import org.openspcoop2.core.monitor.rs.server.model.TempoMedioRispostaTipi;
+import org.openspcoop2.core.monitor.rs.server.model.TipoInformazioneReportEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class RicercaConfigurazioneApi  {
+public class TipoInformazioneReportMultiLineTempoMedioRisposta  implements OneOfOpzioniGenerazioneReportMultiLineTipoInformazione {
   
   @Schema(required = true, description = "")
-  private TransazioneRuoloEnum tipo = null;
+  private TipoInformazioneReportEnum tipo = null;
   
   @Schema(description = "")
-  private FiltroApiSoggetti api = null;
+  private TempoMedioRispostaTipi tempoMedioRisposta = null;
  /**
    * Get tipo
    * @return tipo
   **/
-  @JsonProperty("tipo")
+  @Override
+@JsonProperty("tipo")
   @NotNull
   @Valid
-  public TransazioneRuoloEnum getTipo() {
+  public TipoInformazioneReportEnum getTipo() {
     return this.tipo;
   }
 
-  public void setTipo(TransazioneRuoloEnum tipo) {
+  public void setTipo(TipoInformazioneReportEnum tipo) {
     this.tipo = tipo;
   }
 
-  public RicercaConfigurazioneApi tipo(TransazioneRuoloEnum tipo) {
+  public TipoInformazioneReportMultiLineTempoMedioRisposta tipo(TipoInformazioneReportEnum tipo) {
     this.tipo = tipo;
     return this;
   }
 
  /**
-   * Get api
-   * @return api
+   * Get tempoMedioRisposta
+   * @return tempoMedioRisposta
   **/
-  @JsonProperty("api")
+  @JsonProperty("tempo_medio_risposta")
   @Valid
-  public FiltroApiSoggetti getApi() {
-    return this.api;
+  public TempoMedioRispostaTipi getTempoMedioRisposta() {
+    return this.tempoMedioRisposta;
   }
 
-  public void setApi(FiltroApiSoggetti api) {
-    this.api = api;
+  public void setTempoMedioRisposta(TempoMedioRispostaTipi tempoMedioRisposta) {
+    this.tempoMedioRisposta = tempoMedioRisposta;
   }
 
-  public RicercaConfigurazioneApi api(FiltroApiSoggetti api) {
-    this.api = api;
+  public TipoInformazioneReportMultiLineTempoMedioRisposta tempoMedioRisposta(TempoMedioRispostaTipi tempoMedioRisposta) {
+    this.tempoMedioRisposta = tempoMedioRisposta;
     return this;
   }
 
@@ -77,10 +78,10 @@ public class RicercaConfigurazioneApi  {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("class RicercaConfigurazioneApi {\n");
+    sb.append("class TipoInformazioneReportMultiLineTempoMedioRisposta {\n");
     
-    sb.append("    tipo: ").append(RicercaConfigurazioneApi.toIndentedString(this.tipo)).append("\n");
-    sb.append("    api: ").append(RicercaConfigurazioneApi.toIndentedString(this.api)).append("\n");
+    sb.append("    tipo: ").append(TipoInformazioneReportMultiLineTempoMedioRisposta.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tempoMedioRisposta: ").append(TipoInformazioneReportMultiLineTempoMedioRisposta.toIndentedString(this.tempoMedioRisposta)).append("\n");
     sb.append("}");
     return sb.toString();
   }
