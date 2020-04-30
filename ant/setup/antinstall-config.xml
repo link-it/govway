@@ -42,6 +42,7 @@
 
 	<hidden property="antinstaller_console_env" value="runtime"/>
 	<hidden property="antinstaller_stats_env" value="runtime"/>
+	<hidden property="antinstaller_batch_dir" value=""/>
 
     </page>
 
@@ -245,6 +246,9 @@
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
         </large-select>
 
+	<!-- Utilizzabile su sistemi di provisioning avanzati -->
+	<hidden property="antinstaller_batch_dir" value=""/>
+
     </page>
 
     <page name="informazioniPreliminari_nuovaInstallazione_notPostgresNotOracle" type="input" displayText="Informazioni Dispiegamento"
@@ -281,6 +285,9 @@
             <option value="runtime" text="Utilizza stesso ambiente del Runtime"/>
 	    <option value="batch" text="Generazione tramite Applicazione Batch"/>
         </large-select>
+
+	<!-- Utilizzabile su sistemi di provisioning avanzati -->
+	<hidden property="antinstaller_batch_dir" value=""/>
 
     </page>
 

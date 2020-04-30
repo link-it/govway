@@ -91,6 +91,7 @@
 			antinstaller_index_statistiche=standard/full
 			antinstaller_console_env=runtime/manager
 			antinstaller_stats_env=runtime/batch
+			antinstaller_batch_dir=
 
 		Informazioni DataSource
 			antinstaller_driver_jdbc_classname=org.postgresql.Driver
@@ -306,10 +307,34 @@
 					defaultValue="${antinstaller_directory_lavoro_openspcoop}" regexp="\\" replace="/" />
 				<propertyregex property="log_dir" override="true" input="${antinstaller_directory_log_openspcoop}" 
 					defaultValue="${antinstaller_directory_log_openspcoop}" regexp="\\" replace="/" />
+				<if>
+					<not>
+						<equals arg1="${antinstaller_batch_dir}" arg2="" />
+					</not>
+					<then>
+						<propertyregex property="batch_dir" override="true" input="${antinstaller_batch_dir}" 
+							defaultValue="${antinstaller_batch_dir}" regexp="\\" replace="/" />
+					</then>
+					<else>
+						<property name="batch_dir" value=""/>
+					</else>
+				</if>
+
 			</then>
 	    		<else>
 	    			<property name="work_dir" value="${antinstaller_directory_lavoro_openspcoop}"/>
 				<property name="log_dir" value="${antinstaller_directory_log_openspcoop}"/>
+				<if>
+					<not>
+						<equals arg1="${antinstaller_batch_dir}" arg2="" />
+					</not>
+					<then>
+						<property name="batch_dir" value="${antinstaller_batch_dir}"/>
+					</then>
+					<else>
+						<property name="batch_dir" value=""/>
+					</else>
+				</if>
 	    		</else>
 		</if>	
 
@@ -336,6 +361,24 @@
                                 <echo message="DOPO Normalizzazione LogDIR [${log_dir}]"/>
                         </then>
                 </if> 
+		<if>
+			<not>
+				<equals arg1="${batch_dir}" arg2="" />
+			</not>
+			<then>
+				<if>
+				        <matches pattern=".*/$" string="${batch_dir}" /> 
+				        <then>
+				                <echo message="Normalizzazione BatchDIR [${batch_dir}]"/>
+				                <script language="javascript">
+				                        var w = project.getProperty("batch_dir");
+				                        project.setProperty("batch_dir", w.substring(0,w.length()-1));
+				                </script>
+				                <echo message="DOPO Normalizzazione BatchDIR [${batch_dir}]"/>
+				        </then>
+				</if>
+			</then>
+		</if>
 		
 		<!-- Impostazione Trasparente -->
 		<if>

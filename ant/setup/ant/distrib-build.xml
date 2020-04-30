@@ -479,11 +479,25 @@
 					<param name="token" value="/var/govway/log"/>
 					<param name="value" value="${log_dir}"/>
 				</antcall>
-				<antcall target="replace_token">
-				    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
-					<param name="token" value="/var/govway/log"/>
-					<param name="value" value="${log_dir}"/>
-				</antcall>
+				<if>
+					<not>
+						<equals arg1="${batch_dir}" arg2="" />
+					</not>
+					<then>
+						<antcall target="replace_token">
+						    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
+							<param name="token" value="/var/govway/log"/>
+							<param name="value" value="${batch_dir}"/>
+						</antcall>
+					</then>
+					<else>
+						<antcall target="replace_token">
+						    <param name="file" value="${dist}/batch/crond/govway_batch_crond"/>
+							<param name="token" value="/var/govway/log"/>
+							<param name="value" value="${log_dir}"/>
+						</antcall>
+					</else>
+				</if>
 			</then>
 		</if>
 	</target>

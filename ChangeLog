@@ -1,3 +1,11 @@
+2020-04-30  Tito Flagella <pintori@link.it>
+
+	* [InstallerVersioneBinaria]
+	Risolti i seguenti problemi presenti nel batch per la generazione delle statistiche prodotto con l'installer:
+	- Corretto file 'govway_batch.sh' che non differenziava il PID file per esecuzione di batch differente (es. generazioneOraria, generazioneGiornaliera ...)
+	- Corretto file 'govway_batch_crond' per suggerire la generazione delle statistiche settimanali e mensili rispettivamente alle 02:00 e alle 02:30
+	- Aggiunta proprietà 'antinstaller_batch_dir' utilizzabile per indicare una directory differente dove dispiegare i batch (informazione presente all'interno del file 'govway_batch_crond')
+
 2020-04-30  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]

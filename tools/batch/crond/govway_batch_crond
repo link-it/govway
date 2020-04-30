@@ -6,8 +6,8 @@
 # Per la generazione delle statistiche giornaliere si consiglia un'esecuzione ogni 30 minuti del batch
 #*/30 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheGiornaliere.sh false
 #
-# Per la generazione delle statistiche settimanali si consiglia un'esecuzione ogni ora del batch con una configurazione disabilitata relativamente alla generazione dell'ultimo intervallo
-#*/60 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheSettimanali.sh false
+# Per la generazione delle statistiche settimanali si consiglia un'esecuzione del batch alle 02:00 con una configurazione disabilitata relativamente alla generazione dell'ultimo intervallo
+#0 2 * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheSettimanali.sh false
 #
-# Per la generazione delle statistiche settimanali si consiglia un'esecuzione ogni due ore del batch con una configurazione disabilitata relativamente alla generazione dell'ultimo intervallo
-#*/120 * * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheMensili.sh false
+# Per la generazione delle statistiche mensili si consiglia un'esecuzione del batch alle 02:30 con una configurazione disabilitata relativamente alla generazione dell'ultimo intervallo
+#30 2 * * * root /var/govway/log/batch/crond/govway_batch.sh /var/govway/log/batch/generatoreStatistiche generaStatisticheMensili.sh false

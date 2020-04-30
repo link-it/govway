@@ -16,7 +16,8 @@ BATCH_COMMAND="$2"
 [ -x "$BATCH_DIRECTORY/$BATCH_COMMAND" ] || { echo "Il comando [$BATCH_DIRECTORY/${BATCH_COMMAND}] non possiede i diritti di esecuzione"; exit 6; }
 
 # Batch Tipo
-BATCH_TIPO=$(basename ${BATCH_DIRECTORY})
+# BATCH_TIPO=$(basename ${BATCH_DIRECTORY})
+BATCH_TIPO=`echo ${BATCH_COMMAND=} | cut -f 1 -d '.'`
 
 # PID File
 PID_FILE="/var/govway/log/govway_batch_$BATCH_TIPO.pid"
