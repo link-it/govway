@@ -1,3 +1,28 @@
+2020-04-30  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Aggiunta funzionalità OP-973
+	Aggiunta la possibilità di selezionare un elemento tra quelli di una lista scrivendo il criterio di ricerca all'interno della lista stessa.
+	Aggiunto inoltre il supporto dell'highlight della keyword di ricerca effettuata sia all'interno delle liste che nei campi con funzionalità di 'autocomplete'.
+	Per la console di monitoraggio sono stati effettuati i seguenti miglioramenti:
+	- Personalizzazione del comportamento di default utilizzato dalla console per il criterio di ricerca 'Escludi Richieste Scartate' nella sezione Transazioni e Statistiche
+	- Quando si ritorna alla lista delle transazioni, dopo aver visionato il dettaglio di una transazione, 
+          viene mantenuto chiuso il filtro di ricerca in modo da permettere una immediata consultazione di una transazione successiva presente nell'elenco.
+	- Risolto il problema di visualizzazione dei contenuti di messaggi formato da solamente 2 caratteri (es. un semplice text/plain 'ok'). 
+	  Attualmente veniva erroneamente visualizzato un messaggio vuoto.
+	- Durante il download dei contenuti applicativi, viene adesso utilizzato la corretta estensione del file (in relazione al Content-Type) 
+	  anche per una registrazione avvenuto con la funzionalità di 'Dump Binario'. Attualmente veniva utilizzata sempre l'estensione '.bin'.
+	- Nei report a torta, sulla destra di ogni voce presente nella legenda viene adesso riportato anche il numero di record oltra la %.
+	- Aggiornato il titolo associato ai Report per API; viene usato:
+	  'Distribuzione per Erogazioni' se la tipologia del filtro è abilitata su erogazione;
+	  'Distrubuzione per Fruizioni' se fruizione;
+	  'Distribuzione per API' altrimenti.
+	- Spostata la 'Ricerca per ID Transazione' come primo criterio di ricerca per identificativo.
+	Per la console di configurazione sono stati effettuati i seguenti miglioramenti:
+	- Corretto messaggio di warning che veniva riportato durante la modifica di un referente di API (Profilo SPCoop); veniva visualizzato un id numerico al posto del nome del soggetto.
+	- La configurazione sui connettori multipli veniva erroneamente persa se venivano effettuate modifica nella sezione 'URL di Invocazione'.
+	- Mediante il processo di importazione di una govlet era possibile creare un nuovo applicativo o soggetto con le stesse credenziali di uno già esistente. Il problema è stato risolto.
+
 2020-04-29  Andrea Poli <apoli@link.it>
 
 	[ApiRsMonitoraggio]

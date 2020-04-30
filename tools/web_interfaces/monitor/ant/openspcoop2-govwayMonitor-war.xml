@@ -179,8 +179,8 @@
 			</lib>
 			<lib dir="${required_lib_govwayMonitor}/faces">
 				<include name="richfaces-api-3.3.4.Final.jar" />
-				<include name="richfaces-ui-3.3.4.Final.jar" />
-				<include name="richfaces-impl-3.3.4.Final-gov4j-1.jar" />
+				<include name="richfaces-ui-3.3.4.Final-gov4j-2.jar" />
+				<include name="richfaces-impl-3.3.4.Final-gov4j-2.jar" />
 				<include name="jsf-facelets-1.1.15.jar" />
 				<include name="aopalliance-1.0.jar" />
 				<include name="cglib-nodep-2.2.3.jar" />

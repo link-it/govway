@@ -287,9 +287,9 @@
     </library>
     <library name="openspcoop2_3.3_lib_faces" systemlibrary="false">
         <archive path="/op2_3.3.dev/lib/faces/richfaces-api-3.3.4.Final.jar"/>
-        <archive path="/op2_3.3.dev/lib/faces/richfaces-impl-3.3.4.Final-gov4j-1.jar"/>
+        <archive path="/op2_3.3.dev/lib/faces/richfaces-impl-3.3.4.Final-gov4j-2.jar"/>
         <!-- <archive path="/op2_3.3.dev/lib/faces/richfaces-impl-jsf2-3.3.4.Final.jar"/> -->
-        <archive path="/op2_3.3.dev/lib/faces/richfaces-ui-3.3.4.Final.jar"/>
+        <archive path="/op2_3.3.dev/lib/faces/richfaces-ui-3.3.4.Final-gov4j-2.jar"/>
         <archive path="/op2_3.3.dev/lib/faces/jsf-api-1.2_15-06.jar"/>
 	<archive path="/op2_3.3.dev/lib/faces/jsf-impl-1.2_15-06.jar"/>
     </library>

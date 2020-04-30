@@ -240,7 +240,7 @@ public class DistribuzionePerSABean<T extends ResBase> extends BaseStatsMBean<T,
 		}
 
 
-		return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY);
+		return MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_MITTENTE_LABEL_SUFFIX_KEY);
 	}
 	
 	public boolean isShowColumnSoggetto() {

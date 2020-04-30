@@ -415,6 +415,7 @@ function chartMapping(_dataJson, _type, _size) {
     dpChart.showLegend = _dataJson.hasOwnProperty('mostraLegenda')?_dataJson.mostraLegenda:true;
     dpChart.limit = _dataJson.hasOwnProperty('limit')?parseInt(_dataJson.limit,10):-1;
     dpChart.limitLegenda = _dataJson.hasOwnProperty('limitLegenda')?parseInt(_dataJson.limitLegenda,10):-1;
+    dpChart.valueOnLegend = _dataJson.hasOwnProperty('valueOnLegend')?_dataJson.valueOnLegend:false;
     dpChart.rotation = _dataJson.hasOwnProperty('xAxisLabelDirezione')?Math.abs(_dataJson.xAxisLabelDirezione):0;
     dpChart.rotation = dpChart.rotation != 0?-dpChart.rotation:0;
     dpChart.xAxisGridLine = _dataJson.hasOwnProperty('xAxisGridLine')?_dataJson.xAxisGridLine:true;
@@ -481,7 +482,7 @@ function chartMapping(_dataJson, _type, _size) {
     } else {
         if(_dataJson.hasOwnProperty("dati") && _dataJson.hasOwnProperty("coloriAutomatici")) {
             serieRef = _dataJson.dati.map(function(item){
-                return labelUnescape(item.label);
+                return { label: labelUnescape(item.label), value: item.value };
             });
             serie.push(_dataJson.dati.map(function(item) {
                 dpChart.pieTotal += item.value;
@@ -501,13 +502,17 @@ function chartMapping(_dataJson, _type, _size) {
             else serieColors = colorSerie(serieRef.length - 1);
             dpChart.legendTooltip = {};
             serieRef = serieRef.map(function(key, index) {
-                dpChart.legendTooltip[index] = key;
+                dpChart.legendTooltip[index] = key.label;
                 if(dpChart.limitLegenda !== -1) {
-                    if(dpChart.limitLegenda < key.length) {
-                        return (index +1) + '. ' + key.substr(0, dpChart.limitLegenda) + '...';
+                    if(dpChart.limitLegenda < key.label.length) {
+                        var _txt = (index +1) + '. ' + key.label.substr(0, dpChart.limitLegenda) + '...';
+                        return (dpChart.valueOnLegend)?_txt+' ('+ key.value + ')':_txt;
                     }
                 }
-                return (index +1) + '. ' + key;
+                if(dpChart.valueOnLegend) {
+                    return (index +1) + '. ' + key.label + ' (' + key.value + ')';
+                }
+                return (index +1) + '. ' + key.label;
             });
         }
     }
@@ -629,4 +634,5 @@ function setPolyfill() {
 function labelUnescape(_label) {
     return _label.replace('&apos;',"'");
 }
+
 

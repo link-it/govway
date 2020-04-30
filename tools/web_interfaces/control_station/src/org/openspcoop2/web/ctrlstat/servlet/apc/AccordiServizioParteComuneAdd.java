@@ -639,7 +639,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
+						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+						false);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -734,7 +735,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 						this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 						this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 						this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
+						this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+						false);
 
 				// aggiunta campi custom
 				dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);
@@ -915,7 +917,8 @@ public final class AccordiServizioParteComuneAdd extends Action {
 							this.accordoCooperazione, this.statoPackage, this.statoPackage, this.tipoAccordo, this.validazioneDocumenti, 
 							this.tipoProtocollo, listaTipiProtocollo,false,false,this.protocolFactory,
 							this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-							this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc);
+							this.nuovaVersione, gestioneNuovaVersione_min, nuovaVersioneRidefinisciInterfaccia, gestioneNuovaVersione_oldIdApc,
+							false);
 
 					// aggiunta campi custom
 					dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties);

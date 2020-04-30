@@ -36,7 +36,7 @@
 			<link:prop label="#{msg['stats.search.gruppo']}">
 				<rich:comboBox id="gruppoCombo2" value="#{sf_gruppo}" converter="selectItemConverter"
 					defaultLabel="#{msg['stats.search.gruppo.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.gruppiSelectItemsWidth}"
-					width="416" enableManualInput="false" >
+					width="416" enableManualInput="true" >
 					<f:selectItem itemValue="--" itemLabel="--" />
 					<f:selectItems value="#{sf_gruppi}"/>
 					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>

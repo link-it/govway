@@ -49,19 +49,23 @@ public abstract class AbstractCoreSearchForm {
 	protected boolean executeQuery = false;
 	private boolean aggiornamentoDatiAbilitato = false;
 	private boolean visualizzaSelezioneDimensionePagina = false;
+	private boolean visualizzaFiltroAperto = true;
 	
 	public String aggiorna() {
 		this.initParametriPaginazione();
+		this.aggiornaStatoFiltroRicercaEseguiAggiorna();
 		return this.eseguiAggiorna();
 	}
 	
 	public String filtra() {
 		this.initParametriPaginazione();
+		this.aggiornaStatoFiltroRicercaEseguiFiltra();
 		return this.eseguiFiltra();
 	}
 
 	public String ripulisci(){
 		this.resetParametriPaginazione();
+		this.initStatoFiltroRicerca();
 		return this.ripulisciValori();
 	}
 	
@@ -95,6 +99,7 @@ public abstract class AbstractCoreSearchForm {
 	
 	public void initSearchListener(ActionEvent ae){
 		this.resetParametriPaginazione();
+		this.initStatoFiltroRicerca();
 	}
 	
 	public Integer getNumeroPagine() {
@@ -200,5 +205,25 @@ public abstract class AbstractCoreSearchForm {
 
 	public void setVisualizzaSelezioneDimensionePagina(boolean visualizzaSelezioneDimensionePagina) {
 		this.visualizzaSelezioneDimensionePagina = visualizzaSelezioneDimensionePagina;
+	}
+
+	public boolean isVisualizzaFiltroAperto() {
+		return this.visualizzaFiltroAperto;
+	}
+
+	public void setVisualizzaFiltroAperto(boolean visualizzaFiltroAperto) {
+		this.visualizzaFiltroAperto = visualizzaFiltroAperto;
+	}
+	
+	protected void initStatoFiltroRicerca () {
+		this.setVisualizzaFiltroAperto(true);
+	}
+	
+	protected void aggiornaStatoFiltroRicercaEseguiFiltra () {
+		this.setVisualizzaFiltroAperto(false);
+	}
+	
+	protected void aggiornaStatoFiltroRicercaEseguiAggiorna () {
+		this.setVisualizzaFiltroAperto(false);
 	}
 }

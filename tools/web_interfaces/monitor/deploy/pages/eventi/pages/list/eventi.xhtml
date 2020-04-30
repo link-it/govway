@@ -12,7 +12,7 @@
 			#crumbs {display: none;	}					
 		</style>
 		<a4j:outputPanel id="panelPaginaRicerca" layout="block">
-			<rich:simpleTogglePanel id="panelFiltri1" opened="true"
+			<rich:simpleTogglePanel id="panelFiltri1" opened="#{searchFormEventi.visualizzaFiltroAperto}"
 				label="Eventi" switchType="client">
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">

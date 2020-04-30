@@ -1423,4 +1423,14 @@ Context, Cloneable {
 	public void setVisualizzaLiveCustomColonnaRuoloTransazioneEnabled(boolean visualizzaLiveCustomColonnaRuoloTransazioneEnabled) {
 		this.visualizzaLiveCustomColonnaRuoloTransazioneEnabled = visualizzaLiveCustomColonnaRuoloTransazioneEnabled;
 	}
+	
+	@Override
+	protected void initStatoFiltroRicerca() {
+		if(this.isLive()) {
+			this.setVisualizzaFiltroAperto(false);
+		} else {
+			super.initStatoFiltroRicerca();
+		}
+	}
+	
 }

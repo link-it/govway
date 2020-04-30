@@ -12,7 +12,7 @@
 		<c:if test="#{!applicationBean.amministratore}">
 				<link:prop label="#{msg['configurazioniGenerali.search.soggetto']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 					<rich:comboBox width="416" id="sogAssociatoSuggestion" value="#{sf_bean.tipoNomeSoggettoLocale}" defaultLabel="#{msg['configurazioniGenerali.search.soggetto.defaultLabel']}" 
-							directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="false" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
+							directInputSuggestions="true"  converter="selectItemConverter" enableManualInput="true" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl,servizioComboCtr"/>
@@ -50,7 +50,7 @@
 				<link:prop label="#{msg['configurazioniGenerali.search.soggetto']}" rendered="#{sf_bean.showFiltroSoggettoLocale}">
 					<rich:comboBox id="sogErogCombo" value="#{sf_bean.tipoNomeSoggettoLocale}" converter="selectItemConverter"
 						defaultLabel="#{msg['configurazioniGenerali.search.soggetto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-						width="416"   enableManualInput="false">
+						width="416"   enableManualInput="true">
 						<f:selectItem itemValue="--" itemLabel="--"/>
 						<f:selectItems value="#{sf_mbean.soggetti}"  />
 						<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}"	reRender="searchPnl,servizioComboCtr" />

@@ -68,6 +68,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.VALORE_REALE_TORTA_KEY,true);
 		grafico.put(CostantiGrafici.COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 		grafico.put(CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
+		grafico.put(CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA, true);
 
 		boolean occupazioneBanda = false;
 		boolean tempoMedio = false;
@@ -853,6 +854,7 @@ public class JsonStatsUtils {
 		grafico.put(CostantiGrafici.VALORE_REALE_TORTA_KEY,true);
 		grafico.put(CostantiGrafici.COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
 		grafico.put(CostantiGrafici.LIMITE_COLONNE_LEGENDA_KEY, CostantiGrafici.COLONNE_LEGENDA_DEFAULT_VALUE);
+		grafico.put(CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA, true);
 		
 		// calcolo series
 		boolean occupazioneBanda = false;

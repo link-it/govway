@@ -1330,11 +1330,13 @@ public final class PorteApplicativeChange extends Action {
 			pa.setCorrelazioneApplicativa(ca);
 			pa.setIntegrazione(integrazione);
 			
-			if(behaviour!=null && !"".equals(behaviour)){
-				pa.setBehaviour(new PortaApplicativaBehaviour());
-				pa.getBehaviour().setNome(behaviour);
-			}else 
-				pa.setBehaviour(null);
+			if(!porteApplicativeCore.isConnettoriMultipliEnabled()) {
+				if(behaviour!=null && !"".equals(behaviour)){
+					pa.setBehaviour(new PortaApplicativaBehaviour());
+					pa.getBehaviour().setNome(behaviour);
+				}else 
+					pa.setBehaviour(null);
+			}
 
 			if(servizioApplicativo!=null && !"".equals(servizioApplicativo)){
 				// Se il servizioApplicativo e' valorizzato deve esistere un solo SA nella porta applicativa

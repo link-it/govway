@@ -454,7 +454,7 @@ public class GeneralHelper {
 					link.addElement(glAll);
 				}
 				
-				if(idSoggettiOperativi.size() < numeroMassimoSoggettiSelectListSoggettiOperatiti) {	
+				if(idSoggettiOperativi.size() <= numeroMassimoSoggettiSelectListSoggettiOperatiti) {	
 					
 				} else {
 					// Abilita l visualizzazione autocomplete

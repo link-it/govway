@@ -836,6 +836,10 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.dettaglio.utilizzaVisualizzazioneCustomConsegneMultiple.enabled", true, true));
 	}
 	
+	public boolean escludiRichiesteScartateDefaultValue() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.escludiRichiesteScartate.defaultValue", true, true));
+	}
+	
 	/* Properties gestione finestra di export transazioni */
 	
 	public boolean isExportTransazioniZipTracceDefaultValue() throws Exception{

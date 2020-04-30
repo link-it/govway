@@ -406,6 +406,32 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
     	if($( "#iconaPanelListaSpan" ).length > 0){
     		$('#iconaPanelListaSpan').attr('title', '<%=Costanti.TOOLTIP_NASCONDI_FILTRI_RICERCA %>');
     	}
+    	
+    	// reinit select del filtro
+    	if($('select[id^=filterValue_]').length > 0){
+    		// elimino eventuali plugin gia' applicati
+    		$('select[id^=filterValue_]').each(function() {
+    			var wrapper = $( this ).parent();
+    			if(wrapper.attr('id').indexOf('_wrapper') > -1) {
+    				$( this ).appendTo($( this ).parent().parent());
+    				wrapper.remove();
+    				$( this ).css('width','');
+    				$( this ).css('height','');
+    			}
+    			
+    			var checkID = $( this ).attr('id') + '_hidden_chk';
+    			if($( '#' + checkID ).length > 0) {
+    				var val = $( '#' + checkID ).attr('value');
+    				if(val && val == 'true'){
+    					$( this ).searchable({disableInput : false});	
+    				} else {
+    					$( this ).searchable({disableInput : true});	
+    				}
+    			} else {
+    				$( this ).searchable({disableInput : true});
+    			}
+			});
+    	}
     } else {
     	$("#searchForm").removeClass('searchFormOn');
     	$("#searchForm").addClass('searchFormOff');
@@ -429,6 +455,8 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 	 });
 </script>
 <script type="text/javascript" src="js/utils.js"></script>
+<script type="text/javascript" src="js/jquery-on.js"></script>
+<script type="text/javascript" src="js/jquery.searchabledropdown-1.0.8.min.js"></script>
 <tbody>
 		<tr>
 		<td valign=top>
@@ -475,6 +503,7 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 							  	String selezionato = filtro.getSelected();
 								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
 								String classInput = filtro.getStyleClass();
+								String filterId = filterName + "__id";
 							  	%>
 										<tr>
 											<td>
@@ -483,13 +512,22 @@ function togglePanelListaRicerca(panelListaRicercaOpen){
 													<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 
 													<label><%= filtro.getLabel() %></label>
-												  	<select name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
+												  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
 												  	<%
 												  	for (int i = 0; i < values.length; i++) {
 												  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
 												  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
 												  	}
 												  	%></select>
+												  	<%
+												  	String abilitaSearch = "false";
+										      		if(filtro.isAbilitaFiltroOpzioniSelect()){
+										      			abilitaSearch = "true";
+										      		} else {
+										      			abilitaSearch = "false";
+										      		}
+										      		%>
+										      		<input type="hidden" id="<%= filterId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
 												</div>
 											</td>
 										</tr>	

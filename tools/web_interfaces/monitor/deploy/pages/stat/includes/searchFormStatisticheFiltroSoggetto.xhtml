@@ -16,7 +16,7 @@
 					<link:prop label="#{msg['stats.search.soggettoLocale']}" rendered="#{sf_bean.distribuzionePerSoggettoRemota and sf_bean.showFiltroSoggettoLocale}">
 						<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter" defaultLabel="#{msg['stats.search.soggettoLocale.defaultLabel']}"
 										value="#{sf_soggettoLocale}"  listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
-										enableManualInput="false">
+										enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -214,7 +214,7 @@
 					<link:prop label="#{msg['stats.search.soggettoLocale']}" rendered="#{sf_bean.distribuzionePerSoggettoRemota and sf_bean.showFiltroSoggettoLocale}">
 						<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter" defaultLabel="#{msg['stats.search.soggettoLocale.defaultLabel']}"
 										value="#{sf_soggettoLocale}"  listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
-										enableManualInput="false">
+										enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 							<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -229,7 +229,7 @@
 						<link:prop label="#{msg['stats.search.soggettoDestinatario']}" rendered="#{sf_tipologiaRicerca eq 'uscita'}">
 							<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
 								defaultLabel="#{msg['stats.search.soggettoDestinatario.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-								width="416"   enableManualInput="false">
+								width="416"   enableManualInput="true">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItems value="#{sf_soggetti}"  />
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -244,7 +244,7 @@
 							rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
 							<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
 								defaultLabel="#{msg['stats.search.soggettoMittente.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-								width="416"   enableManualInput="false">
+								width="416"   enableManualInput="true">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItems value="#{sf_soggetti}"  />
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -257,7 +257,7 @@
 						<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 							<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 								defaultLabel="#{msg['stats.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-								width="416"   enableManualInput="false">
+								width="416"   enableManualInput="true">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItems value="#{sf_soggetti}"  />
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -284,7 +284,7 @@
 				<link:prop label="#{msg['stats.search.soggettoLocale']}" rendered="#{sf_bean.distribuzionePerSoggettoRemota and sf_bean.showFiltroSoggettoLocale}">
 					<rich:comboBox width="416" id="sogLocaleCombo" converter="selectItemConverter" defaultLabel="#{msg['stats.search.soggettoLocale.defaultLabel']}"
 									value="#{sf_soggettoLocale}"  listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
-									enableManualInput="false">
+									enableManualInput="true">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItems value="#{sf_soggettiLocale}"  />
 								<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -299,7 +299,7 @@
 					<link:prop label="#{msg['stats.search.soggettoDestinatario']}" rendered="#{sf_tipologiaRicerca eq 'uscita'}">
 						<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
 							defaultLabel="#{msg['stats.search.soggettoDestinatario.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-							width="416"   enableManualInput="false">
+							width="416"   enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_soggetti}"  />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -314,7 +314,7 @@
 						rendered="#{sf_tipologiaRicerca eq 'ingresso'}">
 						<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
 							defaultLabel="#{msg['stats.search.soggettoMittente.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-							width="416"   enableManualInput="false">
+							width="416"   enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_soggetti}"  />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>
@@ -327,7 +327,7 @@
 					<link:prop label="#{msg['stats.search.soggettoRemoto']}" rendered="#{sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca}">
 						<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 							defaultLabel="#{msg['stats.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-							width="416"   enableManualInput="false">
+							width="416"   enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_soggetti}"  />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" oncomplete="#{outOfRegionToRefresh}()"/>

@@ -21,7 +21,7 @@
 
 <%@page import="org.apache.commons.lang.StringUtils"%>
 <%@ page session="true" import="java.util.Vector, org.openspcoop2.web.lib.mvc.*" %>
-
+<script type="text/javascript" src="js/autocomplete.js"></script>
 <%
 String iddati = "";
 String ct = request.getContentType();
@@ -206,7 +206,6 @@ String logoTitolo = gd.getLogoHeaderTitolo();
 														    <input id="menuSoggetto_menuAutocomplete" type="text" name="soggettoAutoComplete" value="<%=labelSelezionato %>">
 														  </div>
 													
-													  <script type="text/javascript" src="js/autocomplete.js"></script>
 													  <script type="text/javascript">
 														  autocomplete(document.getElementById("menuSoggetto_menuAutocomplete"), soggettiSuggestionList);
 													  </script>

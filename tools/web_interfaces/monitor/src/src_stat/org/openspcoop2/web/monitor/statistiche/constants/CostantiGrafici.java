@@ -90,6 +90,7 @@ public class CostantiGrafici {
 	public static final int LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE;
 	public static final String LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY;
 	public static final int LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.LIMITE_LUNGHEZZA_LABEL_LEGENDA_DEFAULT_VALUE;
+	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA;
 	
 	public static final String OK_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_KEY;
 	public static final String OK_LABEL= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.OK_LABEL;
@@ -153,6 +154,8 @@ public class CostantiGrafici {
 	public static final String DISTRIBUZIONE_SA_TOKEN_USERNAME_FILE_NAME = "distribuzione_token_username";
 	public static final String DISTRIBUZIONE_SA_TOKEN_ISSUER_FILE_NAME = "distribuzione_token_issuer";
 	public static final String DISTRIBUZIONE_SERVIZIO_FILE_NAME = "distribuzione_api";
+	public static final String DISTRIBUZIONE_SERVIZIO_EROGAZONI_FILE_NAME = "distribuzione_erogazioni";
+	public static final String DISTRIBUZIONE_SERVIZIO_FRUIZIONI_FILE_NAME = "distribuzione_fruizioni";
 	public static final String DISTRIBUZIONE_SOGGETTO_LOCALE_FILE_NAME = "distribuzione_soggetto_locale";
 	public static final String DISTRIBUZIONE_SOGGETTO_REMOTO_FILE_NAME = "distribuzione_soggetto_remoto";
 	public static final String DISTRIBUZIONE_PERSONALIZZATA_FILE_NAME = "distribuzione_personalizzata";

@@ -19,6 +19,7 @@ json
 log
 lucene
 opensaml
+openapi4j
 reports
 saaj
 security

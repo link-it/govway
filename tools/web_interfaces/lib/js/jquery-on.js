@@ -55,5 +55,35 @@ jQuery.fn.extend({
 	},
 	one: function( types, selector, data, fn ) {
 		return this.on.call( this, types, selector, data, fn, 1 );
-	} 
+	},
+	off: function( types, selector, data, fn ) {
+		if ( types && types.preventDefault && types.handleObj ) {
+			// ( event )  dispatched jQuery.Event
+			var handleObj = types.handleObj;
+			jQuery( types.delegateTarget ).off(
+				handleObj.namespace ? handleObj.origType + "." + handleObj.namespace : handleObj.origType,
+				handleObj.selector,
+				handleObj.handler
+			);
+			return this;
+		}
+		if ( typeof types === "object" ) {
+			// ( types-object [, selector] )
+			for ( var type in types ) {
+				this.off( type, selector, data, types[ type ] );
+			}
+			return this;
+		}
+		if ( selector === false || typeof selector === "function" ) {
+			// ( types [, fn] )
+			fn = selector;
+			selector = undefined;
+		}
+		if ( fn === false ) {
+			fn = returnFalse;
+		}
+		return this.each(function() {
+			jQuery.event.remove( this, types, fn,  data, selector );
+		});
+	}
 });

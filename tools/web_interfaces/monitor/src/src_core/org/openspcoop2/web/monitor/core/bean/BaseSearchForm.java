@@ -209,7 +209,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 			this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 		}
-		this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
+		
 		this.tipoRicercaSPCoop = "spcoop";
 		this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 				: "Ultimo mese");
@@ -226,6 +226,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			this.setStatistichePersonalizzateAttive(govwayMonitorProperties.isAttivoModuloTransazioniStatistichePersonalizzate());	
 			this._tipologiaRicercaEntrambiEnabled = govwayMonitorProperties.isVisualizzaVoceEntrambiFiltroRuolo();
 			this.isSearchFormEsitoConsegnaMultiplaEnabled = govwayMonitorProperties.isSearchFormEsitoConsegnaMultiplaEnabled();
+			this.escludiRichiesteScartate = govwayMonitorProperties.escludiRichiesteScartateDefaultValue();
 		} catch (Exception e) {
 			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
 		}
@@ -250,7 +251,12 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 			BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 			this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 		}
-		this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
+		try {
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
+			this.escludiRichiesteScartate = govwayMonitorProperties.escludiRichiesteScartateDefaultValue();
+		} catch (Exception e) {
+			BaseSearchForm.log.error("Errore durante la creazione del form: " + e.getMessage(),e);
+		}
 		this.tipoRicercaSPCoop = "spcoop";
 		this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 				: "Ultimo mese");
@@ -290,7 +296,8 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 				BaseSearchForm.log.error("Errore durante l'impostazione del default per il contesto: " + e.getMessage(),e);
 				this.esitoContesto = EsitoUtils.ALL_VALUE_AS_STRING;
 			}
-			this.escludiRichiesteScartate = EsitoUtils.DEFAULT_VALUE_ESCLUDI_RICHIESTE_SCARTATE;
+			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(BaseSearchForm.log);
+			this.escludiRichiesteScartate = govwayMonitorProperties.escludiRichiesteScartateDefaultValue();
 			this.tipoRicercaSPCoop = "spcoop";
 			this.setPeriodo(this.periodoDefault != null ? this.periodoDefault
 					: "Ultimo mese");

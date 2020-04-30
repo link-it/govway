@@ -417,17 +417,18 @@ public class DettagliDump extends PdDBaseBean<Transazione, String, ITransazioniS
 			// NOTA: L'id potrebbe essere -1 nel caso di mascheramento logico.
 			String fileName = "messaggio";
 
-			boolean dumpBinario = TipoMessaggio.RICHIESTA_INGRESSO_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
-					TipoMessaggio.RICHIESTA_USCITA_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
-					TipoMessaggio.RISPOSTA_INGRESSO_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio()) ||
-					TipoMessaggio.RISPOSTA_USCITA_DUMP_BINARIO.equals(this.dumpMessaggio.getTipoMessaggio());
 			String ext = "bin";
 			String contentType = this.dumpMessaggio.getContentType();
-			if(dumpBinario == false) {
-				if(ContentTypeUtilities.isMultipart(contentType)){
-					contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+			
+			try {
+				if(contentType != null) {
+					if(ContentTypeUtilities.isMultipart(contentType)){
+						contentType = ContentTypeUtilities.getInternalMultipartContentType(contentType);
+					}
+					ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
 				}
-				ext = MimeTypeUtils.fileExtensionForMIMEType(contentType);
+			}catch(Exception e) {
+				ext = "bin";
 			}
 
 			fileName+="."+ext;

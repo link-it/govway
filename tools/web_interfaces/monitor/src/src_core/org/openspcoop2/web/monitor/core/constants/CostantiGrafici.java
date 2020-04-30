@@ -84,6 +84,8 @@ public class CostantiGrafici {
 	public static final String LIMITE_COLONNE_LEGENDA_KEY= "limiteColonneLegenda";
 	public static final int COLONNE_LEGENDA_DEFAULT_VALUE = 16;
 	
+	public static final String VISUALIZZA_VALUE_NELLA_LABEL_LEGENDA= "valueOnLegend";
+	
 	public static final String LIMITE_LUNGHEZZA_LABEL_GRAFICO_KEY = "limit";
 	public static final int LIMITE_LUNGHEZZA_LABEL_GRAFICO_DEFAULT_VALUE = 50;
 	public static final String LIMITE_LUNGHEZZA_LABEL_LEGENDA_KEY= "limitLegenda";

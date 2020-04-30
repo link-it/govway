@@ -1,0 +1,14 @@
+diff --git a/ant/setup/deploy/resources/core/monitor_local.properties b/ant/setup/deploy/resources/core/monitor_local.properties
+index 8783458d2..60c3885f6 100644
+--- a/ant/setup/deploy/resources/core/monitor_local.properties
++++ b/ant/setup/deploy/resources/core/monitor_local.properties
+@@ -30,3 +30,9 @@ statoPdD.sonde.standard.Gateway.url=http://127.0.0.1:8080/govway/check
+ #appTitle=GovWay - Monitoraggio <Collaudo/Produzione>
+ # ================================================
+ 
++# ================================================
++# Scelte di default impostate sia nei criteri di ricerca delle transazioni che per la generazione dei report statistici
++#
++# Checkbox 'Escludi Richieste Scartate'
++transazioni.escludiRichiesteScartate.defaultValue=true
++# ================================================

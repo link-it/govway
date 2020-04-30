@@ -613,8 +613,8 @@ for (int i = 0; i < dati.size(); i++) {
 		                               								String visualizzaAjaxStatus = de.isShowAjaxStatus() ? Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS : "";
 		                               								String selEvtOnChange = !de.getOnChange().equals("") ? (" onChange=\"" + visualizzaAjaxStatus + de.getOnChange() + "\" " ) : " ";
 																	String selTitle = (de.getToolTip()!=null && !de.getToolTip().equals("")) ? ("title='"+de.getToolTip()+"'") : " ";
-		                               								
-		                          									%><select name="<%= deName  %>" <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
+		                               								String selId = "select_" + i;
+		                          									%><select id="<%= selId  %>" name="<%= deName  %>" <%= selEvtOnChange %> <%= selTitle %> class="<%= classInput %>"><%
 		                          									String [] values = de.getValues();
 		                                        					if (values != null) {
 		                            									String [] labels = de.getLabels();
@@ -628,7 +628,20 @@ for (int i = 0; i < dati.size(); i++) {
 		                            										}
 		                            									} //end for values
 		                                        					}
-		                          									%></select><%
+		                          									%></select>
+		                          									
+		                          									<script>
+			                          									$(document).ready(function() {
+			                          									<%
+			                          										String disabilitaSearch= "{disableInput : false}";
+															      			if(!de.isAbilitaFiltroOpzioniSelect()){
+															      				disabilitaSearch = "{disableInput : true}";
+															      			}
+															      		%> 
+															      		$("#<%= selId %>").searchable(<%= disabilitaSearch %>);
+		                          										});
+		                          									</script>
+		                          									<%
 														      		if(deInfo != null){
 														      			String idDivIconInfo = "divIconInfo_"+i;
 												      					String idIconInfo = "iconInfo_"+i; 

@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
 import org.openspcoop2.core.commons.ErrorsHandlerCostant;
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.ConfigurazioneGestioneErrore;
@@ -82,6 +81,9 @@ import org.openspcoop2.core.registry.driver.ValidazioneStatoPackageException;
 import org.openspcoop2.core.registry.driver.db.DriverRegistroServiziDB;
 import org.openspcoop2.generic_project.exception.NotFoundException;
 import org.openspcoop2.generic_project.expression.IPaginatedExpression;
+import org.openspcoop2.protocol.engine.utils.DBOggettiInUsoUtils;
+import org.openspcoop2.utils.certificate.ArchiveLoader;
+import org.openspcoop2.utils.certificate.Certificate;
 import org.slf4j.Logger;
 
 /**
@@ -358,6 +360,37 @@ public abstract class AbstractArchiveEngine {
 		}
 	}
 	
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiBasic(String utente) throws DriverRegistroServiziException{
+		return this.driverRegistroServizi.soggettoWithCredenzialiBasicList(utente, null, false);
+	}
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiSsl(String subject, String issuer) throws DriverRegistroServiziException{
+		try {
+			return this.driverRegistroServizi.getSoggettoByCredenzialiSsl(subject, issuer);
+		}catch(DriverRegistroServiziNotFound notFound) {
+			return null;
+		}
+	}
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiSsl(byte[]archivio, boolean strictVerifier) throws DriverRegistroServiziException{
+		Certificate cSelezionato = null;
+		try {
+			cSelezionato = ArchiveLoader.load(archivio);
+		}catch(Exception e) {
+			throw new DriverRegistroServiziException(e.getMessage(),e);
+		}
+		try {
+			return this.driverRegistroServizi.getSoggettoByCredenzialiSsl(cSelezionato.getCertificate(), strictVerifier);
+		}catch(DriverRegistroServiziNotFound notFound) {
+			return null;
+		}
+	}
+	public org.openspcoop2.core.registry.Soggetto getSoggettoRegistroCredenzialiPrincipal(String principal) throws DriverRegistroServiziException{
+		try {
+			return this.driverRegistroServizi.getSoggettoByCredenzialiPrincipal(principal);
+		}catch(DriverRegistroServiziNotFound notFound) {
+			return null;
+		}
+	}
+	
 	
 	
 	// --- Soggetti Configurazione ---
@@ -445,6 +478,41 @@ public abstract class AbstractArchiveEngine {
 				this.driverConfigurazione.releaseConnection(con);
 			}catch(Exception eClose){}
 		}
+	}
+	
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiBasic(String utente) throws DriverConfigurazioneException{
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiBasicList(utente, null, false);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(String subject, String issuer) throws DriverConfigurazioneException{
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(subject, issuer);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiSsl(byte[]archivio, boolean strictVerifier) throws DriverConfigurazioneException{
+		Certificate cSelezionato = null;
+		try {
+			cSelezionato = ArchiveLoader.load(archivio);
+		}catch(Exception e) {
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiSslList(cSelezionato.getCertificate(), strictVerifier);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
+	}
+	public org.openspcoop2.core.config.ServizioApplicativo getServizioApplicativoCredenzialiPrincipal(String principal) throws DriverConfigurazioneException{
+		List<org.openspcoop2.core.config.ServizioApplicativo> l = this.driverConfigurazione.servizioApplicativoWithCredenzialiPrincipalList(principal);
+		if(l!=null && !l.isEmpty()) {
+			return l.get(0);
+		}
+		return null;
 	}
 	
 	

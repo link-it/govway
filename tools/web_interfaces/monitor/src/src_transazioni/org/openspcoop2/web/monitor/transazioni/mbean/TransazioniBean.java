@@ -947,6 +947,10 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 			GruppoStorico gruppoId = new GruppoStorico();
 			gruppoId.setLabel(MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_LABEL_KEY));
 			List<Storico> listaGruppoId = new ArrayList<>();
+			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), 
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY), 
+					ModalitaRicercaTransazioni.ID_TRANSAZIONE,
+					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY)));
 			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_APPLICATIVO.getValue(), 
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_APPLICATIVO_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_APPLICATIVO,
@@ -955,10 +959,6 @@ public class TransazioniBean extends DynamicPdDBean<TransazioneBean, String, ISe
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_LABEL_KEY), 
 					ModalitaRicercaTransazioni.ID_MESSAGGIO,
 					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_MESSAGGIO_ICON_KEY)));
-			listaGruppoId.add(new Storico(ModalitaRicercaTransazioni.ID_TRANSAZIONE.getValue(), 
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_LABEL_KEY), 
-					ModalitaRicercaTransazioni.ID_TRANSAZIONE,
-					MessageManager.getInstance().getMessage(TransazioniCostanti.TRANSAZIONI_SEARCH_TIPO_RICERCA_ID_RICERCA_ID_TRANSAZIONE_ICON_KEY)));
 			gruppoId.setListaStorico(listaGruppoId);
 			this.tipiStorico.add(gruppoId);
 		}

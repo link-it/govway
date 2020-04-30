@@ -621,7 +621,8 @@ public final class AccordiServizioParteComuneWSDLChange extends Action {
 					(as.getPrivato()!=null && as.getPrivato()),isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					accordoCooperazioneId,statoPackage,statoPackage,this.tipoAccordo,this.validazioneDocumenti, 
 					tipoProtocollo,listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,serviceBinding,messageType,formatoSpecifica,gruppi, elencoGruppi,
-					false, -1, false, -1);
+					false, -1, false, -1,
+					false);
 
 			// aggiunta campi custom
 			dati = apcHelper.addProtocolPropertiesToDatiRegistry(dati, this.consoleConfiguration,this.consoleOperationType, this.protocolProperties,oldProtocolPropertyList,propertiesProprietario);

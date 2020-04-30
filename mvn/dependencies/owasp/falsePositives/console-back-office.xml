@@ -3,7 +3,7 @@
       <notes><![CDATA[
       file name: struts-core-1.3.10.jar, facelets-taglib-jsf12-spring-4-gov4j-1.jar, jsf-facelets-1.1.15.jar e richfaces-*.jar vengono utilizzati dalle console di gestione e monitoraggio adibite a funzioni di backoffice che non devono essere esposte al pubblico.
       ]]></notes>
-      <filePath regex="true">.*(struts-core-1.3.10.jar|facelets-taglib-jsf.*-spring-4-gov4j-1.jar|jsf-facelets-1.1.15.jar|richfaces-impl-jsf2-3.3.4.Final.jar.*|richfaces-impl-3.3.4.Final-gov4j-1.jar.*)</filePath>
+      <filePath regex="true">.*(struts-core-1.3.10.jar|facelets-taglib-jsf.*-spring-4-gov4j-1.jar|jsf-facelets-1.1.15.jar|richfaces-impl-jsf2-3.3.4.Final.jar.*|richfaces-impl-3.3.4.Final-gov4j-2.jar.*)</filePath>
       <cvssBelow>10</cvssBelow>
    </suppress>
 </suppressions>

@@ -845,12 +845,14 @@ public final class PorteApplicativeAdd extends Action {
 			
 			pa.setValidazioneContenutiApplicativi(vx);
 
-			if(behaviour!=null && !"".equals(behaviour)) {
-				pa.setBehaviour(new PortaApplicativaBehaviour());
-				pa.getBehaviour().setNome(behaviour);
+			if(!porteApplicativeCore.isConnettoriMultipliEnabled()) {
+				if(behaviour!=null && !"".equals(behaviour)) {
+					pa.setBehaviour(new PortaApplicativaBehaviour());
+					pa.getBehaviour().setNome(behaviour);
+				}
+				else 
+					pa.setBehaviour(null);
 			}
-			else 
-				pa.setBehaviour(null);
 			
 			if(autorizzazione != null && autorizzazione.equals(AutorizzazioneUtilities.STATO_XACML_POLICY) && allegatoXacmlPolicy.getValue() != null) {
 				pa.setXacmlPolicy(new String(allegatoXacmlPolicy.getValue()));

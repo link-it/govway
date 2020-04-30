@@ -340,6 +340,10 @@ public class PageData {
 	}
 	
 	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size) throws Exception{
+		this.addFilter(name, label, valueSelected, values, labels, postBack, size, false);
+	}
+	
+	public void addFilter(String name, String label, String valueSelected, String [] values, String [] labels, boolean postBack, int size, boolean disabilitaFiltroRisultati) throws Exception{
 		if(this.filter_names == null) {
 			this.filter_names = new ArrayList<DataElement>();
 			this.filter_values = new ArrayList<DataElement>();
@@ -370,6 +374,8 @@ public class PageData {
 		deValue.setLabels(labels);
 		deValue.setSize(size);
 		deValue.setPostBack(postBack);
+		if(disabilitaFiltroRisultati)
+			deValue.disabilitaFiltroOpzioniSelect();
 		this.filter_values.add(deValue);
 		
 	}

@@ -142,8 +142,8 @@
 			</lib>
 			<lib dir="${openspcoop2.lib}/faces">
                                 <include name="richfaces-api-3.3.4.Final.jar" />
-                                <include name="richfaces-ui-3.3.4.Final.jar" />
-                                <include name="richfaces-impl-3.3.4.Final-gov4j-1.jar" />
+                                <include name="richfaces-ui-3.3.4.Final-gov4j-2.jar" />
+                                <include name="richfaces-impl-3.3.4.Final-gov4j-2.jar" />
 				<include name="jsf-facelets-1.1.15.jar" />
 				<include name="jsf-impl-1.2_15-06.jar" />
 				<include name="jsf-api-1.2_15-06.jar" />

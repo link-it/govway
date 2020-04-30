@@ -42,6 +42,7 @@ import org.openspcoop2.core.statistiche.constants.TipoLatenza;
 import org.openspcoop2.core.statistiche.constants.TipoReport;
 import org.openspcoop2.core.statistiche.constants.TipoVisualizzazione;
 import org.openspcoop2.web.monitor.core.constants.Costanti;
+import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.Utility;
 import org.openspcoop2.web.monitor.core.dao.IService;
 import org.openspcoop2.web.monitor.core.datamodel.ResBase;
@@ -213,7 +214,23 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 		} else {
 			sb.append(CostantiGrafici.GIORNALIERA_LABEL).append(CostantiGrafici.WHITE_SPACE);
 		}
-		sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE); 
+		
+		TipologiaRicerca tipologiaRicercaEnum = this.search.getTipologiaRicercaEnum();
+		if(tipologiaRicercaEnum == null)
+			tipologiaRicercaEnum = TipologiaRicerca.all;
+		
+		switch (tipologiaRicercaEnum) {
+		case all:
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
+			break;
+		case uscita:
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_FRUIZIONE_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
+			break;
+		case ingresso:
+			sb.append(MessageManager.getInstance().getMessage(StatisticheCostanti.STATS_ANALISI_STATISTICA_TIPO_DISTRIBUZIONE_SERVIZIO_LABEL_EROGAZIONE_SUFFIX_KEY)).append(CostantiGrafici.WHITE_SPACE);
+			break;
+		}
+		 
 		return sb.toString();
 	}
 
@@ -698,6 +715,19 @@ BaseStatsMBean<T, Integer, IService<ResBase, Integer>> {
 	
 	@Override
 	public String getExportFilename() {
+		TipologiaRicerca tipologiaRicercaEnum = this.search.getTipologiaRicercaEnum();
+		if(tipologiaRicercaEnum == null)
+			tipologiaRicercaEnum = TipologiaRicerca.all;
+		
+		switch (tipologiaRicercaEnum) {
+		case all:
+			return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_FILE_NAME;
+		case uscita:
+			return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_FRUIZIONI_FILE_NAME;
+		case ingresso:
+			return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_EROGAZONI_FILE_NAME;
+		}
+		
 		return CostantiGrafici.DISTRIBUZIONE_SERVIZIO_FILE_NAME;
 	}
 }

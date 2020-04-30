@@ -35,7 +35,7 @@
    		<link:prop label="#{msg['stats.search.servizio']}" required="true">
 			<rich:comboBox value="#{sf_servizio}" listWidth="#{sf_mbean.serviziSelectItemsWidth}" id="servizioCombo2"
 				defaultLabel="#{msg['stats.search.servizio.defaultLabel']}" directInputSuggestions="true" converter="selectItemConverter"
-				width="416" require="true" label="#{msg['stats.search.servizio']}" enableManualInput="false" >
+				width="416" require="true" label="#{msg['stats.search.servizio']}" enableManualInput="true" >
 				<f:selectItem itemValue="--" itemLabel="--" />
 				<f:selectItems value="#{sf_servizi}" />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.servizioSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>

@@ -36,6 +36,7 @@
 							<rich:panelMenuItem label="#{msg['menu.monitoraggio.live']}" id="live" action="#{transazioniBean.submit}" actionListener="#{transazioniBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showTransazioniLive}">
 								<f:setPropertyActionListener value="Live" target="#{searchFormTransazioni.periodo}" />
+								<f:setPropertyActionListener value="false" target="#{searchFormTransazioni.visualizzaFiltroAperto}" />
 							</rich:panelMenuItem>
 							
 							<rich:panelMenuItem label="#{msg['menu.monitoraggio.esitiLive']}" action="esitiLive" id="esiti_live"

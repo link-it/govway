@@ -2976,7 +2976,8 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			IProtocolFactory<?> protocolFactory,
 			ServiceBinding serviceBinding, MessageType messageType, org.openspcoop2.protocol.manifest.constants.InterfaceType interfaceType,
 			String gruppi, List<String> elencoGruppi,
-			boolean gestioneNuovaVersione, int gestioneNuovaVersione_min, boolean gestioneNuovaVersione_ridefinisciInterfaccia, long gestioneNuovaVersione_oldIdApc
+			boolean gestioneNuovaVersione, int gestioneNuovaVersione_min, boolean gestioneNuovaVersione_ridefinisciInterfaccia, long gestioneNuovaVersione_oldIdApc,
+			boolean confirm
 			) throws Exception {
 
 		Boolean showAccordiAzioni = (Boolean) this.session.getAttribute(CostantiControlStation.SESSION_PARAMETRO_VISUALIZZA_ACCORDI_AZIONI);
@@ -3230,7 +3231,7 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 					sogg = this.soggettiCore.getSoggettoRegistro(Integer.parseInt(referente));
 				}
 			}
-			if( modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione ){
+			if( modificheAbilitate && modificaAbilitataServizioComposto && !gestioneNuovaVersione && !confirm ){
 	
 				de.setType(DataElementType.SELECT);
 				de.setValues(providersList);

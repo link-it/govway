@@ -26,8 +26,10 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.openspcoop2.core.config.Configurazione;
+import org.openspcoop2.core.config.Credenziali;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
+import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
@@ -47,6 +49,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
 import org.openspcoop2.core.registry.PortType;
@@ -911,6 +914,41 @@ public class ImporterArchiveUtils {
 						}	
 					}
 				}
+				if(archiveSoggetto.getSoggettoRegistro().getCredenziali()!=null) {
+					CredenzialiSoggetto credenziali = archiveSoggetto.getSoggettoRegistro().getCredenziali();
+					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = credenziali.getTipo();
+					if(tipo!=null) {
+						Soggetto soggettoFound = null;
+						String c = null;
+						switch (tipo) {
+						case BASIC:
+							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiBasic(credenziali.getUser());
+							c = credenziali.getUser();
+							break;
+						case SSL:
+							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+								c = "X.509";
+							}
+							else {
+								soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiSsl(credenziali.getCnSubject(), credenziali.getCnIssuer());
+								c = credenziali.getCnSubject();
+							}
+							break;
+						case PRINCIPAL:
+							soggettoFound = this.importerEngine.getSoggettoRegistroCredenzialiPrincipal(credenziali.getUser());
+							c = credenziali.getUser();
+							break;
+						}
+						if(soggettoFound!=null) {
+							IDSoggetto idSoggettoFound =  new IDSoggetto(soggettoFound.getTipo(), soggettoFound.getNome());
+							boolean equalsForUpdate = idSoggettoFound.equals(idSoggetto);
+							if(!equalsForUpdate) {
+								throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate al soggetto '"+idSoggettoFound+"'");
+							}
+						}
+					}
+				}
 				
 				
 				// --- compatibilita' elementi riferiti ---
@@ -1100,6 +1138,44 @@ public class ImporterArchiveUtils {
 					if(this.importerEngine.existsRuolo(idRuolo) == false ){
 						throw new Exception("Ruolo ["+idRuolo.getNome()+"] associato non esiste");
 					}	
+				}
+			}
+			if(archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta()!=null &&
+					archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getCredenzialiList()!=null &&
+					!archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getCredenzialiList().isEmpty()) {
+				for (Credenziali credenziali : archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getCredenzialiList()) {
+					org.openspcoop2.core.config.constants.CredenzialeTipo tipo = credenziali.getTipo();
+					if(tipo!=null) {
+						ServizioApplicativo saFound = null;
+						String c = null;
+						switch (tipo) {
+						case BASIC:
+							saFound = this.importerEngine.getServizioApplicativoCredenzialiBasic(credenziali.getUser());
+							c = credenziali.getUser();
+							break;
+						case SSL:
+							if(credenziali.getCertificate()!=null && credenziali.getCertificate().length>0) {
+								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCertificate(), credenziali.isCertificateStrictVerification());
+								c = "X.509";
+							}
+							else {
+								saFound = this.importerEngine.getServizioApplicativoCredenzialiSsl(credenziali.getCnSubject(), credenziali.getCnIssuer());
+								c = credenziali.getCnSubject();
+							}
+							break;
+						case PRINCIPAL:
+							saFound = this.importerEngine.getServizioApplicativoCredenzialiPrincipal(credenziali.getUser());
+							c = credenziali.getUser();
+							break;
+						}
+						if(saFound!=null) {
+							IDSoggetto idSoggettoProprietarioFound =  new IDSoggetto(saFound.getTipoSoggettoProprietario(), saFound.getNomeSoggettoProprietario());
+							boolean equalsForUpdate = idSoggettoProprietario.equals(idSoggettoProprietarioFound) && idServizioApplicativo.getNome().contentEquals(saFound.getNome());
+							if(!equalsForUpdate) {
+								throw new Exception("Le credenziali '"+tipo+"' ("+c+") risultano già associate all'applicativo '"+saFound.getNome()+"' appartenente al soggetto '"+idSoggettoProprietarioFound+"'");
+							}
+						}
+					}
 				}
 			}
 			

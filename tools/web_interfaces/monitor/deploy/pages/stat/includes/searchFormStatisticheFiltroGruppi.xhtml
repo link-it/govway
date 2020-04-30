@@ -34,7 +34,7 @@
 	    
 	   	<c:if test="#{sf_bean.visualizzaFiltroGruppiSelectList}">
 			<link:prop label="#{msg['stats.search.gruppo']}">
-				<rich:comboBox value="#{sf_gruppo}" id="gruppoCombo2" enableManualInput="false" converter="selectItemConverter"
+				<rich:comboBox value="#{sf_gruppo}" id="gruppoCombo2" enableManualInput="true" converter="selectItemConverter"
 					defaultLabel="#{msg['stats.search.gruppo.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.gruppiSelectItemsWidth}"
 					width="416">
 					<f:selectItem itemValue="--" itemLabel="--"/>

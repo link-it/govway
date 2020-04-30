@@ -58,7 +58,7 @@
 		<link:prop label="#{msg['transazioni.search.soggettoDestinatario']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'uscita'}">
 			<rich:comboBox id="sogDestCombo" value="#{sf_nomeDestinatario}" converter="selectItemConverter"
 					defaultLabel="#{msg['transazioni.search.soggettoDestinatario.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="416"   enableManualInput="false">
+					width="416"   enableManualInput="true">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
@@ -69,7 +69,7 @@
 		<link:prop label="#{msg['transazioni.search.soggettoRemoto']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and (sf_tipologiaRicerca eq 'all' or empty sf_tipologiaRicerca)}">
 			<rich:comboBox id="sogCombo" value="#{sf_trafficoPerSoggetto}" converter="selectItemConverter"
 					defaultLabel="#{msg['transazioni.search.soggettoRemoto.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-					width="416"   enableManualInput="false">
+					width="416"   enableManualInput="true">
 				<f:selectItem itemValue="--" itemLabel="--"/>
 				<f:selectItems value="#{sf_soggetti}"  />
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true" />

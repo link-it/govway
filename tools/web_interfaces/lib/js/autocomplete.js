@@ -32,7 +32,8 @@ function autocomplete(inp, suggestionList) {
           // b.innerHTML += suggestionList[i].label.substr(val.length);
           
           // inserisco il valore che coincide
-          b.innerHTML += suggestionList[i].label;
+//          b.innerHTML += suggestionList[i].label;
+          b.innerHTML += createHighlightItem(suggestionList[i].label, val);
           
           /*insert a input field that will hold the current array item's value:*/
           b.innerHTML += "<input type='hidden' value='" + suggestionList[i].label + "' name='" + suggestionList[i].value + "'>";
@@ -109,4 +110,83 @@ function autocomplete(inp, suggestionList) {
   document.addEventListener("click", function (e) {
       closeAllLists(e.target);
   });
+  
+}
+  
+function createHighlightItem(test, subString){
+  var tokens = occurrences(test,test.toUpperCase(), subString.toUpperCase());
+  
+  var html = '';
+  for(var i=0;i<tokens.length;i++){
+	  var token = tokens[i];
+	  if(token.highlight) { 
+		  html += "<strong>";
+	  }
+	  html += token.originText;
+	  if(token.highlight) {
+		  html += "</strong>";
+		  }
+	  }
+	  
+	  return html;
+  }
+  
+  /*
+    Restituisce una lista di token che corrispondono ai match trovati.
+    originTest la stringa originale da dividere
+    test la stringa da confrontare
+    subString la stringa da cercare
+   * */
+function occurrences(originTest, test, subString) {
+	  var split = [];
+	  test += "";
+  subString += "";
+  if (subString.length <= 0) return split;
+
+  var pos = 0, nuovaPos = 0, step = subString.length;
+
+  while (true) {
+//		  console.log('Pos: ' + pos);
+	  nuovaPos = test.indexOf(subString, pos);
+//		  console.log('NuovaPos: ' + nuovaPos);
+	  var tokenString = '';
+	  var originTokenString = '';
+	  var highlight = false;
+	  if (nuovaPos >= 0) {
+		  if(nuovaPos == pos) { // metch del token highlight true
+			  tokenString = test.substr(pos, step);
+			  originTokenString = originTest.substr(pos, step);
+			  pos += step;
+			  highlight = true;
+		  } else {
+			  tokenString = test.substr(pos, (nuovaPos - pos));
+			  originTokenString = originTest.substr(pos, (nuovaPos - pos));
+			  pos = nuovaPos;
+		  }
+		  if(tokenString) {
+//				  console.log('Token: ' + tokenString);
+//				  console.log('Highlight: ' + highlight);
+			  var item = {};
+			  item.text = tokenString;
+			  item.highlight = highlight;
+			  item.originText = originTokenString;
+			  split.push(item);
+		  }
+	  } else {
+		  tokenString = test.substr(pos);
+		  originTokenString = originTest.substr(pos);
+		  if(tokenString) {
+//				  console.log('Ultimo Token: ' + tokenString);
+//				  console.log('Highlight: ' + highlight);
+			  var item = {};
+			  item.text = tokenString;
+			  item.highlight = highlight;
+			  item.originText = originTokenString;
+			  split.push(item);
+		  }
+		  break;
+	  }
+  }
+   
+  return split;
 }

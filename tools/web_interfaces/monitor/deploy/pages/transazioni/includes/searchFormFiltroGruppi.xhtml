@@ -36,7 +36,7 @@
 	    	 <link:prop label="#{msg['transazioni.search.gruppo']}" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}">
 				<rich:comboBox id="gruppoCombo" value="#{sf_gruppo}" converter="selectItemConverter"
 					defaultLabel="#{msg['transazioni.search.gruppo.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.gruppiSelectItemsWidth}"
-					width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="false">
+					width="416" rendered="#{sf_bean.tipoRicercaSPCoop != 'im'}" enableManualInput="true">
 					<f:selectItem itemValue="--" itemLabel="--"/>
 					<f:selectItems value="#{sf_gruppi}"  />
 					<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.gruppoSelected}" reRender="searchPnl,ctr-ricerca-personal,servizioComboCtr,azComboCtr" limitToList="true"/>

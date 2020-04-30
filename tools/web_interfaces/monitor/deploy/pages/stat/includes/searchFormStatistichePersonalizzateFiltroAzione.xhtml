@@ -34,7 +34,7 @@
 		<link:prop label="#{sf_bean.labelAzione}">
 			<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" converter="selectItemConverter"
 				defaultLabel="Selezione #{sf_bean.labelAzione}" directInputSuggestions="true" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
-				width="416" enableManualInput="false" >
+				width="416" enableManualInput="true" >
 				<f:selectItem itemValue="--" itemLabel="--" />
 				<f:selectItems value="#{sf_azioni}"/>
 				<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.azioneSelected}" reRender="searchPnl,valoreRisorsaCtr" oncomplete="#{outOfRegionToRefresh}()"/>

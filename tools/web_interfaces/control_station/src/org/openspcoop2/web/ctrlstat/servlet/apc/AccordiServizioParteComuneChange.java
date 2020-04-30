@@ -625,7 +625,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-						false, -1, false, -1);
+						false, -1, false, -1,
+						false);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -727,7 +728,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 					this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 					this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 					this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-					false, -1, false, -1);
+					false, -1, false, -1,
+					false);
 
 			// aggiunta campi custom
 			if(addPropertiesHidden) {
@@ -771,7 +773,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-						false, -1, false, -1);
+						false, -1, false, -1,
+						true);
 
 				dati = apcHelper.addAccordiToDatiAsHidden(dati, nome, this.descr, this.profcoll, null, null, null, null, 
 						this.filtrodup, this.confric, this.idcoll, this.idRifRichiesta, this.consord, this.scadenza, this.id,						
@@ -925,7 +928,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 						this.privato,this.isServizioComposto,accordiCooperazioneEsistenti,accordiCooperazioneEsistentiLabel,
 						this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 						this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-						false, -1, false, -1);
+						false, -1, false, -1,
+						false);
 
 				// aggiunta campi custom
 				if(addPropertiesHidden) {
@@ -1060,7 +1064,8 @@ public final class AccordiServizioParteComuneChange extends Action {
 									this.accordoCooperazioneId,this.statoPackage,oldStatoPackage, this.tipoAccordo, this.validazioneDocumenti,
 									this.tipoProtocollo, listaTipiProtocollo,used,asWithAllegati,this.protocolFactory,
 									this.serviceBinding,this.messageType,this.interfaceType, this.gruppi, elencoGruppi,
-									false, -1, false, -1);
+									false, -1, false, -1,
+									false);
 
 							// aggiunta campi custom
 							if(addPropertiesHidden) {

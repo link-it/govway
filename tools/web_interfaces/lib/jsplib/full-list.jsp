@@ -134,6 +134,7 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 							  	String selezionato = filtro.getSelected();
 								String selEvtOnChange = !filtro.getOnChange().equals("") ? (" onChange=\""+ Costanti.JS_FUNCTION_VISUALIZZA_AJAX_STATUS +"Change(document.form,'"+filterName+"')\" " ) : " ";
 								String classInput = filtro.getStyleClass();
+								String filterId = filterName + "__id";
 							  	%>
 										<tr>
 											<td>
@@ -142,13 +143,23 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 													<input type="hidden" name="<%= filtroName.getName() %>" value="<%= filtroName.getValue() %>"/>
 
 													<label><%= filtro.getLabel() %></label>
-												  	<select name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
+												  	<select id="<%= filterId  %>" name="<%= filterName %>" <%= selEvtOnChange %> class="<%= classInput %>">
 												  	<%
 												  	for (int i = 0; i < values.length; i++) {
 												  		String optionSel = values[i].equals(selezionato) ? " selected " : " ";
 												  		%><option value="<%= values[i]  %>" <%=optionSel %> ><%= labels[i] %></option><%
 												  	}
 												  	%></select>
+												  	
+												  	<%
+												  	String abilitaSearch = "false";
+										      		if(filtro.isAbilitaFiltroOpzioniSelect()){
+										      			abilitaSearch = "true";
+										      		} else {
+										      			abilitaSearch = "false";
+										      		}
+										      		%>
+										      		<input type="hidden" id="<%= filterId  %>_hidden_chk" value="<%= abilitaSearch  %>"/>
 												</div>
 											</td>
 										</tr>	

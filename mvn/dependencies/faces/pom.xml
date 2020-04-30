@@ -28,7 +28,7 @@
 		<jsf.facelets.version>1.1.15</jsf.facelets.version>
 		<jsr311.api.version>1.1.1</jsr311.api.version>
 		<richfaces.version>3.3.4.Final</richfaces.version>
-		<richfaces.gov4j.version>3.3.4.Final-gov4j-1</richfaces.gov4j.version>
+		<richfaces.gov4j.version>3.3.4.Final-gov4j-2</richfaces.gov4j.version>
 
 	</properties>
 
@@ -225,7 +225,7 @@
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-ui</artifactId>
-			<version>${richfaces.version}</version>
+			<version>${richfaces.gov4j.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>*</groupId>

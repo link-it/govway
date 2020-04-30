@@ -74,7 +74,7 @@
 					<link:prop label="#{msg['transazioni.search.soggettoLocale']}">
 						<rich:comboBox id="sogLocaleCombo" value="#{sf_soggettoLocale}" converter="selectItemConverter"
 							defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiLocaleSelectItemsWidth}"
-							width="416"   enableManualInput="false">
+							width="416"   enableManualInput="true">
 							<f:selectItem itemValue="--" itemLabel="--"/>
 							<f:selectItems value="#{sf_soggettiLocale}"  />
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
@@ -88,7 +88,7 @@
 					<rich:comboBox width="416" id="sogLocaleSuggestion"  converter="selectItemConverter"
 									value="#{sf_soggettoLocale}" listWidth="#{sf_mbean.soggettiAssociatiSelectItemsWidth}"
 									defaultLabel="#{msg['transazioni.search.soggettoLocale.defaultLabel']}" directInputSuggestions="true"
-									enableManualInput="false">
+									enableManualInput="true">
 								<f:selectItem itemValue="--" itemLabel="--"/>
 								<f:selectItems value="#{sf_mbean.tipiNomiSoggettiAssociati}"  />
 								<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.soggettoLocaleSelected}" reRender="searchPnl,saComboCtr" limitToList="true"/>
@@ -129,7 +129,7 @@
 					<h:inputText id="idCluster" value="#{sf_bean.clusterId}" styleClass="inputLinkLong" rendered="#{sf_bean.visualizzaIdClusterAsSelectList == false}"/>
 					<rich:comboBox id="idClusterCombo" value="#{sf_bean.clusterId}"
 						defaultLabel="Seleziona Id" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false"
+						width="416" converter="selectItemConverter" enableManualInput="true"
 						rendered="#{sf_bean.visualizzaIdClusterAsSelectList == true}">
 						<f:selectItems value="#{sf_bean.listIdCluster}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
@@ -269,7 +269,7 @@
 				<link:prop label="Esito">
 					<rich:comboBox id="esitoGruppoCombo" value="#{sf_bean.esitoGruppo}"
 						defaultLabel="Seleziona esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="true">
 						<f:selectItems value="#{sf_bean.esitiGruppo}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true" />
 					</rich:comboBox>
@@ -278,7 +278,7 @@
 				<link:prop label="Dettaglio Esito" rendered="#{sf_bean.showDettaglio}">
 					<rich:comboBox id="esitoDettaglioCombo" value="#{sf_bean.esitoDettaglio}"
 						defaultLabel="Seleziona dettaglio esito" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="true">
 						<f:selectItems value="#{sf_bean.esitiDettaglio}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
@@ -292,7 +292,7 @@
 				<link:prop label="Contesto" rendered="#{sf_bean.showEsitiContesto}">
 					<rich:comboBox id="esitoContestoCombo" value="#{sf_bean.esitoContesto}"
 						defaultLabel="Seleziona contesto" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
+						width="416" converter="selectItemConverter" enableManualInput="true">
 						<f:selectItems value="#{sf_bean.esitiContesto}"/>
 						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
 					</rich:comboBox>
@@ -366,7 +366,7 @@
 								rendered="#{sf_bean.tipoRicercaSPCoop != 'im' and sf_tipologiaRicerca eq 'ingresso'}">
 								<rich:comboBox id="sogMitCombo" value="#{sf_nomeMittente}" converter="selectItemConverter"
 										defaultLabel="#{msg['transazioni.search.soggettoMittente.defaultLabel']}" directInputSuggestions="true" listWidth="#{sf_mbean.soggettiSelectItemsWidth}"
-										width="416"   enableManualInput="false">
+										width="416"   enableManualInput="true">
 									<f:selectItem itemValue="--" itemLabel="--"/>
 									<f:selectItems value="#{sf_soggetti}"  />
 									<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.destinatarioSelected}" reRender="searchPnl" limitToList="true"/>
@@ -381,7 +381,7 @@
 							<rich:comboBox id="saCombo" value="#{sf_servizioApplicativo}"
 										defaultLabel="#{sf_bean.defaultLabelServizioApplicativo}" 
 										directInputSuggestions="true" listWidth="#{sf_mbean.serviziApplicativiSelectItemsWidth}"
-										width="416" enableManualInput="false">
+										width="416" enableManualInput="true">
 								<f:selectItem itemValue="--"/>
 								<f:selectItems value="#{sf_serviziApplicativi}"/>
 								<a4j:support status="mainStatus" event="onselect" reRender="searchPnl,saToolTip" limitToList="true"/>
@@ -557,7 +557,7 @@
 					<link:prop label="Risorsa Contenuto">
 						<rich:comboBox id="risorseCombo" value="#{sf_bean.nomeRisorsa}"
 							defaultLabel="Selezione Risorsa" directInputSuggestions="true"
-							width="416" enableManualInput="false">
+							width="416" enableManualInput="true">
 							<f:selectItem itemValue="--"/>
 							<f:selectItems value="#{sf_mbean.risorse}"/>
 							<a4j:support status="mainStatus" event="onselect" actionListener="#{sf_bean.risorsaSelected}" reRender="risorsaValoreCtr,ctr-ricerca-personal" limitToList="true"/>

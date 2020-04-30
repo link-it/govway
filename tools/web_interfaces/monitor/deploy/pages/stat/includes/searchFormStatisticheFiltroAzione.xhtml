@@ -32,7 +32,7 @@
     
    	<c:if test="#{sf_bean.visualizzaFiltroAzioniSelectList}">
    		<link:prop label="#{sf_bean.labelAzione}">
-			<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" enableManualInput="false" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
+			<rich:comboBox id="azCombo" value="#{sf_nomeAzione}" enableManualInput="true" listWidth="#{sf_mbean.azioniSelectItemsWidth}"
 				defaultLabel="Selezione #{sf_bean.labelAzione}" directInputSuggestions="true" converter="selectItemConverter"
 				width="416">
 				<f:selectItem itemValue="--" itemLabel="--" />

@@ -29,7 +29,7 @@ xmlns="http://www.w3.org/1999/xhtml"
 		<a4j:loadStyle src="resource:///css/transazioni.css" rendered="#{not(searchFormTransazioni.periodo eq 'Live')}" />
 		<a4j:loadScript src="resource://scripts/utils.min.js" rendered="#{searchFormTransazioni.periodo eq 'Live'}" />
 		<a4j:outputPanel id="panelPaginaTransazioniCtr" layout="block">
-			<rich:simpleTogglePanel id="panelTransazioni" opened="#{not(searchFormTransazioni.periodo eq 'Live')}" 
+			<rich:simpleTogglePanel id="panelTransazioni" opened="#{searchFormTransazioni.visualizzaFiltroAperto}" 
 				label="#{(searchFormTransazioni.periodo eq 'Live') ? 'Visualizza Transazioni (Live)' : searchFormTransazioni.tipoStoricoLabel}" switchType="client">
 				<f:facet name="openMarker">
 					<a4j:outputPanel id="openMarkerPnl" stuleClass="icon-search-box">
