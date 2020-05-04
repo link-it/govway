@@ -65,12 +65,10 @@ import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.NameValue;
 import org.openspcoop2.utils.UtilsException;
 import org.openspcoop2.utils.io.Base64Utilities;
-import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpBodyParameters;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
-import org.openspcoop2.utils.transport.http.RFC2047Encoding;
 import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 /**
@@ -396,29 +394,25 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 	    		if(this.debug)
 					this.logger.info("Impostazione autenticazione token (header-name '"+nv.getName()+"' value '"+nv.getValue()+"')",false);
 	    	}
+	    	
+	    	
+	    	
+	    	
+	    	// ForwardProxy
+	    	if(this.forwardProxy_headerName!=null && this.forwardProxy_headerValue!=null) {
+	    		if(this.requestMsg!=null && this.requestMsg.getTransportRequestContext()!=null) {
+	    			this.requestMsg.getTransportRequestContext().removeParameterTrasporto(this.forwardProxy_headerName); // Fix: senno sovrascriveva il vecchio token
+	    		}
+	    		setRequestHeader(this.forwardProxy_headerName,this.forwardProxy_headerValue, propertiesTrasportoDebug);
+	    		if(this.debug)
+					this.logger.info("Impostazione ForwardProxy (header-name '"+this.forwardProxy_headerName+"' value '"+this.forwardProxy_headerValue+"')",false);
+	    	}
 
 			
 			
 			// Impostazione Proprieta del trasporto
 			if(this.debug)
 				this.logger.debug("Impostazione header di trasporto...");
-			boolean encodingRFC2047 = false;
-			Charset charsetRFC2047 = null;
-			RFC2047Encoding encodingAlgorithmRFC2047 = null;
-			boolean validazioneHeaderRFC2047 = false;
-			if(this.idModulo!=null){
-				if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
-					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
-					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
-				}else{
-					encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
-					charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
-					encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
-					validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
-				}
-			}
 			this.forwardHttpRequestHeader();
 			if(this.propertiesTrasporto != null){
 				Iterator<String> keys = this.propertiesTrasporto.keySet().iterator();
@@ -428,20 +422,20 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 					if(this.debug)
 						this.logger.info("Set proprieta' ["+key+"]=["+value+"]",false);
 					
-					if(encodingRFC2047){
-						if(RFC2047Utilities.isAllCharactersInCharset(value, charsetRFC2047)==false){
-							String encoded = RFC2047Utilities.encode(new String(value), charsetRFC2047, encodingAlgorithmRFC2047);
+					if(this.encodingRFC2047){
+						if(RFC2047Utilities.isAllCharactersInCharset(value, this.charsetRFC2047)==false){
+							String encoded = RFC2047Utilities.encode(new String(value), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
 							//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
 							if(this.debug)
-								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+charsetRFC2047+" encoding-algorithm:"+encodingAlgorithmRFC2047+")",false);
-							this.setRequestHeader(validazioneHeaderRFC2047, key, encoded, this.logger, propertiesTrasportoDebug);
+								this.logger.info("RFC2047 Encoded value in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
+							this.setRequestHeader(this.validazioneHeaderRFC2047, key, encoded, this.logger, propertiesTrasportoDebug);
 						}
 						else{
-							this.setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
+							this.setRequestHeader(this.validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 						}
 					}
 					else{
-						this.setRequestHeader(validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
+						this.setRequestHeader(this.validazioneHeaderRFC2047, key, value, this.logger, propertiesTrasportoDebug);
 					}
 				}
 			}
@@ -708,7 +702,11 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
     		}catch(Throwable t){}
     	}
     	if(this.location!=null){
-	    	return this.location;
+    		String l = new String(this.location);
+//	    	if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
+//	    		l = l+" [govway-proxy]";
+//	    	}
+	    	return l;
     	}
     	return null;
     }
@@ -728,6 +726,8 @@ public class ConnettoreHTTPCORE extends ConnettoreBaseHTTP {
 				ConnettoreHTTPCORE.ENDPOINT_TYPE, 
 				this.propertiesUrlBased, this.location,
 				this.getProtocolFactory(), this.idModulo);
+		
+		this.updateLocation_forwardProxy(this.location);
     }
 	
 	

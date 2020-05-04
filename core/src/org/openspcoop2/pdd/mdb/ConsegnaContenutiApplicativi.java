@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaApplicativa;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -1234,6 +1235,19 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			connettoreMsg.setIdPortaApplicativa(idPA);
 			connettoreMsg.setDataConsegnaTransazioneApplicativoServer(dataConsegna);
 		}
+		ForwardProxy forwardProxy = null;
+		if(configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				forwardProxy = configurazionePdDManager.getForwardProxyConfigErogazione(identitaPdD, idServizio);
+			}catch(Exception e) {
+				msgDiag.logErroreGenerico(e, "Configurazione ForwardProxy (sa:"+servizioApplicativo+")");
+				ejbUtils.rollbackMessage("Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+servizioApplicativo+"]",servizioApplicativo, esito);
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazione(EsitoLib.ERRORE_NON_GESTITO, "Configurazione del connettore errata per la funzionalità govway-proxy; sa ["+servizioApplicativo+"]");
+				return esito;
+			}
+		}
+		connettoreMsg.setForwardProxy(forwardProxy);
 
 		// Identificativo di una risposta.
 		String idMessageResponse = null;
@@ -1734,6 +1748,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
+				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 				
 				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);
@@ -1986,6 +2001,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(consegnaMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
+				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 				
 				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);

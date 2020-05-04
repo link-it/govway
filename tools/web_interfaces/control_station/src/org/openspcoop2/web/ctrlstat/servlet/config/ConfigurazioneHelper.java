@@ -1459,6 +1459,34 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		}
 	}
 
+	public void refreshSystemProperties() {
+		// reimposto proprietà
+		List<String> aliases = this.confCore.getJmxPdD_aliases();
+		boolean resetOk = false;
+		if(aliases!=null && aliases.size()>0){
+			resetOk = true;
+			for (String alias : aliases) {
+				String stato = null;
+				try{
+					stato = this.confCore.invokeJMXMethod(this.confCore.getGestoreRisorseJMX(alias), alias, this.confCore.getJmxPdD_configurazioneSistema_type(alias), 
+							this.confCore.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias),
+							this.confCore.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
+					if(this.isErroreHttp(stato, "refresh System Properties")){
+						// e' un errore
+						throw new Exception(stato);
+					}
+				}catch(Exception e){
+					ControlStationCore.getLog().error("Errore durante il refresh via jmx delle system properties (alias: "+alias+"): "+e.getMessage(),e);
+					resetOk = false;
+				}
+			}
+		}
+		
+		if(!resetOk) {
+			this.pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+		}
+	}
+	
 	// Controlla i dati del pannello Configurazione -> Tabella di routing
 	public boolean routingCheckData(String[] registriList) throws Exception {
 
@@ -3862,17 +3890,22 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_ROUTING);
 			ServletUtils.setDataElementVisualizzaLabel(de);
 			dati.addElement(de);
+		
+		}
+		
+		if (!allHidden) {
 	
 			de = new DataElement();
 			de.setLabel(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA);
 			de.setType(DataElementType.TITLE);
 			dati.addElement(de);
-	
+			
 			de = new DataElement();
 			de.setType(DataElementType.LINK);
 			de.setUrl(ConfigurazioneCostanti.SERVLET_NAME_CONFIGURAZIONE_SYSTEM_PROPERTIES_LIST);
 			ServletUtils.setDataElementVisualizzaLabel(de);
 			dati.addElement(de);
+			
 		}
 		
 		// Lascio solo in menu
@@ -5868,7 +5901,7 @@ public class ConfigurazioneHelper extends ConsoleHelper{
 		return dati;
 	}
 
-	private boolean isErroreHttp(String stato, String risorsa){
+	public boolean isErroreHttp(String stato, String risorsa){
 		if(stato!=null && stato.startsWith("[httpCode ")){
 			this.log.error("Errore durante la lettura della risorsa ["+risorsa+"]: "+stato);
 			return true;

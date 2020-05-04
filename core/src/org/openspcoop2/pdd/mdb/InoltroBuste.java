@@ -77,6 +77,7 @@ import org.openspcoop2.pdd.config.MTOMProcessorConfig;
 import org.openspcoop2.pdd.config.MessageSecurityConfig;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.config.RichiestaDelegata;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.core.AbstractCore;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.EJBUtils;
@@ -895,6 +896,25 @@ public class InoltroBuste extends GenericLib{
 		// Validazione id completa
 		boolean validazioneIDBustaCompleta = this.propertiesReader.isValidazioneIDBustaCompleta(implementazionePdDDestinatario);
 
+		
+		// Esamina informazioni
+		IDSoggetto soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
+		IDServizio idServizio = richiestaDelegata.getIdServizio();
+		IDAccordo idAccordoServizio = richiestaDelegata.getIdAccordo();
+		ForwardProxy forwardProxy = null;
+		if(functionAsRouter==false && configurazionePdDManager.isForwardProxyEnabled()) {
+			try {
+				forwardProxy = configurazionePdDManager.getForwardProxyConfigFruizione(identitaPdD, idServizio);
+			}catch(Exception e) {
+				msgDiag.logErroreGenerico(e, "Configurazione del connettore errata per la funzionalità govway-proxy"); 
+				openspcoopstate.releaseResource();
+				esito.setEsitoInvocazione(false); 
+				esito.setStatoInvocazioneErroreNonGestito(e);
+				return esito;
+			}
+		}
+		
+		
 
 		// Risposta
 		OpenSPCoop2Message responseMessage = null;
@@ -956,9 +976,6 @@ public class InoltroBuste extends GenericLib{
 
 
 			/* ------------------ Routing --------------- */
-			IDSoggetto soggettoFruitore = richiestaDelegata.getIdSoggettoFruitore();
-			IDServizio idServizio = richiestaDelegata.getIdServizio();
-			IDAccordo idAccordoServizio = richiestaDelegata.getIdAccordo();
 			msgDiag.logPersonalizzato("routingTable.esaminaInCorso");
 			
 			// ConnectorProperties (Punto di accesso della porta di identitaPdD.getCodicePorta() a cui spedire la busta)
@@ -1889,6 +1906,7 @@ public class InoltroBuste extends GenericLib{
 			connettoreMsg.setPropertiesTrasporto(propertiesTrasporto);
 			connettoreMsg.setPropertiesUrlBased(propertiesUrlBased);
 			connettoreMsg.initPolicyGestioneToken(configurazionePdDManager);
+			connettoreMsg.setForwardProxy(forwardProxy);
 			IConnettore connectorSender = null;
 
 			// mapping per forward token
@@ -1970,6 +1988,7 @@ public class InoltroBuste extends GenericLib{
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
+				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 				
 				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);
@@ -2168,6 +2187,7 @@ public class InoltroBuste extends GenericLib{
 				String locationWithUrl = ConnettoreUtils.buildLocationWithURLBasedParameter(requestMessageTrasformato, connettoreMsg.getTipoConnettore(), connettoreMsg.getPropertiesUrlBased(), location,
 						protocolFactory, this.idModulo);
 				locationWithUrl = ConnettoreUtils.addProxyInfoToLocationForHTTPConnector(connettoreMsg.getTipoConnettore(), connettoreMsg.getConnectorProperties(), locationWithUrl);
+				locationWithUrl = ConnettoreUtils.addGovWayProxyInfoToLocationForHTTPConnector(connettoreMsg.getForwardProxy(),connectorSender, locationWithUrl);
 				msgDiag.addKeyword(CostantiPdD.KEY_LOCATION, ConnettoreUtils.formatLocation(httpRequestMethod, locationWithUrl));
 				
 				pddContext.addObject(CostantiPdD.CONNETTORE_REQUEST_METHOD, httpRequestMethod);

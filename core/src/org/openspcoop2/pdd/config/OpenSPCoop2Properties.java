@@ -1644,6 +1644,10 @@ public class OpenSPCoop2Properties {
 			// Statistiche via jmx Console
 			this.isStatisticheViaJmx();
 			
+			// Forward Proxy
+			this.isForwardProxyEnable();
+			this.getForwardProxyConfigurazioneDefault();
+			
 			// Trasporto REST / SOAP
 			
 			this.getSOAPServicesUrlParametersForwardConfig();
@@ -16219,6 +16223,199 @@ public class OpenSPCoop2Properties {
 			}
 		}
 	}
+	
+	/* ------------- Forward Proxy ---------------------*/
+	
+	private static Boolean isForwardProxyEnable = null;
+	public boolean isForwardProxyEnable(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.enable";
+		if(OpenSPCoop2Properties.isForwardProxyEnable==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyEnable = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isForwardProxyEnable = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyEnable = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyEnable;
+	}
+	
+	
+	private static Boolean isForwardProxyHeaderEnable = null;
+	private boolean isForwardProxyHeaderEnable(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.enable";
+		if(OpenSPCoop2Properties.isForwardProxyHeaderEnable==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyHeaderEnable = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isForwardProxyHeaderEnable = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyHeaderEnable = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyHeaderEnable;
+	}
+	
+	private static String getForwardProxyHeaderName = null;
+	private String getForwardProxyHeaderName(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.nome";
+		if(OpenSPCoop2Properties.getForwardProxyHeaderName==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getForwardProxyHeaderName = value;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER);
+					OpenSPCoop2Properties.getForwardProxyHeaderName = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getForwardProxyHeaderName = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER;
+			}
+		}
+
+		return OpenSPCoop2Properties.getForwardProxyHeaderName;
+	}
+	
+	private static Boolean isForwardProxyHeaderBase64 = null;
+	private boolean isForwardProxyHeaderBase64(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.header.base64";
+		if(OpenSPCoop2Properties.isForwardProxyHeaderBase64==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyHeaderBase64 = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
+					OpenSPCoop2Properties.isForwardProxyHeaderBase64 = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyHeaderBase64 = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyHeaderBase64;
+	}
+	
+	
+	private static Boolean isForwardProxyQueryParameterEnable = null;
+	private boolean isForwardProxyQueryParameterEnable(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.enable";
+		if(OpenSPCoop2Properties.isForwardProxyQueryParameterEnable==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyQueryParameterEnable = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false");
+					OpenSPCoop2Properties.isForwardProxyQueryParameterEnable = false;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default=false, errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyQueryParameterEnable = false;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyQueryParameterEnable;
+	}
+	
+	private static String getForwardProxyQueryParameterName = null;
+	private String getForwardProxyQueryParameterName(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.nome";
+		if(OpenSPCoop2Properties.getForwardProxyQueryParameterName==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.getForwardProxyQueryParameterName = value;
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER);
+					OpenSPCoop2Properties.getForwardProxyQueryParameterName = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getForwardProxyQueryParameterName = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER;
+			}
+		}
+
+		return OpenSPCoop2Properties.getForwardProxyQueryParameterName;
+	}
+	
+	private static Boolean isForwardProxyQueryParameterBase64 = null;
+	private boolean isForwardProxyQueryParameterBase64(){
+
+		String pName = "org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.base64";
+		if(OpenSPCoop2Properties.isForwardProxyQueryParameterBase64==null){
+			try{  
+				String value = this.reader.getValue_convertEnvProperties(pName); 
+
+				if (value != null){
+					value = value.trim();
+					OpenSPCoop2Properties.isForwardProxyQueryParameterBase64 = Boolean.parseBoolean(value);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64);
+					OpenSPCoop2Properties.isForwardProxyQueryParameterBase64 = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+				}
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isForwardProxyQueryParameterBase64 = ForwardProxy.DEFAULT_GOVWAY_PROXY_HEADER_BASE64;
+			}
+		}
+
+		return OpenSPCoop2Properties.isForwardProxyQueryParameterBase64;
+	}
+	
+	public ForwardProxyConfigurazione getForwardProxyConfigurazioneDefault() {
+		ForwardProxyConfigurazione config = new ForwardProxyConfigurazione();
+		if(this.isForwardProxyHeaderEnable()) {
+			config.setHeader(this.getForwardProxyHeaderName());
+			config.setHeaderBase64(this.isForwardProxyHeaderBase64());
+		}
+		if(this.isForwardProxyQueryParameterEnable()) {
+			config.setQuery(this.getForwardProxyQueryParameterName());
+			config.setQueryBase64(this.isForwardProxyQueryParameterBase64());
+		}
+		return config;
+	}
+
 	
 	/* ------------- SOAP (Trasporto - URLParameters) ---------------------*/
 	

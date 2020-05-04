@@ -24,6 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.openspcoop2.core.config.ResponseCachingConfigurazione;
 import org.openspcoop2.core.config.constants.RuoloContesto;
@@ -33,14 +34,22 @@ import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
+import org.openspcoop2.pdd.config.ForwardProxyConfigurazione;
 import org.openspcoop2.pdd.config.UrlInvocazioneAPI;
 import org.openspcoop2.pdd.core.CostantiPdD;
+import org.openspcoop2.pdd.core.dynamic.DynamicUtils;
+import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.utils.Utilities;
+import org.openspcoop2.utils.io.Base64Utilities;
+import org.openspcoop2.utils.resources.Charset;
 import org.openspcoop2.utils.transport.TransportUtils;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.utils.transport.http.HttpUtilities;
+import org.openspcoop2.utils.transport.http.RFC2047Encoding;
+import org.openspcoop2.utils.transport.http.RFC2047Utilities;
 
 /**
  * ConnettoreBaseHTTP
@@ -77,6 +86,12 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	/** InputStream Risposta */
 	protected String resultHTTPMessage;
 
+	/** RFC 2047 */
+	boolean encodingRFC2047 = false;
+	Charset charsetRFC2047 = null;
+	RFC2047Encoding encodingAlgorithmRFC2047 = null;
+	boolean validazioneHeaderRFC2047 = false;
+	
 	
 	/** REST Proxy Pass Reverse */
 	protected boolean rest_proxyPassReverse = false;
@@ -84,14 +99,35 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 	protected List<String> rest_proxyPassReverse_headers = null;
 	
 	
+	/** ForwardProxy */
+	protected ForwardProxy forwardProxy;
+	protected String forwardProxy_headerName;
+	protected String forwardProxy_headerValue;
+	
 	@Override
 	protected boolean initialize(ConnettoreMsg request, boolean connectorPropertiesRequired, ResponseCachingConfigurazione responseCachingConfig){
 		boolean init = super.initialize(request, connectorPropertiesRequired, responseCachingConfig);
+		
+		updateForwardProxy(request.getForwardProxy());
 		
 		// Location
 		if(this.properties.get(CostantiConnettori.CONNETTORE_LOCATION)==null){
 			this.errore = "Proprieta' '"+CostantiConnettori.CONNETTORE_LOCATION+"' non fornita e richiesta da questo tipo di connettore ["+request.getTipoConnettore()+"]";
 			return false;
+		}
+		
+		if(this.idModulo!=null){
+			if(ConsegnaContenutiApplicativi.ID_MODULO.equals(this.idModulo)){
+				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_consegnaContenutiApplicativi();
+				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
+			}else{
+				this.encodingRFC2047 = this.openspcoopProperties.isEnabledEncodingRFC2047HeaderValue_inoltroBuste();
+				this.charsetRFC2047 = this.openspcoopProperties.getCharsetEncodingRFC2047HeaderValue_inoltroBuste();
+				this.encodingAlgorithmRFC2047 = this.openspcoopProperties.getEncodingRFC2047HeaderValue_inoltroBuste();
+				this.validazioneHeaderRFC2047 = this.openspcoopProperties.isEnabledValidazioneRFC2047HeaderNameValue_inoltroBuste();
+			}
 		}
 		
 		if(this.isRest) {
@@ -146,6 +182,75 @@ public abstract class ConnettoreBaseHTTP extends ConnettoreBaseWithResponse {
 				this.propertiesTrasporto.put(key, value);
 			}
 		}
+	}
+	
+	protected void updateForwardProxy(ForwardProxy forwardProxy) {
+		if(this.forwardProxy==null) {
+			this.forwardProxy = forwardProxy;
+		}
+	}
+	protected boolean updateLocation_forwardProxy(String location) throws ConnettoreException {
+		
+		if(this.forwardProxy!=null && this.forwardProxy.isEnabled()) {
+					
+			ForwardProxyConfigurazione config = this.forwardProxy.getConfig();
+			
+			String base64Location = null;
+			if(config.getHeader()!=null) {
+				this.forwardProxy_headerName = config.getHeader();
+				
+				if(config.isHeaderBase64()) {
+					base64Location = Base64Utilities.encodeAsString(location.getBytes());
+					this.forwardProxy_headerValue = base64Location;
+				}
+				else {
+					this.forwardProxy_headerValue = location;
+					if(this.encodingRFC2047){
+						try {
+							if(RFC2047Utilities.isAllCharactersInCharset(this.forwardProxy_headerValue, this.charsetRFC2047)==false){
+								String encoded = RFC2047Utilities.encode(new String(this.forwardProxy_headerValue), this.charsetRFC2047, this.encodingAlgorithmRFC2047);
+								//System.out.println("@@@@ CODIFICA ["+value+"] in ["+encoded+"]");
+								if(this.debug)
+									this.logger.info("RFC2047 Encoded value ["+this.forwardProxy_headerValue+"] in ["+encoded+"] (charset:"+this.charsetRFC2047+" encoding-algorithm:"+this.encodingAlgorithmRFC2047+")",false);
+								this.forwardProxy_headerValue = encoded;
+							}
+						}catch(Exception e) {
+							throw new ConnettoreException(e.getMessage(),e);
+						}
+					}
+				}
+			}
+			
+			Map<String, String> queryParameters = new HashMap<String, String>();
+			if(config.getQuery()!=null) {
+				if(config.isQueryBase64()) {
+					if(base64Location==null) {
+						base64Location = Base64Utilities.encodeAsString(location.getBytes());
+					}
+					queryParameters.put(config.getQuery(), base64Location);
+				}
+				else {
+					queryParameters.put(config.getQuery(), location);
+				}
+			}
+			
+			String newUrl = this.forwardProxy.getUrl();
+			if(this.dynamicMap!=null) {
+				try {
+					newUrl = DynamicUtils.convertDynamicPropertyValue("forwardProxyUrl", newUrl, this.dynamicMap, this.getPddContext(), false);
+				}catch(Exception e){
+					this.logger.error("Errore durante la costruzione della url per la funzionalità di 'forwardProxy' (dynamic): "+e.getMessage(),e);
+				}
+			}
+			
+			boolean encodeBaseLocation = true; // la base location può contenere dei parametri
+			this.location = TransportUtils.buildLocationWithURLBasedParameter(queryParameters, newUrl, encodeBaseLocation, this.logger!=null ? this.logger.getLogger() : OpenSPCoop2Logger.getLoggerOpenSPCoopCore());
+			
+			return true;
+		}
+		
+		return false;
+		
 	}
 	
 	

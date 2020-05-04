@@ -1162,4 +1162,16 @@ public class ConfigurazionePdDManager {
 	public List<MappingFruizionePortaDelegata> getMappingFruizionePortaDelegataList(IDSoggetto idFruitore, IDServizio idServizio) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getMappingFruizionePortaDelegataList(idFruitore, idServizio, this.getConnection());
 	} 
+	
+	/* ******** FORWARD PROXY ******** */
+	
+	public boolean isForwardProxyEnabled() {
+		return this.configurazionePdDReader.isForwardProxyEnabled();
+	}
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigFruizione(dominio, idServizio);
+	}
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio);
+	}
 }

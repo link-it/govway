@@ -1012,6 +1012,8 @@ public class ControlStationCore {
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = new Hashtable<String, String>();
 	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus  = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = new Hashtable<String, String>();
+	private Map<String, String> jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = new Hashtable<String, String>();
 	private Map<String, List<String>> jmxPdD_caches = new Hashtable<String, List<String>>();
 	private Map<String, List<String>> jmxPdD_caches_prefill = new Hashtable<String, List<String>>();
 	private Map<String, String> jmxPdD_cache_type = new Hashtable<String, String>();
@@ -1279,6 +1281,12 @@ public class ControlStationCore {
 	}
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) {
 		return this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.get(alias);
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) {
+		return this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.get(alias);
 	}
 	public List<String> getJmxPdD_caches(String alias) {
 		return this.jmxPdD_caches.get(alias);
@@ -1886,6 +1894,8 @@ public class ControlStationCore {
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW = core.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW;
 		this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi = core.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi;
 		this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus = core.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus;
+		this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD = core.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD;
+		this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration = core.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration;
 		this.jmxPdD_caches = core.jmxPdD_caches;
 		this.jmxPdD_caches_prefill = core.jmxPdD_caches_prefill;
 		this.jmxPdD_cache_type = core.jmxPdD_cache_type;
@@ -2272,6 +2282,8 @@ public class ControlStationCore {
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW.put(alias,consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getInformazioniDatabaseDatasourcesGW(alias));
 					this.jmxPdD_configurazioneSistema_nomeRisorsaConsegnaContenutiApplicativi.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaGestioneConsegnaApplicativi(alias));
 					this.jmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(alias));
+					this.jmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(alias));
+					this.jmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration.put(alias, consoleProperties.getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(alias));
 					this.jmxPdD_caches.put(alias, consoleProperties.getJmxPdD_caches(alias));
 					this.jmxPdD_caches_prefill.put(alias, consoleProperties.getJmxPdD_caches_prefill(alias));
 					this.jmxPdD_cache_type.put(alias, consoleProperties.getJmxPdD_cache_type(alias));

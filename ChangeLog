@@ -1,3 +1,10 @@
+2020-05-04  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore]
+	Aggiunta funzionalità OP-986
+	La funzionalità consente di inoltrare la richiesta ad un endpoint differente da quello censito nella configurazione del connettore di una API.
+	L'endpoint rappresenta un reverse proxy al quale viene fornito anche l'indirizzo effettivo dell'API, tramite un header http o un parametro della url.
+
 2020-04-30  Tito Flagella <pintori@link.it>
 
 	* [InstallerVersioneBinaria]
@@ -33,7 +40,7 @@
 
 2020-04-29  Andrea Poli <apoli@link.it>
 
-	[ApiRsMonitoraggio]
+	* [ApiRsMonitoraggio]
 	Aggiunta funzionalità OP-982
 	Riviste interfacce OpenAPI 3 dei servizi di configurazione e monitoraggio per utilizzare un discriminator interno agli oggetti elencati nelle strutture oneOf,
 	come richiesto dalla specifica OpenAPI "https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/".
@@ -41,20 +48,20 @@
 
 2020-04-24  Andrea Poli <apoli@link.it>
 
-	[GovWayCore]
+	* [GovWayCore]
 	Risolto Bug OP-871
 	Aggiunto nuovo engine per la validazione tramite interfaccia OpenAPI 3 che utilizza la libreria openapi4j (https://openapi4j.github.io/openapi4j/).
 	Tramite il nuovo engine è possibile validare correttamente messaggi definiti tramite 'oneOf' che possiedono un discriminator.
 
 2020-04-20  Andrea Poli <apoli@link.it>
 
-	[BatchStatistiche]
+	* [BatchStatistiche]
 	Risolto Bug OP-979
 	Il batch delle statistiche non si avviava correttamente sul nuovo stack tecnologico (java 11)
 
 2020-04-17  Andrea Poli <apoli@link.it>
 
-	[GovWayCore, ProtocolloSDI]
+	* [GovWayCore, ProtocolloSDI]
 	Aggiunta funzionalità OP-977
 	Se vengono configurati 'metadati' di backward compatibility con lo scopo di generare header di integrazione uguali a quelli generati da 'OpenSPCoop2' (es. x-openspcoop2-trasporto)
 	adesso anche gli header specifici del profilo di fatturazione sono stati allineati per essere retrocompatibili (X-SDI-*)
@@ -64,7 +71,7 @@
 
 2020-04-10  Andrea Poli <apoli@link.it>
 
-	[GovWayCore]
+	* [GovWayCore]
 	Risolto Bug OP-975
 	Risolti i seguenti problemi:
 	- Nella consegna multipla, sulle eventuali risposte ottenute in seguito alla consegna della notifica venivano applicate 
@@ -73,7 +80,7 @@
 
 2020-04-09  Andrea Poli <apoli@link.it>
 
-	[GovWayCore]
+	* [GovWayCore]
 	Risolto Bug OP-975
 	Risolti i seguenti problemi:
 	- La validazione dei contenuti non funzionava su API REST se abilitata su gruppi differenti dal Predefinito.
@@ -81,7 +88,7 @@
 
 2020-04-09  Andrea Poli <apoli@link.it>
 
-	[GovWayConsole]
+	* [GovWayConsole]
 	Risolto problema presente sulla console di configurazione, per quanto concerne il profilo 'ModI PA', 
 	che non consentiva di aggiungere applicativi autorizzati puntualmente su una API quando era abilitato il Multi-Tenant.
 

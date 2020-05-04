@@ -3866,4 +3866,235 @@ public class ConfigurazionePdD  {
 		}
 	}
 	
+	
+	
+	
+	/* ******** FORWARD PROXY ******** */
+		
+	public static String _getKey_isForwardProxyEnabled(){ 
+		String key = "isForwardProxyEnabled";
+		return key;
+	}
+	
+	public boolean isForwardProxyEnabled() {
+		try {
+			return this._isForwardProxyEnabled();
+		}catch(Exception e) {
+			this.log.error("isForwardProxyEnabled error: "+e.getMessage(),e); // non dovrebbe mai succedere
+			return false;
+		}
+	}
+	public boolean _isForwardProxyEnabled() throws DriverConfigurazioneException{
+			
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_isForwardProxyEnabled();
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return (Boolean) response.getObject();
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		boolean v = false;
+		if(this.cache!=null){
+			v = isForwardProxyEnabledCache(key);
+		}else{
+			v = isForwardProxyEnabledEngine();
+		}
+
+		return v;
+		
+	} 
+	
+	private synchronized boolean isForwardProxyEnabledCache(String keyCache) throws DriverConfigurazioneException{
+
+		boolean obj = false;
+		try{
+
+			//			System.out.println("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+			//			System.out.println("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+
+			String methodName = "isForwardProxyEnabledCache";
+			
+			// Raccolta dati
+			if(keyCache == null)
+				throw new DriverConfigurazioneException("["+methodName+"]: KeyCache non definita");	
+
+			// se e' attiva una cache provo ad utilizzarla
+			if(this.cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						return (Boolean) response.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+
+			// Effettuo le query nella mia gerarchia di registri.
+			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
+			obj = isForwardProxyEnabledEngine();
+
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					Boolean v = obj;
+					responseCache.setObject((java.io.Serializable)v);
+					this.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+			}
+
+		}catch(DriverConfigurazioneException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
+	
+	private boolean isForwardProxyEnabledEngine() throws DriverConfigurazioneException{
+		
+		try {
+			return ForwardProxy.isProxyEnabled();
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+	}
+	
+	
+	
+	
+	public ForwardProxy getForwardProxyConfigFruizione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(true, dominio, idServizio);
+	}
+	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		return getForwardProxyConfig(false, dominio, idServizio);
+	}
+	
+	public static String _getKey_ForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio){ 
+		String key = "ForwardProxy_"+(fruizione?"Fruizione":"Erogazione");
+		key = key +"_"+dominio.toString();
+		key = key +"_"+idServizio.toString(false);
+		return key;
+	}
+	private ForwardProxy getForwardProxyConfig(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_ForwardProxyConfig(fruizione, dominio, idServizio);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return (ForwardProxy) response.getObject();
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		ForwardProxy config = null;
+		if(this.cache!=null){
+			config = getForwardProxyConfigCache(key, fruizione, dominio, idServizio);
+		}else{
+			config = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+		}
+
+		return config;
+		
+	} 
+	
+	private synchronized ForwardProxy getForwardProxyConfigCache(String keyCache,boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+
+
+		ForwardProxy obj = null;
+		try{
+
+			//			System.out.println("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+			//			System.out.println("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+
+			String methodName = "getForwardProxyConfigCache";
+			
+			// Raccolta dati
+			if(keyCache == null)
+				throw new DriverConfigurazioneException("["+methodName+"]: KeyCache non definita");	
+
+			// se e' attiva una cache provo ad utilizzarla
+			if(this.cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						return (ForwardProxy) response.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+
+			// Effettuo le query nella mia gerarchia di registri.
+			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
+			obj = getForwardProxyConfigEngine(fruizione, dominio, idServizio);
+
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				if(obj!=null){
+					this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				}else{
+					throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
+				}
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)obj);
+					this.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+			}
+
+		}catch(DriverConfigurazioneException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
+	
+	private ForwardProxy getForwardProxyConfigEngine(boolean fruizione, IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
+		
+		try {
+			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+	}
 }

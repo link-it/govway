@@ -1017,7 +1017,7 @@ public abstract class ConnettoreBase extends AbstractCore implements IConnettore
     	}
     }
     
-    private Map<String, Object> dynamicMap = null;
+    protected Map<String, Object> dynamicMap = null;
     protected synchronized Map<String, Object> buildDynamicMap(ConnettoreMsg connettoreMsg){
     	if(this.dynamicMap==null) {
     		this.dynamicMap = new Hashtable<String, Object>();

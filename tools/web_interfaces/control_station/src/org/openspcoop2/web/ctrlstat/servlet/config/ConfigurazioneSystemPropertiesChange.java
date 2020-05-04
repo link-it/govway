@@ -34,12 +34,11 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 import org.openspcoop2.core.commons.Liste;
-import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.core.config.Property;
+import org.openspcoop2.core.config.SystemProperties;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
-import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.ctrlstat.core.Search;
-import org.openspcoop2.web.lib.mvc.Costanti;
+import org.openspcoop2.web.ctrlstat.servlet.GeneralHelper;
 import org.openspcoop2.web.lib.mvc.DataElement;
 import org.openspcoop2.web.lib.mvc.DataElementType;
 import org.openspcoop2.web.lib.mvc.ForwardParams;
@@ -206,7 +205,8 @@ public final class ConfigurazioneSystemPropertiesChange extends Action {
 
 			confHelper.prepareSystemPropertiesList(ricerca, lista);
 
-			pd.setMessage(ConfigurazioneCostanti.LABEL_CONFIGURAZIONE_PROPRIETA_SISTEMA_MODIFICATA_CON_SUCCESSO, Costanti.MESSAGE_TYPE_INFO);
+			// refresh via JMX
+			confHelper.refreshSystemProperties();
 			
 			ServletUtils.setGeneralAndPageDataIntoSession(session, gd, pd);
 

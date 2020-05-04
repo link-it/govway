@@ -35,6 +35,7 @@ import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.core.transazioni.TransazioneApplicativoServer;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.pdd.config.ConfigurazionePdDManager;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.core.PdDContext;
 import org.openspcoop2.pdd.core.handlers.OutRequestContext;
 import org.openspcoop2.pdd.core.token.PolicyNegoziazioneToken;
@@ -113,6 +114,8 @@ public class ConnettoreMsg  {
 	private TransazioneApplicativoServer transazioneApplicativoServer;
 	private IDPortaApplicativa idPortaApplicativa;
 	private Date dataConsegnaTransazioneApplicativoServer;
+	
+	private ForwardProxy forwardProxy;
 	
 
 
@@ -498,5 +501,12 @@ public class ConnettoreMsg  {
 	}
 	public void setDataConsegnaTransazioneApplicativoServer(Date dataConsegnaTransazioneApplicativoServer) {
 		this.dataConsegnaTransazioneApplicativoServer = dataConsegnaTransazioneApplicativoServer;
+	}
+	
+	public ForwardProxy getForwardProxy() {
+		return this.forwardProxy;
+	}
+	public void setForwardProxy(ForwardProxy forwardProxy) {
+		this.forwardProxy = forwardProxy;
 	}
 }

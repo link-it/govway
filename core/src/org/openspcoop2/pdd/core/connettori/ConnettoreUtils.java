@@ -30,6 +30,7 @@ import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.OpenSPCoop2MessageProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.RestUtilities;
+import org.openspcoop2.pdd.config.ForwardProxy;
 import org.openspcoop2.pdd.config.OpenSPCoop2Properties;
 import org.openspcoop2.pdd.core.CostantiPdD;
 import org.openspcoop2.pdd.core.PdDContext;
@@ -235,6 +236,17 @@ public class ConnettoreUtils {
 				String proxyHostname = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_HOSTNAME);
 				String proxyPort = properties.get(CostantiConnettori.CONNETTORE_HTTP_PROXY_PORT);
 				return location+" [proxy: "+proxyHostname+":"+proxyPort+"]";
+			}
+		}
+		return location;
+	}
+	
+	public static String addGovWayProxyInfoToLocationForHTTPConnector(ForwardProxy forwardProxy, IConnettore connectorSender, String location) throws ConnettoreException {
+		if(forwardProxy!=null && connectorSender instanceof ConnettoreBaseHTTP) {
+			ConnettoreBaseHTTP http = (ConnettoreBaseHTTP) connectorSender;
+			http.updateForwardProxy(forwardProxy);
+			if(http.updateLocation_forwardProxy(location)) {
+				return http.getLocation();
 			}
 		}
 		return location;

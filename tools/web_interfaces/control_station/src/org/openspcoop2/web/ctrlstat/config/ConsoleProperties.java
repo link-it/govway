@@ -653,6 +653,12 @@ public class ConsoleProperties {
 	public String getJmxPdD_configurazioneSistema_nomeMetodo_getThreadPoolStatus(String alias) throws UtilsException {
 		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.getThreadPoolStatus");
 	}
+	public String getJmxPdD_configurazioneSistema_nomeRisorsaSystemPropertiesPdD(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeRisorsaSystemPropertiesPdD");
+	}
+	public String getJmxPdD_configurazioneSistema_nomeMetodo_refreshPersistentConfiguration(String alias) throws UtilsException {
+		return _getJmxPdD_value(true, alias, "risorseJmxPdd.configurazioneSistema.nomeMetodo.refreshPersistentConfiguration");
+	}
 	public List<String> getJmxPdD_caches(String alias) throws UtilsException {
 		return this.read_jmx_caches(alias, "risorseJmxPdd.caches");
 	}

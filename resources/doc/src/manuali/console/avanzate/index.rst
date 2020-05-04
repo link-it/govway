@@ -15,6 +15,7 @@ Funzionalità Avanzate
         header_integrazione/index.rst
         errori_gw/index.rst
         connettori/index.rst
+	govway_proxy
         correlazione
         autenticazione
 	contentBased
