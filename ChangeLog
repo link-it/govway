@@ -2,7 +2,7 @@
 
 	* [GovWayCore]
 	Aggiunta funzionalità OP-986
-	La funzionalità consente di inoltrare la richiesta ad un endpoint differente da quello censito nella configurazione del connettore di una API.
+	Nuova funzionalità 'GovWay-Proxy' che consente di inoltrare la richiesta ad un endpoint differente da quello censito nella configurazione del connettore di una API.
 	L'endpoint rappresenta un reverse proxy al quale viene fornito anche l'indirizzo effettivo dell'API, tramite un header http o un parametro della url.
 
 2020-04-30  Tito Flagella <pintori@link.it>
