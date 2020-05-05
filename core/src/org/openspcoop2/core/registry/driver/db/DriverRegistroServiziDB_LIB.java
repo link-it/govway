@@ -4925,7 +4925,7 @@ public class DriverRegistroServiziDB_LIB {
 						DriverRegistroServiziDB_LIB.formatSQLString(updateQuery,idAccordo,idGruppoLong));
 				n = updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione type = " + type + " row affected =" + n);
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
 
 				break;
 
@@ -4948,7 +4948,7 @@ public class DriverRegistroServiziDB_LIB {
 				updateStmt.setLong(index++, idGruppoLong);
 				n=updateStmt.executeUpdate();
 				updateStmt.close();
-				DriverRegistroServiziDB_LIB.log.debug("CRUDAzione type = " + type + " row affected =" + n);
+				DriverRegistroServiziDB_LIB.log.debug("CRUDAccordoGruppo type = " + type + " row affected =" + n);
 				
 				break;
 			}
@@ -4956,9 +4956,9 @@ public class DriverRegistroServiziDB_LIB {
 			return n;
 
 		} catch (SQLException se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzione] SQLException : " + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] SQLException : " + se.getMessage(),se);
 		} catch (Exception se) {
-			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAzione] Exception : " + se.getMessage(),se);
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB_LIB::CRUDAccordoGruppo] Exception : " + se.getMessage(),se);
 		} finally {
 			try {
 				if(updateStmt!=null)updateStmt.close();

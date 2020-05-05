@@ -80,6 +80,8 @@ public class Importer {
 		
 		// updateAbilitato
 		boolean updateAbilitato = Boolean.parseBoolean(args[8]); 
+		boolean importPolicyConfig = Boolean.parseBoolean(args[9]); 
+		boolean importConfig = Boolean.parseBoolean(args[10]); 
 
 		// other
 		boolean isShowCorrelazioneAsincronaInAccordi = true;
@@ -122,7 +124,8 @@ public class Importer {
 		ArchiveEngine importerEngine = new ArchiveEngine(driverRegistroServizi, driverConfigurazione, serviceManager);
 		ImporterArchiveUtils importerArchiveUtils = 
 				new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, tipoPddDefault,
-						isShowGestioneWorkflowStatoDocumenti, updateAbilitato);
+						isShowGestioneWorkflowStatoDocumenti, updateAbilitato,
+						importPolicyConfig, importConfig);
 		ArchiveEsitoImport result = importerArchiveUtils.importArchive(archive, userLogin, 
 				isShowAccordiColonnaAzioni,
 				isAbilitatoControlloUnicitaImplementazioneAccordoPerSoggetto, 

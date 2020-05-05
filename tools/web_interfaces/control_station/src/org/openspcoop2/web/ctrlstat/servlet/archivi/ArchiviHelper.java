@@ -125,7 +125,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			List<String> protocolliSelectList,String protocollo,
 			List<ExportMode> exportModes,String exportMode,
 			ArchiveType servletSourceExport, String objToExport, 
-			String cascade,String configurazioneType,
+			String cascadePolicyConfig, String cascade,String configurazioneType,
 			String cascadePdd,String cascadeRuoli,String cascadeScope, String cascadeSoggetti,
 			String cascadeServiziApplicativi, String cascadePorteDelegate, String cascadePorteApplicative,
 			String cascadeAc, String cascadeAspc, String cascadeAsc, String cascadeAsps, String cascadeFruizioni) throws Exception{
@@ -233,7 +233,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 			}
 		}
 		
-
+		de = new DataElement();
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
+		if(cascadeEnabled){
+			de.setType(DataElementType.CHECKBOX);
+			de.setPostBack(true);
+		}
+		else
+			de.setType(DataElementType.HIDDEN);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT);
+		de.setSelected(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
+		de.setValue(cascadePolicyConfig);
+		dati.addElement(de);
+		
 		de = new DataElement();
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 		if(cascadeEnabled){
@@ -242,7 +255,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		}
 		else
 			de.setType(DataElementType.HIDDEN);
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT);
 		de.setSelected(ServletUtils.isCheckBoxEnabled(cascade));
 		de.setValue(cascade);
 		dati.addElement(de);
@@ -692,6 +706,7 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 
 	public void addImportToDati(Vector<DataElement> dati,
 			boolean validazioneDocumenti,boolean updateEnabled,
+			boolean importPolicyConfig, boolean importConfig,
 			boolean showProtocols, List<String> protocolliSelectList,String protocollo,
 			List<ImportMode> importModes,String importMode,
 			List<ArchiveModeType> importTypes,String importType,
@@ -776,7 +791,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_RIGHT);
 		de.setValue(""+validazioneDocumenti);
 		if (this.isModalitaAvanzata()) {
 			de.setType(DataElementType.CHECKBOX);
@@ -790,7 +806,8 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		dati.addElement(de);
 		
 		de = new DataElement();
-		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED);
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT);
 		de.setValue(""+updateEnabled);
 		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
 		if(deleter){
@@ -804,6 +821,44 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		//	de.setType("hidden");
 		//}
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT);
+		de.setValue(""+importPolicyConfig);
+		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if(deleter){
+			de.setType(DataElementType.HIDDEN);
+		}else{
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(importPolicyConfig);
+		}
+		//}
+		//else{
+		//	de.setType("hidden");
+		//}
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setLabel(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT);
+		de.setLabelRight(ArchiviCostanti.LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT);
+		de.setValue(""+importConfig);
+		//if (!InterfaceType.STANDARD.equals(user.getInterfaceType())) {
+		if(deleter){
+			de.setType(DataElementType.HIDDEN);
+		}else{
+			de.setType(DataElementType.CHECKBOX);
+			de.setSelected(importConfig);
+		}
+		//}
+		//else{
+		//	de.setType("hidden");
+		//}
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 
@@ -1344,7 +1399,9 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 	}
 	
 	public void addImportInformationMissingToDati(Vector<DataElement> dati,ImporterUtils importerUtils, FormFile ff,
-			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,boolean validazioneDocumenti,boolean updateEnabled,
+			String protocolloSelect,String inputMode,String protocolloEffettivo,String inputType,
+			boolean validazioneDocumenti,boolean updateEnabled,
+			boolean importPolicyConfig, boolean importConfig,
 			ImportInformationMissingCollection importInformationMissingCollection,
 			ImportInformationMissingException importInformationMissingException,
 			String modalitaAcquisizioneInformazioniProtocollo,List<PortType> portTypesOpenSPCoop,
@@ -1476,6 +1533,20 @@ public class ArchiviHelper extends ServiziApplicativiHelper {
 		de.setValue(""+updateEnabled);
 		de.setType(DataElementType.HIDDEN);
 		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_UPDATE_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(""+importPolicyConfig);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
+		de.setSize(this.getSize());
+		dati.addElement(de);
+		
+		de = new DataElement();
+		de.setValue(""+importConfig);
+		de.setType(DataElementType.HIDDEN);
+		de.setName(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
 		de.setSize(this.getSize());
 		dati.addElement(de);
 		

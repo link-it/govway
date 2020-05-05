@@ -27,6 +27,7 @@ import java.util.List;
 
 import org.openspcoop2.core.config.Configurazione;
 import org.openspcoop2.core.config.Credenziali;
+import org.openspcoop2.core.config.GenericProperties;
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
@@ -111,6 +112,8 @@ public class ImporterArchiveUtils {
 	private String userLogin;
 	private boolean gestioneWorkflowStatiAccordi;
 	private boolean updateAbilitato;
+	private boolean importPolicyConfigurazione;
+	private boolean importConfigurazione;
 	private String nomePddOperativa;
 	private String tipoPddDefault;
 	private ProtocolFactoryManager protocolFactoryManager;
@@ -120,12 +123,15 @@ public class ImporterArchiveUtils {
 	public ImporterArchiveUtils(AbstractArchiveEngine importerEngine,Logger log,
 			String userLogin,String nomePddOperativa, String tipoPddDefault,
 			boolean gestioneWorkflowStatiAccordi,
-			boolean updateAbilitato) throws Exception{
+			boolean updateAbilitato,
+			boolean importPolicyConfigurazione, boolean importConfigurazione) throws Exception{
 		this.importerEngine = importerEngine;
 		this.log = log;
 		this.userLogin = userLogin;
 		this.gestioneWorkflowStatiAccordi = gestioneWorkflowStatiAccordi;
 		this.updateAbilitato = updateAbilitato;
+		this.importPolicyConfigurazione = importPolicyConfigurazione;
+		this.importConfigurazione = importConfigurazione;
 		if(nomePddOperativa!=null){
 			this.nomePddOperativa = nomePddOperativa;
 		}
@@ -556,7 +562,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaDominio(nomePdd)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -645,7 +651,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsGruppo(idGruppo)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -728,7 +734,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsRuolo(idRuolo)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -809,7 +815,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsScope(idScope)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -894,7 +900,7 @@ public class ImporterArchiveUtils {
 				// --- check esistenza ---
 				if(this.updateAbilitato==false){
 					if(this.importerEngine.existsSoggettoRegistro(idSoggetto)){
-						detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+						detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 						return;
 					}
 				}
@@ -1025,7 +1031,7 @@ public class ImporterArchiveUtils {
 				// --- check esistenza ---
 				if(this.updateAbilitato==false){
 					if(this.importerEngine.existsSoggettoConfigurazione(idSoggetto) && !create){
-						detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+						detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 						return;
 					}
 				}
@@ -1120,7 +1126,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsServizioApplicativo(idServizioApplicativo)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -1259,7 +1265,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoCooperazione(idAccordoCooperazione)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -1410,7 +1416,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -1419,6 +1425,15 @@ public class ImporterArchiveUtils {
 			// --- check elementi riferiti ---
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
+			}
+			if(archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi()!=null && 
+					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi().sizeGruppoList()>0){
+				for (int i = 0; i < archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi().sizeGruppoList(); i++) {
+					IDGruppo idGruppo = new IDGruppo(archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi().getGruppo(i).getNome());
+					if(this.importerEngine.existsGruppo(idGruppo) == false ){
+						throw new Exception("Tag ["+idGruppo.getNome()+"] associato non esiste");
+					}	
+				}
 			}
 			
 			
@@ -1540,7 +1555,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioComposto)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -1905,7 +1920,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2173,7 +2188,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(old!=null){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2306,7 +2321,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaDelegata(idPortaDelegata)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2484,7 +2499,7 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsPortaApplicativa(idPortaApplicativa)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2651,6 +2666,12 @@ public class ImporterArchiveUtils {
 	public void importControlloTraffico_configurazione(org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale configurazione, 
 			ArchiveEsitoImportDetailConfigurazione<org.openspcoop2.core.controllo_traffico.ConfigurazioneGenerale> detail){		
 		try{
+			// --- check abilitazione ---
+			if(this.importConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			// update
 			this.importerEngine.updateControlloTraffico_configurazione(configurazione);
 			detail.setState(ArchiveStatoImport.UPDATED);
@@ -2668,10 +2689,16 @@ public class ImporterArchiveUtils {
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
 			
+			// --- check abilitazione ---
+			if(this.importPolicyConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsControlloTraffico_configurationPolicy(nomePolicy)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2737,11 +2764,18 @@ public class ImporterArchiveUtils {
 		
 		String nomePolicy = archivePolicy.getNomePolicy();
 		try{
+			boolean policyGlobale = archivePolicy.getPolicy().getFiltro()==null || archivePolicy.getPolicy().getFiltro().getNomePorta()==null || "".equals(archivePolicy.getPolicy().getFiltro().getNomePorta());
+						
+			// --- check abilitazione ---
+			if(policyGlobale && this.importPolicyConfigurazione==false){ // se non e' globale la policy di attivazione va aggiunta sempre poiche' associata all'erogazione o alla fruizione
+				detail.setState(ArchiveStatoImport.IMPORT_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
 			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2810,10 +2844,16 @@ public class ImporterArchiveUtils {
 		String tipologiaPolicy = archivePolicy.getTipologiaPolicy();
 		try{
 			
+			// --- check abilitazione ---
+			if(this.importPolicyConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_POLICY_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)){
-					detail.setState(ArchiveStatoImport.UPDATE_NOT_PERMISSED);
+					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
 			}
@@ -2841,9 +2881,9 @@ public class ImporterArchiveUtils {
 			
 			// --- upload ---
 			boolean create = false;
-			if(this.importerEngine.existsControlloTraffico_activePolicy(nomePolicy)){
+			if(this.importerEngine.existsGenericProperties(tipologiaPolicy, nomePolicy)){
 				
-				AttivazionePolicy old = this.importerEngine.getControlloTraffico_activePolicy(nomePolicy);
+				GenericProperties old = this.importerEngine.getGenericProperties(tipologiaPolicy, nomePolicy);
 				archivePolicy.getPolicy().setId(old.getId());
 				
 				// visibilita' oggetto stesso per update
@@ -2876,6 +2916,12 @@ public class ImporterArchiveUtils {
 	
 	public void importConfigurazione(Configurazione configurazionePdD, ArchiveEsitoImportDetailConfigurazione<Configurazione> detail){		
 		try{
+			// --- check abilitazione ---
+			if(this.importConfigurazione==false){
+				detail.setState(ArchiveStatoImport.IMPORT_CONFIG_NOT_ENABLED);
+				return;
+			}
+			
 			// update
 			this.importerEngine.updateConfigurazione(configurazionePdD);
 			detail.setState(ArchiveStatoImport.UPDATED);

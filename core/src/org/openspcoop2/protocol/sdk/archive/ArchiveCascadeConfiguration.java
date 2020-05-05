@@ -102,6 +102,8 @@ public class ArchiveCascadeConfiguration {
 	private boolean cascadeAccordoCooperazione = false;
 	private boolean cascadeFruizioni = false;
 	
+	private boolean cascadePolicyConfigurazione = false;
+	
 	
 	public boolean isCascadePdd() {
 		return this.cascadePdd;
@@ -188,5 +190,11 @@ public class ArchiveCascadeConfiguration {
 	public void setCascadeAccordoCooperazione(boolean cascadeAccordoCooperazione) {
 		this.cascadeAccordoCooperazione = cascadeAccordoCooperazione;
 	}
-		
+
+	public boolean isCascadePolicyConfigurazione() {
+		return this.cascadePolicyConfigurazione;
+	}
+	public void setCascadePolicyConfigurazione(boolean cascadeConfigurazione) {
+		this.cascadePolicyConfigurazione = cascadeConfigurazione;
+	}
 }

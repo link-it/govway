@@ -106,6 +106,7 @@ public final class Exporter extends Action {
 			
 			
 			// Cascade
+			String cascadePolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
 			String cascade = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
@@ -345,6 +346,7 @@ public final class Exporter extends Action {
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP+"="+ tipoConfigurazione;
 				}
 				if(cascadeEnabled){
+					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG+"="+ (ServletUtils.isCheckBoxEnabled(cascadePolicyConfig)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					send = send + "&" + ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE+"="+ (ServletUtils.isCheckBoxEnabled(cascade)?Costanti.CHECK_BOX_ENABLED:Costanti.CHECK_BOX_DISABLED);
 					ArchiveCascadeConfiguration cascadeConfig = archiviCore.getCascadeConfig(exportModes, exportMode);
 					if(cascadeConfig.isCascadePdd()){
@@ -433,7 +435,7 @@ public final class Exporter extends Action {
 			archiviHelper.addExportToDati(dati, protocolli, protocollo, 
 					exportModes, exportMode, 
 					archiveType, objToExport,
-					cascade,tipoConfigurazione,
+					cascadePolicyConfig, cascade,tipoConfigurazione,
 					cascadePdd,cascadeRuoli,cascadeScope,cascadeSoggetti,
 					cascadeServiziApplicativi, cascadePorteDelegate, cascadePorteApplicative,
 					cascadeAccordiCooperazione, cascadeAccordiServizioParteComune, 

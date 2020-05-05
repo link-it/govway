@@ -22,6 +22,7 @@ package org.openspcoop2.web.ctrlstat.servlet.archivi;
 
 import java.util.Vector;
 
+import org.openspcoop2.protocol.basic.archive.EsitoUtils;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
 import org.openspcoop2.web.ctrlstat.servlet.config.ConfigurazioneCostanti;
@@ -153,6 +154,8 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "fileName";
 	public final static String PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI = "validazioneDocumenti";
 	public final static String PARAMETRO_ARCHIVI_UPDATE_ENABLED = "updateEnabled";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED = "policyConfigEnabled";
+	public final static String PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED = "configEnabled";
 	public final static String PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "tipologiaArchivio";
 	
 	public final static String PARAMETRO_ARCHIVI_TIPO = "tipoArchivio";
@@ -181,6 +184,7 @@ public class ArchiviCostanti {
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_HIDDEN = "ProprietaInputHidden_";
 	public final static String PARAMETRO_ARCHIVI_IMPORT_INPUT_PROPRIETA_PREFIX_VALUE = "ProprietaInputValue_";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO = "tipoExport";
+	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG = "cascadeConfig";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE = "cascade";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "tipoDump";
 	public final static String PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "cascadePdd";
@@ -203,8 +207,14 @@ public class ArchiviCostanti {
 	
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE = "File";
 	public final static String LABEL_PARAMETRO_ARCHIVI_PACKAGE_FILE_SIMPLE_NAME = "File Caricato";
-	public final static String LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI = "Validazione Documenti";
-	public final static String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED = "Aggiornamento";
+	public final static String LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_LEFT = "Validazione Documenti";
+	public final static String LABEL_PARAMETRO_ARCHIVI_VALIDAZIONE_DOCUMENTI_RIGHT = "Le interfacce delle API (Wsdl, OpenAPI 3) vengono validate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_LEFT = "Aggiornamento";
+	public final static String LABEL_PARAMETRO_ARCHIVI_UPDATE_ENABLED_RIGHT = "Gli elementi già esistenti verranno aggiornati";
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_RIGHT = "Eventuali policy globali (Token, Rate Limiting) presenti nell'archivio verranno importate";
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_CONFIGURAZIONE;
+	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_CONFIG_RIGHT = "Una eventuale configurazione presente nell'archivio verrà importata";
 	public final static String LABEL_PARAMETRO_ARCHIVI_TIPOLOGIA_ARCHIVIO = "Tipologia archivio";
 	public final static String LABEL_PARAMETRO_ARCHIVI_TIPO = "Tipo";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_ID_DESCRIPTION ="Descrizione";
@@ -228,7 +238,10 @@ public class ArchiviCostanti {
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_SERVIZIO_PARTE_COMUNE_INPUT = "AccordoServizioParteComune/ServizioComposto";
 	public final static String LABEL_PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_ACCORDO_COOPERAZIONE_INPUT = "AccordoCooperazione";
 	
-	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE = "Includi gli elementi riferiti";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_LEFT = EsitoUtils.LABEL_IMPORT_POLICY;
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG_RIGHT = "Vengono incluse le policy globali (Token, Rate Limiting)";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_LEFT = "Elementi di Registro";
+	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_RIGHT = "Vengono inclusi gli elementi riferiti";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_SEZIONE = "Configurazione 'Cascade'";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_TIPO_DUMP = "Modalità";
 	public final static String LABEL_PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD = "Porte di Dominio";

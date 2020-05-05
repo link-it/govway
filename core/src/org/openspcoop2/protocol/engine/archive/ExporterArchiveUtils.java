@@ -462,7 +462,7 @@ public class ExporterArchiveUtils {
 		
 	}
 	
-	private void readControlloTrafficoPolicyPorta(Archive archive, boolean delegata, String nomePorta) throws Exception {
+	private void readControlloTrafficoPolicyPorta(Archive archive, boolean delegata, String nomePorta,  ArchiveCascadeConfiguration cascadeConfig) throws Exception {
 		
 		List<IdActivePolicy> listControlloTraffico_activePolicies = null;
 		try {
@@ -484,13 +484,15 @@ public class ExporterArchiveUtils {
 				}
 				
 				// aggiungo anche la policy configurata.
-				String keyPolicyConfig = ArchiveConfigurationPolicy.buildKey(idPolicy.getIdPolicy());
-				if(archive.getControlloTraffico_configurationPolicies().containsKey(keyPolicyConfig)==false) {
-					try {
-						archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
-								this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy.getIdPolicy()),
-								this.idCorrelazione));
-					}catch(DriverConfigurazioneNotFound notFound) {}
+				if(cascadeConfig.isCascadePolicyConfigurazione()) {
+					String keyPolicyConfig = ArchiveConfigurationPolicy.buildKey(idPolicy.getIdPolicy());
+					if(archive.getControlloTraffico_configurationPolicies().containsKey(keyPolicyConfig)==false) {
+						try {
+							archive.getControlloTraffico_configurationPolicies().add(new ArchiveConfigurationPolicy(
+									this.archiveEngine.getControlloTraffico_configurationPolicy(idPolicy.getIdPolicy()),
+									this.idCorrelazione));
+						}catch(DriverConfigurazioneNotFound notFound) {}
+					}
 				}
 			}
 		}
@@ -498,13 +500,16 @@ public class ExporterArchiveUtils {
 	
 	private void readTokenPolicyConfigurazione(Archive archive) throws Exception {
 		
+		ArchiveCascadeConfiguration cascadeConfigPolicy = new ArchiveCascadeConfiguration();
+		cascadeConfigPolicy.setCascadePolicyConfigurazione(true);
+		
 		List<IDGenericProperties> listPolicies_validation = null;
 		try {
 			listPolicies_validation = this.archiveEngine.getAllIdGenericProperties_validation();
 		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listPolicies_validation!=null && listPolicies_validation.size()>0) {
 			for (IDGenericProperties idGP : listPolicies_validation) {
-				readTokenPolicy_validation(archive,idGP.getNome());
+				readTokenPolicy_validation(archive,idGP.getNome(), cascadeConfigPolicy);
 			}
 		}
 		
@@ -514,32 +519,40 @@ public class ExporterArchiveUtils {
 		}catch(DriverConfigurazioneNotFound notFound) {}
 		if(listPolicies_retrieve!=null && listPolicies_retrieve.size()>0) {
 			for (IDGenericProperties idGP : listPolicies_retrieve) {
-				readTokenPolicy_retrieve(archive,idGP.getNome());
+				readTokenPolicy_retrieve(archive,idGP.getNome(), cascadeConfigPolicy);
 			}
 		}
 		
 	}
 	
-	private void readTokenPolicy_validation(Archive archive, String nomePolicy) throws Exception {
+	private void readTokenPolicy_validation(Archive archive, String nomePolicy, ArchiveCascadeConfiguration cascadeConfig) throws Exception {
 		
-		String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nomePolicy);
-		if(archive.getToken_validation_policies().containsKey(key)){
-			// gia gestito
-		}
-		else{
-			archive.getToken_validation_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_validation(nomePolicy), this.idCorrelazione));
+		if(cascadeConfig.isCascadePolicyConfigurazione()) {
+		
+			String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_VALIDATION, nomePolicy);
+			if(archive.getToken_validation_policies().containsKey(key)){
+				// gia gestito
+			}
+			else{
+				archive.getToken_validation_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_validation(nomePolicy), this.idCorrelazione));
+			}
+			
 		}
 		
 	}
 	
-	private void readTokenPolicy_retrieve(Archive archive, String nomePolicy) throws Exception {
+	private void readTokenPolicy_retrieve(Archive archive, String nomePolicy, ArchiveCascadeConfiguration cascadeConfig) throws Exception {
 		
-		String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nomePolicy);
-		if(archive.getToken_retrieve_policies().containsKey(key)){
-			// gia gestito
-		}
-		else{
-			archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_retrieve(nomePolicy), this.idCorrelazione));
+		if(cascadeConfig.isCascadePolicyConfigurazione()) {
+		
+			String key = ArchiveTokenPolicy.buildKey(CostantiConfigurazione.GENERIC_PROPERTIES_TOKEN_TIPOLOGIA_RETRIEVE, nomePolicy);
+			if(archive.getToken_retrieve_policies().containsKey(key)){
+				// gia gestito
+			}
+			else{
+				archive.getToken_retrieve_policies().add(new ArchiveTokenPolicy(this.archiveEngine.getGenericProperties_retrieve(nomePolicy), this.idCorrelazione));
+			}
+			
 		}
 		
 	}
@@ -1062,16 +1075,20 @@ public class ExporterArchiveUtils {
 					}
 					
 					// token policy di negoziazione
-					if(sa!=null && sa.getInvocazioneServizio()!=null) {
-						if(sa.getInvocazioneServizio().getConnettore()!=null &&
-								sa.getInvocazioneServizio().getConnettore().getProperties()!=null && sa.getInvocazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-							this.readTokenPolicy_retrieve(archive, sa.getInvocazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(sa!=null && sa.getInvocazioneServizio()!=null) {
+							if(sa.getInvocazioneServizio().getConnettore()!=null &&
+									sa.getInvocazioneServizio().getConnettore().getProperties()!=null && sa.getInvocazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+								this.readTokenPolicy_retrieve(archive, sa.getInvocazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+										cascadeConfig);
+							}
 						}
-					}
-					if(sa!=null && sa.getRispostaAsincrona()!=null) {
-						if(sa.getRispostaAsincrona().getConnettore()!=null &&
-								sa.getRispostaAsincrona().getConnettore().getProperties()!=null && sa.getRispostaAsincrona().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-							this.readTokenPolicy_retrieve(archive, sa.getRispostaAsincrona().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+						if(sa!=null && sa.getRispostaAsincrona()!=null) {
+							if(sa.getRispostaAsincrona().getConnettore()!=null &&
+									sa.getRispostaAsincrona().getConnettore().getProperties()!=null && sa.getRispostaAsincrona().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+								this.readTokenPolicy_retrieve(archive, sa.getRispostaAsincrona().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+										cascadeConfig);
+							}
 						}
 					}
 				}
@@ -1197,7 +1214,9 @@ public class ExporterArchiveUtils {
 					if(as.getGruppi()!=null && as.getGruppi().sizeGruppoList()>0) {
 						for (GruppoAccordo gruppo : as.getGruppi().getGruppoList()) {
 							IDGruppo idGruppo = new IDGruppo(gruppo.getNome());
-							this.readGruppo(archive, idGruppo, cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE); // per evitare loop
+							this.readGruppo(archive, idGruppo, cascadeConfig, false,
+									ArchiveType.GRUPPO); // voglio che sia aggiunto sempre e comunque il tag (si tratta di un caso eccezionale, essendo il tag un elemento che non contiene aspetti di configurazione)
+									//ArchiveType.ACCORDO_SERVIZIO_PARTE_COMUNE); // per evitare loop
 						}
 					}
 					
@@ -1374,17 +1393,21 @@ public class ExporterArchiveUtils {
 						this.readAccordoServizioComposto(archive, idAccordoServizioParteComune, cascadeConfig, false, ArchiveType.ACCORDO_SERVIZIO_PARTE_SPECIFICA); // per evitare loop
 					}
 					
-					// token policy di negoziazione
-					if(as!=null && as.getConfigurazioneServizio()!=null) {
-						if(as.getConfigurazioneServizio().getConnettore()!=null &&
-								as.getConfigurazioneServizio().getConnettore().getProperties()!=null && as.getConfigurazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-							this.readTokenPolicy_retrieve(archive, as.getConfigurazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
-						}
-						if(as.getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
-							for (ConfigurazioneServizioAzione confAzione : as.getConfigurazioneServizio().getConfigurazioneAzioneList()) {
-								if(confAzione.getConnettore()!=null &&
-										confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-									this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+					// token policy di negoziazione (aggiunte solamente se abilitato il cascade di configurazione)
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(as!=null && as.getConfigurazioneServizio()!=null) {
+							if(as.getConfigurazioneServizio().getConnettore()!=null &&
+									as.getConfigurazioneServizio().getConnettore().getProperties()!=null && as.getConfigurazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+								this.readTokenPolicy_retrieve(archive, as.getConfigurazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+										cascadeConfig);
+							}
+							if(as.getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+								for (ConfigurazioneServizioAzione confAzione : as.getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+									if(confAzione.getConnettore()!=null &&
+											confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+										this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+												cascadeConfig);
+									}
 								}
 							}
 						}
@@ -1539,16 +1562,20 @@ public class ExporterArchiveUtils {
 					this.readAccordoServizioParteSpecifica(archive, idAccordoServizio, cascadeConfig, false, ArchiveType.FRUITORE); // per evitare loop
 					
 					// token policy di negoziazione
-					if(fruitore!=null) {
-						if(fruitore.getConnettore()!=null &&
-								fruitore.getConnettore().getProperties()!=null && fruitore.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-							this.readTokenPolicy_retrieve(archive, fruitore.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
-						}
-						if(fruitore.sizeConfigurazioneAzioneList()>0) {
-							for (ConfigurazioneServizioAzione confAzione : fruitore.getConfigurazioneAzioneList()) {
-								if(confAzione.getConnettore()!=null &&
-										confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
-									this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY));
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(fruitore!=null) {
+							if(fruitore.getConnettore()!=null &&
+									fruitore.getConnettore().getProperties()!=null && fruitore.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+								this.readTokenPolicy_retrieve(archive, fruitore.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+										cascadeConfig);
+							}
+							if(fruitore.sizeConfigurazioneAzioneList()>0) {
+								for (ConfigurazioneServizioAzione confAzione : fruitore.getConfigurazioneAzioneList()) {
+									if(confAzione.getConnettore()!=null &&
+											confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+										this.readTokenPolicy_retrieve(archive, confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY),
+												cascadeConfig);
+									}
 								}
 							}
 						}
@@ -1612,7 +1639,7 @@ public class ExporterArchiveUtils {
 					archive.getPorteDelegate().add(archivePd);
 					
 					// add rateLimiting
-					readControlloTrafficoPolicyPorta(archive, true, pd.getNome());
+					readControlloTrafficoPolicyPorta(archive, true, pd.getNome(), cascadeConfig);
 					
 					
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -1673,8 +1700,10 @@ public class ExporterArchiveUtils {
 					}
 					
 					// token policy di validazione
-					if(pd!=null && pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null && !"".equals(pd.getGestioneToken().getPolicy())) {
-						this.readTokenPolicy_validation(archive, pd.getGestioneToken().getPolicy());
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(pd!=null && pd.getGestioneToken()!=null && pd.getGestioneToken().getPolicy()!=null && !"".equals(pd.getGestioneToken().getPolicy())) {
+							this.readTokenPolicy_validation(archive, pd.getGestioneToken().getPolicy(), cascadeConfig);
+						}
 					}
 					
 					// trasformazioni
@@ -1771,7 +1800,7 @@ public class ExporterArchiveUtils {
 					archive.getPorteApplicative().add(archivePa);
 					
 					// add rateLimiting
-					readControlloTrafficoPolicyPorta(archive, false, pa.getNome());
+					readControlloTrafficoPolicyPorta(archive, false, pa.getNome(), cascadeConfig);
 					
 				
 					// *** dipendenze: oggetti necessari per la creazione dell'oggetto sopra aggiunto ***
@@ -1850,8 +1879,10 @@ public class ExporterArchiveUtils {
 					}
 					
 					// token policy di validazione
-					if(pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy())) {
-						this.readTokenPolicy_validation(archive, pa.getGestioneToken().getPolicy());
+					if(cascadeConfig.isCascadePolicyConfigurazione()) {
+						if(pa!=null && pa.getGestioneToken()!=null && pa.getGestioneToken().getPolicy()!=null && !"".equals(pa.getGestioneToken().getPolicy())) {
+							this.readTokenPolicy_validation(archive, pa.getGestioneToken().getPolicy(), cascadeConfig);
+						}
 					}
 					
 					// serviziApplicativi autorizzati

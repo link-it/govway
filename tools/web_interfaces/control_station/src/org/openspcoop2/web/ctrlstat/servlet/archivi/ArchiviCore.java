@@ -188,7 +188,7 @@ public class ArchiviCore extends ControlStationCore {
 	}
 	
 	public String importArchive(Archive archive,ArchiveMode archiveMode,String protocol, String userLogin, boolean smista,
-			boolean updateAbilitato, String nomePddOperativa,
+			boolean updateAbilitato, boolean importPolicyConfig, boolean importConfig, String nomePddOperativa,
 			ConsoleHelper consoleHelper) throws Exception,ImportInformationMissingException{
 		
 		Connection con = null;
@@ -207,7 +207,8 @@ public class ArchiviCore extends ControlStationCore {
 			
 			ImporterArchiveUtils importerArchiveUtils = 
 					new ImporterArchiveUtils(importerEngine, log, userLogin, nomePddOperativa, this.getImportArchivi_tipoPdD(), 
-							consoleHelper.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato);
+							consoleHelper.isShowGestioneWorkflowStatoDocumenti(), updateAbilitato,
+							importPolicyConfig, importConfig);
 			
 			ArchiveEsitoImport esito = importerArchiveUtils.importArchive(archive, userLogin, 
 					this.isShowAccordiColonnaAzioni(),

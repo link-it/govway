@@ -23,13 +23,16 @@ possibile nei modi seguenti:
    -  *Profilo Interoperabilità*: indicazione del profilo cui fa
       riferimento l'esportazione.
 
-   -  *Tipologia archivio*: se previsto, fa selezionare la tipologia di
+   -  *Soggetto*: indicazione del dominio cui fa
+      riferimento l'esportazione.
+
+   -  *Tipologia archivio*: se previsto dal Profilo di Interoperabilità, fa selezionare la tipologia di
       archivio da produrre. Il default è il formato *Govlet* standard di
       esportazione di Govway.
 
-   -  *Includi elementi riferiti*: include nell'archivio di esportazione
-      anche gli elementi di configurazione riferiti da quelli
-      selezionati.
+   -  *Policy di Configurazione*: se il flag viene abilitato vengono incluse nell'archivio esportato le policy globali (Token, Rate Limiting) condivise tra più API
+
+   -  *Elementi di Registro*: se il flag viene abilitato vengono incluse nell'archivio esportato anche gli elementi del registro riferiti da quelli selezionati.
 
    .. figure:: ../_figure_console/Esportazione2.png
     :scale: 100%

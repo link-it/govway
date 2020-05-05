@@ -566,14 +566,22 @@ public class EsitoUtils {
 		
 		return bfEsito.toString();
 	}
+	public final static String LABEL_IMPORT_POLICY = "Policy di Configurazione";
+	public final static String LABEL_IMPORT_CONFIGURAZIONE = "Configurazione di GovWay";
 	public void serializeStato(ArchiveEsitoImportDetail detail,StringBuilder bfEsito, boolean importOperation){
 		String stateDetail = "";
 		if(detail.getStateDetail()!=null){
 			stateDetail = detail.getStateDetail();
 		}
 		switch (detail.getState()) {
-		case UPDATE_NOT_PERMISSED:
+		case UPDATE_NOT_ENABLED:
 			bfEsito.append("non importato: già presente (aggiornamento non abilitato)").append(stateDetail);
+			break;
+		case IMPORT_POLICY_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_POLICY+"' non abilitata").append(stateDetail);
+			break;
+		case IMPORT_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_CONFIGURAZIONE+"' non abilitata").append(stateDetail);
 			break;
 		case ERROR:
 			if(detail.getStateDetail()!=null){
@@ -604,8 +612,14 @@ public class EsitoUtils {
 			stateDetail = detail.getStateDetail();
 		}
 		switch (detail.getState()) {
-		case UPDATE_NOT_PERMISSED:
+		case UPDATE_NOT_ENABLED:
 			// Stato mai usato per questo oggetto
+			break;
+		case IMPORT_POLICY_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_POLICY+"' non abilitata").append(stateDetail);
+			break;
+		case IMPORT_CONFIG_NOT_ENABLED:
+			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_CONFIGURAZIONE+"' non abilitata").append(stateDetail);
 			break;
 		case ERROR:
 			if(detail.getStateDetail()!=null){

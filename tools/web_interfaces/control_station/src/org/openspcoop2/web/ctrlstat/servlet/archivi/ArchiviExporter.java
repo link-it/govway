@@ -124,6 +124,7 @@ public class ArchiviExporter extends HttpServlet {
 			
 			
 			// Cascade
+			String cascadePolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_POLICY_CONFIG);
 			String cascade = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE);
 			String cascadePdd = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_PDD);
 			String cascadeGruppi = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_EXPORT_CASCADE_GRUPPI);
@@ -221,7 +222,8 @@ public class ArchiviExporter extends HttpServlet {
 					}
 				}
 			}
-			
+			cascadeConfig.setCascadePolicyConfigurazione(ServletUtils.isCheckBoxEnabled(cascadePolicyConfig));
+						
 			
 			// Recuperi eventuali identificativi logici degli oggetti
 			ExporterUtils exporterUtils = new ExporterUtils(archiviCore);

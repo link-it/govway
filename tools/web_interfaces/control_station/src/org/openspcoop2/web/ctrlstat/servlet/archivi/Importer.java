@@ -93,6 +93,8 @@ public final class Importer extends Action {
 	
 	private boolean validazioneDocumenti = true;
 	private boolean updateEnabled = false;
+	private boolean importPolicyConfig = false;
+	private boolean importConfig = false;
 
 	private int step = 0;
 	
@@ -278,6 +280,36 @@ public final class Importer extends Action {
 				}
 			}
 			
+			// importPolicyConfig
+			String tmpImportPolicyConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_POLICY_CONFIG_ENABLED);
+			if(archiviHelper.isEditModeInProgress() && tmpImportPolicyConfig==null){
+				// primo accesso alla servlet
+				this.importPolicyConfig = false;
+			}
+			else{
+				if(ServletUtils.isCheckBoxEnabled(tmpImportPolicyConfig)){
+					this.importPolicyConfig = true;
+				}
+				else{
+					this.importPolicyConfig = false;
+				}
+			}
+			
+			// importConfig
+			String tmpImportConfig = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_CONFIG_ENABLED);
+			if(archiviHelper.isEditModeInProgress() && tmpImportConfig==null){
+				// primo accesso alla servlet
+				this.importConfig = false;
+			}
+			else{
+				if(ServletUtils.isCheckBoxEnabled(tmpImportConfig)){
+					this.importConfig = true;
+				}
+				else{
+					this.importConfig = false;
+				}
+			}
+			
 			
 			// importInformationMissing: objectClass
 			String tmpClass = archiviHelper.getParameter(ArchiviCostanti.PARAMETRO_ARCHIVI_IMPORT_INFO_MISSING_OBJECT_CLASS);
@@ -342,6 +374,7 @@ public final class Importer extends Action {
 				dati.addElement(ServletUtils.getDataElementForEditModeFinished());
 
 				archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
+						this.importPolicyConfig, this.importConfig,
 						showProtocols, protocolli, this.protocollo, 
 						importModes, this.importMode, 
 						importTypes, this.importType,
@@ -586,7 +619,9 @@ public final class Importer extends Action {
 					}
 					
 					archiviHelper.addImportInformationMissingToDati(dati, importerUtils, ff, 
-							this.protocollo, this.importMode, protocolloEffettivo, this.importType, this.validazioneDocumenti, this.updateEnabled,
+							this.protocollo, this.importMode, protocolloEffettivo, this.importType, 
+							this.validazioneDocumenti, this.updateEnabled,
+							this.importPolicyConfig, this.importConfig,
 							importInformationMissingCollection, importInformationMissingException, 
 							this.importInformationMissing_modalitaAcquisizioneInformazioniProtocollo,this.importInformationMissing_portTypes,
 							protocolliForModes,readedDatiConnettori,
@@ -597,6 +632,7 @@ public final class Importer extends Action {
 				}
 				else{
 					archiviHelper.addImportToDati(dati, this.validazioneDocumenti, this.updateEnabled,
+							this.importPolicyConfig, this.importConfig,
 							showProtocols, protocolli, this.protocollo, 
 							importModes, this.importMode, 
 							importTypes, this.importType,
@@ -652,7 +688,7 @@ public final class Importer extends Action {
 			}else{
 				esito = archiviCore.importArchive(archive, archiveMode, protocolloEffettivo, 
 						userLogin, archiviHelper.smista(), 
-						this.updateEnabled, nomePddOperativa,
+						this.updateEnabled, this.importPolicyConfig, this.importConfig, nomePddOperativa,
 						archiviHelper);
 			}
 									

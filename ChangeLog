@@ -1,3 +1,10 @@
+2020-05-05  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Aggiunta funzionalità OP-988
+	Nella funzionalità 'Importa' della console è adesso possibile indicare se eventuali configurazioni o policy globali (Token, RateLimiting) presenti all'interno dell'archivio devono essere importate nel registro.
+	Anche per la funzionalità 'Esporta' è inoltre possibile indicare se includere nell'archivio esportato le policy globali riferite.
+
 2020-05-05  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]
