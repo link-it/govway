@@ -38,7 +38,30 @@ Una volta abilitata la funzionalità la configurazione è attuabile tramite le s
 - govway-proxy-query-base64: nel caso sia stato configurato un parametro della url, l'indirizzo remoto sarà codificato in base64 se viene abilitata la seguente proprietà.
 
 .. note::
-      La configurazione dei parametri che riguardano l'header http o il parametro della url non sono obbligatori e se non presenti viene presa la configurazione di default definita nel file di configurazione locale '/etc/govway/govway_local.properties' (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione) tramite le proprietà org.openspcoop2.pdd.connettori.govwayProxy.header.* e org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.*. Anche l'abilitazione stessa della funzionalità 'govway-proxy' può essere effettuata nel file di configurazione locale tramite la proprietà 'org.openspcoop2.pdd.connettori.govwayProxy.enable' ed in questo caso non è necessario registrare la proprietà di sistema 'govway-proxy-enable'
+      La configurazione dei parametri che riguardano l'header http o il parametro della url non sono obbligatori e se non presenti viene utilizzata la configurazione di default (header http 'GovWay-APIAddress' non codificato in base64) ridefinibile nel file di configurazione locale '/etc/govway/govway_local.properties' tramite una configurazione come quella riportata di seguito (assumendo sia /etc/govway la directory di configurazione indicata in fase di installazione):
+
+
+   ::
+
+      # ================================================
+      #  GovWay Proxy
+      #
+      # Default behaviour
+      org.openspcoop2.pdd.connettori.govwayProxy.enable=false
+      #
+      # Default configuration (HTTP)
+      org.openspcoop2.pdd.connettori.govwayProxy.header.enable=true
+      org.openspcoop2.pdd.connettori.govwayProxy.header.nome=GovWay-APIAddress
+      org.openspcoop2.pdd.connettori.govwayProxy.header.base64=false
+      #
+      # Default configurazion (query URL)
+      org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.enable=false
+      org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.nome=govway_api_address
+      org.openspcoop2.pdd.connettori.govwayProxy.urlParameter.base64=false
+      # ================================================
+
+.. note::
+      Anche l'abilitazione stessa della funzionalità 'govway-proxy' può essere effettuata nel file di configurazione locale tramite la proprietà 'org.openspcoop2.pdd.connettori.govwayProxy.enable' ed in questo caso non è necessario registrare la proprietà di sistema 'govway-proxy-enable'
 
 L'endpoint utilizzato per il proxy, indicato nella proprietà 'govway-proxy', può essere ridefinito tramite le seguenti proprietà dalla più generica fino alla più specifica:
 
