@@ -31,7 +31,7 @@
 					<rich:panelMenu expandMode="none" mode="server">
 						<rich:panelMenuGroup label="#{msg['menu.monitoraggio.label']}" expanded="true" id="monitoraggioMenuGroup"
 							rendered="#{applicationBean.showTransazioniBase}">
-							<rich:panelMenuItem id="transazioniMenuLink" label="#{msg['menu.monitoraggio.storico']}" action="transazioniStart" actionListener="#{transazioniBean.search.initSearchListener}" />
+							<rich:panelMenuItem id="transazioniMenuLink" label="#{msg['menu.monitoraggio.storico']}" action="transazioniStart" />
 							
 							<rich:panelMenuItem label="#{msg['menu.monitoraggio.live']}" id="live" action="#{transazioniBean.submit}" actionListener="#{transazioniBean.search.initSearchListener}" 
 									rendered="#{applicationBean.showTransazioniLive}">
@@ -63,9 +63,7 @@
 						<!-- iconExpanded="triangleDown" -->
 						<rich:panelMenuGroup iconCollapsed="triangle" label="#{msg['menu.reportistica.label']}" id="reportisticaMenuGroup"
 							expanded="true" rendered="#{applicationBean.showStatisticheBase}">
-							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart" 
-								actionListener="#{analisiStatisticaBean.menuActionListener}"
-								/>
+							<rich:panelMenuItem label="#{msg['menu.reportistica.analisiStatistica']}" action="analisiStatisticaStart" />
 							<rich:panelMenuItem
 								label="#{msg['menu.reportistica.analisiLog']}" rendered="#{applicationBean.showReport}"
 								action="#{reportBean.submit}"

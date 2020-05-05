@@ -1,3 +1,12 @@
+2020-05-05  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Risolto Bug OP-984
+	Cliccano su alcune voci della console di monitoraggio si atterra su pagine statiche che non necessitano di query sul DB. 
+	Prima del fix veniva effettuate query inutili che rallentavano l'utilizzo della console.
+	La risoluzione riguarda le voci del menù principale 'Transazioni' e 'Analisi Statistica' e le modalità di ricerca 'ID Transazione' e 'ID Messaggio'.
+	È stata inoltre aggiunta la possibilità di accedere al dettaglio di una risorsa, dall'elenco presente in una API, cliccando anche sul metodo http.
+
 2020-05-04  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

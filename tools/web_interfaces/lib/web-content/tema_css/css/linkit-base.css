@@ -1387,6 +1387,9 @@ div.prop-slider{
 	  background-color: ${api.resources.httpmethod.background.unlink.color};
 }
 
+.resource-method-block-pointer {
+	cursor: pointer;
+}
 
 /* CLASSI VISTA CUSTOM EROGAZIONI, FRUIZIONI, API */
 

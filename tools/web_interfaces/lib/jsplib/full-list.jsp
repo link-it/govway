@@ -395,10 +395,10 @@ String classPanelTitolo = mostraFormHeader ? "panelListaRicerca" : "panelListaRi
 										//no url
 										if (!de.getOnClick().equals("")) {
 										  //onclick
-										  %><a class="<%= classLink %>" href='' onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;"><%= de.getValue() %></a><%
+										  %><span class="<%= classSpan %>" onClick="<%= visualizzaAjaxStatus %><%= de.getOnClick() %>; return false;"><%= de.getValue() %></span><%
 										} else {
 										  //string only
-										  %><span class="<%= classSpan %>"><%= de.getValue() %></span><%
+										  %><span class="<%= classSpan %>" ><%= de.getValue() %></span><%
 										}
 							      	}
 								} else { 

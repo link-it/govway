@@ -26,7 +26,8 @@
 							<div class="tipologie">
 								<c:forEach items="#{gruppoAnalisi.listaAnalisiStatistica}" var="tipoAnalisi">
 									<a4j:outputPanel styleClass="tipologia-button-div" layout="block">
-										<a4j:htmlCommandLink action="analisiStatistica" rendered="#{tipoAnalisi.rendered}" styleClass="tipologia-button">
+										<a4j:htmlCommandLink action="analisiStatistica" rendered="#{tipoAnalisi.rendered}" styleClass="tipologia-button"
+											actionListener="#{analisiStatisticaBean.menuActionListener}">
 											<i class="material-icons md-48">#{tipoAnalisi.icona}</i>
 											<span class="tipologia-button-text">#{tipoAnalisi.label}</span>
 											<f:setPropertyActionListener value="#{tipoAnalisi.value}" target="#{analisiStatisticaBean.tipoDistribuzione}" />

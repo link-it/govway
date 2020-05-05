@@ -1,0 +1,29 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+	<a4j:region renderRegionOnly="true"> 
+		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+			
+			<h:inputHidden value="#{sf_mbean.tipoStorico}" rendered="#{sf_bean.periodo != 'Live'}"/>
+
+			<a4j:outputPanel id="filtriAvanzatiIdTransazioneCtr" layout="block" rendered="#{sf_bean.modalitaRicercaStorico == 'idTransazione'}">
+			
+				<div class="subtitle">
+					<h:outputText id="idDatiIdTransazione" value="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.label']}" styleClass="subtitle"/>
+				</div>
+			
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
+					<h:inputText id="idTransazione" value="#{sf_bean.idTransazione}" styleClass="inputLinkLong"/>
+				</link:prop>
+					
+			</a4j:outputPanel>
+		</a4j:outputPanel>
+	 </a4j:region>	
+</ui:composition>

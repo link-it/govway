@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:link="http://www.link.it"
+    xmlns:c="http://java.sun.com/jstl/core">
+    <f:loadBundle var="msg" basename="messages" /> 
+    
+	<a4j:region renderRegionOnly="true"> 
+		<a4j:outputPanel id="searchPnl" ajaxRendered="false" layout="block">
+			
+			<h:inputHidden value="#{sf_mbean.tipoStorico}" rendered="#{sf_bean.periodo != 'Live'}"/>
+
+			<a4j:outputPanel id="filtriAvanzatiIdMessaggioCtr" layout="block" rendered="#{sf_bean.modalitaRicercaStorico == 'idMessaggio'}">
+			
+				<div class="subtitle">
+					<h:outputText id="idDatiIdProtocollo" value="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.label']}" styleClass="subtitle"/>
+				</div>
+				
+				<link:prop label="Tipo" rendered="#{sf_bean.periodo != 'Live'}" >
+					<rich:comboBox id="tipoIdMessaggioCombo" value="#{sf_bean.tipoIdMessaggio}"
+						defaultLabel="Seleziona Tipo" directInputSuggestions="true"
+						width="416" converter="selectItemConverter" enableManualInput="false">
+						<f:selectItems value="#{sf_bean.tipiIdMessaggio}"/>
+						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
+					</rich:comboBox>
+				</link:prop>		
+			
+				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
+					<h:inputText id="idEgov" value="#{sf_bean.idEgov}" styleClass="inputLinkLong"/>
+				</link:prop>
+					
+			</a4j:outputPanel>
+			
+		</a4j:outputPanel>
+	 </a4j:region>	
+</ui:composition>

@@ -25,7 +25,8 @@ xmlns="http://www.w3.org/1999/xhtml"
 							<div class="tipologie">
 								<c:forEach items="#{gruppoStorico.listaStorico}" var="tipoStorico">
 									<a4j:outputPanel styleClass="tipologia-button-div" layout="block">
-										<a4j:htmlCommandLink action="transazioni"  rendered="#{tipoStorico.rendered}" styleClass="tipologia-button">
+										<a4j:htmlCommandLink action="transazioni"  rendered="#{tipoStorico.rendered}" styleClass="tipologia-button"
+											 actionListener="#{transazioniBean.search.initSearchListener}" >
 											<i class="material-icons md-48">#{tipoStorico.icona}</i>
 											<span class="tipologia-button-text">#{tipoStorico.label}</span>
 											<f:setPropertyActionListener value="true" target="#{transazioniBean.updateTipoStorico}" />

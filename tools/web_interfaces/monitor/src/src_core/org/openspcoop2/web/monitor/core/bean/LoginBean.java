@@ -104,6 +104,8 @@ public class LoginBean extends AbstractLoginBean {
 	
 	private IVersionInfo vInfo;
 	private List<String> listaNomiGruppi = null;
+	private List<Soggetto> listaSoggettiDisponibiliUtente = null;
+	private Boolean showFiltroSoggettoLocale = null;
 	
 	public LoginBean(boolean initDao){
 		super(initDao);
@@ -424,6 +426,8 @@ public class LoginBean extends AbstractLoginBean {
 		
 		// cambio della modalita' provoca il reset del soggetto
 		this.colonneUserInfo = null;
+		this.listaSoggettiDisponibiliUtente = null;
+		this.showFiltroSoggettoLocale = null;
 		this.setSoggettoPddMonitor(null);
 		this.cambiaSoggetto();
 		
@@ -463,10 +467,7 @@ public class LoginBean extends AbstractLoginBean {
 	public List<MenuModalitaItem> getVociMenuModalita() {
 		this.vociMenuModalita = new ArrayList<MenuModalitaItem>();
 		try {
-			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-
-			List<String> listaNomiProtocolli = Utility.getProtocolli(this.getUtente(), pfManager, protocolFactories, true);
+			List<String> listaNomiProtocolli = this.listaProtocolliDisponibilePerUtentePddMonitor();
 			
 			if(listaNomiProtocolli != null && listaNomiProtocolli.size() > 1) {
 				// prelevo l'eventuale protocollo selezionato
@@ -743,10 +744,10 @@ public class LoginBean extends AbstractLoginBean {
 		try {
 			if(this.soggettoPddMonitor == null) {
 				try {
-					List<Soggetto> listaNomiProtocolli = this.listaSoggettiDisponibilePerUtentePddMonitor();
+					List<Soggetto> listaNomiSoggetti = this.listaSoggettiDisponibilePerUtentePddMonitor();
 
-					if(listaNomiProtocolli.size() == 1) {
-						IDSoggetto idSoggetto = new IDSoggetto(listaNomiProtocolli.get(0).getTipoSoggetto(), listaNomiProtocolli.get(0).getNomeSoggetto()); 
+					if(listaNomiSoggetti.size() == 1) {
+						IDSoggetto idSoggetto = new IDSoggetto(listaNomiSoggetti.get(0).getTipoSoggetto(), listaNomiSoggetti.get(0).getNomeSoggetto()); 
 						labelSelezionato = NamingUtils.getLabelSoggetto(idSoggetto);  
 					} else {
 						labelSelezionato = Costanti.LABEL_PARAMETRO_MODALITA_ALL;
@@ -774,10 +775,16 @@ public class LoginBean extends AbstractLoginBean {
 	}
 	
 	public List<Soggetto> listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
+		if(this.listaSoggettiDisponibiliUtente == null) {
+			this.listaSoggettiDisponibiliUtente = _listaSoggettiDisponibilePerUtentePddMonitor();
+		}
+		
+		return this.listaSoggettiDisponibiliUtente;
+	}
+	
+	private List<Soggetto> _listaSoggettiDisponibilePerUtentePddMonitor() throws Exception {
 		User utente = this.getUtente();
-		ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
-		MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-		List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+		List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 		String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
 		if(protocolliDispondibili.size()==1) {
 			protocolloSelezionato = protocolliDispondibili.get(0); // forzo
@@ -827,9 +834,7 @@ public class LoginBean extends AbstractLoginBean {
 		this.vociMenuSoggetto = new ArrayList<MenuModalitaItem>();
 		try {
 			User utente = this.getUtente();
-			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-			List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+			List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
 			if(protocolliDispondibili.size()==1) {
 				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
@@ -945,6 +950,14 @@ public class LoginBean extends AbstractLoginBean {
 	}
 	
 	public boolean isShowFiltroSoggettoLocale(){
+		if(this.showFiltroSoggettoLocale == null) {
+			this.showFiltroSoggettoLocale =  _isShowFiltroSoggettoLocale();
+		}
+		
+		return this.showFiltroSoggettoLocale;
+	}
+
+	private boolean _isShowFiltroSoggettoLocale() {
 		try {
 			User utente = Utility.getLoggedUtente();
 			
@@ -954,9 +967,7 @@ public class LoginBean extends AbstractLoginBean {
 				return false;
 			}
 			
-			ProtocolFactoryManager pfManager = ProtocolFactoryManager.getInstance();
-			MapReader<String,IProtocolFactory<?>> protocolFactories = pfManager.getProtocolFactories();	
-			List<String> protocolliDispondibili = Utility.getProtocolli(utente, pfManager, protocolFactories, true);
+			List<String> protocolliDispondibili = this.listaProtocolliDisponibilePerUtentePddMonitor();
 			String protocolloSelezionato = utente.getProtocolloSelezionatoPddMonitor();
 			if(protocolliDispondibili.size()==1) {
 				protocolloSelezionato = protocolliDispondibili.get(0); // forzo
@@ -974,7 +985,7 @@ public class LoginBean extends AbstractLoginBean {
 				return false;
 		} catch (Exception e) {
 			this.log.error("Si e' verificato un errore durante il caricamento della lista protocolli: " + e.getMessage(), e);
-		} 
+		}
 		return true;
 	}
 	

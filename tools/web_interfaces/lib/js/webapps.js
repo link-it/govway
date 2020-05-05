@@ -57,3 +57,9 @@ function nascondiAjaxStatus(){
 		$("#ajax_status_div").css('display', 'none');
 	}
 }
+
+function goToLocation(location){
+	if(location) {
+		document.location = location;
+	}
+}

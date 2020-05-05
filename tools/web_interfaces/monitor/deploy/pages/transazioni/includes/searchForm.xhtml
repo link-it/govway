@@ -497,41 +497,6 @@
 			
 			</a4j:outputPanel>
 			
-			<a4j:outputPanel id="filtriAvanzatiIdMessaggioCtr" layout="block"
-				rendered="#{sf_bean.modalitaRicercaStorico == 'idMessaggio'}">
-			
-				<div class="subtitle">
-					<h:outputText id="idDatiIdProtocollo" value="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.label']}" styleClass="subtitle"/>
-				</div>
-				
-				<link:prop label="Tipo" rendered="#{sf_bean.periodo != 'Live'}" >
-					<rich:comboBox id="tipoIdMessaggioCombo" value="#{sf_bean.tipoIdMessaggio}"
-						defaultLabel="Seleziona Tipo" directInputSuggestions="true"
-						width="416" converter="selectItemConverter" enableManualInput="false">
-						<f:selectItems value="#{sf_bean.tipiIdMessaggio}"/>
-						<a4j:support status="mainStatus" event="onselect" reRender="searchPnl" limitToList="true"/>
-					</rich:comboBox>
-				</link:prop>		
-			
-				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoMessaggio.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
-					<h:inputText id="idEgov" value="#{sf_bean.idEgov}" styleClass="inputLinkLong"/>
-				</link:prop>
-					
-			</a4j:outputPanel>
-			
-			<a4j:outputPanel id="filtriAvanzatiIdTransazioneCtr" layout="block"
-				rendered="#{sf_bean.modalitaRicercaStorico == 'idTransazione'}">
-			
-				<div class="subtitle">
-					<h:outputText id="idDatiIdTransazione" value="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.label']}" styleClass="subtitle"/>
-				</div>
-			
-				<link:prop label="#{msg['transazioni.search.sezioneFiltroIdentificativoTransazione.id.label']}" rendered="#{sf_bean.periodo != 'Live'}" required="true">
-					<h:inputText id="idTransazione" value="#{sf_bean.idTransazione}" styleClass="inputLinkLong"/>
-				</link:prop>
-					
-			</a4j:outputPanel>
-			
 			<a4j:outputPanel id="filtriAvanzatiServiziCtr" layout="block"
 				rendered="#{applicationBean.showTransazioniContenuti and sf_bean.tipoRicercaSPCoop != 'im' and !empty sf_servizio and
 				(sf_bean.periodo == 'Live' or sf_bean.modalitaRicercaStorico == 'intervalloTemporale')}">

@@ -6132,18 +6132,23 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 
 					String labelParametroApcResourcesHttpMethodQualsiasi = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
 					Vector<DataElement> e = new Vector<DataElement>();
+					
+					List<Parameter> parametriChangeRisorsa = new ArrayList<>();
+					parametriChangeRisorsa.add(new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc));
+					//parametriChangeRisorsa.add(new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa));
+					parametriChangeRisorsa.add(new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""));
+					parametriChangeRisorsa.add(AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo));
+					
+					
 					//HTTP Method
-					DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi);
+					String detailURL = new Parameter("", AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, parametriChangeRisorsa.toArray(new Parameter[parametriChangeRisorsa.size()])).getValue(); 
+					DataElement de = getDataElementHTTPMethodResource(risorsa, labelParametroApcResourcesHttpMethodQualsiasi, detailURL);
 					e.addElement(de);
 					
 					de = new DataElement();
 					String nomeRisorsa = risorsa.getNome();
-					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, 
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_ID, idApc),
-//							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_NOME, nomeRisorsa),
-							new Parameter(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_ID, risorsa.getId()+""),
-							AccordiServizioParteComuneUtilities.getParametroAccordoServizio(tipoAccordo)
-							);
+					de.setUrl(AccordiServizioParteComuneCostanti.SERVLET_NAME_APC_RESOURCES_CHANGE, parametriChangeRisorsa.toArray(new Parameter[parametriChangeRisorsa.size()]));
+					
 					if(risorsa.getPath()==null || "".equals(risorsa.getPath())) {
 						de.setValue(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI);
 					}

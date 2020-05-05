@@ -200,6 +200,9 @@ public class Costanti {
 	public final static String JS_FUNCTION_VISUALIZZA_AJAX_STATUS = "visualizzaAjaxStatus();";
 	public final static String JS_FUNCTION_NASCONDI_AJAX_STATUS = "nascondiAjaxStatus();";
 	
+	public final static String JS_FUNCTION_GO_TO_PREFIX = "goToLocation('"; 
+	public final static String JS_FUNCTION_GO_TO_SUFFIX = "')"; 
+	
 	/** PARAMETRI BINARI **/
 	
 	public static final String PARAMETER_FILENAME_PREFIX = "__fn__";  

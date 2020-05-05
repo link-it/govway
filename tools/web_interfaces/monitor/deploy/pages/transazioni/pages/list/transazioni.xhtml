@@ -49,38 +49,57 @@ xmlns="http://www.w3.org/1999/xhtml"
 					<div class="form-container noborder">
 						<h:form prependId="false"  id="formSearchTransazioni" >
 							<a4j:jsFunction name="refreshPnl" reRender="panelTransazioniCtr"/>
-								<ui:include src="/transazioni/includes/searchForm.xhtml" >
-									<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
-									<ui:param name="sf_periodo" value="#{searchFormTransazioni.periodo}" />
-									<ui:param name="sf_dataInizio" value="#{searchFormTransazioni.dataInizio}" />
-									<ui:param name="sf_dataFine" value="#{searchFormTransazioni.dataFine}" />
-									<ui:param name="sf_nomeMittente" value="#{searchFormTransazioni.tipoNomeMittente}" />
-									<ui:param name="sf_nomeDestinatario" value="#{searchFormTransazioni.tipoNomeDestinatario}" />
-									<ui:param name="sf_gruppo" value="#{searchFormTransazioni.gruppo}" />
-									<ui:param name="sf_servizio" value="#{searchFormTransazioni.nomeServizio}" />
-									<ui:param name="sf_nomeAzione" value="#{searchFormTransazioni.nomeAzione}" />
-									<ui:param name="sf_trafficoPerSoggetto" value="#{searchFormTransazioni.tipoNomeTrafficoPerSoggetto}" />
-									<ui:param name="sf_soggettoLocale" value="#{searchFormTransazioni.tipoNomeSoggettoLocale}" />
-									<ui:param name="sf_servizioApplicativo" value="#{searchFormTransazioni.servizioApplicativo}" />
-									<ui:param name="sf_soggettiLocale" value="#{transazioniBean.soggettiLocale}" />
-									<ui:param name="sf_soggetti" value="#{transazioniBean.soggetti}" />
-									<ui:param name="sf_gruppi" value="#{transazioniBean.gruppi}" />
-									<ui:param name="sf_servizi" value="#{transazioniBean.servizi}" />
-									<ui:param name="sf_azioni" value="#{transazioniBean.azioni}" />
-									<ui:param name="sf_serviziApplicativi" value="#{transazioniBean.serviziApplicativi}" />
-									
-									<ui:param name="sf_tipologiaRicerca" value="#{searchFormTransazioni.tipologiaRicerca}" />
-									<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
-									<ui:param name="sf_mbean" value="#{transazioniBean}" />
-									
-									<ui:param name="sf_labelSoggettoLocale" value="#{searchFormTransazioni.labelTipoNomeSoggettoLocale}" />
-									<ui:param name="sf_labelNomeMittente" value="#{searchFormTransazioni.labelTipoNomeMittente}" />
-									<ui:param name="sf_labelNomeDestinatario" value="#{searchFormTransazioni.labelTipoNomeDestinatario}" />
-									<ui:param name="sf_labelTrafficoPerSoggetto" value="#{searchFormTransazioni.labelTipoNomeTrafficoPerSoggetto}" />
-									<ui:param name="sf_labelGruppo" value="#{searchFormTransazioni.gruppo}" />
-									<ui:param name="sf_labelServizio" value="#{searchFormTransazioni.labelNomeServizio}" />
-									<ui:param name="sf_labelNomeAzione" value="#{searchFormTransazioni.labelNomeAzione}" />
-								</ui:include>
+								
+								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico != 'idMessaggio' and searchFormTransazioni.modalitaRicercaStorico != 'idTransazione'}">
+									<ui:include src="/transazioni/includes/searchForm.xhtml" >
+										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+										<ui:param name="sf_periodo" value="#{searchFormTransazioni.periodo}" />
+										<ui:param name="sf_dataInizio" value="#{searchFormTransazioni.dataInizio}" />
+										<ui:param name="sf_dataFine" value="#{searchFormTransazioni.dataFine}" />
+										<ui:param name="sf_nomeMittente" value="#{searchFormTransazioni.tipoNomeMittente}" />
+										<ui:param name="sf_nomeDestinatario" value="#{searchFormTransazioni.tipoNomeDestinatario}" />
+										<ui:param name="sf_gruppo" value="#{searchFormTransazioni.gruppo}" />
+										<ui:param name="sf_servizio" value="#{searchFormTransazioni.nomeServizio}" />
+										<ui:param name="sf_nomeAzione" value="#{searchFormTransazioni.nomeAzione}" />
+										<ui:param name="sf_trafficoPerSoggetto" value="#{searchFormTransazioni.tipoNomeTrafficoPerSoggetto}" />
+										<ui:param name="sf_soggettoLocale" value="#{searchFormTransazioni.tipoNomeSoggettoLocale}" />
+										<ui:param name="sf_servizioApplicativo" value="#{searchFormTransazioni.servizioApplicativo}" />
+										<ui:param name="sf_soggettiLocale" value="#{transazioniBean.soggettiLocale}" />
+										<ui:param name="sf_soggetti" value="#{transazioniBean.soggetti}" />
+										<ui:param name="sf_gruppi" value="#{transazioniBean.gruppi}" />
+										<ui:param name="sf_servizi" value="#{transazioniBean.servizi}" />
+										<ui:param name="sf_azioni" value="#{transazioniBean.azioni}" />
+										<ui:param name="sf_serviziApplicativi" value="#{transazioniBean.serviziApplicativi}" />
+										
+										<ui:param name="sf_tipologiaRicerca" value="#{searchFormTransazioni.tipologiaRicerca}" />
+										<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
+										<ui:param name="sf_mbean" value="#{transazioniBean}" />
+										
+										<ui:param name="sf_labelSoggettoLocale" value="#{searchFormTransazioni.labelTipoNomeSoggettoLocale}" />
+										<ui:param name="sf_labelNomeMittente" value="#{searchFormTransazioni.labelTipoNomeMittente}" />
+										<ui:param name="sf_labelNomeDestinatario" value="#{searchFormTransazioni.labelTipoNomeDestinatario}" />
+										<ui:param name="sf_labelTrafficoPerSoggetto" value="#{searchFormTransazioni.labelTipoNomeTrafficoPerSoggetto}" />
+										<ui:param name="sf_labelGruppo" value="#{searchFormTransazioni.gruppo}" />
+										<ui:param name="sf_labelServizio" value="#{searchFormTransazioni.labelNomeServizio}" />
+										<ui:param name="sf_labelNomeAzione" value="#{searchFormTransazioni.labelNomeAzione}" />
+									</ui:include>
+								</c:if>
+								
+								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico == 'idMessaggio'}">
+									<ui:include src="/transazioni/includes/searchFormIdMessaggio.xhtml" >
+										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+										<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
+										<ui:param name="sf_mbean" value="#{transazioniBean}" />
+									</ui:include>
+								</c:if>
+								
+								<c:if test="#{searchFormTransazioni.modalitaRicercaStorico == 'idTransazione'}">
+									<ui:include src="/transazioni/includes/searchFormIdTransazione.xhtml" >
+										<ui:param name="outOfRegionToRefresh" value="refreshPnl"/>
+										<ui:param name="sf_bean" value="#{searchFormTransazioni}" />
+										<ui:param name="sf_mbean" value="#{transazioniBean}" />
+									</ui:include>
+								</c:if>
 								
 								<a4j:outputPanel id="panelButtonSearchTransazioni" styleClass="buttonrow" layout="block" ajaxRendered="false">	
 									<a4j:commandButton id="filtra" value="#{(searchFormTransazioni.aggiornamentoDatiAbilitato and searchFormTransazioni.showButtonNuovaRicerca) ? 

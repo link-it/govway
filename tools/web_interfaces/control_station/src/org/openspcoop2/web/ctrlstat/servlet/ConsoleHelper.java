@@ -8236,12 +8236,12 @@ public class ConsoleHelper implements IConsoleHelper {
 	}
 	
 	public DataElement getDataElementHTTPMethodResource(org.openspcoop2.core.registry.beans.ResourceSintetica risorsa,	String labelParametroApcResourcesHttpMethodQualsiasi) {
-		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi);
+		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi, null);
 	}
-	public DataElement getDataElementHTTPMethodResource(org.openspcoop2.core.registry.Resource risorsa,	String labelParametroApcResourcesHttpMethodQualsiasi) {
-		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi);
+	public DataElement getDataElementHTTPMethodResource(org.openspcoop2.core.registry.Resource risorsa,	String labelParametroApcResourcesHttpMethodQualsiasi, String detailURL) {
+		return getDataElementHTTPMethodResource(risorsa.getMethod(), labelParametroApcResourcesHttpMethodQualsiasi, detailURL);
 	}
-	public DataElement getDataElementHTTPMethodResource(HttpMethod httpMethod,	String labelParametroApcResourcesHttpMethodQualsiasi) {
+	public DataElement getDataElementHTTPMethodResource(HttpMethod httpMethod,	String labelParametroApcResourcesHttpMethodQualsiasi, String detailUrl) {
 		
 		DataElement de = new DataElement();
 
@@ -8288,6 +8288,15 @@ public class ConsoleHelper implements IConsoleHelper {
 				break;
 			}
 		}
+		if(StringUtils.isNotEmpty(detailUrl)) {
+			StringBuilder onClickFunction = new StringBuilder();
+			onClickFunction.append(Costanti.JS_FUNCTION_GO_TO_PREFIX);
+			onClickFunction.append(detailUrl);
+			onClickFunction.append(Costanti.JS_FUNCTION_GO_TO_SUFFIX);
+			de.setOnClick(onClickFunction.toString());
+			styleClass += " resource-method-block-pointer";
+		}
+		
 		de.setLabelStyleClass(styleClass); 
 		de.setWidthPx(75);
 		return de;
