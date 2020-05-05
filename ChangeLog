@@ -1,3 +1,8 @@
+2020-05-05  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayMonitor, GovWayConsole]
+	Corretto colore dei link visited; veniva erroneamente utilizzato il colore utilizzato per l'hover.
+
 2020-05-05  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
