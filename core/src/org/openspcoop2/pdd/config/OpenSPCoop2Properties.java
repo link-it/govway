@@ -876,6 +876,10 @@ public class OpenSPCoop2Properties {
 				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop: 'org.openspcoop2.pdd.erroreApplicativo'.");
 				return false;
 			}
+			
+			// Problem RFC 7807
+			this.getProblemRFC7807_transactionId_claim();
+			this.getProblemRFC7807_code_claim();
 
 			// IdentitaPdD
 			if( this.getIdentitaPortaDefault() == null  ){
@@ -6135,7 +6139,47 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.isAggiungiDetailErroreApplicativo_SoapFaultPdD;
 	}
 
+	private static String getProblemRFC7807_transactionId_claim = null;
+	public String getProblemRFC7807_transactionId_claim(){
+		
+		String pName = "org.openspcoop2.pdd.problemRFC7807.transactionId.claim";
+		if(OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim==null){
+			try{  
+				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				if(fault==null)
+					throw new Exception("non definita");
+				fault = fault.trim();
+				OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim = fault;
 
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID();
+			}
+		}
+
+		return OpenSPCoop2Properties.getProblemRFC7807_transactionId_claim;
+	}
+	
+	private static String getProblemRFC7807_code_claim = null;
+	public String getProblemRFC7807_code_claim(){
+		
+		String pName = "org.openspcoop2.pdd.problemRFC7807.code.claim";
+		if(OpenSPCoop2Properties.getProblemRFC7807_code_claim==null){
+			try{  
+				String fault = this.reader.getValue_convertEnvProperties(pName); 
+				if(fault==null)
+					throw new Exception("non definita");
+				fault = fault.trim();
+				OpenSPCoop2Properties.getProblemRFC7807_code_claim = fault;
+
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE()+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.getProblemRFC7807_code_claim = org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE();
+			}
+		}
+
+		return OpenSPCoop2Properties.getProblemRFC7807_code_claim;
+	}
 
 
 

@@ -96,7 +96,14 @@
 									
 		</h:panelGrid>
 					
-		<h:panelGrid id="panelDettaglioAPI" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" >
+		<h:panelGrid id="panelDettaglioAPI" columns="2" styleClass="borderSpacingTable" columnClasses="labelAllineataDxFixedWidth130,valueAllineataSx" 
+			rendered="#{
+				(not empty dettagliBean.dettaglio.nomeSoggettoErogatore)
+				or
+				(dettagliBean.dettaglio.showParteComune and not empty dettagliBean.dettaglio.api)
+				or
+				(not empty dettagliBean.dettaglio.nomeServizio)		
+			}">
 		
 			<h:outputLabel styleClass="outputFieldLabel" value="&#160;&#160;" rendered="#{true}" />
 			<h:outputText value="&#160;&#160;" rendered="#{true}" />

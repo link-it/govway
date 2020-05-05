@@ -10,5 +10,5 @@ index 8783458d2..60c3885f6 100644
 +# Scelte di default impostate sia nei criteri di ricerca delle transazioni che per la generazione dei report statistici
 +#
 +# Checkbox 'Escludi Richieste Scartate'
-+transazioni.escludiRichiesteScartate.defaultValue=true
++transazioni.escludiRichiesteScartate.defaultValue=false
 +# ================================================

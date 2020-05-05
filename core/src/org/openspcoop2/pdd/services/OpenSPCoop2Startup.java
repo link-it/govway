@@ -139,6 +139,7 @@ import org.openspcoop2.pdd.timers.TimerRepositoryStatefulThread;
 import org.openspcoop2.pdd.timers.TimerStatisticheThread;
 import org.openspcoop2.pdd.timers.TimerThresholdThread;
 import org.openspcoop2.pdd.timers.TimerUtils;
+import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.engine.driver.repository.IGestoreRepository;
 import org.openspcoop2.protocol.manifest.constants.ServiceBinding;
@@ -1390,6 +1391,8 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				configPdD.setCheckIntervalJDBC(propertiesReader.getGestioneSerializableDB_CheckInterval());
 				configPdD.setTipoDatabase(TipiDatabase.toEnumConstant(propertiesReader.getDatabaseType()));
 				configPdD.setLog(logCore);
+				Costanti.initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(propertiesReader.getProblemRFC7807_transactionId_claim());
+				Costanti.initPROBLEM_RFC7807_GOVWAY_CODE(propertiesReader.getProblemRFC7807_code_claim());
 				ProtocolFactoryManager.initialize(OpenSPCoop2Startup.log, configPdD, propertiesReader.getDefaultProtocolName());
 				// forzo update logger. (viene caricato dopo il log della console)
 				ProtocolFactoryManager.updateLogger(logCore);

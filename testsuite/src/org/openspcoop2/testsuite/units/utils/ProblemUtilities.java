@@ -217,7 +217,7 @@ public class ProblemUtilities {
 			Reporter.log("Controllo esistenza govway status");
 			String govwayStatus = null;
 			if(problemRFC7807.getCustom()!=null) {
-				govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE);
+				govwayStatus = (String) problemRFC7807.getCustom().get(org.openspcoop2.protocol.basic.Costanti._getPROBLEM_RFC7807_GOVWAY_CODE());
 			}
 			Assert.assertTrue(govwayStatus!=null);
 			

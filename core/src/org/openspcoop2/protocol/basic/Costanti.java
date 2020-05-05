@@ -45,11 +45,52 @@ public class Costanti {
 	public static final String ERRORE_PROTOCOLLO_PREFIX = "protocol";
 	public final static String ERRORE_PROTOCOLLO_PREFIX_CODE = ERRORE_INTEGRAZIONE_PREFIX_CODE; // e' stato deciso di usare lo stesso dell'integrazione. Viene differenziato per namespace
 	
-	public static final String PROBLEM_RFC7807_GOVWAY_CODE = "govway_status";
+	private static final String PROBLEM_RFC7807_GOVWAY_CODE = "govway_status";
+	public static String _getPROBLEM_RFC7807_GOVWAY_CODE() {
+		return PROBLEM_RFC7807_GOVWAY_CODE;
+	}
+	private static String valuePROBLEM_RFC7807_GOVWAY_CODE = null;
+	public static String getPROBLEM_RFC7807_GOVWAY_CODE() {
+		if(valuePROBLEM_RFC7807_GOVWAY_CODE==null) {
+			initPROBLEM_RFC7807_GOVWAY_CODE(null);
+		}
+		return valuePROBLEM_RFC7807_GOVWAY_CODE;
+	}
+	public static synchronized void initPROBLEM_RFC7807_GOVWAY_CODE(String name) {
+		if(valuePROBLEM_RFC7807_GOVWAY_CODE==null) {
+			if(name!=null && !"".equals(name)){
+				valuePROBLEM_RFC7807_GOVWAY_CODE = name;
+			}
+			else {
+				valuePROBLEM_RFC7807_GOVWAY_CODE = PROBLEM_RFC7807_GOVWAY_CODE;
+			}
+		}
+	}
+	
 	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION = ERRORE_INTEGRAZIONE_PREFIX+":";
 	public static final String PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_PROTOCOL = ERRORE_PROTOCOLLO_PREFIX+":";
 	
-	public static final String PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = "govway_id";
+	private static final String PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = "govway_id";
+	public static String _getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID() {
+		return PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
+	}
+	private static String valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = null;
+	public static String getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID() {
+		if(valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID==null) {
+			initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(null);
+		}
+		return valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
+	}
+	public static synchronized void initPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(String name) {
+		if(valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID==null) {
+			if(name!=null && !"".equals(name)){
+				valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = name;
+			}
+			else {
+				valuePROBLEM_RFC7807_GOVWAY_TRANSACTION_ID = PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID;
+			}
+		}
+	}
 	
     /** Ora di creazione di un tracciamento. Il token 'locale' indica il tempo locale
     non sincronizzato da sistema che lo imposta*/

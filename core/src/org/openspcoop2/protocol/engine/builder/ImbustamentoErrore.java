@@ -682,14 +682,14 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					else {
 						prefixCodeStatus = org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE_PREFIX_INTEGRATION;
 					}
-					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_CODE, prefixCodeStatus+code);
+					problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_CODE(), prefixCodeStatus+code);
 				}
 			}
 			if(rfc7807.isInstance()) {
 				problemRFC7807.setInstance(nomePorta);
 			}
 			if(rfc7807.isGovwayTransactionId()) {
-				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.PROBLEM_RFC7807_GOVWAY_TRANSACTION_ID, transactionId);
+				problemRFC7807.getCustom().put(org.openspcoop2.protocol.basic.Costanti.getPROBLEM_RFC7807_GOVWAY_TRANSACTION_ID(), transactionId);
 			}
 			return problemRFC7807;
 		}catch(Exception e){
