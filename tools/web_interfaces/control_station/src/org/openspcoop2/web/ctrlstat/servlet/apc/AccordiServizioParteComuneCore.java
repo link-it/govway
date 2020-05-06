@@ -810,7 +810,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 		}
 	}
 	
-	public boolean existsAccordoServizioResource(String httpMethod, String path, long idAccordo) throws DriverRegistroServiziException {
+	public boolean existsAccordoServizioResource(String httpMethod, String path, long idAccordo, String excludeResourceWithName) throws DriverRegistroServiziException {
 		Connection con = null;
 		String nomeMetodo = "existsAccordoServizioResource";
 		DriverControlStationDB driver = null;
@@ -820,7 +820,7 @@ public class AccordiServizioParteComuneCore extends ControlStationCore {
 			con = ControlStationCore.dbM.getConnection();
 			// istanzio il driver
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
-			return driver.getDriverRegistroServiziDB().existsAccordoServizioParteComuneResource(httpMethod, path, idAccordo);
+			return driver.getDriverRegistroServiziDB().existsAccordoServizioParteComuneResource(httpMethod, path, idAccordo, excludeResourceWithName);
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
 			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);

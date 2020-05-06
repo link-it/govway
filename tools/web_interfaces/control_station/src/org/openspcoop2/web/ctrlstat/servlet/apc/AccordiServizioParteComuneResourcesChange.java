@@ -348,22 +348,41 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			}
 			
 			// 1. se il path non inizia per '/' aggiungo all'inizio della stringa
-			String pathNormalizzato = null;
-			if(path!=null && !"".equals(path)) {
-				pathNormalizzato = path.trim();
-				if(!pathNormalizzato.startsWith("/"))
+			String pathNormalizzato = path;
+			if(pathNormalizzato!=null && !"".equals(pathNormalizzato)) {
+				pathNormalizzato = apcHelper.normalizePathEmpty(path);
+			}
+			if(pathNormalizzato!=null && !"".equals(pathNormalizzato)) {
+				pathNormalizzato = pathNormalizzato.trim();
+				if(!pathNormalizzato.startsWith("/")) {
 					pathNormalizzato = "/" + pathNormalizzato;
+				}
+				if(pathNormalizzato.length()>1 && pathNormalizzato.endsWith("/")) {
+					pathNormalizzato = pathNormalizzato.substring(0, pathNormalizzato.length()-1);
+				}
 			}
 			
 			// 2. se il nome non e; stato impostato allora genero un nome automatico
 			String nomeRisorsaProposto = nomeRisorsa;
 			if(StringUtils.isEmpty(nomeRisorsaProposto)) {
-				if(httpMethod==null) {
-					pd.setMessage("Il campo '"+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME+"' non è stato definito");
-					isOk = false;
+				boolean httpMethodAndPathQualsiasi = apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+				if(httpMethodAndPathQualsiasi) {
+					if(pathNormalizzato==null || "".equals(pathNormalizzato)) {
+						pd.setMessage("Il campo '"+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME+"' deve essere indicato se il campo '"+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH+"' è definito come qualsiasi");
+						isOk = false;
+					}
+					else {
+						nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+					}
 				}
 				else {
-					nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+					if(httpMethod==null) {
+						pd.setMessage("Il campo '"+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PARAMETER_NOME+"' non è stato definito");
+						isOk = false;
+					}
+					else {
+						nomeRisorsaProposto = APIUtils.normalizeResourceName(HttpMethod.toEnumConstant(httpMethod), pathNormalizzato);
+					}
 				}
 			}
 			
@@ -457,8 +476,8 @@ public final class AccordiServizioParteComuneResourcesChange extends Action {
 			Resource newResource = new Resource();
 			newResource.setNome(nomeRisorsaProposto);
 			newResource.setDescrizione(descr);
-			newResource.setPath(pathNormalizzato);
-			newResource.set_value_method(httpMethod);
+			newResource.setPath("".equals(pathNormalizzato) ? null : pathNormalizzato);
+			newResource.set_value_method("".equals(httpMethod) ? null : httpMethod);
 			newResource.setMessageType(apcCore.fromMessageMessageType(messageType));
 			newResource.setRequestMessageType(apcCore.fromMessageMessageType(messageTypeRequest));
 			newResource.setResponseMessageType(apcCore.fromMessageMessageType(messageTypeResponse));

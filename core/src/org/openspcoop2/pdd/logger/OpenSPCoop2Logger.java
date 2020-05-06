@@ -120,6 +120,7 @@ public class OpenSPCoop2Logger {
 	/**  Logger log4j utilizzato per le transazioni */
 	protected static Logger loggerOpenSPCoopTransazioni = null;
 	protected static Logger loggerOpenSPCoopTransazioniError = null;
+	protected static Logger loggerOpenSPCoopTransazioniDevNull = null;
 	/**  Logger log4j utilizzato per le transazioni */
 	protected static Logger loggerOpenSPCoopTransazioniSql = null;
 	protected static Logger loggerOpenSPCoopTransazioniSqlError = null;
@@ -441,6 +442,11 @@ public class OpenSPCoop2Logger {
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError = LoggerWrapperFactory.getLogger("govway.transazioni.error");
 			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError==null)
 				throw new Exception("Logger govway.transazioni.error non trovato");
+			
+			// TRANSAZIONI LOG (DEVNULL)
+			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniDevNull = LoggerWrapperFactory.getLogger("govway.transazioni.devnull");
+			if(OpenSPCoop2Logger.loggerOpenSPCoopTransazioniDevNull==null)
+				throw new Exception("Logger govway.transazioni.devnull non trovato");
 			
 			// TRANSAZIONI SQL LOG
 			OpenSPCoop2Logger.loggerOpenSPCoopTransazioniSql = LoggerWrapperFactory.getLogger("govway.transazioni.sql");
@@ -1041,6 +1047,9 @@ public class OpenSPCoop2Logger {
 		else {
 			return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniError;
 		}
+	}
+	public static Logger getLoggerOpenSPCoopTransazioniDevNull() {
+		return OpenSPCoop2Logger.loggerOpenSPCoopTransazioniDevNull;
 	}
 	
 	public static Logger getLoggerOpenSPCoopTransazioniSql(boolean debug) {

@@ -79,9 +79,12 @@ public class GestoreConsegnaMultipla {
 	private static final String ID_MODULO = "GestoreConsegnaMultipla";
 
 	private static DAOFactory daoFactory = null;
+	private static DAOFactory daoFactoryDevNull = null;
 	private static ServiceManagerProperties daoFactoryServiceManagerPropertiesTransazioni = null;
+	private static ServiceManagerProperties daoFactoryDevNullServiceManagerPropertiesTransazioni = null;
 	private static Logger daoFactoryLoggerTransazioni = null;
 	private static Logger daoFactoryLoggerTransazioniSql = null;
+	private static Logger daoFactoryLoggerTransazioniDevNull = null;
 
 	private static OpenSPCoop2Properties openspcoopProperties = null;
 
@@ -104,14 +107,22 @@ public class GestoreConsegnaMultipla {
 
 				debug = openspcoopProperties.isTransazioniDebug();
 
-				DAOFactoryProperties daoFactoryProperties = null;
 				daoFactoryLoggerTransazioni = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioni(debug);
 				daoFactoryLoggerTransazioniSql = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniSql(debug);
+				daoFactoryLoggerTransazioniDevNull = OpenSPCoop2Logger.getLoggerOpenSPCoopTransazioniDevNull();
+				
 				daoFactory = DAOFactory.getInstance(daoFactoryLoggerTransazioniSql);
-				daoFactoryProperties = DAOFactoryProperties.getInstance(daoFactoryLoggerTransazioniSql);
+				DAOFactoryProperties daoFactoryProperties = DAOFactoryProperties.getInstance(daoFactoryLoggerTransazioniSql);
 				daoFactoryServiceManagerPropertiesTransazioni = daoFactoryProperties.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
 				daoFactoryServiceManagerPropertiesTransazioni.setShowSql(debug);	
 				daoFactoryServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
+				
+				daoFactoryDevNull = DAOFactory.getInstance(daoFactoryLoggerTransazioniDevNull);
+				DAOFactoryProperties daoFactoryPropertiesDevNull = DAOFactoryProperties.getInstance(daoFactoryLoggerTransazioniDevNull);
+				daoFactoryDevNullServiceManagerPropertiesTransazioni = daoFactoryPropertiesDevNull.getServiceManagerProperties(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance());
+				daoFactoryDevNullServiceManagerPropertiesTransazioni.setShowSql(debug);	
+				daoFactoryDevNullServiceManagerPropertiesTransazioni.setDatabaseType(DBTransazioniManager.getInstance().getTipoDatabase());
+				
 
 			}catch(Exception e){
 				throw new TransactionMultiDeliverException("Inizializzazione risorse database non riuscita: "+e.getMessage(),e);
@@ -568,15 +579,17 @@ public class GestoreConsegnaMultipla {
 		}
 		
 		CoreException coreException = null;
-		
 		while(updateEffettuato==false && DateManager.getTimeMillis() < scadenzaWhile){
 
 			try{	
+				DAOFactory daoF = this.debug ? daoFactory : daoFactoryDevNull;
+				Logger log = this.debug ? daoFactoryLoggerTransazioniSql : daoFactoryLoggerTransazioniDevNull;
+				ServiceManagerProperties smp = this.debug ? daoFactoryServiceManagerPropertiesTransazioni : daoFactoryDevNullServiceManagerPropertiesTransazioni;
 				
 				org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager jdbcServiceManager =
-						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoFactory.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
+						(org.openspcoop2.core.transazioni.dao.jdbc.JDBCServiceManager) daoF.getServiceManager(org.openspcoop2.core.transazioni.utils.ProjectInfo.getInstance(), 
 								connectionDB, false,
-								daoFactoryServiceManagerPropertiesTransazioni, daoFactoryLoggerTransazioniSql);
+								smp, log);
 				jdbcServiceManager.getJdbcProperties().setShowSql(this.debug);
 				JDBCTransazioneService transazioneService = (JDBCTransazioneService) jdbcServiceManager.getTransazioneService();
 				
@@ -593,7 +606,7 @@ public class GestoreConsegnaMultipla {
 						coreException = new CoreException("Trovata più di una transazione con id '"+transazioneApplicativoServer.getIdTransazione()+"'");
 					}
 					else {
-						
+												
 						Object oEsito = l.get(0).get(Transazione.model().ESITO.getFieldName());
 						int esito = -1;
 						if(oEsito!=null && oEsito instanceof Integer) {

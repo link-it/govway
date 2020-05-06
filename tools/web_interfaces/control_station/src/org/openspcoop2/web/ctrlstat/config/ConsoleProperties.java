@@ -310,6 +310,27 @@ public class ConsoleProperties {
 		return this.readBooleanProperty(true, "integrationManager.enabled");
 	}
 	
+	public boolean isApiResourcePathValidatorEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "api.resource.pathValidator");
+	}
+	
+	public boolean isApiResourceHttpMethodAndPathQualsiasiEnabled() throws UtilsException{
+		return this.readBooleanProperty(true, "api.resource.httpMethodAndPathQualsiasi.enabled");
+	}
+	
+	public List<String> getApiResourcePathQualsiasiSpecialChar() throws UtilsException{
+		List<String> l = new ArrayList<String>();
+		String p = this.readProperty(false, "api.resource.pathQualsiasi.specialChar");
+		if(p!=null && !"".equals(p.trim())){
+			String [] tmp = p.trim().split(",");
+			for (int i = 0; i < tmp.length; i++) {
+				tmp[i] = tmp[i].trim();
+				l.add(tmp[i]);
+			}
+		}
+		return l;
+	}
+	
 	public boolean isAccordiCooperazioneEnabled() throws UtilsException{
 		return this.readBooleanProperty(true, "accordiCooperazione.enabled");
 	}

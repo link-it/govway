@@ -407,7 +407,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			if (StringUtils.isEmpty(newRes.getNome()) && newRes.getMethod() == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il campo nome non è stato definito");
 
-			if (env.apcCore.existsAccordoServizioResource(newRes.get_value_method(), newRes.getPath(), as.getId()))
+			if (env.apcCore.existsAccordoServizioResource(newRes.get_value_method(), newRes.getPath(), as.getId(), null))
 				throw FaultCode.CONFLITTO.toException("La risorsa " + newRes.getNome() + " è già stata associata alla Api");
 
 			if (!env.apcHelper.accordiResourceCheckData(TipoOperazione.ADD, as.getId().toString(),

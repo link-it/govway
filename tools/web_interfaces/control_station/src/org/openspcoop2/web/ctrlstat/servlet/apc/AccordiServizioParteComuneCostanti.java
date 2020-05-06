@@ -520,6 +520,11 @@ public class AccordiServizioParteComuneCostanti {
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_NOME_NOTE = "Se non definito verr&agrave; automaticamente generato un identificativo univoco";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_DESCRIZIONE = "Descrizione";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_PATH = "Path";
+	private final static String LABEL_PARAMETRO_APC_RESOURCES_PATH_INFO = "Per associare al metodo HTTP selezionato un qualsiasi path è possibile lasciare il campo vuoto o utilizzare il carattere speciale 'CHAR'";
+	private final static String LABEL_PARAMETRO_APC_RESOURCES_PATH_INFO_NOME_OBBLIGATORIO = "; per utilizzare un path qualsiasi è obbligatorio indicare il nome della Risorsa";
+	public static String getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(String charAll, boolean appendNomeObbligatorio) {
+		return LABEL_PARAMETRO_APC_RESOURCES_PATH_INFO.replace("CHAR", charAll) + (appendNomeObbligatorio ? LABEL_PARAMETRO_APC_RESOURCES_PATH_INFO_NOME_OBBLIGATORIO : "");
+	}
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD = CostantiControlStation.LABEL_PARAMETRO_HTTP_METHOD;
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE = "Tipo Messaggio";
 	public final static String LABEL_PARAMETRO_APC_RESOURCES_MESSAGE_TYPE_REQUEST = "Tipo Messaggio Richiesta";

@@ -555,6 +555,20 @@ public class ControlStationCore {
 		return this.isIntegrationManagerEnabled;
 	}
 	
+	/** API */
+	private boolean isApiResourcePathValidatorEnabled;
+	private boolean isApiResourceHttpMethodAndPathQualsiasiEnabled;
+	private List<String> getApiResourcePathQualsiasiSpecialChar;
+	public boolean isApiResourcePathValidatorEnabled() {
+		return this.isApiResourcePathValidatorEnabled;
+	}
+	public boolean isApiResourceHttpMethodAndPathQualsiasiEnabled() {
+		return this.isApiResourceHttpMethodAndPathQualsiasiEnabled;
+	}
+	public List<String> getGetApiResourcePathQualsiasiSpecialChar() {
+		return this.getApiResourcePathQualsiasiSpecialChar;
+	}
+	
 	/** Accordi di Cooperazione */
 	private boolean isAccordiCooperazioneEnabled;
 	public boolean isAccordiCooperazioneEnabled() {
@@ -1715,6 +1729,11 @@ public class ControlStationCore {
 		/** IntegrationManager */
 		this.isIntegrationManagerEnabled = core.isIntegrationManagerEnabled;
 		
+		/** API */
+		this.isApiResourcePathValidatorEnabled = core.isApiResourcePathValidatorEnabled;
+		this.isApiResourceHttpMethodAndPathQualsiasiEnabled = core.isApiResourceHttpMethodAndPathQualsiasiEnabled;
+		this.getApiResourcePathQualsiasiSpecialChar = core.getApiResourcePathQualsiasiSpecialChar;
+		
 		/** Accordi di Cooperazione */
 		this.isAccordiCooperazioneEnabled = core.isAccordiCooperazioneEnabled;
 		
@@ -2015,6 +2034,9 @@ public class ControlStationCore {
 			this.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore = consoleProperties.isControlloTrafficoPolicyGlobaleFiltroApiSoggettoErogatore();
 			this.isAuditingRegistrazioneElementiBinari = consoleProperties.isAuditingRegistrazioneElementiBinari();
 			this.isIntegrationManagerEnabled = consoleProperties.isIntegrationManagerEnabled();
+			this.isApiResourcePathValidatorEnabled = consoleProperties.isApiResourcePathValidatorEnabled();
+			this.isApiResourceHttpMethodAndPathQualsiasiEnabled = consoleProperties.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+			this.getApiResourcePathQualsiasiSpecialChar = consoleProperties.getApiResourcePathQualsiasiSpecialChar();
 			this.isAccordiCooperazioneEnabled = consoleProperties.isAccordiCooperazioneEnabled();
 			this.messageEngines = consoleProperties.getMessageEngines();
 			this.isSoggettiCredenzialiBasicCheckUniqueUsePassword = consoleProperties.isSoggettiCredenzialiBasicCheckUniqueUsePassword();

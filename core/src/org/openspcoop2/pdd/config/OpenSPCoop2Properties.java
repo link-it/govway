@@ -763,7 +763,9 @@ public class OpenSPCoop2Properties {
 			this.isEnabledValidazioneRFC2047HeaderNameValue_consegnaContenutiApplicativi();
 			
 			this.getGestioneCORS_returnCode_ricezioneContenutiApplicativi();
+			this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi();
 			this.getGestioneCORS_returnCode_ricezioneBuste();
+			this.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste();
 			
 			
 
@@ -11706,6 +11708,29 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneContenutiApplicativi;
 	}
 	
+	private static Boolean isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi = null;
+	public boolean isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi() {	
+		if(OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneContenutiApplicativi.cors.resourceHttpMethodQualsiasi";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi = java.lang.Boolean.valueOf(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi;
+	}
+	
 	private static Integer getGestioneCORS_returnCode_ricezioneBuste = null;
 	public int getGestioneCORS_returnCode_ricezioneBuste() {	
 		if(OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste==null){
@@ -11728,6 +11753,28 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.getGestioneCORS_returnCode_ricezioneBuste;
 	}
 	
+	private static Boolean isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste = null;
+	public boolean isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste() {	
+		if(OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste==null){
+			String pName = "org.openspcoop2.pdd.services.ricezioneBuste.cors.resourceHttpMethodQualsiasi";
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null){
+					name = name.trim();
+					OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste = java.lang.Boolean.valueOf(name);
+				}else{
+					this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false);
+					OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste = false;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.warn("Proprieta' di openspcoop '"+pName+"' non impostata, viene utilizzato il default="+false+", errore:"+e.getMessage(),e);
+				OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste = false;
+			}    
+		}
+
+		return OpenSPCoop2Properties.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneBuste;
+	}
 	
 
 

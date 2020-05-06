@@ -56,6 +56,9 @@ import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.core.id.IdentificativiFruizione;
+import org.openspcoop2.core.registry.AccordoServizioParteComune;
+import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.Resource;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziAzioneNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziCorrelatoNotFound;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
@@ -1418,6 +1421,37 @@ public class RicezioneContenutiApplicativi {
 		if(!effettuareGestioneCORS) {
 			if(pddContext.containsKey(CostantiPdD.CORS_PREFLIGHT_REQUEST_SOAP)) {
 				effettuareGestioneCORS = true;
+			}
+			else {
+				// devo verificare se si tratta di una azione matched poichè è stato inserito un tipo http method 'qualsiasi'
+				if(propertiesReader.isGestioneCORS_resourceHttpMethodQualsiasi_ricezioneContenutiApplicativi()) {
+					if(cors!=null && 
+							StatoFunzionalita.ABILITATO.equals(cors.getStato()) &&
+							TipoGestioneCORS.GATEWAY.equals(cors.getTipo()) &&
+							this.msgContext.isGestioneRisposta()) {
+						if(idServizio!=null && idServizio.getAzione()!=null) {
+							try {
+								RegistroServiziManager registroServiziManager = RegistroServiziManager.getInstance();
+								AccordoServizioParteSpecifica asps = registroServiziManager.getAccordoServizioParteSpecifica(idServizio, null, false);
+								if(asps!=null) {
+									AccordoServizioParteComune aspc = registroServiziManager.getAccordoServizioParteComune(IDAccordoFactory.getInstance().getIDAccordoFromUri(asps.getAccordoServizioParteComune()), null, false);
+									if(aspc!=null && org.openspcoop2.core.registry.constants.ServiceBinding.REST.equals(aspc.getServiceBinding())) {
+										if(aspc.sizeResourceList()>0) {
+											for (Resource resource : aspc.getResourceList()) {
+												if(idServizio.getAzione().equals(resource.getNome())) {
+													if(resource.getMethod()==null){
+														effettuareGestioneCORS = true;
+													}
+													break;
+												}
+											}
+										}
+									}
+								}
+							}catch(Throwable tIgnore) {}
+						}
+					}
+				}
 			}
 		}
 		

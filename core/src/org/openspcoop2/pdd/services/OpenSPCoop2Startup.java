@@ -470,9 +470,17 @@ public class OpenSPCoop2Startup implements ServletContextListener {
 				return;
 			}
 			
-			
-			
-			
+			/* ------------ 
+			 * Disabilita il log di errore prodotto da freemarker
+			 * https://freemarker.apache.org/docs/api/freemarker/log/Logger.html#SYSTEM_PROPERTY_NAME_LOGGER_LIBRARY
+			 * deprecato: freemarker.log.Logger.selectLoggerLibrary(freemarker.log.Logger.LIBRARY_NONE);
+			 */
+			try{
+				System.setProperty(freemarker.log.Logger.SYSTEM_PROPERTY_NAME_LOGGER_LIBRARY,freemarker.log.Logger.LIBRARY_NAME_NONE);
+			}catch(Exception e){
+				this.logError("Inizializzazione org.apache.wss4j.dom.engine.WSSConfig.init",e);
+				return;
+			}
 			
 			
 			

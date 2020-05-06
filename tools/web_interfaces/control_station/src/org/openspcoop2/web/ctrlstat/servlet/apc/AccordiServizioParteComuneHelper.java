@@ -70,6 +70,7 @@ import org.openspcoop2.core.registry.constants.RepresentationXmlType;
 import org.openspcoop2.core.registry.constants.StatiAccordo;
 import org.openspcoop2.core.registry.constants.StatoFunzionalita;
 import org.openspcoop2.core.registry.constants.TipologiaServizio;
+import org.openspcoop2.core.registry.driver.DriverRegistroServiziException;
 import org.openspcoop2.core.registry.driver.DriverRegistroServiziNotFound;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
 import org.openspcoop2.message.constants.MessageType;
@@ -80,8 +81,11 @@ import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.constants.ArchiveType;
 import org.openspcoop2.protocol.sdk.constants.FunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneResult;
+import org.openspcoop2.utils.rest.ValidatorException;
 import org.openspcoop2.utils.rest.api.ApiResponse;
 import org.openspcoop2.utils.rest.api.ApiSchemaTypeRestriction;
+import org.openspcoop2.utils.rest.api.ApiUtilities;
+import org.openspcoop2.utils.transport.http.HttpRequestMethod;
 import org.openspcoop2.web.ctrlstat.core.ControlStationCore;
 import org.openspcoop2.web.ctrlstat.core.Search;
 import org.openspcoop2.web.ctrlstat.costanti.CostantiControlStation;
@@ -6320,6 +6324,21 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			de.setName(AccordiServizioParteComuneCostanti.PARAMETRO_APC_RESOURCES_PATH);
 			de.setSize(this.getSize());
 			de.setRequired(!(nameRequired));
+			List<String> l = this.apcCore.getGetApiResourcePathQualsiasiSpecialChar();
+			if(de.isRequired()) {
+				boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+				if(httpMethodAndPathQualsiasi && l!=null && !l.isEmpty()) {
+					de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
+							AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), true));
+				}
+			}
+			else {
+				if(l!=null && !l.isEmpty()) {
+					de.setInfo(AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH, 
+							AccordiServizioParteComuneCostanti.getLABEL_PARAMETRO_APC_RESOURCES_PATH_INFO(l.get(0), false));
+				}
+			}
+			de.setRequired(false); // lascio sempre a false poiche' altrimenti non si capisce quando si rientra in edit che il carattere vuoto e' ammesso. Sembra un bug
 			dati.addElement(de);	
 	
 			de = new DataElement();
@@ -6768,8 +6787,11 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			// Campi obbligatori
 			// path
 			if ((path==null || path.equals("")) && httpMethod!=null) {
-				this.pd.setMessage("Dati incompleti. E' necessario indicare un Path");
-				return false;
+				boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+				if(!httpMethodAndPathQualsiasi) {
+					this.pd.setMessage("Dati incompleti. E' necessario indicare un Path");
+					return false;
+				}
 			}
 			
 			// validazione del campo path, controllo solo che non ci siano spazi bianchi
@@ -6803,6 +6825,14 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			if(path!=null && !"".equals(path)) {
 				if(this.checkLength255(path, AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH)==false) {
 					return false;
+				}
+				if(this.apcCore.isApiResourcePathValidatorEnabled()) {
+					try {
+						ApiUtilities.validatePath(path);
+					}catch(ValidatorException e) {
+						this.pd.setMessage(e.getMessage());
+						return false;
+					}
 				}
 			}
 			
@@ -6853,30 +6883,36 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			
 			// Se tipoOp = add, controllo che la risorsa non sia gia' stato registrata per l'accordo
 			if (tipoOp.equals(TipoOperazione.ADD)) {
-				boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
-				if (giaRegistrato) {
-					String m = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
-					if(httpMethod!=null && !"".equals(httpMethod) && !AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod)) {
-						m = httpMethod;
-					}
-					String p = path;
-					if(p==null || "".equals(p)) {
-						p = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI;
-					}
-					this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +m +" , "
-								+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +p + ") &egrave; gi&agrave; stata associata alla API");
-					return false;
-				}
 				
+				// check nome
 				if(!nomeRisorsa.equals("")) {
-					giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
+					boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
 					if (giaRegistrato) {
 						this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata alla API");
 						return false;
 					}
 				}
+				
+				// check http method e path
+				if(checkHttpMethodAndPath(httpMethod, path, id, null)==false) {
+					return false;
+				}
+				
 			} else {
 				// change
+				
+				// check nome
+				if(!nomeRisorsaProposto.equals(oldNomeRisorsa)) {
+					if(!nomeRisorsaProposto.equals("") ) {
+						boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
+						if (giaRegistrato) {
+							this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata alla API");
+							return false;
+						}
+					}
+				}
+				
+				
 				// se ho modificato path o method controllo se e' disponibile
 				boolean modificatoPath = false;
 				if(oldPath!=null) {
@@ -6892,25 +6928,13 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 				else {
 					modificatoHttpMethod = (httpMethod!=null);
 				}
-				
-				
+								
 				if(modificatoPath || modificatoHttpMethod) {
-					boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id));
-					if (giaRegistrato) {
-						this.pd.setMessage("La Risorsa (" + AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +httpMethod 
-									+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +path + ") &egrave; gi&agrave; stata associata alla API");
+					if(checkHttpMethodAndPath(httpMethod, path, id, oldNomeRisorsa)==false) {
 						return false;
 					}
-					if(!nomeRisorsaProposto.equals(oldNomeRisorsa)) {
-						if(!nomeRisorsaProposto.equals("") ) {
-							giaRegistrato = this.apcCore.existsAccordoServizioResource(nomeRisorsaProposto, Integer.parseInt(id));
-							if (giaRegistrato) {
-								this.pd.setMessage("La Risorsa " + nomeRisorsaProposto + " &egrave; gi&agrave; stata associata alla API");
-								return false;
-							}
-						}
-					}
 				}
+
 			}
 			return true;
 		} catch (Exception e) {
@@ -6918,6 +6942,80 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 			throw new Exception(e);
 		}
 		
+	}
+	
+	private boolean checkHttpMethodAndPath(String httpMethod, String path, String id, String nome) throws NumberFormatException, DriverRegistroServiziException {
+		String m = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI;
+		if(httpMethod!=null && !"".equals(httpMethod) && !AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod)) {
+			m = httpMethod;
+		}
+		String p = path;
+		if(p==null || "".equals(p)) {
+			p = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI;
+		}
+		String identificativoRisorsa = AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD + ": " +m +" , "
+				+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH + ": " +p;
+		
+		boolean giaRegistrato = this.apcCore.existsAccordoServizioResource(httpMethod, path, Integer.parseInt(id), nome);
+		if (giaRegistrato) {
+			
+			this.pd.setMessage("La Risorsa (" + identificativoRisorsa + ") &egrave; gi&agrave; stata associata alla API");
+			return false;
+		}
+		
+		boolean httpMethodAndPathQualsiasi = this.apcCore.isApiResourceHttpMethodAndPathQualsiasiEnabled();
+		if(httpMethodAndPathQualsiasi) {
+			if(path==null || "".equals(path)) {
+				if(httpMethod!=null && !"".equals(httpMethod) && !AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod)) {
+					// se il metodo e' definito e il path e' qualsiasi, devo controllare che non esista gia' una risorsa con sia path che metodo qualsiasi
+					boolean registrataOperazioneQualsiasi = this.apcCore.existsAccordoServizioResource(null, path, Integer.parseInt(id), nome);
+					if(registrataOperazioneQualsiasi) {
+						this.pd.setMessage("La Risorsa (" + identificativoRisorsa + ")"+
+								" è in conflitto con una esistente ("+
+								AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD+": "+ AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI+" , "+
+								AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH+": "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI+")");
+						return false;
+					}
+				}
+				else {
+					// se si tratta della risorsa speciale *, devo verificare che non esista una risorsa che cmq contenga il path '*' ed un metodo.
+					HttpRequestMethod [] metodi = HttpRequestMethod.values();
+					for (HttpRequestMethod httpRequestMethodCheck : metodi) {
+						boolean registrataOperazioneMetodo = this.apcCore.existsAccordoServizioResource(httpRequestMethodCheck.toString(), path, Integer.parseInt(id), nome);
+						if(registrataOperazioneMetodo) {
+							this.pd.setMessage("Non &egrave; possibile creare la Risorsa (" + identificativoRisorsa + ")"+
+									" è in conflitto con una esistente ("+
+									AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD+": "+ httpRequestMethodCheck.toString()+" , "+
+									AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH+": "+AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH_QUALSIASI+")");
+							return false;
+						}
+					}
+				}
+			}
+		}
+		
+		/*
+		 * BUG: e' cosentito. GovWay prima cerca il path dato con un http method specifico.
+		 * Poi cerca il path dato con un http method qualsiasi.
+		if(path!=null && !"".equals(path)) {
+			if(httpMethod==null || "".equals(httpMethod) || AccordiServizioParteComuneCostanti.DEFAULT_VALUE_PARAMETRO_APC_RESOURCES_HTTP_METHOD_QUALSIASI.equals(httpMethod)) {
+				// se sto cercando di registrare una risorsa con qualsiasi http method e un path preciso, verifico che non ne esista una che ha lo stesso path e anche un metodo http preciso.
+				HttpRequestMethod [] metodi = HttpRequestMethod.values();
+				for (HttpRequestMethod httpRequestMethodCheck : metodi) {
+					boolean registrataOperazioneMetodo = this.apcCore.existsAccordoServizioResource(httpRequestMethodCheck.toString(), path, Integer.parseInt(id), nome);
+					if(registrataOperazioneMetodo) {
+						this.pd.setMessage("Non &egrave; possibile creare la Risorsa (" + identificativoRisorsa + ")"+
+								" è in conflitto con una esistente ("+
+								AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_HTTP_METHOD+": "+ httpRequestMethodCheck.toString()+" , "+
+								AccordiServizioParteComuneCostanti.LABEL_PARAMETRO_APC_RESOURCES_PATH+": "+path+")");
+						return false;
+					}
+				}
+			}
+		}
+		*/
+		
+		return true;
 	}
 	
 	public DataElement getHttpMethodDataElement(TipoOperazione tipoOperazione, String httpMethod) {
@@ -8239,5 +8337,15 @@ public class AccordiServizioParteComuneHelper extends ConnettoriHelper {
 		
 		return listaParams;
 	}
- 
+
+	public String normalizePathEmpty(String path) {
+		if(path!=null) {
+			String s = path.trim();
+			List<String> l = this.apcCore.getGetApiResourcePathQualsiasiSpecialChar();
+			if(l!=null && l.contains(s)) {
+				return "";
+			}
+		}
+		return path;
+	}
 }

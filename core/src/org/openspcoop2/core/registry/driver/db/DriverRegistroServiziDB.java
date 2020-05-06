@@ -4621,7 +4621,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 		return exist;
 	}
 	
-	public boolean existsAccordoServizioParteComuneResource(String httpMethod, String path, long idAccordo) throws DriverRegistroServiziException {
+	public boolean existsAccordoServizioParteComuneResource(String httpMethod, String path, long idAccordo, String excludeResourceWithName) throws DriverRegistroServiziException {
 
 		boolean exist = false;
 		Connection connection;
@@ -4647,21 +4647,27 @@ IDriverWS ,IMonitoraggioRisorsa{
 			sqlQueryObject.addWhereCondition("id_accordo = ?");
 			sqlQueryObject.addWhereCondition("http_method = ?");
 			sqlQueryObject.addWhereCondition("path = ?");
+			if(excludeResourceWithName!=null && !"".equals(excludeResourceWithName)) {
+				sqlQueryObject.addWhereCondition("nome <> ?");
+			}
 			sqlQueryObject.setANDLogicOperator(true);
 			String sqlQuery = sqlQueryObject.createSQLQuery();
 			stm = connection.prepareStatement(sqlQuery);
 			stm.setLong(1, idAccordo);
-			if(httpMethod==null) {
+			if(httpMethod==null || "".equals(httpMethod)) {
 				stm.setString(2, CostantiDB.API_RESOURCE_HTTP_METHOD_ALL_VALUE);
 			}
 			else {
 				stm.setString(2, httpMethod);
 			}
-			if(path==null) {
+			if(path==null || "".equals(path)) {
 				stm.setString(3, CostantiDB.API_RESOURCE_PATH_ALL_VALUE);
 			}
 			else {
 				stm.setString(3, path);
+			}
+			if(excludeResourceWithName!=null && !"".equals(excludeResourceWithName)) {
+				stm.setString(4, excludeResourceWithName);
 			}
 			rs = stm.executeQuery();
 			if (rs.next())

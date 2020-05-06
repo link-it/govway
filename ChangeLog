@@ -1,3 +1,16 @@
+2020-05-06  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-990
+	Aggiunta la possibilità di registrare manualmente risorse in API REST con HttpMethod definito e Path Qualsiasi.
+	Inoltre le richieste 'OPTIONS' che vengono associate a risorse definite con HttpMethod 'Qualsiasi' vengono adesso gestite con il CORS se abilitato per l'API.
+	Sono infine stati disattivati i log generati dai template engine 'Freemarker' e 'Velocity' sul server log dell'Application Server.
+
+2020-05-05  Andrea Poli <apoli@link.it>
+	* [GovWayCore, GovWayMonitor]
+	Aggiunta la possibilità di personalizzare i claim 'govway_id' e 'govway_status' nel Problem Detail.
+	Disabilitato come criterio di default il filtro 'Escludi Richieste Scartate'.
+
 2020-05-05  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayMonitor, GovWayConsole]
