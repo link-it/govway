@@ -453,7 +453,8 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 			List<Reference> references = new ArrayList<Reference>();
 			
 			// Prendo il security Header di mia competenza
-	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor);
+	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor,
+	        		this.isThrowExceptionIfFoundMoreSecurityHeader());
 	       
 	        //TODO verificare se actor==null && mustUnderstand==false?
 	        if(security!=null){
@@ -578,7 +579,8 @@ public abstract class AbstractOpenSPCoop2Message_saaj_impl extends AbstractBaseO
 		try{
 		
 			// Prendo il security Header di mia competenza
-	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor);
+	        SOAPElement security = (SOAPElement) WSSecurityUtils.getSecurityHeader(this.getSOAPPartForSearchWSSecurity(),this.messageType, actor,
+	        		this.isThrowExceptionIfFoundMoreSecurityHeader());
 	        
 	        // Rimuovo l'header Security
 	        if(detachHeaderWSSecurity){

@@ -208,9 +208,17 @@ public class GestoreTrasformazioni {
 					!message.getTransportRequestContext().getParametersTrasporto().isEmpty()) {
 					parametriTrasporto = message.getTransportRequestContext().getParametersTrasporto();
 				}
+				else {
+					parametriTrasporto = new HashMap<String, String>();
+					message.getTransportRequestContext().setParametersTrasporto(parametriTrasporto);
+				}
 				if(message.getTransportRequestContext().getParametersFormBased()!=null &&
 						!message.getTransportRequestContext().getParametersFormBased().isEmpty()) {
 					parametriUrl = message.getTransportRequestContext().getParametersFormBased();
+				}
+				else {
+					parametriUrl = new HashMap<String, String>();
+					message.getTransportRequestContext().setParametersFormBased(parametriUrl);
 				}
 				urlInvocazione = message.getTransportRequestContext().getUrlInvocazione_formBased();
 			}
@@ -552,6 +560,10 @@ public class GestoreTrasformazioni {
 				if(message.getTransportResponseContext().getParametersTrasporto()!=null &&
 					!message.getTransportResponseContext().getParametersTrasporto().isEmpty()) {
 					parametriTrasporto = message.getTransportResponseContext().getParametersTrasporto();
+				}
+				else {
+					parametriTrasporto = new HashMap<String, String>();
+					message.getTransportResponseContext().setParametersTrasporto(parametriTrasporto);
 				}
 				try {
 					httpStatus = Integer.parseInt(message.getTransportResponseContext().getCodiceTrasporto());

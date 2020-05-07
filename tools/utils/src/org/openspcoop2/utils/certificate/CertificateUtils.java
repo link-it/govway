@@ -646,8 +646,8 @@ public class CertificateUtils {
 			}
 			
 			if(config.isEnrich_BEGIN_END()) {
-				String BEGIN = "----BEGIN CERTIFICATE----";
-				String END = "----END CERTIFICATE----";
+				String BEGIN = "-----BEGIN CERTIFICATE-----";
+				String END = "-----END CERTIFICATE-----";
 				if(certificate.startsWith(BEGIN)==false) {
 					certificate = BEGIN+"\n"+certificate;
 				}

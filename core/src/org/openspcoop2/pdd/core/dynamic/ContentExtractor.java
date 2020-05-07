@@ -22,9 +22,15 @@ package org.openspcoop2.pdd.core.dynamic;
 
 import java.io.ByteArrayOutputStream;
 
+import javax.xml.soap.SOAPElement;
+import javax.xml.soap.SOAPHeader;
+
 import org.openspcoop2.message.OpenSPCoop2Message;
+import org.openspcoop2.message.OpenSPCoop2SoapMessage;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.message.rest.DumpRestMessageUtils;
+import org.openspcoop2.message.soap.AbstractBaseOpenSPCoop2SoapMessage;
 import org.openspcoop2.message.soap.DumpSoapMessageUtils;
 import org.openspcoop2.message.soap.TunnelSoapUtils;
 import org.openspcoop2.message.utils.DumpMessaggio;
@@ -50,6 +56,69 @@ public class ContentExtractor {
 		this.log = log;
 	}
 
+
+	public void addTransportHeader(String name, String value) {
+		if(this.message!=null) {
+			this.message.forceTransportHeader(name, value);
+		}
+	}
+	public void removeTransportHeader(String name) {
+		if(this.message!=null) {
+			if(this.message.getTransportRequestContext()!=null) {
+				this.message.getTransportRequestContext().removeParameterTrasporto(name);
+			}
+			else if(this.message.getTransportResponseContext()!=null) {
+				this.message.getTransportResponseContext().removeParameterTrasporto(name);
+			}
+		}
+	}
+	
+	public void addUrlProperty(String name, String value) {
+		if(this.message!=null) {
+			this.message.forceUrlProperty(name, value);
+		}
+	}
+	public void removeUrlProperty(String name) {
+		if(this.message!=null) {
+			if(this.message.getTransportRequestContext()!=null) {
+				this.message.getTransportRequestContext().removeParameterFormBased(name);
+			}
+		}
+	}
+
+	public void disableExceptionIfFoundMoreSecurityHeader() {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			if(this.message instanceof AbstractBaseOpenSPCoop2SoapMessage) {
+				AbstractBaseOpenSPCoop2SoapMessage soapMsg = (AbstractBaseOpenSPCoop2SoapMessage) this.message;
+				soapMsg.setThrowExceptionIfFoundMoreSecurityHeader(false);
+			}
+		}
+	}
+	public void addSoapHeader(String xml) throws DynamicException {
+		this.addSoapHeader(xml.getBytes());
+	}
+	public void addSoapHeader(byte[] xml) throws DynamicException {
+		if(this.message!=null && ServiceBinding.SOAP.equals(this.message.getServiceBinding())) {
+			
+			try {
+			
+				OpenSPCoop2SoapMessage soapMsg = this.message.castAsSoap();
+				
+				SOAPHeader header = soapMsg.getSOAPHeader();
+				if(header==null) {
+					header = soapMsg.getSOAPPart().getEnvelope().addHeader();
+				}
+				
+				SOAPElement soapElement = soapMsg.createSOAPElement(xml);
+				
+				header.addChildElement(soapElement);
+				
+			}catch(Throwable t) {
+				throw new DynamicException(t.getMessage(),t);
+			}
+			
+		}
+	}
 	
 	public boolean isSoap() throws DynamicException {
 		if(this.message==null) {
@@ -57,11 +126,48 @@ public class ContentExtractor {
 		}
 		return ServiceBinding.SOAP.equals(this.message.getServiceBinding());
 	}
+	public boolean isSoap11() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.SOAP_11.equals(this.message.getMessageType());
+	}
+	public boolean isSoap12() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.SOAP_12.equals(this.message.getMessageType());
+	}
+	
 	public boolean isRest() throws DynamicException {
 		if(this.message==null) {
 			return false;
 		}
 		return ServiceBinding.REST.equals(this.message.getServiceBinding());
+	}
+	public boolean isRestXml() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.XML.equals(this.message.getMessageType());
+	}
+	public boolean isRestJson() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.JSON.equals(this.message.getMessageType());
+	}
+	public boolean isRestMultipart() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.MIME_MULTIPART.equals(this.message.getMessageType());
+	}
+	public boolean isRestBinary() throws DynamicException {
+		if(this.message==null || this.message.getMessageType()==null) {
+			return false;
+		}
+		return MessageType.BINARY.equals(this.message.getMessageType());
 	}
 	
 	

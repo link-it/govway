@@ -154,15 +154,21 @@ public class DynamicUtils {
 		DynamicInfo dInfo = new DynamicInfo();
 		dInfo.setBusta(busta);
 		dInfo.setPddContext(pddContext);
-		if(trasporto!=null && !trasporto.isEmpty()) {
-			Map<String, String> pNew = new HashMap<String, String>();
-			pNew.putAll(trasporto);
-			dInfo.setTrasporto(pNew);
+		if(trasporto!=null) { 
+			//	&& !trasporto.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<String, String>();
+			//pNew.putAll(trasporto);
+			//dInfo.setTrasporto(pNew);
+			// Fix per permettere la modifica degli header direttamente dentro la trasformazione
+			dInfo.setTrasporto(trasporto);
 		}
-		if(url!=null && !url.isEmpty()) {
-			Map<String, String> pNew = new HashMap<String, String>();
-			pNew.putAll(url);
-			dInfo.setQueryParameters(pNew);
+		if(url!=null) {
+			//&& !url.isEmpty()) {
+			//Map<String, String> pNew = new HashMap<String, String>();
+			//pNew.putAll(url);
+			//dInfo.setQueryParameters(pNew);
+			// Fix per permettere la modifica dei parametri direttamente dentro la trasformazione
+			dInfo.setQueryParameters(url);
 		}
 		if(urlInvocazione!=null) {
 			dInfo.setUrl(urlInvocazione);

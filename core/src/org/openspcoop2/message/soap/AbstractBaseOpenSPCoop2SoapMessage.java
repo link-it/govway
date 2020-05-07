@@ -49,8 +49,12 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 
 	/* SOAPAction */
 	public String soapAction;
-
 	
+	/* boolean throwExceptionIfFoundMoreSecurityHeader */
+	public boolean throwExceptionIfFoundMoreSecurityHeader = true; // se esistono due header con stesso actor e role viene normalmente lanciata una eccezione
+
+
+
 	public AbstractBaseOpenSPCoop2SoapMessage(OpenSPCoop2MessageFactory messageFactory) {
 		super(messageFactory);
 	}
@@ -144,5 +148,18 @@ public abstract class AbstractBaseOpenSPCoop2SoapMessage extends AbstractBaseOpe
 	@Override
 	public void mtomRestoreAfterXSDConformance(List<MtomXomReference> references) throws MessageException,MessageNotSupportedException{
 		MTOMUtilities.restoreAfterFastUnpackaging(this, references, true);
+	}
+	
+	
+	
+	
+	/* WSSecurity */
+	
+	public boolean isThrowExceptionIfFoundMoreSecurityHeader() {
+		return this.throwExceptionIfFoundMoreSecurityHeader;
+	}
+
+	public void setThrowExceptionIfFoundMoreSecurityHeader(boolean throwExceptionIfFoundMoreSecurityHeader) {
+		this.throwExceptionIfFoundMoreSecurityHeader = throwExceptionIfFoundMoreSecurityHeader;
 	}
 }

@@ -43,7 +43,7 @@ import org.w3c.dom.Attr;
 
 public class WSSecurityUtils {
 
-	public static SOAPElement getSecurityHeader(SOAPPart soapPart, MessageType msgType, String actor) throws MessageException, MessageNotSupportedException {
+	public static SOAPElement getSecurityHeader(SOAPPart soapPart, MessageType msgType, String actor, boolean throwExceptionIfFoundMoreSecurityHeader) throws MessageException, MessageNotSupportedException {
         
 		SOAPHeader hdr = null;
 		try {
@@ -83,6 +83,9 @@ public class WSSecurityUtils {
                             	throw new MessageException("Two or more security headers have the same actor name: '"+actor+"'");
                             }
                             foundSecurityHeader = currentChild;
+                            if(!throwExceptionIfFoundMoreSecurityHeader) {
+                            	break; // un header trovato
+                            }
                         }
                     }
 			}

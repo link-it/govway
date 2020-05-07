@@ -130,6 +130,7 @@ public class GestoreTrasformazioniUtilities {
 				if(nome==null) {
 					throw new Exception("["+oggetto+"] Nome non indicato");
 				}
+				nome = nome.trim();
 				if(tipo==null) {
 					throw new Exception("["+oggetto+"] Tipo di operazione da effettuare non indicata per '"+nome+"'");
 				}
