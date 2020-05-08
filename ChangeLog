@@ -1,5 +1,10 @@
 2020-05-08  Andrea Poli <apoli@link.it>
 
+	* [GovWayConsole]
+	Corretto problema presente durante l'esportazione di una API con Multi-Tenant abilitato e un soggetto selezionato in testata: l'archivio esportato era vuoto.
+
+2020-05-08  Andrea Poli <apoli@link.it>
+
 	* [GovWayCore, GovWayConsole]
 	Aggiunta funzionalità OP-992
 	Definiti nuovi header di integrazione 'template', 'template-request' e 'template-response'.

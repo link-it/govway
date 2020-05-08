@@ -601,17 +601,28 @@ public class ExporterUtils {
 		// accordi parte comune (raccolgo solo elementi riferiti, l'eliminazione la faccio dopo)
 		if(archive.getAccordiServizioParteComune()!=null && archive.getAccordiServizioParteComune().size()>0) {
 			for (int i = 0; i < archive.getAccordiServizioParteComune().size(); i++) {
-				if(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente()!=null &&
-						idSoggettoSelezionato.equals(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente())) {
-					
-					IDAccordo idAccordo = archive.getAccordiServizioParteComune().get(i).getIdAccordoServizioParteComune();
-					if(idAccordiCoinvolti.contains(idAccordo)==false) {
-						idAccordiCoinvolti.add(idAccordo);
-					}
-					
-					IDSoggetto idSoggettoReferente = archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente();
-					if(idSoggettiCoinvolti.contains(idSoggettoReferente)==false) {
-						idSoggettiCoinvolti.add(idSoggettoReferente);
+				
+				// filtro solo se il protocollo supporta il soggetto referente.
+				if(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente()!=null) {
+					try {
+						String protocollo = this.soggettiCore.getProtocolloAssociatoTipoSoggetto(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente().getTipo());
+						boolean soggettoReferenteSupportato = this.aspcCore.isSupportatoSoggettoReferente(protocollo);
+						
+						if( !soggettoReferenteSupportato ||
+								idSoggettoSelezionato.equals(archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente())) {
+							
+							IDAccordo idAccordo = archive.getAccordiServizioParteComune().get(i).getIdAccordoServizioParteComune();
+							if(idAccordiCoinvolti.contains(idAccordo)==false) {
+								idAccordiCoinvolti.add(idAccordo);
+							}
+							
+							IDSoggetto idSoggettoReferente = archive.getAccordiServizioParteComune().get(i).getIdSoggettoReferente();
+							if(idSoggettiCoinvolti.contains(idSoggettoReferente)==false) {
+								idSoggettiCoinvolti.add(idSoggettoReferente);
+							}
+						}
+					}catch(Exception e) {
+						throw new ProtocolException(e.getMessage(), e);
 					}
 				}
 			}
