@@ -24,6 +24,7 @@ import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
@@ -44,10 +45,16 @@ import org.openspcoop2.utils.digest.IDigestReader;
 public class ValidazioneSemantica extends BasicStateComponentFactory implements
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica {
 
+	protected Context context;
+	
 	public ValidazioneSemantica(IProtocolFactory<?> factory,IState state) throws ProtocolException{
 		super(factory,state);
 	}
 
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
 	
 	@Override
 	public IProtocolFactory<?> getProtocolFactory() {

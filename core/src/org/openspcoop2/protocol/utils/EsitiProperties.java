@@ -68,6 +68,10 @@ public class EsitiProperties {
 	public boolean isErroreProtocollo() {
 		return this.erroreProtocollo;
 	}
+	private boolean envelopeErroreProtocollo = false;
+	public boolean isEnvelopeErroreProtocollo() {
+		return this.envelopeErroreProtocollo;
+	}
 	private String labelErroreProtocollo = null;
 	private boolean faultEsterno = false;
 	public boolean isFaultEsterno() {
@@ -119,10 +123,12 @@ public class EsitiProperties {
 		if(pf==null) {
 			// Serve per la configurazione
 			this.erroreProtocollo = true;
+			this.envelopeErroreProtocollo = true;
 			this.faultEsterno = true;
 		}
 		else if(pf.getInformazioniProtocol()!=null) {
 			this.erroreProtocollo = pf.getInformazioniProtocol().isErrorProtocol();
+			this.envelopeErroreProtocollo = pf.getInformazioniProtocol().isEnvelopeErrorProtocol();
 			this.labelErroreProtocollo = pf.getInformazioniProtocol().getLabelErrorProtocol();
 			this.faultEsterno = pf.getInformazioniProtocol().isExternalFault();
 			this.labelFaultEsterno = pf.getInformazioniProtocol().getLabelExternalFault();

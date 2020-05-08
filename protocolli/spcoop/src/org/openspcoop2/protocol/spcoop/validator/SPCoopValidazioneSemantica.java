@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.registry.RegistroServiziReader;
 import org.openspcoop2.protocol.registry.RisultatoValidazione;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -91,6 +92,8 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 	/** informazioni Servizio */
 	private Servizio infoServizio = null;
 	
+	@SuppressWarnings("unused")
+	private Context context;
 	
 
 	/**
@@ -104,6 +107,12 @@ public class SPCoopValidazioneSemantica extends BasicStateComponentFactory imple
 		super(protocolFactory,state);
 	}
 
+	
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
+	
 
 	/**
 	 * Metodo che effettua la validazione dei soggetti di una busta, controllando la loro registrazione nel registro dei servizi. 

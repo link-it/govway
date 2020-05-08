@@ -176,6 +176,7 @@ import org.openspcoop2.protocol.engine.validator.Validatore;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.Integrazione;
@@ -775,6 +776,8 @@ public class RicezioneBuste {
 			he = (HandlerException) e;
 		}
 		
+		Context context = this.msgContext.getPddContext();
+		
 		if(msgDiag!=null){
 			if(he!=null){
 				if(he.isEmettiDiagnostico()){
@@ -821,18 +824,18 @@ public class RicezioneBuste {
 					String descrizioneErrore = null;
 					try{
 						descrizioneErrore = erroreCooperazione.getDescrizione(this.generatoreErrore.getProtocolFactory());
-						messageFault = this.generatoreErrore.buildErroreIntestazione(integrationError, 
+						messageFault = this.generatoreErrore.buildErroreIntestazione(context, integrationError, 
 								erroreCooperazione.getCodiceErrore(), descrizioneErrore);
 					}catch(Exception eP){
 						messageFault = this.generatoreErrore.buildFault(eP);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreIntestazione(integrationError, 
+					messageFault = this.generatoreErrore.buildErroreIntestazione(context,integrationError, 
 							erroreIntegrazione);
 				}
 			}else{
 				if(erroreIntegrazione!=null){
-					messageFault = this.generatoreErrore.buildErroreProcessamento(integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
 							erroreIntegrazione,e);
 				}
 				else if(e!=null){
@@ -843,13 +846,13 @@ public class RicezioneBuste {
 					if(erroreIntegrazioneGenerato==null) {
 						erroreIntegrazioneGenerato = ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore);
 					}
-					messageFault = this.generatoreErrore.buildErroreProcessamento(integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
 							erroreIntegrazioneGenerato,e);
 					if(he!=null){
 						he.customized(messageFault);
 					}
 				}else{
-					messageFault = this.generatoreErrore.buildErroreProcessamento(integrationError, 
+					messageFault = this.generatoreErrore.buildErroreProcessamento(context,integrationError, 
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.get5XX_ErroreProcessamento(posizioneErrore));
 				}
 			}
@@ -2029,7 +2032,7 @@ public class RicezioneBuste {
 		ProprietaValidazione properties = new ProprietaValidazione();
 		boolean readQualifiedAttribute = propertiesReader.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD);
 		
-		Validatore validatore = new Validatore(requestMessage,pddContext.getContext(),properties, openspcoopstate.getStatoRichiesta(),readQualifiedAttribute, protocolFactory);
+		Validatore validatore = new Validatore(requestMessage,pddContext,properties, openspcoopstate.getStatoRichiesta(),readQualifiedAttribute, protocolFactory);
 		
 		
 		msgDiag.logPersonalizzato("validazioneSintattica");
@@ -7089,7 +7092,7 @@ public class RicezioneBuste {
 							msgDiag.highDebug("Tipo Messaggio Risposta dopo l'imbustamento ["+responseMessage.getClass().getName()+"]");
 						}
 						else{
-							Validatore v = new Validatore(responseMessage,pddContext.getContext(),openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
+							Validatore v = new Validatore(responseMessage,pddContext,openspcoopstate.getStatoRichiesta(), logCore, protocolFactory);
 							headerBustaRisposta = v.getHeaderProtocollo_senzaControlli();
 						}
 					}else{
@@ -7779,7 +7782,7 @@ public class RicezioneBuste {
 						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(responseErrorMessage.getFactory()),responseErrorMessage);
 					}
 				}
-				Validatore v = new Validatore(responseErrorMessage,this.msgContext.getPddContext().getContext(),openspcoopState.getStatoRichiesta(),
+				Validatore v = new Validatore(responseErrorMessage,this.msgContext.getPddContext(),openspcoopState.getStatoRichiesta(),
 						parametriGenerazioneBustaErrore.getLogCore(), protocolFactory);
 				tracciamento.registraRisposta(responseErrorMessage,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), parametriGenerazioneBustaErrore.getBusta(),esitoTraccia,
@@ -7931,7 +7934,7 @@ public class RicezioneBuste {
 
 		}catch (Exception e) {
 			msgDiag.logErroreGenerico(e, "sendRispostaBustaErrore");
-			this.msgContext.setMessageResponse(this.generatoreErrore.buildErroreProcessamento(
+			this.msgContext.setMessageResponse(this.generatoreErrore.buildErroreProcessamento(pddContext,
 					IntegrationError.INTERNAL_ERROR,
 					ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.getErroreIntegrazione(), e));
 		}  	
@@ -8824,7 +8827,7 @@ public class RicezioneBuste {
 						requestInfo.getProtocolRequestMessageType(), MessageRole.RESPONSE);
 			}
 			else{
-				msg = this.generatoreErrore.buildErroreIntestazione(IntegrationError.INTERNAL_ERROR);
+				msg = this.generatoreErrore.buildErroreIntestazione(pddContext,IntegrationError.INTERNAL_ERROR);
 			}
 			
 			
@@ -8857,7 +8860,7 @@ public class RicezioneBuste {
 //						securityInfoResponse = validazioneSemantica.readSecurityInformation(messageSecurityContext.getDigestReader(),msg);
 //					}
 //				}
-				Validatore v = new Validatore(msg,this.msgContext.getPddContext().getContext(),openspcoopstate.getStatoRichiesta(),
+				Validatore v = new Validatore(msg,this.msgContext.getPddContext(),openspcoopstate.getStatoRichiesta(),
 						log, protocolFactory);
 				tracciamento.registraRisposta(msg,securityInfoResponse,
 						v.getHeaderProtocollo_senzaControlli(), bustaHTTPReply,esitoTraccia,

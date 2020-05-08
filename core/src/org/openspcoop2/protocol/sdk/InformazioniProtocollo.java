@@ -45,6 +45,7 @@ public class InformazioniProtocollo implements java.io.Serializable{
 	private String webSite;
 	
 	private boolean errorProtocol;
+	private boolean envelopeErrorProtocol = true;
 	private String labelErrorProtocol;
 	private boolean externalFault;
 	private String labelExternalFault;
@@ -78,6 +79,12 @@ public class InformazioniProtocollo implements java.io.Serializable{
 	}
 	public void setErrorProtocol(boolean errorProtocol) {
 		this.errorProtocol = errorProtocol;
+	}
+	public boolean isEnvelopeErrorProtocol() {
+		return this.envelopeErrorProtocol;
+	}
+	public void setEnvelopeErrorProtocol(boolean envelopeErrorProtocol) {
+		this.envelopeErrorProtocol = envelopeErrorProtocol;
 	}
 	public String getLabelErrorProtocol() {
 		return this.labelErrorProtocol;

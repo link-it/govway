@@ -109,7 +109,7 @@ public class ServerCongelamentoBuste extends ServerCore{
 			}
 			// ??? Serve ancora ??? Configurazione.init(checkInterval, gestoreRepositoryBuste, sqlQueryObject, this.log);
 			IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getDefaultProtocolFactory();
-			ValidazioneSintattica validator = new ValidazioneSintattica(null,msg,pf);
+			ValidazioneSintattica validator = new ValidazioneSintattica(null,null,msg,pf);
 			boolean bustaCorretta = validator.valida();
 			if(!bustaCorretta)
 				throw new Exception ("Busta non corretta?");

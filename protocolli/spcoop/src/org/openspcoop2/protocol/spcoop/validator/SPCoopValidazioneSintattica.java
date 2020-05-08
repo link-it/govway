@@ -48,6 +48,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.soap.SoapUtils;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -133,6 +134,8 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	
 	private SPCoopProperties spcoopProperties = null;
 	
+	@SuppressWarnings("unused")
+	private Context context;
 	
 	/**
 	 * Costruttore
@@ -188,6 +191,10 @@ public class SPCoopValidazioneSintattica extends BasicStateComponentFactory impl
 	}
 
 
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
 
 	/**
 	 * Oggetto Busta SPCoop contenente i valori della busta ricevuta.

@@ -32,6 +32,7 @@ import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ErroreApplicativoBuilder;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaErroreApplicativo;
@@ -73,35 +74,35 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 		this.proprietaErroreAppl.setDominio(this.identitaPdD.getCodicePorta());
 	}
 	
-	public ErroreApplicativoBuilder getErroreApplicativoBuilderForAddDetailInSoapFault(MessageType messageTypeError) throws ProtocolException{
+	public ErroreApplicativoBuilder getErroreApplicativoBuilderForAddDetailInSoapFault(Context context, MessageType messageTypeError) throws ProtocolException{
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(IntegrationError.INTERNAL_ERROR); 
 		int httpStatus = 500; // soapFault vuole 500
-		return this.getErroreApplicativoBuilder(messageTypeError, rfc7807, httpStatus);
+		return this.getErroreApplicativoBuilder(context, messageTypeError, rfc7807, httpStatus);
 	}
-	public ErroreApplicativoBuilder getErroreApplicativoBuilder(MessageType messageTypeError, ConfigurationRFC7807 rfc7807, int httpStatus) throws ProtocolException{
+	public ErroreApplicativoBuilder getErroreApplicativoBuilder(Context context, MessageType messageTypeError, ConfigurationRFC7807 rfc7807, int httpStatus) throws ProtocolException{
 		ErroreApplicativoBuilder erroreApplicativoBuilder = new ErroreApplicativoBuilder(this.log, this.protocolFactory, 
 				this.identitaPdD, this.mittente, this.idServizio, 
 				this.idModulo, 
 				this.proprietaErroreAppl, 
 				messageTypeError, rfc7807, httpStatus, this.getInterfaceName(),
 				this.tipoPdD, this.servizioApplicativo,
-				this.requestInfo.getIdTransazione());
+				this.requestInfo.getIdTransazione(), context);
 		return erroreApplicativoBuilder;
 	}
 	
 	
 	
-	public OpenSPCoop2Message build(IntegrationError integrationError, Eccezione ecc, IDSoggetto idSoggettoProduceEccezione, ParseException parseException) {
-		return build(integrationError, ecc, idSoggettoProduceEccezione, null, parseException);
+	public OpenSPCoop2Message build(Context context, IntegrationError integrationError, Eccezione ecc, IDSoggetto idSoggettoProduceEccezione, ParseException parseException) {
+		return build(context, integrationError, ecc, idSoggettoProduceEccezione, null, parseException);
 	}
-	public OpenSPCoop2Message build(IntegrationError integrationError, Eccezione ecc, IDSoggetto idSoggettoProduceEccezione, DettaglioEccezione dettaglioEccezione, ParseException parseException) {
+	public OpenSPCoop2Message build(Context context, IntegrationError integrationError, Eccezione ecc, IDSoggetto idSoggettoProduceEccezione, DettaglioEccezione dettaglioEccezione, ParseException parseException) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(context, msgTypeErrorResponse,rfc7807, httpReturnCode);
 			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(ecc,idSoggettoProduceEccezione,dettaglioEccezione,parseException);		
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -111,14 +112,14 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 		}
 	}
 	
-	public OpenSPCoop2Message build(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento, ParseException parseException) {
+	public OpenSPCoop2Message build(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento, ParseException parseException) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(context, msgTypeErrorResponse,rfc7807, httpReturnCode);
 			OpenSPCoop2Message msg = erroreApplicativoBuilder.toMessage(erroreIntegrazione,eProcessamento,parseException);		
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
@@ -128,14 +129,14 @@ public class RicezioneContenutiApplicativiInternalErrorGenerator extends Abstrac
 		}
 	}
 	
-	public byte[] buildAsByteArray(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, List<Integer> returnCode) {
+	public byte[] buildAsByteArray(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, List<Integer> returnCode) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 			int httpReturnCode = this.getReturnCodeForError(integrationError);
-			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(msgTypeErrorResponse,rfc7807, httpReturnCode);
+			ErroreApplicativoBuilder erroreApplicativoBuilder = getErroreApplicativoBuilder(context, msgTypeErrorResponse,rfc7807, httpReturnCode);
 			byte[] bytes = erroreApplicativoBuilder.toByteArray(erroreIntegrazione);
 			returnCode.add(httpReturnCode);
 			return bytes;

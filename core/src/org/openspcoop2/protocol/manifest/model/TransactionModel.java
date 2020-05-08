@@ -41,6 +41,7 @@ public class TransactionModel extends AbstractModel<Transaction> {
 		super();
 	
 		this.ERROR_PROTOCOL = new Field("errorProtocol",boolean.class,"transaction",Transaction.class);
+		this.ENVELOPE_ERROR_PROTOCOL = new Field("envelopeErrorProtocol",boolean.class,"transaction",Transaction.class);
 		this.LABEL_ERROR_PROTOCOL = new Field("labelErrorProtocol",java.lang.String.class,"transaction",Transaction.class);
 		this.EXTERNAL_FAULT = new Field("externalFault",boolean.class,"transaction",Transaction.class);
 		this.LABEL_EXTERNAL_FAULT = new Field("labelExternalFault",java.lang.String.class,"transaction",Transaction.class);
@@ -52,6 +53,7 @@ public class TransactionModel extends AbstractModel<Transaction> {
 		super(father);
 	
 		this.ERROR_PROTOCOL = new ComplexField(father,"errorProtocol",boolean.class,"transaction",Transaction.class);
+		this.ENVELOPE_ERROR_PROTOCOL = new ComplexField(father,"envelopeErrorProtocol",boolean.class,"transaction",Transaction.class);
 		this.LABEL_ERROR_PROTOCOL = new ComplexField(father,"labelErrorProtocol",java.lang.String.class,"transaction",Transaction.class);
 		this.EXTERNAL_FAULT = new ComplexField(father,"externalFault",boolean.class,"transaction",Transaction.class);
 		this.LABEL_EXTERNAL_FAULT = new ComplexField(father,"labelExternalFault",java.lang.String.class,"transaction",Transaction.class);
@@ -61,6 +63,8 @@ public class TransactionModel extends AbstractModel<Transaction> {
 	
 
 	public IField ERROR_PROTOCOL = null;
+	 
+	public IField ENVELOPE_ERROR_PROTOCOL = null;
 	 
 	public IField LABEL_ERROR_PROTOCOL = null;
 	 

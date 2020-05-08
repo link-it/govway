@@ -1270,7 +1270,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_507_COSTRUZIONE_IDENTIFICATIVO),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
+								(responseMessage!=null ? responseMessage.getParseException() : null),
+								pddContext);
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "imbustatore.buildID(idMessageResponse)");
 					}catch(Exception sendError){
@@ -1435,7 +1436,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_509_READ_REQUEST_MSG),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "msgRequest.getMessage()");
 					esito.setEsitoInvocazione(true);
@@ -1607,7 +1609,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 									erroreIntegrazione,
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(responseMessage!=null ? responseMessage.getParseException() : null),
+									pddContext);
 						}
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -1973,7 +1976,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							erroreIntegrazione,
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -2221,7 +2225,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_500_ERRORE_INTERNO),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null));
+								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null),
+								pddContext);
 						
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -2339,7 +2344,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								erroreIntegrazione,
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null));
+								(connectorSender!=null && connectorSender.getResponse()!=null ? connectorSender.getResponse().getParseException() : null),
+								pddContext);
 						}
 						
 						esito.setEsitoInvocazione(true); 
@@ -2389,7 +2395,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 							get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_525_GESTIONE_FUNZIONALITA_PROTOCOLLO),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -2482,7 +2489,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								erroreIntegrazione,
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
+								(responseMessage!=null ? responseMessage.getParseException() : null),
+								pddContext);
 						
 						esito.setEsitoInvocazione(true); 
 						esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErrore);
@@ -2509,7 +2517,7 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 			
 			/* ------------ Controllo che il messaggio non contenga una busta */
 			msgDiag.mediumDebug("Controllo non esistenza di una busta ...");
-			ValidazioneSintattica validatoreSintattico = new ValidazioneSintattica(openspcoopstate.getStatoRichiesta(),responseMessage, protocolFactory);
+			ValidazioneSintattica validatoreSintattico = new ValidazioneSintattica(pddContext, openspcoopstate.getStatoRichiesta(),responseMessage, protocolFactory);
 			String msgErrore = null;
 			try{
 				if(validatoreSintattico.verifyProtocolPresence(tipoPdD,profiloCollaborazione,RuoloMessaggio.RISPOSTA)){
@@ -2523,7 +2531,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 					this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 							ErroriIntegrazione.ERRORE_454_BUSTA_PRESENTE_RISPOSTA_APPLICATIVA.getErroreIntegrazione(),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -2616,7 +2625,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_515_CONNETTORE_NON_REGISTRATO),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreConnettoreNonSupportato);
@@ -2670,7 +2680,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											ErroriIntegrazione.ERRORE_559_RICEVUTA_RISPOSTA_CON_ERRORE_TRASPORTO.
 												get559_RicevutaRispostaConErroreTrasporto(msgErroreSituazioneAnomale),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eInvokerNonSupportato,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(responseMessage!=null ? responseMessage.getParseException() : null),
+											pddContext);
 									
 									esito.setEsitoInvocazione(true); 
 									esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, msgErroreSituazioneAnomale);
@@ -2695,7 +2706,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(connettoreMsgRequest.getParseException().getParseException()),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
-								connettoreMsgRequest.getParseException().getParseException(),connettoreMsgRequest.getParseException());
+								connettoreMsgRequest.getParseException().getParseException(),connettoreMsgRequest.getParseException(),
+								pddContext);
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -2712,7 +2724,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_516_CONNETTORE_UTILIZZO_CON_ERRORE.get516_ServizioApplicativoNonDisponibile(),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, eccezioneProcessamentoConnettore,
-								(responseMessage!=null ? responseMessage.getParseException() : null));
+								(responseMessage!=null ? responseMessage.getParseException() : null),
+								pddContext);
 					
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -2733,7 +2746,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 						this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 								ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 								idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
-								parseException.getParseException(),parseException);
+								parseException.getParseException(),parseException,
+								pddContext);
 						
 						openspcoopstate.releaseResource();
 						esito.setEsitoInvocazione(true); 
@@ -2968,7 +2982,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_511_READ_RESPONSE_MSG),
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(responseMessage!=null ? responseMessage.getParseException() : null),
+									pddContext);
 						
 							esito.setEsitoInvocazione(true); 
 							esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "risposta per riferimento non costruita, "+e.getMessage());
@@ -3012,7 +3027,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_517_RISPOSTA_RICHIESTA_NON_RITORNATA),
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, null,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(responseMessage!=null ? responseMessage.getParseException() : null),
+									pddContext);
 							
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
@@ -3175,7 +3191,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ex.getErrore(),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(responseMessage!=null ? responseMessage.getParseException() : null),
+											pddContext);
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -3202,7 +3219,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 											ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 												get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_531_VALIDAZIONE_TRAMITE_INTERFACCIA_FALLITA),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, ex,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(responseMessage!=null ? responseMessage.getParseException() : null),
+											pddContext);
 								
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -3319,7 +3337,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 								this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 										errore,
 										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
+										(responseMessage!=null ? responseMessage.getParseException() : null),
+										pddContext);
 								
 								esito.setEsitoInvocazione(true); 
 								esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO,
@@ -3387,7 +3406,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_425_SCARTA_BODY.getErrore425_ScartaBody(e.getMessage()),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(responseMessage!=null ? responseMessage.getParseException() : null),
+											pddContext);
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -3408,7 +3428,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									this.sendErroreProcessamento(localForward, localForwardEngine, ejbUtils, 
 											ErroriIntegrazione.ERRORE_424_ALLEGA_BODY.getErrore424_AllegaBody(e.getMessage()),
 											idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-											(responseMessage!=null ? responseMessage.getParseException() : null));
+											(responseMessage!=null ? responseMessage.getParseException() : null),
+											pddContext);
 									
 									openspcoopstate.releaseResource();
 									esito.setEsitoInvocazione(true); 
@@ -3459,7 +3480,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_556_LOCAL_FORWARD_PROCESS_RESPONSE_ERROR),
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(responseMessage!=null ? responseMessage.getParseException() : null),
+									pddContext);
 							
 							openspcoopstate.releaseResource();
 							esito.setEsitoInvocazione(true); 
@@ -3497,7 +3519,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 									ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 										get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_510_SAVE_RESPONSE_MSG),
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-									(responseMessage!=null ? responseMessage.getParseException() : null));
+									(responseMessage!=null ? responseMessage.getParseException() : null),
+									pddContext);
 							
 						} else {
 							
@@ -3507,7 +3530,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										getErrore440_MessaggioRispostaMalformato(responseMessage.getParseException().getParseException()),
 									idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, 
 									responseMessage.getParseException().getParseException(),
-									responseMessage.getParseException());
+									responseMessage.getParseException(),
+									pddContext);
 							
 						}
 						openspcoopstate.releaseResource();
@@ -3554,7 +3578,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 										ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 											get5XX_ErroreProcessamento(CodiceErroreIntegrazione.CODICE_512_SEND),
 										idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-										(responseMessage!=null ? responseMessage.getParseException() : null));
+										(responseMessage!=null ? responseMessage.getParseException() : null),
+										pddContext);
 								
 								openspcoopstate.releaseResource();
 								esito.setEsitoInvocazione(true); 
@@ -3631,7 +3656,8 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							ErroriIntegrazione.ERRORE_5XX_GENERICO_PROCESSAMENTO_MESSAGGIO.
 								getErroreIntegrazione(),
 							idModuloInAttesa, bustaRichiesta, idCorrelazioneApplicativa, idCorrelazioneApplicativaRisposta, servizioApplicativoFruitore, e,
-							(responseMessage!=null ? responseMessage.getParseException() : null));
+							(responseMessage!=null ? responseMessage.getParseException() : null),
+							pddContext);
 					
 					esito.setEsitoInvocazione(true); 
 					esito.setStatoInvocazione(EsitoLib.ERRORE_GESTITO, "ErroreGenerale");
@@ -3715,9 +3741,10 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 		
 	private void sendErroreProcessamento(boolean localForward,LocalForwardEngine localForwardEngine, EJBUtils ejbUtils, ErroreIntegrazione errore,
 			String idModuloInAttesa,Busta bustaRichiesta,String idCorrelazioneApplicativa, String idCorrelazioneApplicativaRisposta,
-			String servizioApplicativoFruitore, Throwable e, ParseException parseException) throws LocalForwardException, EJBUtilsException, ProtocolException{
+			String servizioApplicativoFruitore, Throwable e, ParseException parseException,
+			PdDContext pddContext) throws LocalForwardException, EJBUtilsException, ProtocolException{
 		if(localForward){
-			localForwardEngine.sendErrore(errore,e,parseException);
+			localForwardEngine.sendErrore(pddContext, errore,e,parseException);
 		}else{
 			ejbUtils.sendAsRispostaBustaErroreProcessamento(idModuloInAttesa,bustaRichiesta,
 					errore,	idCorrelazioneApplicativa,idCorrelazioneApplicativaRisposta,servizioApplicativoFruitore,e,parseException);

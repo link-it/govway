@@ -483,13 +483,13 @@ public class RicezioneBusteService  {
 				if(HttpConstants.CONTENT_TYPE_NON_PRESENTE.equals(contentTypeReq)){
 					//ContentType del messaggio non presente
 					msgDiag.logPersonalizzato("contentType.notDefined");
-					responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+					responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 							ErroriIntegrazione.ERRORE_433_CONTENT_TYPE_NON_PRESENTE.getErrore433_ContentTypeNonPresente(supportedContentTypes));	
 				}	
 				else{
 					//ContentType del messaggio non supportato
 					msgDiag.logPersonalizzato("contentType.unsupported");
-					responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+					responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 							ErroriIntegrazione.ERRORE_429_CONTENT_TYPE_NON_SUPPORTATO.getErrore429_ContentTypeNonSupportato(contentTypeReq,supportedContentTypes));	
 				}
 			}
@@ -585,14 +585,14 @@ public class RicezioneBusteService  {
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, mustUnderstandError);
 						msgDiag.logPersonalizzato("mustUnderstand.unknown");
-						responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+						responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 								ErroriIntegrazione.ERRORE_427_MUSTUNDERSTAND_ERROR.getErrore427_MustUnderstandHeaders(mustUnderstandError));
 					}
 					else{
 						pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 						msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, soapEnvelopeNamespaceVersionMismatch);
 						msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
-						responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+						responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 								ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
 									getErrore430_SoapNamespaceNonSupportato(messageTypeReq, soapEnvelopeNamespaceVersionMismatch));
 					}
@@ -648,7 +648,7 @@ public class RicezioneBusteService  {
 				pddContext.addObject(org.openspcoop2.core.constants.Costanti.CONTENUTO_RICHIESTA_NON_RICONOSCIUTO, true);
 				msgDiag.addKeyword(CostantiPdD.KEY_SOAP_ENVELOPE_NAMESPACE, "Impossibile recuperare il valore del namespace");
 				msgDiag.logPersonalizzato("soapEnvelopeNamespace.versionMismatch");
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_430_SOAP_ENVELOPE_NAMESPACE_ERROR.
 							getErrore430_SoapNamespaceNonSupportato(messageTypeReq,  "Impossibile recuperare il valore del namespace"));
 			}
@@ -662,7 +662,7 @@ public class RicezioneBusteService  {
 				logCore.error("parsingExceptionRichiesta",e);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
 				// Richiesto da certificazione DigitPA
-				responseMessage = this.generatoreErrore.buildErroreIntestazione(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.buildErroreIntestazione(pddContext, IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(tParsing));
 			}
 			else if (e instanceof HandlerException) {
@@ -679,13 +679,13 @@ public class RicezioneBusteService  {
 				if(integrationError==null) {
 					integrationError = IntegrationError.BAD_REQUEST;
 				}
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(integrationError,errore,e);
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, integrationError,errore,e);
 				he.customized(responseMessage);
 			}
 			else{
 				logCore.error("ErroreGenerale",e);
 				msgDiag.logErroreGenerico(e, "Generale(richiesta)");
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(true, e), e);
 			}
 
@@ -709,7 +709,7 @@ public class RicezioneBusteService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage =this.generatoreErrore.buildErroreIntestazione(IntegrationError.BAD_REQUEST,
+				responseMessage =this.generatoreErrore.buildErroreIntestazione(pddContext, IntegrationError.BAD_REQUEST,
 							ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()));
 			}
 			else if( (responseMessage!=null && responseMessage.getParseException() != null) ||
@@ -729,7 +729,7 @@ public class RicezioneBusteService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRisposta");
-				responseMessage = this.generatoreErrore.buildErroreProcessamento(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
 			}
 			
@@ -1036,11 +1036,11 @@ public class RicezioneBusteService  {
 					msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 					msgDiag.logPersonalizzato("parsingExceptionRisposta");
-					responseMessageError = this.generatoreErrore.buildErroreProcessamento(IntegrationError.INTERNAL_ERROR,
+					responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.INTERNAL_ERROR,
 							ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()));
 				} else {
-					responseMessageError = this.generatoreErrore.buildErroreProcessamento(IntegrationError.INTERNAL_ERROR,
+					responseMessageError = this.generatoreErrore.buildErroreProcessamento(pddContext, IntegrationError.INTERNAL_ERROR,
 							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.getErrore426_ServletError(false, e));
 				}
 				// transfer length

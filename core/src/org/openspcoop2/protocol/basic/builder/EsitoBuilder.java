@@ -68,12 +68,14 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 	
 	protected EsitiProperties esitiProperties;
 	protected boolean erroreProtocollo = false;
+	protected boolean envelopeErroreProtocollo = true;
 	protected boolean faultEsterno = false;
 	
 	public EsitoBuilder(IProtocolFactory<?> protocolFactory) throws ProtocolException{
 		super(protocolFactory);
 		this.esitiProperties = EsitiProperties.getInstance(this.log, protocolFactory.getProtocol());
 		this.erroreProtocollo = this.esitiProperties.isErroreProtocollo();
+		this.envelopeErroreProtocollo = this.esitiProperties.isEnvelopeErroreProtocollo();
 		this.faultEsterno = this.esitiProperties.isFaultEsterno();
 	}
 
@@ -308,6 +310,32 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_INVOCAZIONE, tipoContext);
 			}
 			else if(soapBody!=null && soapBody.hasFault()){
+				
+				Object erroreGovwayObject = message.getContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY);
+				String erroreGovway = null;
+				if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
+					erroreGovway = (String) erroreGovwayObject;
+				}
+				
+				if(erroreGovway!=null && !"".equals(erroreGovway)) {
+					// verifico se fosse stato registrato un errore di protocollo
+					boolean erroreProtocolloInContext = false;
+					if(this.erroreProtocollo) {
+						Object o = message.getContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
+						if(o!=null) {
+							if(o instanceof String) {
+								erroreProtocolloInContext = "true".equalsIgnoreCase((String)o);
+							}
+							else if(o instanceof Boolean) {
+								erroreProtocolloInContext = (Boolean) o;
+							}
+						}
+					}
+					if(erroreProtocolloInContext) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+					}
+				}
+				
 				return getEsitoSoapFault(message, soapBody, erroreApplicativo, informazioniErroriInfrastrutturali, tipoContext);
 			}
 			else if(message!=null) {
@@ -321,7 +349,26 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				if(erroreGovwayObject!=null && erroreGovwayObject instanceof String) {
 					erroreGovway = (String) erroreGovwayObject;
 				}
-						
+				
+				if(erroreGovway!=null && !"".equals(erroreGovway)) {
+					// verifico se fosse stato registrato un errore di protocollo
+					boolean erroreProtocolloInContext = false;
+					if(this.erroreProtocollo) {
+						Object o = message.getContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
+						if(o!=null) {
+							if(o instanceof String) {
+								erroreProtocolloInContext = "true".equalsIgnoreCase((String)o);
+							}
+							else if(o instanceof Boolean) {
+								erroreProtocolloInContext = (Boolean) o;
+							}
+						}
+					}
+					if(erroreProtocolloInContext) {
+						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+					}
+				}
+				
 				boolean checkReturnCodeForFault = false;
 				switch (message.getMessageType()) {
 				case SOAP_11:
@@ -514,7 +561,12 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}else{
 					// EccezioneBusta
 					if(this.erroreProtocollo) {
-						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+						if(this.envelopeErroreProtocollo) {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
+						}
+						else {
+							return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_APPLICATIVO, tipoContext);
+						}
 					}
 					else {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROCESSAMENTO_PDD_5XX, tipoContext);
@@ -528,7 +580,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			ITraduttore trasl = this.protocolFactory.createTraduttore();
 			
 			if("Client".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_VALIDAZIONE).equals(reason) ){
-				if(this.erroreProtocollo) {
+				if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
 					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 				}
 				else {
@@ -536,7 +588,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 				}
 			}
 			else if("Server".equals(codice) && trasl.toString(MessaggiFaultErroreCooperazione.FAULT_STRING_PROCESSAMENTO).equals(reason) ){
-				if(this.erroreProtocollo) {
+				if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
 					return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 				}
 				else {
@@ -656,7 +708,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 							ErroreApplicativo erroreApplicativoObject = XMLUtils.getErroreApplicativo(this.log, xml);
 							Eccezione ecc = erroreApplicativoObject.getException();
 							if(TipoEccezione.PROTOCOL.equals(ecc.getType())){
-								if(this.erroreProtocollo) {
+								if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
 									return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 								}
 								else {
@@ -741,7 +793,7 @@ public class EsitoBuilder extends BasicComponentFactory implements org.openspcoo
 			try {
 				String tipo = JsonXmlPathExpressionEngine.extractAndConvertResultAsString(jsonBody, "$.exception.type", this.log);
 				if(TipoEccezione.PROTOCOL.getValue().equals(tipo)){
-					if(this.erroreProtocollo) {
+					if(this.erroreProtocollo && this.envelopeErroreProtocollo) {
 						return this.esitiProperties.convertToEsitoTransazione(EsitoTransazioneName.ERRORE_PROTOCOLLO, tipoContext);
 					}
 					else {

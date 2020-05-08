@@ -34,6 +34,7 @@ import java.io.Serializable;
  * <pre>
  * &lt;complexType name="transaction"&gt;
  * 		&lt;attribute name="errorProtocol" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
+ * 		&lt;attribute name="envelopeErrorProtocol" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="true"/&gt;
  * 		&lt;attribute name="labelErrorProtocol" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
  * 		&lt;attribute name="externalFault" type="{http://www.w3.org/2001/XMLSchema}boolean" use="optional" default="false"/&gt;
  * 		&lt;attribute name="labelExternalFault" type="{http://www.w3.org/2001/XMLSchema}string" use="optional"/&gt;
@@ -65,6 +66,18 @@ public class Transaction extends org.openspcoop2.utils.beans.BaseBean implements
 
   public void setErrorProtocol(boolean errorProtocol) {
     this.errorProtocol = errorProtocol;
+  }
+
+  public boolean isEnvelopeErrorProtocol() {
+    return this.envelopeErrorProtocol;
+  }
+
+  public boolean getEnvelopeErrorProtocol() {
+    return this.envelopeErrorProtocol;
+  }
+
+  public void setEnvelopeErrorProtocol(boolean envelopeErrorProtocol) {
+    this.envelopeErrorProtocol = envelopeErrorProtocol;
   }
 
   public java.lang.String getLabelErrorProtocol() {
@@ -102,6 +115,10 @@ public class Transaction extends org.openspcoop2.utils.beans.BaseBean implements
   @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
   @XmlAttribute(name="errorProtocol",required=false)
   protected boolean errorProtocol = false;
+
+  @javax.xml.bind.annotation.XmlSchemaType(name="boolean")
+  @XmlAttribute(name="envelopeErrorProtocol",required=false)
+  protected boolean envelopeErrorProtocol = true;
 
   @javax.xml.bind.annotation.XmlSchemaType(name="string")
   @XmlAttribute(name="labelErrorProtocol",required=false)

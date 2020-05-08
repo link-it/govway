@@ -90,6 +90,10 @@ public class Costanti {
 	public final static String CONSEGNA_MULTIPLA_SINCRONA = "CONSEGNA_MULTIPLA_SINCRONA";
 	public final static String CONSEGNA_MULTIPLA_CONNETTORI = "CONSEGNA_MULTIPLA_CONNETTORI";
 	
+	public final static String ERRORE_VALIDAZIONE_PROTOCOLLO = "ERRORE_PROTOCOLLO";
+	
+	public final static String ERRORE_TRUE = "true";
+	
 	public final static String [] CONTEXT_OBJECT = 
 		new String [] {Costanti.ID_TRANSAZIONE,Costanti.PROTOCOL_NAME,
 			Costanti.ID_PORTA,Costanti.ID_FUNZIONE,

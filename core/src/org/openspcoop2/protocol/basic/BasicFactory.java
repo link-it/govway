@@ -94,6 +94,7 @@ public abstract class BasicFactory<BustaRawType> implements IProtocolFactory<Bus
 		this.informazioniProtocollo.setDescription(manifest.getProtocol().getDescrizione());
 		if(manifest.getProtocol().getTransaction()!=null) {
 			this.informazioniProtocollo.setErrorProtocol(manifest.getProtocol().getTransaction().isErrorProtocol());
+			this.informazioniProtocollo.setEnvelopeErrorProtocol(manifest.getProtocol().getTransaction().isEnvelopeErrorProtocol());
 			this.informazioniProtocollo.setLabelErrorProtocol(manifest.getProtocol().getTransaction().getLabelErrorProtocol());
 			this.informazioniProtocollo.setExternalFault(manifest.getProtocol().getTransaction().isExternalFault());
 			this.informazioniProtocollo.setLabelExternalFault(manifest.getProtocol().getTransaction().getLabelExternalFault());

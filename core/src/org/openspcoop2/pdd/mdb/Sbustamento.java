@@ -575,7 +575,7 @@ public class Sbustamento extends GenericLib{
 				gestioneErroreProtocollo(configurazionePdDManager,ejbUtils,profiloCollaborazione,repositoryBuste,
 						bustaRichiesta,identitaPdD,eccezioneDaInviareServizioApplicativo,erroreIntegrazioneDaInviareServizioApplicativo,
 						new IDSoggetto(bustaRichiesta.getTipoMittente(),bustaRichiesta.getMittente()),
-						dettaglioEccezione, protocolFactory, protocolManager);
+						dettaglioEccezione, protocolFactory, protocolManager, pddContext);
 
 				// Commit modifiche
 				openspcoopstate.commit();
@@ -679,7 +679,7 @@ public class Sbustamento extends GenericLib{
 							msgDiag.mediumDebug("Invio eventuale messaggio di errore al servizio applicativo (gestione errore)...");
 							gestioneErroreProtocollo(configurazionePdDManager, ejbUtils, profiloCollaborazione, repositoryBuste,
 									bustaNonValida, identitaPdD, eccezioneDaInviareServizioApplicativo,null,
-									identitaPdD, null, protocolFactory, protocolManager);
+									identitaPdD, null, protocolFactory, protocolManager, pddContext);
 
 							// Commit modifiche
 							openspcoopstate.commit();
@@ -2381,7 +2381,7 @@ public class Sbustamento extends GenericLib{
 	 */
 	private void gestioneErroreProtocollo(ConfigurazionePdDManager configurazionePdDManager, EJBUtils ejbUtils, ProfiloDiCollaborazione profiloCollaborazione, RepositoryBuste repositoryBuste,
 			Busta busta, IDSoggetto identitaPdD, Eccezione eccezioneProtocollo, ErroreIntegrazione erroreIntegrazione, IDSoggetto soggettoProduttoreEccezione, DettaglioEccezione dettaglioEccezione, 
-			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager) throws Exception{
+			IProtocolFactory<?> protocolFactory, IProtocolManager protocolManager, PdDContext pddContext) throws Exception{
 
 		// Gestione ERRORE
 		if(org.openspcoop2.protocol.sdk.constants.ProfiloDiCollaborazione.SINCRONO.equals(busta.getProfiloDiCollaborazione()) && busta.getRiferimentoMessaggio()!=null){
@@ -2451,11 +2451,11 @@ public class Sbustamento extends GenericLib{
 						
 						OpenSPCoop2Message responseMessageError = null;
 						if(eccezioneProtocollo!=null){
-							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationError.INTERNAL_ERROR,
 									eccezioneProtocollo,soggettoProduttoreEccezione,dettaglioEccezione,
 									null);
 						}else{
-							responseMessageError = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,erroreIntegrazione,null,null);
+							responseMessageError = this.generatoreErrore.build(pddContext, IntegrationError.INTERNAL_ERROR,erroreIntegrazione,null,null);
 						}
 						//	Aggiorno l'id di sessione al riferimento Messaggio, id utilizzato dal servizio
 						// RicezioneContenutiApplicativi per l'attesa di una risposta

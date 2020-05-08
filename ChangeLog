@@ -1,5 +1,11 @@
 2020-05-08  Andrea Poli <apoli@link.it>
 
+	* [GovWayCore, ProtocolloModI-PA]
+	Aggiunta funzionalità OP-994
+	Gli errori generati durante la validazione 'ModI PA' vengono adesso classificati con un esito dedicato 'Errore ModI PA'.
+
+2020-05-08  Andrea Poli <apoli@link.it>
+
 	* [GovWayConsole]
 	Corretto problema presente durante l'esportazione di una API con Multi-Tenant abilitato e un soggetto selezionato in testata: l'archivio esportato era vuoto.
 

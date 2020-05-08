@@ -6,7 +6,7 @@
     	webSite="http://www.fatturapa.gov.it/">
     	<factory>org.openspcoop2.protocol.sdi.SDIFactory</factory>
     	<transaction 
-    		errorProtocol="true" labelErrorProtocol="Errore SDI"
+    		errorProtocol="true" envelopeErrorProtocol="true" labelErrorProtocol="Errore SDI"
     	/>
     </protocol>
 

@@ -6,7 +6,7 @@
     	webSite="https://ec.europa.eu/cefdigital/wiki/display/CEFDIGITAL/eDelivery" logger="true">
     	<factory>org.openspcoop2.protocol.as4.AS4Factory</factory>
     	<transaction 
-    		errorProtocol="true" labelErrorProtocol="Errore eDelivery"
+    		errorProtocol="true" envelopeErrorProtocol="true" labelErrorProtocol="Errore eDelivery"
     	/>
     </protocol>
     

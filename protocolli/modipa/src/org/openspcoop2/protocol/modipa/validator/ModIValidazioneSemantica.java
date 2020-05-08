@@ -27,6 +27,7 @@ import java.util.Date;
 
 import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaApplicativaAutorizzazioneServizioApplicativo;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDPortaApplicativa;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.message.constants.ServiceBinding;
@@ -88,6 +89,9 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 		java.util.List<Eccezione> erroriValidazione = null;
 		if(this.erroriValidazione.size()>0){
 			erroriValidazione = this.erroriValidazione;
+			if(this.context!=null) {
+				this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
+			}
 		}
 		java.util.List<Eccezione> erroriProcessamento = null;
 		if(this.erroriProcessamento.size()>0){
@@ -200,6 +204,7 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 					if(autorizzazioneModIPAAbilitata) {
 					
 						if(busta.getServizioApplicativoFruitore()==null || CostantiPdD.SERVIZIO_APPLICATIVO_ANONIMO.equals(busta.getServizioApplicativoFruitore())) {
+							this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
 							this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
 									"Applicativo Mittente non identificato"));
 						}
@@ -215,8 +220,10 @@ public class ModIValidazioneSemantica extends ValidazioneSemantica {
 								}
 							}
 							if(!autorizzato) {
+								String idApp = busta.getServizioApplicativoFruitore() + " (Soggetto: "+busta.getMittente()+")";
+								this.context.addObject(Costanti.ERRORE_AUTORIZZAZIONE, Costanti.ERRORE_TRUE);
 								this.erroriValidazione.add(this.validazioneUtils.newEccezioneValidazione(CodiceErroreCooperazione.SICUREZZA_AUTORIZZAZIONE_FALLITA, 
-										"Applicativo Mittente non autorizzato"));
+										"Applicativo Mittente "+idApp+" non autorizzato"));
 							}
 						}
 						

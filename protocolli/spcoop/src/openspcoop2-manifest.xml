@@ -6,7 +6,7 @@
     	webSite="http://www.agid.gov.it/agenda-digitale/infrastrutture-architetture/sistema-pubblico-connettivita/cooperazione-applicativa">
     	<factory>org.openspcoop2.protocol.spcoop.SPCoopFactory</factory>
     	<transaction 
-    		errorProtocol="true" labelErrorProtocol="Errore SPCoop"
+    		errorProtocol="true" envelopeErrorProtocol="true" labelErrorProtocol="Errore SPCoop"
     		externalFault="true" labelExternalFault="Fault PdD Esterna"
     	/>
     </protocol>

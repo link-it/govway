@@ -2447,10 +2447,10 @@ public class EJBUtils {
 			if(errore==null) {
 				DettaglioEccezione dettaglioEccezione = this.dettaglioBuilder.buildDettaglioEccezioneFromBusta(this.identitaPdD,this.tipoPdD,this.idModulo, 
 						this.servizioApplicativoErogatore, busta, eProcessamento);
-				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, dettaglioEccezione);
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.integrationErrorPortaApplicativa, dettaglioEccezione);
 			}
 			else {
-				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.integrationErrorPortaApplicativa, errore, eProcessamento);
+				errorMsg = this.generatoreErrorePortaApplicativa.buildErroreProcessamento(this.pddContext, this.integrationErrorPortaApplicativa, errore, eProcessamento);
 			}			
 			if(errorMsg == null){
 				throw new EJBUtilsException("EJBUtils.sendRispostaErroreProcessamentoProtocollo error: Costruzione Msg Errore Protocollo fallita.");
@@ -2551,10 +2551,10 @@ public class EJBUtils {
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = null;
 		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
 		}
 		else {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa);
 		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreValidazioneProtocollo error: Costruzione messaggio Errore Protocollo fallita.");
@@ -2613,10 +2613,10 @@ public class EJBUtils {
 		//ErroreValidazioneProtocollo: Msg
 		OpenSPCoop2Message msg = null;
 		if(codiceErroreCooperazione!=null && descrizioneErroreCooperazione!=null) {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa, codiceErroreCooperazione, descrizioneErroreCooperazione);
 		}
 		else {
-			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.integrationErrorPortaApplicativa);
+			msg = this.generatoreErrorePortaApplicativa.buildErroreIntestazione(this.pddContext, this.integrationErrorPortaApplicativa);
 		}
 		if(msg == null){
 			throw new EJBUtilsException("EJBUtils.sendRispostaErroreProtocollo_BustaRispostaMalformata error: Costruzione Msg Errore Protocollo fallita.");

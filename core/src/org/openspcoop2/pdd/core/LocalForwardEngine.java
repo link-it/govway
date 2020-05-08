@@ -277,6 +277,7 @@ public class LocalForwardEngine {
 		
 			IState state = ((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).getStatoRichiesta();
 			
+			PdDContext pddContext = this.localForwardParameter.getPddContext();
 			
 			
 			/* ****************** PORTA DELEGATA **************************** */
@@ -432,7 +433,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = Eccezione.getEccezioneValidazione(ErroriCooperazione.MESSAGE_SECURITY.getErroreMessageSecurity(msgErrore, codiceErroreCooperazione),
@@ -441,7 +442,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -658,7 +659,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							erroreIntegrazione,configException,null);
 				}else{
 					Eccezione ecc = eccezioniSicurezza.get(0); // prendo la prima disponibile.
@@ -666,7 +667,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -778,6 +779,7 @@ public class LocalForwardEngine {
 
 			IState state = ((OpenSPCoopState)this.localForwardParameter.getOpenspcoopstate()).getStatoRisposta();
 			
+			PdDContext pddContext = this.localForwardParameter.getPddContext();
 			
 			
 			
@@ -939,7 +941,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
@@ -949,7 +951,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -1131,7 +1133,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(erroreIntegrazione.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							erroreIntegrazione,configException,
 							(responseMessage!=null ? responseMessage.getParseException() : null));
 				}else{
@@ -1141,7 +1143,7 @@ public class LocalForwardEngine {
 						this.localForwardParameter.getMsgDiag().logErroreGenerico(ecc.getDescrizione(this.localForwardParameter.getProtocolFactory()), 
 								posizione);
 					}
-					this.responseMessageError = this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,
+					this.responseMessageError = this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,
 							ecc,this.richiestaDelegata.getIdSoggettoFruitore(),null);
 				}
 				if(logDiagnosticError==false){
@@ -1177,12 +1179,12 @@ public class LocalForwardEngine {
 	
 	/* ***** SEND RESPONSE ******** */
 	
-	public void sendErrore(ErroreIntegrazione errore,Throwable eErrore,ParseException parseException) throws LocalForwardException{
+	public void sendErrore(PdDContext pddContext, ErroreIntegrazione errore,Throwable eErrore,ParseException parseException) throws LocalForwardException{
 	
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.generatoreErrorePortaDelegata.build(this.integrationError,errore,eErrore,parseException);
+					this.generatoreErrorePortaDelegata.build(pddContext, this.integrationError,errore,eErrore,parseException);
 			
 			// Retry-After
 			if(this.integrationError!=null && IntegrationError.SERVICE_UNAVAILABLE.equals(this.integrationError)) {
@@ -1210,12 +1212,12 @@ public class LocalForwardEngine {
 		}	
 	}
 	
-	public void sendErrore(Eccezione errore,IDSoggetto dominio,ParseException parseException) throws LocalForwardException{
+	public void sendErrore(PdDContext pddContext, Eccezione errore,IDSoggetto dominio,ParseException parseException) throws LocalForwardException{
 		
 		try{
 		
 			OpenSPCoop2Message responseMessageError = 
-					this.generatoreErrorePortaDelegata.build(IntegrationError.INTERNAL_ERROR,errore,dominio,parseException);
+					this.generatoreErrorePortaDelegata.build(pddContext, IntegrationError.INTERNAL_ERROR,errore,dominio,parseException);
 			this.sendErrore(responseMessageError);
 			
 		}catch(Exception e){

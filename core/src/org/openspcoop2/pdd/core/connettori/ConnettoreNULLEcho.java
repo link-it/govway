@@ -169,7 +169,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 			}
 			this.responseMsg = pr.getMessage_throwParseException();
 			
-			validatoreSintattico = new ValidazioneSintattica(state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
+			validatoreSintattico = new ValidazioneSintattica(this.getPddContext(),state,this.responseMsg, this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory); 
 
 			if(validatoreSintattico.verifyProtocolPresence(TipoPdD.APPLICATIVA,null,RuoloMessaggio.RISPOSTA) && 
 					!"sdi".equals(protocolFactory.getProtocol())){ // evitare sdi per far funzionare il protocollo sdi con la sonda.
@@ -180,7 +180,7 @@ public class ConnettoreNULLEcho extends ConnettoreBase {
 				property.setValidazioneProfiloCollaborazione(false);
 				property.setValidazioneManifestAttachments(false);
 				
-				validatoreProtocollo = new Validatore(this.responseMsg,this.getPddContext()!=null?this.getPddContext().getContext():null,property,null,
+				validatoreProtocollo = new Validatore(this.responseMsg,this.getPddContext(),property,null,
 						this.openspcoopProperties.isReadQualifiedAttribute(CostantiRegistroServizi.IMPLEMENTAZIONE_STANDARD), protocolFactory);
 				
 				if(validatoreProtocollo.validazioneSintattica() == false){

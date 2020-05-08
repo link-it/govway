@@ -560,7 +560,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					msgErrore = tMessage.toString();
 				}
 				msgDiag.logErroreGenerico(errorImbustamentoSoapNonRiuscito+"  "+msgErrore, "ImbustamentoSOAP");
-				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_422_IMBUSTAMENTO_SOAP_NON_RIUSCITO_RICHIESTA_APPLICATIVA.
 						getErrore422_MessaggioSOAPNonGenerabileTramiteImbustamentoSOAP(errorImbustamentoSoapNonRiuscito),tMessage,null);
 			}
@@ -573,7 +573,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",e);
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(tParsing),tParsing,null);
 			}
@@ -591,13 +591,13 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				if(integrationError==null) {
 					integrationError = IntegrationError.BAD_REQUEST;
 				}
-				responseMessage = this.generatoreErrore.build(integrationError,errore,e,null);
+				responseMessage = this.generatoreErrore.build(pddContext,integrationError,errore,e,null);
 				he.customized(responseMessage);
 			}
 			else{
 				logCore.error("ErroreGenerale",e);
 				msgDiag.logErroreGenerico(e, "Generale(richiesta)");
-				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 						getErrore426_ServletError(true, e),e,null);
 			}
@@ -621,7 +621,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRichiesta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRichiesta");
-				responseMessage = this.generatoreErrore.build(IntegrationError.BAD_REQUEST,
+				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.BAD_REQUEST,
 						ErroriIntegrazione.ERRORE_432_PARSING_EXCEPTION_RICHIESTA.
 						getErrore432_MessaggioRichiestaMalformato(parseException.getParseException()),
 						parseException.getParseException(),null);
@@ -643,7 +643,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 				msgDiag.addKeyword(CostantiPdD.KEY_ERRORE_PROCESSAMENTO, msgErrore);
 				logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 				msgDiag.logPersonalizzato("parsingExceptionRisposta");
-				responseMessage = this.generatoreErrore.build(IntegrationError.INTERNAL_ERROR,
+				responseMessage = this.generatoreErrore.build(pddContext,IntegrationError.INTERNAL_ERROR,
 						ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 						getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 						parseException.getParseException(),null);
@@ -1016,7 +1016,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					logCore.error("parsingExceptionRisposta",parseException.getSourceException());
 					msgDiag.logPersonalizzato("parsingExceptionRisposta");
 										
-					rispostaErrore = this.generatoreErrore.buildAsByteArray(IntegrationError.INTERNAL_ERROR,
+					rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationError.INTERNAL_ERROR,
 							ErroriIntegrazione.ERRORE_440_PARSING_EXCEPTION_RISPOSTA.
 							getErrore440_MessaggioRispostaMalformato(parseException.getParseException()),
 							returnCode);
@@ -1025,7 +1025,7 @@ public class RicezioneContenutiApplicativiHTTPtoSOAPService  {
 					informazioniErrori_error.setContenutoRispostaNonRiconosciuto(true);
 				} 
 				else{
-					rispostaErrore = this.generatoreErrore.buildAsByteArray(IntegrationError.INTERNAL_ERROR,
+					rispostaErrore = this.generatoreErrore.buildAsByteArray(pddContext, IntegrationError.INTERNAL_ERROR,
 							ErroriIntegrazione.ERRORE_426_SERVLET_ERROR.
 							getErrore426_ServletError(false, e),
 							returnCode);

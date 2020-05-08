@@ -433,7 +433,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo, 
 			ErroreIntegrazione errore,Throwable eProcessamento, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault){
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context){
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 			DettaglioEccezione dettaglioEccezione = this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
@@ -446,7 +447,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			}
 			return this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(), 
 					messageType, rfc7807, httpStatus, nomePorta, 
-					setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+					setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+					context);
 		}catch(Exception e){
 			return this.errorFactory.createFaultMessage(messageType, useProblemRFC7807, "Errore buildSoapFaultProtocollo_processamento: "+e.getMessage());
 		}
@@ -454,62 +456,87 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 	
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
 			ErroreIntegrazione errore, MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault){
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context){
 		return buildFaultProtocollo_processamento(identitaPdD, tipoPdD, modulo, errore, null, 
 				messageType, rfc7807, httpStatus, nomePorta, 
-				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_processamento(DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta, 
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault){
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context){
 		return this.buildFaultProtocollo(false, dettaglioEccezione, generazioneDettaglioEccezione, 
 				messageType, rfc7807, httpStatus, nomePorta,
-				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);	
+				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+				context);	
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
 			CodiceErroreCooperazione codiceErrore,String msgErrore, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault) throws ProtocolException{
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = 
 				this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, codiceErrore, 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(codiceErrore,msgErrore));
 		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
 				messageType, rfc7807, httpStatus, nomePorta, 
-				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(IDSoggetto identitaPdD,TipoPdD tipoPdD,String modulo,
 			ErroreIntegrazione errore, 
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault) throws ProtocolException{
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context) throws ProtocolException{
 		DettaglioEccezione dettaglioEccezione = 
 				this.dettaglioEccezioneOpenSPCoop2Builder.buildDettaglioEccezione(identitaPdD, tipoPdD, modulo, 
 					errore, // errore.getCodiceErrore(), 
 					this.dettaglioEccezioneOpenSPCoop2Builder.transformFaultMsg(errore));
 		return this.buildFaultProtocollo_intestazione(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(), 
 				messageType, rfc7807, httpStatus, nomePorta, 
-				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+				context);
 	}
 	
 	public OpenSPCoop2Message buildFaultProtocollo_intestazione(DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
-			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault)  {
+			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, boolean useInternalFault,
+			Context context)  {
 		return this.buildFaultProtocollo(true, dettaglioEccezione, generazioneDettaglioEccezione, 
 				messageType, rfc7807, httpStatus, nomePorta, 
-				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);	
+				setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault, context);	
 	}
 
 	private OpenSPCoop2Message buildFaultProtocollo(boolean erroreValidazione,
 			DettaglioEccezione dettaglioEccezione, boolean generazioneDettaglioEccezione,
 			MessageType messageType, ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
 			boolean setSoapPrefixBackwardCompatibilityOpenSPCoop1, 
-			boolean useInternalFault)  {
+			boolean useInternalFault,
+			Context context)  {
 
 		boolean useProblemRFC7807 = rfc7807!=null;
 		try{
 
+			boolean addErroreProtocolloInMessaggio = false;
+			if(erroreValidazione) { // non aggiungamo anche gli errori di processamento altrimenti vengono catalogati come errore di protocollo se avvengono prima della generazione della busta errore
+				if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO)) {
+					Object o = context.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
+					if(o!=null) {
+						if(o instanceof String) {
+							addErroreProtocolloInMessaggio = "true".equalsIgnoreCase((String)o);
+						}
+						else if(o instanceof Boolean) {
+							addErroreProtocolloInMessaggio = (Boolean) o;
+						}
+					}
+				}
+			}
+			
 			OpenSPCoop2MessageFactory mf = this.errorFactory;
 			switch (messageType) {
 				case XML:
@@ -533,6 +560,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					OpenSPCoop2Message msg = pr.getMessage_throwParseException();
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 
 				case JSON:
@@ -554,6 +584,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					msg = pr.getMessage_throwParseException();
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 					
 				case BINARY:
@@ -562,6 +595,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					msg =  mf.createEmptyMessage(messageType, MessageRole.FAULT);
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 
 				default:
@@ -641,6 +677,9 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 					
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 			}
 			
@@ -884,7 +923,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			OpenSPCoop2Message responseMessage = 
 					this.buildFaultProtocollo_processamento(dettaglioEccezione, this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
 							messageType, rfc7807, httpStatus, nomePorta, 
-							setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+							setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+							context);
 
 			// Tracciamento in Busta (se il profilo e' null, non aggiunto la trasmissione, rischierei di aggiungere elementi che non sono validi per le LineeGuida1.1)
 			if(generazioneListaTrasmissioni){
@@ -1074,7 +1114,8 @@ L'xml possiede una dichiarazione ulteriore del namespace soap.
 			OpenSPCoop2Message responseMessage = 
 				this.buildFaultProtocollo_intestazione(dettaglioEccezione,this.protocolManager.isGenerazioneDetailsFaultProtocollo_EccezioneValidazione(),
 						messageType, rfc7807, httpStatus, nomePorta, 
-						setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault);
+						setSoapPrefixBackwardCompatibilityOpenSPCoop1, useInternalFault,
+						context);
 
 			// Tracciamento in Busta
 			if(generazioneListaTrasmissioni){

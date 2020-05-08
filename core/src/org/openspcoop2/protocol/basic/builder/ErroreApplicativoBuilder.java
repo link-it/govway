@@ -59,6 +59,7 @@ import org.openspcoop2.protocol.basic.BasicComponentFactory;
 import org.openspcoop2.protocol.basic.Costanti;
 import org.openspcoop2.protocol.basic.Utilities;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
@@ -671,6 +672,29 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 		boolean useProblemRFC7807 = false;
 		try{
 
+			Context context = null;
+			if(eccezioneIntegrazione!=null){
+				context = eccezioneIntegrazione.getContext();
+			}
+			else {
+				context = eccezioneProtocollo.getContext();
+			}
+			
+			boolean addErroreProtocolloInMessaggio = false;
+			if(eccezioneProtocollo!=null) { // non aggiungamo anche gli errori di processamento altrimenti vengono catalogati come errore di protocollo se avvengono prima della generazione della busta errore
+				if(context!=null && context.containsKey(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO)) {
+					Object o = context.getObject(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO);
+					if(o!=null) {
+						if(o instanceof String) {
+							addErroreProtocolloInMessaggio = "true".equalsIgnoreCase((String)o);
+						}
+						else if(o instanceof Boolean) {
+							addErroreProtocolloInMessaggio = (Boolean) o;
+						}
+					}
+				}
+			}
+			
 			// RFC7807
 			if(eccezioneIntegrazione!=null){
 				rfc7807 = eccezioneIntegrazione.getRfc7807();
@@ -706,6 +730,9 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 
 				case JSON:
@@ -721,6 +748,9 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					}
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 					
 				case BINARY:
@@ -729,6 +759,9 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					msg = this.errorFactory.createEmptyMessage(messageType, MessageRole.FAULT);
 					msg.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						msg.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return msg;
 
 				default:
@@ -844,6 +877,9 @@ public class ErroreApplicativoBuilder extends BasicComponentFactory implements o
 					
 					responseMessageError.addContextProperty(org.openspcoop2.message.constants.Costanti.ERRORE_GOVWAY, useProblemRFC7807 ? 
 							org.openspcoop2.message.constants.Costanti.TIPO_RFC7807 : org.openspcoop2.message.constants.Costanti.TIPO_GOVWAY );
+					if(addErroreProtocolloInMessaggio) {
+						responseMessageError.addContextProperty(org.openspcoop2.core.constants.Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, org.openspcoop2.core.constants.Costanti.ERRORE_TRUE);
+					}
 					return responseMessageError;
 					
 			}

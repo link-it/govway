@@ -29,6 +29,7 @@ import java.util.List;
 import javax.xml.soap.SOAPEnvelope;
 
 import org.openspcoop2.core.config.ServizioApplicativo;
+import org.openspcoop2.core.constants.Costanti;
 import org.openspcoop2.core.id.IDAccordo;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
@@ -348,6 +349,13 @@ public class ModIValidazioneSintattica extends ValidazioneSintattica<AbstractMod
 			ValidazioneSintatticaResult<AbstractModISecurityToken<?>> resultError = new ValidazioneSintatticaResult<AbstractModISecurityToken<?>>(erroriValidazione, erroriProcessamento, null, 
 					bustaRitornata, null, null, rawContent, true);
 			resultError.setErroreProcessamento_internalMessage(erroreProcessamento_internalMessage);
+			
+			if(erroriValidazione.size()>0) {
+				if(this.context!=null) {
+					this.context.addObject(Costanti.ERRORE_VALIDAZIONE_PROTOCOLLO, Costanti.ERRORE_TRUE);
+				}
+			}
+			
 			return resultError;
 		}
 		

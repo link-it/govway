@@ -57,6 +57,7 @@ public abstract class AbstractEccezioneBuilderParameter {
 	private int httpStatus;
 	private String nomePorta;
 	private String transactionId;
+	private Context context;
 	
 	public ParseException getParseException() {
 		return this.parseException;
@@ -147,6 +148,12 @@ public abstract class AbstractEccezioneBuilderParameter {
 	}
 	public void setTransactionId(String transactionId) {
 		this.transactionId = transactionId;
+	}
+	public Context getContext() {
+		return this.context;
+	}
+	public void setContext(Context context) {
+		this.context = context;
 	}
 	public abstract SOAPFaultCode getSoapFaultCode();
 }

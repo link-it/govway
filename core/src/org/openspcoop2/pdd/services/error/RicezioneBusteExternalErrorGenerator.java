@@ -34,6 +34,7 @@ import org.openspcoop2.pdd.core.transazioni.TransactionContext;
 import org.openspcoop2.protocol.engine.RequestInfo;
 import org.openspcoop2.protocol.engine.builder.ImbustamentoErrore;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.Integrazione;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -81,10 +82,10 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 
 	}
 	
-	public OpenSPCoop2Message buildErroreProcessamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
-		return this.buildErroreProcessamento(integrationError, erroreIntegrazione, null);
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
+		return this.buildErroreProcessamento(context, integrationError, erroreIntegrazione, null);
 	}
-	public OpenSPCoop2Message buildErroreProcessamento(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento) {
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione, Throwable eProcessamento) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
@@ -95,7 +96,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_processamento(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					erroreIntegrazione,eProcessamento,
 					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(), 
-					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault);			
+					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
+					context);			
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
@@ -104,7 +106,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreProcessamento(IntegrationError integrationError, DettaglioEccezione dettaglioEccezione){	
+	public OpenSPCoop2Message buildErroreProcessamento(Context context, IntegrationError integrationError, DettaglioEccezione dettaglioEccezione){	
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -114,7 +116,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_processamento(dettaglioEccezione,
 					this.protocolFactory.createProtocolManager().isGenerazioneDetailsFaultProtocollo_EccezioneProcessamento(),
 					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
-					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault);			
+					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
+					context);			
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
@@ -123,7 +126,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreIntestazione(IntegrationError integrationError)  {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError)  {
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
 		boolean useProblemRFC7807 = rfc7807!=null;
@@ -134,7 +137,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(
 					this.identitaPdD,this.tipoPdD,this.idModulo, 
 					erroreIntegrazione, msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
-					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault);			
+					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
+					context);			
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
@@ -143,7 +147,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 		}
 	}
 	
-	public OpenSPCoop2Message buildErroreIntestazione(IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError, ErroreIntegrazione erroreIntegrazione) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
@@ -153,7 +157,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			boolean useInternalFault = this.isUseInternalFault(integrationError);
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					erroreIntegrazione,msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
-					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault);			
+					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
+					context);			
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){
@@ -161,7 +166,7 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			return OpenSPCoop2MessageFactory.getDefaultMessageFactory().createFaultMessage(msgTypeErrorResponse, useProblemRFC7807, e);
 		}
 	}
-	public OpenSPCoop2Message buildErroreIntestazione(IntegrationError integrationError, CodiceErroreCooperazione codiceErroreCooperazione, String descrizione) {
+	public OpenSPCoop2Message buildErroreIntestazione(Context context, IntegrationError integrationError, CodiceErroreCooperazione codiceErroreCooperazione, String descrizione) {
 		
 		MessageType msgTypeErrorResponse = this.getMessageTypeForErrorSafeMode(integrationError);
 		ConfigurationRFC7807 rfc7807 = this.getRfc7807ForErrorSafeMode(integrationError);
@@ -172,7 +177,8 @@ public class RicezioneBusteExternalErrorGenerator extends AbstractErrorGenerator
 			OpenSPCoop2Message msg = this.imbustamentoErrore.buildFaultProtocollo_intestazione(this.identitaPdD,this.tipoPdD,this.idModulo, 
 					codiceErroreCooperazione,descrizione,
 					msgTypeErrorResponse,rfc7807, httpReturnCode, this.getInterfaceName(),
-					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault);			
+					this.forceSoapPrefixCompatibilitOpenSPCoopV1, useInternalFault,
+					context);			
 			msg.setForcedResponseCode(httpReturnCode+"");	
 			return msg;
 		}catch(Exception e){

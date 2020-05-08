@@ -33,6 +33,7 @@ import org.openspcoop2.message.config.ConfigurationRFC7807;
 import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.message.exception.ParseException;
 import org.openspcoop2.protocol.sdk.AbstractEccezioneBuilderParameter;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.EccezioneIntegrazioneBuilderParameters;
 import org.openspcoop2.protocol.sdk.EccezioneProtocolloBuilderParameters;
@@ -112,13 +113,14 @@ public class ErroreApplicativoBuilder  {
 	}
 	
 	private String idTransazione;
+	private Context context;
 
 	public ErroreApplicativoBuilder(Logger aLog, IProtocolFactory<?> protocolFactory,
 			IDSoggetto dominio,IDSoggetto mittente,IDServizio servizio,String idFunzione,
 			ProprietaErroreApplicativo proprietaErroreApplicativo,MessageType messageType,
 			ConfigurationRFC7807 rfc7807, int httpStatus, String nomePorta,
 			TipoPdD tipoPdD,String servizioApplicativo,
-			String idTransazione) throws ProtocolException{
+			String idTransazione, Context context) throws ProtocolException{
 		if(aLog!=null)
 			this.log = aLog;
 		else
@@ -151,6 +153,8 @@ public class ErroreApplicativoBuilder  {
 		this.servizioApplicativo = servizioApplicativo;
 		
 		this.idTransazione = idTransazione;
+		
+		this.context = context;
 	}
 
 	public IProtocolFactory<?> getProtocolFactory(){
@@ -176,6 +180,7 @@ public class ErroreApplicativoBuilder  {
 		parameters.setHttpStatus(this.httpStatus);
 		parameters.setNomePorta(this.nomePorta);
 		parameters.setTransactionId(this.idTransazione);
+		parameters.setContext(this.context);
 		
 		parameters.setTipoPorta(this.tipoPdD);
 		

@@ -30,6 +30,7 @@ import org.openspcoop2.message.constants.IntegrationError;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -104,6 +105,9 @@ public class ValidazioneSintattica {
 	/** Stato */
 	private IState state;
 	
+	/** Context */
+	private Context context;
+	
 	/**
 	 * Costruttore
 	 *
@@ -111,14 +115,14 @@ public class ValidazioneSintattica {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(state,aMsg,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
+	public ValidazioneSintattica(Context context, IState state,OpenSPCoop2Message aMsg,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(context,state,aMsg,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
 	}
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(state,aMsg,Configurazione.getLibraryLog(),false, protocolFactory);
+	public ValidazioneSintattica(Context context, IState state,OpenSPCoop2Message aMsg, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(context,state,aMsg,Configurazione.getLibraryLog(),false, protocolFactory);
 	}
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(state,aMsg,alog,false, protocolFactory);
+	public ValidazioneSintattica(Context context, IState state,OpenSPCoop2Message aMsg,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(context, state,aMsg,alog,false, protocolFactory);
 	}
 	
 	/**
@@ -128,14 +132,15 @@ public class ValidazioneSintattica {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg, Busta busta, Boolean isRichiesta, Logger alog, boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
-		this(state,aMsg, alog, readQualifiedAttribute, protocolFactory);
+	public ValidazioneSintattica(Context context, IState state,OpenSPCoop2Message aMsg, Busta busta, Boolean isRichiesta, Logger alog, boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+		this(context, state,aMsg, alog, readQualifiedAttribute, protocolFactory);
 		this.busta = busta;
 		this.isRichiesta = isRichiesta;
 	}
 	
-	public ValidazioneSintattica(IState state,OpenSPCoop2Message aMsg,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public ValidazioneSintattica(Context context, IState state,OpenSPCoop2Message aMsg,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.state = state;
+		this.context = context;
 		this.msg = aMsg;
 		if(alog!=null){
 			this.log = alog;
@@ -238,6 +243,7 @@ public class ValidazioneSintattica {
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<?> validazioneSintattica = null;
 		try {
 			validazioneSintattica = this.protocolFactory.createValidazioneSintattica(this.state);
+			validazioneSintattica.setContext(this.context);
 			ProprietaValidazioneErrori pValidazioneErrori = new ProprietaValidazioneErrori();
 			pValidazioneErrori.setIgnoraEccezioniNonGravi(this.protocolManager.isIgnoraEccezioniNonGravi());
 			if(this.isRichiesta==null || this.isRichiesta){

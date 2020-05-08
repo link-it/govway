@@ -247,7 +247,7 @@ public class ConnectorDispatcherUtils {
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
-			OpenSPCoop2Message msgErrore = generatoreErrore.build(integrationError, erroreIntegrazione, e, null);
+			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationError, erroreIntegrazione, e, null);
 			if(msgErrore.getForcedResponseCode()!=null){
 				res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
 			}
@@ -281,7 +281,7 @@ public class ConnectorDispatcherUtils {
 		
 		if(generatoreErrore!=null){
 			
-			OpenSPCoop2Message msgErrore = generatoreErrore.build(integrationError, erroreIntegrazione, e, parseException);
+			OpenSPCoop2Message msgErrore = generatoreErrore.build(null, integrationError, erroreIntegrazione, e, parseException);
 			
 			return _doError(requestInfo, res, log, true, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
 			
@@ -304,7 +304,7 @@ public class ConnectorDispatcherUtils {
 		IProtocolFactory<?> protocolFactory = requestInfo.getProtocolFactory();
 				
 		if(generatoreErrore!=null){
-			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
+			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationError, erroreIntegrazione, e);
 			if(msgErrore.getForcedResponseCode()!=null){
 				res.setStatus(Integer.parseInt(msgErrore.getForcedResponseCode()));
 			}
@@ -338,7 +338,7 @@ public class ConnectorDispatcherUtils {
 				
 		if(generatoreErrore!=null){
 		
-			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(integrationError, erroreIntegrazione, e);
+			OpenSPCoop2Message msgErrore = generatoreErrore.buildErroreProcessamento(null, integrationError, erroreIntegrazione, e);
 			
 			return _doError(requestInfo, res, log, false, erroreIntegrazione, integrationError, e, parseException, msgErrore, clientError);
 			

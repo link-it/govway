@@ -33,6 +33,7 @@ import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.engine.driver.ProfiloDiCollaborazione;
 import org.openspcoop2.protocol.registry.RegistroServiziManager;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -45,6 +46,7 @@ import org.openspcoop2.protocol.sdk.constants.StatoFunzionalitaProtocollo;
 import org.openspcoop2.protocol.sdk.state.IState;
 import org.openspcoop2.protocol.sdk.state.StatefulMessage;
 import org.openspcoop2.protocol.sdk.state.StatelessMessage;
+import org.openspcoop2.protocol.sdk.validator.IValidazioneSemantica;
 import org.openspcoop2.protocol.sdk.validator.ProprietaValidazione;
 import org.openspcoop2.protocol.sdk.validator.ValidazioneSemanticaResult;
 import org.openspcoop2.utils.LoggerWrapperFactory;
@@ -65,6 +67,8 @@ public class ValidazioneSemantica  {
 	/** Se IState e' un'istanza di StatefulMessage possiede una Connessione SQL in autoCommit mode su cui effettuare query 
 	 *  Altrimenti, e' un'istanza di StatelessMessage e nn necessita di connessioni  */
 	protected IState state;
+	/** Context */
+	protected Context context;
 	/** Errori di validazione riscontrati sulla busta */
 	protected java.util.List<Eccezione> erroriValidazione;
 	/** Errori di processamento riscontrati sulla busta */
@@ -100,8 +104,8 @@ public class ValidazioneSemantica  {
 	 * 
 	 */
 	 
-	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, IProtocolFactory<?> protocolFactory){
-		this(aBusta,state,validazioneIdentificativiCompleta,Configurazione.getLibraryLog(), protocolFactory);
+	public ValidazioneSemantica(Busta aBusta, Context context, IState state, boolean validazioneIdentificativiCompleta, IProtocolFactory<?> protocolFactory){
+		this(aBusta,context, state,validazioneIdentificativiCompleta,Configurazione.getLibraryLog(), protocolFactory);
 	}
 	
 	/**
@@ -112,8 +116,9 @@ public class ValidazioneSemantica  {
 	 * 
 	 */
 	 
-	public ValidazioneSemantica(Busta aBusta, IState state, boolean validazioneIdentificativiCompleta, Logger alog, IProtocolFactory<?> protocolFactory){
+	public ValidazioneSemantica(Busta aBusta, Context context, IState state, boolean validazioneIdentificativiCompleta, Logger alog, IProtocolFactory<?> protocolFactory){
 		this.busta = aBusta;
+		this.context = context;
 		this.state = state;
 		this.registroServiziReader = RegistroServiziManager.getInstance(state);
 		if(alog!=null){
@@ -160,7 +165,9 @@ public class ValidazioneSemantica  {
 			
 			proprietaValidazione.setValidazioneIDCompleta(this.validazioneIdentificativiCompleta);
 			proprietaValidazione.setVersioneProtocollo(versioneProtocollo);
-			ValidazioneSemanticaResult result = this.protocolFactory.createValidazioneSemantica(this.state).valida(msg, this.busta, proprietaValidazione, tipoBusta);
+			IValidazioneSemantica validazioneSemantica = this.protocolFactory.createValidazioneSemantica(this.state);
+			validazioneSemantica.setContext(this.context);
+			ValidazioneSemanticaResult result = validazioneSemantica.valida(msg, this.busta, proprietaValidazione, tipoBusta);
 			this.infoServizio = result.getInfoServizio();
 			this.servizioCorrelato = result.getServizioCorrelato();
 			this.tipoServizioCorrelato = result.getTipoServizioCorrelato();

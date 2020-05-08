@@ -24,6 +24,7 @@ import org.openspcoop2.core.constants.TipoPdD;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.builder.ProprietaManifestAttachments;
@@ -42,6 +43,8 @@ import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 
 public interface IValidazioneSintattica<BustaRawType> extends IComponentFactory {
 
+	public void setContext(Context context);
+	
 	/**
 	 * Esegue la validazione sintattica delle informazioni di cooperazione
 	 * 

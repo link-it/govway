@@ -23,6 +23,7 @@ package org.openspcoop2.protocol.sdk.validator;
 import org.openspcoop2.core.id.IDSoggetto;
 import org.openspcoop2.message.OpenSPCoop2Message;
 import org.openspcoop2.protocol.sdk.Busta;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IComponentFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.SecurityInfo;
@@ -46,6 +47,7 @@ import org.openspcoop2.utils.digest.IDigestReader;
 
 public interface IValidazioneSemantica extends IComponentFactory {
 
+	public void setContext(Context context);
 
 	/**
 	 * Verifica che l'identificativo del messaggio rispetti le specifiche di protocollo.

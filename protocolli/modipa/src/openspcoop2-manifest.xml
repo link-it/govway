@@ -5,6 +5,9 @@
     	descrizione="Assicura in maniera del tutto trasparente alle applicazioni interne al dominio, la conformità delle API (sia in fruzione che in erogazione) alle Linee Guida AGID di Interoperabilità"
     	webSite="https://docs.italia.it/italia/piano-triennale-ict/lg-modellointeroperabilita-docs/it/">
     	<factory>org.openspcoop2.protocol.modipa.ModIFactory</factory>
+    	<transaction 
+    		errorProtocol="true" envelopeErrorProtocol="false" labelErrorProtocol="Errore ModI PA"
+    	/>
     </protocol>
     
 

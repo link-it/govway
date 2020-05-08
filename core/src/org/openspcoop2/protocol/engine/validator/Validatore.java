@@ -23,7 +23,6 @@
 package org.openspcoop2.protocol.engine.validator;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,6 +38,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.Configurazione;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.Eccezione;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
@@ -85,7 +85,7 @@ public class Validatore  {
 	
 	/** Messaggio. */
 	private OpenSPCoop2Message msg;
-	private Hashtable<String, Object> ctx;
+	private Context context;
 	/** Proprieta di Validazione. */
 	private ProprietaValidazione proprietaValidazione;
 	/** Eventuale errore avvenuto durante il processo di validazione */
@@ -159,7 +159,7 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,Context ctx,ProprietaValidazione aValidazione, IState state,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(aMsg,ctx,aValidazione,state,Configurazione.getLibraryLog(),readQualifiedAttribute, protocolFactory);
 	}
 	/**
@@ -171,9 +171,9 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,Context ctx,ProprietaValidazione aValidazione,IState state,Logger alog,boolean readQualifiedAttribute, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this.msg = aMsg;
-		this.ctx = ctx;
+		this.context = ctx;
 		if(aValidazione == null)
 			this.proprietaValidazione = new ProprietaValidazione();
 		else
@@ -196,7 +196,7 @@ public class Validatore  {
 	 * @throws ProtocolException 
 	 * 
 	 */
-	public Validatore(OpenSPCoop2Message aMsg,Hashtable<String, Object> ctx,IState state,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
+	public Validatore(OpenSPCoop2Message aMsg,Context ctx,IState state,Logger alog, IProtocolFactory<?> protocolFactory) throws ProtocolException {
 		this(aMsg,ctx,null,state,alog,false, protocolFactory);
 	}
 
@@ -229,7 +229,7 @@ public class Validatore  {
 
 		try{
 			/** (Controllo presenza Busta) */
-			this.validatoreSintattico = new ValidazioneSintattica(this.state,this.msg, busta, isRichiesta, this.log,this.readQualifiedAttribute, this.protocolFactory);
+			this.validatoreSintattico = new ValidazioneSintattica(this.context, this.state,this.msg, busta, isRichiesta, this.log,this.readQualifiedAttribute, this.protocolFactory);
 			if (this.validatoreSintattico.valida() == false){
 				this.errore = this.validatoreSintattico.getErrore();
 				this.errore_integrationError = this.validatoreSintattico.getErrore_integrationError();
@@ -426,7 +426,7 @@ public class Validatore  {
 			/** Applicazione Message-Security (eventualmente per decriptare il body applicativo: utile anche per il SoapFault del MessaggioErrore) */
 			if(messageSecurityContext!= null && messageSecurityContext.getIncomingProperties() != null && messageSecurityContext.getIncomingProperties().size() > 0){
 				boolean existsHeaderMessageSecurity = messageSecurityContext.existsSecurityHeader(this.msg, messageSecurityContext.getActor());
-				if(messageSecurityContext.processIncoming(this.msg,this.busta,this.ctx, tempiElaborazione) == false){  
+				if(messageSecurityContext.processIncoming(this.msg,this.busta,(this.context!=null ? this.context.getContext() : null), tempiElaborazione) == false){  
 					List<Eccezione> eccezioniSicurezza = new ArrayList<Eccezione>();
 					if(messageSecurityContext.getListaSubCodiceErrore()!=null && messageSecurityContext.getListaSubCodiceErrore().size()>0){
 						List<SubErrorCodeSecurity> subCodiciErrore = messageSecurityContext.getListaSubCodiceErrore();
@@ -548,7 +548,7 @@ public class Validatore  {
 			/** Validazione semantica */
 			// Questa validazione non deve essere effettuata per messaggi Busta Errore
 			if(this.isMessaggioErrore==false){
-				ValidazioneSemantica registryValidator = new ValidazioneSemantica(this.busta,this.state,validazioneIdentificativiCompleta,this.log, this.protocolFactory);
+				ValidazioneSemantica registryValidator = new ValidazioneSemantica(this.busta,this.context,this.state,validazioneIdentificativiCompleta,this.log, this.protocolFactory);
 				registryValidator.valida(this.msg,this.proprietaValidazione,this.ruoloBustaRicevuta,this.versioneProtocollo);
 				addListaEccezioni(registryValidator.getEccezioniValidazione(),this.erroriValidazione);
 				addListaEccezioni(registryValidator.getEccezioniProcessamento(),this.erroriProcessamento);
@@ -767,7 +767,7 @@ public class Validatore  {
 	}
 	
 	public BustaRawContent<?> getHeaderProtocollo_senzaControlli() throws ProtocolException{
-		this.validatoreSintattico = new ValidazioneSintattica(this.state,this.msg,this.log, this.protocolFactory);
+		this.validatoreSintattico = new ValidazioneSintattica(this.context, this.state,this.msg,this.log, this.protocolFactory);
 		return this.validatoreSintattico.getHeaderProtocollo_senzaControlli();
 	}
 

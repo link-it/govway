@@ -1268,7 +1268,7 @@ public class InoltroRisposte extends GenericLib{
 				property.setValidazioneConSchema(configurazionePdDManager.isLivelloValidazioneRigido(implementazionePdDDestinatario));
 				property.setValidazioneProfiloCollaborazione(configurazionePdDManager.isValidazioneProfiloCollaborazione(implementazionePdDDestinatario));
 				property.setValidazioneManifestAttachments(configurazionePdDManager.isValidazioneManifestAttachments(implementazionePdDDestinatario));
-				validatoreProtocolConnectionReply = new Validatore(responseHttpReply,pddContext.getContext(),property, 
+				validatoreProtocolConnectionReply = new Validatore(responseHttpReply,pddContext,property, 
 						openspcoopstate.getStatoRisposta(),readQualifiedAttribute, protocolFactory);
 				presenzaRispostaProtocolConnectionReply  = validatoreProtocolConnectionReply.validazioneSintattica();
 				if(presenzaRispostaProtocolConnectionReply){

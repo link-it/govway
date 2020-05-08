@@ -29,6 +29,7 @@ import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.basic.BasicStateComponentFactory;
 import org.openspcoop2.protocol.sdk.Busta;
 import org.openspcoop2.protocol.sdk.BustaRawContent;
+import org.openspcoop2.protocol.sdk.Context;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
 import org.openspcoop2.protocol.sdk.Trasmissione;
@@ -55,12 +56,17 @@ public class ValidazioneSintattica<BustaRawType> extends BasicStateComponentFact
 		org.openspcoop2.protocol.sdk.validator.IValidazioneSintattica<BustaRawType> {
 
 	private IBustaBuilder<BustaRawType> bustaBuilder = null;
+	protected Context context;
 		
 	public ValidazioneSintattica(IProtocolFactory<BustaRawType> factory,IState state) throws ProtocolException{
 		super(factory,state);
 		this.bustaBuilder = factory.createBustaBuilder(state);
 	}
 
+	@Override
+	public void setContext(Context context) {
+		this.context = context;
+	}
 	
 	@Override
 	public ValidazioneSintatticaResult<BustaRawType> validaRichiesta(OpenSPCoop2Message msg, Busta datiBustaLettiURLMappingProperties, ProprietaValidazioneErrori proprietaValidazioneErrori) throws ProtocolException{

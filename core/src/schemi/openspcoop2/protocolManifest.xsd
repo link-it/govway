@@ -70,6 +70,7 @@
        </xsd:element>
        <xsd:complexType name="transaction">
               <xsd:attribute name="errorProtocol" type="xsd:boolean" use="optional" default="false" />
+              <xsd:attribute name="envelopeErrorProtocol" type="xsd:boolean" use="optional" default="true" />
               <xsd:attribute name="labelErrorProtocol" type="xsd:string" use="optional" />
               <xsd:attribute name="externalFault" type="xsd:boolean" use="optional" default="false" />
               <xsd:attribute name="labelExternalFault" type="xsd:string" use="optional" />
