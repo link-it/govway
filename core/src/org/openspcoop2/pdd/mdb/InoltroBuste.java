@@ -1297,15 +1297,14 @@ public class InoltroBuste extends GenericLib{
 							gestore.setOutRequestHeader(headerIntegrazione,outRequestPDMessage);
 						}
 					}else{
-						msgDiag.logErroreGenerico("Gestore ["+tipiIntegrazionePD[i]+"] non inizializzato (is null)","gestoriIntegrazionePD.get("+tipiIntegrazionePD[i]+")");
+						throw new Exception("Gestore non inizializzato");
 					}
 					
 				} catch (Exception e) {
-					this.log.debug("Errore durante la lettura dell'header di integrazione ["+ tipiIntegrazionePD[i]
-									+ "]: "+ e.getMessage(),e);
 					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePD[i]);
 					msgDiag.addKeywordErroreProcessamento(e);
-					msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
+					msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+					this.log.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 				}
 			}
 			

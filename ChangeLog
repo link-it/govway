@@ -1,3 +1,10 @@
+2020-05-08  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole]
+	Aggiunta funzionalità OP-992
+	Definiti nuovi header di integrazione 'template', 'template-request' e 'template-response'.
+	Consentono di definire tramite un template freemaker o velocity come le informazioni di integrazione siano inserite nel messaggio.
+
 2020-05-07  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore]

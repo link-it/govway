@@ -138,6 +138,22 @@ public enum TipoTrasformazione implements IEnumeration , Serializable , Cloneabl
 				TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
 	}
 	
+	public boolean isTemplateFreemarker() {
+		return TipoTrasformazione.FREEMARKER_TEMPLATE.equals(this)
+				|| 
+				TipoTrasformazione.FREEMARKER_TEMPLATE_ZIP.equals(this)
+				||
+				TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this);
+	}
+	
+	public boolean isTemplateVelocity() {
+		return TipoTrasformazione.VELOCITY_TEMPLATE.equals(this)
+				|| 
+				TipoTrasformazione.VELOCITY_TEMPLATE_ZIP.equals(this)
+				||
+				TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
+	}
+	
 	public boolean isContextInjection() {
 		return TipoTrasformazione.CONTEXT_FREEMARKER_TEMPLATE.equals(this) || TipoTrasformazione.CONTEXT_VELOCITY_TEMPLATE.equals(this);
 	}

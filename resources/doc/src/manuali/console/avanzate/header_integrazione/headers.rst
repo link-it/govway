@@ -137,6 +137,14 @@ virgola:
    .. note::
       Utilizzabile solamente con API di tipologia SOAP
 
+-  *template*, *template-request*, *template-response*: consentono di definire tramite un template freemaker o velocity come le informazioni siano inserite nel messaggio.
+   Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per singole API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'.
+   In alternativa è possibile definire il tipo e il file template a livello globale agendo sul file locale di configurazione *govway_local.properties* tramite la definizione delle proprietà 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.tipo' e 'org.openspcoop2.pdd.integrazione.template.<pd/pa>.<request/response>.file'. 
+
+   - template: il template viene applicato sia alla richiesta che alla risposta
+   - template-request: il template viene applicato solamente alla richiesta
+   - template-response: il template viene applicato solamente alla risposta
+
 -  *openspcoop2-<tipo>* o *openspcoop1-<tipo>*: sono disponibili header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:
 
    - openspcoop2-trasporto o openspcoop1-trasporto: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'

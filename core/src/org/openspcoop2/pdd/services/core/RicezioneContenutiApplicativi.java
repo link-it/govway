@@ -5524,11 +5524,13 @@ public class RicezioneContenutiApplicativi {
 						gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePDMessage);
 					}
 				} else {
-					msgDiag.logErroreGenerico("Creazione header di integrazione ["+ tipiIntegrazionePD[i]+ "] non riuscito, gestore non inzializzato","setHeaderIntegrazioneRisposta");
+					throw new Exception("Gestore non inizializzato");
 				}
 			} catch (Exception e) {
-				logCore.error("Errore durante la creazione dell'header di integrazione ["+ tipiIntegrazionePD[i] + "]: "+ e.getMessage(), e);
-				msgDiag.logErroreGenerico(e,"setHeaderIntegrazioneRisposta("+tipiIntegrazionePD[i]+")");
+				msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePD[i]);
+				msgDiag.addKeywordErroreProcessamento(e);
+				msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+				logCore.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 			}
 		}
 

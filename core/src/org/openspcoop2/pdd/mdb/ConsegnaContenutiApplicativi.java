@@ -1551,11 +1551,14 @@ public class ConsegnaContenutiApplicativi extends GenericLib {
 							gestore.setOutRequestHeader(headerIntegrazione,outRequestPAMessage);
 						}
 					}else{
-						msgDiag.logErroreGenerico("Gestore ["+tipiIntegrazione[i]+"] non inizializzato (is null)","gestoriIntegrazionePA.get("+tipiIntegrazione[i]+")");
+						throw new Exception("Gestore non inizializzato");
 					}
 
 				}catch(Exception e){
-					msgDiag.logErroreGenerico(e,"gestoriIntegrazionePA.aggiornaGet("+tipiIntegrazione[i]+")");
+					msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazione[i]);
+					msgDiag.addKeywordErroreProcessamento(e);
+					msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+					this.log.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 				}
 			}
 

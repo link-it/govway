@@ -7488,13 +7488,14 @@ public class RicezioneBuste {
 								gestore.setOutResponseHeader(headerIntegrazioneRisposta,outResponsePAMessage);
 							}
 						} else {
-							msgDiag.logErroreGenerico("Creazione header di integrazione ["+ tipiIntegrazionePA_response[i]+ "] non riuscito, gestore non inizializzato","setHeaderIntegrazioneRisposta");
+							throw new Exception("Gestore non inizializzato");
 						}
 							
 					} catch (Exception e) {
 						msgDiag.addKeyword(CostantiPdD.KEY_TIPO_HEADER_INTEGRAZIONE,tipiIntegrazionePA_response[i]);
 						msgDiag.addKeywordErroreProcessamento(e);
-						msgDiag.logPersonalizzato("headerIntegrazione.letturaFallita");
+						msgDiag.logPersonalizzato("headerIntegrazione.creazioneFallita");
+						logCore.error(msgDiag.getMessaggio_replaceKeywords("headerIntegrazione.creazioneFallita"), e);
 					}
 				}
 				

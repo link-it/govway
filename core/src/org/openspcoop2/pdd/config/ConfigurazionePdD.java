@@ -22,6 +22,7 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ import org.openspcoop2.utils.cache.CacheAlgorithm;
 import org.openspcoop2.utils.certificate.ArchiveLoader;
 import org.openspcoop2.utils.certificate.ArchiveType;
 import org.openspcoop2.utils.certificate.CertificateInfo;
+import org.openspcoop2.utils.resources.FileSystemUtilities;
 import org.slf4j.Logger;
 
 
@@ -548,6 +550,13 @@ public class ConfigurazionePdD  {
 		if(alogConsole!=null){
 			alogConsole.info(msg);
 		}
+		
+		try{
+			this.cache.remove(_getKey_isForwardProxyEnabled());
+			this.isForwardProxyEnabled();
+		}
+		catch(Exception e){this.log.error("[prefill] errore"+e.getMessage(),e);}
+		
 		
 		// *** Soggetti ***
 		
@@ -4092,6 +4101,135 @@ public class ConfigurazionePdD  {
 		
 		try {
 			return ForwardProxy.getProxyConfigurazione(fruizione, dominio, idServizio);
+		}catch(Exception e){
+			throw new DriverConfigurazioneException(e.getMessage(),e);
+		}
+		
+	}
+	
+	
+	
+	
+	
+	
+	/* ********  GENERIC FILE  ******** */
+
+	public static String _getKey_ContentFile(File file){ 
+		String key = "ContentFile_"+file.getAbsolutePath();
+		return key;
+	}
+	
+	public ContentFile getContentFile(File file) throws DriverConfigurazioneException{
+			
+		// se e' attiva una cache provo ad utilizzarla
+		String key = null;	
+		if(this.cache!=null){
+			key = _getKey_ContentFile(file);
+			org.openspcoop2.utils.cache.CacheResponse response = 
+					(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(key);
+			if(response != null){
+				if(response.getException()!=null){
+					throw (DriverConfigurazioneException) response.getException();
+				}else{
+					return (ContentFile) response.getObject();
+				}
+			}
+		}
+
+		// Algoritmo CACHE
+		ContentFile content = null;
+		if(this.cache!=null){
+			content = getContentFileCache(key, file);
+		}else{
+			content = getContentFileEngine(file);
+		}
+
+		return content;
+		
+	} 
+	
+	private synchronized ContentFile getContentFileCache(String keyCache, File file) throws DriverConfigurazioneException{
+
+
+		ContentFile obj = null;
+		try{
+
+			//			System.out.println("@"+keyCache+"@ INFO CACHE: "+this.cache.toString());
+			//			System.out.println("@"+keyCache+"@ KEYS: \n\t"+this.cache.printKeys("\n\t"));
+
+			String methodName = "getContentFileCache";
+			
+			// Raccolta dati
+			if(keyCache == null)
+				throw new DriverConfigurazioneException("["+methodName+"]: KeyCache non definita");	
+
+			// se e' attiva una cache provo ad utilizzarla
+			if(this.cache!=null){
+				org.openspcoop2.utils.cache.CacheResponse response = 
+						(org.openspcoop2.utils.cache.CacheResponse) this.cache.get(keyCache);
+				if(response != null){
+					if(response.getObject()!=null){
+						this.log.debug("Oggetto (tipo:"+response.getObject().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						return (ContentFile) response.getObject();
+					}else if(response.getException()!=null){
+						this.log.debug("Eccezione (tipo:"+response.getException().getClass().getName()+") con chiave ["+keyCache+"] (methodo:"+methodName+") in cache.");
+						throw (Exception) response.getException();
+					}else{
+						this.log.error("In cache non e' presente ne un oggetto ne un'eccezione.");
+					}
+				}
+			}
+
+			// Effettuo le query nella mia gerarchia di registri.
+			this.log.debug("oggetto con chiave ["+keyCache+"] (methodo:"+methodName+") ricerco nella configurazione...");
+			obj = getContentFileEngine(file);
+
+			// Aggiungo la risposta in cache (se esiste una cache)	
+			// Se ho una eccezione aggiungo in cache solo una not found
+			if( this.cache!=null ){ 	
+				if(obj!=null){
+					this.log.info("Aggiungo oggetto ["+keyCache+"] in cache");
+				}else{
+					throw new Exception("Metodo ("+methodName+") ha ritornato un valore null");
+				}
+				try{	
+					org.openspcoop2.utils.cache.CacheResponse responseCache = new org.openspcoop2.utils.cache.CacheResponse();
+					responseCache.setObject((java.io.Serializable)obj);
+					this.cache.put(keyCache,responseCache);
+				}catch(UtilsException e){
+					this.log.error("Errore durante l'inserimento in cache ["+keyCache+"]: "+e.getMessage());
+				}
+			}
+
+		}catch(DriverConfigurazioneException e){
+			throw e;
+		}catch(Exception e){
+			throw new DriverConfigurazioneException("Configurazione, Algoritmo di Cache fallito: "+e.getMessage(),e);
+		}
+
+		return obj;
+	}
+	
+	private ContentFile getContentFileEngine(File file) throws DriverConfigurazioneException{
+		
+		try {
+			ContentFile cf = new ContentFile();
+			
+			if(file.exists()) {
+				cf.setExists(true);
+				if(!file.canRead()) {
+					throw new Exception("File '"+file.getAbsolutePath()+"' cannot read");
+				}
+				if(!file.isFile()) {
+					throw new Exception("File '"+file.getAbsolutePath()+"' is not file");
+				}
+				cf.setContent(FileSystemUtilities.readBytesFromFile(file));
+			}
+			else {
+				cf.setExists(false);	
+			}
+			return cf;
+
 		}catch(Exception e){
 			throw new DriverConfigurazioneException(e.getMessage(),e);
 		}

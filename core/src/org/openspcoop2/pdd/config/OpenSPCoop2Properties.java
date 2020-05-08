@@ -80,9 +80,11 @@ import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioDiagnosticiMana
 import org.openspcoop2.pdd.core.handlers.transazioni.ISalvataggioTracceManager;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePA;
 import org.openspcoop2.pdd.core.integrazione.IGestoreIntegrazionePD;
+import org.openspcoop2.pdd.core.integrazione.UtilitiesTemplate;
 import org.openspcoop2.pdd.core.node.INodeReceiver;
 import org.openspcoop2.pdd.core.node.INodeSender;
 import org.openspcoop2.pdd.core.threshold.IThreshold;
+import org.openspcoop2.pdd.core.trasformazioni.TipoTrasformazione;
 import org.openspcoop2.pdd.logger.OpenSPCoop2Logger;
 import org.openspcoop2.pdd.mdb.ConsegnaContenutiApplicativi;
 import org.openspcoop2.pdd.mdb.Imbustamento;
@@ -1023,6 +1025,28 @@ public class OpenSPCoop2Properties {
 						return false;
 				}
 			}
+			
+			// Integrazione Template
+			if(this.getIntegrazioneTemplateRequestPropertyTipo()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneTemplateRequestPropertyFile()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneTemplateResponsePropertyTipo()==null) {
+				return false;
+			}
+			if(this.getIntegrazioneTemplateResponsePropertyFile()==null) {
+				return false;
+			}
+			getIntegrazioneTemplatePortaDelegataRequestTipo();
+			getIntegrazioneTemplatePortaDelegataRequestFile();
+			getIntegrazioneTemplatePortaDelegataResponseTipo();
+			getIntegrazioneTemplatePortaDelegataResponseFile();
+			getIntegrazioneTemplatePortaApplicativaRequestTipo();
+			getIntegrazioneTemplatePortaApplicativaRequestFile();
+			getIntegrazioneTemplatePortaApplicativaResponseTipo();
+			getIntegrazioneTemplatePortaApplicativaResponseFile();
 			
 			// Warning
 			this.isIntegrazioneAsincroniConIdCollaborazioneEnabled();
@@ -10101,11 +10125,276 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.headerSoapExtProtocolInfoNomeAttributoIntegrazione_backwardCompatibility_openspcoop1;
 	}
 
+	
+	/* ********  INTEGRAZIONE TEMPLATE  ******** */
     
+	private static String getIntegrazioneTemplateRequestPropertyTipo = null;
+	public String getIntegrazioneTemplateRequestPropertyTipo() {
+		String pName = "org.openspcoop2.pdd.integrazione.template.request.property.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyTipo==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyTipo = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyTipo = null;
+			}    
+		}
 
-    
+		return OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyTipo;
+	}
+	
+	private static String getIntegrazioneTemplateRequestPropertyFile = null;
+	public String getIntegrazioneTemplateRequestPropertyFile() {
+		String pName = "org.openspcoop2.pdd.integrazione.template.request.property.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyFile==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyFile = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyFile = null;
+			}    
+		}
 
+		return OpenSPCoop2Properties.getIntegrazioneTemplateRequestPropertyFile;
+	}
+	
+	private static String getIntegrazioneTemplateResponsePropertyTipo = null;
+	public String getIntegrazioneTemplateResponsePropertyTipo() {
+		String pName = "org.openspcoop2.pdd.integrazione.template.response.property.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyTipo==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyTipo = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyTipo = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyTipo;
+	}
+	
+	private static String getIntegrazioneTemplateResponsePropertyFile = null;
+	public String getIntegrazioneTemplateResponsePropertyFile() {
+		String pName = "org.openspcoop2.pdd.integrazione.template.response.property.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyFile==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name==null)
+					throw new Exception("non definita");
+				name = name.trim();
+				OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyFile = name;
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyFile = null;
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplateResponsePropertyFile;
+	}
+	
+	
     
+	private static Boolean getIntegrazioneTemplatePortaDelegataRequestTipo_read = null;
+	private static TipoTrasformazione getIntegrazioneTemplatePortaDelegataRequestTipo = null;
+	public TipoTrasformazione getIntegrazioneTemplatePortaDelegataRequestTipo() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pd.request.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestTipo_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestTipo = UtilitiesTemplate.convert(name);
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestTipo_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestTipo;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaDelegataRequestFile_read = null;
+	private static String getIntegrazioneTemplatePortaDelegataRequestFile = null;
+	public String getIntegrazioneTemplatePortaDelegataRequestFile() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pd.request.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestFile_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestFile = name;
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestFile_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataRequestFile;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaDelegataResponseTipo_read = null;
+	private static TipoTrasformazione getIntegrazioneTemplatePortaDelegataResponseTipo = null;
+	public TipoTrasformazione getIntegrazioneTemplatePortaDelegataResponseTipo() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pd.response.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseTipo_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseTipo = UtilitiesTemplate.convert(name);
+
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseTipo_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseTipo;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaDelegataResponseFile_read = null;
+	private static String getIntegrazioneTemplatePortaDelegataResponseFile = null;
+	public String getIntegrazioneTemplatePortaDelegataResponseFile() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pd.response.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseFile_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseFile = name;
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseFile_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaDelegataResponseFile;
+	}
+    
+	
+	private static Boolean getIntegrazioneTemplatePortaApplicativaRequestTipo_read = null;
+	private static TipoTrasformazione getIntegrazioneTemplatePortaApplicativaRequestTipo = null;
+	public TipoTrasformazione getIntegrazioneTemplatePortaApplicativaRequestTipo() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pa.request.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestTipo_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestTipo = UtilitiesTemplate.convert(name);
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestTipo_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestTipo;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaApplicativaRequestFile_read = null;
+	private static String getIntegrazioneTemplatePortaApplicativaRequestFile = null;
+	public String getIntegrazioneTemplatePortaApplicativaRequestFile() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pa.request.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestFile_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestFile = name;
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestFile_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaRequestFile;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaApplicativaResponseTipo_read = null;
+	private static TipoTrasformazione getIntegrazioneTemplatePortaApplicativaResponseTipo = null;
+	public TipoTrasformazione getIntegrazioneTemplatePortaApplicativaResponseTipo() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pa.response.tipo";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseTipo_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseTipo = UtilitiesTemplate.convert(name);
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseTipo_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseTipo;
+	}
+	
+	private static Boolean getIntegrazioneTemplatePortaApplicativaResponseFile_read = null;
+	private static String getIntegrazioneTemplatePortaApplicativaResponseFile = null;
+	public String getIntegrazioneTemplatePortaApplicativaResponseFile() throws Exception{
+		String pName = "org.openspcoop2.pdd.integrazione.template.pa.response.file";
+		if(OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseFile_read==null){
+			try{ 
+				String name = null;
+				name = this.reader.getValue_convertEnvProperties(pName);
+				if(name!=null) {
+					name = name.trim();
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseFile = name;
+					
+					OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseFile_read = true;
+				}
+			}catch(java.lang.Exception e) {
+				this.log.error("Riscontrato errore durante la lettura della proprieta' di openspcoop '"+pName+"': "+e.getMessage(),e);
+				throw new Exception (e);
+			}    
+		}
+
+		return OpenSPCoop2Properties.getIntegrazioneTemplatePortaApplicativaResponseFile;
+	}
+	
    
 
 

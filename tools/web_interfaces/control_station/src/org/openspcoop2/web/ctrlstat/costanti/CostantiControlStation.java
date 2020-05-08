@@ -299,7 +299,13 @@ public class CostantiControlStation {
 			"<b>none</b>: non viene utilizzata alcuna modalità; questo tipo serve a sovrascrivere le impostazioni di default del Gateway<BR/>"+
 			"<b>trasportoExt, urlBasedExt, soapExt, wsaExt</b>: rispetto alla descrizione fornita precedentemente, le informazioni vengono veicolate anche fuori dal dominio di gestione<BR/>"+
 			"<BR/>"+
-			"Sono inoltre disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
+			"Sono anche disponibili modalità che consentono di definire tramite un template freemaker o velocity (definito a livello globale) come le informazioni siano inserite nel messaggio.<BR/>"+
+			"Il tipo di template (freemarker/velocity) e il path del file template possono essere specifici per API indicandoli nelle proprietà 'integrazione.template.richiesta/risposta.tipo' e 'integrazione.template.richiesta/risposta.file'<BR/>"+
+			"<b>template</b>: il template viene applicato sia alla richiesta che alla risposta<BR/>"+
+			"<b>template-request</b>: il template viene applicato solamente alla richiesta<BR/>"+
+			"<b>template-response</b>: il template viene applicato solamente alla risposta<BR/>"+
+			"<BR/>"+
+			"Sono infine disponibili modalità che generano gli header di integrazione compatibili con le versioni di OpenSPCoop 2.x e 1.x:<BR/>"+
 			"<b>openspcoop2-trasporto</b> o <b>openspcoop1-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP senza prefisso 'X-'<BR/>"+
 			"<b>openspcoop2-x-trasporto</b> o <b>openspcoop1-x-trasporto</b>: le informazioni sono veicolate all'interno di header HTTP con prefisso 'X-'<BR/>"+
 			"<b>openspcoop2-urlBased</b> o <b>openspcoop1-urlBased</b>: le informazioni sono veicolate come parametri della url<BR/>"+

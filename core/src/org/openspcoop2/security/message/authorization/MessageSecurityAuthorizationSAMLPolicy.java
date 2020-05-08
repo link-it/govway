@@ -248,7 +248,7 @@ public class MessageSecurityAuthorizationSAMLPolicy  implements IMessageSecurity
 	    	
 	    	SOAPElement security = null;
 	    	try{
-	    		security = (SOAPElement) WSSecurityUtils.getSecurityHeader(soapMessage.getSOAPPart(), soapMessage.getMessageType(), actor);
+	    		security = (SOAPElement) WSSecurityUtils.getSecurityHeader(soapMessage.getSOAPPart(), soapMessage.getMessageType(), actor, true);
 	    	}catch(Exception e){
 	    		throw new SecurityException("Errore durante la ricerca dell'header WSSecurity (actor:"+actor+") "+e.getMessage(),e);
 	    	}

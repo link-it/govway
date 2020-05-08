@@ -20,6 +20,7 @@
 
 package org.openspcoop2.pdd.config;
 
+import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -1173,5 +1174,11 @@ public class ConfigurazionePdDManager {
 	}
 	public ForwardProxy getForwardProxyConfigErogazione(IDSoggetto dominio, IDServizio idServizio) throws DriverConfigurazioneException{
 		return this.configurazionePdDReader.getForwardProxyConfigErogazione(dominio, idServizio);
+	}
+	
+	/* ********  GENERIC FILE  ******** */
+
+	public ContentFile getContentFile(File file)throws DriverConfigurazioneException{
+		return this.configurazionePdDReader.getContentFile(file);
 	}
 }

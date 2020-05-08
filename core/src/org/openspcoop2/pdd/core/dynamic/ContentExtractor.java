@@ -57,6 +57,11 @@ public class ContentExtractor {
 	}
 
 
+	public OpenSPCoop2Message getMessage() {
+		return this.message; // questo metodo consente di attuare trasformazione più avanzate agendo sull'oggetto
+	}
+
+
 	public void addTransportHeader(String name, String value) {
 		if(this.message!=null) {
 			this.message.forceTransportHeader(name, value);
