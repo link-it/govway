@@ -142,7 +142,9 @@ public class SPCoopProperties {
 			}
 			if(CostantiProtocollo.IDENTIFICATIVO_SERIALE_STATIC.equals(tipo)){
 				OpenSPCoop2Properties op2Properties = OpenSPCoop2Properties.getInstance();
-				Integer prefix = (op2Properties!=null) ? op2Properties.getClusterIdNumerico() : null;
+				Integer prefix = (op2Properties!=null) ? 
+						(op2Properties.getClusterIdNumerico()!=null ? Integer.valueOf(op2Properties.getClusterIdNumerico()) : null) 
+						: null;
 				if(prefix!=null) {
 					if(prefix<0 || prefix>99){
 						String msg = "La generazione dell'identificativo eGov richiede un identificativo del cluster compreso tra 0 e 99";

@@ -71,6 +71,18 @@ public class TransazioniApplicativoServerService implements ITransazioniApplicat
 			this.log.error(e.getMessage(), e);
 		}
 	}
+	protected TransazioniApplicativoServerService(DAOFactory daoFactory, org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager, 
+			org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerServiceSearch transazioniSASearch) {
+		this.log =  LoggerManager.getPddMonitorSqlLogger();
+		try {
+			this.daoFactory = daoFactory;
+			this.transazioniServiceManager = transazioniServiceManager;
+			this.transazioniSASearch = transazioniSASearch;
+		} catch (Exception e) {
+			this.log.error(e.getMessage(), e);
+		}
+	}
+	
 
 	@Override
 	public List<TransazioneApplicativoServerBean> findAll(int start, int limit) {

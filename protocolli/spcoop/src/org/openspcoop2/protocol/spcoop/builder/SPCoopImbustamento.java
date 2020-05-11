@@ -191,7 +191,11 @@ public class SPCoopImbustamento {
 			throw new ProtocolException("Creazione ID eGov non riuscita: alcuni parametri di creazione null idPD["+idPD+"] codAmm["+codAmm+"]");
 		}
 		
-		Integer prefix = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		Integer prefix = null;
+		String prefixS = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		if(prefixS!=null) {
+			prefix = Integer.valueOf(prefixS);
+		}
 		initSerialCounter(prefix==null ? -1 : prefix);
 
 		IDSerialGenerator serialGenerator = null;

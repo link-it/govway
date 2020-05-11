@@ -147,5 +147,7 @@ public interface ITransazioniService extends ISearchFormService<TransazioneBean,
 	public List<TransazioneBean> findAll(int start, int limit, SortOrder sortOrder, String sortField);
 
 	public void setLiveMaxResults(Integer limit);
+	
+	public ITransazioniApplicativoServerService getTransazioniApplicativoServerService();
 
 }

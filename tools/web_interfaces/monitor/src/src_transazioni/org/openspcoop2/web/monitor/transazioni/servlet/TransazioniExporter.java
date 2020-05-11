@@ -61,6 +61,7 @@ public class TransazioniExporter extends HttpServlet{
 	private static Logger log = LoggerManager.getPddMonitorCoreLogger();
 
 	private static Boolean enableHeaderInfo = false;
+	private static Boolean enableConsegneInfo = false;
 	private static Boolean mimeThrowExceptionIfNotFound = false;
 	private boolean headersAsProperties = true;
 	private boolean contenutiAsProperties = false;
@@ -73,6 +74,7 @@ public class TransazioniExporter extends HttpServlet{
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(TransazioniExporter.log);
 
 			TransazioniExporter.enableHeaderInfo = govwayMonitorProperties.isAttivoTransazioniExportHeader();
+			TransazioniExporter.enableConsegneInfo = govwayMonitorProperties.isAttivoTransazioniExportConsegneMultiple();
 			TransazioniExporter.mimeThrowExceptionIfNotFound=govwayMonitorProperties.isTransazioniDownloadThrowExceptionMimeTypeNotFound();
 			this.headersAsProperties = govwayMonitorProperties.isAttivoTransazioniExportHeaderAsProperties();
 			this.contenutiAsProperties = govwayMonitorProperties.isAttivoTransazioniExportContenutiAsProperties();
@@ -205,6 +207,7 @@ public class TransazioniExporter extends HttpServlet{
 
 			ExporterProperties prop = new ExporterProperties();
 			prop.setEnableHeaderInfo(TransazioniExporter.enableHeaderInfo);
+			prop.setEnableConsegneInfo(TransazioniExporter.enableConsegneInfo);
 			prop.setExportContenuti(exportContenuti);
 			prop.setExportDiagnostici(exportDiagnostici);
 			prop.setExportTracce(exportTracce);

@@ -8,6 +8,7 @@
 	<target name="-generatesrc_from_schema">
 		<basename property="schema.basename" file="${schema}"/>
 		<echo message="Generazione sorgenti a partire dallo schema ${schema.basename}..."/>
+<!-- Da Java 11 non e' piu' presente. Si deve usare il jar apposito jaxb-xjc-2.3.2.jar (di seguito verra' invocata la classe registrata come Main nel Manifest del jar)
                 <exec executable="xjc">
                         <arg value="-verbose" />
                         <arg value="-npa" />
@@ -16,7 +17,24 @@
                         <arg value="-d" />
                         <arg value="${outDir}" />
                         <arg value="${schema}" />
-              </exec>
+		</exec>
+-->
+		<java classname="com.sun.tools.xjc.XJCFacade" fork="true">
+			<arg value="-verbose" />
+                        <arg value="-npa" />
+                        <arg value="-target" />
+                        <arg value="2.0" />
+                        <arg value="-d" />
+                        <arg value="${outDir}" />
+                        <arg value="${schema}" />
+			<classpath>
+				<pathelement path="${required_lib}/jax/jaxb-xjc-2.3.2.jar"/>
+				<pathelement path="${required_lib}/jax/jaxb-api-2.3.1.jar"/>
+				<pathelement path="${required_lib}/jax/jaxb-impl-2.3.2.jar"/>
+				<pathelement path="${required_lib}/jax/jaxb-core-2.3.0.1.jar"/>
+				<pathelement path="${required_lib}/shared/jakarta.activation-1.2.1.jar"/>
+			</classpath>
+		</java>
 	</target>
 	
 </project>

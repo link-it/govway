@@ -34,6 +34,7 @@ public class ExporterProperties {
 	private boolean exportDiagnostici;
 	private boolean exportContenuti;
 	private boolean enableHeaderInfo;
+	private boolean enableConsegneInfo;
 	private boolean mimeThrowExceptionIfNotFound;
 	private boolean abilitaMarcamentoTemporaleEsportazione;
 	private boolean headersAsProperties = true;
@@ -54,6 +55,9 @@ public class ExporterProperties {
 	public boolean isEnableHeaderInfo() {
 		return this.enableHeaderInfo;
 	}
+	public boolean isEnableConsegneInfo() {
+		return this.enableConsegneInfo;
+	}
 	public boolean isMimeThrowExceptionIfNotFound() {
 		return this.mimeThrowExceptionIfNotFound;
 	}
@@ -68,6 +72,9 @@ public class ExporterProperties {
 	}
 	public void setEnableHeaderInfo(boolean enableHeaderInfo) {
 		this.enableHeaderInfo = enableHeaderInfo;
+	}
+	public void setEnableConsegneInfo(boolean isEnableConsegneInfo) {
+		this.enableConsegneInfo = isEnableConsegneInfo;
 	}
 	public void setMimeThrowExceptionIfNotFound(boolean mimeThrowExceptionIfNotFound) {
 		this.mimeThrowExceptionIfNotFound = mimeThrowExceptionIfNotFound;

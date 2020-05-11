@@ -104,6 +104,8 @@ public class ColonnaExportManager {
 		this._addColonna(CostantiExport.KEY_COL_PROFILO_COLLABORAZIONE_PROT, CostantiExport.LABEL_COL_PROFILO_COLLABORAZIONE_PROT, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_ID_COLLABORAZIONE, CostantiExport.LABEL_COL_ID_COLLABORAZIONE, !SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_URI_ACCORDO_SERVIZIO, CostantiExport.LABEL_COL_URI_ACCORDO_SERVIZIO, !SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TIPO_API, CostantiExport.LABEL_COL_TIPO_API, SHOW_IN_CUSTOM_VIEW);
+		this._addColonna(CostantiExport.KEY_COL_TAGS, CostantiExport.LABEL_COL_TAGS, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_SERVIZIO, CostantiExport.LABEL_COL_SERVIZIO, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_AZIONE, CostantiExport.LABEL_COL_AZIONE, SHOW_IN_CUSTOM_VIEW);
 		this._addColonna(CostantiExport.KEY_COL_ID_CORRELAZIONE_APPLICATIVA, CostantiExport.LABEL_COL_ID_CORRELAZIONE_APPLICATIVA, SHOW_IN_CUSTOM_VIEW);

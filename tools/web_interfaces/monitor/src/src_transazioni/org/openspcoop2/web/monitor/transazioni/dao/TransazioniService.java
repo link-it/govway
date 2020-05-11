@@ -145,6 +145,7 @@ public class TransazioniService implements ITransazioniService {
 
 	private org.openspcoop2.core.transazioni.dao.IServiceManager transazioniServiceManager;
 	private org.openspcoop2.core.transazioni.dao.ITransazioneService transazioniDAO;
+	private org.openspcoop2.core.transazioni.dao.ITransazioneApplicativoServerServiceSearch transazioniApplicativoServerSearchDAO;
 	private org.openspcoop2.core.transazioni.dao.ITransazioneServiceSearch transazioniSearchDAO;
 	private org.openspcoop2.core.transazioni.dao.ICredenzialeMittenteService credenzialiMittenteDAO;
 
@@ -295,6 +296,7 @@ public class TransazioniService implements ITransazioniService {
 
 			this.transazioniSearchDAO = this.transazioniServiceManager.getTransazioneServiceSearch();
 			this.transazioniDAO = this.transazioniServiceManager.getTransazioneService();
+			this.transazioniApplicativoServerSearchDAO = this.transazioniServiceManager.getTransazioneApplicativoServerServiceSearch();
 			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
 			this.dumpMessaggioSearchDAO = this.transazioniServiceManager.getDumpMessaggioServiceSearch();
 
@@ -361,6 +363,7 @@ public class TransazioniService implements ITransazioniService {
 
 			this.transazioniSearchDAO = this.transazioniServiceManager.getTransazioneServiceSearch();
 			this.transazioniDAO = this.transazioniServiceManager.getTransazioneService();
+			this.transazioniApplicativoServerSearchDAO = this.transazioniServiceManager.getTransazioneApplicativoServerServiceSearch();
 			this.credenzialiMittenteDAO = this.transazioniServiceManager.getCredenzialeMittenteService();
 			this.dumpMessaggioSearchDAO = this.transazioniServiceManager.getDumpMessaggioServiceSearch();
 
@@ -398,6 +401,11 @@ public class TransazioniService implements ITransazioniService {
 		this.liveMaxResults = 50;
 	}
 
+	@Override
+	public ITransazioniApplicativoServerService getTransazioniApplicativoServerService() {
+		return new TransazioniApplicativoServerService(this.daoFactory, this.transazioniServiceManager, this.transazioniApplicativoServerSearchDAO);
+	}
+	
 	@Override
 	public void setLiveMaxResults(Integer limit) {
 		this.liveMaxResults = limit;

@@ -1240,6 +1240,16 @@ public final class ServiziApplicativiEndPointInvocazioneServizio extends Action 
 						invocazionePorta.addCredenziali(c);
 					}
 				}
+				else {
+					// Fix: altrimenti rimaneva assegnate le credenziali quando si disabilitava l'integration manager
+					if(!saHelper.isModalitaCompleta()) {
+						if(invocazionePorta!=null && invocazionePorta.sizeCredenzialiList()>0) {
+							while (invocazionePorta.sizeCredenzialiList()>0) {
+								invocazionePorta.removeCredenziali(0);
+							}
+						}
+					}
+				}
 
 				oggettiDaAggiornare.add(sa);
 			}

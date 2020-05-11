@@ -1,3 +1,21 @@
+2020-05-11  Andrea Poli <apoli@link.it>
+
+	* [GovWayCore, GovWayConsole, GovWayMonitor]
+	Risolto Bug OP-996
+	Risolti i seguenti problemi sulla console di configurazione:
+	- Se durante un aggiornamento viene aggiunto un nuovo profilo di interoperabilità, senza che sia stato creato sul database un soggetto di default associato,
+	  la console non segnalava l'errore puntuale ma sollevava un errore generico.
+	- Se è abilitata la gestione dell'IntegrationManager, e su un connettore viene prima abilitato assegnando delle credenziali basic e poi successivamente disabilitato, 
+	  le credenziali rimangono erroneamente assegnato all'applicativo. Il problema si evidenzia quando si effettua un export ed un successivo import dell'erogazione.
+	  Terminato il processo di import viene creato erroneamente un applicativo che possiede il nome interno dell'erogazione e le credenziali che inizialmente erano state assegnate alla funzione I.M.
+	Risolti i seguenti problemi sulla console di monitoraggio:
+	- L'export, di qualsiasi tipo, non contiene le informazioni riguardanti il tipo di api (REST/SOAP) e i tags.
+	- Nessuno dei tipi di esportazione esistenti permettevano di esportare informazioni relative alle consegne multiple. La modalità 'ZIP' è stata estesa per supportare tali informazioni.
+	Risolto il seguente problema sul runtime:
+	- L'identificativo del cluster numerico assegnabile alla proprietà 'org.openspcoop2.pdd.cluster_id.numeric' nel file 'govway_local.properties', veniva erroneamente gestito come intero invece che come stringa;
+	  questo comportava nel caso di numeri a due cifre che non si potessero utilizzare le prime 9 cifre definite come '0X' poichè si perdeva lo 0 iniziale. 
+	  Il problema è stato corretto e adesso se si vogliono gestire fino a 99 nodi del cluster è possibile farlo poichè vengono considerati anche i primi 9 (01, 02, 03 .... 09).
+
 2020-05-08  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, ProtocolloModI-PA]

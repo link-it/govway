@@ -799,6 +799,18 @@ public class SingleCsvFileExporter implements IExporter{
 					} else {
 						oneLine.add(CostantiExport.EMPTY_STRING);
 					}
+				}  else if(keyColonna.equals(CostantiExport.KEY_COL_TIPO_API)){
+					if(StringUtils.isNotEmpty(t.getTipoApiLabel())){
+						oneLine.add(t.getTipoApiLabel());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
+				}  else if(keyColonna.equals(CostantiExport.KEY_COL_TAGS)){
+					if(StringUtils.isNotEmpty(t.getGruppi())){
+						oneLine.add(t.getGruppi());
+					} else {
+						oneLine.add(CostantiExport.EMPTY_STRING);
+					}
 				} else if(keyColonna.equals(CostantiExport.KEY_COL_URL_INVOCAZIONE)){
 					if(StringUtils.isNotEmpty(t.getUrlInvocazione())){
 						oneLine.add(t.getUrlInvocazione());

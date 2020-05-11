@@ -23,6 +23,7 @@
                     <xsd:simpleContent>
                         <xsd:extension base="xsd:string">
                             <xsd:attribute name="codice" type="xsd:integer" use="optional"/>
+                            <xsd:attribute name="consegne-multiple" type="xsd:integer" use="optional"/>
                         </xsd:extension>
                     </xsd:simpleContent>
                 </xsd:complexType>
@@ -224,6 +225,23 @@
                 </xsd:complexType>
             </xsd:element>
             <xsd:element name="azione" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+            
+            <!-- API -->
+            <xsd:element name="api" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                	<xsd:sequence>
+                		<xsd:element name="tags" minOccurs="0" maxOccurs="1">
+                			<xsd:complexType>
+                				<xsd:sequence>
+                					<xsd:element name="tag" type="xsd:string" minOccurs="1" maxOccurs="unbounded"/>
+                				</xsd:sequence>
+                			</xsd:complexType>
+                		</xsd:element>
+                	</xsd:sequence>
+                	<xsd:attribute name="nome" type="xsd:string" use="optional"/>
+                	<xsd:attribute name="tipo" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
             
             <!-- Identificativi Messaggi -->
             <xsd:element name="id-messaggio-richiesta" minOccurs="0" maxOccurs="1"

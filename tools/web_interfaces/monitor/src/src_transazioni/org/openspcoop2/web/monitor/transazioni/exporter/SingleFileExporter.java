@@ -37,9 +37,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.commons.lang.StringUtils;
+import org.openspcoop2.protocol.basic.archive.ZIPUtils;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
 import org.openspcoop2.protocol.sdk.ProtocolException;
+import org.openspcoop2.protocol.sdk.constants.EsitoTransazioneName;
 import org.openspcoop2.protocol.sdk.constants.RuoloMessaggio;
 import org.openspcoop2.protocol.sdk.constants.TipoSerializzazione;
 import org.openspcoop2.protocol.sdk.XMLRootElement;
@@ -53,6 +55,7 @@ import org.openspcoop2.protocol.sdk.tracciamento.DriverTracciamentoNotFoundExcep
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaDriver;
 import org.openspcoop2.protocol.sdk.tracciamento.ITracciaSerializer;
 import org.openspcoop2.protocol.sdk.tracciamento.Traccia;
+import org.openspcoop2.protocol.utils.EsitiProperties;
 import org.openspcoop2.utils.transport.http.ContentTypeUtilities;
 import org.openspcoop2.utils.transport.http.HttpConstants;
 import org.slf4j.Logger;
@@ -70,8 +73,10 @@ import org.openspcoop2.core.transazioni.constants.ExportState;
 import org.openspcoop2.core.transazioni.constants.TipoMessaggio;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.openspcoop2.web.monitor.core.utils.MimeTypeUtils;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.core.UtilityTransazioni;
+import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniApplicativoServerService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniExportService;
 import org.openspcoop2.web.monitor.transazioni.dao.ITransazioniService;
 
@@ -91,12 +96,14 @@ public class SingleFileExporter implements IExporter{
 	private boolean exportDiagnostici = false;
 	private boolean exportContenuti = false;
 	private boolean enableHeaderInfo = false;
+	private boolean enableConsegneInfo = false;
 	private boolean mimeThrowExceptionIfNotFound = false;
 	private boolean abilitaMarcamentoTemporale = false;
 	private boolean headersAsProperties = true;
 	private boolean contenutiAsProperties = false;
 	
 	private ITransazioniService transazioniService;
+	private ITransazioniApplicativoServerService transazioniApplicativoService;
 	private ITracciaDriver tracciamentoService;
 	private IDiagnosticDriver diagnosticiService;
 	private ITransazioniExportService transazioniExporterService;
@@ -105,8 +112,10 @@ public class SingleFileExporter implements IExporter{
 	private ZipOutputStream zip;
 	private String fileName=null;
 	
-	private SingleFileExporter(ExporterProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) {
+	private SingleFileExporter(ExporterProperties properties, ITransazioniService transazioniService,
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) {
 		this.enableHeaderInfo = properties.isEnableHeaderInfo();
+		this.enableConsegneInfo = properties.isEnableConsegneInfo();
 		
 		this.exportTracce = properties.isExportTracce();
 		this.exportDiagnostici = properties.isExportDiagnostici();
@@ -118,10 +127,12 @@ public class SingleFileExporter implements IExporter{
 		
 		this.tracciamentoService = tracciamentoService;
 		this.transazioniService = transazioniService;
+		this.transazioniApplicativoService = transazioniService.getTransazioniApplicativoServerService();
 		this.diagnosticiService = diagnosticiService;
 		this.transazioniExporterService = transazioniExport;
 		
 		SingleFileExporter.log.info("Single File Exporter inizializzato:");
+		SingleFileExporter.log.info("\t -esportazione Consegne    abilitata: "+this.enableConsegneInfo);
 		SingleFileExporter.log.info("\t -esportazione Tracce      abilitata: "+this.exportTracce);
 		SingleFileExporter.log.info("\t -esportazione Contenuti   abilitata: "+this.exportContenuti);
 		SingleFileExporter.log.info("\t -esportazione Diagnostici abilitata: "+this.exportDiagnostici);
@@ -129,16 +140,20 @@ public class SingleFileExporter implements IExporter{
 		SingleFileExporter.log.info("\t -MimeType handling (mime.throwExceptionIfMappingNotFound):"+this.mimeThrowExceptionIfNotFound);
 	}
 	
-	public SingleFileExporter(OutputStream outstream,ExporterProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+	public SingleFileExporter(OutputStream outstream,ExporterProperties properties, ITransazioniService transazioniService,
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
 		
-		this(properties, transazioniService, tracciamentoService, diagnosticiService,transazioniExport);
+		this(properties, transazioniService,  
+				tracciamentoService, diagnosticiService,transazioniExport);
 
 		this.zip = new ZipOutputStream(outstream);
 		
 	}
 
-	public SingleFileExporter(File destFile,ExporterProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService,ITransazioniExportService transazioniExport) throws Exception{
-		this(properties,transazioniService,tracciamentoService,diagnosticiService,transazioniExport);
+	public SingleFileExporter(File destFile,ExporterProperties properties, ITransazioniService transazioniService,
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService,ITransazioniExportService transazioniExport) throws Exception{
+		this(properties,transazioniService, 
+				tracciamentoService,diagnosticiService,transazioniExport);
 		
 		FileOutputStream fos = new FileOutputStream(destFile);
 		
@@ -148,8 +163,10 @@ public class SingleFileExporter implements IExporter{
 		
 	}
 
-	public SingleFileExporter(String pathToFile,ExporterProperties properties, ITransazioniService transazioniService, ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
-		this(new File(pathToFile), properties, transazioniService, tracciamentoService, diagnosticiService,transazioniExport);
+	public SingleFileExporter(String pathToFile,ExporterProperties properties, ITransazioniService transazioniService,
+			ITracciaDriver tracciamentoService,IDiagnosticDriver diagnosticiService, ITransazioniExportService transazioniExport) throws Exception{
+		this(new File(pathToFile), properties, transazioniService,  
+				tracciamentoService, diagnosticiService,transazioniExport);
 	}
 	
 	private void export(String rootDir, List<TransazioneBean> transazioni) throws ExportException{
@@ -161,6 +178,22 @@ public class SingleFileExporter implements IExporter{
 		for(TransazioneBean t: transazioni){
 			
 			String transazioneDir = rootDir+t.getIdTransazione()+File.separatorChar;
+			
+			boolean consegnaMultipla = false;
+			try{
+				EsitiProperties esitiProperties = EsitiProperties.getInstance(log, t.getProtocollo());
+				EsitoTransazioneName esitoTransactionName = esitiProperties.getEsitoTransazioneName(t.getEsito());
+				if(EsitoTransazioneName.isConsegnaMultipla(esitoTransactionName)) {
+					consegnaMultipla = true;
+				}
+			} catch (Exception e) {
+				String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+				msg+=" Non sono riuscito a comprendere l'esito della transazione ("+e.getMessage()+")";
+				SingleFileExporter.log.error(msg,e);
+				throw new ExportException(msg, e);
+			}
+			
+			
 			
 			//manifest
 			if(this.enableHeaderInfo){
@@ -178,6 +211,81 @@ public class SingleFileExporter implements IExporter{
 				}
 				
 			}
+			
+			
+			// manifest consegne
+			if(consegnaMultipla && this.enableConsegneInfo){
+								
+				try{
+					String dir = transazioneDir+"consegne"+File.separator;
+					
+					this.transazioniApplicativoService.setIdTransazione(t.getIdTransazione());
+					this.transazioniApplicativoService.setProtocollo(t.getProtocollo());
+					List<TransazioneApplicativoServerBean> listConsegne = this.transazioniApplicativoService.findAll();					
+					if(listConsegne!=null && !listConsegne.isEmpty()) {
+						for (TransazioneApplicativoServerBean tAS : listConsegne) {
+							
+							String connettoreNome = ZIPUtils.convertNameToSistemaOperativoCompatible(tAS.getConnettoreNome()!=null ? tAS.getConnettoreNome() : "Default");
+							String dirConsegna = dir+connettoreNome+File.separator;
+							
+							this.zip.putNextEntry(new ZipEntry(dirConsegna+"manifest.xml"));
+							UtilityTransazioni.writeManifestTransazioneApplicativoServer(t,tAS,this.zip);
+							this.zip.flush();
+							this.zip.closeEntry();
+							
+							if(this.exportDiagnostici) {
+								//diagnostici
+								exportDiagnostici(t, dirConsegna, false, tAS.getServizioApplicativoErogatore());
+							}
+							
+							if(this.exportContenuti){
+								
+								//fault
+								String fault = tAS.getFault();
+								if(StringUtils.isNotBlank(fault)){
+									try{
+										String ext = UtilityTransazioni.getExtension(tAS.getFormatoFault());
+										this.zip.putNextEntry(new ZipEntry(dirConsegna+"fault."+ext));
+										this.zip.write((fault != null ? fault.getBytes() : "".getBytes()));
+										this.zip.flush();
+										this.zip.closeEntry();
+									}catch(Exception ioe){
+										String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+										msg+=" Non sono riuscito a creare il file fault ("+ioe.getMessage()+")";
+										SingleFileExporter.log.error(msg,ioe);
+										throw new ExportException(msg, ioe);
+									}				
+								}
+								
+								//faultultimo errore
+								String faultErrore = tAS.getFaultUltimoErrore();
+								if(StringUtils.isNotBlank(faultErrore)){
+									try{
+										String ext = UtilityTransazioni.getExtension(tAS.getFormatoFaultUltimoErrore());
+										this.zip.putNextEntry(new ZipEntry(dirConsegna+"faultUltimoErrore."+ext));
+										this.zip.write((faultErrore != null ? faultErrore.getBytes() : "".getBytes()));
+										this.zip.flush();
+										this.zip.closeEntry();
+									}catch(Exception ioe){
+										String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
+										msg+=" Non sono riuscito a creare il file faultUltimoErrore ("+ioe.getMessage()+")";
+										SingleFileExporter.log.error(msg,ioe);
+										throw new ExportException(msg, ioe);
+									}				
+								}
+								
+							}
+						}
+					}
+				}catch(Exception e){
+					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+					msg+=" Non sono riuscito a recuperare le informazioni sulle consegne ("+e.getMessage()+")";
+					SingleFileExporter.log.error(msg,e);
+					throw new ExportException(msg, e);
+				}
+				
+			}
+			
 			
 			//tracce
 			if(this.exportTracce){
@@ -322,77 +430,7 @@ public class SingleFileExporter implements IExporter{
 			
 			//diagnostici
 			if(this.exportDiagnostici){
-				try{
-					FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
-					
-					
-					//devo impostare solo l'idtransazione
-					//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
-					Hashtable<String, String> properties = new Hashtable<String, String>();
-					properties.put("id_transazione", t.getIdTransazione());
-					filter.setProperties(properties);
-					
-					//non necessario, id_transazione e' sufficiente
-					//filter.setIdentificativoPorta(search.getIdentificativoPorta());
-					
-					
-					List<MsgDiagnostico> list = null;
-					try {
-						list = this.diagnosticiService.getMessaggiDiagnostici(filter);
-					}catch(DriverMsgDiagnosticiNotFoundException notFound) {
-						log.debug("[getMessaggiDiagnostici("+t.getIdTransazione()+")] non trovati: " +notFound.getMessage(),notFound);
-					}
-					if(list!=null && !list.isEmpty()) {
-						// Add ZIP entry to output stream.
-						this.zip.putNextEntry(new ZipEntry(transazioneDir+"diagnostici.xml"));
-						
-						String tail = null;
-						for (int j = 0; j < list.size(); j++) {
-							MsgDiagnostico msg = list.get(j);
-							String newLine = j > 0 ? "\n\n" : "";
-							
-							IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
-							IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
-							
-							if(j==0){
-								XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
-								if(xmlRootElement!=null){
-									String head = xmlRootElement.getAsStringStartTag();
-									if(head!=null && !"".equals(head)){
-										head = head +"\n\n";
-										this.zip.write(head.getBytes(), 0, head.length());
-										tail = xmlRootElement.getAsStringEndTag();
-		    							if(tail!=null && !"".equals(tail)){
-		    								tail = "\n\n" + tail;
-		    							}
-									}
-								}
-							}
-							
-							String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
-							in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
-							// Transfer bytes from the input stream to the ZIP file
-							int len;
-							while ((len = in.read(buf)) > 0) {
-								this.zip.write(buf, 0, len);
-							}
-	
-						}
-						if(tail!=null && !"".equals(tail)){
-							this.zip.write(tail.getBytes(), 0, tail.length());
-						}
-						
-						// Complete the entry
-						this.zip.flush();
-						this.zip.closeEntry();
-						if(in!=null)
-							in.close();
-					}
-				}catch(Exception e){
-					String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
-					msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
-					throw new ExportException(msg, e);
-				}
+				exportDiagnostici(t, transazioneDir, consegnaMultipla, null);
 			}
 			//contenuti e fault
 			if(this.exportContenuti){
@@ -401,13 +439,14 @@ public class SingleFileExporter implements IExporter{
 				String fault = t.getFaultIntegrazione();
 				if(StringUtils.isNotBlank(fault)){
 					try{
-						this.zip.putNextEntry(new ZipEntry(transazioneDir+"faultIntegrazione.xml"));
+						String ext = UtilityTransazioni.getExtension(t.getFormatoFaultIntegrazione());
+						this.zip.putNextEntry(new ZipEntry(transazioneDir+"faultIntegrazione."+ext));
 						this.zip.write((fault != null ? fault.getBytes() : "".getBytes()));
 						this.zip.flush();
 						this.zip.closeEntry();
 					}catch(Exception ioe){
 						String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
-						msg+=" Non sono riuscito a creare il file faultIntegrazione.xml ("+ioe.getMessage()+")";
+						msg+=" Non sono riuscito a creare il file faultIntegrazione ("+ioe.getMessage()+")";
 						SingleFileExporter.log.error(msg,ioe);
 						throw new ExportException(msg, ioe);
 					}				
@@ -417,13 +456,14 @@ public class SingleFileExporter implements IExporter{
 				fault = t.getFaultCooperazione();
 				if(StringUtils.isNotBlank(fault)){
 					try{
-						this.zip.putNextEntry(new ZipEntry(transazioneDir+"faultCooperazione.xml"));
+						String ext = UtilityTransazioni.getExtension(t.getFormatoFaultCooperazione());
+						this.zip.putNextEntry(new ZipEntry(transazioneDir+"faultCooperazione."+ext));
 						this.zip.write((fault != null ? fault.getBytes() : "".getBytes()));
 						this.zip.flush();
 						this.zip.closeEntry();
 					}catch(Exception ioe){
 						String msg = "Si e' verificato un errore durante l'esportazione dei contenuti della transazione con id:"+t.getIdTransazione();
-						msg+=" Non sono riuscito a creare il file faultCooperazione.xml ("+ioe.getMessage()+")";
+						msg+=" Non sono riuscito a creare il file faultCooperazione ("+ioe.getMessage()+")";
 						SingleFileExporter.log.error(msg,ioe);
 						throw new ExportException(msg, ioe);
 					}				
@@ -440,6 +480,88 @@ public class SingleFileExporter implements IExporter{
 			}
 
 		}//chiudo for transazioni
+	}
+	
+	private void exportDiagnostici(TransazioneBean t, String dir, boolean forceNullApplicativo, String servizioApplicativo) throws ExportException {
+		InputStream in = null;
+		byte[] buf = new byte[1024];
+		try{
+			FiltroRicercaDiagnosticiConPaginazione filter = new FiltroRicercaDiagnosticiConPaginazione();
+			
+			
+			//devo impostare solo l'idtransazione
+			//filter.setIdEgov(this.diagnosticiBean.getIdEgov());	
+			Hashtable<String, String> properties = new Hashtable<String, String>();
+			properties.put("id_transazione", t.getIdTransazione());
+			filter.setProperties(properties);
+			
+			//non necessario, id_transazione e' sufficiente
+			//filter.setIdentificativoPorta(search.getIdentificativoPorta());
+			
+			if(forceNullApplicativo) {
+				filter.setCheckApplicativoIsNull(true);
+			}
+			else if(servizioApplicativo!=null) {
+				filter.setApplicativo(servizioApplicativo);
+			}
+			
+			List<MsgDiagnostico> list = null;
+			try {
+				list = this.diagnosticiService.getMessaggiDiagnostici(filter);
+			}catch(DriverMsgDiagnosticiNotFoundException notFound) {
+				log.debug("[getMessaggiDiagnostici("+t.getIdTransazione()+")] non trovati: " +notFound.getMessage(),notFound);
+			}
+			if(list!=null && !list.isEmpty()) {
+				// Add ZIP entry to output stream.
+				this.zip.putNextEntry(new ZipEntry(dir+"diagnostici.xml"));
+				
+				String tail = null;
+				for (int j = 0; j < list.size(); j++) {
+					MsgDiagnostico msg = list.get(j);
+					String newLine = j > 0 ? "\n\n" : "";
+					
+					IProtocolFactory<?> pf = ProtocolFactoryManager.getInstance().getProtocolFactoryByName(msg.getProtocollo());
+					IDiagnosticSerializer diagnosticoBuilder = pf.createDiagnosticSerializer();
+					
+					if(j==0){
+						XMLRootElement xmlRootElement = diagnosticoBuilder.getXMLRootElement();
+						if(xmlRootElement!=null){
+							String head = xmlRootElement.getAsStringStartTag();
+							if(head!=null && !"".equals(head)){
+								head = head +"\n\n";
+								this.zip.write(head.getBytes(), 0, head.length());
+								tail = xmlRootElement.getAsStringEndTag();
+    							if(tail!=null && !"".equals(tail)){
+    								tail = "\n\n" + tail;
+    							}
+							}
+						}
+					}
+					
+					String msgDiagnostico = diagnosticoBuilder.toString(msg,TipoSerializzazione.DEFAULT);
+					in = new ByteArrayInputStream((newLine + msgDiagnostico).getBytes());
+					// Transfer bytes from the input stream to the ZIP file
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						this.zip.write(buf, 0, len);
+					}
+
+				}
+				if(tail!=null && !"".equals(tail)){
+					this.zip.write(tail.getBytes(), 0, tail.length());
+				}
+				
+				// Complete the entry
+				this.zip.flush();
+				this.zip.closeEntry();
+				if(in!=null)
+					in.close();
+			}
+		}catch(Exception e){
+			String msg = "Si e' verificato un errore durante l'esportazione della transazione con id:"+t.getIdTransazione();
+			msg+=" Non sono riuscito a creare il file diagnostici.xml ("+e.getMessage()+")";
+			throw new ExportException(msg, e);
+		}
 	}
 	
 	public void export(List<String> idtransazioni) throws ExportException{

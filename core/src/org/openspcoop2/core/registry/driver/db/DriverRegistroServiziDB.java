@@ -9062,7 +9062,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				
 				
 			}else{
-				throw new DriverRegistroServiziNotFound("Nessun risultato trovat eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+				throw new DriverRegistroServiziNotFound("Nessun risultato trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			}
 
 			// Protocol Properties
@@ -16705,7 +16705,7 @@ IDriverWS ,IMonitoraggioRisorsa{
 				idSoggettoObject.setTipo(rs.getString("tipo_soggetto"));
 
 			}else{
-				throw new DriverRegistroServiziNotFound("Nessun risultato trovat eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
+				throw new DriverRegistroServiziNotFound("Nessun risultato trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, idSoggetto));
 			}
 
 			return idSoggettoObject;
@@ -16715,6 +16715,87 @@ IDriverWS ,IMonitoraggioRisorsa{
 			throw se;
 		}catch (Exception se) {
 			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getIdSoggetto] Exception: " + se.getMessage(),se);
+		} finally {
+
+			//Chiudo statement and resultset
+			try{
+				if(rs!=null) rs.close();
+				if(stm!=null) stm.close();
+			}catch (Exception e) {
+				//ignore
+			}
+
+			try {
+				if (conParam==null && this.atomica) {
+					this.log.debug("rilascio connessioni al db...");
+					con.close();
+				}
+			} catch (Exception e) {
+				// ignore exception
+			}
+		}
+	}
+	
+	
+	
+	public List<IDSoggetto> getSoggettiDefault() throws DriverRegistroServiziException {
+		return getSoggettiDefault(null);
+	}
+	public List<IDSoggetto> getSoggettiDefault(Connection conParam) throws DriverRegistroServiziException {
+
+		List<IDSoggetto> soggettiDefault = new ArrayList<IDSoggetto>();
+
+		Connection con = null;
+		PreparedStatement stm = null;
+		ResultSet rs = null;
+
+		if(conParam!=null){
+			con = conParam;
+		}
+		else if (this.atomica) {
+			try {
+				con = this.getConnectionFromDatasource("getSoggettiDefault()");
+
+			} catch (Exception e) {
+				throw new DriverRegistroServiziException("DriverRegistroServiziDB::getSoggettiDefault] Exception accedendo al datasource :" + e.getMessage(),e);
+
+			}
+
+		} else
+			con = this.globalConnection;
+
+		this.log.debug("operazione atomica = " + this.atomica);
+
+		try {
+			ISQLQueryObject sqlQueryObject = SQLObjectFactory.createSQLQueryObject(this.tipoDB);
+			sqlQueryObject.addFromTable(CostantiDB.SOGGETTI);
+			sqlQueryObject.addSelectField("tipo_soggetto");
+			sqlQueryObject.addSelectField("nome_soggetto");
+			sqlQueryObject.addWhereCondition("is_default = ?");
+			sqlQueryObject.setANDLogicOperator(true);
+			String sqlQuery = sqlQueryObject.createSQLQuery();
+
+			stm = con.prepareStatement(sqlQuery);
+
+			stm.setInt(1, CostantiDB.TRUE);
+
+			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
+			rs = stm.executeQuery();
+
+			if (rs.next()) {
+				
+				IDSoggetto idSoggetto = new IDSoggetto(rs.getString("tipo_soggetto"), rs.getString("nome_soggetto"));
+				soggettiDefault.add(idSoggetto);
+
+			}else{
+				throw new DriverRegistroServiziNotFound("Nessun risultato trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
+			}
+
+			return soggettiDefault;
+		} catch (SQLException se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggettiDefault] SqlException: " + se.getMessage(),se);
+		}catch (Exception se) {
+			throw new DriverRegistroServiziException("[DriverRegistroServiziDB::getSoggettiDefault] Exception: " + se.getMessage(),se);
 		} finally {
 
 			//Chiudo statement and resultset

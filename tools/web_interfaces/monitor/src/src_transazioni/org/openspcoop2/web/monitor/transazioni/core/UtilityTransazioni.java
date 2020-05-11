@@ -37,7 +37,9 @@ import org.openspcoop2.core.transazioni.DumpHeaderAllegato;
 import org.openspcoop2.core.transazioni.DumpHeaderTrasporto;
 import org.openspcoop2.core.transazioni.DumpMultipartHeader;
 import org.openspcoop2.core.transazioni.constants.RuoloTransazione;
+import org.openspcoop2.core.transazioni.constants.TipoAPI;
 import org.openspcoop2.core.transazioni.utils.TransactionContentUtils;
+import org.openspcoop2.message.constants.MessageType;
 import org.openspcoop2.monitor.engine.condition.EsitoUtils;
 import org.openspcoop2.monitor.sdk.parameters.Parameter;
 import org.openspcoop2.pdd.logger.MsgDiagnosticiProperties;
@@ -46,6 +48,7 @@ import org.openspcoop2.utils.xml.XMLUtils;
 import org.openspcoop2.web.monitor.core.constants.TipologiaRicerca;
 import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
+import org.openspcoop2.web.monitor.transazioni.bean.TransazioneApplicativoServerBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioneBean;
 import org.openspcoop2.web.monitor.transazioni.bean.TransazioniSearchForm;
 import org.openspcoop2.web.monitor.transazioni.core.contents.ContentType;
@@ -53,6 +56,8 @@ import org.openspcoop2.web.monitor.transazioni.core.contents.RisorsaType;
 import org.openspcoop2.web.monitor.transazioni.core.header.HeaderType;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.DiagnosticaSerializationType;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType;
+import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType.Api;
+import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType.Api.Tags;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType.Digest;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType.Duplicati;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.ProtocolloType.Profilo;
@@ -71,6 +76,10 @@ import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.Dom
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.Esito;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.IntegrationManager;
 import org.openspcoop2.web.monitor.transazioni.core.manifest.TransazioneType.TempiAttraversamento;
+import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna;
+import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna.UltimoErrore;
+import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiIntegrationManager;
+import org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito.DettaglioEsito;
 import org.openspcoop2.web.monitor.transazioni.core.search.FiltroContenuti;
 import org.openspcoop2.web.monitor.transazioni.core.search.FiltroContenuti.Risorsa;
 import org.openspcoop2.web.monitor.transazioni.core.search.RicercaPersonalizzata;
@@ -401,6 +410,9 @@ public class UtilityTransazioni {
 			Esito esito = new Esito();
 			esito.setCodice(new BigInteger(t.getEsito()+""));
 			esito.setValue(UtilityTransazioni.escapeXmlValue(esitiProperties.getEsitoLabel(t.getEsito())));
+			if(t.getConsegneMultipleInCorso()>0) {
+				esito.setConsegneMultiple(new BigInteger(t.getConsegneMultipleInCorso()+""));
+			}
 			transazione.setEsito(esito);
 		}
 		
@@ -411,6 +423,7 @@ public class UtilityTransazioni {
 			contesto.setValue(UtilityTransazioni.escapeXmlValue(esitiProperties.getEsitoTransactionContextLabel(t.getEsitoContesto())));
 			transazione.setContesto(contesto);
 		}
+		
 		
 		
         /*
@@ -847,6 +860,43 @@ public class UtilityTransazioni {
 			protocollo.setAzione(UtilityTransazioni.escapeXmlValue(t.getAzione()));
 		}
 		
+		// api
+		TipoAPI tipoApi = null;
+		if(t.getTipoApi()>0) {
+			tipoApi = TipoAPI.toEnumConstant(t.getTipoApi());
+		}
+		if(
+			(tipoApi!=null) 
+			||
+			(t.getUriAccordoServizio()!=null && !"".equals(t.getUriAccordoServizio()))
+			) {
+			Api api = new Api();
+			if(tipoApi!=null) {
+				api.setTipo(tipoApi.name());
+			}
+			if((t.getUriAccordoServizio()!=null && !"".equals(t.getUriAccordoServizio()))) {
+				api.setNome(t.getUriAccordoServizio());
+			}
+			if(t.getGruppi()!=null && !"".equals(t.getGruppi())){
+				Tags tags = new Tags();
+				String tmp = t.getGruppi().trim();
+				if(tmp.contains(",")){
+					String [] split = tmp.split(",");
+					if(split!=null && split.length>0){
+						for (int i = 0; i < split.length; i++) {
+							tags.getTag().add(split[i].trim());
+						}
+						
+					}
+				}
+				else {
+					tags.getTag().add(tmp);
+				}
+				api.setTags(tags);
+			}
+			protocollo.setApi(api);
+		}
+		
 		// Identificativi Messaggi
 		if( 
 				(t.getIdMessaggioRichiesta()!=null && StringUtils.isNotEmpty(t.getIdMessaggioRichiesta())) 
@@ -1125,6 +1175,211 @@ public class UtilityTransazioni {
 		transazione.setDiagnostica(diagnostica);
 	}
 	
+	public static String getExtension(String formato) {
+		MessageType messageType= MessageType.BINARY;
+		if(StringUtils.isNotEmpty(formato)) {
+			messageType = MessageType.valueOf(formato);
+		}
+
+		switch (messageType) {
+		case BINARY:
+		case MIME_MULTIPART:
+			return "bin";
+		case JSON:
+			return "json";
+		case SOAP_11:
+		case SOAP_12:
+		case XML:
+			return "xml";
+		}
+		
+		return "bin";
+	}
+	
+	public static void writeManifestTransazioneApplicativoServer(TransazioneBean t, TransazioneApplicativoServerBean tAS, OutputStream out)
+			throws Exception {
+		PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(LoggerManager.getPddMonitorCoreLogger());
+		UtilityTransazioni.writeManifestTransazioneApplicativoServer(t, tAS, out, monitorProperties.isAttivoTransazioniDataAccettazione());
+	}
+	public static void writeManifestTransazioneApplicativoServer(TransazioneBean tr, TransazioneApplicativoServerBean tAS, OutputStream out, boolean isAttivoTransazioniDataAccettazione)
+			throws Exception {
+		
+
+		JAXBContext jc = JAXBContext
+				.newInstance(org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ObjectFactory.class.getPackage().getName());
+
+		Marshaller marshaller = jc.createMarshaller();
+		// marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+
+		org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ObjectFactory objFactory = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ObjectFactory();
+
+		org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType consegna = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType();
+
+		// Esito
+		org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito esito = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.Esito();
+		EsitiProperties esitiProperties = EsitiProperties.getInstance(LoggerManager.getPddMonitorCoreLogger(),tr.getProtocollo());
+		if (tAS.getDettaglioEsito() >= 0) {
+			// <esito>ESITO_CALCOLATO_IN_FORMA_LEGGIBILE_DA_UMANO</esito>
+			DettaglioEsito dettaglioEsito = new DettaglioEsito();
+			dettaglioEsito.setCodice(new BigInteger(tAS.getDettaglioEsito()+""));
+			dettaglioEsito.setValue(UtilityTransazioni.escapeXmlValue(esitiProperties.getEsitoLabel(tAS.getDettaglioEsito())));
+			esito.setDettaglioEsito(dettaglioEsito);
+		}
+		esito.setConsegnaTerminata(tAS.getConsegnaTerminata());
+		if(tAS.getDataMessaggioScaduto()!=null) {
+			esito.setDataMessaggioScaduto(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataMessaggioScaduto()));
+		}
+		esito.setConsegnaTrasparente(tAS.isConsegnaTrasparente());
+		esito.setConsegnaIntegrationManager(tAS.isConsegnaIntegrationManager());
+		consegna.setEsito(esito);
+		
+		// Tempi di latenza
+		if (tAS.getDataUscitaRichiesta() != null
+				|| tAS.getDataIngressoRisposta() != null) {
+
+			org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.TempiAttraversamento tempi = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.TempiAttraversamento();
+
+			try{
+				if(isAttivoTransazioniDataAccettazione){
+					if (tAS.getDataAccettazioneRichiesta() != null) {
+						tempi.setRichiestaAccettazione(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataAccettazioneRichiesta()));
+					}
+				}
+				
+				if (tAS.getDataUscitaRichiesta() != null) {
+					tempi.setRichiestaUscita(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataUscitaRichiesta()));
+				}
+	
+				if(isAttivoTransazioniDataAccettazione){
+					if (tAS.getDataAccettazioneRisposta() != null) {
+						tempi.setRispostaAccettazione(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataAccettazioneRisposta()));
+					}
+				}
+				
+				if (tAS.getDataIngressoRisposta() != null) {
+					tempi.setRispostaIngresso(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataIngressoRisposta()));
+				}
+	
+				if(tAS.getDataUscitaRichiesta()!=null && tAS.getDataIngressoRisposta()!=null){
+					long latenza = tAS.getDataIngressoRisposta().getTime() - tAS.getDataUscitaRichiesta().getTime();
+					if(latenza>=0)
+						tempi.setLatenzaServizio(latenza);
+				}
+				
+			}catch(Exception e){
+				throw new JAXBException(e.getMessage(),e);
+			}
+			consegna.setTempiAttraversamento(tempi);
+		}
+		
+		// Dimensione messaggi gestiti
+		if (tAS.getRichiestaUscitaBytes() != null
+				|| tAS.getRispostaIngressoBytes() != null) {
+
+			org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DimensioneMessaggi dm = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DimensioneMessaggi();
+
+			if (tAS.getRichiestaUscitaBytes() != null) {
+				dm.setRichiestaUscita(tAS.getRichiestaUscitaBytes());
+			}
+
+			if (tAS.getRispostaIngressoBytes() != null) {
+				dm.setRispostaIngresso(tAS.getRispostaIngressoBytes());
+			}
+
+			consegna.setDimensioneMessaggi(dm);
+		}
+		
+		// Dati Consegna
+		if(tAS.isConsegnaTrasparente()) {
+			DatiConsegna datiConsegna = new DatiConsegna();
+			if(tAS.getUltimoErrore()!=null && !"".equals(tAS.getUltimoErrore())) {
+				
+				UltimoErrore ultimoErrore = new UltimoErrore();
+				ultimoErrore.setDettaglio(UtilityTransazioni.escapeXmlValue(tAS.getUltimoErrore()));
+				
+				if(tAS.getDettaglioEsitoUltimoErrore()>=0) {
+					org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna.UltimoErrore.DettaglioEsito dettaglioEsito = new org.openspcoop2.web.monitor.transazioni.core.manifest_consegna.ConsegnaType.DatiConsegna.UltimoErrore.DettaglioEsito();
+					dettaglioEsito.setCodice(new BigInteger(tAS.getDettaglioEsitoUltimoErrore()+""));
+					dettaglioEsito.setValue(UtilityTransazioni.escapeXmlValue(esitiProperties.getEsitoLabel(tAS.getDettaglioEsitoUltimoErrore())));
+					ultimoErrore.setDettaglioEsito(dettaglioEsito);
+				}
+				
+				if(tAS.getLocationUltimoErrore()!=null && !"".equals(tAS.getLocationUltimoErrore())) {
+					ultimoErrore.setConnettore(UtilityTransazioni.escapeXmlValue(tAS.getLocationUltimoErrore()));
+				}
+				if(tAS.getCodiceRispostaUltimoErrore()!=null && !"".equals(tAS.getCodiceRispostaUltimoErrore())) {
+					ultimoErrore.setCodiceRisposta(UtilityTransazioni.escapeXmlValue(tAS.getCodiceRispostaUltimoErrore()));
+				}
+				if (tAS.getDataUltimoErrore() != null) {
+					ultimoErrore.setData(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataUltimoErrore()));
+				}
+				if(tAS.getClusterIdUltimoErrore()!=null && !"".equals(tAS.getClusterIdUltimoErrore())) {
+					ultimoErrore.setClusterId(UtilityTransazioni.escapeXmlValue(tAS.getClusterIdUltimoErrore()));
+				}
+				
+				datiConsegna.setUltimoErrore(ultimoErrore);
+			}
+			if(tAS.getLocationConnettore()!=null && !"".equals(tAS.getLocationConnettore())) {
+				datiConsegna.setConnettore(UtilityTransazioni.escapeXmlValue(tAS.getLocationConnettore()));
+			}
+			if(tAS.getCodiceRisposta()!=null && !"".equals(tAS.getCodiceRisposta())) {
+				datiConsegna.setCodiceRisposta(UtilityTransazioni.escapeXmlValue(tAS.getCodiceRisposta()));
+			}
+			if (tAS.getDataPrimoTentativo() != null) {
+				datiConsegna.setDataPrimoTentativo(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataPrimoTentativo()));
+			}
+			if (tAS.getNumeroTentativi()>=0) {
+				datiConsegna.setNumeroTentativi(new BigInteger(tAS.getNumeroTentativi()+""));
+			}
+			if(tAS.getClusterIdConsegna()!=null && !"".equals(tAS.getClusterIdConsegna())) {
+				datiConsegna.setClusterIdConsegna(UtilityTransazioni.escapeXmlValue(tAS.getClusterIdConsegna()));
+			}
+			consegna.setDatiConsegna(datiConsegna);
+		}
+
+		// dati-integration-manager
+		if(tAS.isConsegnaIntegrationManager()) {
+			DatiIntegrationManager datiIM = new DatiIntegrationManager();
+			
+			if (tAS.getDataPrimoPrelievoIm() != null) {
+				datiIM.setDataPrimoPrelievo(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataPrimoPrelievoIm()));
+			}
+			if (tAS.getDataPrelievoIm() != null) {
+				datiIM.setDataPrelievo(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataPrelievoIm()));
+			}
+			if (tAS.getNumeroPrelieviIm()>=0) {
+				datiIM.setNumeroPrelievi(new BigInteger(tAS.getNumeroPrelieviIm()+""));
+			}
+			if(tAS.getClusterIdPrelievoIm()!=null && !"".equals(tAS.getClusterIdPrelievoIm())) {
+				datiIM.setClusterIdPrelievo(UtilityTransazioni.escapeXmlValue(tAS.getClusterIdPrelievoIm()));
+			}
+			if (tAS.getDataEliminazioneIm() != null) {
+				datiIM.setDataEliminazione(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataEliminazioneIm()));
+			}
+			if(tAS.getClusterIdEliminazioneIm()!=null && !"".equals(tAS.getClusterIdEliminazioneIm())) {
+				datiIM.setClusterIdEliminazione(UtilityTransazioni.escapeXmlValue(tAS.getClusterIdEliminazioneIm()));
+			}
+			consegna.setDatiIntegrationManager(datiIM);
+		}
+		
+		// dati consegna
+		consegna.setIdTransazione(UtilityTransazioni.escapeXmlValue(tAS.getIdTransazione()));
+		consegna.setServizioApplicativoErogatore(UtilityTransazioni.escapeXmlValue(tAS.getServizioApplicativoErogatore()));
+		if(tAS.getConnettoreNome()!=null && !"".equals(tAS.getConnettoreNome())) {
+			consegna.setNomeConnettore(UtilityTransazioni.escapeXmlValue(tAS.getConnettoreNome()));
+		}
+		if (tAS.getDataRegistrazione() != null) {
+			consegna.setDataRegistrazione(XMLUtils.getInstance().toGregorianCalendar(tAS.getDataRegistrazione()));
+		}
+		if(tAS.getIdentificativoMessaggio()!=null && !"".equals(tAS.getIdentificativoMessaggio())) {
+			consegna.setIdentificativoMessaggio(UtilityTransazioni.escapeXmlValue(tAS.getIdentificativoMessaggio()));
+		}
+		if(tAS.getClusterIdPresaInCarico()!=null && !"".equals(tAS.getClusterIdPresaInCarico())) {
+			consegna.setClusterIdInCoda(UtilityTransazioni.escapeXmlValue(tAS.getClusterIdPresaInCarico()));
+		}
+		
+		marshaller.marshal(objFactory.createConsegna(consegna), out);
+	}
 	
 	@SuppressWarnings("unused")
 	private static String convertSize(Long value) {
@@ -1377,6 +1632,7 @@ public class UtilityTransazioni {
 		marshaller.marshal(objFactory.createTransazione(transazione), out);
 	}
 
+	
 	public static void writeHeadersTrasportoXml(
 			List<DumpHeaderTrasporto> headers, OutputStream out, boolean asProperties)
 			throws Exception {

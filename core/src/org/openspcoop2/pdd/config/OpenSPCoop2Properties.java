@@ -12505,9 +12505,9 @@ public class OpenSPCoop2Properties {
 		return OpenSPCoop2Properties.cluster_id;
 	}
 	
-	private static Integer cluster_id_numerico =null;
+	private static String cluster_id_numerico =null;
 	private static Boolean cluster_id_numerico_read =null;
-	public Integer getClusterIdNumerico() throws ProtocolException {
+	public String getClusterIdNumerico() throws ProtocolException {
 		if(OpenSPCoop2Properties.cluster_id_numerico_read==null){
 			try{ 
 				String name = this.reader.getValue_convertEnvProperties("org.openspcoop2.pdd.cluster_id.numeric");
@@ -12518,7 +12518,7 @@ public class OpenSPCoop2Properties {
 						this.log.error(msg);
 						throw new ProtocolException(msg);
 					}
-					OpenSPCoop2Properties.cluster_id_numerico = numero;
+					OpenSPCoop2Properties.cluster_id_numerico = name.trim();
 				}
 				
 				OpenSPCoop2Properties.cluster_id_numerico_read = true;

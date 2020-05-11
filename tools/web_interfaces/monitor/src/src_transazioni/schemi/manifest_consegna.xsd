@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns="http://www.openspcoop2.org/web/monitor/transazioni/core/manifest_consegna"
+    targetNamespace="http://www.openspcoop2.org/web/monitor/transazioni/core/manifest_consegna">
+    
+    <!-- ********* MANIFEST ************* -->
+    
+    <xsd:element name="consegna" type="consegna_type"> </xsd:element>
+    
+    <xsd:complexType name="consegna_type">
+        <xsd:sequence>
+ 
+            <!-- Esito -->
+            <xsd:element name="esito" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                	<xsd:sequence>
+	                	<xsd:element name="dettaglio-esito" minOccurs="0" maxOccurs="1">
+			                <xsd:complexType>
+			                    <xsd:simpleContent>
+			                        <xsd:extension base="xsd:string">
+			                            <xsd:attribute name="codice" type="xsd:integer" use="optional"/>
+			                        </xsd:extension>
+			                    </xsd:simpleContent>
+			                </xsd:complexType>
+			            </xsd:element>
+                	</xsd:sequence>
+                    <xsd:attribute name="consegna-terminata" type="xsd:boolean" use="optional" />
+                    <xsd:attribute name="data-messaggio-scaduto" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="consegna-trasparente" type="xsd:boolean" use="optional" />
+                    <xsd:attribute name="consegna-integration-manager" type="xsd:boolean" use="optional" />
+                </xsd:complexType>
+            </xsd:element>
+                        
+            <!-- Tempi di latenza -->
+            <xsd:element name="tempi-attraversamento" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta-accettazione" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="richiesta-uscita" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="risposta-accettazione" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="risposta-ingresso" type="xsd:dateTime" use="optional"/>
+                    <xsd:attribute name="latenza-servizio" type="xsd:long" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <!-- Dimensione messaggi gestiti -->
+            <xsd:element name="dimensione-messaggi" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="richiesta-uscita" type="xsd:long" use="optional"/>
+                    <xsd:attribute name="risposta-ingresso" type="xsd:long" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+            
+            <xsd:element name="dati-consegna" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                	<xsd:sequence>
+			            <xsd:element name="ultimo-errore" minOccurs="0" maxOccurs="1">
+			                <xsd:complexType>
+			                	<xsd:sequence>
+				                	<xsd:element name="dettaglio-esito" minOccurs="0" maxOccurs="1">
+						                <xsd:complexType>
+						                    <xsd:simpleContent>
+						                        <xsd:extension base="xsd:string">
+						                            <xsd:attribute name="codice" type="xsd:integer" use="optional"/>
+						                        </xsd:extension>
+						                    </xsd:simpleContent>
+						                </xsd:complexType>
+						            </xsd:element>
+						            <xsd:element name="dettaglio" type="xsd:string" minOccurs="0" maxOccurs="1"/>
+			                	</xsd:sequence>
+			                    <xsd:attribute name="connettore" type="xsd:string" use="optional"/>
+			                    <xsd:attribute name="codice-risposta" type="xsd:string" use="optional"/>   
+			                    <xsd:attribute name="data" type="xsd:dateTime" use="optional"/> 
+			                    <xsd:attribute name="cluster-id" type="xsd:string" use="optional"/>                
+			                </xsd:complexType>
+			            </xsd:element> 
+                	</xsd:sequence>
+                    <xsd:attribute name="connettore" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="codice-risposta" type="xsd:string" use="optional"/>   
+                    <xsd:attribute name="data-primo-tentativo" type="xsd:dateTime" use="optional"/> 
+                    <xsd:attribute name="numero-tentativi" type="xsd:integer" use="optional"/>
+                    <xsd:attribute name="cluster-id-consegna" type="xsd:string" use="optional"/>                
+                </xsd:complexType>
+            </xsd:element> 
+            
+            <xsd:element name="dati-integration-manager" minOccurs="0" maxOccurs="1">
+                <xsd:complexType>
+                    <xsd:attribute name="data-primo-prelievo" type="xsd:dateTime" use="optional"/> 
+                    <xsd:attribute name="data-prelievo" type="xsd:dateTime" use="optional"/> 
+                    <xsd:attribute name="numero-prelievi" type="xsd:integer" use="optional"/>
+                    <xsd:attribute name="cluster-id-prelievo" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="data-eliminazione" type="xsd:dateTime" use="optional"/> 
+                    <xsd:attribute name="cluster-id-eliminazione" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element> 
+        </xsd:sequence>
+        <xsd:attribute name="id-transazione" type="xsd:string" use="required"/>
+        <xsd:attribute name="servizio-applicativo-erogatore" type="xsd:string" use="required"/>
+        <xsd:attribute name="nome-connettore" type="xsd:string" use="optional"/>
+        <xsd:attribute name="data-registrazione" type="xsd:dateTime" use="required"/>
+        <xsd:attribute name="identificativo-messaggio" type="xsd:string" use="optional"/>
+        <xsd:attribute name="cluster-id-in-coda" type="xsd:string" use="optional"/>
+    </xsd:complexType>
+    
+</xsd:schema>

@@ -136,7 +136,11 @@ public class Utilities {
 		return _generateIDDateTime(IDUtilities.generateDateTime_ISO_8601_TZ(type, format, syncMs), clusterIdSeparator, clusterIdAsPrefix);
 	}
 	private static String _generateIDDateTime(String timeId, String clusterIdSeparator, boolean clusterIdAsPrefix) throws ProtocolException {
-		Integer prefix = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		Integer prefix = null;
+		String prefixSop2 = OpenSPCoop2Properties.getInstance().getClusterIdNumerico();
+		if(prefixSop2!=null) {
+			prefix = Integer.valueOf(prefixSop2);
+		}
 		String prefixS = "00";
 		if(prefix!=null) {
 			if(prefix<10) {

@@ -113,6 +113,8 @@ public class CostantiExport {
 	public static final String KEY_COL_PROFILO_COLLABORAZIONE_PROT = "colProfColl";
 	public static final String KEY_COL_ID_COLLABORAZIONE = "colIDCollaborazione";
 	public static final String KEY_COL_URI_ACCORDO_SERVIZIO = "colUriAccordoServizio";
+	public static final String KEY_COL_TIPO_API = "colTipoApi";
+	public static final String KEY_COL_TAGS = "colTags";
 	public static final String KEY_COL_SERVIZIO = "colServ";
 	public static final String KEY_COL_VERSIONE_SERVIZIO = "colVersioneServ";
 	public static final String KEY_COL_AZIONE = "colAzione";
@@ -189,6 +191,8 @@ public class CostantiExport {
 	public static final String LABEL_COL_PROFILO_COLLABORAZIONE_PROT = "Profilo Collaborazione";
 	public static final String LABEL_COL_ID_COLLABORAZIONE = "ID Collaborazione";
 	public static final String LABEL_COL_URI_ACCORDO_SERVIZIO = "Uri API";
+	public static final String LABEL_COL_TIPO_API = "Tipo API";
+	public static final String LABEL_COL_TAGS = "Tags";
 	public static final String LABEL_COL_SERVIZIO = "API";
 	public static final String LABEL_COL_VERSIONE_SERVIZIO = "Versione API";
 	public static final String LABEL_COL_AZIONE = "Azione";

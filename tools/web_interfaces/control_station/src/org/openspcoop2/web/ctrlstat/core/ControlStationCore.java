@@ -1631,6 +1631,9 @@ public class ControlStationCore {
 				}
 			}
 			
+			// Verifica Consistenza dei Protocolli
+			verificaConsistenzaProtocolli(this);
+			
 		}catch(Exception e){
 			ControlStationCore.logError("Errore di inizializzazione: "+e.getMessage(), e);
 			throw e;
@@ -4396,9 +4399,79 @@ public class ControlStationCore {
 
 
 
+	/* ************** VERIFICA CONSISTENZA PROTOCOLLI ***************** */
 
-
-
+	private static Boolean verificaConsistenzaProtocolli = null;
+	
+	private static void verificaConsistenzaProtocolli(ControlStationCore core) {
+		if(verificaConsistenzaProtocolli==null) {
+			_verificaConsistenzaProtocolli(core);
+		}
+	}
+	private synchronized static void _verificaConsistenzaProtocolli(ControlStationCore core) {
+		if(verificaConsistenzaProtocolli==null) {
+			StringBuilder verificaConfigurazioneProtocolliBuilder = new StringBuilder();
+			boolean configurazioneCorretta = core.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolliBuilder); 
+			
+			if(!configurazioneCorretta) {
+				log.error("il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione del Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolliBuilder.toString());
+			}
+			
+			verificaConsistenzaProtocolli = true;
+		}
+	}
+	
+	public boolean verificaConfigurazioneProtocolliRispettoSoggettiDefault(StringBuilder error) {
+		
+		try {
+			ProtocolFactoryManager protocolFactoryManager = ProtocolFactoryManager.getInstance();
+			
+			// Prima verifico che per ogni protocollo a bordo dell'archivio console vi sia il corrispettivo soggetto di default
+			// Localizza eventuali protocolli aggiunti senza avere aggiunto anche il sql relativo al soggetto nel database
+			Enumeration<String> protocolNames = protocolFactoryManager.getProtocolFactories().keys();
+			while (protocolNames.hasMoreElements()) {
+				String protocolName = (String) protocolNames.nextElement();
+				IDSoggetto idSoggetto = this.getSoggettoOperativoDefault(null, protocolName);
+				if(idSoggetto==null || idSoggetto.getTipo()==null || idSoggetto.getNome()==null) {
+					if(error.length()>0) {
+						error.append("\n");
+					}
+					error.append("Configurazione non corretta; non è stato rilevato un soggetto di default per il protocollo '"+protocolName+"'.");
+					
+				}
+			}
+			
+			if(error.length()>0) {
+				error.append("\n");
+				error.append("Se sono stati aggiunti nuovi profili di interoperabilità rispetto alla precedente installazione, devono essere eseguiti gli script sql generati dall'installer 'dist/sql/profili/GovWay_upgrade_initialize-profilo-<new-profile>.sql");
+			}
+			
+			if(error.length()<=0) {
+				// se non vi sono stati errori, recupero tutti i tipi di soggetto di default dal database e verifico che vi sia il protocollo nell'archivio
+				// Localizza eventuali aggiornamenti dove sono stati inseriti meno protocolli di quante configurazioni sono presenti sul database.
+				List<IDSoggetto> soggettiDefault = this.getSoggettiDefault();
+				if(soggettiDefault==null || soggettiDefault.isEmpty()) {
+					error.append("Configurazione non corretta; non è stato rilevato alcun soggetto di default");
+				}
+				else {
+					List<String> tipi_con_protocolli_censiti = protocolFactoryManager.getOrganizationTypesAsList();
+					for (IDSoggetto idSoggeto : soggettiDefault) {
+						if(!tipi_con_protocolli_censiti.contains(idSoggeto.getTipo())) {
+							error.append("Configurazione non corretta; Non esiste un protocollo che possa gestire il soggetto di default '"+idSoggeto.toString()+"' rilevato.");
+						}
+					}
+				}
+			}
+			
+		}catch(Exception e) {
+			if(error.length()>0) {
+				error.append("\n");
+			}
+			error.append("Verifica fallita; "+e.getMessage());
+		}
+		
+		return error.length()<=0;
+	}
 
 
 
@@ -5712,6 +5785,27 @@ public class ControlStationCore {
 			driver = new DriverControlStationDB(con, null, this.tipoDB);
 
 			return driver.getDriverRegistroServiziDB().soggettiRegistroList(superuser, ricerca);
+
+		} catch (Exception e) {
+			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);
+			throw new DriverRegistroServiziException("[ControlStationCore::" + nomeMetodo + "] Error :" + e.getMessage(),e);
+		} finally {
+			ControlStationCore.dbM.releaseConnection(con);
+		}
+	}
+	
+	public List<IDSoggetto> getSoggettiDefault() throws DriverRegistroServiziException {
+		Connection con = null;
+		String nomeMetodo = "getSoggettiDefault";
+		DriverControlStationDB driver = null;
+
+		try {
+			// prendo una connessione
+			con = ControlStationCore.dbM.getConnection();
+			// istanzio il driver
+			driver = new DriverControlStationDB(con, null, this.tipoDB);
+
+			return driver.getDriverRegistroServiziDB().getSoggettiDefault();
 
 		} catch (Exception e) {
 			ControlStationCore.log.error("[ControlStationCore::" + nomeMetodo + "] Exception :" + e.getMessage(), e);

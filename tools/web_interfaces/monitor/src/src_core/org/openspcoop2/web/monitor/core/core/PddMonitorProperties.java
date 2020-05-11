@@ -198,6 +198,9 @@ public class PddMonitorProperties {
 	public boolean isAttivoTransazioniExportHeader() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableHeaderInfo", true, true));
 	}
+	public boolean isAttivoTransazioniExportConsegneMultiple() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.enableConsegneMultipleInfo", true, true));
+	}
 	public boolean isAttivoTransazioniExportHeaderAsProperties() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("transazioni.export.headers.asProperties", true, true));
 	}

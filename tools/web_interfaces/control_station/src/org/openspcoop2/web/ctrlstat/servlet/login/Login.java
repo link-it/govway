@@ -116,8 +116,17 @@ public final class Login extends Action {
 			Search ricerca = (Search) ServletUtils.getSearchObjectFromSession(session, Search.class);
 			loginHelper.initializeFilter(ricerca);
 			
-			if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
-				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",Costanti.MESSAGE_TYPE_INFO);
+			// Boolean verifico configurazione
+			StringBuilder verificaConfigurazioneProtocolli = new StringBuilder();
+			boolean configurazioneCorretta = loginCore.verificaConfigurazioneProtocolliRispettoSoggettiDefault(verificaConfigurazioneProtocolli); 
+			
+			if(!configurazioneCorretta) {
+				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo di consistenza tra Profili di Interoperabilità attivati e la configurazione sul Gateway ha rilevato inconsistenze: \n"+verificaConfigurazioneProtocolli.toString(),
+						Costanti.MESSAGE_TYPE_ERROR);
+			}
+			else if(GestoreConsistenzaDati.gestoreConsistenzaDatiEseguitoConErrore){
+				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO+"<br/><br/><b>Attenzione</b>: il controllo sulla consistenza dei dati è terminato con errore; esaminare i log per maggiori dettagli",
+						Costanti.MESSAGE_TYPE_INFO);
 			}
 			else{
 				pd.setMessage(LoginCostanti.LABEL_LOGIN_EFFETTUATO_CON_SUCCESSO,Costanti.MESSAGE_TYPE_INFO_SINTETICO);
