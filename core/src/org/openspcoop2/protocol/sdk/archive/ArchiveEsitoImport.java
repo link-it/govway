@@ -45,6 +45,11 @@ public class ArchiveEsitoImport {
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> porteDelegate = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> porteApplicative = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> porteDelegate_initMapping = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> porteApplicative_initMapping = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> mappingFruizioni = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	private ArchiveSortedMap<ArchiveEsitoImportDetail> mappingErogazioni = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
+	
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiCooperazione = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiServizioParteComune = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
 	private ArchiveSortedMap<ArchiveEsitoImportDetail> accordiServizioComposto = new ArchiveSortedMap<ArchiveEsitoImportDetail>();
@@ -93,7 +98,23 @@ public class ArchiveEsitoImport {
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPorteApplicative() {
 		return this.porteApplicative;
 	}
+	
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPorteDelegate_initMapping() {
+		return this.porteDelegate_initMapping;
+	}
 
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getPorteApplicative_initMapping() {
+		return this.porteApplicative_initMapping;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getMappingFruizioni() {
+		return this.mappingFruizioni;
+	}
+
+	public ArchiveSortedMap<ArchiveEsitoImportDetail> getMappingErogazioni() {
+		return this.mappingErogazioni;
+	}
+	
 	public ArchiveSortedMap<ArchiveEsitoImportDetail> getAccordiCooperazione() {
 		return this.accordiCooperazione;
 	}

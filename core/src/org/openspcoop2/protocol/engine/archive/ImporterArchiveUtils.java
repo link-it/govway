@@ -84,6 +84,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -421,12 +423,23 @@ public class ImporterArchiveUtils {
 			if(listMappingErogazionePA.size()>0){
 				for (int i = 0; i < listMappingErogazionePA.size(); i++) {
 					MappingErogazionePortaApplicativa mapping = listMappingErogazionePA.get(i);
+					ArchiveMappingErogazione archiveMappingErogazione = new ArchiveMappingErogazione(mapping);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveMappingErogazione);
 					try{
-						this.importerEngine.createMappingErogazione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+						if(this.importerEngine.existsMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa())) {
+							detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+						}
+						else {
+							this.importerEngine.createMappingErogazione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+							detail.setState(ArchiveStatoImport.CREATED);
+						}
 					}catch(Exception e){
 						this.log.error("Errore durante la creazione del mapping di erogazione nome ["+mapping.getNome()+"] deafult ["+mapping.isDefault()+"] del servizio ["+mapping.getIdServizio()+
 								"] verso la porta applicativa ["+mapping.getIdPortaApplicativa().getNome()+"]: "+e.getMessage(),e);
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
 					}
+					esito.getMappingErogazioni().add(detail);
 				}
 			}
 			
@@ -434,12 +447,23 @@ public class ImporterArchiveUtils {
 			if(listMappingFruizionePD.size()>0){
 				for (int i = 0; i < listMappingFruizionePD.size(); i++) {
 					MappingFruizionePortaDelegata mapping = listMappingFruizionePD.get(i);
+					ArchiveMappingFruizione archiveMappingFruizione = new ArchiveMappingFruizione(mapping);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveMappingFruizione);
 					try{
-						this.importerEngine.createMappingFruizione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
+						if(this.importerEngine.existsMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata())) {
+							detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
+						}
+						else {
+							this.importerEngine.createMappingFruizione(mapping.getNome(), mapping.getDescrizione(), mapping.isDefault(), mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());
+							detail.setState(ArchiveStatoImport.CREATED);
+						}
 					}catch(Exception e){
 						this.log.error("Errore durante la creazione del mapping di fruizione nome ["+mapping.getNome()+"] deafult ["+mapping.isDefault()+"] del servizio ["+mapping.getIdServizio()+
 								"] verso la porta delegata ["+mapping.getIdPortaDelegata().getNome()+"] da parte del soggetto ["+mapping.getIdFruitore()+"]: "+e.getMessage(),e);
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
 					}
+					esito.getMappingFruizioni().add(detail);
 				}
 			}
 			
@@ -529,18 +553,64 @@ public class ImporterArchiveUtils {
 			
 			// Creazione mapping in caso di importazione package creati prima dell'introduzione dei mapping fruizione ed erogazione
 			if(archive.getPorteApplicative().size()>0){
-				List<PortaApplicativa> listPA = new ArrayList<>();
 				for (int i = 0; i < archive.getPorteApplicative().size(); i++) {
-					listPA.add(archive.getPorteApplicative().get(i).getPortaApplicativa());
+					
+					ArchiveEsitoImportDetail detailEsitoPortaApplicativaPrecedente = null;
+					if(esito.getPorteApplicative().size()>i) {
+						detailEsitoPortaApplicativaPrecedente = esito.getPorteApplicative().get(i);
+					}
+					boolean init = true;
+					if(detailEsitoPortaApplicativaPrecedente!=null) {
+						if(ArchiveStatoImport.ERROR.equals(detailEsitoPortaApplicativaPrecedente.getState())){
+							init = false;
+						}
+					}
+					
+					ArchivePortaApplicativa archivePortaApplicativa = archive.getPorteApplicative().get(i);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaApplicativa);
+					try{
+						if(init) {
+							List<PortaApplicativa> listPA = new ArrayList<>();
+							listPA.add(archive.getPorteApplicative().get(i).getPortaApplicativa());
+							this.importerEngine.initMappingErogazione(this.log,listPA);
+						}
+						detail.setState(ArchiveStatoImport.UPDATED); // esito non gestito ma ci vuole sempre per corrispondere alla lista degli esiti della PA
+					}catch(Exception e){
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
+					}
+					esito.getPorteApplicative_initMapping().add(detail);
 				}
-				this.importerEngine.initMappingErogazione(this.log,listPA);
 			}
 			if(archive.getPorteDelegate().size()>0){
-				List<PortaDelegata> listPD = new ArrayList<>();
 				for (int i = 0; i < archive.getPorteDelegate().size(); i++) {
-					listPD.add(archive.getPorteDelegate().get(i).getPortaDelegata());
+					
+					ArchiveEsitoImportDetail detailEsitoPortaDelegataPrecedente = null;
+					if(esito.getPorteApplicative().size()>i) {
+						detailEsitoPortaDelegataPrecedente = esito.getPorteDelegate().get(i);
+					}
+					boolean init = true;
+					if(detailEsitoPortaDelegataPrecedente!=null) {
+						if(ArchiveStatoImport.ERROR.equals(detailEsitoPortaDelegataPrecedente.getState())){
+							init = false;
+						}
+					}
+					
+					ArchivePortaDelegata archivePortaDelegata = archive.getPorteDelegate().get(i);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archivePortaDelegata);
+					try{
+						if(init) {
+							List<PortaDelegata> listPD = new ArrayList<>();
+							listPD.add(archive.getPorteDelegate().get(i).getPortaDelegata());
+							this.importerEngine.initMappingFruizione(this.log,listPD);
+						}
+						detail.setState(ArchiveStatoImport.UPDATED); // esito non gestito ma ci vuole sempre per corrispondere alla lista degli esiti della PA
+					}catch(Exception e){
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
+					}
+					esito.getPorteDelegate_initMapping().add(detail);
 				}
-				this.importerEngine.initMappingFruizione(this.log,listPD);
 			}
 			
 			return esito;
@@ -1920,6 +1990,18 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica)){
+					
+					List<IDPortaApplicativa> idPACheck = this.importerEngine.getIDPorteApplicativeAssociateErogazione(idAccordoServizioParteSpecifica);
+					// gestione portaApplicativaAssociata
+					if(archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()!=null &&
+							archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate().size()>0){
+						for (MappingErogazionePortaApplicativa mappingPortaApplicativaAssociata : archiveAccordoServizioParteSpecifica.getMappingPorteApplicativeAssociate()) {
+							if(idPACheck==null || idPACheck.size()<=0 || (idPACheck.contains(mappingPortaApplicativaAssociata.getIdPortaApplicativa())==false)){
+								listMappingErogazionePA.add(mappingPortaApplicativaAssociata);
+							}	
+						}
+					}
+					
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
@@ -2188,6 +2270,18 @@ public class ImporterArchiveUtils {
 			// --- check esistenza ---
 			if(this.updateAbilitato==false){
 				if(old!=null){
+					
+					// gestione portaDelegataAssociata
+					if(archiveFruitore.getMappingPorteDelegateAssociate()!=null &&
+							archiveFruitore.getMappingPorteDelegateAssociate().size()>0){
+						List<IDPortaDelegata> idPDCheck = this.importerEngine.getIDPorteDelegateAssociateFruizione(archiveFruitore.getIdAccordoServizioParteSpecifica(), archiveFruitore.getIdSoggettoFruitore());
+						for (MappingFruizionePortaDelegata mappingPortaDelegataAssociata : archiveFruitore.getMappingPorteDelegateAssociate()) {
+							if(idPDCheck==null || idPDCheck.size()<=0 || idPDCheck.contains(mappingPortaDelegataAssociata.getIdPortaDelegata())==false){
+								listMappingFruizionePD.add(mappingPortaDelegataAssociata);
+							}	
+						}
+					}
+					
 					detail.setState(ArchiveStatoImport.UPDATE_NOT_ENABLED);
 					return;
 				}
@@ -2377,6 +2471,16 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			if(archivePortaDelegata.getPortaDelegata().getServizioApplicativoList()!=null && archivePortaDelegata.getPortaDelegata().sizeServizioApplicativoList()>0){
+				for (int i = 0; i < archivePortaDelegata.getPortaDelegata().sizeServizioApplicativoList(); i++) {
+					IDServizioApplicativo idSaAuth = new IDServizioApplicativo();
+					idSaAuth.setIdSoggettoProprietario(idSoggettoProprietario);
+					idSaAuth.setNome(archivePortaDelegata.getPortaDelegata().getServizioApplicativo(i).getNome());
+					if(this.importerEngine.existsServizioApplicativo(idSaAuth) == false ){
+						throw new Exception("Applicativo ["+idSaAuth+"] indicato nel controllo degli accessi non esistente");
+					}	
+				}
+			}
 			
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2552,6 +2656,37 @@ public class ImporterArchiveUtils {
 					IDScope idScope = new IDScope(archivePortaApplicativa.getPortaApplicativa().getScope().getScope(i).getNome());
 					if(this.importerEngine.existsScope(idScope) == false ){
 						throw new Exception("Scope ["+idScope.getNome()+"] associato non esiste");
+					}	
+				}
+			}
+			if(archivePortaApplicativa.getPortaApplicativa().getSoggetti()!=null && archivePortaApplicativa.getPortaApplicativa().getSoggetti().sizeSoggettoList()>0){
+				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getSoggetti().sizeSoggettoList(); i++) {
+					IDSoggetto idSoggettoAuth = new IDSoggetto(archivePortaApplicativa.getPortaApplicativa().getSoggetti().getSoggetto(i).getTipo(),
+							archivePortaApplicativa.getPortaApplicativa().getSoggetti().getSoggetto(i).getNome());
+					if(this.importerEngine.existsSoggettoRegistro(idSoggettoAuth) == false ){
+						throw new Exception("Soggetto ["+idSoggettoAuth+"] indicato nel controllo degli accessi non esistente");
+					}	
+				}
+			}
+			if(archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati()!=null && archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0){
+				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); i++) {
+					IDSoggetto idSoggettoAuth = new IDSoggetto(archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().getServizioApplicativo(i).getTipoSoggettoProprietario(),
+							archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().getServizioApplicativo(i).getNomeSoggettoProprietario());
+					IDServizioApplicativo idSaAuth = new IDServizioApplicativo();
+					idSaAuth.setIdSoggettoProprietario(idSoggettoAuth);
+					idSaAuth.setNome(archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().getServizioApplicativo(i).getNome());
+					if(this.importerEngine.existsServizioApplicativo(idSaAuth) == false ){
+						throw new Exception("Applicativo ["+idSaAuth+"] indicato nel controllo degli accessi non esistente");
+					}	
+				}
+			}
+			if(archivePortaApplicativa.getPortaApplicativa().getServizioApplicativoList()!=null && archivePortaApplicativa.getPortaApplicativa().sizeServizioApplicativoList()>0){
+				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().sizeServizioApplicativoList(); i++) {
+					IDServizioApplicativo idSaErogatore = new IDServizioApplicativo();
+					idSaErogatore.setIdSoggettoProprietario(idSoggettoErogatore);
+					idSaErogatore.setNome(archivePortaApplicativa.getPortaApplicativa().getServizioApplicativo(i).getNome());
+					if(this.importerEngine.existsServizioApplicativo(idSaErogatore) == false ){
+						throw new Exception("Servizio Applicativo ["+idSaErogatore+"] (erogatore) non esistente");
 					}	
 				}
 			}

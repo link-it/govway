@@ -123,11 +123,10 @@ A tale scopo sarà necessario:
                               
 
    Devono essere elencati inserendo al posto di #USERNAMEGW# e
-   #PASSWORDGW# le credenziali utilizzate in precedenza nel file:
+   #PASSWORDGW# le credenziali utilizzate in precedenza nel file 'govway_local.properties', proprietà:
 
    ::
-
-      govway_local.properties, proprietà
+ 
       org.openspcoop2.pdd.check.readJMXResources.username e
       org.openspcoop2.pdd.check.readJMXResources.password
 

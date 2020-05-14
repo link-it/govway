@@ -1,3 +1,13 @@
+2020-05-14  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-998
+	Importando un'archivio contenente una erogazione in cui è stato registrato nel controllo degli accessi un applicativo non esistente 
+	ne sulla base dati di destinazione ne sull'archivio che si sta importando, l'operazione termina con un errrore inatteso.
+	Aggiungendo l'applicativo mancante e poi procedendo a re-importare l'archivio l'operazione termina correttamente ma viene generata una erogazione 
+	con stato disabilitato contenente erroneamente due gruppi (nell'erogazione originale esisteva solamente il gruppo predefinito).
+	Entrambe le problematiche sono stati risolte.
+
 2020-05-11  Andrea Poli <apoli@link.it>
 
 	* [GovWayCore, GovWayConsole, GovWayMonitor]

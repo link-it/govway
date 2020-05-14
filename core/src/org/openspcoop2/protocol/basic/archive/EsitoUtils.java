@@ -34,6 +34,8 @@ import org.openspcoop2.core.id.IDPortaDelegata;
 import org.openspcoop2.core.id.IDServizio;
 import org.openspcoop2.core.id.IDServizioApplicativo;
 import org.openspcoop2.core.id.IDSoggetto;
+import org.openspcoop2.core.mapping.MappingErogazionePortaApplicativa;
+import org.openspcoop2.core.mapping.MappingFruizionePortaDelegata;
 import org.openspcoop2.core.registry.driver.IDAccordoCooperazioneFactory;
 import org.openspcoop2.core.registry.driver.IDAccordoFactory;
 import org.openspcoop2.core.registry.driver.IDServizioFactory;
@@ -51,6 +53,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazio
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveIdCorrelazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -59,6 +63,7 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveScope;
 import org.openspcoop2.protocol.sdk.archive.ArchiveServizioApplicativo;
 import org.openspcoop2.protocol.sdk.archive.ArchiveSoggetto;
 import org.openspcoop2.protocol.sdk.archive.ArchiveTokenPolicy;
+import org.openspcoop2.protocol.sdk.constants.ArchiveStatoImport;
 
 /**
  * EsitoUtils
@@ -165,6 +170,11 @@ public class EsitoUtils {
 		
 		StringBuilder bfEsito = new StringBuilder();
 		
+		String labelNonErrore = "non importato";
+		if(!importOperation) {
+			labelNonErrore = "non eliminato";
+		}
+		
 		// Pdd
 		if(archive.getPdd().size()>0){
 			bfEsito.append("Gateway (").append(archive.getPdd().size()).append(")\n");
@@ -176,7 +186,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomePdd).append("] ");
 				serializeStato(archivePdd, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -196,7 +206,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomeGruppo).append("] ");
 				serializeStato(archiveGruppo, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -216,7 +226,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomeRuolo).append("] ");
 				serializeStato(archiveRuolo, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -236,7 +246,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomeScope).append("] ");
 				serializeStato(archiveScope, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -256,7 +266,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(idSoggetto.toString()).append("] ");
 				serializeStato(archiveSoggetto, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -277,7 +287,7 @@ public class EsitoUtils {
 						append("_").append(idServizioApplicativo.getNome()).append("] ");
 				serializeStato(archiveServizioApplicativo, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -298,7 +308,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoCooperazione, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -319,7 +329,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioParteComune, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -340,7 +350,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -361,7 +371,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioComposto, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -383,7 +393,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(uriAccordo).append("] ");
 				serializeStato(archiveAccordoServizioParteSpecifica, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -405,7 +415,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- ["+idFruitore+"] -> [").append(uriAccordo).append("] ");
 				serializeStato(archiveFruitore, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -426,9 +436,26 @@ public class EsitoUtils {
 				bfEsito.append("\t- ["+idProprietario+"]["+idPortaDelegata.getNome()+"] ");
 				serializeStato(archivePortaDelegata, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
+			
+			// Si registrano solo gli errori per il check mapping (ci saranno solo in createUpdate)
+			if(importOperation) {
+				try{
+					ArchiveEsitoImportDetail archivePortaDelegata = archive.getPorteDelegate_initMapping().get(i);
+					if(ArchiveStatoImport.ERROR.equals(archivePortaDelegata.getState())){
+						IDPortaDelegata idPortaDelegata = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdPortaDelegata();
+						IDSoggetto idProprietario = ((ArchivePortaDelegata)archivePortaDelegata.getArchiveObject()).getIdSoggettoProprietario();
+						bfEsito.append("\t- Fruizione ["+idProprietario+"]["+idPortaDelegata.getNome()+"] ");
+						serializeStato(archivePortaDelegata, bfEsito, importOperation);
+						bfEsito.append("\n");
+					}
+				}catch(Exception e){
+					bfEsito.append("\t- [").append((i+1)).append("] fruizione non creata: ").append(e.getMessage());
+					bfEsito.append("\n");
+				}
+			}
 		}
 		if(archive.getPorteDelegate().size()>0){
 			bfEsito.append("\n");	
@@ -447,14 +474,85 @@ public class EsitoUtils {
 				bfEsito.append("\t- ["+idProprietario+"]["+idPortaApplicativa.getNome()+"] ");
 				serializeStato(archivePortaApplicativa, bfEsito, importOperation);
 			}catch(Exception e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
+			
+			// Si registrano solo gli errori per il check mapping (ci saranno solo in createUpdate)
+			if(importOperation) {
+				try{
+					ArchiveEsitoImportDetail archivePortaApplicativa = archive.getPorteApplicative_initMapping().get(i);
+					if(ArchiveStatoImport.ERROR.equals(archivePortaApplicativa.getState())){
+						IDPortaApplicativa idPortaApplicativa = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdPortaApplicativa();
+						IDSoggetto idProprietario = ((ArchivePortaApplicativa)archivePortaApplicativa.getArchiveObject()).getIdSoggettoProprietario();
+						bfEsito.append("\t- Erogazione ["+idProprietario+"]["+idPortaApplicativa.getNome()+"] ");
+						serializeStato(archivePortaApplicativa, bfEsito, importOperation);
+						bfEsito.append("\n");
+					}
+				}catch(Exception e){
+					bfEsito.append("\t- [").append((i+1)).append("] erogazione non creata: ").append(e.getMessage());
+					bfEsito.append("\n");
+				}
+			}
 		}
 		if(archive.getPorteApplicative().size()>0){
 			bfEsito.append("\n");	
 		}
 		
+		
+		
+		
+		// Mapping Fruizioni
+		if(archive.getMappingFruizioni().size()>0){
+			bfEsito.append("Fruizioni (").append(archive.getMappingFruizioni().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getMappingFruizioni().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveFruizione = archive.getMappingFruizioni().get(i);
+				MappingFruizionePortaDelegata mapping = ((ArchiveMappingFruizione)archiveFruizione.getArchiveObject()).getMappingFruizionePortaDelegata();
+				String nome = (mapping.getDescrizione()!=null && !"".equals(mapping.getDescrizione())) ? mapping.getDescrizione() : mapping.getNome();
+				IDServizio idServizio = mapping.getIdServizio();
+				IDSoggetto idFruitore = mapping.getIdFruitore();
+				bfEsito.append("\t- (gruppo:"+nome+") ["+idFruitore+"] -> ["+idServizio+"] ");
+				serializeStato(archiveFruizione, bfEsito, importOperation);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getMappingFruizioni().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		
+		
+		
+		// Mapping Erogazioni
+		if(archive.getMappingErogazioni().size()>0){
+			bfEsito.append("Erogazioni (").append(archive.getMappingErogazioni().size()).append(")\n");
+		}
+		for (int i = 0; i < archive.getMappingErogazioni().size(); i++) {
+			try{
+				ArchiveEsitoImportDetail archiveErogazione = archive.getMappingErogazioni().get(i);
+				MappingErogazionePortaApplicativa mapping = ((ArchiveMappingErogazione)archiveErogazione.getArchiveObject()).getMappingErogazionePortaApplicativa();
+				String nome = (mapping.getDescrizione()!=null && !"".equals(mapping.getDescrizione())) ? mapping.getDescrizione() : mapping.getNome();
+				IDServizio idServizio = mapping.getIdServizio();
+				bfEsito.append("\t- (gruppo:"+nome+") ["+idServizio+"] ");
+				serializeStato(archiveErogazione, bfEsito, importOperation);
+			}catch(Exception e){
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
+			}
+			bfEsito.append("\n");
+		}
+		if(archive.getMappingErogazioni().size()>0){
+			bfEsito.append("\n");	
+		}
+		
+		
+		
+		
+				
 		
 		// Controllo Traffico (Configurazione)
 		if(archive.getControlloTraffico_configurazione()!=null){
@@ -482,7 +580,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveCCPolicy, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -501,7 +599,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveCCPolicy, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -521,7 +619,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveTokenPolicy, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -540,7 +638,7 @@ public class EsitoUtils {
 				bfEsito.append("\t- [").append(nomePolicy).append("] ");
 				serializeStato(archiveTokenPolicy, bfEsito, importOperation);
 			}catch(Throwable e){
-				bfEsito.append("\t- [").append((i+1)).append("] non importato: ").append(e.getMessage());
+				bfEsito.append("\t- [").append((i+1)).append("] "+labelNonErrore+": ").append(e.getMessage());
 			}
 			bfEsito.append("\n");
 		}
@@ -576,6 +674,9 @@ public class EsitoUtils {
 		switch (detail.getState()) {
 		case UPDATE_NOT_ENABLED:
 			bfEsito.append("non importato: già presente (aggiornamento non abilitato)").append(stateDetail);
+			break;
+		case NOT_UPDATABLE:
+			bfEsito.append("già presente (aggiornamento non necessario)").append(stateDetail);
 			break;
 		case IMPORT_POLICY_CONFIG_NOT_ENABLED:
 			bfEsito.append("non importato: opzione '"+LABEL_IMPORT_POLICY+"' non abilitata").append(stateDetail);
@@ -613,6 +714,9 @@ public class EsitoUtils {
 		}
 		switch (detail.getState()) {
 		case UPDATE_NOT_ENABLED:
+			// Stato mai usato per questo oggetto
+			break;
+		case NOT_UPDATABLE:
 			// Stato mai usato per questo oggetto
 			break;
 		case IMPORT_POLICY_CONFIG_NOT_ENABLED:

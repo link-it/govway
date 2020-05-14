@@ -65,6 +65,8 @@ import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetail;
 import org.openspcoop2.protocol.sdk.archive.ArchiveEsitoImportDetailConfigurazione;
 import org.openspcoop2.protocol.sdk.archive.ArchiveFruitore;
 import org.openspcoop2.protocol.sdk.archive.ArchiveGruppo;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingErogazione;
+import org.openspcoop2.protocol.sdk.archive.ArchiveMappingFruizione;
 import org.openspcoop2.protocol.sdk.archive.ArchivePdd;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaApplicativa;
 import org.openspcoop2.protocol.sdk.archive.ArchivePortaDelegata;
@@ -158,12 +160,23 @@ public class DeleterArchiveUtils {
 			if(listMappingErogazionePA.size()>0){
 				for (int i = 0; i < listMappingErogazionePA.size(); i++) {
 					MappingErogazionePortaApplicativa mapping = listMappingErogazionePA.get(i);
+					ArchiveMappingErogazione archiveMappingErogazione = new ArchiveMappingErogazione(mapping);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveMappingErogazione);
 					try{
-						this.importerEngine.deleteMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+						if(this.importerEngine.existsMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa())) {
+							this.importerEngine.deleteMappingErogazione(mapping.getIdServizio(), mapping.getIdPortaApplicativa());
+							detail.setState(ArchiveStatoImport.DELETED);
+						}
+						else {
+							detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+						}
 					}catch(Exception e){
 						this.log.error("Errore durante l'eliminazione del mapping di erogazione del servizio ["+mapping.getIdServizio()+
 								"] verso la porta applicativa ["+mapping.getIdPortaApplicativa().getNome()+"]: "+e.getMessage(),e);
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
 					}
+					esito.getMappingErogazioni().add(detail);
 				}
 			}
 			
@@ -172,12 +185,23 @@ public class DeleterArchiveUtils {
 			if(listMappingFruizionePD.size()>0){
 				for (int i = 0; i < listMappingFruizionePD.size(); i++) {
 					MappingFruizionePortaDelegata mapping = listMappingFruizionePD.get(i);
+					ArchiveMappingFruizione archiveMappingFruizione = new ArchiveMappingFruizione(mapping);
+					ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveMappingFruizione);
 					try{
-						this.importerEngine.deleteMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());					
+						if(this.importerEngine.existsMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata())) {
+							this.importerEngine.deleteMappingFruizione(mapping.getIdServizio(), mapping.getIdFruitore(), mapping.getIdPortaDelegata());	
+							detail.setState(ArchiveStatoImport.DELETED);
+						}
+						else {
+							detail.setState(ArchiveStatoImport.DELETED_NOT_EXISTS);
+						}
 					}catch(Exception e){
 						this.log.error("Errore durante l'eliminazione del mapping di fruizione del servizio ["+mapping.getIdServizio()+
 								"] verso la porta delegata ["+mapping.getIdPortaDelegata().getNome()+"] da parte del soggetto ["+mapping.getIdFruitore()+"]: "+e.getMessage(),e);
+						detail.setState(ArchiveStatoImport.ERROR);
+						detail.setException(e);
 					}
+					esito.getMappingFruizioni().add(detail);
 				}
 			}
 			

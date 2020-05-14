@@ -351,7 +351,7 @@ public class DBMappingUtils {
 			stmt.close();
 			
 		}catch(Exception e){
-			throw new CoreException("createMappingErogazione error",e);
+			throw new CoreException("Creazione Mapping Erogazione fallita: "+e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
@@ -1331,7 +1331,7 @@ public class DBMappingUtils {
 			stmt.close();
 			
 		}catch(Exception e){
-			throw new CoreException("createMappingFruizione error",e);
+			throw new CoreException("Creazione Mapping Fruizione fallita: "+e.getMessage(),e);
 		} finally {
 
 			//Chiudo statement and resultset
