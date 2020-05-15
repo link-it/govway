@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +29,31 @@ import javax.validation.Valid;
 public class GruppoEreditaConfigurazione  implements OneOfGruppoConfigurazione {
   
   @Schema(required = true, description = "")
+  private ModalitaConfigurazioneGruppoEnum modalita = null;
+  
+  @Schema(required = true, description = "")
   private String nome = null;
+ /**
+   * Get modalita
+   * @return modalita
+  **/
+  @Override
+@JsonProperty("modalita")
+  @NotNull
+  @Valid
+  public ModalitaConfigurazioneGruppoEnum getModalita() {
+    return this.modalita;
+  }
+
+  public void setModalita(ModalitaConfigurazioneGruppoEnum modalita) {
+    this.modalita = modalita;
+  }
+
+  public GruppoEreditaConfigurazione modalita(ModalitaConfigurazioneGruppoEnum modalita) {
+    this.modalita = modalita;
+    return this;
+  }
+
  /**
    * Get nome
    * @return nome
@@ -55,6 +80,7 @@ public class GruppoEreditaConfigurazione  implements OneOfGruppoConfigurazione {
     StringBuilder sb = new StringBuilder();
     sb.append("class GruppoEreditaConfigurazione {\n");
     
+    sb.append("    modalita: ").append(GruppoEreditaConfigurazione.toIndentedString(this.modalita)).append("\n");
     sb.append("    nome: ").append(GruppoEreditaConfigurazione.toIndentedString(this.nome)).append("\n");
     sb.append("}");
     return sb.toString();

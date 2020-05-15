@@ -1,13 +1,12 @@
 {
     "nome": "GruppoJsonEredita",
-    "modalita": "nuova",
     "azioni": ["DELETE_pet.petId", "GET_pet.petId"],
     "configurazione": {
-		"autenticazione": {
-
-        	"tipo": "https",
-			"opzionale": true
-		}
+	"modalita": "nuova",
+    	"autenticazione": {
+		"tipo": "https",
+		"opzionale": true
+	}
     }
 
 }

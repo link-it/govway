@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,7 +29,31 @@ import javax.validation.Valid;
 public class RateLimitingPolicyIdentificativo  implements OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione {
   
   @Schema(required = true, description = "")
+  private RateLimitingIdentificazionePolicyEnum identificazione = null;
+  
+  @Schema(required = true, description = "")
   private String policy = null;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public RateLimitingIdentificazionePolicyEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public RateLimitingPolicyIdentificativo identificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get policy
    * @return policy
@@ -55,6 +80,7 @@ public class RateLimitingPolicyIdentificativo  implements OneOfRateLimitingPolic
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyIdentificativo {\n");
     
+    sb.append("    identificazione: ").append(RateLimitingPolicyIdentificativo.toIndentedString(this.identificazione)).append("\n");
     sb.append("    policy: ").append(RateLimitingPolicyIdentificativo.toIndentedString(this.policy)).append("\n");
     sb.append("}");
     return sb.toString();

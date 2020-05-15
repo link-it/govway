@@ -1,7 +1,7 @@
 {
-	"ruolo": "allegato",
 	"allegato": {
 		"nome": "AllegatoJsosn1.txt",
-		"documento": "Q29udGVudXRvIGRlbGwnIGFsbGVnYXRvLmpzb24K"
+		"documento": "Q29udGVudXRvIGRlbGwnIGFsbGVnYXRvLmpzb24K",
+		"ruolo": "allegato"
 	}
 }

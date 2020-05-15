@@ -61,10 +61,10 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniApiHelper;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.ErogazioniEnv;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneBasic;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneCustom;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazionePrincipal;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneBasic;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneCustom;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneHttps;
+import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazionePrincipal;
 import org.openspcoop2.core.config.rs.server.model.ApiImplStato;
 import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
@@ -88,6 +88,7 @@ import org.openspcoop2.core.config.rs.server.model.GestioneCors;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRichiesta;
 import org.openspcoop2.core.config.rs.server.model.ListaCorrelazioneApplicativaRisposta;
 import org.openspcoop2.core.config.rs.server.model.ListaRateLimitingPolicy;
+import org.openspcoop2.core.config.rs.server.model.OneOfControlloAccessiAutenticazioneAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
@@ -410,11 +411,11 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			policy.setFiltro(new AttivazionePolicyFiltro());
 			policy.setGroupBy(new AttivazionePolicyRaggruppamento());
 			
-			String modalita = ErogazioniApiHelper.getDataElementModalita(body.getIdentificazione());
+			String modalita = ErogazioniApiHelper.getDataElementModalita(body.getConfigurazione().getIdentificazione());
 			
 			String idPolicy = ErogazioniApiHelper.getIdPolicy(body, env.confCore, env.confHelper);
 			if(idPolicy==null) {
-				switch (body.getIdentificazione()) {
+				switch (body.getConfigurazione().getIdentificazione()) {
 				case POLICY:
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Policy Utente non trovata");
 				case CRITERI:
@@ -1132,86 +1133,97 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 			final FruizioniConfEnv env = new FruizioniConfEnv(context.getServletRequest(), profilo, soggetto, context, erogatore, nome, versione, gruppo, tipoServizio );		
 			final PortaDelegata pd = env.pdCore.getPortaDelegata(env.idPd);
 		
-			final APIImplAutenticazione autRet = new APIImplAutenticazione();
-			autRet.setOpzionale(Helper.statoFunzionalitaConfToBool( pd.getAutenticazioneOpzionale() ));
-			
+			OneOfControlloAccessiAutenticazioneAutenticazione autRet = null;
+			TipoAutenticazioneEnum tipoAutenticazione = null;
 			if ( TipoAutenticazione.toEnumConstant(pd.getAutenticazione()) == null ) {
-				autRet.setTipo(TipoAutenticazioneEnum.CUSTOM);
-				APIImplAutenticazioneConfigurazioneCustom customConfig = new APIImplAutenticazioneConfigurazioneCustom();
-				customConfig.setNome(pd.getAutenticazione());
-				autRet.setConfigurazione(customConfig);
+				tipoAutenticazione = TipoAutenticazioneEnum.CUSTOM;
 			}
-			else {
-				autRet.setTipo( Enums.dualizeMap(Enums.tipoAutenticazioneFromRest).get(TipoAutenticazione.toEnumConstant(pd.getAutenticazione())) );
+			else {		
+				tipoAutenticazione = Enums.dualizeMap(Enums.tipoAutenticazioneFromRest).get(TipoAutenticazione.toEnumConstant(pd.getAutenticazione())) ;
 			}
 						
 			ControlloAccessiAutenticazioneToken token = BaseHelper.evalnull( () -> pd.getGestioneToken().getAutenticazione() ) != null
 					? ErogazioniApiHelper.fromGestioneTokenAutenticazione(pd.getGestioneToken().getAutenticazione())
 					: null;
 			
-			// TODO: Posso fattorizzare e generalizzare su pa\pd.getProprietaAutenticazioneList e condividere uno stesso metodo anche con le erogazioni
-			switch(autRet.getTipo()) {
+			switch(tipoAutenticazione) {
 			case HTTP_BASIC: {
-				APIImplAutenticazioneConfigurazioneBasic config = new APIImplAutenticazioneConfigurazioneBasic();
+				APIImplAutenticazioneBasic authnBasic = new APIImplAutenticazioneBasic();
+				authnBasic.setTipo(tipoAutenticazione);
+				authnBasic.setOpzionale(Helper.statoFunzionalitaConfToBool( pd.getAutenticazioneOpzionale() ));
+				autRet = authnBasic;
 				
 				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION.equals(p.getNome())).findAny();
 				if (prop.isPresent() && prop.get().getValore().equals(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE))
-					config.setForward(false);
+					authnBasic.setForward(false);
 				else
-					config.setForward(true);
-				autRet.setConfigurazione(config);
+					authnBasic.setForward(true);
+				
+				break;
+			}
+			case HTTPS: {
+				APIImplAutenticazioneHttps authnHttps = new APIImplAutenticazioneHttps();
+				authnHttps.setTipo(tipoAutenticazione);
+				authnHttps.setOpzionale(Helper.statoFunzionalitaConfToBool( pd.getAutenticazioneOpzionale() ));
+				autRet = authnHttps;
+				
 				break;
 			}
 			case PRINCIPAL: {
-				APIImplAutenticazioneConfigurazionePrincipal config = new APIImplAutenticazioneConfigurazionePrincipal();				
+			
+				APIImplAutenticazionePrincipal authnPrincipal = new APIImplAutenticazionePrincipal();
+				authnPrincipal.setTipo(tipoAutenticazione);
+				authnPrincipal.setOpzionale(Helper.statoFunzionalitaConfToBool( pd.getAutenticazioneOpzionale() ));
+				autRet = authnPrincipal;
+				
 				TipoAutenticazionePrincipal tipoAuthnPrincipal = pd.getProprietaAutenticazioneList()
 						.stream()
 						.filter( p -> ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE.equals(p.getNome()))
 						.map( p -> TipoAutenticazionePrincipal.toEnumConstant(p.getValore()) )
 						.findAny()
 						.orElse(TipoAutenticazionePrincipal.CONTAINER);
-				config.setTipo(Enums.dualizeMap(Enums.tipoAutenticazionePrincipalFromRest).get(tipoAuthnPrincipal));
+				authnPrincipal.setTipoPrincipal(Enums.dualizeMap(Enums.tipoAutenticazionePrincipalFromRest).get(tipoAuthnPrincipal));
 				
-				switch (config.getTipo()) {
+				switch (authnPrincipal.getTipoPrincipal()) {
 				case CONTAINER:
 				case IP_ADDRESS:
 				case IP_ADDRESS_FORWARDED_FOR:
 					break;
 				case HEADER_BASED: {
 					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
-					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					if (prop.isPresent()) authnPrincipal.setNome(prop.get().getValore());					
 					break;
 				}
 				case FORM_BASED: {
 					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
-					if (prop.isPresent()) config.setNome(prop.get().getValore());					
+					if (prop.isPresent()) authnPrincipal.setNome(prop.get().getValore());					
 					break;
 				}
 				case URL_BASED: {
 					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.PATTERN.equals(p.getNome())).findAny();
-					if (prop.isPresent()) config.setPattern(prop.get().getValore());
+					if (prop.isPresent()) authnPrincipal.setPattern(prop.get().getValore());
 					break;
 				}
 				case TOKEN: {
 					Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.TOKEN_CLAIM.equals(p.getNome())).findAny();
 					if (prop.isPresent()) {
 						if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT.equals(prop.get().getValore())) {
-							config.setToken(TipoAutenticazionePrincipalToken.SUBJECT);
+							authnPrincipal.setToken(TipoAutenticazionePrincipalToken.SUBJECT);
 						}
 						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CLIENT_ID.equals(prop.get().getValore())) {
-							config.setToken(TipoAutenticazionePrincipalToken.CLIENTID);
+							authnPrincipal.setToken(TipoAutenticazionePrincipalToken.CLIENTID);
 						}
 						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_USERNAME.equals(prop.get().getValore())) {
-							config.setToken(TipoAutenticazionePrincipalToken.USERNAME);
+							authnPrincipal.setToken(TipoAutenticazionePrincipalToken.USERNAME);
 						}
 						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_EMAIL.equals(prop.get().getValore())) {
-							config.setToken(TipoAutenticazionePrincipalToken.EMAIL);
+							authnPrincipal.setToken(TipoAutenticazionePrincipalToken.EMAIL);
 						}
 						else if(ParametriAutenticazionePrincipal.TOKEN_CLAIM_CUSTOM.equals(prop.get().getValore())) {
-							config.setToken(TipoAutenticazionePrincipalToken.CUSTOM);
+							authnPrincipal.setToken(TipoAutenticazionePrincipalToken.CUSTOM);
 							
 							Optional<Proprieta> propName = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.NOME.equals(p.getNome())).findAny();
-							if (propName.isPresent()) config.setNome(propName.get().getValore());
+							if (propName.isPresent()) authnPrincipal.setNome(propName.get().getValore());
 						}
 					}
 					break;
@@ -1221,14 +1233,22 @@ public class FruizioniConfigurazioneApiServiceImpl extends BaseImpl implements F
 				// IsForward
 				Optional<Proprieta> prop = pd.getProprietaAutenticazioneList().stream().filter( p -> ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL.equals(p.getNome())).findAny();
 				if (prop.isPresent() && ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_TRUE.equals(prop.get().getValore()))
-					config.setForward(false);
+					authnPrincipal.setForward(false);
 				else
-					config.setForward(true);
+					authnPrincipal.setForward(true);
 				
-				autRet.setConfigurazione(config);
 				break;
 			}  // case principal
-			
+			case CUSTOM: {
+				APIImplAutenticazioneCustom authnCustom = new APIImplAutenticazioneCustom();
+				authnCustom.setTipo(tipoAutenticazione);
+				authnCustom.setOpzionale(Helper.statoFunzionalitaConfToBool( pd.getAutenticazioneOpzionale() ));
+				autRet = authnCustom;
+				
+				authnCustom.setNome(pd.getAutenticazione());
+				
+				break;
+			}
 			default:
 				break;
 			}  // switch autRet.getTipo

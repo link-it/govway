@@ -30,18 +30,23 @@ import org.openspcoop2.core.commons.Liste;
 import org.openspcoop2.core.config.rs.server.api.impl.Enums;
 import org.openspcoop2.core.config.rs.server.api.impl.Helper;
 import org.openspcoop2.core.config.rs.server.config.ServerProperties;
-import org.openspcoop2.core.config.rs.server.model.Allegato;
-import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
 import org.openspcoop2.core.config.rs.server.model.Api;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegato;
+import org.openspcoop2.core.config.rs.server.model.ApiAllegatoGenerico;
 import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItem;
+import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItemGenerico;
+import org.openspcoop2.core.config.rs.server.model.ApiAllegatoItemSpecificaSemiformale;
+import org.openspcoop2.core.config.rs.server.model.ApiAllegatoSpecificaSemiformale;
 import org.openspcoop2.core.config.rs.server.model.ApiAzione;
+import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaRest;
+import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
 import org.openspcoop2.core.config.rs.server.model.ApiRisorsa;
 import org.openspcoop2.core.config.rs.server.model.ApiServizio;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
 import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
+import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
@@ -101,41 +106,77 @@ public class ApiApiHelper {
 		String interfaccia = body.getInterfaccia() != null ? new String(body.getInterfaccia()) : null;
 
 		// defaults
+		// Questo codice e il controllo sotto non dovrebbero mai intervenire essendo tipo required
 		if (env.profilo != ProfiloEnum.APIGATEWAY) {
 			
-			if (body.getTipo() == null)
-				body.setTipo(TipoApiEnum.SOAP);			
+			if (body.getTipoInterfaccia() == null) {
+				ApiInterfacciaSoap iSoap = new ApiInterfacciaSoap();
+				iSoap.setProtocollo(TipoApiEnum.SOAP);
+				iSoap.setFormato(FormatoSoapEnum._1);
+				body.setTipoInterfaccia(iSoap);	
+			}
 		}
 		
 		if ( env.profilo == ProfiloEnum.APIGATEWAY ) {
-			if ( body.getTipo() == null )
-				body.setTipo(TipoApiEnum.REST);
+			
+			if ( body.getTipoInterfaccia() == null ) {
+				ApiInterfacciaRest iRest = new ApiInterfacciaRest();
+				iRest.setProtocollo(TipoApiEnum.REST);
+				iRest.setFormato(FormatoRestEnum.OPENAPI3_0);
+				body.setTipoInterfaccia(iRest);	
+			}
 		
 		}
 		
-		if ( body.getTipo() == null )	// Questo non può mai accadere, lo tengo perchè in futuro il codice sopra potrà cambiare.
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un tipo per la Api");
+		if ( body.getTipoInterfaccia() == null )	// Questo non può mai accadere, lo tengo perchè in futuro il codice sopra potrà cambiare.
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un tipo di interfaccia per la Api");
 		
-		switch (body.getTipo()) {
+		switch (body.getTipoInterfaccia().getProtocollo()) {
 		case REST:
-			as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
-			FormatoRestEnum formatoRest = (FormatoRestEnum) body.getFormato();
-			as.setFormatoSpecifica( BaseHelper.evalorElse( () -> 
-				Enums.formatoSpecificaFromRest.get(formatoRest),
-				FormatoSpecifica.OPEN_API_3
-				)); 
+			
+			if(body.getTipoInterfaccia() instanceof ApiInterfacciaSoap) {
+				ApiInterfacciaSoap soap = (ApiInterfacciaSoap) body.getTipoInterfaccia();
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+soap.getFormato()+") non è compatibile con il protocollo REST indicato");
+			}
+			else if(body.getTipoInterfaccia() instanceof ApiInterfacciaRest) {
+				ApiInterfacciaRest iRest = (ApiInterfacciaRest) body.getTipoInterfaccia();
+				
+				as.setByteWsdlConcettuale(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);
+				FormatoRestEnum formatoRest = iRest.getFormato();
+				as.setFormatoSpecifica( BaseHelper.evalorElse( () -> 
+					Enums.formatoSpecificaFromRest.get(formatoRest),
+					FormatoSpecifica.OPEN_API_3
+					)); 
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+body.getTipoInterfaccia().getClass().getName()+") risulta sconosciuto e non compatibile con il protocollo REST indicato");
+			}
+
 			break;
 		case SOAP: 
-		
-			FormatoSoapEnum formatoSoap = (FormatoSoapEnum) body.getFormato();
-			as.setFormatoSpecifica( BaseHelper.evalorElse( 
-					() -> Enums.formatoSpecificaFromSoap.get(formatoSoap), 
-					FormatoSpecifica.WSDL_11 
-				));
-			as.setByteWsdlLogicoErogatore(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);	// Da commenti e audit, WSDL solo logico ed erogatore
+			
+			if(body.getTipoInterfaccia() instanceof ApiInterfacciaRest) {
+				ApiInterfacciaRest rest = (ApiInterfacciaRest) body.getTipoInterfaccia();
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+rest.getFormato()+") non è compatibile con il protocollo SOAP indicato");
+			}
+			else if(body.getTipoInterfaccia() instanceof ApiInterfacciaSoap) {
+				ApiInterfacciaSoap iSoap = (ApiInterfacciaSoap) body.getTipoInterfaccia();
+			
+				FormatoSoapEnum formatoSoap = iSoap.getFormato();
+				as.setFormatoSpecifica( BaseHelper.evalorElse( 
+						() -> Enums.formatoSpecificaFromSoap.get(formatoSoap), 
+						FormatoSpecifica.WSDL_11 
+					));
+				as.setByteWsdlLogicoErogatore(interfaccia != null && !interfaccia.trim().replaceAll("\n", "").equals("") ? interfaccia.trim().getBytes() : null);	// Da commenti e audit, WSDL solo logico ed erogatore
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il formato dell'interfaccia ("+body.getTipoInterfaccia().getClass().getName()+") risulta sconosciuto e non compatibile con il protocollo SOAP indicato");
+			}
+			
+			break;
 		}
 		
-		as.setServiceBinding(env.apcCore.fromMessageServiceBinding(Enums.serviceBindingFromTipo.get(body.getTipo())));
+		as.setServiceBinding(env.apcCore.fromMessageServiceBinding(Enums.serviceBindingFromTipo.get(body.getTipoInterfaccia().getProtocollo())));
 		
 		boolean facilityUnicoWSDL_interfacciaStandard = false;
 		if(as.getByteWsdlLogicoErogatore()!=null && as.getByteWsdlLogicoFruitore()==null && as.getByteWsdlConcettuale()==null){
@@ -209,27 +250,41 @@ public class ApiApiHelper {
 		
 		Documento documento = new Documento();
 		documento.setIdProprietarioDocumento(as.getId());
-		documento.setRuolo(Enums.ruoliDocumentoFromApi.get(body.getRuolo()).toString());
 		
-		Allegato allegato = body.getAllegato();
-		documento.setFile(allegato.getNome());
-		documento.setByteContenuto(allegato.getDocumento());
+		RuoloAllegatoAPI ruoloAllegato = body.getAllegato().getRuolo();
 		
-		switch (body.getRuolo()) {
+		documento.setRuolo(Enums.ruoliDocumentoFromApi.get(ruoloAllegato).toString());
+		
+		switch (ruoloAllegato) {
 		case ALLEGATO:
-			documento.setTipo( evalnull( () -> allegato.getNome().substring( allegato.getNome().lastIndexOf('.')+1, allegato.getNome().length())) );
+			
+			if(! (body.getAllegato() instanceof ApiAllegatoGenerico)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
+			}
+			ApiAllegatoGenerico allegatoGenerico = (ApiAllegatoGenerico) body.getAllegato();
+			documento.setFile(allegatoGenerico.getNome());
+			documento.setByteContenuto(allegatoGenerico.getDocumento());
+			documento.setTipo( evalnull( () -> allegatoGenerico.getNome().substring( allegatoGenerico.getNome().lastIndexOf('.')+1, allegatoGenerico.getNome().length())) );
 			break;
+
 		case SPECIFICASEMIFORMALE:
-			if(body.getTipoAllegato()==null) {
+			
+			if(! (body.getAllegato() instanceof ApiAllegatoSpecificaSemiformale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
+			}
+			ApiAllegatoSpecificaSemiformale allegatoSS = (ApiAllegatoSpecificaSemiformale) body.getAllegato();
+			documento.setFile(allegatoSS.getNome());
+			documento.setByteContenuto(allegatoSS.getDocumento());
+			if(allegatoSS.getTipoSpecifica()==null) {
 				documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
 			}
 			else {
-				TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) body.getTipoAllegato();
+				TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) allegatoSS.getTipoSpecifica();
 				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato) ).toString() );
 			}
 			break;
 		}
-
+		
 		return documento;
 	}
 	
@@ -237,22 +292,28 @@ public class ApiApiHelper {
 	public static final ApiAllegato documentoToApiAllegato(Documento d) {
 		ApiAllegato ret = new ApiAllegato();
 		
-		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
+		RuoloAllegatoAPI ruoloAllegato = Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo()));
 		
-		Allegato ag = new Allegato();
-		ag.setDocumento(d.getByteContenuto());
-		ag.setNome(d.getFile());
-		ret.setAllegato(ag);
-		
-		switch (ret.getRuolo()) {
-		case ALLEGATO: {
+		switch (ruoloAllegato) {
+		case ALLEGATO:
+			
+			ApiAllegatoGenerico allegatoGenerico = new ApiAllegatoGenerico();
+			allegatoGenerico.setRuolo(ruoloAllegato);
+			allegatoGenerico.setDocumento(d.getByteContenuto());
+			allegatoGenerico.setNome(d.getFile());
+			ret.setAllegato(allegatoGenerico);
 			break;
-		}
-		case SPECIFICASEMIFORMALE: {
+
+		case SPECIFICASEMIFORMALE:
+			
+			ApiAllegatoSpecificaSemiformale allegatoSS = new ApiAllegatoSpecificaSemiformale();
+			allegatoSS.setRuolo(ruoloAllegato);
+			allegatoSS.setDocumento(d.getByteContenuto());
+			allegatoSS.setNome(d.getFile());
 			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
+			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
+			ret.setAllegato(allegatoSS);
 			break;
-		}	
 		}
 		
 		return ret;
@@ -261,21 +322,26 @@ public class ApiApiHelper {
 	public static final ApiAllegatoItem documentoToApiAllegatoItem(Documento d) {
 		ApiAllegatoItem ret = new ApiAllegatoItem();
 		
-		ret.setRuolo(Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo())));
+		RuoloAllegatoAPI ruoloAllegato = Enums.ruoliApiFromDocumento.get(Enum.valueOf(RuoliDocumento.class, d.getRuolo()));
 		
-		AllegatoItem ag = new AllegatoItem();
-		ag.setNome(d.getFile());
-		ret.setAllegato(ag);
-		
-		switch (ret.getRuolo()) {
-		case ALLEGATO: {
+		switch (ruoloAllegato) {
+		case ALLEGATO:
+			
+			ApiAllegatoItemGenerico allegatoGenerico = new ApiAllegatoItemGenerico();
+			allegatoGenerico.setRuolo(ruoloAllegato);
+			allegatoGenerico.setNome(d.getFile());
+			ret.setAllegato(allegatoGenerico);
 			break;
-		}
-		case SPECIFICASEMIFORMALE: {
+
+		case SPECIFICASEMIFORMALE:
+			
+			ApiAllegatoItemSpecificaSemiformale allegatoSS = new ApiAllegatoItemSpecificaSemiformale();
+			allegatoSS.setRuolo(ruoloAllegato);
+			allegatoSS.setNome(d.getFile());
 			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, d.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
+			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
+			ret.setAllegato(allegatoSS);
 			break;
-		}	
 		}
 		
 		return ret;
@@ -458,18 +524,10 @@ public class ApiApiHelper {
 		ApiItem ret = new ApiItem();
 
 		ret.setDescrizione(api.getDescrizione());
-		if(api.getFormato()!=null) {
-			if(api.getFormato() instanceof FormatoRestEnum) {
-				ret.setFormato(((FormatoRestEnum)api.getFormato()).toString());				
-			}
-			else if(api.getFormato() instanceof FormatoSoapEnum) {
-				ret.setFormato(((FormatoSoapEnum)api.getFormato()).toString());				
-			}
-		}
+		ret.setTipoInterfaccia(api.getTipoInterfaccia());
 		ret.setNome(api.getNome());
 		ret.setProfilo(env.profilo);	// TODO: In multitenant questo va cambiato al profilo relativo al tip del soggetto referente dell'as
 		ret.setSoggetto(api.getReferente());
-		ret.setTipo(api.getTipo());
 		ret.setVersione(api.getVersione());
 		ret.setReferente(api.getReferente());
 			
@@ -477,7 +535,7 @@ public class ApiApiHelper {
 		StatoApiEnum stato = null;
 		String descrizioneStato = "";
 		Search searchForCount = new Search(true);
-		switch (ret.getTipo()) {
+		switch (ret.getTipoInterfaccia().getProtocollo()) {
 			case REST:
 				// caso REST: l'API e' abilitata se ha almeno una risorsa
 				try {
@@ -549,13 +607,17 @@ public class ApiApiHelper {
 		
 		switch (as.getServiceBinding()) {
 		case REST:
-			ret.setTipo(TipoApiEnum.REST);
-			ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+			ApiInterfacciaRest iRest = new ApiInterfacciaRest();
+			iRest.setProtocollo(TipoApiEnum.REST);
+			iRest.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setTipoInterfaccia(iRest);
 			ret.setInterfaccia(as.getByteWsdlConcettuale());
 			break;
 		case SOAP:
-			ret.setTipo(TipoApiEnum.SOAP);
-			ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+			ApiInterfacciaSoap iSoap = new ApiInterfacciaSoap();
+			iSoap.setProtocollo(TipoApiEnum.SOAP);
+			iSoap.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+			ret.setTipoInterfaccia(iSoap);
 			ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 			break;
 		}
@@ -566,14 +628,7 @@ public class ApiApiHelper {
 		return ret;	
 	}
 	
-	
-	public static final void correggiDeserializzazione(Api body) {
-		
-		if (body.getTipo() == TipoApiEnum.REST) body.setFormato(body.getFormato());
-		if (body.getTipo() == TipoApiEnum.SOAP) body.setFormato(body.getFormato());
-	}
-		
-	
+
 	// Versione "deprecata" in favore di quella più generica nell'Helper
 	public static final AccordoServizioParteComune getAccordoFull(String nome, Integer versione, ApiEnv env) throws CoreException {
 		return Helper.getAccordoFull(nome, versione, env.idSoggetto.toIDSoggetto(), env.apcCore);

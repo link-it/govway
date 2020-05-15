@@ -1,9 +1,9 @@
 {
     "nome": "GruppoJson",
-    "modalita": "nuova",
     "azioni": ["POST_pet", "PUT_pet"],
     "configurazione": {
-        "autenticazione": {
+        "modalita": "nuova",
+    	"autenticazione": {
             "tipo": "https",
             "opzionale": true
         }

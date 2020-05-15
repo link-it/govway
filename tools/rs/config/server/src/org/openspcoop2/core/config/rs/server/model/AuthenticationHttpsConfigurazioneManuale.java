@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,11 +28,35 @@ import javax.validation.Valid;
 
 public class AuthenticationHttpsConfigurazioneManuale  implements OneOfAuthenticationHttpsCertificato {
   
+  @Schema(required = true, description = "")
+  private TipoAutenticazioneHttps tipo = null;
+  
   @Schema(example = "cn=esterno", required = true, description = "")
   private String subject = null;
   
   @Schema(example = "cn=esterno", description = "")
   private String issuer = null;
+ /**
+   * Get tipo
+   * @return tipo
+  **/
+  @Override
+@JsonProperty("tipo")
+  @NotNull
+  @Valid
+  public TipoAutenticazioneHttps getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
+  }
+
+  public AuthenticationHttpsConfigurazioneManuale tipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
+    return this;
+  }
+
  /**
    * Get subject
    * @return subject
@@ -77,6 +102,7 @@ public class AuthenticationHttpsConfigurazioneManuale  implements OneOfAuthentic
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationHttpsConfigurazioneManuale {\n");
     
+    sb.append("    tipo: ").append(AuthenticationHttpsConfigurazioneManuale.toIndentedString(this.tipo)).append("\n");
     sb.append("    subject: ").append(AuthenticationHttpsConfigurazioneManuale.toIndentedString(this.subject)).append("\n");
     sb.append("    issuer: ").append(AuthenticationHttpsConfigurazioneManuale.toIndentedString(this.issuer)).append("\n");
     sb.append("}");

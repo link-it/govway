@@ -1,9 +1,9 @@
 {
     "nome": "policyTest",
     "stato": "abilitato",
-    "identificazione": "criteri",
-
+    
     "configurazione": {
+	"identificazione": "criteri",
 	"metrica": "occupazione-banda",
 	"intervallo": "orario"
     },

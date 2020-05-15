@@ -28,7 +28,8 @@ done
 # Rimuovo un eventuale backslash iniziale
 endpoint=`echo $endpoint | sed -e 's/^\///g'`
 
-url="http://127.0.0.1:8080/govwayAPIConfig/$endpoint?$query_params"
+#url="http://127.0.0.1:8080/govwayAPIConfig/$endpoint?$query_params"
+url="http://127.0.0.1:8080/govway/ENTE/api-config/v1/$endpoint?$query_params"
 
 echo $url
 curl --user amministratore:123456 -i -H "Content-Type: application/json" -X PUT --data @$body $url

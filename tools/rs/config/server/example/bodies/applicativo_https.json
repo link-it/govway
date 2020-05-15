@@ -1,9 +1,9 @@
 {
  	"nome": "ApplicativoJsonHttps",
-   	"modalita_accesso": "https",
    	"credenziali": {
-		"tipo": "configurazione-manuale",
-       		"certificato": {
+		"modalita_accesso": "https",
+		"certificato": {
+			"tipo": "configurazione-manuale",
 			"subject": "cn=gabibbo",
 			"issuer": "cn=issuer2"
 		}

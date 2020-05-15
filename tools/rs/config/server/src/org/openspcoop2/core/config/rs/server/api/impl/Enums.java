@@ -23,21 +23,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openspcoop2.core.config.constants.TipoAutenticazione;
-import org.openspcoop2.core.config.constants.TipoAutorizzazione;
 import org.openspcoop2.core.config.constants.TipoGestioneCORS;
 import org.openspcoop2.core.config.rs.server.model.ContestoEnum;
 import org.openspcoop2.core.config.rs.server.model.FonteEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoRestEnum;
 import org.openspcoop2.core.config.rs.server.model.FormatoSoapEnum;
-import org.openspcoop2.utils.service.beans.ProfiloCollaborazioneEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingChiaveEnum;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPIImpl;
 import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipal;
-import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneNewEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoGestioneCorsEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaLivelloServizioEnum;
 import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
@@ -55,6 +51,7 @@ import org.openspcoop2.core.registry.constants.TipiDocumentoSemiformale;
 import org.openspcoop2.core.registry.constants.TipiDocumentoSicurezza;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.manifest.constants.InterfaceType;
+import org.openspcoop2.utils.service.beans.ProfiloCollaborazioneEnum;
 
 /**
  * Enums
@@ -91,22 +88,6 @@ public class Enums {
 		Enums.ruoloTipologiaFromRest.put(FonteEnum.REGISTRO, RuoloTipologia.INTERNO);
 	}
 	
-
-	public static final Map<TipoAutorizzazioneNewEnum, TipoAutorizzazione> tipoAutorizzazioneNewFromRest = new HashMap<TipoAutorizzazioneNewEnum, TipoAutorizzazione>();
-	static {
-		Enums.tipoAutorizzazioneNewFromRest.put(TipoAutorizzazioneNewEnum.DISABILITATO, TipoAutorizzazione.DISABILITATO);
-		Enums.tipoAutorizzazioneNewFromRest.put(TipoAutorizzazioneNewEnum.XACML_POLICY, TipoAutorizzazione.XACML_POLICY);
-	}
-
-	
-	public static final Map<TipoAutenticazioneNewEnum, TipoAutenticazione> tipoAutenticazioneNewFromRest = new HashMap<TipoAutenticazioneNewEnum, TipoAutenticazione>();
-	static {
-		Enums.tipoAutenticazioneNewFromRest.put(TipoAutenticazioneNewEnum.DISABILITATO, TipoAutenticazione.DISABILITATO);
-		Enums.tipoAutenticazioneNewFromRest.put(TipoAutenticazioneNewEnum.HTTP_BASIC, TipoAutenticazione.BASIC);
-		Enums.tipoAutenticazioneNewFromRest.put(TipoAutenticazioneNewEnum.HTTPS, TipoAutenticazione.SSL);
-		Enums.tipoAutenticazioneNewFromRest.put(TipoAutenticazioneNewEnum.PRINCIPAL, TipoAutenticazione.PRINCIPAL);
-	}
-	
 	
 	public static final Map<TipoAutenticazioneEnum, TipoAutenticazione> tipoAutenticazioneFromRest = new HashMap<TipoAutenticazioneEnum, TipoAutenticazione>();
 	static {
@@ -126,27 +107,6 @@ public class Enums {
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.IP_ADDRESS_FORWARDED_FOR, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.INDIRIZZO_IP_X_FORWARDED_FOR);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.URL_BASED, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.URL);
 		Enums.tipoAutenticazionePrincipalFromRest.put(TipoAutenticazionePrincipal.TOKEN, org.openspcoop2.core.config.constants.TipoAutenticazionePrincipal.TOKEN);
-	}
-	
-	public static TipoAutenticazioneNewEnum convertTipoAutenticazione(TipoAutenticazioneEnum tipo){
-		TipoAutenticazioneNewEnum convert = null;
-		switch (tipo) {
-		case CUSTOM:
-			break;
-		case DISABILITATO:
-			convert = TipoAutenticazioneNewEnum.DISABILITATO;
-			break;
-		case HTTP_BASIC:
-			convert = TipoAutenticazioneNewEnum.HTTP_BASIC;
-			break;
-		case HTTPS:
-			convert = TipoAutenticazioneNewEnum.HTTPS;
-			break;
-		case PRINCIPAL:
-			convert = TipoAutenticazioneNewEnum.PRINCIPAL;
-			break;
-		}
-		return convert;
 	}
 	
 	public static final <T1,T2> Map<T1,T2> dualizeMap(Map<T2,T1> map) {
@@ -348,14 +308,14 @@ public class Enums {
 		tipoFiltroApplicativo.forEach( (a,r) -> rateLimitingChiaveEnum.put(r, a));
 	}
 	
-	public static final Map<TipoAutenticazioneNewEnum, CredenzialeTipo> credenzialeTipoFromTipoAutenticazioneNew = new HashMap<TipoAutenticazioneNewEnum, CredenzialeTipo>();
+	public static final Map<TipoAutenticazioneEnum, CredenzialeTipo> credenzialeTipoFromTipoAutenticazione = new HashMap<TipoAutenticazioneEnum, CredenzialeTipo>();
 	static {
-		credenzialeTipoFromTipoAutenticazioneNew.put(TipoAutenticazioneNewEnum.HTTP_BASIC, CredenzialeTipo.BASIC);
-		credenzialeTipoFromTipoAutenticazioneNew.put(TipoAutenticazioneNewEnum.HTTPS,  CredenzialeTipo.SSL);
-		credenzialeTipoFromTipoAutenticazioneNew.put(TipoAutenticazioneNewEnum.PRINCIPAL, CredenzialeTipo.PRINCIPAL);
+		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTP_BASIC, CredenzialeTipo.BASIC);
+		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.HTTPS,  CredenzialeTipo.SSL);
+		credenzialeTipoFromTipoAutenticazione.put(TipoAutenticazioneEnum.PRINCIPAL, CredenzialeTipo.PRINCIPAL);
 	}
 
-	public static final TipoAutenticazione toTipoAutenticazione(TipoAutenticazioneNewEnum authn) {
+	public static final TipoAutenticazione toTipoAutenticazione(TipoAutenticazioneEnum authn) {
 		if (authn == null) return null;
 		
 		switch(authn) {

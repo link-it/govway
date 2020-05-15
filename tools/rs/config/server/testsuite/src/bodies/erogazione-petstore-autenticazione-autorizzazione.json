@@ -4,7 +4,8 @@
         "endpoint": "https://ginovadifrettaforte.it/petstore",
     
         "autenticazione_http": {
-            "username": "mario",
+            "modalita_accesso": "http-basic",
+   	    "username": "mario",
             "password": "perbene2"
         },
     
@@ -40,15 +41,14 @@
     "autorizzazione": {
         "tipo": "abilitato",
 
-        "configurazione": {
-            "richiedente": true,
-            "soggetto": "SoggettoJson",
+        "richiedente": true,
+        "soggetto": "SoggettoJson",
             
-            "ruoli": true,
-            "ruoli_fonte": "qualsiasi",
-            "ruoli_richiesti": "all",
-            "ruolo": "RuoloJson1"
-        }
+        "ruoli": true,
+        "ruoli_fonte": "qualsiasi",
+        "ruoli_richiesti": "all",
+        "ruolo": "RuoloJson1"
+
     },
  
     "api_nome": "PetStore",

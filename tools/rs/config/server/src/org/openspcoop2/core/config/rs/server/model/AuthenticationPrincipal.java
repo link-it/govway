@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,8 +28,32 @@ import javax.validation.Valid;
 
 public class AuthenticationPrincipal  implements OneOfBaseCredenzialiCredenziali {
   
+  @Schema(required = true, description = "")
+  private ModalitaAccessoEnum modalitaAccesso = null;
+  
   @Schema(example = "idEsterno", required = true, description = "")
   private String userid = null;
+ /**
+   * Get modalitaAccesso
+   * @return modalitaAccesso
+  **/
+  @Override
+@JsonProperty("modalita_accesso")
+  @NotNull
+  @Valid
+  public ModalitaAccessoEnum getModalitaAccesso() {
+    return this.modalitaAccesso;
+  }
+
+  public void setModalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
+  }
+
+  public AuthenticationPrincipal modalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
+    return this;
+  }
+
  /**
    * Get userid
    * @return userid
@@ -55,6 +80,7 @@ public class AuthenticationPrincipal  implements OneOfBaseCredenzialiCredenziali
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationPrincipal {\n");
     
+    sb.append("    modalitaAccesso: ").append(AuthenticationPrincipal.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    userid: ").append(AuthenticationPrincipal.toIndentedString(this.userid)).append("\n");
     sb.append("}");
     return sb.toString();

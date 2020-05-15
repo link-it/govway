@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
-import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPIImpl;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,38 +28,13 @@ import javax.validation.Valid;
 public class ApiImplAllegatoItem  {
   
   @Schema(required = true, description = "")
-  private RuoloAllegatoAPIImpl ruolo = null;
-  
-  @Schema(required = true, description = "")
-  private AllegatoItem allegato = null;
-  
-  @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "ruolo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "ruolo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSemiformaleEnum.class, name = "specificaSemiFormale"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSicurezzaEnum.class, name = "specificaSicurezza"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaLivelloServizioEnum.class, name = "specificaLivelloServizio")  })
-  private OneOfApiImplAllegatoItemTipoAllegato tipoAllegato = null;
- /**
-   * Get ruolo
-   * @return ruolo
-  **/
-  @JsonProperty("ruolo")
-  @NotNull
-  @Valid
-  public RuoloAllegatoAPIImpl getRuolo() {
-    return this.ruolo;
-  }
-
-  public void setRuolo(RuoloAllegatoAPIImpl ruolo) {
-    this.ruolo = ruolo;
-  }
-
-  public ApiImplAllegatoItem ruolo(RuoloAllegatoAPIImpl ruolo) {
-    this.ruolo = ruolo;
-    return this;
-  }
-
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoItemGenerico.class, name = "allegato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoItemSpecificaSemiformale.class, name = "specificaSemiFormale"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoItemSpecificaSicurezza.class, name = "specificaSicurezza"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoItemSpecificaLivelloServizio.class, name = "specificaLivelloServizio")  })
+  private OneOfApiImplAllegatoItemAllegato allegato = null;
  /**
    * Get allegato
    * @return allegato
@@ -69,35 +42,16 @@ public class ApiImplAllegatoItem  {
   @JsonProperty("allegato")
   @NotNull
   @Valid
-  public AllegatoItem getAllegato() {
+  public OneOfApiImplAllegatoItemAllegato getAllegato() {
     return this.allegato;
   }
 
-  public void setAllegato(AllegatoItem allegato) {
+  public void setAllegato(OneOfApiImplAllegatoItemAllegato allegato) {
     this.allegato = allegato;
   }
 
-  public ApiImplAllegatoItem allegato(AllegatoItem allegato) {
+  public ApiImplAllegatoItem allegato(OneOfApiImplAllegatoItemAllegato allegato) {
     this.allegato = allegato;
-    return this;
-  }
-
- /**
-   * Get tipoAllegato
-   * @return tipoAllegato
-  **/
-  @JsonProperty("tipo_allegato")
-  @Valid
-  public OneOfApiImplAllegatoItemTipoAllegato getTipoAllegato() {
-    return this.tipoAllegato;
-  }
-
-  public void setTipoAllegato(OneOfApiImplAllegatoItemTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
-  }
-
-  public ApiImplAllegatoItem tipoAllegato(OneOfApiImplAllegatoItemTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
     return this;
   }
 
@@ -107,9 +61,7 @@ public class ApiImplAllegatoItem  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiImplAllegatoItem {\n");
     
-    sb.append("    ruolo: ").append(ApiImplAllegatoItem.toIndentedString(this.ruolo)).append("\n");
     sb.append("    allegato: ").append(ApiImplAllegatoItem.toIndentedString(this.allegato)).append("\n");
-    sb.append("    tipoAllegato: ").append(ApiImplAllegatoItem.toIndentedString(this.tipoAllegato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

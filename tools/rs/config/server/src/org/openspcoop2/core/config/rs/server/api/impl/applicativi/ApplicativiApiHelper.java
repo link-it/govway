@@ -96,8 +96,8 @@ public class ApplicativiApiHelper {
 		
 		wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, credenziali.getTipo().toString());
 		
-		if(applicativo.getModalitaAccesso()!=null) {
-			Helper.overrideAuthParams(wrap, consoleHelper, applicativo.getModalitaAccesso(), applicativo.getCredenziali());
+		if(applicativo.getCredenziali()!=null) {
+			Helper.overrideAuthParams(wrap, consoleHelper, applicativo.getCredenziali());
 		}
 	}
     
@@ -153,7 +153,7 @@ public class ApplicativiApiHelper {
 		
 		// *** Invocazione Porta ***
 		InvocazionePorta invocazionePorta = new InvocazionePorta();
-		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali(), applicativo.getModalitaAccesso());
+		Credenziali credenziali = credenzialiFromAuth(applicativo.getCredenziali());
 
 		invocazionePorta.addCredenziali(credenziali);
 		
@@ -208,7 +208,6 @@ public class ApplicativiApiHelper {
 	
 		
 		Credenziali cred = invPorta.getCredenziali(0);
-		ret.setModalitaAccesso(Helper.modalitaAccessoFromCredenzialeTipo.get(cred.getTipo()));
 		ret.setCredenziali(authFromCredenziali(cred));
 			
 		return ret;
@@ -284,15 +283,20 @@ public class ApplicativiApiHelper {
 	 */
 	public static OneOfBaseCredenzialiCredenziali translateCredenzialiApplicativo(Applicativo applicativo) {
 		OneOfBaseCredenzialiCredenziali creds = null;
-		String  tipoauthSA = Helper.tipoAuthSAFromModalita.get(applicativo.getModalitaAccesso().toString());
+		
+		if(applicativo.getCredenziali()==null || applicativo.getCredenziali().getModalitaAccesso()==null) {
+			return null;
+		}
+		
+		String  tipoauthSA = Helper.tipoAuthSAFromModalita.get(applicativo.getCredenziali().getModalitaAccesso().toString());
 		
 		if (tipoauthSA == null)
-			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo modalità accesso sconosciuto: " + applicativo.getModalitaAccesso());
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo modalità accesso sconosciuto: " + applicativo.getCredenziali().getModalitaAccesso());
 		
 		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_BASIC) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_PRINCIPAL) ||
 				tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_SSL)) {
-			creds = Helper.translateCredenziali(applicativo.getCredenziali(), applicativo.getModalitaAccesso());
+			creds = Helper.translateCredenziali(applicativo.getCredenziali());
 		}
 		else if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
 			creds = null;
@@ -315,23 +319,34 @@ public class ApplicativiApiHelper {
 	 * @throws IllegalAccessException 
 	 * 
 	 */
-	public static Credenziali credenzialiFromAuth(Object cred, ModalitaAccessoEnum modalitaAccesso) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
+	public static Credenziali credenzialiFromAuth(OneOfBaseCredenzialiCredenziali cred) throws IllegalAccessException, InvocationTargetException, InstantiationException, UtilsException {
 		
-		String tipoauthSA = Helper.tipoAuthSAFromModalita.get(modalitaAccesso.toString());
+		Credenziali credenziali = null;
 		
-		Credenziali credenziali = new Credenziali();
-		if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
-			credenziali.setTipo(null);
-		}
-		else {
+		if(cred!=null) {
 		
-			credenziali = Helper.apiCredenzialiToGovwayCred(
-					cred,
-					modalitaAccesso,
-					Credenziali.class,
-					org.openspcoop2.core.config.constants.CredenzialeTipo.class
-					);	
-		
+			ModalitaAccessoEnum modalitaAccesso = cred.getModalitaAccesso();
+			if(modalitaAccesso == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Modalità di accesso delle credenziali non indicata");
+			}
+			
+			String tipoauthSA = Helper.tipoAuthSAFromModalita.get(modalitaAccesso.toString());
+			
+			credenziali = new Credenziali();
+			if (tipoauthSA.equals(ConnettoriCostanti.AUTENTICAZIONE_TIPO_NESSUNA)) {
+				credenziali.setTipo(null);
+			}
+			else {
+			
+				credenziali = Helper.apiCredenzialiToGovwayCred(
+						cred,
+						modalitaAccesso,
+						Credenziali.class,
+						org.openspcoop2.core.config.constants.CredenzialeTipo.class
+						);	
+			
+			}
+			
 		}
 		
 		return credenziali;

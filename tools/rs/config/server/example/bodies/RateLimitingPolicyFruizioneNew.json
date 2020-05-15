@@ -2,10 +2,9 @@
     "nome": "policyTest",
     "stato": "abilitato",
 
-    "identificazione": "criteri",
-
     "configurazione": {
-	"metrica": "numero-richieste-simultanee"
+	"identificazione": "criteri",
+    	"metrica": "numero-richieste-simultanee"
     },
 
     "soglia_ridefinita": true,

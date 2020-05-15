@@ -2,11 +2,10 @@
     "autorizzazione": {
         "tipo": "abilitato",
 
-        "configurazione": {
-            "richiedente": true,
-            "ruoli": false,
-            "scope": false,
-	    "token": false 
-        }
+        "richiedente": true,
+        "ruoli": false,
+        "scope": false,
+	"token": false 
+
     }
 }

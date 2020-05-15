@@ -2,9 +2,6 @@
     "connettore": {
         "endpoint": "https://ginovadifretta.it/petstore"
     },
-    "autenticazione": {},
-    "autorizzazione": {},
-
     "api_nome": "PetStore",
     "api_versione": 1
 }

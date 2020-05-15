@@ -23,5 +23,5 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfGruppoConfigurazione
 */
 public interface OneOfGruppoConfigurazione {
-
+    public ModalitaConfigurazioneGruppoEnum getModalita();
 }

@@ -1,7 +1,9 @@
 {
 	"nome": "ApiJson",
 	"descrizione": "DescrizioneApiJson",
-	"formato": "Wario",
-	"tipo": "rest",
+	"tipo_interfaccia":{
+		"protocollo": "rest",
+		"formato": "Wario"
+	},
 	"versione": 1
 }

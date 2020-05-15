@@ -82,98 +82,7 @@ import org.openspcoop2.core.config.rs.server.api.impl.IdServizio;
 import org.openspcoop2.core.config.rs.server.api.impl.StatoDescrizione;
 import org.openspcoop2.core.config.rs.server.api.impl.erogazioni.configurazione.ErogazioniConfEnv;
 import org.openspcoop2.core.config.rs.server.api.impl.fruizioni.configurazione.FruizioniConfEnv;
-import org.openspcoop2.core.config.rs.server.model.APIImpl;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneBasic;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazioneCustom;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneConfigurazionePrincipal;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneNew;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazione;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneConfig;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneConfigNew;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneCustom;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneNew;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneView;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLConfig;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneXACMLViewConfig;
-import org.openspcoop2.core.config.rs.server.model.AllAnyEnum;
-import org.openspcoop2.core.config.rs.server.model.Allegato;
-import org.openspcoop2.core.config.rs.server.model.AllegatoItem;
-import org.openspcoop2.core.config.rs.server.model.ApiImplAllegato;
-import org.openspcoop2.core.config.rs.server.model.ApiImplAllegatoItem;
-import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGenerali;
-import org.openspcoop2.core.config.rs.server.model.ApiImplInformazioniGeneraliView;
-import org.openspcoop2.core.config.rs.server.model.ApiImplItem;
-import org.openspcoop2.core.config.rs.server.model.ApiImplVersioneApiView;
-import org.openspcoop2.core.config.rs.server.model.ApiImplViewItem;
-import org.openspcoop2.core.config.rs.server.model.AuthenticationHttpBasic;
-import org.openspcoop2.core.config.rs.server.model.CachingRisposta;
-import org.openspcoop2.core.config.rs.server.model.CachingRispostaRegola;
-import org.openspcoop2.core.config.rs.server.model.Connettore;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttps;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpsClient;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneHttpsServer;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneProxy;
-import org.openspcoop2.core.config.rs.server.model.ConnettoreConfigurazioneTimeout;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazione;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazione;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutorizzazioneView;
-import org.openspcoop2.core.config.rs.server.model.ControlloAccessiGestioneToken;
-import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiesta;
-import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRichiestaEnum;
-import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRisposta;
-import org.openspcoop2.core.config.rs.server.model.CorrelazioneApplicativaRispostaEnum;
-import org.openspcoop2.core.config.rs.server.model.ErogazioneItem;
-import org.openspcoop2.core.config.rs.server.model.ErogazioneViewItem;
-import org.openspcoop2.core.config.rs.server.model.FonteEnum;
-import org.openspcoop2.core.config.rs.server.model.FruizioneItem;
-import org.openspcoop2.core.config.rs.server.model.FruizioneViewItem;
-import org.openspcoop2.core.config.rs.server.model.GestioneCors;
-import org.openspcoop2.core.config.rs.server.model.GestioneCorsAccessControl;
-import org.openspcoop2.core.config.rs.server.model.GruppoEreditaConfigurazione;
-import org.openspcoop2.core.config.rs.server.model.GruppoNuovaConfigurazione;
-import org.openspcoop2.core.config.rs.server.model.HttpMethodEnum;
-import org.openspcoop2.core.config.rs.server.model.KeystoreEnum;
-import org.openspcoop2.core.config.rs.server.model.ListaApiImplAllegati;
-import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
-import org.openspcoop2.core.config.rs.server.model.OneOfApiImplAllegatoItemTipoAllegato;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriIntervalloEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBaseConIdentificazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyCriteri;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneUpdate;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyErogazioneView;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltro;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroErogazione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFiltroFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizione;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneUpdate;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyFruizioneView;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyGroupBy;
-import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyIdentificativo;
-import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggi;
-import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazione;
-import org.openspcoop2.core.config.rs.server.model.RegistrazioneMessaggiConfigurazioneRegola;
-import org.openspcoop2.core.config.rs.server.model.SslTipologiaEnum;
-import org.openspcoop2.core.config.rs.server.model.StatoApiEnum;
-import org.openspcoop2.core.config.rs.server.model.StatoDefaultRidefinitoEnum;
-import org.openspcoop2.core.config.rs.server.model.StatoFunzionalitaConWarningEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneNewEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazionePrincipalToken;
-import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoGestioneCorsEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaLivelloServizioEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSemiformaleEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoSpecificaSicurezzaEnum;
-import org.openspcoop2.core.config.rs.server.model.TipoValidazioneEnum;
-import org.openspcoop2.core.config.rs.server.model.TokenClaimEnum;
-import org.openspcoop2.core.config.rs.server.model.Validazione;
+import org.openspcoop2.core.config.rs.server.model.*;
 import org.openspcoop2.core.constants.CostantiDB;
 import org.openspcoop2.core.constants.TipiConnettore;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
@@ -644,30 +553,61 @@ public class ErogazioniApiHelper {
 		return list;
 	}
 
-	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(TipoAutenticazioneNewEnum tipo, Object config){
-		if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
-			APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
-			try {
-				authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazionePrincipal.class);
-				return Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
-			} catch (Exception e) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato: " + e.getMessage() );
+	public static Boolean getAutenticazioneOpzionale(Object authn) {
+		if(authn!=null) {
+			if(authn instanceof APIImplAutenticazioneBasic) {
+				return ((APIImplAutenticazioneBasic)authn).isOpzionale();
+			}
+			else if(authn instanceof APIImplAutenticazioneHttps) {
+				return ((APIImplAutenticazioneHttps)authn).isOpzionale();
+			}
+			else if(authn instanceof APIImplAutenticazionePrincipal) {
+				return ((APIImplAutenticazionePrincipal)authn).isOpzionale();
+			}
+			else if(authn instanceof APIImplAutenticazioneCustom) {
+				return ((APIImplAutenticazioneCustom)authn).isOpzionale();
+			}
+		}
+		return null;
+	}
+	
+	public static TipoAutenticazionePrincipal getTipoAutenticazionePrincipal(Object authn){
+		if(authn!=null && (authn instanceof APIImplAutenticazionePrincipal)) {
+			
+			APIImplAutenticazionePrincipal authPrincipal = (APIImplAutenticazionePrincipal) authn;
+			TipoAutenticazioneEnum tipo = authPrincipal.getTipo();
+			
+			if(TipoAutenticazioneEnum.PRINCIPAL.equals(tipo)) {
+				try {
+					return Enums.tipoAutenticazionePrincipalFromRest.get(authPrincipal.getTipoPrincipal());
+				} catch (Exception e) {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione principal non è correttamente definita: " + e.getMessage() );
+				}
 			}
 		}
 		return null;
 	}
 
-	public static List<String> getAutenticazioneParametroList(ErogazioniEnv env,TipoAutenticazioneNewEnum tipo, Object config) {
-		if(TipoAutenticazioneNewEnum.HTTP_BASIC.equals(tipo)) { 
-			if(config!=null) {
-				APIImplAutenticazioneConfigurazioneBasic authConfig = null;
+	public static List<String> getAutenticazioneParametroList(ErogazioniEnv env,TipoAutenticazioneEnum tipo, Object authn) {
+		if(TipoAutenticazioneEnum.HTTP_BASIC.equals(tipo)) {
+			
+			APIImplAutenticazioneBasic authnBasic = null;
+			if(authn!=null) {
+				if(authn instanceof APIImplAutenticazioneBasic) {
+					authnBasic = (APIImplAutenticazioneBasic) authn;
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+tipo+"' non è correttamente definita (trovata configurazione '"+authn.getClass().getName()+"')"  );
+				}
+			}
+			
+			if(authnBasic!=null) {
 				
-				authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazioneBasic.class);
-        		List<Proprieta> listConfig = new ArrayList<>();
-        		if(authConfig != null && authConfig.isForward()!=null) {
+				List<Proprieta> listConfig = new ArrayList<>();
+        		if(authnBasic.isForward()!=null) {
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION);
-        			if(authConfig.isForward()) {	
+        			if(authnBasic.isForward()) {	
         				propertyAutenticazione.setValore(ParametriAutenticazioneBasic.CLEAN_HEADER_AUTHORIZATION_FALSE);
         			}
         			else {
@@ -677,20 +617,26 @@ public class ErogazioniApiHelper {
         		}
         		
         		if(!listConfig.isEmpty()) {
-        			return env.stationCore.getParametroAutenticazione(Enums.tipoAutenticazioneNewFromRest.get(tipo).toString(), listConfig);
+        			return env.stationCore.getParametroAutenticazione(Enums.tipoAutenticazioneFromRest.get(tipo).toString(), listConfig);
         		}
 			}
 			
 		}
-		else if(TipoAutenticazioneNewEnum.PRINCIPAL.equals(tipo)) {
-			if(config!=null) {
-        		APIImplAutenticazioneConfigurazionePrincipal authConfig = null;
+		else if(TipoAutenticazioneEnum.PRINCIPAL.equals(tipo)) {
+			
+			APIImplAutenticazionePrincipal authnPrincipal = null;
+			if(authn!=null) {
+				if(authn instanceof APIImplAutenticazionePrincipal) {
+					authnPrincipal = (APIImplAutenticazionePrincipal) authn;
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+tipo+"' non è correttamente definita (trovata configurazione '"+authn.getClass().getName()+"')"  );
+				}
+			}
+			
+			if(authnPrincipal!=null) {	
         		
-        		authConfig = BaseHelper.deserialize(config, APIImplAutenticazioneConfigurazionePrincipal.class);
-        		if (authConfig == null || authConfig.getTipo() == null)
-        			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il parametro configurazione per l'autenticazione basic non è correttamente formato");
-        		
-        		TipoAutenticazionePrincipal autenticazionePrincipal = Enums.tipoAutenticazionePrincipalFromRest.get(authConfig.getTipo());
+        		TipoAutenticazionePrincipal autenticazionePrincipal = Enums.tipoAutenticazionePrincipalFromRest.get(authnPrincipal.getTipoPrincipal());
         		Proprieta propTipoAuthn = new Proprieta();
         		propTipoAuthn.setNome(ParametriAutenticazionePrincipal.TIPO_AUTENTICAZIONE);
         		propTipoAuthn.setValore(autenticazionePrincipal.getValue());
@@ -703,44 +649,44 @@ public class ErogazioniApiHelper {
 				case INDIRIZZO_IP_X_FORWARDED_FOR:
 					break;
         		case HEADER:
-					if(authConfig.getNome()==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome di un header http per l'autenticazione principal '"+authConfig.getTipo()+"' indicata");
+					if(authnPrincipal.getNome()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome di un header http per l'autenticazione principal '"+authnPrincipal.getTipoPrincipal()+"' indicata");
 					}
 					Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.NOME);
-					propertyAutenticazione.setValore(authConfig.getNome());
+					propertyAutenticazione.setValore(authnPrincipal.getNome());
 					listConfig.add(propertyAutenticazione);
 					break;
 				case FORM:
-					if(authConfig.getNome()==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome di un parametro della url per l'autenticazione principal '"+authConfig.getTipo()+"' indicata");
+					if(authnPrincipal.getNome()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome di un parametro della url per l'autenticazione principal '"+authnPrincipal.getTipoPrincipal()+"' indicata");
 					}
 					propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.NOME);
-					propertyAutenticazione.setValore(authConfig.getNome());
+					propertyAutenticazione.setValore(authnPrincipal.getNome());
 					listConfig.add(propertyAutenticazione);
 					break;
 				case URL:
-					if(authConfig.getPattern()==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stata fornita una espressione regolare per l'autenticazione principal '"+authConfig.getTipo()+"' indicata");
+					if(authnPrincipal.getPattern()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stata fornita una espressione regolare per l'autenticazione principal '"+authnPrincipal.getTipoPrincipal()+"' indicata");
 					}
 					propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.PATTERN);
-					propertyAutenticazione.setValore(authConfig.getPattern());
+					propertyAutenticazione.setValore(authnPrincipal.getPattern());
 					listConfig.add(propertyAutenticazione);
 					break;
 				case TOKEN:
-					if(authConfig.getToken()==null) {
-						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il token claim, da cui estrarre il principal, per l'autenticazione '"+authConfig.getTipo()+"' indicata");
+					if(authnPrincipal.getToken()==null) {
+						throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il token claim, da cui estrarre il principal, per l'autenticazione '"+authnPrincipal.getTipoPrincipal()+"' indicata");
 					}
-					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authConfig.getToken())) {
-						if(authConfig.getNome()==null) {
-							throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome del token claim, da cui estrarre il principal, per l'autenticazione '"+authConfig.getTipo()+"' indicata");
+					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authnPrincipal.getToken())) {
+						if(authnPrincipal.getNome()==null) {
+							throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è stato indicato il nome del token claim, da cui estrarre il principal, per l'autenticazione '"+authnPrincipal.getTipoPrincipal()+"' indicata");
 						}
 					}
 					propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.TOKEN_CLAIM);
-					switch (authConfig.getToken()) {
+					switch (authnPrincipal.getToken()) {
 					case SUBJECT:
 						propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.TOKEN_CLAIM_SUBJECT);	
 						break;
@@ -759,21 +705,21 @@ public class ErogazioniApiHelper {
 					}
 					listConfig.add(propertyAutenticazione);
 					
-					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authConfig.getToken())) {
+					if(TipoAutenticazionePrincipalToken.CUSTOM.equals(authnPrincipal.getToken())) {
 						propertyAutenticazione = new Proprieta();
 						propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.NOME);
-						propertyAutenticazione.setValore(authConfig.getNome());
+						propertyAutenticazione.setValore(authnPrincipal.getNome());
 						listConfig.add(propertyAutenticazione);
 					}
 					
 					break;
 				}
         		
-        		if(authConfig.isForward()!=null) {
+        		if(authnPrincipal.isForward()!=null) {
         			
         			Proprieta propertyAutenticazione = new Proprieta();
 					propertyAutenticazione.setNome(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL);
-        			if(authConfig.isForward()) {
+        			if(authnPrincipal.isForward()) {
         				propertyAutenticazione.setValore(ParametriAutenticazionePrincipal.CLEAN_PRINCIPAL_FALSE);
         			}
         			else {
@@ -786,6 +732,9 @@ public class ErogazioniApiHelper {
         			return env.stationCore.getParametroAutenticazione(tipo.toString(), listConfig);
         		}
         	}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Autenticazione principal non correttamente formata");
+			}
 		}
 		return null;
 	}
@@ -901,8 +850,8 @@ public class ErogazioniApiHelper {
 		}
 
         // Autenticazione e autorizzazione sono opzionali nel json.
-        final APIImplAutorizzazioneNew authz = impl.getAutorizzazione();
-        final APIImplAutenticazioneNew authn = impl.getAutenticazione();
+        final OneOfAPIImplAutorizzazione authz = impl.getAutorizzazione();
+        final OneOfAPIImplAutenticazione authn = impl.getAutenticazione();
         
         // Vincolo rilasciato
 //        // Se sono in modalità SPCoop non posso specificare l'autenticazione
@@ -910,8 +859,6 @@ public class ErogazioniApiHelper {
 //        	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Non è possibile specificare l'autenticazione per un servizio spcoop");
 //        }
         
-        APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
-        APIImplAutorizzazioneXACMLConfig configAuthXaml = new APIImplAutorizzazioneXACMLConfig();        
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         String erogazioneRuolo = null;
         boolean isRichiedente = false;
@@ -920,57 +867,74 @@ public class ErogazioniApiHelper {
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
         if(authn!=null) {
-        	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn.getTipo(), authn.getConfigurazione()); 
-        	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn.getConfigurazione());
+        	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn); 
+        	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn);
         }
-        
+        final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(authn); // gestisce authn se null
+        AllAnyEnum ruoliRichiesti = null;
         
         if ( generaPortaApplicativa && as.getServiceBinding() == ServiceBinding.SOAP && authz != null && authz.getTipo() != null ) {
 	        switch ( authz.getTipo() ) {
 	        case ABILITATO:
-	        	configAuthz = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneConfigNew.class);
-	        	if(configAuthz.getRuoliFonte()!=null) {
-	        		ruoliFonte = configAuthz.getRuoliFonte();
+	        	
+	        	if(authz instanceof APIImplAutorizzazioneAbilitataNew) {
+	        	
+	        		APIImplAutorizzazioneAbilitataNew authzAbilitata = (APIImplAutorizzazioneAbilitataNew) authz;
+	        		
+		        	if(authzAbilitata.getRuoliFonte()!=null) {
+		        		ruoliFonte = authzAbilitata.getRuoliFonte();
+		        	}
+		         	erogazioneRuolo = authzAbilitata.getRuolo();
+		         	isRichiedente = authzAbilitata.isRichiedente();
+		         	isRuoli = authzAbilitata.isRuoli();
+		         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
+		         	ruoliRichiesti = authzAbilitata.getRuoliRichiesti();
 	        	}
-	         	erogazioneRuolo = configAuthz.getRuolo();
-	         	isRichiedente = configAuthz.isRichiedente();
-	         	isRuoli = configAuthz.isRuoli();
-	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
+	        	else {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+	        	}
 	        	break;
 	        case XACML_POLICY:
-	        	configAuthXaml = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
-	        	if (configAuthXaml.getPolicy() == null) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
-	        	}
-	        	if(configAuthXaml.getRuoliFonte()!=null) {
-	        		ruoliFonte = configAuthXaml.getRuoliFonte();
-	        	}
-	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 	        	
+	        	if(authz instanceof APIImplAutorizzazioneXACML) {
+		        	
+	        		APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
+	        	
+		        	if (authzXacml.getPolicy() == null) {
+		        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Campo obbligatorio 'policy' non presente nell'autorizzazione indicata");
+		        	}
+		        	if(authzXacml.getRuoliFonte()!=null) {
+		        		ruoliFonte = authzXacml.getRuoliFonte();
+		        	}
+		        	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
+	        	}
+	        	else {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+	        	}
 	        	break;
 	        case DISABILITATO:
 	        	statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
 	        	break;
-	        default: break;
+	        case CUSTOM:
+		    	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autorizzazione '"+authz.getTipo()+"' non utilizzabile");
 	        }
         }
         
-		final APIImplAutorizzazioneConfigNew configAuthz_final = configAuthz;
-        
-        
         if (isRichiedente) {
         	
+        	final APIImplAutorizzazioneAbilitataNew configAuthz_final = (APIImplAutorizzazioneAbilitataNew) authz;
+                    	
             // Se ho abilitata l'autorizzazione puntuale, devo aver anche abilitata l'autenticazione
         	if ( env.isSupportatoAutenticazioneSoggetti && 
-        			(authn == null || authn.getTipo() == TipoAutenticazioneNewEnum.DISABILITATO) ) {
+        			(authn == null || authn.getTipo() == TipoAutenticazioneEnum.DISABILITATO) ) {
         		if(!generaPortaApplicativa || !env.isSupportatoAutorizzazioneRichiedenteSenzaAutenticazioneErogazione) {
         			throw FaultCode.RICHIESTA_NON_VALIDA.toException(AccordiServizioParteSpecificaCostanti.MESSAGGIO_ERRORE_ABILITARE_AUTENTICAZIONE_PER_AUTORIZZAZIONE_PUNTUALE);
         		}
         	}
        	
-        	if ( !StringUtils.isEmpty(configAuthz.getSoggetto()) ) {
+        	if ( !StringUtils.isEmpty(configAuthz_final.getSoggetto()) ) {
         		
-        		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazioneNew.get(authn.getTipo()) );
+        		CredenzialeTipo credTipo = evalnull( () -> Enums.credenzialeTipoFromTipoAutenticazione.get(authn.getTipo()) );
         		Optional<String> soggettoCompatibile = getSoggettiCompatibiliAutorizzazione(credTipo, env.idSoggetto, env)
         	        	.stream()
         	        	.map( IDSoggettoDB::getNome )
@@ -979,28 +943,36 @@ public class ErogazioniApiHelper {
         	
         		//Se ho scelto un soggetto, questo deve esistere ed essere compatibile con il profilo di autenticazione
 	        	if ( !soggettoCompatibile.isPresent() ) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto " + configAuthz.getSoggetto() + " scelto per l'autorizzazione puntuale non esiste o non è compatibile con la modalità di autenticazione scelta");
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il soggetto " + configAuthz_final.getSoggetto() + " scelto per l'autorizzazione puntuale non esiste o non è compatibile con la modalità di autenticazione scelta");
 	        	}
         	}
         	
         }
         
-        if (isRuoli && !StringUtils.isEmpty(configAuthz.getRuolo())) {
-        	RuoliCore ruoliCore = new RuoliCore(env.stationCore);
-        	// Il ruolo deve esistere
-        	org.openspcoop2.core.registry.Ruolo regRuolo = null;
-			try {
-				regRuolo = ruoliCore.getRuolo(configAuthz.getRuolo());
-			} catch (DriverConfigurazioneException e) {	}
-			
-			if (regRuolo == null) {
-				throw FaultCode.NOT_FOUND.toException("Non esiste nessun ruolo con nome " + configAuthz.getRuolo());
-			}
+        if (isRuoli) {
+        	
+        	final APIImplAutorizzazioneAbilitataNew configAuthz_final = (APIImplAutorizzazioneAbilitataNew) authz;
+            
+        	if (!StringUtils.isEmpty(configAuthz_final.getRuolo())) {
+	        	RuoliCore ruoliCore = new RuoliCore(env.stationCore);
+	        	// Il ruolo deve esistere
+	        	org.openspcoop2.core.registry.Ruolo regRuolo = null;
+				try {
+					regRuolo = ruoliCore.getRuolo(configAuthz_final.getRuolo());
+				} catch (DriverConfigurazioneException e) {	}
+				
+				if (regRuolo == null) {
+					throw FaultCode.NOT_FOUND.toException("Non esiste nessun ruolo con nome " + configAuthz_final.getRuolo());
+				}
+        	}
         }
         
 	
         final BinaryParameter xamlPolicy = new BinaryParameter();
-        xamlPolicy.setValue(configAuthXaml.getPolicy());
+        if(authz instanceof APIImplAutorizzazioneXACML) {
+        	APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
+        	xamlPolicy.setValue(authzXacml.getPolicy());
+        }
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
         
         
@@ -1114,29 +1086,29 @@ public class ErogazioniApiHelper {
         		null,	// responseInputWaitTime,
         		null,	// erogazioneSoggetto, Come da codice console.
         		erogazioneRuolo,	//, non viene utilizzato.
-        		evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus(authn.isOpzionale()) ),					// erogazioneAutenticazioneOpzionale
+        		evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),		// erogazioneAutenticazione
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ),					// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,					   	// erogazioneAutorizzazione QUESTO E' lo STATO dell'autorizzazione
         		ServletUtils.boolToCheckBoxStatus( isRichiedente ), 			// erogazioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ),				// erogazioneAutorizzazioneRuoli, 
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				// erogazioneAutorizzazioneRuoliTipologia,
-                evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
+                ruoliRichiesti!=null ? ruoliRichiesti.toString() : null,  	// erogazioneAutorizzazioneRuoliMatch,  AllAnyEnum == RuoloTipoMatch
         		env.isSupportatoAutenticazioneSoggetti,	
         		generaPortaApplicativa,													// generaPACheckSoggetto (Un'erogazione genera una porta applicativa)
         		listExtendedConnettore,
         		null,																	// fruizioneServizioApplicativo
         		null,																	// Ruolo fruizione, non viene utilizzato.
-        		evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 			// fruizioneAutenticazioneOpzionale
+        		evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),  // fruizioneAutenticazione 
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ), 			// fruizioneAutenticazioneOpzionale
         		autenticazionePrincipal, // fruizioneAutenticazionePrincipal
         		autenticazioneParametroList, // fruizioneAutenticazioneParametroList
         		statoAutorizzazione,											// fruizioneAutorizzazione 	
         		ServletUtils.boolToCheckBoxStatus( isRichiedente ), 				// fruizioneAutorizzazioneAutenticati, 
         		ServletUtils.boolToCheckBoxStatus( isRuoli ), 					// fruizioneAutorizzazioneRuoli,
                 Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(), 					// fruizioneAutorizzazioneRuoliTipologia,
-                evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ), 		// fruizioneAutorizzazioneRuoliMatch,
+                ruoliRichiesti!=null ? ruoliRichiesti.toString() : null, 		// fruizioneAutorizzazioneRuoliMatch,
         		env.tipo_protocollo, 
         		xamlPolicy, 																//allegatoXacmlPolicy,
         		"",
@@ -1493,17 +1465,16 @@ public class ErogazioniApiHelper {
 		
 		// defaults
 		if (ero.getAutenticazione() == null) {
-			ero.setAutenticazione(new APIImplAutenticazioneNew());
-			ero.getAutenticazione().setTipo(TipoAutenticazioneNewEnum.HTTPS);
-			ero.getAutenticazione().setOpzionale(false);
+			APIImplAutenticazioneHttps https = new APIImplAutenticazioneHttps();
+			https.setTipo(TipoAutenticazioneEnum.HTTPS);
+			https.setOpzionale(false);
+			ero.setAutenticazione(https);
 		}
 		
-		final APIImplAutorizzazioneNew authz = ero.getAutorizzazione();
-        final APIImplAutenticazioneNew authn = ero.getAutenticazione();
+		final OneOfAPIImplAutorizzazione authz = ero.getAutorizzazione();
+        final OneOfAPIImplAutenticazione authn = ero.getAutenticazione();
         
-        APIImplAutorizzazioneConfigNew configAuthz = new APIImplAutorizzazioneConfigNew();
-        APIImplAutorizzazioneXACMLConfig configAuthzXacml = new APIImplAutorizzazioneXACMLConfig();
-		final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
+        final AccordoServizioParteComuneSintetico as = env.apcCore.getAccordoServizioSintetico(asps.getIdAccordo());
 
         FonteEnum ruoliFonte = FonteEnum.QUALSIASI;
         
@@ -1511,50 +1482,76 @@ public class ErogazioniApiHelper {
         boolean isRuoli = false;
         String statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
         String soggettoAutenticato = null;
+        AllAnyEnum ruoliRichiesti = null;
+        String ruolo = null;
         
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
         if(authn!=null) {
-        	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn.getTipo(), authn.getConfigurazione()); 
-        	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn.getConfigurazione());
+        	autenticazionePrincipal = getTipoAutenticazionePrincipal(authn); 
+        	autenticazioneParametroList = getAutenticazioneParametroList(env, authn.getTipo(), authn);
         }
+        final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(authn); // gestisce authn se null
                 
         if ( evalnull( () -> authz.getTipo() ) != null) {
 		    switch (authz.getTipo()) {
 		    case ABILITATO:	
-		    	configAuthz = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneConfigNew.class);
-		    	if(configAuthz.getRuoliFonte()!=null) {
-	        		ruoliFonte = configAuthz.getRuoliFonte();
-		    	}
-	         	isRichiedente = configAuthz.isRichiedente();
-	         	isRuoli = configAuthz.isRuoli();
-	         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
-	         	if ( configAuthz.getSoggetto() != null )
-	         		soggettoAutenticato = new IDSoggetto(env.tipo_soggetto, configAuthz.getSoggetto()).toString();
+		    	
+		    	if(authz instanceof APIImplAutorizzazioneAbilitataNew) {
+		    		
+		    		APIImplAutorizzazioneAbilitataNew authzAbilitata = (APIImplAutorizzazioneAbilitataNew) authz;
+		    		
+			    	if(authzAbilitata.getRuoliFonte()!=null) {
+		        		ruoliFonte = authzAbilitata.getRuoliFonte();
+			    	}
+		         	isRichiedente = authzAbilitata.isRichiedente();
+		         	isRuoli = authzAbilitata.isRuoli();
+		         	statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
+		         	if ( authzAbilitata.getSoggetto() != null )
+		         		soggettoAutenticato = new IDSoggetto(env.tipo_soggetto, authzAbilitata.getSoggetto()).toString();
+		         	ruoliRichiesti = authzAbilitata.getRuoliRichiesti();
+		         	ruolo = authzAbilitata.getRuolo();
+			    }
+	        	else {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+	        	}
 	         	
 		    	break;
 		    case XACML_POLICY:
-		    	configAuthzXacml = BaseHelper.deserialize(authz.getConfigurazione(), APIImplAutorizzazioneXACMLConfig.class);
-		    	if (configAuthzXacml.getPolicy() == null) {
-	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
-	        	}
-		    	if(configAuthzXacml.getRuoliFonte()!=null) {
-	        		ruoliFonte = configAuthzXacml.getRuoliFonte();
+		    	
+		    	if(authz instanceof APIImplAutorizzazioneXACML) {
+		    		
+		    		APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
+		    	
+			    	if (authzXacml.getPolicy() == null) {
+			    		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Campo obbligatorio 'policy' non presente nell'autorizzazione indicata");
+		        	}
+			    	if(authzXacml.getRuoliFonte()!=null) {
+		        		ruoliFonte = authzXacml.getRuoliFonte();
+			    	}
+			    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
 		    	}
-		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_XACML_POLICY;
+	        	else {
+	        		throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+	        	}
 		    	break;
 		    case DISABILITATO:
 		    	statoAutorizzazione = AutorizzazioneUtilities.STATO_DISABILITATO;
 		    	break;
+		    case CUSTOM:
+		    	throw FaultCode.RICHIESTA_NON_VALIDA.toException("Tipo di autorizzazione '"+authz.getTipo()+"' non utilizzabile");
 		    }
         }
         
-        final APIImplAutorizzazioneConfigNew configAuthz_final = configAuthz;
+    	
         
     	final IDServizio idServizio = env.idServizioFactory.getIDServizioFromValues(asps.getTipo(), asps.getNome(), new IDSoggetto(asps.getTipoSoggettoErogatore(), asps.getNomeSoggettoErogatore()), asps.getVersione()); 
 	               
         BinaryParameter xamlPolicy = new BinaryParameter();
-        xamlPolicy.setValue(configAuthzXacml.getPolicy());
+        if(authz instanceof APIImplAutorizzazioneXACML) {
+        	APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
+        	xamlPolicy.setValue(authzXacml.getPolicy());
+        }
         xamlPolicy.setName(CostantiControlStation.PARAMETRO_DOCUMENTO_SICUREZZA_XACML_POLICY);
                 
         AccordiServizioParteSpecificaUtilities.create(
@@ -1568,17 +1565,17 @@ public class ErogazioniApiHelper {
 				regConnettore, 
 				generaPortaApplicativa,										// generaPortaApplicativa,
 				generaPortaDelegata, 										// generaPortaDelegata
-				evalnull( () -> Enums.tipoAutenticazioneNewFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
-        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( authn.isOpzionale() ) ), 														// erogazioneAutenticazioneOpzionale
+				evalnull( () -> Enums.tipoAutenticazioneFromRest.get(authn.getTipo()).toString() ),											// erogazioneAutenticazione
+        		evalnull( () -> ServletUtils.boolToCheckBoxStatus( autenticazioneOpzionale ) ), 														// erogazioneAutenticazioneOpzionale
         		autenticazionePrincipal, // erogazioneAutenticazionePrincipal
         		autenticazioneParametroList, // erogazioneAutenticazioneParametroList
         		statoAutorizzazione,	// autorizzazione, è lo STATO 	
 				ServletUtils.boolToCheckBoxStatus( isRichiedente ),			// 	autorizzazioneAutenticati,
 				ServletUtils.boolToCheckBoxStatus( isRuoli ),				//	autorizzazioneRuoli,
 		    	Enums.ruoloTipologiaFromRest.get(ruoliFonte).toString(),				//	erogazioneAutorizzazioneRuoliTipologia
-		    	evalnull( () -> configAuthz_final.getRuoliRichiesti().toString() ),			// 	autorizzazioneRuoliMatch
+		    	ruoliRichiesti!=null ? ruoliRichiesti.toString() : null,			// 	autorizzazioneRuoliMatch
 				null,	// servizioApplicativo Come da Debug, 
-		    	evalnull( () -> configAuthz_final.getRuolo() ),	// ruolo: E' il ruolo scelto nella label "Ruolo" 
+				ruolo,	// ruolo: E' il ruolo scelto nella label "Ruolo" 
 		    	soggettoAutenticato,	// soggettoAutenticato TODO BISOGNA AGGIUNGERE IL CONTROLLO CHE IL SOGGETTO AUTENTICATO SIA NEL REGISTRO 
 				null,	// autorizzazione_tokenOptions, 
 				null,	// autorizzazioneScope, 
@@ -1691,53 +1688,77 @@ public class ErogazioniApiHelper {
 		
 		Documento documento = new Documento();
 		documento.setIdProprietarioDocumento(asps.getId());
+		
+		RuoloAllegatoAPIImpl ruoloAllegato = body.getAllegato().getRuolo();
+		
 		documento.setRuolo(RuoliDocumento.valueOf(
 				Enums.ruoliDocumentoFromApiImpl
-				.get( body.getRuolo()).toString() )
+				.get( ruoloAllegato).toString() )
 				.toString()
 			);
 		
-		Allegato allegato = body.getAllegato();
-		documento.setFile(allegato.getNome());
-		documento.setByteContenuto(allegato.getDocumento());
-		
-		if (body.getAllegato() != null) {
-			switch (body.getRuolo()) {
-			case ALLEGATO: {
-				documento.setTipo( evalnull( () -> allegato.getNome().substring( allegato.getNome().lastIndexOf('.')+1, allegato.getNome().length())) );
-				break;
+		switch (ruoloAllegato) {
+		case ALLEGATO:
+			
+			if(! (body.getAllegato() instanceof ApiImplAllegatoGenerico)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
 			}
-			case SPECIFICASEMIFORMALE: {
-				if(body.getTipoAllegato()==null) {
-					documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
-				}
-				else {
-					TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) body.getTipoAllegato();
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato).toString()) );
-				}
-				break;
+			ApiImplAllegatoGenerico allegatoGenerico = (ApiImplAllegatoGenerico) body.getAllegato();
+			documento.setFile(allegatoGenerico.getNome());
+			documento.setByteContenuto(allegatoGenerico.getDocumento());
+			documento.setTipo( evalnull( () -> allegatoGenerico.getNome().substring( allegatoGenerico.getNome().lastIndexOf('.')+1, allegatoGenerico.getNome().length())) );
+			break;
+
+		case SPECIFICASEMIFORMALE:
+			
+			if(! (body.getAllegato() instanceof ApiImplAllegatoSpecificaSemiformale)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
 			}
-			case SPECIFICALIVELLOSERVIZIO: {
-				if(body.getTipoAllegato()==null) {
-					documento.setTipo(TipiDocumentoLivelloServizio.WSLA.toString()); // default
-				}
-				else {
-					TipoSpecificaLivelloServizioEnum tipoAllegato = (TipoSpecificaLivelloServizioEnum) body.getTipoAllegato();
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(tipoAllegato).toString()) );
-				}
-				break;
+			ApiImplAllegatoSpecificaSemiformale allegatoSS = (ApiImplAllegatoSpecificaSemiformale) body.getAllegato();
+			documento.setFile(allegatoSS.getNome());
+			documento.setByteContenuto(allegatoSS.getDocumento());
+			if(allegatoSS.getTipoSpecifica()==null) {
+				documento.setTipo(TipiDocumentoSemiformale.LINGUAGGIO_NATURALE.toString()); // default
 			}
-			case SPECIFICASICUREZZA: {
-				if(body.getTipoAllegato()==null) {
-					documento.setTipo(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()); // default
-				}
-				else {
-					TipoSpecificaSicurezzaEnum tipoAllegato = (TipoSpecificaSicurezzaEnum) body.getTipoAllegato();
-					documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(tipoAllegato).toString()) );
-				}
-				break;
+			else {
+				TipoSpecificaSemiformaleEnum tipoAllegato = (TipoSpecificaSemiformaleEnum) allegatoSS.getTipoSpecifica();
+				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSemiFormaleFromSpecifica.get(tipoAllegato) ).toString() );
 			}
+			break;
+			
+		case SPECIFICALIVELLOSERVIZIO:
+			
+			if(! (body.getAllegato() instanceof ApiImplAllegatoSpecificaLivelloServizio)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
 			}
+			ApiImplAllegatoSpecificaLivelloServizio allegatoLS = (ApiImplAllegatoSpecificaLivelloServizio) body.getAllegato();
+			documento.setFile(allegatoLS.getNome());
+			documento.setByteContenuto(allegatoLS.getDocumento());
+			if(allegatoLS.getTipoSpecifica()==null) {
+				documento.setTipo(TipiDocumentoLivelloServizio.WSLA.toString()); // default
+			}
+			else {
+				TipoSpecificaLivelloServizioEnum tipoAllegato = (TipoSpecificaLivelloServizioEnum) allegatoLS.getTipoSpecifica();
+				documento.setTipo( evalnull( () -> Enums.tipoDocumentoLivelloServizioFromSpecifica.get(tipoAllegato).toString()) );
+			}
+			break;
+			
+		case SPECIFICASICUREZZA:
+			
+			if(! (body.getAllegato() instanceof ApiImplAllegatoSpecificaSicurezza)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("L'allegato fornito possiede una struttura dati '"+body.getAllegato().getClass().getName()+"' non compatibile con il ruolo '"+ruoloAllegato+"'");
+			}
+			ApiImplAllegatoSpecificaSicurezza allegatoSSec = (ApiImplAllegatoSpecificaSicurezza) body.getAllegato();
+			documento.setFile(allegatoSSec.getNome());
+			documento.setByteContenuto(allegatoSSec.getDocumento());
+			if(allegatoSSec.getTipoSpecifica()==null) {
+				documento.setTipo(TipiDocumentoSicurezza.LINGUAGGIO_NATURALE.toString()); // default
+			}
+			else {
+				TipoSpecificaSicurezzaEnum tipoAllegato = (TipoSpecificaSicurezzaEnum) allegatoSSec.getTipoSpecifica();
+				documento.setTipo( evalnull( () -> Enums.tipoDocumentoSicurezzaFromSpecifica.get(tipoAllegato).toString()) );
+			}
+			break;
 		}
 
 		return documento;
@@ -1747,33 +1768,56 @@ public class ErogazioniApiHelper {
 	public static final ApiImplAllegato documentoToImplAllegato(Documento doc) {
 		ApiImplAllegato ret = new ApiImplAllegato();
 	    
-		ret.setRuolo(Enums.ruoliApiImplFromDocumento.get( RuoliDocumento.valueOf(doc.getRuolo())) );
-	    
-		Allegato ag = new Allegato();
-		ag.setDocumento(doc.getByteContenuto());
-		ag.setNome(doc.getFile());
-		ret.setAllegato(ag);
+		RuoloAllegatoAPIImpl ruoloAllegato = Enums.ruoliApiImplFromDocumento.get( RuoliDocumento.valueOf(doc.getRuolo()));
 		
-	    switch(ret.getRuolo()) {
-	    case ALLEGATO: {
-	    	break;
-	    }
-	    case SPECIFICASEMIFORMALE: {
-	    	TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
-	    	break;
-	    }
-	    case SPECIFICALIVELLOSERVIZIO: {
-	    	TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
-	    	break;
-	    }
-	    case SPECIFICASICUREZZA: {
-	    	TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
-			ret.setTipoAllegato((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
-	    	break;
-	    }
-	    }
+		switch (ruoloAllegato) {
+		case ALLEGATO: {
+			
+			ApiImplAllegatoGenerico allegatoGenerico = new ApiImplAllegatoGenerico();
+			allegatoGenerico.setRuolo(ruoloAllegato);
+			allegatoGenerico.setDocumento(doc.getByteContenuto());
+			allegatoGenerico.setNome(doc.getFile());
+			ret.setAllegato(allegatoGenerico);
+			break;
+		}
+		
+		case SPECIFICASEMIFORMALE: {
+			
+			ApiImplAllegatoSpecificaSemiformale allegatoSS = new ApiImplAllegatoSpecificaSemiformale();
+			allegatoSS.setRuolo(ruoloAllegato);
+			allegatoSS.setDocumento(doc.getByteContenuto());
+			allegatoSS.setNome(doc.getFile());
+			TipiDocumentoSemiformale tipo = Enum.valueOf(TipiDocumentoSemiformale.class, doc.getTipo());
+			allegatoSS.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSemiformaleEnum.class)));
+			ret.setAllegato(allegatoSS);
+			break;
+		}
+			
+		case SPECIFICALIVELLOSERVIZIO:{
+			
+			ApiImplAllegatoSpecificaLivelloServizio allegatoSL = new ApiImplAllegatoSpecificaLivelloServizio();
+			allegatoSL.setRuolo(ruoloAllegato);
+			allegatoSL.setDocumento(doc.getByteContenuto());
+			allegatoSL.setNome(doc.getFile());
+			TipiDocumentoLivelloServizio tipo = Enum.valueOf(TipiDocumentoLivelloServizio.class, doc.getTipo());
+			allegatoSL.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaLivelloServizioEnum.class)));
+			ret.setAllegato(allegatoSL);
+			break;
+		}
+		
+		case SPECIFICASICUREZZA:{
+			
+			ApiImplAllegatoSpecificaSicurezza allegatoSSec = new ApiImplAllegatoSpecificaSicurezza();
+			allegatoSSec.setRuolo(ruoloAllegato);
+			allegatoSSec.setDocumento(doc.getByteContenuto());
+			allegatoSSec.setNome(doc.getFile());
+			TipiDocumentoSicurezza tipo = Enum.valueOf(TipiDocumentoSicurezza.class, doc.getTipo());
+			allegatoSSec.setTipoSpecifica((Helper.apiEnumToGovway(tipo, TipoSpecificaSicurezzaEnum.class)));
+			ret.setAllegato(allegatoSSec);
+			break;
+		}
+		
+		}
 	    
 	    return ret;
 		
@@ -1782,14 +1826,58 @@ public class ErogazioniApiHelper {
 	public static final ApiImplAllegatoItem ImplAllegatoToItem(ApiImplAllegato allegato) {
 		ApiImplAllegatoItem ret = new ApiImplAllegatoItem();
 		
-		ret.setRuolo(allegato.getRuolo());
+		RuoloAllegatoAPIImpl ruoloAllegato = allegato.getAllegato().getRuolo();
 		
-		AllegatoItem a = new AllegatoItem();
-		a.setNome(allegato.getAllegato().getNome());
-		ret.setAllegato(a);
+		switch (ruoloAllegato) {
+		case ALLEGATO: {
+			
+			ApiImplAllegatoGenerico allegatoGenerico = (ApiImplAllegatoGenerico) allegato.getAllegato();
+			
+			ApiImplAllegatoItemGenerico allegatoGenericoItem = new ApiImplAllegatoItemGenerico();
+			allegatoGenericoItem.setRuolo(ruoloAllegato);
+			allegatoGenericoItem.setNome(allegatoGenerico.getNome());
+			ret.setAllegato(allegatoGenericoItem);
+			break;
+		}
 		
-		ret.setTipoAllegato((OneOfApiImplAllegatoItemTipoAllegato) allegato.getTipoAllegato());
+		case SPECIFICASEMIFORMALE: {
+			
+			ApiImplAllegatoSpecificaSemiformale allegatoSS = (ApiImplAllegatoSpecificaSemiformale) allegato.getAllegato();
+			
+			ApiImplAllegatoItemSpecificaSemiformale allegatoItemSS = new ApiImplAllegatoItemSpecificaSemiformale();
+			allegatoItemSS.setRuolo(ruoloAllegato);
+			allegatoItemSS.setNome(allegatoSS.getNome());
+			allegatoItemSS.setTipoSpecifica(allegatoSS.getTipoSpecifica());
+			ret.setAllegato(allegatoItemSS);
+			break;
+		}
+			
+		case SPECIFICALIVELLOSERVIZIO:{
+			
+			ApiImplAllegatoSpecificaLivelloServizio allegatoSL = (ApiImplAllegatoSpecificaLivelloServizio) allegato.getAllegato();
+			
+			ApiImplAllegatoItemSpecificaLivelloServizio allegatoItemSL = new ApiImplAllegatoItemSpecificaLivelloServizio();
+			allegatoItemSL.setRuolo(ruoloAllegato);
+			allegatoItemSL.setNome(allegatoSL.getNome());
+			allegatoItemSL.setTipoSpecifica(allegatoSL.getTipoSpecifica());
+			ret.setAllegato(allegatoItemSL);
+			break;
+		}
 		
+		case SPECIFICASICUREZZA:{
+			
+			ApiImplAllegatoSpecificaSicurezza allegatoSSec = (ApiImplAllegatoSpecificaSicurezza) allegato.getAllegato();
+			
+			ApiImplAllegatoItemSpecificaSicurezza allegatoItemSSec = new ApiImplAllegatoItemSpecificaSicurezza();
+			allegatoItemSSec.setRuolo(ruoloAllegato);
+			allegatoItemSSec.setNome(allegatoSSec.getNome());
+			allegatoItemSSec.setTipoSpecifica(allegatoSSec.getTipoSpecifica());
+			ret.setAllegato(allegatoItemSSec);
+			break;
+		}
+		
+		}
+
 		return ret;
 		
 	}
@@ -1812,7 +1900,7 @@ public class ErogazioniApiHelper {
 			throw FaultCode.RICHIESTA_NON_VALIDA.toException(StringEscapeUtils.unescapeHtml(env.pd.getMessage()));
 		}
 		
-		switch (body.getRuolo()) {
+		switch (body.getAllegato().getRuolo()) {
 			case ALLEGATO:
 				asps.addAllegato(documento);
 				break;
@@ -3210,7 +3298,7 @@ public class ErogazioniApiHelper {
 	}
 	
 	public static final void fillPortaDelegata(ControlloAccessiAutorizzazione body, final PortaDelegata newPd) {
-		final APIImplAutorizzazione authz = body.getAutorizzazione();
+		final OneOfControlloAccessiAutorizzazioneAutorizzazione authz = body.getAutorizzazione();
 		
 		newPd.setXacmlPolicy(null);
 		
@@ -3224,24 +3312,26 @@ public class ErogazioniApiHelper {
 			break;
 		}
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = authz.getConfigurazione();
-			if(config==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione non fornita");
-			}
+			
+			if(! (authz instanceof APIImplAutorizzazioneAbilitata)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+        	}
+			APIImplAutorizzazioneAbilitata authzAbilitata = (APIImplAutorizzazioneAbilitata) authz;
+
 			
 			// defaults
-			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
-				config.setRuoliFonte(FonteEnum.QUALSIASI);
+			if ( authzAbilitata.isRuoli() && authzAbilitata.getRuoliFonte() == null ) {
+				authzAbilitata.setRuoliFonte(FonteEnum.QUALSIASI);
 			}
 			
 			final String autorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
-			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isRichiedente());
-			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
-			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
-			final String autorizzazione_tokenOptions = config.getTokenClaims();
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(config.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> config.getScopeRichiesti().toString()) );
+			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
+			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
+			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
+			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
+			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
 	
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(autorizzazione,
@@ -3254,7 +3344,7 @@ public class ErogazioniApiHelper {
 			
 			newPd.setAutorizzazione(tipoAutorString);
 			
-			if ( config.isRuoli() ) {
+			if ( authzAbilitata.isRuoli() ) {
 				if ( newPd.getRuoli() == null) newPd.setRuoli(new AutorizzazioneRuoli());
 				
 				newPd.getRuoli().setMatch(tipoRuoloMatch);
@@ -3263,7 +3353,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			
-			if ( config.isScope() ) {
+			if ( authzAbilitata.isScope() ) {
 				if ( newPd.getScope() == null ) newPd.setScope(new AutorizzazioneScope());
 				
 				newPd.getScope().setMatch(scopeTipoMatch);
@@ -3273,7 +3363,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			
-			if ( config.isToken() ) {
+			if ( authzAbilitata.isToken() ) {
 				if ( newPd.getGestioneToken() == null ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessun token configurato per l'erogazione");
 				}
@@ -3284,29 +3374,21 @@ public class ErogazioniApiHelper {
 			}
 			break;
 		}
-		case CUSTOM:
-			APIImplAutorizzazioneCustom customConfig = authz.getConfigurazioneCustom();
-			if(customConfig==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione custom non fornita");
-			}
-			if (StringUtils.isEmpty(customConfig.getNome())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
-			}
-			newPd.setAutorizzazione(customConfig.getNome());
-			break;
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = authz.getConfigurazioneXacml();
-			if(xacmlConfig==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione xacml non fornita");
-			}
-			if (xacmlConfig.getPolicy() == null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName()+": Indicare il campo obbligatorio 'policy'");
+			
+			if(! (authz instanceof APIImplAutorizzazioneXACML)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+        	}
+			APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
+			
+			if (authzXacml.getPolicy() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Campo obbligatorio 'policy' non presente nell'autorizzazione indicata");
 			}
 			
-			if (xacmlConfig.getRuoliFonte() == null)
-				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
+			if (authzXacml.getRuoliFonte() == null)
+				authzXacml.setRuoliFonte(FonteEnum.QUALSIASI);
 			
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(xacmlConfig.getRuoliFonte());
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzXacml.getRuoliFonte());
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(TipoAutorizzazioneEnum.XACML_POLICY.toString(),
 					false,
@@ -3317,16 +3399,28 @@ public class ErogazioniApiHelper {
 				);
 			
 			newPd.setAutorizzazione(tipoAutorString);
-			newPd.setXacmlPolicy( evalnull( () -> new String(xacmlConfig.getPolicy())));				
+			newPd.setXacmlPolicy( evalnull( () -> new String(authzXacml.getPolicy())));				
 			break;
 		}
+		case CUSTOM:
+			
+			if(! (authz instanceof APIImplAutorizzazioneCustom)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+        	}
+			APIImplAutorizzazioneCustom authzACustom = (APIImplAutorizzazioneCustom) authz;
+			
+			if (StringUtils.isEmpty(authzACustom.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
+			}
+			newPd.setAutorizzazione(authzACustom.getNome());
+			break;
 		}	
 	}
 
 
 
 	public static final void fillPortaApplicativa(ControlloAccessiAutorizzazione body, final PortaApplicativa newPa) {
-		final APIImplAutorizzazione authz = body.getAutorizzazione();
+		final OneOfControlloAccessiAutorizzazioneAutorizzazione authz = body.getAutorizzazione();
 		
 		newPa.setXacmlPolicy(null);
 
@@ -3343,24 +3437,24 @@ public class ErogazioniApiHelper {
 		
 		
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = authz.getConfigurazione();
-			if(config==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione non fornita");
-			}
+			if(! (authz instanceof APIImplAutorizzazioneAbilitata)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+        	}
+			APIImplAutorizzazioneAbilitata authzAbilitata = (APIImplAutorizzazioneAbilitata) authz;
 			
 			// defaults
-			if ( config.isRuoli() && config.getRuoliFonte() == null ) {
-				config.setRuoliFonte(FonteEnum.QUALSIASI);
+			if ( authzAbilitata.isRuoli() && authzAbilitata.getRuoliFonte() == null ) {
+				authzAbilitata.setRuoliFonte(FonteEnum.QUALSIASI);
 			}
 			
 			final String statoAutorizzazione = AutorizzazioneUtilities.STATO_ABILITATO;
-			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(config.isRichiedente());
-			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(config.isRuoli());
-			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(config.isScope());
-			final String autorizzazione_tokenOptions = config.getTokenClaims();
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(config.getRuoliFonte());
-			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> config.getRuoliRichiesti().toString()) );	// Gli enum coincidono
-			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> config.getScopeRichiesti().toString()) );
+			final String autorizzazioneAutenticati = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRichiedente());
+			final String autorizzazioneRuoli = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isRuoli());
+			final String autorizzazioneScope = ServletUtils.boolToCheckBoxStatus(authzAbilitata.isScope());
+			final String autorizzazione_tokenOptions = authzAbilitata.getTokenClaims();
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzAbilitata.getRuoliFonte());
+			final RuoloTipoMatch tipoRuoloMatch = RuoloTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getRuoliRichiesti().toString()) );	// Gli enum coincidono
+			final ScopeTipoMatch scopeTipoMatch = ScopeTipoMatch.toEnumConstant( evalnull( () -> authzAbilitata.getScopeRichiesti().toString()) );
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(statoAutorizzazione,
 					ServletUtils.isCheckBoxEnabled(autorizzazioneAutenticati),
@@ -3372,7 +3466,7 @@ public class ErogazioniApiHelper {
 			
 			newPa.setAutorizzazione(tipoAutorString);
 			
-			if ( config.isRuoli() ) {
+			if ( authzAbilitata.isRuoli() ) {
 				if ( newPa.getRuoli() == null) newPa.setRuoli(new AutorizzazioneRuoli());
 				
 				newPa.getRuoli().setMatch(tipoRuoloMatch);
@@ -3381,7 +3475,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			
-			if ( config.isScope() ) {
+			if ( authzAbilitata.isScope() ) {
 				if ( newPa.getScope() == null ) newPa.setScope(new AutorizzazioneScope());
 				
 				newPa.getScope().setMatch(scopeTipoMatch);
@@ -3391,7 +3485,7 @@ public class ErogazioniApiHelper {
 			}
 			
 			
-			if ( config.isToken() ) {
+			if ( authzAbilitata.isToken() ) {
 				if ( newPa.getGestioneToken() == null ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Nessun token configurato per l'erogazione");
 				}
@@ -3402,29 +3496,21 @@ public class ErogazioniApiHelper {
 			}
 			break;
 		}
-		case CUSTOM:
-			APIImplAutorizzazioneCustom customConfig = authz.getConfigurazioneCustom();
-			if(customConfig==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione custom non fornita");
-			}
-			if (StringUtils.isEmpty(customConfig.getNome())) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
-			}
-			newPa.setAutorizzazione(customConfig.getNome());
-			break;
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLConfig xacmlConfig = authz.getConfigurazioneXacml();
-			if(xacmlConfig==null) {
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione xacml non fornita");
-			}
-			if (xacmlConfig.getPolicy() == null) {
-        		throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneXACMLConfig.class.getName() + ": Indicare il campo obbligatorio 'policy'");
+			
+			if(! (authz instanceof APIImplAutorizzazioneXACML)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
         	}
+			APIImplAutorizzazioneXACML authzXacml = (APIImplAutorizzazioneXACML) authz;
 			
-			if (xacmlConfig.getRuoliFonte() == null)
-				xacmlConfig.setRuoliFonte(FonteEnum.QUALSIASI);
+			if (authzXacml.getPolicy() == null) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Campo obbligatorio 'policy' non presente nell'autorizzazione indicata");
+			}
 			
-			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(xacmlConfig.getRuoliFonte());
+			if (authzXacml.getRuoliFonte() == null)
+				authzXacml.setRuoliFonte(FonteEnum.QUALSIASI);
+			
+			final RuoloTipologia tipoRuoloFonte = Enums.ruoloTipologiaFromRest.get(authzXacml.getRuoliFonte());
 			
 			final String tipoAutorString =	AutorizzazioneUtilities.convertToTipoAutorizzazioneAsString(AutorizzazioneUtilities.STATO_XACML_POLICY,
 					false,
@@ -3436,9 +3522,21 @@ public class ErogazioniApiHelper {
 			
 			
 			newPa.setAutorizzazione(tipoAutorString);
-			newPa.setXacmlPolicy( evalnull( () -> new String(xacmlConfig.getPolicy())));				
+			newPa.setXacmlPolicy( evalnull( () -> new String(authzXacml.getPolicy())));				
 			break;
 		}
+		case CUSTOM:
+			
+			if(! (authz instanceof APIImplAutorizzazioneCustom)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Configurazione dell'autorizzazione '"+authz.getClass().getName()+"' non compatibile con il tipo impostato '"+authz.getTipo()+"'");
+        	}
+			APIImplAutorizzazioneCustom authzACustom = (APIImplAutorizzazioneCustom) authz;
+			
+			if (StringUtils.isEmpty(authzACustom.getNome())) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException(APIImplAutorizzazioneCustom.class.getName()+": Indicare il campo obbligatorio 'nome' ");
+			}
+			newPa.setAutorizzazione(authzACustom.getNome());
+			break;
 		}
 	}
 	
@@ -3475,49 +3573,59 @@ public class ErogazioniApiHelper {
 		
 		TipoAutorizzazioneEnum tipoAuthz = getTipoAutorizzazione(pa.getAutorizzazione());		
 	
-		APIImplAutorizzazioneView retAuthz = new APIImplAutorizzazioneView();
-		retAuthz.setTipo(tipoAuthz);
+		OneOfControlloAccessiAutorizzazioneViewAutorizzazione retAuthz = null;
 		
 		switch ( tipoAuthz ) {
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
+			APIImplAutorizzazioneAbilitata authzAbilitata = new APIImplAutorizzazioneAbilitata();
+			authzAbilitata.setTipo(tipoAuthz);
+			retAuthz = authzAbilitata;
 			
-			config.setRichiedente(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()));
+			authzAbilitata.setRichiedente(TipoAutorizzazione.isAuthenticationRequired(pa.getAutorizzazione()));
 			
-			config.setRuoli( TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) );
-			if (config.isRuoli()) {
+			authzAbilitata.setRuoli( TipoAutorizzazione.isRolesRequired(pa.getAutorizzazione()) );
+			if (authzAbilitata.isRuoli()) {
 			
-				config.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
-				config.setRuoliFonte( evalnull( () -> 
+				authzAbilitata.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pa.getRuoli().getMatch().toString()) ) );
+				authzAbilitata.setRuoliFonte( evalnull( () -> 
 						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
 					));
 			}
 			
 			
-			config.setScope( pa.getScope() != null );
-			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
+			authzAbilitata.setScope( pa.getScope() != null );
+			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pa.getScope().getMatch().getValue() )));
 			
-			config.setToken( (pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions() != null) ? true : false);
-			config.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
+			authzAbilitata.setToken( (pa.getGestioneToken()!=null && pa.getGestioneToken().getOptions() != null) ? true : false);
+			authzAbilitata.setTokenClaims( evalnull( () -> pa.getGestioneToken().getOptions() ));
 			
-			retAuthz.setConfigurazione(config);
-			break;
-		}
-		case CUSTOM: {
-			APIImplAutorizzazioneCustom config = new APIImplAutorizzazioneCustom();
-			config.setNome(pa.getAutorizzazione());
-			retAuthz.setConfigurazioneCustom(config);
-			break;
-		}
-		case DISABILITATO: {
 			break;
 		}
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLViewConfig config = new APIImplAutorizzazioneXACMLViewConfig();
-			config.setRuoliFonte( evalnull( () -> 
+			APIImplAutorizzazioneXACMLView authzXacml = new APIImplAutorizzazioneXACMLView();
+			authzXacml.setTipo(tipoAuthz);
+			retAuthz = authzXacml;
+			
+			authzXacml.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pa.getAutorizzazione()) )
 				));
-			retAuthz.setConfigurazioneXacml(config);
+
+			break;
+		}
+		case CUSTOM: {
+			APIImplAutorizzazioneCustom authzCustom = new APIImplAutorizzazioneCustom();
+			authzCustom.setTipo(tipoAuthz);
+			retAuthz = authzCustom;
+			
+			authzCustom.setNome(pa.getAutorizzazione());
+
+			break;
+		}
+		case DISABILITATO: {
+			APIImplAutorizzazioneDisabilitata authzDisabilitata = new APIImplAutorizzazioneDisabilitata();
+			authzDisabilitata.setTipo(tipoAuthz);
+			retAuthz = authzDisabilitata;
+			
 			break;
 		}
 		}
@@ -3531,48 +3639,59 @@ public class ErogazioniApiHelper {
 		
 		TipoAutorizzazioneEnum tipoAuthz = getTipoAutorizzazione(pd.getAutorizzazione());		
 	
-		APIImplAutorizzazioneView retAuthz = new APIImplAutorizzazioneView();
-		retAuthz.setTipo(tipoAuthz);
+		OneOfControlloAccessiAutorizzazioneViewAutorizzazione retAuthz = null;
 		
 		switch ( tipoAuthz ) {
 		case ABILITATO: {
-			APIImplAutorizzazioneConfig config = new APIImplAutorizzazioneConfig();
+			APIImplAutorizzazioneAbilitata authzAbilitata = new APIImplAutorizzazioneAbilitata();
+			authzAbilitata.setTipo(tipoAuthz);
+			retAuthz = authzAbilitata;
 			
-			config.setRichiedente( TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()));
+			authzAbilitata.setRichiedente( TipoAutorizzazione.isAuthenticationRequired(pd.getAutorizzazione()));
 			
 			
-			config.setRuoli( TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) );
-			if (config.isRuoli()) {
-				config.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
-				config.setRuoliFonte( evalnull( () -> 
+			authzAbilitata.setRuoli( TipoAutorizzazione.isRolesRequired(pd.getAutorizzazione()) );
+			if (authzAbilitata.isRuoli()) {
+				authzAbilitata.setRuoliRichiesti( evalnull(  () -> AllAnyEnum.fromValue( pd.getRuoli().getMatch().toString()) ) );
+				authzAbilitata.setRuoliFonte( evalnull( () -> 
 						Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
 					));
 			}
 			
 			
-			config.setScope( pd.getScope() != null );
-			config.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
+			authzAbilitata.setScope( pd.getScope() != null );
+			authzAbilitata.setScopeRichiesti( evalnull( () -> AllAnyEnum.fromValue( pd.getScope().getMatch().getValue() )));
 			
-			config.setToken( (pd.getGestioneToken()!=null && pd.getGestioneToken().getOptions() != null) ? true : false);
-			config.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
-						retAuthz.setConfigurazione(config);
-			break;
-		}
-		case CUSTOM: {
-			APIImplAutorizzazioneCustom config = new APIImplAutorizzazioneCustom();
-			config.setNome(pd.getAutorizzazione());
-			retAuthz.setConfigurazioneCustom(config);
-			break;
-		}
-		case DISABILITATO: {
+			authzAbilitata.setToken( (pd.getGestioneToken()!=null && pd.getGestioneToken().getOptions() != null) ? true : false);
+			authzAbilitata.setTokenClaims( evalnull( () -> pd.getGestioneToken().getOptions() ));
+
 			break;
 		}
 		case XACML_POLICY: {
-			APIImplAutorizzazioneXACMLViewConfig config = new APIImplAutorizzazioneXACMLViewConfig();
-			config.setRuoliFonte( evalnull( () -> 
+			APIImplAutorizzazioneXACMLView authzXacml = new APIImplAutorizzazioneXACMLView();
+			authzXacml.setTipo(tipoAuthz);
+			retAuthz = authzXacml;
+			
+			authzXacml.setRuoliFonte( evalnull( () -> 
 					Enums.registroTipologiaToApiFonte(	AutorizzazioneUtilities.convertToRuoloTipologia(pd.getAutorizzazione()) )
 				));
-			retAuthz.setConfigurazioneXacml(config);
+
+			break;
+		}
+		case CUSTOM: {
+			APIImplAutorizzazioneCustom authzCustom = new APIImplAutorizzazioneCustom();
+			authzCustom.setTipo(tipoAuthz);
+			retAuthz = authzCustom;
+			
+			authzCustom.setNome(pd.getAutorizzazione());
+
+			break;
+		}
+		case DISABILITATO: {
+			APIImplAutorizzazioneDisabilitata authzDisabilitata = new APIImplAutorizzazioneDisabilitata();
+			authzDisabilitata.setTipo(tipoAuthz);
+			retAuthz = authzDisabilitata;
+			
 			break;
 		}
 		}
@@ -3584,24 +3703,30 @@ public class ErogazioniApiHelper {
 
 
 	public static final void fillPortaApplicativa(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaApplicativa newPa) throws InstantiationException, IllegalAccessException {
-		final APIImplAutenticazione auth = body.getAutenticazione();
+		final OneOfControlloAccessiAutenticazioneAutenticazione auth = body.getAutenticazione();
+		final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(auth); // gestisce auth se null
 		
-		newPa.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
+		newPa.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionale)) );
 		newPa.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
         TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
         if(auth!=null) {
-        	autenticazionePrincipal = getTipoAutenticazionePrincipal(Enums.convertTipoAutenticazione(auth.getTipo()), auth.getConfigurazione()); 
-        	autenticazioneParametroList = getAutenticazioneParametroList(env, Enums.convertTipoAutenticazione(auth.getTipo()), auth.getConfigurazione());
+        	autenticazionePrincipal = getTipoAutenticazionePrincipal(auth); 
+        	autenticazioneParametroList = getAutenticazioneParametroList(env, auth.getTipo(), auth);
         }
 		List<Proprieta> proprietaAutenticazione = env.paCore.convertToAutenticazioneProprieta(newPa.getAutenticazione(), autenticazionePrincipal, autenticazioneParametroList);
 		newPa.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
 		// Imposto l'autenticazione custom
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			APIImplAutenticazioneConfigurazioneCustom customConfig = deserializeDefault(auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
-			newPa.setAutenticazione(customConfig.getNome());
+			if(auth instanceof APIImplAutenticazioneCustom) {
+				APIImplAutenticazioneCustom authnCustom = (APIImplAutenticazioneCustom) auth;
+				newPa.setAutenticazione(authnCustom.getNome());
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+auth.getTipo()+"' non è correttamente definita (trovata configurazione '"+auth.getClass().getName()+"')"  );
+			}
 		}
 		// Gestione Token
 		final ControlloAccessiAutenticazioneToken gToken = body.getToken();
@@ -3628,23 +3753,29 @@ public class ErogazioniApiHelper {
 	
 	
 	public static final void fillPortaDelegata(final ErogazioniEnv env, ControlloAccessiAutenticazione body, final PortaDelegata newPd) {
-		final APIImplAutenticazione auth = body.getAutenticazione();
+		final OneOfControlloAccessiAutenticazioneAutenticazione auth = body.getAutenticazione();
+		final Boolean autenticazioneOpzionale = getAutenticazioneOpzionale(auth); // gestisce auth se null
 		
-		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(auth.isOpzionale())) );
+		newPd.setAutenticazioneOpzionale( evalnull( () -> Helper.boolToStatoFunzionalitaConf(autenticazioneOpzionale)) );
 		newPd.setAutenticazione( evalnull( () -> Enums.tipoAutenticazioneFromRest.get(auth.getTipo()).toString()) );
 		
 		TipoAutenticazionePrincipal autenticazionePrincipal = null;
         List<String> autenticazioneParametroList = null;
         if(auth!=null) {
-        	autenticazionePrincipal = getTipoAutenticazionePrincipal(Enums.convertTipoAutenticazione(auth.getTipo()), auth.getConfigurazione()); 
-        	autenticazioneParametroList = getAutenticazioneParametroList(env, Enums.convertTipoAutenticazione(auth.getTipo()), auth.getConfigurazione());
+        	autenticazionePrincipal = getTipoAutenticazionePrincipal(auth); 
+        	autenticazioneParametroList = getAutenticazioneParametroList(env, auth.getTipo(), auth);
         }
 		List<Proprieta> proprietaAutenticazione = env.paCore.convertToAutenticazioneProprieta(newPd.getAutenticazione(), autenticazionePrincipal, autenticazioneParametroList);
 		newPd.setProprietaAutenticazioneList(proprietaAutenticazione);
 		
 		if ( evalnull( () -> auth.getTipo() ) == TipoAutenticazioneEnum.CUSTOM) {
-			APIImplAutenticazioneConfigurazioneCustom customConfig = deserializeDefault(auth.getConfigurazione(), APIImplAutenticazioneConfigurazioneCustom.class);
-			newPd.setAutenticazione(customConfig.getNome());
+			if(auth instanceof APIImplAutenticazioneCustom) {
+				APIImplAutenticazioneCustom authnCustom = (APIImplAutenticazioneCustom) auth;
+				newPd.setAutenticazione(authnCustom.getNome());
+			}
+			else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("La configurazione dell'autenticazione '"+auth.getTipo()+"' non è correttamente definita (trovata configurazione '"+auth.getClass().getName()+"')"  );
+			}
 		}
 		// Gestione Token
 		final ControlloAccessiAutenticazioneToken gToken = body.getToken();
@@ -3882,8 +4013,8 @@ public class ErogazioniApiHelper {
 			RateLimitingPolicyBaseConIdentificazione destIdentificazione = (RateLimitingPolicyBaseConIdentificazione) dest;
 			
 			if(infoPolicy.isBuiltIn()) {
-				destIdentificazione.setIdentificazione(RateLimitingIdentificazionePolicyEnum.CRITERI);
 				RateLimitingPolicyCriteri criteri = new RateLimitingPolicyCriteri();
+				criteri.setIdentificazione(RateLimitingIdentificazionePolicyEnum.CRITERI);
 				boolean intervallo = true;
 				switch (infoPolicy.getTipoRisorsa()) {
 				case NUMERO_RICHIESTE:
@@ -3937,8 +4068,8 @@ public class ErogazioniApiHelper {
 				destIdentificazione.setConfigurazione(criteri);
 			}
 			else {
-				destIdentificazione.setIdentificazione(RateLimitingIdentificazionePolicyEnum.POLICY);
 				RateLimitingPolicyIdentificativo id = new RateLimitingPolicyIdentificativo();
+				id.setIdentificazione(RateLimitingIdentificazionePolicyEnum.POLICY);
 				id.setPolicy(infoPolicy.getIdPolicy());
 				destIdentificazione.setConfigurazione(id);
 			}
@@ -3981,7 +4112,7 @@ public class ErogazioniApiHelper {
 	public static final String getIdPolicy(RateLimitingPolicyBaseConIdentificazione body, ConfigurazioneCore confCore, ConfigurazioneHelper confHelper) throws Exception {
 		
 		String idPolicy = null;
-		switch (body.getIdentificazione()) {
+		switch (body.getConfigurazione().getIdentificazione()) {
 		case POLICY:
 			RateLimitingPolicyIdentificativo identificativo = new RateLimitingPolicyIdentificativo();
 			identificativo = BaseHelper.deserialize(body.getConfigurazione(), RateLimitingPolicyIdentificativo.class);

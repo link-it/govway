@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazione;
 import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
 import org.openspcoop2.core.config.rs.server.model.ControlloAccessiAutenticazioneToken;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +28,14 @@ import javax.validation.Valid;
 public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
   
   @Schema(description = "")
-  private APIImplAutenticazione autenticazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneDisabilitata.class, name = "disabilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneBasic.class, name = "http-basic"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneHttps.class, name = "https"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneCustom.class, name = "custom")  })
+  private OneOfControlloAccessiAutenticazioneAutenticazione autenticazione = null;
   
   @Schema(description = "")
   private ControlloAccessiAutenticazioneToken token = null;
@@ -39,15 +45,15 @@ public class ControlloAccessiAutenticazione extends ApiImplConfigurazioneStato {
   **/
   @JsonProperty("autenticazione")
   @Valid
-  public APIImplAutenticazione getAutenticazione() {
+  public OneOfControlloAccessiAutenticazioneAutenticazione getAutenticazione() {
     return this.autenticazione;
   }
 
-  public void setAutenticazione(APIImplAutenticazione autenticazione) {
+  public void setAutenticazione(OneOfControlloAccessiAutenticazioneAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
   }
 
-  public ControlloAccessiAutenticazione autenticazione(APIImplAutenticazione autenticazione) {
+  public ControlloAccessiAutenticazione autenticazione(OneOfControlloAccessiAutenticazioneAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
     return this;
   }

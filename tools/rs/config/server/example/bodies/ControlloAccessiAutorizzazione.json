@@ -2,14 +2,9 @@
     
     "autorizzazione": {
         "tipo": "abilitato",
-
-        "configurazione": {
-            "puntuale": true,
-            "ruoli": true,
-            "scope": true
-            
-            
-        }
+        "puntuale": true,
+        "ruoli": true,
+        "scope": true
     }
 
 }

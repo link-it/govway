@@ -67,8 +67,8 @@ Scenario: Erogazioni Creazione Petstore con autenticazione e autorizzazione
     * eval randomize ( ruolo_autenticato, ["nome"])    
     * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato })
 
-    * eval erogazione_petstore_auth.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
-    * eval erogazione_petstore_auth.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
+    * eval erogazione_petstore_auth.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval erogazione_petstore_auth.autorizzazione.ruolo = ruolo_autenticato.nome
 
     * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_petstore_auth,  key: petstore_key })
 
@@ -105,8 +105,8 @@ Scenario: Erogazioni Creazione SPCoop 204
     * eval randomize ( ruolo_autenticato, ["nome"])    
     * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato })
 
-    * eval erogazione_spcoop.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
-    * eval erogazione_spcoop.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
+    * eval erogazione_spcoop.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval erogazione_spcoop.autorizzazione.ruolo = ruolo_autenticato.nome
 
     * call create_201 ({ resourcePath: 'erogazioni', body: erogazione_spcoop,  key: spcoop_key })
 
@@ -128,8 +128,8 @@ Scenario: Erogazioni Creazione SPCoop 409
     * eval randomize ( ruolo_autenticato, ["nome"])    
     * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato })
 
-    * eval erogazione_spcoop.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
-    * eval erogazione_spcoop.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
+    * eval erogazione_spcoop.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval erogazione_spcoop.autorizzazione.ruolo = ruolo_autenticato.nome
 
     * call create_409 ({ resourcePath: 'erogazioni', body: erogazione_spcoop,  key: spcoop_key })
 

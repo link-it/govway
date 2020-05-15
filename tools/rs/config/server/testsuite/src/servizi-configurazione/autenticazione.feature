@@ -50,7 +50,7 @@ Scenario: Get Autenticazione
 
 @UpdateBasicForwardAuthorization204
 Scenario: Imposta la autenticazione in modalità basic con ForwardAuthorization abilitato
-    * eval authn_basic.autenticazione.configurazione = { forward: true }
+    * eval authn_basic.autenticazione.forward = true
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -67,12 +67,14 @@ Scenario: Imposta la autenticazione in modalità basic con ForwardAuthorization 
     And params query_params
     When method get
     Then status 200    
-    And match response.autenticazione contains { tipo: 'http-basic', configurazione: { forward: true } }
+    And match response.autenticazione contains { tipo: 'http-basic', forward: true }
 
 @UpdatePrincipalHeaderBased
 Scenario: Imposta l'autenticazione in modalità principal\header-based
-    * def configurazione = { tipo: 'header-based', nome: 'header1', forward: true }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'header-based', nome: 'header1', forward: true }
+    * eval authn_principal.autenticazione.tipo_principal = 'header-based'
+    * eval authn_principal.autenticazione.nome = 'header1'
+    * eval authn_principal.autenticazione.forward = true
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -90,14 +92,16 @@ Scenario: Imposta l'autenticazione in modalità principal\header-based
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 
 #container, header-based, form-based, url-based, ip-address ]
 @UpdatePrincipalFormBased
 Scenario: Imposta l'autenticazione in modalità principal\form-based
-    * def configurazione = { tipo: 'form-based', nome: 'header1', forward: true }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'form-based', nome: 'header1', forward: true }
+    * eval authn_principal.autenticazione.tipo_principal = 'form-based'
+    * eval authn_principal.autenticazione.nome = 'header1'
+    * eval authn_principal.autenticazione.forward = true
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -115,13 +119,14 @@ Scenario: Imposta l'autenticazione in modalità principal\form-based
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 
 @UpdatePrincipalUrlBased
 Scenario: Imposta l'autenticazione in modalità principal\url-based
-    * def configurazione = { tipo: 'url-based', pattern: '*.*' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'url-based', pattern: '*.*' }
+    * eval authn_principal.autenticazione.tipo_principal = 'url-based'
+    * eval authn_principal.autenticazione.pattern = '*.*'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -138,13 +143,13 @@ Scenario: Imposta l'autenticazione in modalità principal\url-based
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdatePrincipalIpBased
 Scenario: Imposta l'autenticazione in modalità principal\ip-based
 
-    * def configurazione = { tipo: 'ip-address' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'ip-address' }
+    * eval authn_principal.autenticazione.tipo_principal = 'ip-address'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -161,12 +166,13 @@ Scenario: Imposta l'autenticazione in modalità principal\ip-based
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdateTokenSubject
 Scenario: Imposta l'autenticazione in modalità principal\token\subject
-    * def configurazione = { tipo: 'token', token: 'subject' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'token', token: 'subject' }
+    * eval authn_principal.autenticazione.tipo_principal = 'token'
+    * eval authn_principal.autenticazione.token = 'subject'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -183,12 +189,13 @@ Scenario: Imposta l'autenticazione in modalità principal\token\subject
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdateTokenClientId
 Scenario: Imposta l'autenticazione in modalità principal\token\clientId
-    * def configurazione = { tipo: 'token', token: 'clientId' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'token', token: 'clientId' }
+    * eval authn_principal.autenticazione.tipo_principal = 'token'
+    * eval authn_principal.autenticazione.token = 'clientId'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -205,12 +212,13 @@ Scenario: Imposta l'autenticazione in modalità principal\token\clientId
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdateTokenUsername
 Scenario: Imposta l'autenticazione in modalità principal\token\username
-    * def configurazione = { tipo: 'token', token: 'username' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'token', token: 'username' }
+    * eval authn_principal.autenticazione.tipo_principal = 'token'
+    * eval authn_principal.autenticazione.token = 'username'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -227,12 +235,13 @@ Scenario: Imposta l'autenticazione in modalità principal\token\username
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdateTokenEMail
 Scenario: Imposta l'autenticazione in modalità principal\token\eMail
-    * def configurazione = { tipo: 'token', token: 'eMail' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'token', token: 'eMail' }
+    * eval authn_principal.autenticazione.tipo_principal = 'token'
+    * eval authn_principal.autenticazione.token = 'eMail'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -249,12 +258,14 @@ Scenario: Imposta l'autenticazione in modalità principal\token\eMail
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 @UpdateTokenCustom
 Scenario: Imposta l'autenticazione in modalità principal\token\custom
-    * def configurazione = { tipo: 'token', token: 'custom' , nome: 'aud' }
-    * eval authn_principal.autenticazione.configurazione = configurazione
+    * def options = { tipo_principal: 'token', token: 'custom' , nome: 'aud' }
+    * eval authn_principal.autenticazione.tipo_principal = 'token'
+    * eval authn_principal.autenticazione.token = 'custom'
+    * eval authn_principal.autenticazione.nome = 'aud'
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autenticazione'
@@ -271,7 +282,7 @@ Scenario: Imposta l'autenticazione in modalità principal\token\custom
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'principal'
-    And match response.autenticazione.configurazione contains configurazione
+    And match response.autenticazione contains options
 
 
 @UpdateAutenticazioneCustom
@@ -294,5 +305,5 @@ Scenario: Imposta l'autenticazione in modalità custom
     When method get
     Then status 200    
     And match response.autenticazione.tipo == 'custom'
-    And match response.autenticazione.configurazione.nome == autenticazione_custom.autenticazione.configurazione.nome
+    And match response.autenticazione.nome == autenticazione_custom.autenticazione.nome
     And match response.autenticazione.opzionale == true

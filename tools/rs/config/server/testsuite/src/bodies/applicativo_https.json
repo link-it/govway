@@ -1,11 +1,11 @@
 {
  	"nome": "TestSuiteApplicativoHttps",
-   	"modalita_accesso": "https",
    	"credenziali": {
-		"tipo": "configurazione-manuale",
-		"certificato": {
-		"subject": "cn=subjectTest",
-		"issuer": "cn=issuerTest"
+		"modalita_accesso": "https",
+   		"certificato": {
+			"tipo": "configurazione-manuale",
+			"subject": "cn=subjectTest",
+			"issuer": "cn=issuerTest"
 		}
 	}
 }

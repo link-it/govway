@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneView;
 import org.openspcoop2.core.config.rs.server.model.ApiImplConfigurazioneStato;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,22 +27,28 @@ import javax.validation.Valid;
 public class ControlloAccessiAutorizzazioneView extends ApiImplConfigurazioneStato {
   
   @Schema(description = "")
-  private APIImplAutorizzazioneView autorizzazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneDisabilitata.class, name = "disabilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneAbilitata.class, name = "abilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneXACMLView.class, name = "xacml-Policy"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneCustom.class, name = "custom")  })
+  private OneOfControlloAccessiAutorizzazioneViewAutorizzazione autorizzazione = null;
  /**
    * Get autorizzazione
    * @return autorizzazione
   **/
   @JsonProperty("autorizzazione")
   @Valid
-  public APIImplAutorizzazioneView getAutorizzazione() {
+  public OneOfControlloAccessiAutorizzazioneViewAutorizzazione getAutorizzazione() {
     return this.autorizzazione;
   }
 
-  public void setAutorizzazione(APIImplAutorizzazioneView autorizzazione) {
+  public void setAutorizzazione(OneOfControlloAccessiAutorizzazioneViewAutorizzazione autorizzazione) {
     this.autorizzazione = autorizzazione;
   }
 
-  public ControlloAccessiAutorizzazioneView autorizzazione(APIImplAutorizzazioneView autorizzazione) {
+  public ControlloAccessiAutorizzazioneView autorizzazione(OneOfControlloAccessiAutorizzazioneViewAutorizzazione autorizzazione) {
     this.autorizzazione = autorizzazione;
     return this;
   }

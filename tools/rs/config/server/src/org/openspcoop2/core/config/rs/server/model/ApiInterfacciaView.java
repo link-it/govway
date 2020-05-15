@@ -20,7 +20,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.utils.service.beans.BaseItem;
-import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,14 +32,11 @@ public class ApiInterfacciaView extends BaseItem {
   private byte[] interfaccia = null;
   
   @Schema(required = true, description = "")
-  private TipoApiEnum tipo = null;
-  
-  @Schema(example = "OpenApi3.0", required = true, description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoSoapEnum.class, name = "soap"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoRestEnum.class, name = "rest")  })
-  private OneOfApiInterfacciaViewFormato formato = null;
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaRest.class, name = "rest"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaSoap.class, name = "soap")  })
+  private OneOfApiInterfacciaViewTipoInterfaccia tipoInterfaccia = null;
  /**
    * Get interfaccia
    * @return interfaccia
@@ -62,42 +58,22 @@ public class ApiInterfacciaView extends BaseItem {
   }
 
  /**
-   * Get tipo
-   * @return tipo
+   * Get tipoInterfaccia
+   * @return tipoInterfaccia
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("tipo_interfaccia")
   @NotNull
   @Valid
-  public TipoApiEnum getTipo() {
-    return this.tipo;
+  public OneOfApiInterfacciaViewTipoInterfaccia getTipoInterfaccia() {
+    return this.tipoInterfaccia;
   }
 
-  public void setTipo(TipoApiEnum tipo) {
-    this.tipo = tipo;
+  public void setTipoInterfaccia(OneOfApiInterfacciaViewTipoInterfaccia tipoInterfaccia) {
+    this.tipoInterfaccia = tipoInterfaccia;
   }
 
-  public ApiInterfacciaView tipo(TipoApiEnum tipo) {
-    this.tipo = tipo;
-    return this;
-  }
-
- /**
-   * Get formato
-   * @return formato
-  **/
-  @JsonProperty("formato")
-  @NotNull
-  @Valid
-  public OneOfApiInterfacciaViewFormato getFormato() {
-    return this.formato;
-  }
-
-  public void setFormato(OneOfApiInterfacciaViewFormato formato) {
-    this.formato = formato;
-  }
-
-  public ApiInterfacciaView formato(OneOfApiInterfacciaViewFormato formato) {
-    this.formato = formato;
+  public ApiInterfacciaView tipoInterfaccia(OneOfApiInterfacciaViewTipoInterfaccia tipoInterfaccia) {
+    this.tipoInterfaccia = tipoInterfaccia;
     return this;
   }
 
@@ -108,8 +84,7 @@ public class ApiInterfacciaView extends BaseItem {
     sb.append("class ApiInterfacciaView {\n");
     sb.append("    ").append(ApiInterfacciaView.toIndentedString(super.toString())).append("\n");
     sb.append("    interfaccia: ").append(ApiInterfacciaView.toIndentedString(this.interfaccia)).append("\n");
-    sb.append("    tipo: ").append(ApiInterfacciaView.toIndentedString(this.tipo)).append("\n");
-    sb.append("    formato: ").append(ApiInterfacciaView.toIndentedString(this.formato)).append("\n");
+    sb.append("    tipoInterfaccia: ").append(ApiInterfacciaView.toIndentedString(this.tipoInterfaccia)).append("\n");
     sb.append("}");
     return sb.toString();
   }

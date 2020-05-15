@@ -23,5 +23,5 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfBaseCredenzialiCredenziali
 */
 public interface OneOfBaseCredenzialiCredenziali {
-
+    public ModalitaAccessoEnum getModalitaAccesso();
 }

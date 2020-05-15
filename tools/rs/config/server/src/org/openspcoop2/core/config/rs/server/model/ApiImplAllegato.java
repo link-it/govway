@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.Allegato;
-import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPIImpl;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,38 +28,13 @@ import javax.validation.Valid;
 public class ApiImplAllegato  {
   
   @Schema(required = true, description = "")
-  private RuoloAllegatoAPIImpl ruolo = null;
-  
-  @Schema(required = true, description = "")
-  private Allegato allegato = null;
-  
-  @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "ruolo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "ruolo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSemiformaleEnum.class, name = "specificaSemiFormale"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSicurezzaEnum.class, name = "specificaSicurezza"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaLivelloServizioEnum.class, name = "specificaLivelloServizio")  })
-  private OneOfApiImplAllegatoTipoAllegato tipoAllegato = null;
- /**
-   * Get ruolo
-   * @return ruolo
-  **/
-  @JsonProperty("ruolo")
-  @NotNull
-  @Valid
-  public RuoloAllegatoAPIImpl getRuolo() {
-    return this.ruolo;
-  }
-
-  public void setRuolo(RuoloAllegatoAPIImpl ruolo) {
-    this.ruolo = ruolo;
-  }
-
-  public ApiImplAllegato ruolo(RuoloAllegatoAPIImpl ruolo) {
-    this.ruolo = ruolo;
-    return this;
-  }
-
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoGenerico.class, name = "allegato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoSpecificaSemiformale.class, name = "specificaSemiFormale"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoSpecificaSicurezza.class, name = "specificaSicurezza"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiImplAllegatoSpecificaLivelloServizio.class, name = "specificaLivelloServizio")  })
+  private OneOfApiImplAllegatoAllegato allegato = null;
  /**
    * Get allegato
    * @return allegato
@@ -69,35 +42,16 @@ public class ApiImplAllegato  {
   @JsonProperty("allegato")
   @NotNull
   @Valid
-  public Allegato getAllegato() {
+  public OneOfApiImplAllegatoAllegato getAllegato() {
     return this.allegato;
   }
 
-  public void setAllegato(Allegato allegato) {
+  public void setAllegato(OneOfApiImplAllegatoAllegato allegato) {
     this.allegato = allegato;
   }
 
-  public ApiImplAllegato allegato(Allegato allegato) {
+  public ApiImplAllegato allegato(OneOfApiImplAllegatoAllegato allegato) {
     this.allegato = allegato;
-    return this;
-  }
-
- /**
-   * Get tipoAllegato
-   * @return tipoAllegato
-  **/
-  @JsonProperty("tipo_allegato")
-  @Valid
-  public OneOfApiImplAllegatoTipoAllegato getTipoAllegato() {
-    return this.tipoAllegato;
-  }
-
-  public void setTipoAllegato(OneOfApiImplAllegatoTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
-  }
-
-  public ApiImplAllegato tipoAllegato(OneOfApiImplAllegatoTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
     return this;
   }
 
@@ -107,9 +61,7 @@ public class ApiImplAllegato  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiImplAllegato {\n");
     
-    sb.append("    ruolo: ").append(ApiImplAllegato.toIndentedString(this.ruolo)).append("\n");
     sb.append("    allegato: ").append(ApiImplAllegato.toIndentedString(this.allegato)).append("\n");
-    sb.append("    tipoAllegato: ").append(ApiImplAllegato.toIndentedString(this.tipoAllegato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

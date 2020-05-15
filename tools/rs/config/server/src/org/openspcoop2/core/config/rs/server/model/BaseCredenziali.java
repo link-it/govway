@@ -19,7 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -27,34 +26,12 @@ import javax.validation.Valid;
 public class BaseCredenziali  {
   
   @Schema(description = "")
-  private ModalitaAccessoEnum modalitaAccesso = null;
-  
-  @Schema(example = "{\"username\":\"user\",\"password\":\"pwd\"}", description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "modalita_accesso", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "modalita_accesso", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpBasic.class, name = "http-basic"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttps.class, name = "https"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationPrincipal.class, name = "principal")  })
   private OneOfBaseCredenzialiCredenziali credenziali = null;
- /**
-   * Get modalitaAccesso
-   * @return modalitaAccesso
-  **/
-  @JsonProperty("modalita_accesso")
-  @Valid
-  public ModalitaAccessoEnum getModalitaAccesso() {
-    return this.modalitaAccesso;
-  }
-
-  public void setModalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
-    this.modalitaAccesso = modalitaAccesso;
-  }
-
-  public BaseCredenziali modalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
-    this.modalitaAccesso = modalitaAccesso;
-    return this;
-  }
-
  /**
    * Get credenziali
    * @return credenziali
@@ -80,7 +57,6 @@ public class BaseCredenziali  {
     StringBuilder sb = new StringBuilder();
     sb.append("class BaseCredenziali {\n");
     
-    sb.append("    modalitaAccesso: ").append(BaseCredenziali.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    credenziali: ").append(BaseCredenziali.toIndentedString(this.credenziali)).append("\n");
     sb.append("}");
     return sb.toString();

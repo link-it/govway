@@ -1,9 +1,9 @@
 {
  	"nome": "SoggettoJson2",
-   	"modalita_accesso": "https",
    	"credenziali": {
-		"tipo": "configurazione-manuale",
-       		"certificato": {
+		"modalita_accesso": "https",
+		"certificato": {
+			"tipo": "configurazione-manuale",
 			"subject": "cn=esterno",
 			"issuer": "cn=issuer2"
 		}

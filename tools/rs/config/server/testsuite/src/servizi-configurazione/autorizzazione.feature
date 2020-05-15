@@ -11,7 +11,11 @@ Background:
 @UpdateAutorizzazione
 Scenario: Update Autorizzazione
 
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: true, ruoli: true, scope: false, token: false })
+    * def options = { richiedente: true, ruoli: true, scope: false, token: false }
+    * eval autorizzazione.autorizzazione.richiedente = true
+    * eval autorizzazione.autorizzazione.ruoli = true
+    * eval autorizzazione.autorizzazione.scope = false
+    * eval autorizzazione.autorizzazione.token = false
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
@@ -28,7 +32,7 @@ Scenario: Update Autorizzazione
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "abilitato"
-    And match response.autorizzazione.configurazione contains ({richiedente: true, ruoli: true, scope: false, token: false })
+    And match response.autorizzazione contains options
 
 @UpdateAutorizzazioneXacml
 Scenario: Update Autorizzazione Xacml
@@ -48,7 +52,7 @@ Scenario: Update Autorizzazione Xacml
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "xacml-Policy"
-    And match response.autorizzazione.configurazione_xacml contains ({ ruoli_fonte: 'esterna' })
+    And match response.autorizzazione contains ({ ruoli_fonte: 'esterna' })
 
 
 @UpdateAutorizzazioneCustom
@@ -69,7 +73,7 @@ Scenario: Update Autorizzazione Custom
     When method get
     Then status 200
     And match response.autorizzazione.tipo == "custom"
-    And match response.autorizzazione.configurazione_custom.nome == autorizzazione_custom.autorizzazione.configurazione_custom.nome
+    And match response.autorizzazione.nome == autorizzazione_custom.autorizzazione.nome
 
 @GetAutorizzazione
 Scenario: Get Autorizzazione
@@ -105,7 +109,12 @@ Scenario: DOWNLOAD XACML POLICY
 @AutorizzazioneRuoli
 Scenario: Controllo accessi autorizzazione ruoli
 
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: true, scope: false, token: false })
+    * def options = { richiedente: false, ruoli: true, scope: false, token: false }
+    * eval autorizzazione.autorizzazione.richiedente = false
+    * eval autorizzazione.autorizzazione.ruoli = true
+    * eval autorizzazione.autorizzazione.scope = false
+    * eval autorizzazione.autorizzazione.token = false
+
     # Imposto l'autorizzazione in modo che supporti l'autorizzazione per ruoli
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
@@ -167,6 +176,10 @@ Scenario: Controllo Accessi Autorizzazione Token Claims
 
     # Disabilito l'autorizzazione
     * eval autorizzazione.autorizzazione.tipo = 'disabilitato'
+    * remove autorizzazione.autorizzazione.richiedente
+    * remove autorizzazione.autorizzazione.ruoli
+    * remove autorizzazione.autorizzazione.scope
+    * remove autorizzazione.autorizzazione.token
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
     And header Authorization = govwayConfAuth
@@ -187,7 +200,13 @@ Scenario: Controllo Accessi Autorizzazione Token Claims
     Then status 204
 
     # Abilito l'autorizzazione per token claim
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: false, scope: false, token: true, token_claims:"user=pippo" })
+    * def options = { richiedente: false, ruoli: false, scope: false, token: true, token_claims:"user=pippo" }
+    * eval autorizzazione.autorizzazione.tipo = 'abilitato'
+    * eval autorizzazione.autorizzazione.richiedente = false
+    * eval autorizzazione.autorizzazione.ruoli = false
+    * eval autorizzazione.autorizzazione.scope = false
+    * eval autorizzazione.autorizzazione.token = true
+    * eval autorizzazione.autorizzazione.token_claims = 'user=pippo'
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'
     And header Authorization = govwayConfAuth
@@ -215,7 +234,11 @@ Scenario: Controllo Accessi Autorizzazione Scope
     Then status 204
 
     # Abilito l'autorizzazione per scope
-    * eval autorizzazione.autorizzazione.configurazione = ({ richiedente: false, ruoli: false, scope: true, token: false })
+    * def options = { richiedente: false, ruoli: false, scope: true, token: false }
+    * eval autorizzazione.autorizzazione.richiedente = false
+    * eval autorizzazione.autorizzazione.ruoli = false
+    * eval autorizzazione.autorizzazione.scope = true
+    * eval autorizzazione.autorizzazione.token = false
 
     Given url configUrl
     And path servizio_path, 'configurazioni', 'controllo-accessi', 'autorizzazione'

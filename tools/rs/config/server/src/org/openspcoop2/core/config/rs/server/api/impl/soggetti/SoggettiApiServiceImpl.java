@@ -86,8 +86,8 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			try{
 				soggetto = (Soggetto) body;
 				
-				if ( soggetto.getCredenziali() != null && soggetto.getModalitaAccesso() != null ) {
-					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), soggetto.getModalitaAccesso()));
+				if ( soggetto.getCredenziali() != null && soggetto.getCredenziali().getModalitaAccesso() != null ) {
+					soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali()));
 					SoggettiApiHelper.overrideAuthParams(env.soggettiHelper, soggetto, env.requestWrapper);
 				}
 				
@@ -316,7 +316,7 @@ public class SoggettiApiServiceImpl extends BaseImpl implements SoggettiApi {
 			Soggetto soggetto = null;
 			try{
 				soggetto = (Soggetto) body;
-				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali(), soggetto.getModalitaAccesso()));
+				soggetto.setCredenziali(Helper.translateCredenziali(soggetto.getCredenziali()));
 			}catch(Throwable e) {
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException(e);
 			}

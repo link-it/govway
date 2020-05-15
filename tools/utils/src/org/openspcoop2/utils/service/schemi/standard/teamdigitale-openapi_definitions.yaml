@@ -48,7 +48,7 @@ components:
         L'header indica l'id dell'oggetto creato.
       schema:
         type: string
-        format: url
+        format: uri
 
   parameters:
   

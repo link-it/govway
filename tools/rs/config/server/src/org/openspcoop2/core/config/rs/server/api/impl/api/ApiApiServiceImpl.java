@@ -38,6 +38,8 @@ import org.openspcoop2.core.config.rs.server.model.ApiDescrizione;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGenerali;
 import org.openspcoop2.core.config.rs.server.model.ApiInformazioniGeneraliView;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfaccia;
+import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaRest;
+import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaSoap;
 import org.openspcoop2.core.config.rs.server.model.ApiInterfacciaView;
 import org.openspcoop2.core.config.rs.server.model.ApiItem;
 import org.openspcoop2.core.config.rs.server.model.ApiReferenteView;
@@ -77,6 +79,7 @@ import org.openspcoop2.utils.json.YAMLUtils;
 import org.openspcoop2.utils.service.BaseImpl;
 import org.openspcoop2.utils.service.authorization.AuthorizationConfig;
 import org.openspcoop2.utils.service.authorization.AuthorizationManager;
+import org.openspcoop2.utils.service.beans.ProfiloCollaborazioneEnum;
 import org.openspcoop2.utils.service.beans.ProfiloEnum;
 import org.openspcoop2.utils.service.beans.utils.BaseHelper;
 import org.openspcoop2.utils.service.beans.utils.ListaUtils;
@@ -128,8 +131,6 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			if (body == null)
 				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Specificare un body");
-
-			ApiApiHelper.correggiDeserializzazione(body);
 
 			if (body.getReferente() == null || "".equals(body.getReferente().trim())) {
 				body.setReferente(soggetto);
@@ -247,12 +248,14 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			Documento documento = ApiApiHelper.apiAllegatoToDocumento(body, as, env);
 
-			if (body.getRuolo() == RuoloAllegatoAPI.ALLEGATO)
+			if(RuoloAllegatoAPI.ALLEGATO.equals(body.getAllegato().getRuolo())) {
 				as.addAllegato(documento);
-			else if (body.getRuolo() == RuoloAllegatoAPI.SPECIFICASEMIFORMALE)
+			}
+			else if(RuoloAllegatoAPI.SPECIFICASEMIFORMALE.equals(body.getAllegato().getRuolo())) {
 				as.addSpecificaSemiformale(documento);
-			else
-				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Ruolo " + body.getRuolo() + " per allegato sconosciuto");
+			}else {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Ruolo " + body.getAllegato().getRuolo() + " sconosciuto");
+			}
 
 			ArchiviCore archiviCore = new ArchiviCore(env.stationCore);
 			SerialiableFormFile filewrap = new SerialiableFormFile(documento.getFile(), documento.getByteContenuto());
@@ -333,6 +336,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 
 			pt.addAzione(newOp);
 			
+			ProfiloCollaborazioneEnum profiloBody = body.getProfiloCollaborazione()!=null ? body.getProfiloCollaborazione() : ProfiloCollaborazioneEnum.SINCRONO;
+			
 			if (! env.apcHelper.accordiPorttypeOperationCheckData(
 					TipoOperazione.ADD,
 					as.getId().toString(),
@@ -346,7 +351,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					AccordiServizioParteComuneHelper.convertAbilitatoDisabilitatoDB2View(newOp.getConsegnaInOrdine()),
 					newOp.getScadenza() != null ? newOp.getScadenza() : "", "-", // Servizio Correlato
 					"-", // Azione Correlata
-					Enums.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), "0", // styleOp
+					Enums.profiloCollaborazioneFromApiEnum.get(profiloBody).toString(), "0", // styleOp
 					"", // soapActionOp,
 					"literal", // useOp,
 					null, // opTypeOp,
@@ -1179,12 +1184,11 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ApiViewItem ret = new ApiViewItem();
 
 			ret.setDescrizione(item.getDescrizione());
-			ret.setFormato(item.getFormato());
+			ret.setTipoInterfaccia(item.getTipoInterfaccia());
 			ret.setNome(item.getNome());
 			ret.setProfilo(item.getProfilo());
 			ret.setReferente(item.getSoggetto());
 			ret.setSoggetto(item.getSoggetto());
-			ret.setTipo(item.getTipo());
 			ret.setVersione(item.getVersione());
 			ret.setStato(item.getStato());
 			ret.setStatoDescrizione(item.getStatoDescrizione());
@@ -1399,15 +1403,22 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ApiInterfacciaView ret = new ApiInterfacciaView();
 
 			ret.setProfilo(env.profilo);
-			ret.setTipo(as.getServiceBinding() == ServiceBinding.REST ? TipoApiEnum.REST : TipoApiEnum.SOAP);
-
-			switch (ret.getTipo()) {
+			
+			TipoApiEnum protocollo = as.getServiceBinding() == ServiceBinding.REST ? TipoApiEnum.REST : TipoApiEnum.SOAP;
+			
+			switch (protocollo) {
 			case REST:
-				ret.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+				ApiInterfacciaRest iRest = new ApiInterfacciaRest();
+				iRest.setProtocollo(protocollo);
+				iRest.setFormato(Enums.formatoRestFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setTipoInterfaccia(iRest);
 				ret.setInterfaccia(as.getByteWsdlConcettuale());
 				break;
 			case SOAP:
-				ret.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+				ApiInterfacciaSoap iSoap = new ApiInterfacciaSoap();
+				iSoap.setProtocollo(protocollo);
+				iSoap.setFormato(Enums.formatoSoapFromSpecifica.get(as.getFormatoSpecifica()));
+				ret.setTipoInterfaccia(iSoap);
 				ret.setInterfaccia(as.getByteWsdlLogicoErogatore());
 				break;
 			default:
@@ -1697,6 +1708,8 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 			ApiApiHelper.updateOperation(body, pt, oldOp);
 			final Operation newOp = oldOp;
 			
+			ProfiloCollaborazioneEnum profiloBody = body.getProfiloCollaborazione()!=null ? body.getProfiloCollaborazione() : ProfiloCollaborazioneEnum.SINCRONO;
+			
 			if (! env.apcHelper.accordiPorttypeOperationCheckData(
 					TipoOperazione.CHANGE,
 					as.getId().toString(),
@@ -1711,7 +1724,7 @@ public class ApiApiServiceImpl extends BaseImpl implements ApiApi {
 					newOp.getScadenza() != null ? newOp.getScadenza() : "", // Scadenza operazione
 					"-", // Servizio Correlato
 					"-", // Azione Correlata
-					Enums.profiloCollaborazioneFromApiEnum.get(body.getProfiloCollaborazione()).toString(), "0", // styleOp
+					Enums.profiloCollaborazioneFromApiEnum.get(profiloBody).toString(), "0", // styleOp
 					"", // soapActionOp,
 					"literal", // useOp,
 					null, // opTypeOp,

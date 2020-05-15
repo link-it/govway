@@ -173,40 +173,79 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		return soggetto;
 	}
 	
-	public static void overrideAuthParams(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, ModalitaAccessoEnum modalitaAccesso, Object credenziali) {
+	public static void overrideAuthParams(HttpRequestWrapper wrap, ConsoleHelper consoleHelper, OneOfBaseCredenzialiCredenziali credenziali) {
+		
+		ModalitaAccessoEnum modalitaAccesso = credenziali.getModalitaAccesso();
+		if(modalitaAccesso == null) {
+			throw FaultCode.RICHIESTA_NON_VALIDA.toException("Modalità di accesso delle credenziali non indicata");
+		}
 		
 		switch(modalitaAccesso) {
 		case HTTP_BASIC: {
+			
+			if(! (credenziali instanceof AuthenticationHttpBasic)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+credenziali.getClass().getName()+"' non compatibili con la modalità '+"+modalitaAccesso.toString()+"+'");
+			}
+			
 			AuthenticationHttpBasic c = (AuthenticationHttpBasic) credenziali;
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_USERNAME, c.getUsername());
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PASSWORD, c.getPassword());
 			break;
 		}
 		case HTTPS: {
+			
+			if(! (credenziali instanceof AuthenticationHttps)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+credenziali.getClass().getName()+"' non compatibili con la modalità '+"+modalitaAccesso.toString()+"+'");
+			}
+						
 			AuthenticationHttps c = (AuthenticationHttps) credenziali;
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_WIZARD_STEP,
 					ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_NO_WIZARD);
-			switch (c.getTipo()) {
+			
+			switch (c.getCertificato().getTipo()) {
 			case CERTIFICATO:
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
-						ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO);
-				AuthenticationHttpsCertificato certificate = (AuthenticationHttpsCertificato) c.getCertificato();
-				consoleHelper.registerBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO, certificate.getArchivio());
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO, certificate.getTipo().toString());
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO, certificate.getAlias());
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD, certificate.getPassword());
+				
+				if(c.getCertificato() instanceof AuthenticationHttpsCertificato) {
+				
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
+							ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_UPLOAD_CERTIFICATO);
+					AuthenticationHttpsCertificato certificate = (AuthenticationHttpsCertificato) c.getCertificato();
+					consoleHelper.registerBinaryParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO, certificate.getArchivio());
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_TIPO_ARCHIVIO, certificate.getTipoCertificato().toString());
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_ALIAS_CERTIFICATO, certificate.getAlias());
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_FILE_CERTIFICATO_PASSWORD, certificate.getPassword());
+					
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Certificato fornito '"+c.getCertificato().getClass().getName()+"' non compatibile con il tipo '"+c.getCertificato().getTipo()+"' ");
+				}
+				
 				break;
 			case CONFIGURAZIONE_MANUALE:
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
-						ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE);
-				AuthenticationHttpsConfigurazioneManuale creManuale = (AuthenticationHttpsConfigurazioneManuale) c.getCertificato();
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT, creManuale.getSubject());
-				wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER, creManuale.getIssuer());
+				
+				if(c.getCertificato() instanceof AuthenticationHttpsConfigurazioneManuale) {
+					
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL,
+							ConnettoriCostanti.VALUE_PARAMETRO_CREDENZIALI_AUTENTICAZIONE_CONFIGURAZIONE_SSL_CONFIGURAZIONE_MANUALE);
+					AuthenticationHttpsConfigurazioneManuale creManuale = (AuthenticationHttpsConfigurazioneManuale) c.getCertificato();
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_SUBJECT, creManuale.getSubject());
+					wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_ISSUER, creManuale.getIssuer());
+					
+				}
+				else {
+					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Certificato fornito '"+c.getCertificato().getClass().getName()+"' non compatibile con il tipo '"+c.getCertificato().getTipo()+"' ");
+				}
+				
 				break;
 			}
 			break;
 		}
 		case PRINCIPAL: {
+			
+			if(! (credenziali instanceof AuthenticationPrincipal)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+credenziali.getClass().getName()+"' non compatibili con la modalità '+"+modalitaAccesso.toString()+"+'");
+			}
+			
 			AuthenticationPrincipal c = (AuthenticationPrincipal) credenziali;
 			wrap.overrideParameter(ConnettoriCostanti.PARAMETRO_CREDENZIALI_AUTENTICAZIONE_PRINCIPAL, c.getUserid());
 			break;
@@ -223,79 +262,26 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 	 * @return
 	 * @throws Exception
 	 */
-	public static OneOfBaseCredenzialiCredenziali translateCredenziali(OneOfBaseCredenzialiCredenziali creds, ModalitaAccessoEnum tipoAuth) {
+	public static OneOfBaseCredenzialiCredenziali translateCredenziali(OneOfBaseCredenzialiCredenziali creds) {
+		
+		if(creds==null || creds.getModalitaAccesso()==null) {
+			return null;
+		}
+		
 		OneOfBaseCredenzialiCredenziali ret = null;
+		ModalitaAccessoEnum tipoAuth = creds.getModalitaAccesso();
 	
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
-			//if(creds!=null && creds instanceof AuthenticationHttpBasic) {
 			ret = (AuthenticationHttpBasic) creds;
-			/*}			
-			else {
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
-				AuthenticationHttpBasic c = new AuthenticationHttpBasic();
-				c.setPassword((String) map_creds.get("password"));
-				c.setUsername((String) map_creds.get("username"));
-				ret = c;					
-			}*/
 			break;
 		}
 		case HTTPS: {
-			//if(creds!=null && creds instanceof AuthenticationHttps) {
 			ret = (AuthenticationHttps) creds;
-			/*}
-			else {
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
-				AuthenticationHttps c = new AuthenticationHttps();
-				c.setTipo(TipoAutenticazioneHttps.fromValue((String) map_creds.get("tipo")));
-				Object oCredenziali = map_creds.get("certificato");
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, Object> map_creds_https = (LinkedHashMap<String,Object>) oCredenziali;
-				switch (c.getTipo()) {
-				case CERTIFICATO:
-					AuthenticationHttpsCertificato cre = new AuthenticationHttpsCertificato();
-					String base64archive = (String) map_creds_https.get("archivio");
-					cre.setArchivio(Base64Utilities.decode(base64archive));
-					cre.setTipo(TipoKeystore.fromValue( (String) map_creds_https.get("tipo")));
-					if(map_creds_https.containsKey("alias")) {
-						cre.setAlias((String)map_creds_https.get("alias"));
-					}
-					if(map_creds_https.containsKey("password")) {
-						cre.setPassword((String)map_creds_https.get("password"));
-					}
-					if(map_creds_https.containsKey("strict_verification")) {
-						cre.setStrictVerification((Boolean)map_creds_https.get("strict_verification"));
-					}
-					c.setCertificato(cre);
-					break;
-				case CONFIGURAZIONE_MANUALE:
-					AuthenticationHttpsConfigurazioneManuale creManuale = new AuthenticationHttpsConfigurazioneManuale();
-					creManuale.setSubject((String)map_creds_https.get("subject"));
-					if(map_creds_https.containsKey("issuer")) {
-						creManuale.setIssuer((String)map_creds_https.get("issuer"));
-					}
-					c.setCertificato(creManuale);
-					break;	
-				}
-				ret = c;
-			}
-			*/
 			break;
 		}
 		case PRINCIPAL: {
-			//if(creds!=null && creds instanceof AuthenticationPrincipal) {
 			ret = (AuthenticationPrincipal) creds;
-			/*}
-			else {
-				@SuppressWarnings("unchecked")
-				LinkedHashMap<String, Object> map_creds = (LinkedHashMap<String,Object>) creds;
-				AuthenticationPrincipal c = new AuthenticationPrincipal();
-				c.setUserid((String) map_creds.get("userid"));
-				ret = c;
-			}
-			*/
 			break;
 		}
 		default:
@@ -329,6 +315,11 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 		
 		switch (tipoAuth) {
 		case HTTP_BASIC: {
+			
+			if(! (creds instanceof AuthenticationHttpBasic)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+creds.getClass().getName()+"' non compatibili con la modalità '+"+tipoAuth.toString()+"+'");
+			}
+			
 			AuthenticationHttpBasic auth = (AuthenticationHttpBasic) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "BASIC"));
 			BeanUtils.setProperty(ret, "user", auth.getUsername());
@@ -336,16 +327,21 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			break;
 		}
 		case HTTPS: {
+			
+			if(! (creds instanceof AuthenticationHttps)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+creds.getClass().getName()+"' non compatibili con la modalità '+"+tipoAuth.toString()+"+'");
+			}
+			
 			AuthenticationHttps auth = (AuthenticationHttps) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "SSL"));
-			switch (auth.getTipo()) {
+			switch (auth.getCertificato().getTipo()) {
 			case CERTIFICATO:
 				AuthenticationHttpsCertificato cre = (AuthenticationHttpsCertificato) auth.getCertificato();
 				ArchiveType type = ArchiveType.CER;
 				String alias = cre.getAlias();
 				String password = cre.getPassword();
-				if(cre.getTipo()!=null) {
-					type = ArchiveType.valueOf(cre.getTipo().toString());
+				if(cre.getTipoCertificato()!=null) {
+					type = ArchiveType.valueOf(cre.getTipoCertificato().toString());
 				}
 				CertificateInfo cInfo = ArchiveLoader.load(type, cre.getArchivio(), alias, password).getCertificate();
 				BeanUtils.setProperty(ret, "certificate", cre.getArchivio());
@@ -362,6 +358,11 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			break;
 		}
 		case PRINCIPAL: {
+			
+			if(! (creds instanceof AuthenticationPrincipal)) {
+				throw FaultCode.RICHIESTA_NON_VALIDA.toException("Credenziali '"+creds.getClass().getName()+"' non compatibili con la modalità '+"+tipoAuth.toString()+"+'");
+			}
+			
 			AuthenticationPrincipal auth = (AuthenticationPrincipal) creds;
 			BeanUtils.setProperty(ret, "tipo", Enum.valueOf( (Class<Enum>)enumClass, "PRINCIPAL"));
 			BeanUtils.setProperty(ret, "user", auth.getUserid());
@@ -393,6 +394,7 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			AuthenticationHttpBasic auth = new AuthenticationHttpBasic();
 			auth.setUsername(BeanUtils.getProperty(govwayCreds, "user"));
 			auth.setPassword(BeanUtils.getProperty(govwayCreds, "password"));
+			auth.setModalitaAccesso(ModalitaAccessoEnum.HTTP_BASIC);
 			ret = auth;
 		}
 		else if ("ssl".equals(tipo)) {
@@ -400,26 +402,28 @@ public class Helper extends org.openspcoop2.utils.service.beans.utils.BaseHelper
 			Method mCertificate = credClass.getMethod("getCertificate");
 			Object oCertificate = mCertificate.invoke(govwayCreds);
 			if(oCertificate==null) {
-				auth.setTipo(TipoAutenticazioneHttps.CONFIGURAZIONE_MANUALE);
 				AuthenticationHttpsConfigurazioneManuale manuale = new AuthenticationHttpsConfigurazioneManuale();
+				manuale.setTipo(TipoAutenticazioneHttps.CONFIGURAZIONE_MANUALE);
 				manuale.setSubject(BeanUtils.getProperty(govwayCreds, "subject"));	
 				manuale.setIssuer(BeanUtils.getProperty(govwayCreds, "issuer"));	
 				auth.setCertificato(manuale);
 			}
 			else {
-				auth.setTipo(TipoAutenticazioneHttps.CERTIFICATO);
 				AuthenticationHttpsCertificato certificato = new AuthenticationHttpsCertificato();
-				certificato.setTipo(TipoKeystore.CER);
+				certificato.setTipo(TipoAutenticazioneHttps.CERTIFICATO);
+				certificato.setTipoCertificato(TipoKeystore.CER);
 				certificato.setArchivio((byte[])oCertificate);
 				Method mCertificateStrictVerification = credClass.getMethod("isCertificateStrictVerification");
 				certificato.setStrictVerification((Boolean) mCertificateStrictVerification.invoke(govwayCreds));
 				auth.setCertificato(certificato);
 			}
+			auth.setModalitaAccesso(ModalitaAccessoEnum.HTTPS);
 			ret = auth;
 		}
 		else if ("principal".equals(tipo)) {
 			AuthenticationPrincipal auth = new AuthenticationPrincipal();
 			auth.setUserid(BeanUtils.getProperty(govwayCreds, "user"));
+			auth.setModalitaAccesso(ModalitaAccessoEnum.PRINCIPAL);
 			ret = auth;
 		}
 		

@@ -19,8 +19,6 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.Allegato;
-import org.openspcoop2.core.config.rs.server.model.RuoloAllegatoAPI;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -30,36 +28,11 @@ import javax.validation.Valid;
 public class ApiAllegato  {
   
   @Schema(required = true, description = "")
-  private RuoloAllegatoAPI ruolo = null;
-  
-  @Schema(required = true, description = "")
-  private Allegato allegato = null;
-  
-  @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "ruolo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "ruolo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = TipoSpecificaSemiformaleEnum.class, name = "specificaSemiFormale")  })
-  private OneOfApiAllegatoTipoAllegato tipoAllegato = null;
- /**
-   * Get ruolo
-   * @return ruolo
-  **/
-  @JsonProperty("ruolo")
-  @NotNull
-  @Valid
-  public RuoloAllegatoAPI getRuolo() {
-    return this.ruolo;
-  }
-
-  public void setRuolo(RuoloAllegatoAPI ruolo) {
-    this.ruolo = ruolo;
-  }
-
-  public ApiAllegato ruolo(RuoloAllegatoAPI ruolo) {
-    this.ruolo = ruolo;
-    return this;
-  }
-
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiAllegatoGenerico.class, name = "allegato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiAllegatoSpecificaSemiformale.class, name = "specificaSemiFormale")  })
+  private OneOfApiAllegatoAllegato allegato = null;
  /**
    * Get allegato
    * @return allegato
@@ -67,35 +40,16 @@ public class ApiAllegato  {
   @JsonProperty("allegato")
   @NotNull
   @Valid
-  public Allegato getAllegato() {
+  public OneOfApiAllegatoAllegato getAllegato() {
     return this.allegato;
   }
 
-  public void setAllegato(Allegato allegato) {
+  public void setAllegato(OneOfApiAllegatoAllegato allegato) {
     this.allegato = allegato;
   }
 
-  public ApiAllegato allegato(Allegato allegato) {
+  public ApiAllegato allegato(OneOfApiAllegatoAllegato allegato) {
     this.allegato = allegato;
-    return this;
-  }
-
- /**
-   * Get tipoAllegato
-   * @return tipoAllegato
-  **/
-  @JsonProperty("tipo_allegato")
-  @Valid
-  public OneOfApiAllegatoTipoAllegato getTipoAllegato() {
-    return this.tipoAllegato;
-  }
-
-  public void setTipoAllegato(OneOfApiAllegatoTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
-  }
-
-  public ApiAllegato tipoAllegato(OneOfApiAllegatoTipoAllegato tipoAllegato) {
-    this.tipoAllegato = tipoAllegato;
     return this;
   }
 
@@ -105,9 +59,7 @@ public class ApiAllegato  {
     StringBuilder sb = new StringBuilder();
     sb.append("class ApiAllegato {\n");
     
-    sb.append("    ruolo: ").append(ApiAllegato.toIndentedString(this.ruolo)).append("\n");
     sb.append("    allegato: ").append(ApiAllegato.toIndentedString(this.allegato)).append("\n");
-    sb.append("    tipoAllegato: ").append(ApiAllegato.toIndentedString(this.tipoAllegato)).append("\n");
     sb.append("}");
     return sb.toString();
   }

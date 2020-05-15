@@ -1,14 +1,12 @@
 {
     "nome": "GruppoJson",
-    "modalita": "nuova",
     "azioni": ["POST_pet"],
     "configurazione": {
-        "autenticazione": {
+        "modalita": "nuova",
+    	"autenticazione": {
             "tipo": "principal",
-            "configurazione": {
-                "tipo": "header-based",
-                "nome": "HeaderTestPrincipal"
-            },
+            "tipo_principal": "header-based",
+            "nome": "HeaderTestPrincipal",
             "opzionale": false
         }
     }

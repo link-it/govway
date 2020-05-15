@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneNew;
+import org.openspcoop2.core.config.rs.server.model.ModalitaConfigurazioneGruppoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,7 +29,37 @@ import javax.validation.Valid;
 public class GruppoNuovaConfigurazione  implements OneOfGruppoConfigurazione {
   
   @Schema(required = true, description = "")
-  private APIImplAutenticazioneNew autenticazione = null;
+  private ModalitaConfigurazioneGruppoEnum modalita = null;
+  
+  @Schema(required = true, description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneDisabilitata.class, name = "disabilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneBasic.class, name = "http-basic"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneHttps.class, name = "https"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal")  })
+  private OneOfGruppoNuovaConfigurazioneAutenticazione autenticazione = null;
+ /**
+   * Get modalita
+   * @return modalita
+  **/
+  @Override
+@JsonProperty("modalita")
+  @NotNull
+  @Valid
+  public ModalitaConfigurazioneGruppoEnum getModalita() {
+    return this.modalita;
+  }
+
+  public void setModalita(ModalitaConfigurazioneGruppoEnum modalita) {
+    this.modalita = modalita;
+  }
+
+  public GruppoNuovaConfigurazione modalita(ModalitaConfigurazioneGruppoEnum modalita) {
+    this.modalita = modalita;
+    return this;
+  }
+
  /**
    * Get autenticazione
    * @return autenticazione
@@ -37,15 +67,15 @@ public class GruppoNuovaConfigurazione  implements OneOfGruppoConfigurazione {
   @JsonProperty("autenticazione")
   @NotNull
   @Valid
-  public APIImplAutenticazioneNew getAutenticazione() {
+  public OneOfGruppoNuovaConfigurazioneAutenticazione getAutenticazione() {
     return this.autenticazione;
   }
 
-  public void setAutenticazione(APIImplAutenticazioneNew autenticazione) {
+  public void setAutenticazione(OneOfGruppoNuovaConfigurazioneAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
   }
 
-  public GruppoNuovaConfigurazione autenticazione(APIImplAutenticazioneNew autenticazione) {
+  public GruppoNuovaConfigurazione autenticazione(OneOfGruppoNuovaConfigurazioneAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
     return this;
   }
@@ -56,6 +86,7 @@ public class GruppoNuovaConfigurazione  implements OneOfGruppoConfigurazione {
     StringBuilder sb = new StringBuilder();
     sb.append("class GruppoNuovaConfigurazione {\n");
     
+    sb.append("    modalita: ").append(GruppoNuovaConfigurazione.toIndentedString(this.modalita)).append("\n");
     sb.append("    autenticazione: ").append(GruppoNuovaConfigurazione.toIndentedString(this.autenticazione)).append("\n");
     sb.append("}");
     return sb.toString();

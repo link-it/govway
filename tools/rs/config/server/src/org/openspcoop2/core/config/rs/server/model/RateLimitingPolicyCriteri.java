@@ -21,6 +21,7 @@ package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriIntervalloEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingCriteriMetricaEnum;
+import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,6 +29,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class RateLimitingPolicyCriteri  implements OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione {
+  
+  @Schema(required = true, description = "")
+  private RateLimitingIdentificazionePolicyEnum identificazione = null;
   
   @Schema(required = true, description = "")
   private RateLimitingCriteriMetricaEnum metrica = null;
@@ -40,6 +44,27 @@ public class RateLimitingPolicyCriteri  implements OneOfRateLimitingPolicyBaseCo
   
   @Schema(example = "false", description = "")
   private Boolean degrado = false;
+ /**
+   * Get identificazione
+   * @return identificazione
+  **/
+  @Override
+@JsonProperty("identificazione")
+  @NotNull
+  @Valid
+  public RateLimitingIdentificazionePolicyEnum getIdentificazione() {
+    return this.identificazione;
+  }
+
+  public void setIdentificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
+    this.identificazione = identificazione;
+  }
+
+  public RateLimitingPolicyCriteri identificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
+    this.identificazione = identificazione;
+    return this;
+  }
+
  /**
    * Get metrica
    * @return metrica
@@ -123,6 +148,7 @@ public class RateLimitingPolicyCriteri  implements OneOfRateLimitingPolicyBaseCo
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyCriteri {\n");
     
+    sb.append("    identificazione: ").append(RateLimitingPolicyCriteri.toIndentedString(this.identificazione)).append("\n");
     sb.append("    metrica: ").append(RateLimitingPolicyCriteri.toIndentedString(this.metrica)).append("\n");
     sb.append("    intervallo: ").append(RateLimitingPolicyCriteri.toIndentedString(this.intervallo)).append("\n");
     sb.append("    congestione: ").append(RateLimitingPolicyCriteri.toIndentedString(this.congestione)).append("\n");

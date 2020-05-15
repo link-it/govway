@@ -1,8 +1,8 @@
 {
-	"ruolo": "specificaSemiFormale",
 	"allegato": {
 		"nome": "AllegatoJsonSpecSemiformale1.uml",
-		"documento": "Q29udGVudXRvIGRlbGwnIGFsbGVnYXRvLmpzb24K"
-	},
-	"tipo_allegato": "UML"
+		"documento": "Q29udGVudXRvIGRlbGwnIGFsbGVnYXRvLmpzb24K",
+		"ruolo": "specificaSemiFormale",
+		"tipo_specifica": "UML"
+	}
 }

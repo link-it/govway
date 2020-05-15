@@ -42,7 +42,6 @@ Scenario: CRUD RATE LIMITING
     {
         nome: #(policy.nome),
         stato: #(policy.stato),
-        identificazione: #(policy.identificazione),
         configurazione: #(policy.configurazione),
         soglia_ridefinita: #(policy.soglia_ridefinita),
         soglia_valore: #(policy.soglia_valore),
@@ -76,7 +75,6 @@ Scenario: CRUD RATE LIMITING
     {
         nome: #(policy_update.nome),
         stato: #(policy_update.stato),
-        identificazione: #(policy.identificazione),
         configurazione: #(policy.configurazione),
         soglia_ridefinita: #(policy_update.soglia_ridefinita),
         filtro: #(policy_update.filtro),

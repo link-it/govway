@@ -63,13 +63,14 @@ public class SoggettiApiHelper {
 
 	public static final void overrideAuthParams(ConsoleHelper consoleHelper, Soggetto soggetto, HttpRequestWrapper wrap) {
 		
-		wrap.overrideParameter(
-				ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, 
-				Helper.tipoAuthFromModalitaAccesso.get(soggetto.getModalitaAccesso())
-		);
+		if(soggetto.getCredenziali()!=null && soggetto.getCredenziali().getModalitaAccesso()!=null) {
+			wrap.overrideParameter(
+					ConnettoriCostanti.PARAMETRO_CREDENZIALI_TIPO_AUTENTICAZIONE, 
+					Helper.tipoAuthFromModalitaAccesso.get(soggetto.getCredenziali().getModalitaAccesso())
+			);
+			Helper.overrideAuthParams(wrap, consoleHelper, soggetto.getCredenziali());
+		}
 		
-		
-		Helper.overrideAuthParams(wrap, consoleHelper, soggetto.getModalitaAccesso(), soggetto.getCredenziali());
 	}
 
 	// In queste logiche non considero:
@@ -102,11 +103,11 @@ public class SoggettiApiHelper {
 			ret.setPortaDominio(nome_pdd);
 		}
 		
-		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getModalitaAccesso() != null ) {
+		if (env.soggettiCore.isSupportatoAutenticazioneSoggetti(env.tipo_protocollo) && body.getCredenziali() != null && body.getCredenziali().getModalitaAccesso() != null ) {
 			try {
 				CredenzialiSoggetto credenziali = Helper.apiCredenzialiToGovwayCred(
 							body.getCredenziali(),
-							body.getModalitaAccesso(),
+							body.getCredenziali().getModalitaAccesso(),
 							CredenzialiSoggetto.class,
 							org.openspcoop2.core.registry.constants.CredenzialeTipo.class
 				);		
@@ -176,7 +177,6 @@ public class SoggettiApiHelper {
 				CredenzialiSoggetto.class,
 				org.openspcoop2.core.registry.constants.CredenzialeTipo.class
 			));
-		ret.setModalitaAccesso(Helper.credenzialiToModalita(ret.getCredenziali()));
 		
 		ret.setDominio(DominioEnum.ESTERNO);
 		try {

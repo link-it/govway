@@ -23,5 +23,5 @@ package org.openspcoop2.core.config.rs.server.model;
 * OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione
 */
 public interface OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione {
-
+    public RateLimitingIdentificazionePolicyEnum getIdentificazione();
 }

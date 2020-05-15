@@ -19,45 +19,19 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.RateLimitingIdentificazionePolicyEnum;
 import org.openspcoop2.core.config.rs.server.model.RateLimitingPolicyBase;
-import javax.validation.constraints.*;
-
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class RateLimitingPolicyBaseConIdentificazione extends RateLimitingPolicyBase {
   
-  @Schema(required = true, description = "")
-  private RateLimitingIdentificazionePolicyEnum identificazione = null;
-  
   @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "identificazione", visible = true )
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "identificazione", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = RateLimitingPolicyCriteri.class, name = "criteri"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = RateLimitingPolicyIdentificativo.class, name = "policy")  })
   private OneOfRateLimitingPolicyBaseConIdentificazioneConfigurazione configurazione = null;
- /**
-   * Get identificazione
-   * @return identificazione
-  **/
-  @JsonProperty("identificazione")
-  @NotNull
-  @Valid
-  public RateLimitingIdentificazionePolicyEnum getIdentificazione() {
-    return this.identificazione;
-  }
-
-  public void setIdentificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
-    this.identificazione = identificazione;
-  }
-
-  public RateLimitingPolicyBaseConIdentificazione identificazione(RateLimitingIdentificazionePolicyEnum identificazione) {
-    this.identificazione = identificazione;
-    return this;
-  }
-
  /**
    * Get configurazione
    * @return configurazione
@@ -83,7 +57,6 @@ public class RateLimitingPolicyBaseConIdentificazione extends RateLimitingPolicy
     StringBuilder sb = new StringBuilder();
     sb.append("class RateLimitingPolicyBaseConIdentificazione {\n");
     sb.append("    ").append(RateLimitingPolicyBaseConIdentificazione.toIndentedString(super.toString())).append("\n");
-    sb.append("    identificazione: ").append(RateLimitingPolicyBaseConIdentificazione.toIndentedString(this.identificazione)).append("\n");
     sb.append("    configurazione: ").append(RateLimitingPolicyBaseConIdentificazione.toIndentedString(this.configurazione)).append("\n");
     sb.append("}");
     return sb.toString();

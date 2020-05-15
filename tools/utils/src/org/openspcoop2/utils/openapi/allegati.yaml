@@ -380,6 +380,39 @@ paths:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
+
+  /documenti/list:
+    get:
+      tags:
+        - document-retrieve
+      parameters:
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/q"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/limit"
+        - $ref: "teamdigitale-openapi_definitions.yaml#/components/parameters/offset"
+      summary: Elenco allegati di una API
+      operationId: findAllApiAllegati
+      description: Questa operazione consente di ottenere gli allegati di una API identificata dal nome e dalla versione
+      responses: 
+        "200":
+          description: Ricerca eseguita correttamente
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListaApiAllegati"
+        "400":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
+        "401":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
+        "403":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
+        "404":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
+        "429":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
+        "503":
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
+        default:
+          $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
        
           
 components:
@@ -585,3 +618,113 @@ components:
              format: uri
           impronta:
              type: string
+             
+    ApiAllegatoItem:
+      type: object
+      required:
+        - allegato
+      properties:
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiAllegatoItemGenerico'
+            - $ref: '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/ApiAllegatoItemGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+    AllegatoItem:
+      type: object
+      required:
+        - nome
+        - ruolo
+      properties:
+        nome:
+          $ref: '#/components/schemas/NCName'
+        ruolo:
+          $ref: '#/components/schemas/RuoloAllegatoAPI'
+    ApiAllegatoItemGenerico:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoItem'
+    ApiAllegatoItemSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/AllegatoItem'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum' 
+    ListaApiAllegati:
+       type: object
+       allOf:
+          - $ref: '#/components/schemas/Lista'
+          - type: object
+            required:
+              - items
+            properties:
+              items:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ApiAllegatoItem'
+
+    TipoSpecificaSemiformaleEnum:
+      type: string
+      enum: ['UML', 'HTML', 'XSD', 'XML', 'JSON', 'YAML', 'Linguaggio Naturale']
+      example: 'XML'
+                        
+    RuoloAllegatoAPI:
+      type: string
+      enum: ['allegato', 'specificaSemiFormale']
+      default: allegato
+      example: 'specificaSemiFormale'
+      
+    NCName:
+      type: string
+      pattern: ^[_A-Za-z][\-\._A-Za-z0-9]*$
+      maxLength: 255
+      description: Può iniziare solo con un carattere [A-Za-z] o il simbolo '_' e dev'essere formato solo da caratteri, cifre, '_' , '-' e '.'
+      
+    Lista:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ListaSenzaTotale'
+        - type: object
+          required:
+            - total
+          properties:
+            total:
+              description: Number of items matching the filter criteria
+              type: integer
+              format: int64
+              minimum: 0
+            last:
+              description: Link to last result page. Null if you are already on last page.
+              type: string   
+ 
+    ListaSenzaTotale:
+      type: object
+      required:
+        - limit
+        - offset
+      properties:
+        offset:
+          description: The zero-ary offset index into the results
+          type: integer
+          format: int64
+        limit:
+          description: How many items to return at one time
+          type: integer
+          format: int32
+        first:
+          description: Link to first result page. Null if you are already on first page.
+          type: string     
+        next:
+          description: Link to next result page. Null if you are on last page.
+          type: string 
+        prev:
+          description: Link to previous result page. Null if you are on first page.
+          type: string 

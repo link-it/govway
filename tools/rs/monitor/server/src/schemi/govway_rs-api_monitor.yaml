@@ -66,23 +66,23 @@ paths:
         - $ref: '#/components/parameters/esito_transazione'
         - $ref: '#/components/parameters/escludi_scartate'
       responses:
-        200:
+        "200":
           description: ricerca completata con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaTransazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -101,23 +101,23 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaIntervalloTemporale'
       responses:
-        200:
+        "200":
           description: ricerca completata con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaTransazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -159,23 +159,23 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/ricerca_esatta'
         - $ref: 'govway_core.yaml#/components/parameters/case_sensitive'          
       responses:
-        200:
+        "200":
           description: ricerca completata con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaTransazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -197,23 +197,23 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaIdApplicativo'
       responses:
-        200:
+        "200":
           description: ricerca completata con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaTransazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -241,23 +241,23 @@ paths:
         - $ref: '#/components/parameters/id_messaggio'
 
       responses:
-        200:
+        "200":
           description: dettaglio transazione restituito correttamente
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaTransazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -273,23 +273,23 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id_transazione'
       responses:
-        200:
+        "200":
           description: dettaglio transazione restituito correttamente
           content:
             application/json:
               schema:
                 $ref: 'govway_trace-ext.yaml#/components/schemas/TransazioneExt'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -320,23 +320,23 @@ paths:
         - $ref: "govway_core.yaml#/components/parameters/ricerca_esatta"
         - $ref: "govway_core.yaml#/components/parameters/case_sensitive"
       responses:
-        200:
+        "200":
           description: Ricerca eventi completata con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ListaEventi'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -353,23 +353,23 @@ paths:
       parameters:
         - $ref: '#/components/parameters/id_evento_path'
       responses:
-        200:
+        "200":
           description: Recupero evento completato con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Evento'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -409,19 +409,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -441,19 +441,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaAndamentoTemporale'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -488,19 +488,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -519,19 +519,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneEsiti'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -567,19 +567,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -598,19 +598,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneSoggettoRemoto'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -647,19 +647,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -678,19 +678,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneSoggettoLocale'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -721,19 +721,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -752,19 +752,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApi'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -799,19 +799,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -830,19 +830,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneAzione'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -880,19 +880,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -911,19 +911,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativoRegistrato'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -960,19 +960,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -991,19 +991,19 @@ paths:
             schema:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1040,19 +1040,19 @@ paths:
         - $ref: '#/components/parameters/tipo_informazione_report'
         - $ref: '#/components/parameters/claim'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1071,19 +1071,19 @@ paths:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneTokenInfo'
 
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1118,19 +1118,19 @@ paths:
         - $ref: "#/components/parameters/tipo_report"
         - $ref: '#/components/parameters/tipo_informazione_report'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1149,19 +1149,19 @@ paths:
               $ref: '#/components/schemas/RicercaStatisticaDistribuzioneApplicativo'
 
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportStatistico'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1183,23 +1183,23 @@ paths:
         circa i soggetti e gli applicativi registrati.
       operationId: getRiepologoConfigurazioni
       responses:
-        200:
+        "200":
           description: Riepilogo ottenuto con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Riepilogo'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1223,23 +1223,23 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
       operationId: getRiepilogoApi
       responses:
-        200:
+        "200":
           description: Informazioni sulla API ottenute con successo
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/InfoImplementazioneApi'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1261,23 +1261,23 @@ paths:
         - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/offset'
         - $ref: 'teamdigitale-openapi_definitions.yaml#/components/parameters/limit'
       responses:
-          200:
+          "200":
             description: Riepilogo ottenuto con successo
             content: 
               application/json:
                 schema:
                   $ref: '#/components/schemas/ListaRiepilogoApi'
-          400:
+          "400":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-          401:
+          "401":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-          403:
+          "403":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-          404:
+          "404":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-          429:
+          "429":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-          503:
+          "503":
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
           default:
             $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1302,19 +1302,19 @@ paths:
         - $ref: 'govway_core.yaml#/components/parameters/tipo_servizio'
         - $ref: 'govway_core.yaml#/components/parameters/versione_servizio'
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportConfigurazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'    
@@ -1333,19 +1333,19 @@ paths:
               $ref: '#/components/schemas/RicercaConfigurazioneApi'
       
       responses:
-        200:
+        "200":
           $ref: '#/components/responses/200ReportConfigurazioni'
-        400:
+        "400":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/400BadRequest'
-        401:
+        "401":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/401Unauthorized'
-        403:
+        "403":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/403Forbidden'
-        404:
+        "404":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/404NotFound'
-        429:
+        "429":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/429TooManyRequests'
-        503:
+        "503":
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/503ServiceUnavailable'
         default:
           $ref: 'teamdigitale-openapi_definitions.yaml#/components/responses/default'
@@ -1591,7 +1591,7 @@ components:
         - $ref: 'govway_core.yaml#/components/schemas/ListaSenzaTotale'
         - type: object
           required:
-            - items
+          - items
           properties:
             items:
               type: array
@@ -1921,7 +1921,7 @@ components:
         tag:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         api:
-          $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
+          $ref: '#/components/schemas/FiltroApiSoggetti'
         azione:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         esito:
@@ -1995,7 +1995,7 @@ components:
         - type: object
           properties:
             api:
-               $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
+               $ref: '#/components/schemas/FiltroApiSoggetti'
 
     RicercaStatisticaAndamentoTemporale:
        type: object
@@ -2074,7 +2074,7 @@ components:
             report:
               $ref: '#/components/schemas/OpzioniGenerazioneReport'
             api:
-               $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
+               $ref: '#/components/schemas/FiltroApiSoggetti'
             azione:
               $ref: 'govway_core.yaml#/components/schemas/NCName'
             mittente:
@@ -2251,7 +2251,7 @@ components:
         tipo:
           $ref: 'govway_trace.yaml#/components/schemas/TransazioneRuoloEnum'
         api:
-          $ref: 'govway_core.yaml#/components/schemas/FiltroApiSoggetti'
+          $ref: '#/components/schemas/FiltroApiSoggetti'
 
 
     # Filtri

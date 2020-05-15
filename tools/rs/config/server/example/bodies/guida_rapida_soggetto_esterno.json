@@ -1,7 +1,10 @@
 {
  	"nome": "EnteEsterno",
-   	"modalita_accesso": "http-basic",
-   
+   	"credenziali": {
+			"modalita_accesso": "http-basic",
+       		"username": "EnteEsterno",
+       		"password": "password"     
+	},   
 	"dominio": "esterno",
 	"descrizione": ""
 }

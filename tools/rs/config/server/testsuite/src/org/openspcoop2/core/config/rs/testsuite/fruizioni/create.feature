@@ -60,8 +60,8 @@ Scenario: Creazione Fruizioni SPCoop 204
     * eval randomize ( ruolo_autenticato, ["nome"])    
     * call create ( { resourcePath: 'ruoli', body: ruolo_autenticato })
 
-    * eval fruizione_spcoop.autorizzazione.configurazione.soggetto = soggetto_autenticato.nome
-    * eval fruizione_spcoop.autorizzazione.configurazione.ruolo = ruolo_autenticato.nome
+    * eval fruizione_spcoop.autorizzazione.soggetto = soggetto_autenticato.nome
+    * eval fruizione_spcoop.autorizzazione.ruolo = ruolo_autenticato.nome
 
     * call create_201 ({ resourcePath: 'fruizioni', body: fruizione_spcoop,  key: spcoop_key })
 

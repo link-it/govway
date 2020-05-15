@@ -20,7 +20,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import java.util.List;
-import org.openspcoop2.core.config.rs.server.model.TipoApiEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -33,7 +32,11 @@ public class ApiBase  {
   private String referente = null;
   
   @Schema(required = true, description = "")
-  private TipoApiEnum tipo = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "protocollo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaRest.class, name = "rest"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = ApiInterfacciaSoap.class, name = "soap")  })
+  private OneOfApiBaseTipoInterfaccia tipoInterfaccia = null;
   
   @Schema(required = true, description = "")
   private String nome = null;
@@ -43,13 +46,6 @@ public class ApiBase  {
   
   @Schema(required = true, description = "")
   private Integer versione = null;
-  
-  @Schema(example = "OpenApi3.0", required = true, description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
-  @com.fasterxml.jackson.annotation.JsonSubTypes({
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoSoapEnum.class, name = "soap"),
-    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = FormatoRestEnum.class, name = "rest")  })
-  private OneOfApiBaseFormato formato = null;
   
   @Schema(example = "[\"PagamentiTelematici\",\"Anagrafica\"]", description = "")
   private List<String> tags = null;
@@ -73,22 +69,22 @@ public class ApiBase  {
   }
 
  /**
-   * Get tipo
-   * @return tipo
+   * Get tipoInterfaccia
+   * @return tipoInterfaccia
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("tipo_interfaccia")
   @NotNull
   @Valid
-  public TipoApiEnum getTipo() {
-    return this.tipo;
+  public OneOfApiBaseTipoInterfaccia getTipoInterfaccia() {
+    return this.tipoInterfaccia;
   }
 
-  public void setTipo(TipoApiEnum tipo) {
-    this.tipo = tipo;
+  public void setTipoInterfaccia(OneOfApiBaseTipoInterfaccia tipoInterfaccia) {
+    this.tipoInterfaccia = tipoInterfaccia;
   }
 
-  public ApiBase tipo(TipoApiEnum tipo) {
-    this.tipo = tipo;
+  public ApiBase tipoInterfaccia(OneOfApiBaseTipoInterfaccia tipoInterfaccia) {
+    this.tipoInterfaccia = tipoInterfaccia;
     return this;
   }
 
@@ -152,26 +148,6 @@ public class ApiBase  {
   }
 
  /**
-   * Get formato
-   * @return formato
-  **/
-  @JsonProperty("formato")
-  @NotNull
-  @Valid
-  public OneOfApiBaseFormato getFormato() {
-    return this.formato;
-  }
-
-  public void setFormato(OneOfApiBaseFormato formato) {
-    this.formato = formato;
-  }
-
-  public ApiBase formato(OneOfApiBaseFormato formato) {
-    this.formato = formato;
-    return this;
-  }
-
- /**
    * Get tags
    * @return tags
   **/
@@ -202,11 +178,10 @@ public class ApiBase  {
     sb.append("class ApiBase {\n");
     
     sb.append("    referente: ").append(ApiBase.toIndentedString(this.referente)).append("\n");
-    sb.append("    tipo: ").append(ApiBase.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tipoInterfaccia: ").append(ApiBase.toIndentedString(this.tipoInterfaccia)).append("\n");
     sb.append("    nome: ").append(ApiBase.toIndentedString(this.nome)).append("\n");
     sb.append("    descrizione: ").append(ApiBase.toIndentedString(this.descrizione)).append("\n");
     sb.append("    versione: ").append(ApiBase.toIndentedString(this.versione)).append("\n");
-    sb.append("    formato: ").append(ApiBase.toIndentedString(this.formato)).append("\n");
     sb.append("    tags: ").append(ApiBase.toIndentedString(this.tags)).append("\n");
     sb.append("}");
     return sb.toString();

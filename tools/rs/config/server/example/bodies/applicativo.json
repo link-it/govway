@@ -1,7 +1,7 @@
 {
  	"nome": "ApplicativoJson",
-   	"modalita_accesso": "http-basic",
    	"credenziali": {
+			"modalita_accesso": "http-basic",
        		"username": "username",
        		"password": "password"     
 	},

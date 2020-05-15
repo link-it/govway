@@ -2,8 +2,6 @@
     "autenticazione": {
         "tipo": "custom",
         "opzionale": true,
-        "configurazione": {
-            "nome": "AutenticazioneCustom"
-        }
+        "nome": "AutenticazioneCustom"
     }
 }

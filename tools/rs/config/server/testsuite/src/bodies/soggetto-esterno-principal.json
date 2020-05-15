@@ -1,8 +1,8 @@
 {
  	"nome": "SoggettoJson1",
-   	"modalita_accesso": "principal",
    	"credenziali": {
-       		"userid": "username"
+       	"modalita_accesso": "principal",
+   		"userid": "username"
 	},
 	"dominio": "esterno",
 	"descrizione": "Descrizione Soggetto Json1",

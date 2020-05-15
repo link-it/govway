@@ -167,21 +167,22 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 			TipoAutenticazionePrincipal erogazioneAutenticazionePrincipal = null;
 			List<String> erogazioneAutenticazioneParametroList = null;
 			
-			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
+			if ( body.getConfigurazione().getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
-				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getConfigurazione().getModalita(), body.getConfigurazione());
 				
 				if(confNuova.getAutenticazione()!=null) {
 					erogazioneAutenticazione = Enums.toTipoAutenticazione(confNuova.getAutenticazione().getTipo()).toString();
-					erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
-					erogazioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
-					erogazioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
+					Boolean autenticazioneOpzionale = ErogazioniApiHelper.getAutenticazioneOpzionale(confNuova.getAutenticazione()); // gestisce authn se null
+					erogazioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(autenticazioneOpzionale);
+					erogazioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione()); 
+					erogazioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione());
 				}
 			}
 			
-			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
+			else if ( body.getConfigurazione().getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {
 				
-				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getConfigurazione().getModalita(), body.getConfigurazione());
 				List<MappingErogazionePortaApplicativa> mappings = ErogazioniApiHelper.getMappingGruppiPA( confEredita.getNome(), idAsps, env.apsCore);
 				if ( mappings.isEmpty() ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
@@ -213,7 +214,7 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					body.getAzioni().toArray(new String[0]),
 					asps, 
 					azioniOccupate,
-					body.getModalita().toString(),					// modeCreazione
+					body.getConfigurazione().getModalita().toString(),					// modeCreazione
 					null,											// Come da codice console,
 					env.isSupportatoAutenticazioneSoggetti,
 					mappingInfo
@@ -228,8 +229,8 @@ public class ErogazioniGruppiApiServiceImpl extends BaseImpl implements Erogazio
 					mappingInfo.getNomeNuovaConfigurazione(),
 					body.getNome(),				// nomeGruppo
 					body.getAzioni().toArray(new String[0]),	// azioni
-					body.getModalita().toString(),				// modeCreazione
-					body.getModalita().toString(),				// modeCreazioneConnettore Forse c'è un bug nella console, qui viene passato "eredita", nella console viene trattato come una checkbox
+					body.getConfigurazione().getModalita().toString(),				// modeCreazione
+					body.getConfigurazione().getModalita().toString(),				// modeCreazioneConnettore Forse c'è un bug nella console, qui viene passato "eredita", nella console viene trattato come una checkbox
 					null,							// endpointtype,
 					null,							// tipoconn,
 					null,							// autenticazioneHttp,	// RECHECK

@@ -1,3 +1,12 @@
+2020-05-15  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, GovWayCore]
+	Aggiunta funzionalità OP-982
+	Adeguata interfaccia OpenAPI 3 del servizio di configurazione per utilizzare un discriminator interno agli oggetti elencati nelle strutture oneOf,
+	come richiesto dalla specifica OpenAPI "https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/".
+	Nella precedente versione il discriminator utilizzato era un claim esterno agli oggetti riferiti nella struttura oneOf.
+	Impostato come tipo di validazione dei contenuti di default il nuovo engine per la validazione tramite interfaccia OpenAPI 3 che utilizza la libreria openapi4j (https://openapi4j.github.io/openapi4j/).
+
 2020-05-14  Andrea Poli <apoli@link.it>
 
 	* [GovWayConsole]
@@ -127,7 +136,7 @@
 
 	* [ApiRsMonitoraggio]
 	Aggiunta funzionalità OP-982
-	Riviste interfacce OpenAPI 3 dei servizi di configurazione e monitoraggio per utilizzare un discriminator interno agli oggetti elencati nelle strutture oneOf,
+	Adeguata interfaccia OpenAPI 3 del servizio di monitoraggio per utilizzare un discriminator interno agli oggetti elencati nelle strutture oneOf,
 	come richiesto dalla specifica OpenAPI "https://swagger.io/docs/specification/data-models/inheritance-and-polymorphism/".
 	Nella precedente versione il discriminator utilizzato era un claim esterno agli oggetti riferiti nella struttura oneOf.
 

@@ -133,15 +133,22 @@ components:
     ApiBase:
       type: object
       required:
-        - tipo
+        - tipo_interfaccia
         - nome
         - versione
-        - formato
       properties:
         referente:
           $ref: 'govway_core.yaml#/components/schemas/SimpleName'
-        tipo:
-          $ref: '#/components/schemas/TipoApiEnum'
+        tipo_interfaccia:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiInterfacciaRest'
+            - $ref: '#/components/schemas/ApiInterfacciaSoap'
+          discriminator:
+            propertyName: protocollo
+            mapping:
+              'rest': '#/components/schemas/ApiInterfacciaRest'
+              'soap': '#/components/schemas/ApiInterfacciaSoap'
         nome:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
         descrizione:
@@ -150,51 +157,57 @@ components:
           example: 'descrizione API'
         versione:
           $ref: 'govway_core.yaml#/components/schemas/Versione'
-        formato:
-          type: string
-          oneOf:
-            - $ref: '#/components/schemas/FormatoSoapEnum'
-            - $ref: '#/components/schemas/FormatoRestEnum'
-          discriminator:
-            propertyName: x-external-property-tipo
-            mapping:
-              'soap': '#/components/schemas/FormatoSoapEnum'
-              'rest': '#/components/schemas/FormatoRestEnum'
-          example: 'OpenApi3.0' 
         tags:
           type: array
           items:
             $ref: 'govway_core.yaml#/components/schemas/NCName'
           example: [PagamentiTelematici, Anagrafica] 
-      
-    # Base: Allegato
-    Allegato:
+
+    ApiBaseConSoggetto:
+      type: object
+      allOf:
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiBase'
+        - type: object
+          required:
+            - profilo
+            - soggetto
+          properties:
+            profilo:
+               $ref: 'govway_core.yaml#/components/schemas/ProfiloEnum'
+            soggetto: 
+               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
+
+    ApiInterfacciaRest:
       type: object
       required:
-        - nome
-        - documento
+        - protocollo
+        - formato
       properties:
-        nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'
-        documento:
-          type: string
-          format: byte  
-
-    AllegatoItem:
+        protocollo:
+          $ref: '#/components/schemas/TipoApiEnum'
+        formato:
+          $ref: '#/components/schemas/FormatoRestEnum'
+    ApiInterfacciaSoap:
       type: object
       required:
-        - nome
+        - protocollo
+        - formato
       properties:
-        nome:
-          $ref: 'govway_core.yaml#/components/schemas/NCName'            
-
+        protocollo:
+          $ref: '#/components/schemas/TipoApiEnum'
+        formato:
+          $ref: '#/components/schemas/FormatoSoapEnum'
+                      
     # Base: Credenziali
     AuthenticationHttpBasic:
       type: object
       required:
+        - modalita_accesso
         - username
         - password
       properties:
+        modalita_accesso:
+          $ref: '#/components/schemas/ModalitaAccessoEnum'
         username:
           type: string
           maxLength: 255
@@ -208,17 +221,18 @@ components:
     AuthenticationHttps:
       type: object
       required:
-        - tipo
+         - modalita_accesso
+         - certificato
       properties:
-        tipo: 
-          $ref: '#/components/schemas/TipoAutenticazioneHttps'        
+        modalita_accesso:
+          $ref: '#/components/schemas/ModalitaAccessoEnum'
         certificato:
           type: object
           oneOf:
             - $ref: '#/components/schemas/AuthenticationHttpsCertificato'
             - $ref: '#/components/schemas/AuthenticationHttpsConfigurazioneManuale'
           discriminator:
-            propertyName: x-external-property-tipo
+            propertyName: tipo
             mapping:
               'certificato': '#/components/schemas/AuthenticationHttpsCertificato'
               'configurazione-manuale': '#/components/schemas/AuthenticationHttpsConfigurazioneManuale' 
@@ -226,9 +240,12 @@ components:
     AuthenticationHttpsCertificato:
       type: object
       required:
-        - archivio
         - tipo
+        - archivio
+        - tipo_certificato
       properties:
+        tipo: 
+          $ref: '#/components/schemas/TipoAutenticazioneHttps'   
         archivio:
           type: string
           format: byte
@@ -240,7 +257,7 @@ components:
           type: string
           maxLength: 255
           example: 'changeit'
-        tipo: 
+        tipo_certificato: 
           $ref: '#/components/schemas/TipoKeystore'  
         strict_verification:
           type: boolean
@@ -250,8 +267,11 @@ components:
     AuthenticationHttpsConfigurazioneManuale:
       type: object
       required:
+        - tipo
         - subject
       properties:
+        tipo: 
+          $ref: '#/components/schemas/TipoAutenticazioneHttps'
         subject: 
           type: string
           maxLength: 2800
@@ -264,8 +284,11 @@ components:
     AuthenticationPrincipal:
       type: object
       required:
+       - modalita_accesso
        - userid
       properties:
+        modalita_accesso:
+          $ref: '#/components/schemas/ModalitaAccessoEnum'
         userid:
           type: string
           maxLength: 255
@@ -274,8 +297,6 @@ components:
     BaseCredenziali:
       type: object
       properties:
-        modalita_accesso:
-          $ref: '#/components/schemas/ModalitaAccessoEnum'
         credenziali:
           type: object
           oneOf:
@@ -283,14 +304,11 @@ components:
             - $ref: '#/components/schemas/AuthenticationHttps'
             - $ref: '#/components/schemas/AuthenticationPrincipal'
           discriminator:
-            propertyName: x-external-property-modalita_accesso
+            propertyName: modalita_accesso
             mapping:
               'http-basic': '#/components/schemas/AuthenticationHttpBasic'
               'https': '#/components/schemas/AuthenticationHttps'
-              'principal': '#/components/schemas/AuthenticationPrincipal'
-          example:
-            username: 'user'
-            password: 'pwd'
+              'principal': '#/components/schemas/AuthenticationPrincipal'  
 
     # Base: Connettore            
     ConnettoreConfigurazioneHttps:
@@ -424,7 +442,7 @@ components:
       properties:
         endpoint:
           type: string
-          format: url
+          format: uri
           example: 'http://ente.it/servizio'
         autenticazione_http:
           $ref: '#/components/schemas/AuthenticationHttpBasic'
@@ -470,47 +488,82 @@ components:
             - connettore
           properties:
             autenticazione:
-              $ref: '#/components/schemas/APIImplAutenticazioneNew'
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/APIImplAutenticazioneDisabilitata' 
+               - $ref: '#/components/schemas/APIImplAutenticazioneBasic'
+               - $ref: '#/components/schemas/APIImplAutenticazioneHttps'
+               - $ref: '#/components/schemas/APIImplAutenticazionePrincipal'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'disabilitato': '#/components/schemas/APIImplAutenticazioneDisabilitata'
+                 'http-basic': '#/components/schemas/APIImplAutenticazioneBasic'
+                 'https': '#/components/schemas/APIImplAutenticazioneHttps'
+                 'principal': '#/components/schemas/APIImplAutenticazionePrincipal'
             autorizzazione:
-              $ref: '#/components/schemas/APIImplAutorizzazioneNew'
+             type: object
+             oneOf:
+               - $ref: '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+               - $ref: '#/components/schemas/APIImplAutorizzazioneAbilitataNew'
+               - $ref: '#/components/schemas/APIImplAutorizzazioneXACML'
+             discriminator:
+               propertyName: tipo
+               mapping:
+                 'disabilitato': '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+                 'abilitato': '#/components/schemas/APIImplAutorizzazioneAbilitataNew'
+                 'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACML'
             connettore:
               $ref: '#/components/schemas/Connettore'
- 
-    APIImplAutenticazioneNew:
+
+    APIImplAutenticazioneDisabilitata:
       type: object
       required:
         - tipo
       properties:
         tipo:
-          $ref: '#/components/schemas/TipoAutenticazioneNewEnum'
-        configurazione:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
-            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
-          discriminator:
-            propertyName: x-external-property-tipo
-            mapping:
-              'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
-              'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
-        opzionale:
-          type: boolean
-          default: false
-          example: false
-    APIImplAutenticazioneConfigurazioneBasic:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
+      additionalProperties: false
+      
+    APIImplAutenticazioneBasic:
       type: object
+      required:
+        - tipo
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
         forward:
           type: boolean
           default: false
           example: false
+        opzionale:
+          type: boolean
+          default: false
+          example: false
       additionalProperties: false
-    APIImplAutenticazioneConfigurazionePrincipal:
+      
+    APIImplAutenticazioneHttps:
       type: object
       required:
         - tipo
       properties:
         tipo:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
+        opzionale:
+          type: boolean
+          default: false
+          example: false
+      additionalProperties: false
+      
+    APIImplAutenticazionePrincipal:
+      type: object
+      required:
+        - tipo
+        - tipo_principal
+      properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
+        tipo_principal:
           $ref: '#/components/schemas/TipoAutenticazionePrincipal'
         token:
           $ref: '#/components/schemas/TipoAutenticazionePrincipalToken'
@@ -528,88 +581,49 @@ components:
           type: boolean
           default: false
           example: false
-      additionalProperties: false    
-    APIImplAutenticazioneConfigurazioneCustom:
-      type: object
-      properties:
-        nome:
-          description: nome autenticazione 'custom', set tipo='custom'
-          type: string
-          maxLength: 255  
-      additionalProperties: false 
-    APIImplAutenticazione:
-      type: object
-      required:
-        - tipo
-      properties:
-        tipo:
-          $ref: '#/components/schemas/TipoAutenticazioneEnum'
-        configurazione:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
-            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
-            - $ref: '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
-          discriminator:
-            propertyName: x-external-property-tipo
-            mapping:
-              'http-basic': '#/components/schemas/APIImplAutenticazioneConfigurazioneBasic'
-              'principal': '#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal'
-              'custom': '#/components/schemas/APIImplAutenticazioneConfigurazioneCustom'
         opzionale:
           type: boolean
           default: false
           example: false
-          
-    APIImplAutorizzazioneNew:
+      additionalProperties: false
+
+    APIImplAutenticazioneCustom:
       type: object
       required:
         - tipo
+        - nome
       properties:
         tipo:
-          $ref: '#/components/schemas/TipoAutorizzazioneNewEnum'
-        configurazione:
-          type: object
-          oneOf:
-            - $ref: '#/components/schemas/APIImplAutorizzazioneConfigNew'
-            - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
-          discriminator:
-            propertyName: x-external-property-tipo
-            mapping:
-              'abilitato': '#/components/schemas/APIImplAutorizzazioneConfigNew'
-              'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
-    APIImplAutorizzazioneView:
-      type: object
-      required:
-        - tipo
-      properties:
-        tipo:
-          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
-        configurazione:
-          $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
-        configurazione_xacml:
-          $ref: '#/components/schemas/APIImplAutorizzazioneXACMLViewConfig'
-        configurazione_custom:
-          $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
-    APIImplAutorizzazione:
+          $ref: '#/components/schemas/TipoAutenticazioneEnum'
+        nome:
+          description: nome autenticazione 'custom', set tipo='custom'
+          type: string
+          maxLength: 255
+        opzionale:
+          type: boolean
+          default: false
+          example: false  
+      additionalProperties: false 
+
+
+    APIImplAutorizzazioneDisabilitata:
       type: object
       required:
         - tipo
       properties:
         tipo:
           $ref: '#/components/schemas/TipoAutorizzazioneEnum'
-        configurazione:
-          $ref: '#/components/schemas/APIImplAutorizzazioneConfig'
-        configurazione_xacml:
-          $ref: '#/components/schemas/APIImplAutorizzazioneXACMLConfig'
-        configurazione_custom:
-          $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
-    APIImplAutorizzazioneConfigNew:
+      additionalProperties: false
+      
+    APIImplAutorizzazioneAbilitataNew:
       type: object
       required:
+        - tipo
         - richiedente
         - ruoli
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         richiedente:
           type: boolean
           default: true
@@ -627,14 +641,17 @@ components:
         ruolo:
           $ref: 'govway_core.yaml#/components/schemas/NCName'
       additionalProperties: false
-    APIImplAutorizzazioneConfig:
+    APIImplAutorizzazioneAbilitata:
       type: object
       required:
+        - tipo
         - richiedente
         - ruoli
         - scope
         - token
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         richiedente:
           type: boolean
           default: true
@@ -662,35 +679,47 @@ components:
           type: string
           maxLength: 4000
       additionalProperties: false
-    APIImplAutorizzazioneXACMLViewConfig:
+
+    APIImplAutorizzazioneXACMLView:
       type: object
       required:
+        - tipo
         - ruoli_fonte
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         ruoli_fonte:
           $ref: '#/components/schemas/FonteEnum'
       additionalProperties: false                 
-    APIImplAutorizzazioneXACMLConfig:
+    APIImplAutorizzazioneXACML:
       type: object
       required:
+        - tipo
         - policy
         - ruoli_fonte
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         ruoli_fonte:
           $ref: '#/components/schemas/FonteEnum'
         policy:
           type: string
           format: byte
       additionalProperties: false 
+      
     APIImplAutorizzazioneCustom:
       type: object
       required:
+        - tipo
         - nome
       properties:
+        tipo:
+          $ref: '#/components/schemas/TipoAutorizzazioneEnum'
         nome:
           type: string
           maxLength: 255  
-      additionalProperties: false  
+      additionalProperties: false 
+
 
     ApiImplItem:
       type: object
@@ -727,7 +756,7 @@ components:
           properties:
             url_invocazione:
               type: string
-              format: url
+              format: uri
             connettore:
               type: string    
             gestione_cors:
@@ -801,7 +830,7 @@ components:
             properties:
                url_invocazione:
                   type: string
-                  format: url
+                  format: uri
                azioni:
                   type: array
                   items:
@@ -811,47 +840,127 @@ components:
     ApiImplAllegato:
       type: object
       required:
-        - ruolo
         - allegato
       properties:
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiImplAllegatoGenerico'
+            - $ref: '#/components/schemas/ApiImplAllegatoSpecificaSemiformale'
+            - $ref: '#/components/schemas/ApiImplAllegatoSpecificaSicurezza'
+            - $ref: '#/components/schemas/ApiImplAllegatoSpecificaLivelloServizio'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/ApiImplAllegatoGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiImplAllegatoSpecificaSemiformale'
+              'specificaSicurezza': '#/components/schemas/ApiImplAllegatoSpecificaSicurezza'
+              'specificaLivelloServizio': '#/components/schemas/ApiImplAllegatoSpecificaLivelloServizio'
+    ApiImplAllegatoGenerico:
+      type: object
+      required:
+        - nome
+        - documento
+        - ruolo
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        documento:
+          type: string
+          format: byte
         ruolo:
           $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
-        allegato:
-          $ref: '#/components/schemas/Allegato'
-        tipo_allegato:
-          type: string
-          oneOf:
-            - $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
-            - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
-            - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
-          discriminator:
-            propertyName: x-external-property-ruolo
-            mapping:
-              'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
-              'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
-              'specificaLivelloServizio': '#/components/schemas/TipoSpecificaLivelloServizioEnum'
+    ApiImplAllegatoSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+    ApiImplAllegatoSpecificaSicurezza:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+    ApiImplAllegatoSpecificaLivelloServizio:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
+
     ApiImplAllegatoItem:
       type: object
       required:
-        - ruolo
         - allegato
       properties:
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiImplAllegatoItemGenerico'
+            - $ref: '#/components/schemas/ApiImplAllegatoItemSpecificaSemiformale'
+            - $ref: '#/components/schemas/ApiImplAllegatoItemSpecificaSicurezza'
+            - $ref: '#/components/schemas/ApiImplAllegatoItemSpecificaLivelloServizio'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/ApiImplAllegatoItemGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiImplAllegatoItemSpecificaSemiformale'
+              'specificaSicurezza': '#/components/schemas/ApiImplAllegatoItemSpecificaSicurezza'
+              'specificaLivelloServizio': '#/components/schemas/ApiImplAllegatoItemSpecificaLivelloServizio'
+    ApiImplAllegatoItemGenerico:
+      type: object
+      required:
+        - nome
+        - ruolo
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'            
         ruolo:
           $ref: '#/components/schemas/RuoloAllegatoAPIImpl'
-        allegato:
-          $ref: '#/components/schemas/AllegatoItem'
-        tipo_allegato:
-          type: string
-          oneOf:
-            - $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
-            - $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
-            - $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'
-          discriminator:
-            propertyName: x-external-property-ruolo
-            mapping:
-              'specificaSemiFormale': '#/components/schemas/TipoSpecificaSemiformaleEnum'
-              'specificaSicurezza': '#/components/schemas/TipoSpecificaSicurezzaEnum'
-              'specificaLivelloServizio': '#/components/schemas/TipoSpecificaLivelloServizioEnum'
+    ApiImplAllegatoItemSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoItemGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSemiformaleEnum'
+    ApiImplAllegatoItemSpecificaSicurezza:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoItemGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaSicurezzaEnum'
+    ApiImplAllegatoItemSpecificaLivelloServizio:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiImplAllegatoItemGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: '#/components/schemas/TipoSpecificaLivelloServizioEnum'             
+
     ListaApiImplAllegati:
        type: object
        allOf:
@@ -895,36 +1004,50 @@ components:
       allOf:
           - $ref: '#/components/schemas/GruppoBase'      
           - type: object
-            required:
-              - modalita
             properties:
-              modalita:
-                $ref: '#/components/schemas/ModalitaConfigurazioneGruppoEnum'
               configurazione:
                 type: object
                 oneOf:
                   - $ref: '#/components/schemas/GruppoEreditaConfigurazione'
                   - $ref: '#/components/schemas/GruppoNuovaConfigurazione'
                 discriminator:
-                  propertyName: x-external-property-modalita
+                  propertyName: modalita
                   mapping:
                     'eredita': '#/components/schemas/GruppoEreditaConfigurazione'
                     'nuova': '#/components/schemas/GruppoNuovaConfigurazione'
     GruppoEreditaConfigurazione:
       type: object
       required:
-        - nome
+       - modalita
+       - nome
       properties:
+        modalita:
+          $ref: '#/components/schemas/ModalitaConfigurazioneGruppoEnum'
         nome:
           type: string
           maxLength: 255 
     GruppoNuovaConfigurazione:
       type: object
       required:
+        - modalita
         - autenticazione
       properties:
-        autenticazione:
-          $ref: '#/components/schemas/APIImplAutenticazioneNew'             
+         modalita:
+            $ref: '#/components/schemas/ModalitaConfigurazioneGruppoEnum'
+         autenticazione:
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/APIImplAutenticazioneDisabilitata'             
+              - $ref: '#/components/schemas/APIImplAutenticazioneBasic'
+              - $ref: '#/components/schemas/APIImplAutenticazioneHttps'
+              - $ref: '#/components/schemas/APIImplAutenticazionePrincipal'
+            discriminator:
+              propertyName: tipo
+              mapping:
+                'disabilitato': '#/components/schemas/APIImplAutenticazioneDisabilitata'
+                'http-basic': '#/components/schemas/APIImplAutenticazioneBasic'
+                'https': '#/components/schemas/APIImplAutenticazioneHttps'
+                'principal': '#/components/schemas/APIImplAutenticazionePrincipal'             
     GruppoItem:
       type: object
       allOf:
@@ -1045,7 +1168,21 @@ components:
           - type: object
             properties:
               autenticazione:
-                $ref: '#/components/schemas/APIImplAutenticazione'
+                  type: object
+                  oneOf:
+                    - $ref: '#/components/schemas/APIImplAutenticazioneDisabilitata'             
+                    - $ref: '#/components/schemas/APIImplAutenticazioneBasic'
+                    - $ref: '#/components/schemas/APIImplAutenticazioneHttps'
+                    - $ref: '#/components/schemas/APIImplAutenticazionePrincipal'
+                    - $ref: '#/components/schemas/APIImplAutenticazioneCustom'
+                  discriminator:
+                    propertyName: tipo
+                    mapping:
+                      'disabilitato': '#/components/schemas/APIImplAutenticazioneDisabilitata'
+                      'http-basic': '#/components/schemas/APIImplAutenticazioneBasic'
+                      'https': '#/components/schemas/APIImplAutenticazioneHttps'
+                      'principal': '#/components/schemas/APIImplAutenticazionePrincipal'
+                      'custom': '#/components/schemas/APIImplAutenticazioneCustom'
               token:
                 $ref: '#/components/schemas/ControlloAccessiAutenticazioneToken'
     ControlloAccessiAutenticazioneToken:
@@ -1079,7 +1216,19 @@ components:
           - type: object
             properties:
               autorizzazione:
-                $ref: '#/components/schemas/APIImplAutorizzazioneView'
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneAbilitata'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneXACMLView'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
+                discriminator:
+                  propertyName: tipo
+                  mapping:
+                    'disabilitato': '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+                    'abilitato': '#/components/schemas/APIImplAutorizzazioneAbilitata'
+                    'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACMLView'
+                    'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
     ControlloAccessiAutorizzazione:
        type: object
        allOf:
@@ -1087,7 +1236,19 @@ components:
           - type: object
             properties:
               autorizzazione:
-                $ref: '#/components/schemas/APIImplAutorizzazione'
+                type: object
+                oneOf:
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneAbilitata'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneXACML'
+                  - $ref: '#/components/schemas/APIImplAutorizzazioneCustom'
+                discriminator:
+                  propertyName: tipo
+                  mapping:
+                    'disabilitato': '#/components/schemas/APIImplAutorizzazioneDisabilitata'
+                    'abilitato': '#/components/schemas/APIImplAutorizzazioneAbilitata'
+                    'xacml-Policy': '#/components/schemas/APIImplAutorizzazioneXACML'
+                    'custom': '#/components/schemas/APIImplAutorizzazioneCustom'
     ControlloAccessiAutorizzazioneSoggetti:
       type: object
       required:
@@ -1197,8 +1358,11 @@ components:
     RateLimitingPolicyCriteri:
        type: object
        required:
+       - identificazione
        - metrica
        properties:
+         identificazione:
+            $ref: '#/components/schemas/RateLimitingIdentificazionePolicyEnum'
          metrica:
             $ref: '#/components/schemas/RateLimitingCriteriMetricaEnum'
          intervallo:
@@ -1214,8 +1378,11 @@ components:
     RateLimitingPolicyIdentificativo:
        type: object
        required:
+       - identificazione
        - policy
        properties:
+         identificazione:
+            $ref: '#/components/schemas/RateLimitingIdentificazionePolicyEnum'
          policy:
             $ref: 'govway_core.yaml#/components/schemas/NCName'
     RateLimitingPolicyBase:
@@ -1243,18 +1410,14 @@ components:
        allOf:
           - $ref: '#/components/schemas/RateLimitingPolicyBase'
           - type: object
-            required:
-            - identificazione
             properties:
-              identificazione:
-                $ref: '#/components/schemas/RateLimitingIdentificazionePolicyEnum'
               configurazione:
                   type: object
                   oneOf:
                     - $ref: '#/components/schemas/RateLimitingPolicyCriteri'
                     - $ref: '#/components/schemas/RateLimitingPolicyIdentificativo'
                   discriminator:
-                    propertyName: x-external-property-identificazione
+                    propertyName: identificazione
                     mapping:
                       'criteri': '#/components/schemas/RateLimitingPolicyCriteri'
                       'policy': '#/components/schemas/RateLimitingPolicyIdentificativo'
@@ -1684,10 +1847,6 @@ components:
       type: string
       enum: ['jks', 'pkcs12', 'jceks', 'bks', 'uber', 'gkr']
       example: 'jks' 
-    TipoAutenticazioneNewEnum:
-      type: string
-      enum: ['disabilitato', 'http-basic', 'https', 'principal']
-      example: 'http-basic'
     TipoAutenticazioneEnum:
       type: string
       enum: ['disabilitato', 'http-basic', 'https', 'principal', 'custom']
@@ -1708,10 +1867,6 @@ components:
       type: string
       enum: ['JKS', 'PKCS12', 'CER']
       example: 'JKS'
-    TipoAutorizzazioneNewEnum:
-      type: string
-      enum: ['disabilitato', 'abilitato', 'xacml-Policy']
-      example: 'abilitato'
     TipoAutorizzazioneEnum:
       type: string
       enum: ['disabilitato', 'abilitato', 'xacml-Policy', 'custom']

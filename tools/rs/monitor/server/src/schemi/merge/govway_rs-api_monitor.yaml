@@ -3272,4 +3272,4 @@ components:
         \ con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
       schema:
         type: "string"
-        format: "url"
+        format: "uri"

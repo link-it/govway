@@ -1,8 +1,8 @@
 {
-    "nome": "TestSuiteApplicativo",
-      "modalita_accesso": "http-basic",
-      "credenziali": {
-              "username": "username",
-              "password": "password"     
-   }
+	"nome": "TestSuiteApplicativo",
+	"credenziali": {
+		"modalita_accesso": "http-basic",
+		"username": "username",
+		"password": "password"     
+	}
 }

@@ -5,7 +5,6 @@
     "autenticazione": {
         "tipo": "disabilitato"
     },
-    "autorizzazione": {},
 
     "api_nome": "PetStore",
     "api_versione": 2

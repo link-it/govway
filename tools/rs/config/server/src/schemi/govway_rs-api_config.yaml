@@ -6204,20 +6204,21 @@ components:
             interfaccia:
               type: string
               format: byte
+
     ApiItem:
       type: object
       allOf:
-        - $ref: 'govway_core.yaml#/components/schemas/BaseSoggettoItem'
-        - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiBase'
-        - type: object
+        - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiBaseConSoggetto'
+        - type: object       
           required:
-            - stato
-            - stato_descrizione
+           - stato
+           - stato_descrizione
           properties:
             stato:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/StatoApiEnum'
             stato_descrizione:
               $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/StatoApiDescrizione'
+        
     ListaApi:
        type: object
        allOf:
@@ -6279,22 +6280,18 @@ components:
           - $ref: '#/components/schemas/ApiInterfaccia'
           - type: object
             required:
-              - tipo
-              - formato
+              - tipo_interfaccia
             properties:
-              tipo:
-                $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoApiEnum'
-              formato:
-                type: string
+              tipo_interfaccia:
+                type: object
                 oneOf:
-                  - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum'
-                  - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum'
+                  - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiInterfacciaRest'
+                  - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/ApiInterfacciaSoap'
                 discriminator:
-                  propertyName: x-external-property-tipo
+                  propertyName: protocollo
                   mapping:
-                    'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoSoapEnum'
-                    'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/FormatoRestEnum'
-                example: 'OpenApi3.0' 
+                    'rest': 'govway_rs-api_config-commons.yaml#/components/schemas/ApiInterfacciaRest'
+                    'soap': 'govway_rs-api_config-commons.yaml#/components/schemas/ApiInterfacciaSoap'
     ApiDescrizione:
       type: object
       required:
@@ -6319,39 +6316,78 @@ components:
     ApiAllegato:
       type: object
       required:
-        - ruolo
         - allegato
       properties:
-        ruolo:
-          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
         allegato:
-          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/Allegato'
-        tipo_allegato:
-          type: string
+          type: object
           oneOf:
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
+            - $ref: '#/components/schemas/ApiAllegatoGenerico'
+            - $ref: '#/components/schemas/ApiAllegatoSpecificaSemiformale'
           discriminator:
-            propertyName: x-external-property-ruolo
+            propertyName: ruolo
             mapping:
-              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
+              'allegato': '#/components/schemas/ApiAllegatoGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiAllegatoSpecificaSemiformale'
+    ApiAllegatoGenerico:
+      type: object
+      required:
+        - nome
+        - documento
+        - ruolo
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'
+        documento:
+          type: string
+          format: byte
+        ruolo:
+          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI' 
+    ApiAllegatoSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiAllegatoGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum' 
+
     ApiAllegatoItem:
       type: object
       required:
-        - ruolo
         - allegato
       properties:
+        allegato:
+          type: object
+          oneOf:
+            - $ref: '#/components/schemas/ApiAllegatoItemGenerico'
+            - $ref: '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+          discriminator:
+            propertyName: ruolo
+            mapping:
+              'allegato': '#/components/schemas/ApiAllegatoItemGenerico'
+              'specificaSemiFormale': '#/components/schemas/ApiAllegatoItemSpecificaSemiformale'
+    ApiAllegatoItemGenerico:
+      type: object
+      required:
+        - nome
+        - ruolo
+      properties:
+        nome:
+          $ref: 'govway_core.yaml#/components/schemas/NCName'            
         ruolo:
           $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/RuoloAllegatoAPI'
-        allegato:
-          $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/AllegatoItem'
-        tipo_allegato:
-          type: string
-          oneOf:
-            - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
-          discriminator:
-            propertyName: x-external-property-ruolo
-            mapping:
-              'specificaSemiFormale': 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum'
+    ApiAllegatoItemSpecificaSemiformale:
+      type: object
+      allOf:
+        - $ref: '#/components/schemas/ApiAllegatoItemGenerico'
+        - type: object
+          required:
+            - tipo_specifica
+          properties:
+           tipo_specifica:
+             $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/TipoSpecificaSemiformaleEnum' 
     ListaApiAllegati:
        type: object
        allOf:

@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
 import org.openspcoop2.core.config.rs.server.model.TipoKeystore;
 import javax.validation.constraints.*;
 
@@ -27,6 +28,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
 public class AuthenticationHttpsCertificato  implements OneOfAuthenticationHttpsCertificato {
+  
+  @Schema(required = true, description = "")
+  private TipoAutenticazioneHttps tipo = null;
   
   @Schema(required = true, description = "")
   private byte[] archivio = null;
@@ -38,10 +42,31 @@ public class AuthenticationHttpsCertificato  implements OneOfAuthenticationHttps
   private String password = null;
   
   @Schema(required = true, description = "")
-  private TipoKeystore tipo = null;
+  private TipoKeystore tipoCertificato = null;
   
   @Schema(example = "false", description = "")
   private Boolean strictVerification = false;
+ /**
+   * Get tipo
+   * @return tipo
+  **/
+  @Override
+@JsonProperty("tipo")
+  @NotNull
+  @Valid
+  public TipoAutenticazioneHttps getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
+  }
+
+  public AuthenticationHttpsCertificato tipo(TipoAutenticazioneHttps tipo) {
+    this.tipo = tipo;
+    return this;
+  }
+
  /**
    * Get archivio
    * @return archivio
@@ -101,22 +126,22 @@ public class AuthenticationHttpsCertificato  implements OneOfAuthenticationHttps
   }
 
  /**
-   * Get tipo
-   * @return tipo
+   * Get tipoCertificato
+   * @return tipoCertificato
   **/
-  @JsonProperty("tipo")
+  @JsonProperty("tipo_certificato")
   @NotNull
   @Valid
-  public TipoKeystore getTipo() {
-    return this.tipo;
+  public TipoKeystore getTipoCertificato() {
+    return this.tipoCertificato;
   }
 
-  public void setTipo(TipoKeystore tipo) {
-    this.tipo = tipo;
+  public void setTipoCertificato(TipoKeystore tipoCertificato) {
+    this.tipoCertificato = tipoCertificato;
   }
 
-  public AuthenticationHttpsCertificato tipo(TipoKeystore tipo) {
-    this.tipo = tipo;
+  public AuthenticationHttpsCertificato tipoCertificato(TipoKeystore tipoCertificato) {
+    this.tipoCertificato = tipoCertificato;
     return this;
   }
 
@@ -145,10 +170,11 @@ public class AuthenticationHttpsCertificato  implements OneOfAuthenticationHttps
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationHttpsCertificato {\n");
     
+    sb.append("    tipo: ").append(AuthenticationHttpsCertificato.toIndentedString(this.tipo)).append("\n");
     sb.append("    archivio: ").append(AuthenticationHttpsCertificato.toIndentedString(this.archivio)).append("\n");
     sb.append("    alias: ").append(AuthenticationHttpsCertificato.toIndentedString(this.alias)).append("\n");
     sb.append("    password: ").append(AuthenticationHttpsCertificato.toIndentedString(this.password)).append("\n");
-    sb.append("    tipo: ").append(AuthenticationHttpsCertificato.toIndentedString(this.tipo)).append("\n");
+    sb.append("    tipoCertificato: ").append(AuthenticationHttpsCertificato.toIndentedString(this.tipoCertificato)).append("\n");
     sb.append("    strictVerification: ").append(AuthenticationHttpsCertificato.toIndentedString(this.strictVerification)).append("\n");
     sb.append("}");
     return sb.toString();

@@ -1,10 +1,10 @@
 {
     "nome": "PolicyProvaKarate",
     "stato": "abilitato",
-    "identificazione": "criteri",
-
+    
     "configurazione": {
-        "metrica": "occupazione-banda",
+        "identificazione": "criteri",
+	"metrica": "occupazione-banda",
         "intervallo": "orario",
 	"congestione": false, 
 	"degrado": false

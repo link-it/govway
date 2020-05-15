@@ -176,19 +176,20 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 			TipoAutenticazionePrincipal fruizioneAutenticazionePrincipal = null;
 			List<String> fruizioneAutenticazioneParametroList = null;
 			
-			if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
+			if ( body.getConfigurazione().getModalita() == ModalitaConfigurazioneGruppoEnum.NUOVA ) {
 				
-				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+				final GruppoNuovaConfigurazione confNuova = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getConfigurazione().getModalita(), body.getConfigurazione());
 				if(confNuova.getAutenticazione()!=null) {
 					fruizioneAutenticazione = Enums.toTipoAutenticazione(confNuova.getAutenticazione().getTipo()).toString();
-					fruizioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(confNuova.getAutenticazione().isOpzionale());
-					fruizioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione()); 
-					fruizioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione().getConfigurazione());
+					Boolean autenticazioneOpzionale = ErogazioniApiHelper.getAutenticazioneOpzionale(confNuova.getAutenticazione()); // gestisce authn se null
+					fruizioneAutenticazioneOpzionale = ServletUtils.boolToCheckBoxStatus(autenticazioneOpzionale);
+					fruizioneAutenticazionePrincipal = ErogazioniApiHelper.getTipoAutenticazionePrincipal(confNuova.getAutenticazione()); 
+					fruizioneAutenticazioneParametroList = ErogazioniApiHelper.getAutenticazioneParametroList(env, confNuova.getAutenticazione().getTipo(), confNuova.getAutenticazione());
 				}
 			}
 			
-			else if ( body.getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {	
-				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getModalita(), body.getConfigurazione());
+			else if ( body.getConfigurazione().getModalita() == ModalitaConfigurazioneGruppoEnum.EREDITA ) {	
+				GruppoEreditaConfigurazione confEredita = ErogazioniApiHelper.deserializeModalitaConfGruppo(body.getConfigurazione().getModalita(), body.getConfigurazione());
 				List<MappingFruizionePortaDelegata> mappings = ErogazioniApiHelper.getMappingGruppiPD( confEredita.getNome(), env.idSoggetto.toIDSoggetto(), idAsps, env.apsCore);
 				if ( mappings.isEmpty() ) {
 					throw FaultCode.RICHIESTA_NON_VALIDA.toException("Il gruppo " + confEredita.getNome() + " da cui ereditare è inesistente");
@@ -220,7 +221,7 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					body.getAzioni().toArray(new String[0]),
 					asps, 
 					azioniOccupate,
-					body.getModalita().toString(),
+					body.getConfigurazione().getModalita().toString(),
 					null,
 					env.isSupportatoAutenticazioneSoggetti,
 					mappingInfo)) {
@@ -234,8 +235,8 @@ public class FruizioniGruppiApiServiceImpl extends BaseImpl implements Fruizioni
 					mappingInfo.getNomeNuovaConfigurazione(), 
 					body.getNome(),
 					body.getAzioni().toArray(new String[0]),
-					body.getModalita().toString(),
-					body.getModalita().toString(),
+					body.getConfigurazione().getModalita().toString(),
+					body.getConfigurazione().getModalita().toString(),
 					null,							// endpointtype,
 					null,							// tipoconn,
 					null,							// autenticazioneHttp,	// RECHECK

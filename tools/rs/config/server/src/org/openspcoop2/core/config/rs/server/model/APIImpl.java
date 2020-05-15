@@ -20,8 +20,6 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.APIBaseImpl;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutenticazioneNew;
-import org.openspcoop2.core.config.rs.server.model.APIImplAutorizzazioneNew;
 import org.openspcoop2.core.config.rs.server.model.Connettore;
 import javax.validation.constraints.*;
 
@@ -32,10 +30,21 @@ import javax.validation.Valid;
 public class APIImpl extends APIBaseImpl {
   
   @Schema(description = "")
-  private APIImplAutenticazioneNew autenticazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneDisabilitata.class, name = "disabilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneBasic.class, name = "http-basic"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazioneHttps.class, name = "https"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutenticazionePrincipal.class, name = "principal")  })
+  private OneOfAPIImplAutenticazione autenticazione = null;
   
   @Schema(description = "")
-  private APIImplAutorizzazioneNew autorizzazione = null;
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
+  @com.fasterxml.jackson.annotation.JsonSubTypes({
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneDisabilitata.class, name = "disabilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneAbilitataNew.class, name = "abilitato"),
+    @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = APIImplAutorizzazioneXACML.class, name = "xacml-Policy")  })
+  private OneOfAPIImplAutorizzazione autorizzazione = null;
   
   @Schema(required = true, description = "")
   private Connettore connettore = null;
@@ -45,15 +54,15 @@ public class APIImpl extends APIBaseImpl {
   **/
   @JsonProperty("autenticazione")
   @Valid
-  public APIImplAutenticazioneNew getAutenticazione() {
+  public OneOfAPIImplAutenticazione getAutenticazione() {
     return this.autenticazione;
   }
 
-  public void setAutenticazione(APIImplAutenticazioneNew autenticazione) {
+  public void setAutenticazione(OneOfAPIImplAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
   }
 
-  public APIImpl autenticazione(APIImplAutenticazioneNew autenticazione) {
+  public APIImpl autenticazione(OneOfAPIImplAutenticazione autenticazione) {
     this.autenticazione = autenticazione;
     return this;
   }
@@ -64,15 +73,15 @@ public class APIImpl extends APIBaseImpl {
   **/
   @JsonProperty("autorizzazione")
   @Valid
-  public APIImplAutorizzazioneNew getAutorizzazione() {
+  public OneOfAPIImplAutorizzazione getAutorizzazione() {
     return this.autorizzazione;
   }
 
-  public void setAutorizzazione(APIImplAutorizzazioneNew autorizzazione) {
+  public void setAutorizzazione(OneOfAPIImplAutorizzazione autorizzazione) {
     this.autorizzazione = autorizzazione;
   }
 
-  public APIImpl autorizzazione(APIImplAutorizzazioneNew autorizzazione) {
+  public APIImpl autorizzazione(OneOfAPIImplAutorizzazione autorizzazione) {
     this.autorizzazione = autorizzazione;
     return this;
   }

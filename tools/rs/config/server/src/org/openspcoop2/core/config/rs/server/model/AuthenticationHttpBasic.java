@@ -19,6 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,11 +28,35 @@ import javax.validation.Valid;
 
 public class AuthenticationHttpBasic  implements OneOfBaseCredenzialiCredenziali {
   
+  @Schema(required = true, description = "")
+  private ModalitaAccessoEnum modalitaAccesso = null;
+  
   @Schema(example = "user", required = true, description = "")
   private String username = null;
   
   @Schema(example = "pwd", required = true, description = "")
   private String password = null;
+ /**
+   * Get modalitaAccesso
+   * @return modalitaAccesso
+  **/
+  @Override
+@JsonProperty("modalita_accesso")
+  @NotNull
+  @Valid
+  public ModalitaAccessoEnum getModalitaAccesso() {
+    return this.modalitaAccesso;
+  }
+
+  public void setModalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
+  }
+
+  public AuthenticationHttpBasic modalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
+    return this;
+  }
+
  /**
    * Get username
    * @return username
@@ -78,6 +103,7 @@ public class AuthenticationHttpBasic  implements OneOfBaseCredenzialiCredenziali
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationHttpBasic {\n");
     
+    sb.append("    modalitaAccesso: ").append(AuthenticationHttpBasic.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    username: ").append(AuthenticationHttpBasic.toIndentedString(this.username)).append("\n");
     sb.append("    password: ").append(AuthenticationHttpBasic.toIndentedString(this.password)).append("\n");
     sb.append("}");

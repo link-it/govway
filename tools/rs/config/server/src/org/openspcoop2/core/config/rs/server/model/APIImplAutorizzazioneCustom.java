@@ -19,16 +19,41 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
+import org.openspcoop2.core.config.rs.server.model.TipoAutorizzazioneEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 
-public class APIImplAutorizzazioneCustom  {
+public class APIImplAutorizzazioneCustom  implements OneOfControlloAccessiAutorizzazioneAutorizzazione, OneOfControlloAccessiAutorizzazioneViewAutorizzazione {
+  
+  @Schema(required = true, description = "")
+  private TipoAutorizzazioneEnum tipo = null;
   
   @Schema(required = true, description = "")
   private String nome = null;
+ /**
+   * Get tipo
+   * @return tipo
+  **/
+  @Override
+@JsonProperty("tipo")
+  @NotNull
+  @Valid
+  public TipoAutorizzazioneEnum getTipo() {
+    return this.tipo;
+  }
+
+  public void setTipo(TipoAutorizzazioneEnum tipo) {
+    this.tipo = tipo;
+  }
+
+  public APIImplAutorizzazioneCustom tipo(TipoAutorizzazioneEnum tipo) {
+    this.tipo = tipo;
+    return this;
+  }
+
  /**
    * Get nome
    * @return nome
@@ -55,6 +80,7 @@ public class APIImplAutorizzazioneCustom  {
     StringBuilder sb = new StringBuilder();
     sb.append("class APIImplAutorizzazioneCustom {\n");
     
+    sb.append("    tipo: ").append(APIImplAutorizzazioneCustom.toIndentedString(this.tipo)).append("\n");
     sb.append("    nome: ").append(APIImplAutorizzazioneCustom.toIndentedString(this.nome)).append("\n");
     sb.append("}");
     return sb.toString();

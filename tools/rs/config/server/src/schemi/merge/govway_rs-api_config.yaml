@@ -6348,8 +6348,7 @@ components:
     ApiItem:
       type: "object"
       allOf:
-      - $ref: "#/components/schemas/BaseSoggettoItem"
-      - $ref: "#/components/schemas/ApiBase"
+      - $ref: "#/components/schemas/ApiBaseConSoggetto"
       - required:
         - "stato"
         - "stato_descrizione"
@@ -6419,23 +6418,19 @@ components:
       - $ref: "#/components/schemas/BaseItem"
       - $ref: "#/components/schemas/ApiInterfaccia"
       - required:
-        - "formato"
-        - "tipo"
+        - "tipo_interfaccia"
         type: "object"
         properties:
-          tipo:
-            $ref: "#/components/schemas/TipoApiEnum"
-          formato:
-            type: "string"
-            example: "OpenApi3.0"
+          tipo_interfaccia:
+            type: "object"
             discriminator:
-              propertyName: "tipo"
+              propertyName: "protocollo"
               mapping:
-                soap: "#/components/schemas/FormatoSoapEnum"
-                rest: "#/components/schemas/FormatoRestEnum"
+                rest: "#/components/schemas/ApiInterfacciaRest"
+                soap: "#/components/schemas/ApiInterfacciaSoap"
             oneOf:
-            - $ref: "#/components/schemas/FormatoSoapEnum"
-            - $ref: "#/components/schemas/FormatoRestEnum"
+            - $ref: "#/components/schemas/ApiInterfacciaRest"
+            - $ref: "#/components/schemas/ApiInterfacciaSoap"
     ApiDescrizione:
       required:
       - "descrizione"
@@ -6460,39 +6455,77 @@ components:
     ApiAllegato:
       required:
       - "allegato"
-      - "ruolo"
       type: "object"
       properties:
-        ruolo:
-          $ref: "#/components/schemas/RuoloAllegatoAPI"
         allegato:
-          $ref: "#/components/schemas/Allegato"
-        tipo_allegato:
-          type: "string"
+          type: "object"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+              allegato: "#/components/schemas/ApiAllegatoGenerico"
+              specificaSemiFormale: "#/components/schemas/ApiAllegatoSpecificaSemiformale"
           oneOf:
-          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+          - $ref: "#/components/schemas/ApiAllegatoGenerico"
+          - $ref: "#/components/schemas/ApiAllegatoSpecificaSemiformale"
+    ApiAllegatoGenerico:
+      required:
+      - "documento"
+      - "nome"
+      - "ruolo"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        documento:
+          type: "string"
+          format: "byte"
+        ruolo:
+          $ref: "#/components/schemas/RuoloAllegatoAPI"
+    ApiAllegatoSpecificaSemiformale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiAllegatoGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ApiAllegatoItem:
       required:
       - "allegato"
-      - "ruolo"
       type: "object"
       properties:
-        ruolo:
-          $ref: "#/components/schemas/RuoloAllegatoAPI"
         allegato:
-          $ref: "#/components/schemas/AllegatoItem"
-        tipo_allegato:
-          type: "string"
+          type: "object"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+              allegato: "#/components/schemas/ApiAllegatoItemGenerico"
+              specificaSemiFormale: "#/components/schemas/ApiAllegatoItemSpecificaSemiformale"
           oneOf:
-          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+          - $ref: "#/components/schemas/ApiAllegatoItemGenerico"
+          - $ref: "#/components/schemas/ApiAllegatoItemSpecificaSemiformale"
+    ApiAllegatoItemGenerico:
+      required:
+      - "nome"
+      - "ruolo"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        ruolo:
+          $ref: "#/components/schemas/RuoloAllegatoAPI"
+    ApiAllegatoItemSpecificaSemiformale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiAllegatoItemGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
     ListaApiAllegati:
       type: "object"
       allOf:
@@ -6987,16 +7020,23 @@ components:
       example: "Nessuna risorsa definita nella API"
     ApiBase:
       required:
-      - "formato"
       - "nome"
-      - "tipo"
+      - "tipo_interfaccia"
       - "versione"
       type: "object"
       properties:
         referente:
           $ref: "#/components/schemas/SimpleName"
-        tipo:
-          $ref: "#/components/schemas/TipoApiEnum"
+        tipo_interfaccia:
+          type: "object"
+          discriminator:
+            propertyName: "protocollo"
+            mapping:
+              rest: "#/components/schemas/ApiInterfacciaRest"
+              soap: "#/components/schemas/ApiInterfacciaSoap"
+          oneOf:
+          - $ref: "#/components/schemas/ApiInterfacciaRest"
+          - $ref: "#/components/schemas/ApiInterfacciaSoap"
         nome:
           $ref: "#/components/schemas/NCName"
         descrizione:
@@ -7005,17 +7045,6 @@ components:
           example: "descrizione API"
         versione:
           $ref: "#/components/schemas/Versione"
-        formato:
-          type: "string"
-          example: "OpenApi3.0"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              soap: "#/components/schemas/FormatoSoapEnum"
-              rest: "#/components/schemas/FormatoRestEnum"
-          oneOf:
-          - $ref: "#/components/schemas/FormatoSoapEnum"
-          - $ref: "#/components/schemas/FormatoRestEnum"
         tags:
           type: "array"
           example:
@@ -7023,30 +7052,48 @@ components:
           - "Anagrafica"
           items:
             $ref: "#/components/schemas/NCName"
-    Allegato:
+    ApiBaseConSoggetto:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiBase"
+      - required:
+        - "profilo"
+        - "soggetto"
+        type: "object"
+        properties:
+          profilo:
+            $ref: "#/components/schemas/ProfiloEnum"
+          soggetto:
+            $ref: "#/components/schemas/SimpleName"
+    ApiInterfacciaRest:
       required:
-      - "documento"
-      - "nome"
+      - "formato"
+      - "protocollo"
       type: "object"
       properties:
-        nome:
-          $ref: "#/components/schemas/NCName"
-        documento:
-          type: "string"
-          format: "byte"
-    AllegatoItem:
+        protocollo:
+          $ref: "#/components/schemas/TipoApiEnum"
+        formato:
+          $ref: "#/components/schemas/FormatoRestEnum"
+    ApiInterfacciaSoap:
       required:
-      - "nome"
+      - "formato"
+      - "protocollo"
       type: "object"
       properties:
-        nome:
-          $ref: "#/components/schemas/NCName"
+        protocollo:
+          $ref: "#/components/schemas/TipoApiEnum"
+        formato:
+          $ref: "#/components/schemas/FormatoSoapEnum"
     AuthenticationHttpBasic:
       required:
+      - "modalita_accesso"
       - "password"
       - "username"
       type: "object"
       properties:
+        modalita_accesso:
+          $ref: "#/components/schemas/ModalitaAccessoEnum"
         username:
           maxLength: 255
           type: "string"
@@ -7059,11 +7106,12 @@ components:
       additionalProperties: false
     AuthenticationHttps:
       required:
-      - "tipo"
+      - "certificato"
+      - "modalita_accesso"
       type: "object"
       properties:
-        tipo:
-          $ref: "#/components/schemas/TipoAutenticazioneHttps"
+        modalita_accesso:
+          $ref: "#/components/schemas/ModalitaAccessoEnum"
         certificato:
           type: "object"
           discriminator:
@@ -7079,8 +7127,11 @@ components:
       required:
       - "archivio"
       - "tipo"
+      - "tipo_certificato"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneHttps"
         archivio:
           type: "string"
           format: "byte"
@@ -7092,7 +7143,7 @@ components:
           maxLength: 255
           type: "string"
           example: "changeit"
-        tipo:
+        tipo_certificato:
           $ref: "#/components/schemas/TipoKeystore"
         strict_verification:
           type: "boolean"
@@ -7102,8 +7153,11 @@ components:
     AuthenticationHttpsConfigurazioneManuale:
       required:
       - "subject"
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneHttps"
         subject:
           maxLength: 2800
           type: "string"
@@ -7115,9 +7169,12 @@ components:
       additionalProperties: false
     AuthenticationPrincipal:
       required:
+      - "modalita_accesso"
       - "userid"
       type: "object"
       properties:
+        modalita_accesso:
+          $ref: "#/components/schemas/ModalitaAccessoEnum"
         userid:
           maxLength: 255
           type: "string"
@@ -7126,13 +7183,8 @@ components:
     BaseCredenziali:
       type: "object"
       properties:
-        modalita_accesso:
-          $ref: "#/components/schemas/ModalitaAccessoEnum"
         credenziali:
           type: "object"
-          example:
-            username: "user"
-            password: "pwd"
           discriminator:
             propertyName: "modalita_accesso"
             mapping:
@@ -7274,7 +7326,7 @@ components:
       properties:
         endpoint:
           type: "string"
-          format: "url"
+          format: "uri"
           example: "http://ente.it/servizio"
         autenticazione_http:
           $ref: "#/components/schemas/AuthenticationHttpBasic"
@@ -7318,46 +7370,78 @@ components:
         type: "object"
         properties:
           autenticazione:
-            $ref: "#/components/schemas/APIImplAutenticazioneNew"
+            type: "object"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                disabilitato: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+                http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
+                https: "#/components/schemas/APIImplAutenticazioneHttps"
+                principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+            oneOf:
+            - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+            - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
+            - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
+            - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
           autorizzazione:
-            $ref: "#/components/schemas/APIImplAutorizzazioneNew"
+            type: "object"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                disabilitato: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+                abilitato: "#/components/schemas/APIImplAutorizzazioneAbilitataNew"
+                xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACML"
+            oneOf:
+            - $ref: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneAbilitataNew"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneXACML"
           connettore:
             $ref: "#/components/schemas/Connettore"
-    APIImplAutenticazioneNew:
+    APIImplAutenticazioneDisabilitata:
       required:
       - "tipo"
       type: "object"
       properties:
         tipo:
-          $ref: "#/components/schemas/TipoAutenticazioneNewEnum"
-        configurazione:
-          type: "object"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              http-basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
-              principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
-          oneOf:
-          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
-          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
-        opzionale:
-          type: "boolean"
-          example: false
-          default: false
-    APIImplAutenticazioneConfigurazioneBasic:
+          $ref: "#/components/schemas/TipoAutenticazioneEnum"
+      additionalProperties: false
+    APIImplAutenticazioneBasic:
+      required:
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneEnum"
         forward:
           type: "boolean"
           example: false
           default: false
+        opzionale:
+          type: "boolean"
+          example: false
+          default: false
       additionalProperties: false
-    APIImplAutenticazioneConfigurazionePrincipal:
+    APIImplAutenticazioneHttps:
       required:
       - "tipo"
       type: "object"
       properties:
         tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneEnum"
+        opzionale:
+          type: "boolean"
+          example: false
+          default: false
+      additionalProperties: false
+    APIImplAutenticazionePrincipal:
+      required:
+      - "tipo"
+      - "tipo_principal"
+      type: "object"
+      properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutenticazioneEnum"
+        tipo_principal:
           $ref: "#/components/schemas/TipoAutenticazionePrincipal"
         token:
           $ref: "#/components/schemas/TipoAutenticazionePrincipalToken"
@@ -7376,87 +7460,45 @@ components:
           type: "boolean"
           example: false
           default: false
+        opzionale:
+          type: "boolean"
+          example: false
+          default: false
       additionalProperties: false
-    APIImplAutenticazioneConfigurazioneCustom:
-      type: "object"
-      properties:
-        nome:
-          maxLength: 255
-          type: "string"
-          description: "nome autenticazione 'custom', set tipo='custom'"
-      additionalProperties: false
-    APIImplAutenticazione:
+    APIImplAutenticazioneCustom:
       required:
+      - "nome"
       - "tipo"
       type: "object"
       properties:
         tipo:
           $ref: "#/components/schemas/TipoAutenticazioneEnum"
-        configurazione:
-          type: "object"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              http-basic: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
-              principal: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
-              custom: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
-          oneOf:
-          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneBasic"
-          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazionePrincipal"
-          - $ref: "#/components/schemas/APIImplAutenticazioneConfigurazioneCustom"
+        nome:
+          maxLength: 255
+          type: "string"
+          description: "nome autenticazione 'custom', set tipo='custom'"
         opzionale:
           type: "boolean"
           example: false
           default: false
-    APIImplAutorizzazioneNew:
-      required:
-      - "tipo"
-      type: "object"
-      properties:
-        tipo:
-          $ref: "#/components/schemas/TipoAutorizzazioneNewEnum"
-        configurazione:
-          type: "object"
-          discriminator:
-            propertyName: "tipo"
-            mapping:
-              abilitato: "#/components/schemas/APIImplAutorizzazioneConfigNew"
-              xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
-          oneOf:
-          - $ref: "#/components/schemas/APIImplAutorizzazioneConfigNew"
-          - $ref: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
-    APIImplAutorizzazioneView:
+      additionalProperties: false
+    APIImplAutorizzazioneDisabilitata:
       required:
       - "tipo"
       type: "object"
       properties:
         tipo:
           $ref: "#/components/schemas/TipoAutorizzazioneEnum"
-        configurazione:
-          $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
-        configurazione_xacml:
-          $ref: "#/components/schemas/APIImplAutorizzazioneXACMLViewConfig"
-        configurazione_custom:
-          $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
-    APIImplAutorizzazione:
-      required:
-      - "tipo"
-      type: "object"
-      properties:
-        tipo:
-          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
-        configurazione:
-          $ref: "#/components/schemas/APIImplAutorizzazioneConfig"
-        configurazione_xacml:
-          $ref: "#/components/schemas/APIImplAutorizzazioneXACMLConfig"
-        configurazione_custom:
-          $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
-    APIImplAutorizzazioneConfigNew:
+      additionalProperties: false
+    APIImplAutorizzazioneAbilitataNew:
       required:
       - "richiedente"
       - "ruoli"
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         richiedente:
           type: "boolean"
           example: false
@@ -7474,14 +7516,17 @@ components:
         ruolo:
           $ref: "#/components/schemas/NCName"
       additionalProperties: false
-    APIImplAutorizzazioneConfig:
+    APIImplAutorizzazioneAbilitata:
       required:
       - "richiedente"
       - "ruoli"
       - "scope"
+      - "tipo"
       - "token"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         richiedente:
           type: "boolean"
           example: false
@@ -7510,20 +7555,26 @@ components:
           description: "Indicare per riga i claims richiesti (nome=valore); è possibile\
             \ elencare differenti valori ammissibili separandoli con la virgola"
       additionalProperties: false
-    APIImplAutorizzazioneXACMLViewConfig:
+    APIImplAutorizzazioneXACMLView:
       required:
       - "ruoli_fonte"
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
       additionalProperties: false
-    APIImplAutorizzazioneXACMLConfig:
+    APIImplAutorizzazioneXACML:
       required:
       - "policy"
       - "ruoli_fonte"
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         ruoli_fonte:
           $ref: "#/components/schemas/FonteEnum"
         policy:
@@ -7533,8 +7584,11 @@ components:
     APIImplAutorizzazioneCustom:
       required:
       - "nome"
+      - "tipo"
       type: "object"
       properties:
+        tipo:
+          $ref: "#/components/schemas/TipoAutorizzazioneEnum"
         nome:
           maxLength: 255
           type: "string"
@@ -7573,7 +7627,7 @@ components:
         properties:
           url_invocazione:
             type: "string"
-            format: "url"
+            format: "uri"
           connettore:
             type: "string"
           gestione_cors:
@@ -7649,7 +7703,7 @@ components:
         properties:
           url_invocazione:
             type: "string"
-            format: "url"
+            format: "uri"
           azioni:
             type: "array"
             example:
@@ -7661,47 +7715,125 @@ components:
     ApiImplAllegato:
       required:
       - "allegato"
-      - "ruolo"
       type: "object"
       properties:
-        ruolo:
-          $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
         allegato:
-          $ref: "#/components/schemas/Allegato"
-        tipo_allegato:
-          type: "string"
+          type: "object"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-              specificaSicurezza: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-              specificaLivelloServizio: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
+              allegato: "#/components/schemas/ApiImplAllegatoGenerico"
+              specificaSemiFormale: "#/components/schemas/ApiImplAllegatoSpecificaSemiformale"
+              specificaSicurezza: "#/components/schemas/ApiImplAllegatoSpecificaSicurezza"
+              specificaLivelloServizio: "#/components/schemas/ApiImplAllegatoSpecificaLivelloServizio"
           oneOf:
-          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-          - $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-          - $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
+          - $ref: "#/components/schemas/ApiImplAllegatoGenerico"
+          - $ref: "#/components/schemas/ApiImplAllegatoSpecificaSemiformale"
+          - $ref: "#/components/schemas/ApiImplAllegatoSpecificaSicurezza"
+          - $ref: "#/components/schemas/ApiImplAllegatoSpecificaLivelloServizio"
+    ApiImplAllegatoGenerico:
+      required:
+      - "documento"
+      - "nome"
+      - "ruolo"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        documento:
+          type: "string"
+          format: "byte"
+        ruolo:
+          $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
+    ApiImplAllegatoSpecificaSemiformale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+    ApiImplAllegatoSpecificaSicurezza:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+    ApiImplAllegatoSpecificaLivelloServizio:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
     ApiImplAllegatoItem:
       required:
       - "allegato"
-      - "ruolo"
       type: "object"
       properties:
-        ruolo:
-          $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
         allegato:
-          $ref: "#/components/schemas/AllegatoItem"
-        tipo_allegato:
-          type: "string"
+          type: "object"
           discriminator:
             propertyName: "ruolo"
             mapping:
-              specificaSemiFormale: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-              specificaSicurezza: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-              specificaLivelloServizio: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
+              allegato: "#/components/schemas/ApiImplAllegatoItemGenerico"
+              specificaSemiFormale: "#/components/schemas/ApiImplAllegatoItemSpecificaSemiformale"
+              specificaSicurezza: "#/components/schemas/ApiImplAllegatoItemSpecificaSicurezza"
+              specificaLivelloServizio: "#/components/schemas/ApiImplAllegatoItemSpecificaLivelloServizio"
           oneOf:
-          - $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
-          - $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
-          - $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
+          - $ref: "#/components/schemas/ApiImplAllegatoItemGenerico"
+          - $ref: "#/components/schemas/ApiImplAllegatoItemSpecificaSemiformale"
+          - $ref: "#/components/schemas/ApiImplAllegatoItemSpecificaSicurezza"
+          - $ref: "#/components/schemas/ApiImplAllegatoItemSpecificaLivelloServizio"
+    ApiImplAllegatoItemGenerico:
+      required:
+      - "nome"
+      - "ruolo"
+      type: "object"
+      properties:
+        nome:
+          $ref: "#/components/schemas/NCName"
+        ruolo:
+          $ref: "#/components/schemas/RuoloAllegatoAPIImpl"
+    ApiImplAllegatoItemSpecificaSemiformale:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoItemGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSemiformaleEnum"
+    ApiImplAllegatoItemSpecificaSicurezza:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoItemGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaSicurezzaEnum"
+    ApiImplAllegatoItemSpecificaLivelloServizio:
+      type: "object"
+      allOf:
+      - $ref: "#/components/schemas/ApiImplAllegatoItemGenerico"
+      - required:
+        - "tipo_specifica"
+        type: "object"
+        properties:
+          tipo_specifica:
+            $ref: "#/components/schemas/TipoSpecificaLivelloServizioEnum"
     ListaApiImplAllegati:
       type: "object"
       allOf:
@@ -7744,12 +7876,8 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/GruppoBase"
-      - required:
-        - "modalita"
-        type: "object"
+      - type: "object"
         properties:
-          modalita:
-            $ref: "#/components/schemas/ModalitaConfigurazioneGruppoEnum"
           configurazione:
             type: "object"
             discriminator:
@@ -7762,19 +7890,37 @@ components:
             - $ref: "#/components/schemas/GruppoNuovaConfigurazione"
     GruppoEreditaConfigurazione:
       required:
+      - "modalita"
       - "nome"
       type: "object"
       properties:
+        modalita:
+          $ref: "#/components/schemas/ModalitaConfigurazioneGruppoEnum"
         nome:
           maxLength: 255
           type: "string"
     GruppoNuovaConfigurazione:
       required:
       - "autenticazione"
+      - "modalita"
       type: "object"
       properties:
+        modalita:
+          $ref: "#/components/schemas/ModalitaConfigurazioneGruppoEnum"
         autenticazione:
-          $ref: "#/components/schemas/APIImplAutenticazioneNew"
+          type: "object"
+          discriminator:
+            propertyName: "tipo"
+            mapping:
+              disabilitato: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+              http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
+              https: "#/components/schemas/APIImplAutenticazioneHttps"
+              principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+          oneOf:
+          - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+          - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
+          - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
+          - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
     GruppoItem:
       type: "object"
       allOf:
@@ -7889,7 +8035,21 @@ components:
       - type: "object"
         properties:
           autenticazione:
-            $ref: "#/components/schemas/APIImplAutenticazione"
+            type: "object"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                disabilitato: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+                http-basic: "#/components/schemas/APIImplAutenticazioneBasic"
+                https: "#/components/schemas/APIImplAutenticazioneHttps"
+                principal: "#/components/schemas/APIImplAutenticazionePrincipal"
+                custom: "#/components/schemas/APIImplAutenticazioneCustom"
+            oneOf:
+            - $ref: "#/components/schemas/APIImplAutenticazioneDisabilitata"
+            - $ref: "#/components/schemas/APIImplAutenticazioneBasic"
+            - $ref: "#/components/schemas/APIImplAutenticazioneHttps"
+            - $ref: "#/components/schemas/APIImplAutenticazionePrincipal"
+            - $ref: "#/components/schemas/APIImplAutenticazioneCustom"
           token:
             $ref: "#/components/schemas/ControlloAccessiAutenticazioneToken"
     ControlloAccessiAutenticazioneToken:
@@ -7927,7 +8087,19 @@ components:
       - type: "object"
         properties:
           autorizzazione:
-            $ref: "#/components/schemas/APIImplAutorizzazioneView"
+            type: "object"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                disabilitato: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+                abilitato: "#/components/schemas/APIImplAutorizzazioneAbilitata"
+                xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACMLView"
+                custom: "#/components/schemas/APIImplAutorizzazioneCustom"
+            oneOf:
+            - $ref: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneAbilitata"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneXACMLView"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
     ControlloAccessiAutorizzazione:
       type: "object"
       allOf:
@@ -7935,7 +8107,19 @@ components:
       - type: "object"
         properties:
           autorizzazione:
-            $ref: "#/components/schemas/APIImplAutorizzazione"
+            type: "object"
+            discriminator:
+              propertyName: "tipo"
+              mapping:
+                disabilitato: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+                abilitato: "#/components/schemas/APIImplAutorizzazioneAbilitata"
+                xacml-Policy: "#/components/schemas/APIImplAutorizzazioneXACML"
+                custom: "#/components/schemas/APIImplAutorizzazioneCustom"
+            oneOf:
+            - $ref: "#/components/schemas/APIImplAutorizzazioneDisabilitata"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneAbilitata"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneXACML"
+            - $ref: "#/components/schemas/APIImplAutorizzazioneCustom"
     ControlloAccessiAutorizzazioneSoggetti:
       required:
       - "soggetti"
@@ -8054,9 +8238,12 @@ components:
               $ref: "#/components/schemas/RateLimitingPolicyItem"
     RateLimitingPolicyCriteri:
       required:
+      - "identificazione"
       - "metrica"
       type: "object"
       properties:
+        identificazione:
+          $ref: "#/components/schemas/RateLimitingIdentificazionePolicyEnum"
         metrica:
           $ref: "#/components/schemas/RateLimitingCriteriMetricaEnum"
         intervallo:
@@ -8071,9 +8258,12 @@ components:
           default: false
     RateLimitingPolicyIdentificativo:
       required:
+      - "identificazione"
       - "policy"
       type: "object"
       properties:
+        identificazione:
+          $ref: "#/components/schemas/RateLimitingIdentificazionePolicyEnum"
         policy:
           $ref: "#/components/schemas/NCName"
     RateLimitingPolicyBase:
@@ -8100,12 +8290,8 @@ components:
       type: "object"
       allOf:
       - $ref: "#/components/schemas/RateLimitingPolicyBase"
-      - required:
-        - "identificazione"
-        type: "object"
+      - type: "object"
         properties:
-          identificazione:
-            $ref: "#/components/schemas/RateLimitingIdentificazionePolicyEnum"
           configurazione:
             type: "object"
             discriminator:
@@ -8572,14 +8758,6 @@ components:
       - "bks"
       - "uber"
       - "gkr"
-    TipoAutenticazioneNewEnum:
-      type: "string"
-      example: "http-basic"
-      enum:
-      - "disabilitato"
-      - "http-basic"
-      - "https"
-      - "principal"
     TipoAutenticazioneEnum:
       type: "string"
       example: "http-basic"
@@ -8622,13 +8800,6 @@ components:
       - "JKS"
       - "PKCS12"
       - "CER"
-    TipoAutorizzazioneNewEnum:
-      type: "string"
-      example: "abilitato"
-      enum:
-      - "disabilitato"
-      - "abilitato"
-      - "xacml-Policy"
     TipoAutorizzazioneEnum:
       type: "string"
       example: "abilitato"
@@ -9240,4 +9411,4 @@ components:
         \ con successo 'http 201'.\nL'header indica l'id dell'oggetto creato."
       schema:
         type: "string"
-        format: "url"
+        format: "uri"

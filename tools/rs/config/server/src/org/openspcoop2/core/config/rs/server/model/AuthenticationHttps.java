@@ -19,7 +19,7 @@
  */
 package org.openspcoop2.core.config.rs.server.model;
 
-import org.openspcoop2.core.config.rs.server.model.TipoAutenticazioneHttps;
+import org.openspcoop2.core.config.rs.server.model.ModalitaAccessoEnum;
 import javax.validation.constraints.*;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -29,31 +29,32 @@ import javax.validation.Valid;
 public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
   
   @Schema(required = true, description = "")
-  private TipoAutenticazioneHttps tipo = null;
+  private ModalitaAccessoEnum modalitaAccesso = null;
   
-  @Schema(description = "")
-  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXTERNAL_PROPERTY, property = "tipo", visible = true )
+  @Schema(required = true, description = "")
+  @com.fasterxml.jackson.annotation.JsonTypeInfo(use = com.fasterxml.jackson.annotation.JsonTypeInfo.Id.NAME, include = com.fasterxml.jackson.annotation.JsonTypeInfo.As.EXISTING_PROPERTY, property = "tipo", visible = true )
   @com.fasterxml.jackson.annotation.JsonSubTypes({
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsCertificato.class, name = "certificato"),
     @com.fasterxml.jackson.annotation.JsonSubTypes.Type(value = AuthenticationHttpsConfigurazioneManuale.class, name = "configurazione-manuale")  })
   private OneOfAuthenticationHttpsCertificato certificato = null;
  /**
-   * Get tipo
-   * @return tipo
+   * Get modalitaAccesso
+   * @return modalitaAccesso
   **/
-  @JsonProperty("tipo")
+  @Override
+@JsonProperty("modalita_accesso")
   @NotNull
   @Valid
-  public TipoAutenticazioneHttps getTipo() {
-    return this.tipo;
+  public ModalitaAccessoEnum getModalitaAccesso() {
+    return this.modalitaAccesso;
   }
 
-  public void setTipo(TipoAutenticazioneHttps tipo) {
-    this.tipo = tipo;
+  public void setModalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
   }
 
-  public AuthenticationHttps tipo(TipoAutenticazioneHttps tipo) {
-    this.tipo = tipo;
+  public AuthenticationHttps modalitaAccesso(ModalitaAccessoEnum modalitaAccesso) {
+    this.modalitaAccesso = modalitaAccesso;
     return this;
   }
 
@@ -62,6 +63,7 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
    * @return certificato
   **/
   @JsonProperty("certificato")
+  @NotNull
   @Valid
   public OneOfAuthenticationHttpsCertificato getCertificato() {
     return this.certificato;
@@ -82,7 +84,7 @@ public class AuthenticationHttps  implements OneOfBaseCredenzialiCredenziali {
     StringBuilder sb = new StringBuilder();
     sb.append("class AuthenticationHttps {\n");
     
-    sb.append("    tipo: ").append(AuthenticationHttps.toIndentedString(this.tipo)).append("\n");
+    sb.append("    modalitaAccesso: ").append(AuthenticationHttps.toIndentedString(this.modalitaAccesso)).append("\n");
     sb.append("    certificato: ").append(AuthenticationHttps.toIndentedString(this.certificato)).append("\n");
     sb.append("}");
     return sb.toString();

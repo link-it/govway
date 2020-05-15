@@ -1,9 +1,7 @@
 {
     "autorizzazione": {
         "tipo": "custom",
-        "configurazione_custom": {
-            "nome": "autorizzazioneTipoCustom"
-        }
-
+        "nome": "autorizzazioneTipoCustom"
+        
     }
 }

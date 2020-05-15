@@ -1,7 +1,7 @@
 {
-    "nome": "TestSuiteApplicativo",
-      "modalita_accesso": "principal",
-      "credenziali": {
-              "userid": "username"
-   }
+	"nome": "TestSuiteApplicativo",
+	"credenziali": {
+        	"modalita_accesso": "principal",
+		"userid": "username"
+	}
 }

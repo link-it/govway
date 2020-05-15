@@ -2,8 +2,6 @@
     "autenticazione": {
         "tipo": "principal",
         "opzionale": false,
-        "configurazione": {
-            "tipo": "container"
-        }
+        "tipo_principal": "container"
     }
 }
