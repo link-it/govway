@@ -70,6 +70,7 @@ public class CostantiGrafici {
 	public static final String KEY_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.KEY_KEY;
 	public static final String DATI_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATI_KEY;
 	public static final String DATA_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATA_KEY;
+	public static final String DATA_LABEL_KEY= org.openspcoop2.web.monitor.core.constants.CostantiGrafici.DATA_LABEL_KEY;
 	public static final String USA_COLORI_AUTOMATICI_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.USA_COLORI_AUTOMATICI_KEY;
 	public static final String COLORE_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.COLORE_KEY;
 	public static final String NO_DATA_KEY = org.openspcoop2.web.monitor.core.constants.CostantiGrafici.NO_DATA_KEY;

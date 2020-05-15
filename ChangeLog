@@ -1,3 +1,9 @@
+2020-05-15  Giuliano Pintori <pintori@link.it>
+
+	* [GovWayConsole, GovWayMonitor]
+	Nella console di configurazione, sono stati aggiunti controlli di consistenza durante l'import di un archivio: vengono verificate la presenta delle Token Policy riferite dalle configurazioni dell'archivio.
+	Nella console di monitoraggio è stata aggiunta la funzionalità per il controllo del numero di label da visualizzare sull'asse X nei grafici di distribuzione temporale.
+
 2020-05-15  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione, GovWayCore]

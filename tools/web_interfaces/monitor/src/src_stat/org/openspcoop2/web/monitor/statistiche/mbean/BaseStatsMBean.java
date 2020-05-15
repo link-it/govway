@@ -64,6 +64,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	// orientamento delle label delle categorie del grafico
 	private String direzioneLabel = CostantiGrafici.DIREZIONE_LABEL_OBLIQUO_LABEL;
 	
+	private Integer numeroLabelAsseXDistribuzioneTemporale = 12;
+	private boolean nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = true;
 	/*
 	 * chart info  
 	 */
@@ -93,6 +95,8 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 			PddMonitorProperties govwayMonitorProperties = PddMonitorProperties.getInstance(DynamicPdDBean.log);
 			this.isVisualizzaPerDimensioneEnabled = govwayMonitorProperties.isAttivoStatisticheVisualizzazioneDimensione();
 			this.direzioneLabel = govwayMonitorProperties.getOrientamentoDefaultLabelGrafici();
+			this.numeroLabelAsseXDistribuzioneTemporale = govwayMonitorProperties.getNumeroLabelDefaultDistribuzioneTemporale();
+			this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = govwayMonitorProperties.isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati();
 		} catch (Exception e) {
 			DynamicPdDBean.log.error(e.getMessage(), e);
 		}
@@ -503,5 +507,18 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	
 	public String getLabelPaginaReport() {
 		return CostantiGrafici.PAGINA_REPORT_LABEL;
+	}
+	public Integer getNumeroLabelAsseXDistribuzioneTemporale() {
+		return this.numeroLabelAsseXDistribuzioneTemporale;
+	}
+	public void setNumeroLabelAsseXDistribuzioneTemporale(Integer numeroLabelAsseXDistribuzioneTemporale) {
+		this.numeroLabelAsseXDistribuzioneTemporale = numeroLabelAsseXDistribuzioneTemporale;
+	}
+	public boolean isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati() {
+		return this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati;
+	}
+	public void setNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati(
+			boolean nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati) {
+		this.nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati;
 	}
 }

@@ -531,44 +531,12 @@ public class StatsUtils {
 	public static List<Res> checkEstremi(List<Res> list, StatsSearchForm search, StatisticType tempo, SimpleDateFormat sdf){
 		Date dataInizio = search.getDataInizio();
 		Date dataFine = search.getDataFine();
-		Date risultatoLower = list.get(0).getRisultato();
-		Date risultatoHigh = list.get(list.size()-1).getRisultato();
 		int sizeRisultati = 0;
 		if(list.get(0).getSomme()!=null){
 			sizeRisultati = list.get(0).getSomme().size();
 		}
-		String dataInizioAsString = null;
-		String dataFineAsString = null;
-		String risultatoLowerAsString = null;
-		String risultatoHighAsString = null;
-		if (StatisticType.ORARIA.equals(tempo)) {
-			dataInizioAsString = sdf.format(dataInizio);
-			dataFineAsString = sdf.format(dataFine);
-			risultatoLowerAsString = sdf.format(risultatoLower);
-			risultatoHighAsString = sdf.format(risultatoHigh);
-		} else if (StatisticType.SETTIMANALE.equals(tempo)) {
-			// settimanale
-			sdf.applyPattern("dd/MM/yy");
-			dataInizioAsString = sdf.format(dataInizio);
-			dataFineAsString = sdf.format(dataFine);
-			risultatoLowerAsString = sdf.format(risultatoLower);
-			risultatoHighAsString = sdf.format(risultatoHigh);
-		} else if (StatisticType.MENSILE.equals(tempo)) {
-			// mensile
-			sdf.applyPattern("MMM/yy");
-			dataInizioAsString = sdf.format(dataInizio);
-			dataFineAsString = sdf.format(dataFine);
-			risultatoLowerAsString = sdf.format(risultatoLower);
-			risultatoHighAsString = sdf.format(risultatoHigh);
-		} else {
-			// giornaliero
-			dataInizioAsString = sdf.format(dataInizio);
-			dataFineAsString = sdf.format(dataFine);
-			risultatoLowerAsString = sdf.format(risultatoLower);
-			risultatoHighAsString = sdf.format(risultatoHigh);
-		}
 
-		if(!dataInizioAsString.equals(risultatoLowerAsString)){
+		if(addEstremoSX(list, search, tempo, sdf)){
 			Res r = new Res();
 			r.setRisultato(dataInizio);
 			r.setSomma(0);
@@ -582,17 +550,9 @@ public class StatsUtils {
 			newList.addAll(list);
 			list = newList;
 		}
-		if(!dataFineAsString.equals(risultatoHighAsString)){
+		if(addEstremoDX(list, search, tempo, sdf)){
 			Res r = new Res();
-			//			if (StatisticType.ORARIA.equals(tempo)) {
-			//				Calendar c = Calendar.getInstance();
-			//				c.setTime((Date)dataFine.clone());
-			//				c.add(Calendar.HOUR, -1);
-			//				r.setRisultato(c.getTime());
-			//			}
-			//			else{
 			r.setRisultato(dataFine);
-			//}
 			r.setSomma(0);
 			ArrayList<Number> l = new ArrayList<Number>();
 			for (int i = 0; i < sizeRisultati; i++) {
@@ -602,6 +562,66 @@ public class StatsUtils {
 			list.add(r);
 		}
 		return list;
+	}
+	
+	public static boolean addEstremoSX(List<Res> list, StatsSearchForm search, StatisticType tempo, SimpleDateFormat sdf){
+		Date dataInizio = search.getDataInizio();
+		Date risultatoLower = list.get(0).getRisultato();
+		String dataInizioAsString = null;
+		String risultatoLowerAsString = null;
+		if (StatisticType.ORARIA.equals(tempo)) {
+			dataInizioAsString = sdf.format(dataInizio);
+			risultatoLowerAsString = sdf.format(risultatoLower);
+		} else if (StatisticType.SETTIMANALE.equals(tempo)) {
+			// settimanale
+			sdf.applyPattern("dd/MM/yy");
+			dataInizioAsString = sdf.format(dataInizio);
+			risultatoLowerAsString = sdf.format(risultatoLower);
+		} else if (StatisticType.MENSILE.equals(tempo)) {
+			// mensile
+			sdf.applyPattern("MMM/yy");
+			dataInizioAsString = sdf.format(dataInizio);
+			risultatoLowerAsString = sdf.format(risultatoLower);
+		} else {
+			// giornaliero
+			dataInizioAsString = sdf.format(dataInizio);
+			risultatoLowerAsString = sdf.format(risultatoLower);
+		}
+
+		if(!dataInizioAsString.equals(risultatoLowerAsString)){
+			return true;
+		}
+		return false;
+	}
+	
+	public static boolean addEstremoDX(List<Res> list, StatsSearchForm search, StatisticType tempo, SimpleDateFormat sdf){
+		Date dataFine = search.getDataFine();
+		Date risultatoHigh = list.get(list.size()-1).getRisultato();
+		String dataFineAsString = null;
+		String risultatoHighAsString = null;
+		if (StatisticType.ORARIA.equals(tempo)) {
+			dataFineAsString = sdf.format(dataFine);
+			risultatoHighAsString = sdf.format(risultatoHigh);
+		} else if (StatisticType.SETTIMANALE.equals(tempo)) {
+			// settimanale
+			sdf.applyPattern("dd/MM/yy");
+			dataFineAsString = sdf.format(dataFine);
+			risultatoHighAsString = sdf.format(risultatoHigh);
+		} else if (StatisticType.MENSILE.equals(tempo)) {
+			// mensile
+			sdf.applyPattern("MMM/yy");
+			dataFineAsString = sdf.format(dataFine);
+			risultatoHighAsString = sdf.format(risultatoHigh);
+		} else {
+			// giornaliero
+			dataFineAsString = sdf.format(dataFine);
+			risultatoHighAsString = sdf.format(risultatoHigh);
+		}
+
+		if(!dataFineAsString.equals(risultatoHighAsString)){
+			return true;
+		}
+		return false;
 	}
 
 	public static String getXmlAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo){

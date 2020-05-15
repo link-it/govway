@@ -66,6 +66,7 @@ public class CostantiGrafici {
 	public static final String KEY_KEY= "key";
 	public static final String DATI_KEY= "dati";
 	public static final String DATA_KEY= "data";
+	public static final String DATA_LABEL_KEY= "dataLabel";
 	public static final String USA_COLORI_AUTOMATICI_KEY= "coloriAutomatici";
 	public static final String COLORE_KEY= "colore";
 	public static final String NO_DATA_KEY= "noData";

@@ -604,9 +604,13 @@ public class PddMonitorProperties {
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.service.reportExporter", true, true));
 	}
 	
+	public Integer getNumeroLabelDefaultDistribuzioneTemporale() throws Exception{
+		return Integer.parseInt(this.appProperties.getProperty("statistiche.distribuzioneTemporale.numeroLabel", true, true));
+	}
 	
-	
-	
+	public boolean isNascondiComandoNumeroLabelSeInferioreAlNumeroRisultati() throws Exception{
+		return "true".equalsIgnoreCase(this.appProperties.getProperty("statistiche.distribuzioneTemporale.nascondiComandoSelezioneNumeroLabel", true, true));
+	}
 	
 
 

@@ -715,6 +715,7 @@ public class SummaryBean implements Serializable{
 					JSONObject bar = new JSONObject();
 
 					bar.put(CostantiGrafici.DATA_KEY, labelArray[i]);
+					bar.put(CostantiGrafici.DATA_LABEL_KEY, labelArray[i]);
 					bar.put(CostantiGrafici.OK_KEY, ok_array[i]);
 					bar.put(CostantiGrafici.FAULT_KEY, fault_array[i]);
 					bar.put(CostantiGrafici.ERRORE_KEY, error_array[i]);

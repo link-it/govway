@@ -32,6 +32,7 @@ import org.openspcoop2.core.config.PortaApplicativa;
 import org.openspcoop2.core.config.PortaDelegata;
 import org.openspcoop2.core.config.ServizioApplicativo;
 import org.openspcoop2.core.config.constants.CostantiConfigurazione;
+import org.openspcoop2.core.constants.CostantiConnettori;
 import org.openspcoop2.core.controllo_traffico.AttivazionePolicy;
 import org.openspcoop2.core.controllo_traffico.ConfigurazionePolicy;
 import org.openspcoop2.core.id.IDAccordo;
@@ -50,6 +51,7 @@ import org.openspcoop2.core.registry.AccordoCooperazione;
 import org.openspcoop2.core.registry.AccordoServizioParteComune;
 import org.openspcoop2.core.registry.AccordoServizioParteComuneServizioCompostoServizioComponente;
 import org.openspcoop2.core.registry.AccordoServizioParteSpecifica;
+import org.openspcoop2.core.registry.ConfigurazioneServizioAzione;
 import org.openspcoop2.core.registry.CredenzialiSoggetto;
 import org.openspcoop2.core.registry.Fruitore;
 import org.openspcoop2.core.registry.Operation;
@@ -182,6 +184,33 @@ public class ImporterArchiveUtils {
 					detail.setException(e);
 				}
 				esito.getPdd().add(detail);
+			}
+			
+			
+			// Token Policy (Validation)
+			for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
+				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_validation_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
+				try{
+					this.importTokenPolicy(archiveTokenPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_validation_policies().add(detail);
+			}
+			
+			// Token Policy (Retrieve)
+			for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
+				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
+				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
+				try{
+					this.importTokenPolicy(archiveTokenPolicy, detail);
+				}catch(Exception e){
+					detail.setState(ArchiveStatoImport.ERROR);
+					detail.setException(e);
+				}
+				esito.getToken_retrieve_policies().add(detail);
 			}
 			
 			
@@ -508,35 +537,7 @@ public class ImporterArchiveUtils {
 				esito.getControlloTraffico_activePolicies().add(detail);
 			}
 			
-			
-			
-			// Token Policy (Validation)
-			for (int i = 0; i < archive.getToken_validation_policies().size(); i++) {
-				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_validation_policies().get(i);
-				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
-				try{
-					this.importTokenPolicy(archiveTokenPolicy, detail);
-				}catch(Exception e){
-					detail.setState(ArchiveStatoImport.ERROR);
-					detail.setException(e);
-				}
-				esito.getToken_validation_policies().add(detail);
-			}
-			
-			// Token Policy (Retrieve)
-			for (int i = 0; i < archive.getToken_retrieve_policies().size(); i++) {
-				ArchiveTokenPolicy archiveTokenPolicy = archive.getToken_retrieve_policies().get(i);
-				ArchiveEsitoImportDetail detail = new ArchiveEsitoImportDetail(archiveTokenPolicy);
-				try{
-					this.importTokenPolicy(archiveTokenPolicy, detail);
-				}catch(Exception e){
-					detail.setState(ArchiveStatoImport.ERROR);
-					detail.setException(e);
-				}
-				esito.getToken_retrieve_policies().add(detail);
-			}
-			
-			
+						
 			// Configurazione
 			if(archive.getConfigurazionePdD()!=null){
 				Configurazione configurazione = archive.getConfigurazionePdD();
@@ -977,11 +978,15 @@ public class ImporterArchiveUtils {
 				
 				
 				// --- check elementi riferiti ---
+				
+				// porta dominio
 				if(archiveSoggetto.getSoggettoRegistro().getPortaDominio()!=null){
 					if(this.importerEngine.existsPortaDominio(archiveSoggetto.getSoggettoRegistro().getPortaDominio()) == false ){
 						throw new Exception("Porta di dominio ["+archiveSoggetto.getSoggettoRegistro().getPortaDominio()+"] associata non esiste");
 					}
 				}		
+				
+				// ruoli
 				if(archiveSoggetto.getSoggettoRegistro().getRuoli()!=null && archiveSoggetto.getSoggettoRegistro().getRuoli().sizeRuoloList()>0){
 					for (int i = 0; i < archiveSoggetto.getSoggettoRegistro().getRuoli().sizeRuoloList(); i++) {
 						IDRuolo idRuolo = new IDRuolo(archiveSoggetto.getSoggettoRegistro().getRuoli().getRuolo(i).getNome());
@@ -990,6 +995,8 @@ public class ImporterArchiveUtils {
 						}	
 					}
 				}
+				
+				// univocita' credenziali
 				if(archiveSoggetto.getSoggettoRegistro().getCredenziali()!=null) {
 					CredenzialiSoggetto credenziali = archiveSoggetto.getSoggettoRegistro().getCredenziali();
 					org.openspcoop2.core.registry.constants.CredenzialeTipo tipo = credenziali.getTipo();
@@ -1203,9 +1210,13 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
+			// soggetto proprietario
 			if(this.importerEngine.existsSoggettoConfigurazione(idSoggettoProprietario) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoProprietario+"] non esistente");
-			}	
+			}
+			
+			// ruoli
 			if(archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta()!=null &&
 					archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getRuoli()!=null && 
 					archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getRuoli().sizeRuoloList()>0){
@@ -1216,6 +1227,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// univocita' credenziali
 			if(archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta()!=null &&
 					archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getCredenzialiList()!=null &&
 					!archiveServizioApplicativo.getServizioApplicativo().getInvocazionePorta().getCredenzialiList().isEmpty()) {
@@ -1254,6 +1267,27 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
+			
+			// token negoziazione
+			if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio()!=null) {
+				if(archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore()!=null &&
+						archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getProperties()!=null && archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+					String policy = archiveServizioApplicativo.getServizioApplicativo().getInvocazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+					if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+						throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+					}
+				}
+			}
+			if(archiveServizioApplicativo.getServizioApplicativo()!=null && archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona()!=null) {
+				if(archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore()!=null &&
+						archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getProperties()!=null && archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+					String policy = archiveServizioApplicativo.getServizioApplicativo().getRispostaAsincrona().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+					if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+						throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+					}
+				}
+			}
+			
 			
 			
 			
@@ -1342,9 +1376,13 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
+			// soggetto referente
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
 			}
+			
+			// soggetti partecipanti
 			if(idSoggettiPartecipanti!=null){
 				for (IDSoggetto idSoggettoPartecipante : idSoggettiPartecipanti) {
 					if(this.importerEngine.existsSoggettoRegistro(idSoggettoPartecipante) == false ){
@@ -1493,9 +1531,13 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
+			// soggetto referente
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
 			}
+			
+			// gruppi
 			if(archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi()!=null && 
 					archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi().sizeGruppoList()>0){
 				for (int i = 0; i < archiveAccordoServizioParteComune.getAccordoServizioParteComune().getGruppi().sizeGruppoList(); i++) {
@@ -1632,14 +1674,17 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
 			// soggetto
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoReferente) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoReferente+"] non esistente");
 			}
+			
 			// accordo cooperazione
 			if(this.importerEngine.existsAccordoCooperazione(idAccordoCooperazione) == false){
 				throw new Exception("Accordo di Cooperazione ["+idAccordoCooperazione+"] riferito non esistente");
 			}
+			
 			// servizi componenti
 			for (IDServizio idServizioComponente : idServiziComponenti) {
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idServizioComponente)==false){
@@ -2009,15 +2054,18 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
 			// soggetto erogatore
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoErogatore) == false ){
 				throw new Exception("Soggetto erogatore ["+idSoggettoErogatore+"] non esistente");
 			}
+			
 			// accordo di servizio parte comune
 			if(this.importerEngine.existsAccordoServizioParteComune(idAccordoServizioParteComune) == false ){
 				throw new Exception(labelAccordoParteComune+" ["+idAccordoServizioParteComune+"] non esistente");
 			}
-			// dati
+			
+			// controlli interni accordo
 			org.openspcoop2.core.registry.Soggetto soggetto = this.importerEngine.getSoggettoRegistro(idSoggettoErogatore);
 			AccordoServizioParteComune accordoServizioParteComune = this.importerEngine.getAccordoServizioParteComune(idAccordoServizioParteComune);
 			AccordoServizioParteSpecifica old = null;
@@ -2061,6 +2109,30 @@ public class ImporterArchiveUtils {
 					}
 				}
 			}
+			
+			// token negoziazione
+			if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica()!=null && archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio()!=null) {
+				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore()!=null &&
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getProperties()!=null && 
+						archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+					String policy = archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+					if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+						throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+					}
+				}
+				if(archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().sizeConfigurazioneAzioneList()>0) {
+					for (ConfigurazioneServizioAzione confAzione : archiveAccordoServizioParteSpecifica.getAccordoServizioParteSpecifica().getConfigurazioneServizio().getConfigurazioneAzioneList()) {
+						if(confAzione.getConnettore()!=null &&
+								confAzione.getConnettore().getProperties()!=null && confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+							String policy = confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+							if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+								throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+							}
+						}
+					}
+				}
+			}
+			
 			
 			
 			// --- compatibilita' elementi riferiti ---
@@ -2289,13 +2361,37 @@ public class ImporterArchiveUtils {
 			
 						
 			// --- check elementi riferiti ---
+			
 			// soggetto fruitore
 			if(this.importerEngine.existsSoggettoRegistro(idSoggettoFruitore) == false ){
 				throw new Exception("Soggetto fruitore ["+idSoggettoFruitore+"] non esistente");
 			}
+			
 			// accordo di servizio parte specifica
 			if(this.importerEngine.existsAccordoServizioParteSpecifica(idAccordoServizioParteSpecifica) == false){
 				throw new Exception("Accordo di Servizio Parte Specifica non esistente");
+			}
+			
+			// token negoziazione
+			if(archiveFruitore.getFruitore().getConnettore()!=null &&
+					archiveFruitore.getFruitore().getConnettore().getProperties()!=null && 
+					archiveFruitore.getFruitore().getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+				String policy = archiveFruitore.getFruitore().getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+				if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+					throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+				}
+			}
+			if(archiveFruitore.getFruitore().sizeConfigurazioneAzioneList()>0) {
+				for (ConfigurazioneServizioAzione confAzione : archiveFruitore.getFruitore().getConfigurazioneAzioneList()) {
+					if(confAzione.getConnettore()!=null &&
+							confAzione.getConnettore().getProperties()!=null && 
+							confAzione.getConnettore().getProperties().containsKey(CostantiConnettori.CONNETTORE_TOKEN_POLICY)) {
+						String policy = confAzione.getConnettore().getProperties().get(CostantiConnettori.CONNETTORE_TOKEN_POLICY);
+						if(this.importerEngine.existsGenericProperties_retrieve(policy) == false) {
+							throw new Exception("Token Policy Negoziazione ["+policy+"] indicato nel connettore non esistente");
+						}
+					}
+				}
 			}
 		
 			
@@ -2442,19 +2538,27 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- check elementi riferiti ---
+			
+			// soggetto proprietario
 			if(this.importerEngine.existsSoggettoConfigurazione(idSoggettoProprietario) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoProprietario+"] non esistente");
 			}
+			
+			// soggetto erogatore
 			if(idSoggettoErogatore!=null){
 				if(this.importerEngine.existsSoggettoRegistro(idSoggettoErogatore) == false ){
 					throw new Exception("Soggetto erogatore riferito nella PD ["+idSoggettoErogatore+"] non esistente");
 				}
 			}
+			
+			// accordo servizio parte specifica
 			if(idServizio!=null){
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idServizio) == false ){
 					throw new Exception("Servizio riferito nella PD ["+idServizio+"] non esistente");
 				}
 			}
+			
+			// ruoli
 			if(archivePortaDelegata.getPortaDelegata().getRuoli()!=null && archivePortaDelegata.getPortaDelegata().getRuoli().sizeRuoloList()>0){
 				for (int i = 0; i < archivePortaDelegata.getPortaDelegata().getRuoli().sizeRuoloList(); i++) {
 					IDRuolo idRuolo = new IDRuolo(archivePortaDelegata.getPortaDelegata().getRuoli().getRuolo(i).getNome());
@@ -2463,6 +2567,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// scope
 			if(archivePortaDelegata.getPortaDelegata().getScope()!=null && archivePortaDelegata.getPortaDelegata().getScope().sizeScopeList()>0){
 				for (int i = 0; i < archivePortaDelegata.getPortaDelegata().getScope().sizeScopeList(); i++) {
 					IDScope idScope = new IDScope(archivePortaDelegata.getPortaDelegata().getScope().getScope(i).getNome());
@@ -2471,6 +2577,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// servizi applicativi autorizzati
 			if(archivePortaDelegata.getPortaDelegata().getServizioApplicativoList()!=null && archivePortaDelegata.getPortaDelegata().sizeServizioApplicativoList()>0){
 				for (int i = 0; i < archivePortaDelegata.getPortaDelegata().sizeServizioApplicativoList(); i++) {
 					IDServizioApplicativo idSaAuth = new IDServizioApplicativo();
@@ -2479,6 +2587,15 @@ public class ImporterArchiveUtils {
 					if(this.importerEngine.existsServizioApplicativo(idSaAuth) == false ){
 						throw new Exception("Applicativo ["+idSaAuth+"] indicato nel controllo degli accessi non esistente");
 					}	
+				}
+			}
+			
+			// token validazione
+			if(archivePortaDelegata.getPortaDelegata().getGestioneToken()!=null && 
+					archivePortaDelegata.getPortaDelegata().getGestioneToken().getPolicy()!=null && 
+					!"".equals(archivePortaDelegata.getPortaDelegata().getGestioneToken().getPolicy())) {
+				if(this.importerEngine.existsGenericProperties_validation(archivePortaDelegata.getPortaDelegata().getGestioneToken().getPolicy()) == false) {
+					throw new Exception("Token Policy Validazione ["+archivePortaDelegata.getPortaDelegata().getGestioneToken().getPolicy()+"] indicato nel controllo degli accessi non esistente");
 				}
 			}
 			
@@ -2630,19 +2747,27 @@ public class ImporterArchiveUtils {
 			
 			
 			// --- check elementi riferiti ---
+			
+			// soggetto proprietario
 			if(this.importerEngine.existsSoggettoConfigurazione(idSoggettoProprietario) == false ){
 				throw new Exception("Soggetto proprietario ["+idSoggettoProprietario+"] non esistente");
 			}
+			
+			// soggetto erogatore
 			if(idSoggettoErogatore!=null){
 				if(this.importerEngine.existsSoggettoRegistro(idSoggettoErogatore) == false ){
 					throw new Exception("Soggetto erogatore riferito nella PA ["+idSoggettoErogatore+"] non esistente");
 				}
 			}
+			
+			// accordo servizio parte specifica
 			if(idServizio!=null){
 				if(this.importerEngine.existsAccordoServizioParteSpecifica(idServizio) == false ){
 					throw new Exception("Servizio riferito nella PA ["+idServizio+"] non esistente");
 				}
 			}
+			
+			// ruoli
 			if(archivePortaApplicativa.getPortaApplicativa().getRuoli()!=null && archivePortaApplicativa.getPortaApplicativa().getRuoli().sizeRuoloList()>0){
 				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getRuoli().sizeRuoloList(); i++) {
 					IDRuolo idRuolo = new IDRuolo(archivePortaApplicativa.getPortaApplicativa().getRuoli().getRuolo(i).getNome());
@@ -2651,6 +2776,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// scope
 			if(archivePortaApplicativa.getPortaApplicativa().getScope()!=null && archivePortaApplicativa.getPortaApplicativa().getScope().sizeScopeList()>0){
 				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getScope().sizeScopeList(); i++) {
 					IDScope idScope = new IDScope(archivePortaApplicativa.getPortaApplicativa().getScope().getScope(i).getNome());
@@ -2659,6 +2786,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// soggetti autorizzati
 			if(archivePortaApplicativa.getPortaApplicativa().getSoggetti()!=null && archivePortaApplicativa.getPortaApplicativa().getSoggetti().sizeSoggettoList()>0){
 				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getSoggetti().sizeSoggettoList(); i++) {
 					IDSoggetto idSoggettoAuth = new IDSoggetto(archivePortaApplicativa.getPortaApplicativa().getSoggetti().getSoggetto(i).getTipo(),
@@ -2668,6 +2797,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// servizi applicativi autorizzati
 			if(archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati()!=null && archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().sizeServizioApplicativoList()>0){
 				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().sizeServizioApplicativoList(); i++) {
 					IDSoggetto idSoggettoAuth = new IDSoggetto(archivePortaApplicativa.getPortaApplicativa().getServiziApplicativiAutorizzati().getServizioApplicativo(i).getTipoSoggettoProprietario(),
@@ -2680,6 +2811,8 @@ public class ImporterArchiveUtils {
 					}	
 				}
 			}
+			
+			// servizi applicativi erogatori
 			if(archivePortaApplicativa.getPortaApplicativa().getServizioApplicativoList()!=null && archivePortaApplicativa.getPortaApplicativa().sizeServizioApplicativoList()>0){
 				for (int i = 0; i < archivePortaApplicativa.getPortaApplicativa().sizeServizioApplicativoList(); i++) {
 					IDServizioApplicativo idSaErogatore = new IDServizioApplicativo();
@@ -2688,6 +2821,15 @@ public class ImporterArchiveUtils {
 					if(this.importerEngine.existsServizioApplicativo(idSaErogatore) == false ){
 						throw new Exception("Servizio Applicativo ["+idSaErogatore+"] (erogatore) non esistente");
 					}	
+				}
+			}
+			
+			// token validazione
+			if(archivePortaApplicativa.getPortaApplicativa().getGestioneToken()!=null && 
+					archivePortaApplicativa.getPortaApplicativa().getGestioneToken().getPolicy()!=null && 
+					!"".equals(archivePortaApplicativa.getPortaApplicativa().getGestioneToken().getPolicy())) {
+				if(this.importerEngine.existsGenericProperties_validation(archivePortaApplicativa.getPortaApplicativa().getGestioneToken().getPolicy()) == false) {
+					throw new Exception("Token Policy Validazione ["+archivePortaApplicativa.getPortaApplicativa().getGestioneToken().getPolicy()+"] indicato nel controllo degli accessi non esistente");
 				}
 			}
 			
@@ -2917,6 +3059,8 @@ public class ImporterArchiveUtils {
 			
 				
 			// --- check elementi riferiti ---
+			
+			// policy
 			if(this.importerEngine.existsControlloTraffico_configurationPolicy(archivePolicy.getPolicy().getIdPolicy()) == false ){
 				throw new Exception("Configurazione della policy ["+archivePolicy.getPolicy().getIdPolicy()+"] non esistente nel registro");
 			}

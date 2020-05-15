@@ -475,7 +475,7 @@ function chartMapping(_dataJson, _type, _size) {
                     return rowdata;
                 });
                 cats = _dataJson.dati.map(function (cat) {
-                    return labelUnescape(cat.data);
+                    return { data: labelUnescape(cat.data), visible: (cat.dataLabel == undefined || cat.dataLabel != '') };
                 });
             }
         }
@@ -537,15 +537,15 @@ function chartMapping(_dataJson, _type, _size) {
             }
         });
         dpChart.cats = cats.map(function(key, index) {
-            dpChart.catsTooltip[index] = key;
+            dpChart.catsTooltip[index] = key.data;
             if(dpChart.limit !== -1) {
-                if(dpChart.limit < key.length) {
-                    key = key.substr(0, dpChart.limit) + '...';
+                if(dpChart.limit < key.data.length) {
+                    key.data = key.data.substr(0, dpChart.limit) + '...';
                 }
             }
-            dpChart.maxCategory = (key.length > dpChart.maxCategory.length)?key:dpChart.maxCategory;
+            dpChart.maxCategory = (key.data.length > dpChart.maxCategory.length)?key.data:dpChart.maxCategory;
 
-            return key;
+            return !key.visible?'':key.data;
         });
     }
     dpChart.colors = serieColors;

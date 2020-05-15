@@ -590,7 +590,7 @@ public class PorteApplicativeConnettoreDefault extends Action {
 			portaApplicativa.getServizioApplicativoList().clear();
 
 			// Scelto un servizio applicativo server, creo il servizio di default e poi associo quello server
-			if(erogazioneServizioApplicativoServer != null) {
+			if(erogazioneServizioApplicativoServer != null && !"".equals(erogazioneServizioApplicativoServer)) {
 				portaApplicativa.setServizioApplicativoDefault(nomeServizioApplicativoErogatore);
 				nomeServizioApplicativoErogatore = erogazioneServizioApplicativoServer;
 			} 

@@ -148,15 +148,15 @@ public class JsonStatsUtils {
 	public static JSONObject getJsonBarChartDistribuzione(List<ResDistribuzione> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice){
 		List<ResBase> listI = new ArrayList<ResBase>();
 		listI.addAll(list);
-		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice,null);
+		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice, null, null);
 	}
-	public static JSONObject getJsonBarChartDistribuzione(List<Res> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice, StatisticType tempo){
+	public static JSONObject getJsonBarChartDistribuzione(List<Res> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer slice, Integer numeroLabel, StatisticType tempo){
 		List<ResBase> listI = new ArrayList<ResBase>();
 		listI.addAll(list);
-		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice,tempo);
+		return _getJsonBarChartDistribuzione(listI, search, caption, subCaption, direzioneLabelParam, slice, numeroLabel, tempo);
 	}
 
-	private static JSONObject _getJsonBarChartDistribuzione(List<ResBase> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, StatisticType tempo
+	private static JSONObject _getJsonBarChartDistribuzione(List<ResBase> list, StatsSearchForm search, String caption, String subCaption, String direzioneLabelParam, Integer sliceParam, Integer numeroLabel, StatisticType tempo
 			,		String ... series
 			){
 		JSONObject grafico = new JSONObject();
@@ -354,6 +354,9 @@ public class JsonStatsUtils {
 				slice = slice * numeroCategorie;
 			
 			int maxLenghtLabel = 0;
+			
+			List<Integer> posizioniDaVisualizzare = getListaIndiciLabelDaVisualizzare(list.size(), numeroLabel);
+			boolean nascondiLabel = posizioniDaVisualizzare != null;
 
 			for (int z = 0 ; z <list.size() ; z++) {
 				ResBase entry = list.get(z);
@@ -419,6 +422,15 @@ public class JsonStatsUtils {
 								maxLenghtLabel = r.length();
 							
 							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
+							if(!nascondiLabel) {
+								bar.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(r));
+							} else {
+								if(posizioniDaVisualizzare.contains(Integer.valueOf(z))) {
+									bar.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(r));
+								} else { 
+									bar.put(CostantiGrafici.DATA_LABEL_KEY, "");
+								}
+							}
 						}
 
 						// calcolo il tooltip
@@ -460,6 +472,7 @@ public class JsonStatsUtils {
 			if(iterazione>slice){
 				JSONObject bar = new JSONObject();
 				bar.put(CostantiGrafici.DATA_KEY, CostantiGrafici.ALTRI_LABEL);
+				bar.put(CostantiGrafici.DATA_LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
@@ -515,7 +528,7 @@ public class JsonStatsUtils {
 		return grafico;
 	}
 
-	public static JSONObject getJsonAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo,String direzioneLabelParam){
+	public static JSONObject getJsonAndamentoTemporale(List<Res> list, StatsSearchForm search, String caption, String subCaption,StatisticType tempo,String direzioneLabelParam, Integer numeroLabel){
 		JSONObject grafico = new JSONObject();
 
 		SimpleDateFormat sdf;
@@ -675,8 +688,13 @@ public class JsonStatsUtils {
 			// check estremi in modo da visualizzare sempre gli estremi ed eliminare il problema
 			// dell'unico risultato con il "puntino" difficilmente visualizzabile
 			list = StatsUtils.checkEstremi(list, search, tempo, sdf);
+			
+			List<Integer> posizioniDaVisualizzare = getListaIndiciLabelDaVisualizzare(list.size(), numeroLabel);
+			boolean nascondiLabel = posizioniDaVisualizzare != null;
 
-			for (Res entry : list) {
+			for (int z = 0; z < list.size(); z++) {
+				Res entry = list.get(z);
+//			for (Res entry : list) {
 				JSONObject point = new JSONObject();
 
 				Date r = entry.getRisultato();
@@ -710,7 +728,17 @@ public class JsonStatsUtils {
 
 				String label = sb.toString();
 				point.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(label));
-
+				
+				if(!nascondiLabel) {
+					point.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(label));
+				} else {
+					if(posizioniDaVisualizzare.contains(Integer.valueOf(z))) {
+						point.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(label));
+					} else { 
+						point.put(CostantiGrafici.DATA_LABEL_KEY, "");
+					}
+				}
+				
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
 					String key = categorie.getJSONObject(j).getString(CostantiGrafici.KEY_KEY);
@@ -806,6 +834,7 @@ public class JsonStatsUtils {
 						}
 						
 						point.put(CostantiGrafici.DATA_KEY, sb.toString());
+						point.put(CostantiGrafici.DATA_LABEL_KEY, sb.toString());
 						dati.add(point);
 					}
 				}
@@ -984,6 +1013,7 @@ public class JsonStatsUtils {
 								maxLenghtLabel = r.length();
 							
 							bar.put(CostantiGrafici.DATA_KEY, escapeJsonLabel(r));
+							bar.put(CostantiGrafici.DATA_LABEL_KEY, escapeJsonLabel(r));
 						}
 
 						// valore da visualizzare nel grafico
@@ -1009,6 +1039,7 @@ public class JsonStatsUtils {
 			if(iterazione>slice){
 				JSONObject bar = new JSONObject();
 				bar.put(CostantiGrafici.DATA_KEY, CostantiGrafici.ALTRI_LABEL);
+				bar.put(CostantiGrafici.DATA_LABEL_KEY, CostantiGrafici.ALTRI_LABEL);
 
 				for (int j = 0; j < numeroCategorie; j++) {
 					// key che identifica la serie
@@ -1073,5 +1104,34 @@ public class JsonStatsUtils {
 		escaped = escaped.replace("\\", "\\\\");
 		
 		return escaped;
+	}
+	
+	public static List<Integer> getListaIndiciLabelDaVisualizzare(int size, Integer numeroLabel){
+		List<Integer> posizioni = null;
+		
+		if(numeroLabel != null) {
+			if(size > numeroLabel.intValue()) {
+				
+				if(numeroLabel < 2)
+					numeroLabel = 2;
+				
+				posizioni = new ArrayList<Integer>();
+				// estremo di sx;
+				posizioni.add(Integer.valueOf(0));
+				
+				int denom = numeroLabel - 1;
+				int numeroPosizioni = numeroLabel - 2;
+				
+				for (int j = 1; j <= numeroPosizioni; j++) {
+					int pos = (int) (j * size / denom);
+					posizioni.add(Integer.valueOf(pos));
+				}
+				
+				// estremo di dx
+				posizioni.add(Integer.valueOf(size -1));
+			}
+		} 
+		
+		return posizioni;
 	}
 }

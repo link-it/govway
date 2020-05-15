@@ -20,7 +20,9 @@
 package org.openspcoop2.web.monitor.statistiche.mbean;
 
 import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.el.ELContext;
@@ -70,7 +72,8 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L; 
+	private static final long serialVersionUID = 1L;
+	private boolean visualizzaComandiSelezioneNumeroLabel; 
 
 	public AndamentoTemporaleBean() {
 		super();
@@ -81,7 +84,10 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		this.init();
 	}
 	private void init() {
-		this.setSlice(Integer.MAX_VALUE);
+		this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
+		this.setMaxCategorie(Integer.MAX_VALUE);
+		this.setMinCategorie(2);
+		this.visualizzaComandiSelezioneNumeroLabel = true;
 	}
 	
 	public void setStatisticheGiornaliereService(
@@ -131,8 +137,11 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 
 		return  xml;
 	}
-	
 	public String getJson(){
+		return this._getJson(true);
+	}
+	
+	private String _getJson(boolean nuovaRicerca){
 		JSONObject grafico = null;
 		List<Res> list = null;
 		this.setVisualizzaComandiExport(false);
@@ -147,12 +156,49 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 		StatisticType tempo = this.getTempo();
 		TipoReport tipoReport = ((StatsSearchForm)this.search).getTipoReport();
 		
+		
+		
 		switch (tipoReport) {
 		case BAR_CHART:
-			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), this.getSlice(), tempo);
+			if(nuovaRicerca && list != null && list.size() > 0) {
+				// reset valore numero label
+				this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
+				this.setMaxCategorie(list.size());
+				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
+					if(this.getSlice() > list.size())
+						this.visualizzaComandiSelezioneNumeroLabel = false;
+				}
+			}
+			
+			grafico = JsonStatsUtils.getJsonBarChartDistribuzione(list,(StatsSearchForm) this.search, this.getCaption(), this.getSubCaption(), this.getDirezioneLabel(), Integer.MAX_VALUE, this.getSlice(), tempo);
 			break;
 		case LINE_CHART:
-			grafico = JsonStatsUtils.getJsonAndamentoTemporale(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , tempo, this.getDirezioneLabel());
+			if(nuovaRicerca && list != null && list.size() > 0) {
+				// reset valore numero label
+				this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
+				this.setMaxCategorie(list.size());
+				
+				SimpleDateFormat sdf;
+				if (StatisticType.ORARIA.equals(tempo)) {
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY_HH, Locale.ITALIAN);
+				} else {
+					sdf = new SimpleDateFormat(CostantiGrafici.PATTERN_DD_MM_YY, Locale.ITALIAN);
+				}
+				if(StatsUtils.addEstremoSX(list, ((StatsSearchForm)this.search), tempo, sdf)) {
+					this.setMaxCategorie(this.getMaxCategorie() + 1); 
+				}
+				if(StatsUtils.addEstremoDX(list, ((StatsSearchForm)this.search), tempo, sdf)) {
+					this.setMaxCategorie(this.getMaxCategorie() + 1);
+				}
+				
+				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
+					if(this.getSlice() > list.size())
+						this.visualizzaComandiSelezioneNumeroLabel = false;
+				}
+			}
+			
+			
+			grafico = JsonStatsUtils.getJsonAndamentoTemporale(list, ((StatsSearchForm)this.search), this.getCaption(), this.getSubCaption() , tempo, this.getDirezioneLabel(), this.getSlice());
 			
 			break;
 		default:
@@ -172,6 +218,13 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 	public String getData(){
 		if(((StatsSearchForm)this.search).isUseGraficiSVG())
 			return this.getJson();
+		
+		return this.getXml();
+	}
+	
+	public String getDataNumeroLabel(){
+		if(((StatsSearchForm)this.search).isUseGraficiSVG())
+			return this._getJson(false);
 		
 		return this.getXml();
 	}
@@ -689,5 +742,13 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 			return CostantiGrafici.DISTRIBUZIONE_ESITI_FILE_NAME;
 		else 
 			return CostantiGrafici.DISTRIBUZIONE_TEMPORALE_FILE_NAME;
+	}
+	
+	public boolean isVisualizzaComandiSelezioneNumeroLabel() {
+		return this.visualizzaComandiSelezioneNumeroLabel;
+	}
+
+	public void setVisualizzaComandiSelezioneNumeroLabel(boolean visualizzaComandiSelezioneNumeroLabel) {
+		this.visualizzaComandiSelezioneNumeroLabel = visualizzaComandiSelezioneNumeroLabel;
 	}
 }

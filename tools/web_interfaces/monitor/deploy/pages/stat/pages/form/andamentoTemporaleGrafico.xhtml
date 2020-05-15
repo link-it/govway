@@ -254,15 +254,15 @@
 						<rich:panel id="formCmdPanel" styleClass="noborder" bodyClass="nopadding">
 							<a4j:form id="cmdPanel">
 								<h:inputHidden value="true" id="usaSVG"/>
-								<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)">
-									<a4j:actionparam name="dir" value="prev" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
+								<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandi">
+									<a4j:actionparam name="dir" value="prev" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}" />
 								</a4j:commandLink>
 								<h:outputText value=" | "/>
-								<a4j:commandLink value='#{andamentoTemporaleBean.actualBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)">
+								<a4j:commandLink value='#{andamentoTemporaleBean.actualBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandi">
 									<a4j:actionparam name="dir" value="actual" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 								</a4j:commandLink>
 								<h:outputText value=" | "/>	
-								<a4j:commandLink value='#{andamentoTemporaleBean.nextBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)">
+								<a4j:commandLink value='#{andamentoTemporaleBean.nextBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandi">
 									<a4j:actionparam name="dir" value="next" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 								</a4j:commandLink>
 							</a4j:form>
@@ -278,7 +278,7 @@
 										</style>	
 									</a4j:outputPanel>
 									<h:inputHidden value="true" id="usaSVG"/>
-									<h:panelGrid columns="#{andamentoTemporaleSearchForm.useGraficiSVG ? 3 : 1 }" >
+									<h:panelGrid columns="#{(andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel) ? 5 : 3 }" >
 										<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
 											<h:outputLabel value="Label" styleClass="direzioneLabelGrafici"/>
 											<rich:comboBox id="rotazioneCombo" value="#{andamentoTemporaleBean.direzioneLabel}" defaultLabel="Seleziona Label"
@@ -288,6 +288,17 @@
 												<f:selectItem itemValue="Verticale" />
 												<a4j:support status="mainStatus" event="onselect" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandi"/>
 											</rich:comboBox>
+										</h:panelGrid>
+										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
+											<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+										</a4j:outputPanel>
+										<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
+											<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
+											<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" 
+												maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
+												enableManualInput="false">
+												<a4j:support event="onchange" data="#{andamentoTemporaleBean.dataNumeroLabel}" oncomplete="updateChart(data)" reRender="formSlider"/>
+											</rich:inputNumberSpinner>
 										</h:panelGrid>
 										<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" layout="block" >
 											<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
@@ -362,15 +373,15 @@
 					<rich:panel id="formCmdPanelBars" styleClass="noborder" bodyClass="nopadding" >
 						<a4j:form id="cmdPanelBars">
 							<h:inputHidden value="true" id="usaSVG"/>
-							<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" >
+							<a4j:commandLink value="#{andamentoTemporaleBean.prevBtnLabel}" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandiBars">
 								<a4j:actionparam name="dir" value="prev" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 							</a4j:commandLink>
 							<h:outputText value=" | "/>
-							<a4j:commandLink value='#{andamentoTemporaleBean.actualBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" >
+							<a4j:commandLink value='#{andamentoTemporaleBean.actualBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandiBars">
 								<a4j:actionparam name="dir" value="actual" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 							</a4j:commandLink>
 							<h:outputText value=" | "/>	
-							<a4j:commandLink value='#{andamentoTemporaleBean.nextBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" >
+							<a4j:commandLink value='#{andamentoTemporaleBean.nextBtnLabel}' data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandiBars" >
 								<a4j:actionparam name="dir" value="next" assignTo="#{andamentoTemporaleBean.dir}" actionListener="#{andamentoTemporaleBean.updateChartDateOffset}"/>
 							</a4j:commandLink>
 						</a4j:form>
@@ -386,7 +397,7 @@
 									</style>	
 								</a4j:outputPanel>
 								<h:inputHidden value="true" id="usaSVG"/>
-								<h:panelGrid columns="#{andamentoTemporaleSearchForm.useGraficiSVG ? 3 : 1 }" >
+								<h:panelGrid columns="#{(andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel) ? 5 : 3 }" >
 									<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}">
 										<h:outputLabel value="Label" styleClass="direzioneLabelGrafici" />
 										<rich:comboBox id="rotazioneCombo" value="#{andamentoTemporaleBean.direzioneLabel}" defaultLabel="Seleziona Label"
@@ -397,12 +408,23 @@
 											<a4j:support status="mainStatus" event="onselect" data="#{andamentoTemporaleBean.data}" oncomplete="updateChart(data)" reRender="gridComandiBars"/>
 										</rich:comboBox>
 									</h:panelGrid>
+									<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}" layout="block" >
+										<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
+									</a4j:outputPanel>
+									<h:panelGrid columns="2" rendered="#{andamentoTemporaleSearchForm.useGraficiSVG and andamentoTemporaleBean.visualizzaComandiSelezioneNumeroLabel}">
+										<h:outputLabel value="Numero Label" styleClass="labelSpinnerGrafici" />
+										<rich:inputNumberSpinner value="#{andamentoTemporaleBean.slice}" minValue="#{andamentoTemporaleBean.minCategorie}" 
+											maxValue="#{andamentoTemporaleBean.maxCategorie}" cycled="false"  styleClass="spinnerNumeroRisultatiGrafici"
+											enableManualInput="false">
+											<a4j:support event="onchange" data="#{andamentoTemporaleBean.dataNumeroLabel}" oncomplete="updateChart(data)" reRender="formSliderBars"/>
+										</rich:inputNumberSpinner>
+									</h:panelGrid>
 									<a4j:outputPanel rendered="#{andamentoTemporaleSearchForm.useGraficiSVG}" layout="block" >
 										<h:outputText value="&#160;&#160;&#160;&#160;&#160;&#160;" />
 									</a4j:outputPanel>
 									<h:panelGrid columns="2">
 										<h:outputLabel value="Larghezza Grafico" styleClass="labelSliderGrafici" style="width: 160px !important;"/>
-										<rich:inputNumberSlider id="sliderLarghezzaGrafico" value="#{andamentoTemporaleBean.larghezzaGrafico}" onchange="updateChart2(this)"
+										<rich:inputNumberSlider id="sliderLarghezzaGraficoBars" value="#{andamentoTemporaleBean.larghezzaGrafico}" onchange="updateChart2(this)"
 											showInput="false" enableManualInput="false" minValue="#{andamentoTemporaleBean.minLarghezzaGrafico}" maxValue="#{andamentoTemporaleBean.maxLarghezzaGrafico}" showBoundaryValues="false" >
 										</rich:inputNumberSlider>
 									</h:panelGrid>
