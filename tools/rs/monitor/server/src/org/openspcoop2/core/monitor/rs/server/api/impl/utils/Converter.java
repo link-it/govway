@@ -318,7 +318,8 @@ public class Converter {
 		return riepilogo;
 	}
 	
-	public static Riepilogo toRiepilogo(List<ConfigurazioneGenerale> listDB_infoGenerali_right, List<ConfigurazioneGenerale> listDB_infoServizi_left , Logger log) throws Exception {
+	public static Riepilogo toRiepilogo(List<ConfigurazioneGenerale> listDB_infoGenerali_right, List<ConfigurazioneGenerale> listDB_infoServizi_left , 
+			ConfigurazioneGenerale soggettiOperativi, Logger log) throws Exception {
 		Riepilogo riepilogo = new Riepilogo();
 		
 		if(listDB_infoGenerali_right!=null && !listDB_infoGenerali_right.isEmpty()) {
@@ -346,6 +347,13 @@ public class Converter {
 				else if(CostantiConfigurazioni.CONF_FRUIZIONI_SERVIZIO_LABEL.equals(configurazioneGenerale.getLabel())) {
 					riepilogo.setFruizioni(Integer.valueOf(configurazioneGenerale.getValue()));
 				}
+			}
+		}
+		
+		if(riepilogo.getSoggettiDominioInterno()==null) {
+			// mutitenant disabilitato
+			if(soggettiOperativi!=null) {
+				riepilogo.setSoggettiDominioInterno(Integer.valueOf(soggettiOperativi.getValue()));
 			}
 		}
 		

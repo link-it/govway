@@ -1303,12 +1303,13 @@ public class ReportisticaApiServiceImpl extends BaseImpl implements Reportistica
 
 				List<ConfigurazioneGenerale> listDB_infoGenerali_right = configurazioniService.findAllInformazioniGenerali();
 				List<ConfigurazioneGenerale> listDB_infoServizi_left = configurazioniService.findAllInformazioniServizi();
+				ConfigurazioneGenerale soggettiOperativi = configurazioniService.getSoggettiOperativi();
 				if (serverProperties.isFindall404()
 						&& (listDB_infoGenerali_right == null || listDB_infoGenerali_right.isEmpty())
 						&& (listDB_infoServizi_left == null || listDB_infoServizi_left.isEmpty()))
 					throw FaultCode.NOT_FOUND.toException("Nessuna configurazione trovata corrispondente ai criteri di ricerca");
 
-				Riepilogo riepilogo = Converter.toRiepilogo(listDB_infoGenerali_right, listDB_infoServizi_left, this.log);
+				Riepilogo riepilogo = Converter.toRiepilogo(listDB_infoGenerali_right, listDB_infoServizi_left, soggettiOperativi, this.log);
 
 				context.getLogger().info("Invocazione completata con successo");
 				return riepilogo;
