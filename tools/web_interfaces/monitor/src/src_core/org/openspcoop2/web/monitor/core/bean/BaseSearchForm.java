@@ -136,6 +136,7 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	private List<SelectItem> protocolli= null;
 	private String modalita = null;
 	private String soggettoPddMonitor = null;
+	private boolean checkSoggettoPddMonitor = true;
 	
 
 	private IFilter filtro;
@@ -1819,14 +1820,21 @@ public abstract class BaseSearchForm extends AbstractDateSearchForm {
 	}
 	
 	public String getSoggettoPddMonitor(boolean checkLoginBean) {
-		if(this.soggettoPddMonitor == null && checkLoginBean)
-			return Utility.getLoginBean().getSoggettoPddMonitor();
+		if(this.soggettoPddMonitor == null && checkLoginBean) {
+			if(this.checkSoggettoPddMonitor) { // controllo che serve per le api rs.
+				return Utility.getLoginBean().getSoggettoPddMonitor();
+			}
+		}
 		
 		return this.soggettoPddMonitor;
 	}
 
 	public void setSoggettoPddMonitor(String soggettoPddMonitor) {
 		this.soggettoPddMonitor = soggettoPddMonitor;
+	}
+
+	public void setCheckSoggettoPddMonitor(boolean checkSoggettoPddMonitor) {
+		this.checkSoggettoPddMonitor = checkSoggettoPddMonitor;
 	}
 	
 	public boolean isShowFiltroSoggettoLocale(){

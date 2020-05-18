@@ -108,6 +108,9 @@ public class SearchFormUtilities {
 			searchForm.setTipoNomeSoggettoLocale(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 			searchForm.setSoggettoPddMonitor(tipoSoggettoLocale+"/"+nomeSoggettoLocale);
 		}
+		else {
+			searchForm.setCheckSoggettoPddMonitor(false);
+		}
 		searchForm.saveProtocollo();
 	}
 	
