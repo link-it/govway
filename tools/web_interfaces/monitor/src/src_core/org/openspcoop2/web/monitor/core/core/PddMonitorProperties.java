@@ -946,4 +946,8 @@ public class PddMonitorProperties {
 	public boolean isSearchFormEsitoConsegnaMultiplaEnabled() throws Exception{
 		return "true".equalsIgnoreCase(this.appProperties.getProperty("console.searchForm.esiti.consegnaMultiplaEnabled", true, true));
 	}
+	
+	public Integer getSearchFormLimit() throws Exception{
+		return Integer.valueOf(this.appProperties.getProperty("console.searchForm.limit",true,true));
+	}
 }

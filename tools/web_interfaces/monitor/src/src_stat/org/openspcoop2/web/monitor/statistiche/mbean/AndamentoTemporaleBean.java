@@ -165,7 +165,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				this.setSlice(this.getNumeroLabelAsseXDistribuzioneTemporale());
 				this.setMaxCategorie(list.size());
 				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
-					if(this.getSlice() > list.size())
+					if(this.getSlice() >= list.size())
 						this.visualizzaComandiSelezioneNumeroLabel = false;
 				}
 			}
@@ -192,7 +192,7 @@ BaseStatsMBean<ResBase, Integer, IService<ResBase, Integer>> {
 				}
 				
 				if(this.isNascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati()) {
-					if(this.getSlice() > list.size())
+					if(this.getSlice() >= list.size())
 						this.visualizzaComandiSelezioneNumeroLabel = false;
 				}
 			}

@@ -91,6 +91,7 @@ import org.openspcoop2.generic_project.utils.ServiceManagerProperties;
 import org.openspcoop2.message.constants.ServiceBinding;
 import org.openspcoop2.protocol.engine.ProtocolFactoryManager;
 import org.openspcoop2.protocol.sdk.IProtocolFactory;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.core.PermessiUtenteOperatore;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
@@ -109,7 +110,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 
 	private int defaultStart = 0;
-	private int defaultLimit = 100;
+	private int LIMIT_SEARCH = 10000;
 
 	private static Logger log = LoggerManager.getPddMonitorSqlLogger(); 
 
@@ -132,8 +133,6 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 	private IPortaDelegataServiceSearch portaDelegataDAO = null;
 	private IPortaApplicativaServiceSearch portaApplicativaDAO  = null;
-
-	public static final int LIMIT_SEARCH = 10000;
 
 	public DynamicUtilsService(){
 		this(null);
@@ -166,6 +165,9 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
+			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -202,6 +204,9 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			this.portaApplicativaDAO = this.utilsServiceManager.getPortaApplicativaServiceSearch();
 			this.portaDelegataDAO = this.utilsServiceManager.getPortaDelegataServiceSearch();
 
+			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
+			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
+			
 		} catch (Exception e) {
 			log.error(e.getMessage(), e);
 		}
@@ -389,7 +394,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			IPaginatedExpression pagExpr = this.soggettoDAO
 					.toPaginatedExpression(expr); 
 			
-			pagExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			pagExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 
 			return this.soggettoDAO.findAll(pagExpr);
 		} catch (ServiceException e) {
@@ -1328,7 +1333,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 					pagExpr.addOrder(AccordoServizioParteComune.model().NOME);
 					pagExpr.addOrder(AccordoServizioParteComune.model().VERSIONE);
 
-					pagExpr.offset(0).limit(LIMIT_SEARCH);
+					pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 					toRet = this.aspcDAO.findAll(pagExpr);
 					return toRet;
 				}
@@ -1384,7 +1389,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 				pagExpr.addOrder(AccordoServizioParteComune.model().NOME);
 				pagExpr.addOrder(AccordoServizioParteComune.model().VERSIONE);
 
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 				toRet = this.aspcDAO.findAll(pagExpr);
 			}
 		} catch (ServiceException e) {
@@ -1584,7 +1589,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 				IPaginatedExpression pagExpr = this.aspsDAO.toPaginatedExpression(expr);
 
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 
 				return this.aspsDAO.findAll(pagExpr);
@@ -1769,7 +1774,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 				IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
 
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 				List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
 
@@ -1826,7 +1831,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 				IPaginatedExpression pagExpr = this.soggettoDAO
 						.toPaginatedExpression(expr);
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 				return this.soggettoDAO.findAll(pagExpr);
 
@@ -1900,7 +1905,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 				IPaginatedExpression pagExpr =this.aspsDAO.toPaginatedExpression(expr);
 
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 				List<AccordoServizioParteSpecifica> lstAsps = this.aspsDAO.findAll(pagExpr);
 
@@ -1946,7 +1951,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 						pagExpr = this.fruitoreSearchDAO.toPaginatedExpression(expr);
 
-						pagExpr.offset(0).limit(LIMIT_SEARCH);
+						pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 						List<Fruitore> lstFruitori = this.fruitoreSearchDAO.findAll(pagExpr); 
 
@@ -1983,7 +1988,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 
 				IPaginatedExpression pagExpr = this.soggettoDAO
 						.toPaginatedExpression(expr);
-				pagExpr.offset(0).limit(LIMIT_SEARCH);
+				pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 				return this.soggettoDAO.findAll(pagExpr);
 			}
@@ -2081,7 +2086,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
-			pagPaExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2153,7 +2158,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			pagPaExpr.addOrder(PortaApplicativa.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPaExpr.addOrder(PortaApplicativa.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
-			pagPaExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			pagPaExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			listaPorte = this.portaApplicativaDAO.findAll(pagPaExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2276,7 +2281,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
-			pagPdExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();
@@ -2348,7 +2353,7 @@ public class DynamicUtilsService implements IDynamicUtilsService{
 			pagPdExpr.addOrder(PortaDelegata.model().NOME_SERVIZIO, SortOrder.ASC);
 			pagPdExpr.addOrder(PortaDelegata.model().VERSIONE_SERVIZIO, SortOrder.ASC);
 			
-			pagPdExpr.offset(this.defaultStart).limit(this.defaultLimit);
+			pagPdExpr.offset(this.defaultStart).limit(this.LIMIT_SEARCH);
 			listaPorte = this.portaDelegataDAO.findAll(pagPdExpr);
 			
 			List<String> lstTmp = new ArrayList<String>();

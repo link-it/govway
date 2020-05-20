@@ -47,6 +47,7 @@ import org.openspcoop2.web.lib.users.DriverUsersDBException;
 import org.openspcoop2.web.lib.users.dao.Stato;
 import org.openspcoop2.web.lib.users.dao.User;
 import org.openspcoop2.web.monitor.core.constants.NomiTabelle;
+import org.openspcoop2.web.monitor.core.core.PddMonitorProperties;
 import org.openspcoop2.web.monitor.core.logger.LoggerManager;
 import org.slf4j.Logger;
 
@@ -60,6 +61,8 @@ import org.slf4j.Logger;
  */
 public class GenericService implements IGenericService {
 
+	private int LIMIT_SEARCH = 10000;
+	
 	private static Logger log =  LoggerManager.getPddMonitorSqlLogger();
 
 	private org.openspcoop2.web.lib.users.DriverUsersDB utenteDAO;
@@ -101,6 +104,9 @@ public class GenericService implements IGenericService {
 			this.soggettoDAO = this.utilsServiceManager
 					.getSoggettoServiceSearch();
 
+			PddMonitorProperties monitorProperties = PddMonitorProperties.getInstance(log);
+			this.LIMIT_SEARCH = monitorProperties.getSearchFormLimit();
+			
 		} catch (Exception e) {
 			GenericService.log.error(e.getMessage(), e);
 		}
@@ -736,7 +742,7 @@ public class GenericService implements IGenericService {
 
 			IPaginatedExpression pagExpr = this.soggettoDAO
 					.toPaginatedExpression(expr);
-			pagExpr.offset(0).limit(DynamicUtilsService.LIMIT_SEARCH);
+			pagExpr.offset(0).limit(this.LIMIT_SEARCH);
 
 			return this.soggettoDAO.findAll(pagExpr);
 		} catch (ServiceException e) {

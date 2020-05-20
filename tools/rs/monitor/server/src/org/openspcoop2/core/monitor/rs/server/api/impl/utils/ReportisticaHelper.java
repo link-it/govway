@@ -787,16 +787,50 @@ public class ReportisticaHelper {
 
 	public static final byte[] generateReport(HttpRequestWrapper request, IContext context) throws Exception {
 		DBManager dbManager = DBManager.getInstance();
-		Connection connection = null;
+		Connection connectionConfig = null;
+		Connection connectionStats = null;
+		Connection connectionTransazioni = null;
 		StatisticheGiornaliereService statisticheService = null;
 		ServiceManagerProperties smp = null;
+		boolean uniqueConnection = false;
 		try {
-			connection = dbManager.getConnectionStatistiche();
+			connectionStats = dbManager.getConnectionStatistiche();
 			smp = dbManager.getServiceManagerPropertiesTracce();
-			statisticheService = new StatisticheGiornaliereService(connection, true, smp,
-					LoggerProperties.getLoggerDAO());
+			
+			if(dbManager.getDataSourceStatisticheName().equals(dbManager.getDataSourceTracceName()) && 
+					dbManager.getDataSourceStatisticheName().equals(dbManager.getDataSourceConfigName())) {
+				// unico datasource
+				uniqueConnection = true;
+			}
+			
+			if(uniqueConnection) {
+				statisticheService = new StatisticheGiornaliereService(connectionStats, true, smp,
+						LoggerProperties.getLoggerDAO());
+			}
+			else {
+				
+				Connection ctracce = connectionStats;
+				if( !dbManager.getDataSourceStatisticheName().equals(dbManager.getDataSourceTracceName()) ) {
+					connectionTransazioni = dbManager.getConnectionTracce();
+					ctracce = connectionTransazioni;
+				}
+				
+				Connection cconfig = connectionStats;
+				if( !dbManager.getDataSourceStatisticheName().equals(dbManager.getDataSourceConfigName()) ) {
+					connectionConfig = dbManager.getConnectionConfig();
+					cconfig = connectionConfig;
+				}
+				
+				statisticheService = new StatisticheGiornaliereService(cconfig, connectionStats, ctracce, true, smp,
+						LoggerProperties.getLoggerDAO());
+			}
+
 		} catch (Exception e) {
-			dbManager.releaseConnectionStatistiche(connection);
+			dbManager.releaseConnectionStatistiche(connectionStats);
+			if(!uniqueConnection) {
+				dbManager.releaseConnectionConfig(connectionConfig);
+				dbManager.releaseConnectionTracce(connectionTransazioni);
+			}
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		}
 
@@ -807,7 +841,11 @@ public class ReportisticaHelper {
 		} catch (Exception e) {
 			throw FaultCode.ERRORE_INTERNO.toException(e);
 		} finally {
-			dbManager.releaseConnectionStatistiche(connection);
+			dbManager.releaseConnectionStatistiche(connectionStats);
+			if(!uniqueConnection) {
+				dbManager.releaseConnectionConfig(connectionConfig);
+				dbManager.releaseConnectionTracce(connectionTransazioni);
+			}
 		}
 	}
 

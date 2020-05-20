@@ -64,7 +64,7 @@ public abstract class BaseStatsMBean<T, K, IService> extends DynamicPdDBean<T, K
 	// orientamento delle label delle categorie del grafico
 	private String direzioneLabel = CostantiGrafici.DIREZIONE_LABEL_OBLIQUO_LABEL;
 	
-	private Integer numeroLabelAsseXDistribuzioneTemporale = 12;
+	private Integer numeroLabelAsseXDistribuzioneTemporale = 13; // viene scelto 13 per non far vedere la casella nelle ultime 12 ore (12+intervalloCorrente).
 	private boolean nascondiComandoSelezioneNumeroLabelSeInferioreANumeroRisultati = true;
 	/*
 	 * chart info  
