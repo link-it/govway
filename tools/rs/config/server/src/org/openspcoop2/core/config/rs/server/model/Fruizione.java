@@ -31,6 +31,12 @@ public class Fruizione extends APIImpl {
   @Schema(description = "")
   private String descrizione = null;
   
+  @Schema(description = "")
+  private String fruizioneNome = null;
+  
+  @Schema(description = "")
+  private Integer fruizioneVersione = null;
+  
   @Schema(required = true, description = "")
   private String erogatore = null;
  /**
@@ -49,6 +55,44 @@ public class Fruizione extends APIImpl {
 
   public Fruizione descrizione(String descrizione) {
     this.descrizione = descrizione;
+    return this;
+  }
+
+ /**
+   * Get fruizioneNome
+   * @return fruizioneNome
+  **/
+  @JsonProperty("fruizione_nome")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getFruizioneNome() {
+    return this.fruizioneNome;
+  }
+
+  public void setFruizioneNome(String fruizioneNome) {
+    this.fruizioneNome = fruizioneNome;
+  }
+
+  public Fruizione fruizioneNome(String fruizioneNome) {
+    this.fruizioneNome = fruizioneNome;
+    return this;
+  }
+
+ /**
+   * Get fruizioneVersione
+   * @return fruizioneVersione
+  **/
+  @JsonProperty("fruizione_versione")
+  @Valid
+  public Integer getFruizioneVersione() {
+    return this.fruizioneVersione;
+  }
+
+  public void setFruizioneVersione(Integer fruizioneVersione) {
+    this.fruizioneVersione = fruizioneVersione;
+  }
+
+  public Fruizione fruizioneVersione(Integer fruizioneVersione) {
+    this.fruizioneVersione = fruizioneVersione;
     return this;
   }
 
@@ -79,6 +123,8 @@ public class Fruizione extends APIImpl {
     sb.append("class Fruizione {\n");
     sb.append("    ").append(Fruizione.toIndentedString(super.toString())).append("\n");
     sb.append("    descrizione: ").append(Fruizione.toIndentedString(this.descrizione)).append("\n");
+    sb.append("    fruizioneNome: ").append(Fruizione.toIndentedString(this.fruizioneNome)).append("\n");
+    sb.append("    fruizioneVersione: ").append(Fruizione.toIndentedString(this.fruizioneVersione)).append("\n");
     sb.append("    erogatore: ").append(Fruizione.toIndentedString(this.erogatore)).append("\n");
     sb.append("}");
     return sb.toString();

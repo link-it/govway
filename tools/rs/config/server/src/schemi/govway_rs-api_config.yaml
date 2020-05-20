@@ -13,6 +13,7 @@ info:
   title: GovWay Config API
   x-summary: Servizi per la configurazione di GovWay
   description: Servizi per la configurazione di GovWay
+  termsOfService: https://govway.org/documentazione/api/index.html
   version: "3.3.0"
   contact:
     email: info@link.it
@@ -6509,10 +6510,14 @@ components:
       type: object
       allOf:
         - $ref: 'govway_rs-api_config-commons.yaml#/components/schemas/APIImpl'
-        - type: object # inserito per far generare un oggetto Erogazione invece di Object
+        - type: object
           properties:
             descrizione:
-              type: string
+                type: string
+            erogazione_nome:
+                $ref: 'govway_core.yaml#/components/schemas/NCName'
+            erogazione_versione:
+                $ref: 'govway_core.yaml#/components/schemas/Versione'
     ErogazioneItem:
       type: object
       allOf:
@@ -6543,8 +6548,12 @@ components:
           required:
             - erogatore
           properties:
-            descrizione: # inserito per essere uguale all'oggetto Erogazione (vedi motivo sopra)
-              type: string
+            descrizione:
+                type: string
+            fruizione_nome:
+                $ref: 'govway_core.yaml#/components/schemas/NCName'
+            fruizione_versione:
+                $ref: 'govway_core.yaml#/components/schemas/Versione'
             erogatore:
               $ref: 'govway_core.yaml#/components/schemas/SimpleName'
     FruizioneItem:

@@ -2,6 +2,7 @@ openapi: "3.0.3"
 info:
   title: "GovWay Monitor API"
   description: "Servizi per il monitoraggio di GovWay"
+  termsOfService: "https://govway.org/documentazione/api/index.html"
   contact:
     email: "info@link.it"
   license:

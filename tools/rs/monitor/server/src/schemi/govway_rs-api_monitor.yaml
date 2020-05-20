@@ -13,6 +13,7 @@ info:
   title: GovWay Monitor API
   x-summary: Servizi per il monitoraggio di GovWay
   description: Servizi per il monitoraggio di GovWay
+  termsOfService: https://govway.org/documentazione/api/index.html
   version: "3.3.0"
   contact:
     email: info@link.it

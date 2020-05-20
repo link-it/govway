@@ -2,6 +2,7 @@ openapi: "3.0.3"
 info:
   title: "GovWay Config API"
   description: "Servizi per la configurazione di GovWay"
+  termsOfService: "https://govway.org/documentazione/api/index.html"
   contact:
     email: "info@link.it"
   license:
@@ -6646,6 +6647,10 @@ components:
         properties:
           descrizione:
             type: "string"
+          erogazione_nome:
+            $ref: "#/components/schemas/NCName"
+          erogazione_versione:
+            $ref: "#/components/schemas/Versione"
     ErogazioneItem:
       type: "object"
       allOf:
@@ -6676,6 +6681,10 @@ components:
         properties:
           descrizione:
             type: "string"
+          fruizione_nome:
+            $ref: "#/components/schemas/NCName"
+          fruizione_versione:
+            $ref: "#/components/schemas/Versione"
           erogatore:
             $ref: "#/components/schemas/SimpleName"
     FruizioneItem:

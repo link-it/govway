@@ -224,6 +224,32 @@ public class ErogazioniApiHelper {
 		if (as.getServiceBinding() == ServiceBinding.SOAP) {
 			ret.setNome(ret.getPortType());
 		}
+		
+		if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo))
+			ret.setVersione(as.getVersione());
+		
+		if(impl instanceof Erogazione) {
+			Erogazione erogazione = (Erogazione) impl;
+			if(erogazione.getErogazioneNome()!=null && !"".equals(erogazione.getErogazioneNome())) {
+				ret.setNome(erogazione.getErogazioneNome());
+			}
+			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo)) {
+				if(erogazione.getErogazioneVersione()!=null && erogazione.getErogazioneVersione()>0) {
+					ret.setVersione(erogazione.getErogazioneVersione());
+				}
+			}
+		}
+		else if(impl instanceof Fruizione) {
+			Fruizione fruizione = (Fruizione) impl;
+			if(fruizione.getFruizioneNome()!=null && !"".equals(fruizione.getFruizioneNome())) {
+				ret.setNome(fruizione.getFruizioneNome());
+			}
+			if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo)) {
+				if(fruizione.getFruizioneVersione()!=null && fruizione.getFruizioneVersione()>0) {
+					ret.setVersione(fruizione.getFruizioneVersione());
+				}
+			}
+		}
 
 		ret.setIdSoggetto(soggErogatore.getId());
 		ret.setTipoSoggettoErogatore(soggErogatore.getTipo());
@@ -241,13 +267,7 @@ public class ErogazioniApiHelper {
 		ret.setPrivato(false);								// Come da debug.
 		ret.setStatoPackage(StatoType.FINALE.getValue()); 
 		ret.setConfigurazioneServizio(new ConfigurazioneServizio());
-		
-		
-		
-		if(env.apsCore.isSupportatoVersionamentoAccordiServizioParteSpecifica(env.tipo_protocollo))
-			ret.setVersione(as.getVersione());
-		
-		 
+				 
 		if (StringUtils.isEmpty(ret.getTipo())) {
 			String tipoServizio = env.protocolFactoryMgr.getProtocolFactoryByName(env.tipo_protocollo).createProtocolConfiguration().getTipoServizioDefault(Utilities.convert(as.getServiceBinding()));
 			ret.setTipo( tipoServizio );
@@ -1057,7 +1077,7 @@ public class ErogazioniApiHelper {
         		evalnull( () -> httpsClient.getKeyAlias() ),					// httpsKeyAlias
         		evalnull( () -> httpsServer.getTruststoreCrl() ),					// httpsTrustStoreCRLs
         		null, 								// tipoconn Da debug = null.	
-        		as.getVersione().toString(), 		// Versione aspc
+        		asps.getVersione().toString(), //as.getVersione().toString(), 		// Versione aspc
         		false,								// validazioneDocumenti Da debug = false
         		null,								// Da Codice console
         		ServletUtils.boolToCheckBoxStatus(http_stato),	// "yes" se utilizziamo http.
@@ -2176,7 +2196,7 @@ public class ErogazioniApiHelper {
 			toFill.setSoggetto(nomeSoggetto);	// Questo nelle fruizioni è il fruitore, nelle erogazioni è l'erogatore
 			toFill.setApiNome(aspc.getNome());
 			toFill.setApiTipo(TipoApiEnum.valueOf(aspc.getServiceBinding().name()));
-			toFill.setApiVersione(asps.getVersione());
+			toFill.setApiVersione(aspc.getVersione());
 			toFill.setProfilo(env.profilo);
 			toFill.setConnettore(urlConnettore);		
 			toFill.setApiSoapServizio(asps.getPortType());

@@ -1,3 +1,9 @@
+2020-05-20  Andrea Poli <apoli@link.it>
+
+	* [ApiRsConfigurazione, ApiRsMonitoraggio]
+	Aggiunta la possibilità, durante la creazione di una erogazione o fruizione, di ridefinire un nome o una versione differente da quella dell'API implementata.
+	Definito nelle interfacce OpenAPI l'elemento 'termsOfService'.
+
 2020-05-15  Giuliano Pintori <pintori@link.it>
 
 	* [GovWayConsole, GovWayMonitor]

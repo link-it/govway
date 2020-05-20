@@ -20,6 +20,8 @@
 package org.openspcoop2.core.config.rs.server.model;
 
 import org.openspcoop2.core.config.rs.server.model.APIImpl;
+import javax.validation.constraints.*;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
@@ -28,6 +30,12 @@ public class Erogazione extends APIImpl {
   
   @Schema(description = "")
   private String descrizione = null;
+  
+  @Schema(description = "")
+  private String erogazioneNome = null;
+  
+  @Schema(description = "")
+  private Integer erogazioneVersione = null;
  /**
    * Get descrizione
    * @return descrizione
@@ -47,6 +55,44 @@ public class Erogazione extends APIImpl {
     return this;
   }
 
+ /**
+   * Get erogazioneNome
+   * @return erogazioneNome
+  **/
+  @JsonProperty("erogazione_nome")
+  @Valid
+ @Pattern(regexp="^[_A-Za-z][\\-\\._A-Za-z0-9]*$") @Size(max=255)  public String getErogazioneNome() {
+    return this.erogazioneNome;
+  }
+
+  public void setErogazioneNome(String erogazioneNome) {
+    this.erogazioneNome = erogazioneNome;
+  }
+
+  public Erogazione erogazioneNome(String erogazioneNome) {
+    this.erogazioneNome = erogazioneNome;
+    return this;
+  }
+
+ /**
+   * Get erogazioneVersione
+   * @return erogazioneVersione
+  **/
+  @JsonProperty("erogazione_versione")
+  @Valid
+  public Integer getErogazioneVersione() {
+    return this.erogazioneVersione;
+  }
+
+  public void setErogazioneVersione(Integer erogazioneVersione) {
+    this.erogazioneVersione = erogazioneVersione;
+  }
+
+  public Erogazione erogazioneVersione(Integer erogazioneVersione) {
+    this.erogazioneVersione = erogazioneVersione;
+    return this;
+  }
+
 
   @Override
   public String toString() {
@@ -54,6 +100,8 @@ public class Erogazione extends APIImpl {
     sb.append("class Erogazione {\n");
     sb.append("    ").append(Erogazione.toIndentedString(super.toString())).append("\n");
     sb.append("    descrizione: ").append(Erogazione.toIndentedString(this.descrizione)).append("\n");
+    sb.append("    erogazioneNome: ").append(Erogazione.toIndentedString(this.erogazioneNome)).append("\n");
+    sb.append("    erogazioneVersione: ").append(Erogazione.toIndentedString(this.erogazioneVersione)).append("\n");
     sb.append("}");
     return sb.toString();
   }
