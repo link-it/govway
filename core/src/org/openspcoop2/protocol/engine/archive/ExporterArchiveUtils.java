@@ -1963,6 +1963,12 @@ public class ExporterArchiveUtils {
 					this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.PORTA_APPLICATIVA);
 				}
 			}
+			if(pa.getServizioApplicativoDefault()!=null && !"".equals(pa.getServizioApplicativoDefault())) {
+				IDServizioApplicativo idSA = new IDServizioApplicativo();
+				idSA.setIdSoggettoProprietario(idSoggettoErogatore);
+				idSA.setNome(pa.getServizioApplicativoDefault());
+				this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.PORTA_APPLICATIVA);
+			}
 			
 		}
 		
@@ -1990,7 +1996,17 @@ public class ExporterArchiveUtils {
 							this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.SERVIZIO_APPLICATIVO);
 						}
 					}
-				}				
+				}
+				if(pa.getServizioApplicativoDefault()!=null && !"".equals(pa.getServizioApplicativoDefault())) {
+					IDServizioApplicativo idSA = new IDServizioApplicativo();
+					idSA.setNome(pa.getServizioApplicativoDefault());
+					idSA.setIdSoggettoProprietario(new IDSoggetto(pa.getTipoSoggettoProprietario(), pa.getNomeSoggettoProprietario()));
+					ServizioApplicativo sa = this.archiveEngine.getServizioApplicativo(idSA);
+					if(!CostantiConfigurazione.SERVER.equals(sa.getTipo()) && !CostantiConfigurazione.CLIENT_OR_SERVER.equals(sa.getTipo())) {
+						// i server verranno inclusi solamente se viene scelto di includere tutti gli elementi riferiti
+						this.readServizioApplicativo(archive, idSA, cascadeConfig, ArchiveType.SERVIZIO_APPLICATIVO);
+					}
+				}
 			}
 		}
 		

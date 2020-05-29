@@ -1811,6 +1811,16 @@ public class XMLDataConverter {
 				}
 			}
 			
+			boolean isIMenabled = false;
+			if(servizioApplicativo.getInvocazioneServizio()!=null && servizioApplicativo.getInvocazioneServizio().getGetMessage()!=null &&
+					StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getInvocazioneServizio().getGetMessage())) {
+				isIMenabled = true;
+			}
+			else if(servizioApplicativo.getRispostaAsincrona()!=null && servizioApplicativo.getRispostaAsincrona().getGetMessage()!=null &&
+					StatoFunzionalita.ABILITATO.equals(servizioApplicativo.getRispostaAsincrona().getGetMessage())) {
+				isIMenabled = true;
+			}
+			
 			if(servizioApplicativo.getInvocazionePorta()!=null && servizioApplicativo.getInvocazionePorta().sizeCredenzialiList()>0) {
 				// Verifico che esista una credenziale buona
 				boolean found = false;
@@ -1831,11 +1841,16 @@ public class XMLDataConverter {
 			// Se e' stato esportato, il tipo sarà valorizzato.
 			if(isClient) {
 				if(servizioApplicativo.getTipo()==null) {
-					servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT);
+					if(!isIMenabled) {
+						servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT);
+					}
+					//else {
+						// si tratta di un servizio applicativo I.M. registrato in una erogazione 
+					//}
 				}
 				else {
 					if(CostantiConfigurazione.SERVER.equals(servizioApplicativo.getTipo())) {
-						servizioApplicativo.setTipo(CostantiConfigurazione.CLIENT_OR_SERVER);
+						servizioApplicativo.setUseAsClient(true);
 					}
 					//else {
 						// se e' client o clientOrServer va gia' bene

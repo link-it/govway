@@ -16782,12 +16782,14 @@ IDriverWS ,IMonitoraggioRisorsa{
 			this.log.debug("eseguo query : " + DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
 			rs = stm.executeQuery();
 
-			if (rs.next()) {
+			while (rs.next()) {
 				
 				IDSoggetto idSoggetto = new IDSoggetto(rs.getString("tipo_soggetto"), rs.getString("nome_soggetto"));
 				soggettiDefault.add(idSoggetto);
 
-			}else{
+			}
+			
+			if(soggettiDefault.isEmpty()) {
 				throw new DriverRegistroServiziNotFound("Nessun risultato trovato eseguendo: "+DriverRegistroServiziDB_LIB.formatSQLString(sqlQuery, CostantiDB.TRUE));
 			}
 

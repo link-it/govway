@@ -1,3 +1,13 @@
+2020-05-29  Andrea Poli <apoli@link.it>
+
+	* [GovWayConsole]
+	Risolto Bug OP-1005
+	Risolti i seguenti problemi sulla console di configurazione:
+	- L'import di un archivio, contenente una precedente esportazione di una erogazione il cui connettore era definito con I.M., provocava la registrazione di un applicativo 'client' errato.
+	  L'applicativo interno associato all'erogazione non doveva essere visualizzabile nella lista degli applicativi.
+	- L'esportazione di una erogazione, sulla quale era associato nel connettore un applicativo 'server', non veniva esportata correttamente 
+	  poichè tra gli elementi esportati non veniva inserito l'applicativo interno associato all'erogazione stessa.
+
 2020-05-20  Andrea Poli <apoli@link.it>
 
 	* [ApiRsConfigurazione, ApiRsMonitoraggio]
