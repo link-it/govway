@@ -9,7 +9,7 @@ del servizio erogato tramite GovWay. In :numref:`scenarioErogazione` è illustra
 caso dell'erogazione.
 
    .. figure:: ../_figure_console/ErogazioneScenario.png
-    :scale: 100%
+    :scale: 80%
     :align: center
     :name: scenarioErogazione
 
@@ -141,8 +141,8 @@ La pagina di dettaglio dell'erogazione visualizza i principali elementi di confi
            -  *API senza WSDL*: l'operation viene identificata inserendo il relativo identificativo nella URL di invocazione, <URL\_Invocazione>/<Azione>
 
           Sono disponibili ulteriori metodi per l'identificazione dell'operation nel caso SOAP, per i cui dettagli si rimanda alla sezione :ref:`identificazioneAzione`.
-    - **Connettore**: Endpoint del servizio acceduto dal gateway, cui verranno consegnate le richieste pervenute. È presente l'icona a matita per aggiornare il valore del connettore. È inoltre presente un'icona che consente di testare la raggiungibilità del servizio tramite il connettore fornito.
-    - **Gestione CORS**: stato abilitazione della funzione CORS. L'icona a matita consente di modificare l'impostazione corrente.
+    - **Connettore**: Endpoint del servizio acceduto dal gateway, cui verranno consegnate le richieste pervenute. È presente l'icona a matita per aggiornare il valore del connettore. È inoltre presente un'icona che consente di testare la raggiungibilità del servizio tramite il connettore fornito. Maggiori dettagli vengono forniti nella sezione :ref:`configSpecificaConnettore`.
+    - **Gestione CORS**: stato abilitazione della funzione CORS. L'icona a matita consente di modificare l'impostazione corrente come descritto nella sezione :ref:`configSpecificaCORS`.
 
 Ulteriori elementi possono essere indicati per specificare il funzionamento dell'erogazione. Si tratta degli elementi di configurazione specifica, per i cui dettagli si rimanda alla sezione :ref:`configSpecifica`.
 
@@ -176,22 +176,19 @@ ed in particolare:
 Errori Generati dal Gateway
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-La gestione dei casi di errore nelle comunicazioni mediate da un Gateway
-devono tenere conto di ulteriori situazioni che possono presentarsi
-rispetto alla situazione di dialogo diretto tra gli applicativi. Oltre
-agli errori conosciuti dagli applicativi, e quindi previsti nei
-descrittori del servizio, gli applicativi client possono ricevere
-ulteriori errori generati dal gateway.
+La gestione dei casi di errore, nelle comunicazioni mediate da un Gateway, devono tenere conto di ulteriori situazioni che possono presentarsi rispetto alla situazione di dialogo diretto tra gli applicativi. 
+Oltre agli errori conosciuti dagli applicativi, e quindi previsti nei descrittori del servizio, gli applicativi client possono ricevere due tipi di errori generati da GovWay:
 
-Govway genera differenti errori a seconda se l'erogazione o la fruizione
-riguarda una API di tipologia SOAP o REST.
+- *Errori Client*: sono identificabili da un codice http 4xx su API REST o da un fault code 'Client' su API SOAP. Il problema deve essere risolto dal Client prima di effettuare una nuova richiesta.
 
--  *REST*: viene generato un oggetto *Problem Details* come definito
-   nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807).
-   Ulteriori dettagli vengono descritti nella sezione :ref:`rfc7807`.
+- *Errori Server*: sono identificabili da un codice http 5xx su API REST o da un fault code 'Server' su API SOAP. Il problema deve essere risolto agendo su GovWay. Il client può effettuare una nuova richiesta fino a che non ottiene un successo.
 
--  *SOAP*: viene generato un SOAPFault contenente un actor (o role in
-   SOAP 1.2) valorizzato con *http://govway.org/integration*.
-   Nell'elemento *fault string* è presente il dettaglio dell'errore
-   mentre nell'elemento *fault code* una codifica di tale errore.
-   Ulteriori dettagli vengono descritti nella sezione :ref:`soapFault`.
+Per ciascun error GovWay ritorna le seguenti informazioni:
+
+- Un codice http su API REST o un fault code su API SOAP come descritto in precedenza.
+- Un codice di errore, indicato nell'header http 'GovWay-Transaction-ErrorType', che specifica la problematica rilevata dal gateway (es. AuthenticationRequired, TokenExpired, InvalidRequestContent ...). 
+- Un identificativo di transazione, indicato nell'header http 'GovWay-Transaction-ID', che permette di individuare la transazione terminata in errore tramite la Console di Monitoraggio.
+- Un payload http, contenente maggiori dettagli sull'errore, che differisce a seconda se l'errore riguarda una API di tipologia REST (:ref:`rfc7807`) o SOAP (:ref:`soapFault`).
+
+Maggiori dettagli, sulla gestione degli errori, sono disponibili nella sezione :ref:`erroriGovWay`.
+

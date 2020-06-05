@@ -19,6 +19,8 @@ nell'intestazione della pagina.
 	fruizione
 	versionamentoApi
 	configurazione
+	sospensioneApi
+        connettore/index
 	cors
 	configSpecificaRisorsa
 	controlloAccessi/index
@@ -31,4 +33,4 @@ nell'intestazione della pagina.
 	correlazione
 	mtom
 	registrazioneMessaggi
-        connettore/index
+	proprieta

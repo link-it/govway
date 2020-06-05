@@ -12,12 +12,8 @@ alla govwayConsole in modalità *avanzata* (Sezione :ref:`modalitaAvanzata`).
     e Service-Unavailable, descritti nella sezione :ref:`headerRisposta`, vengono generati
     solamente nella modalità *Header HTTP*.
 
-A partire dall'erogazione o fruizione già creata in precedenza accedendo
-tramite il link Gestione Configurazione presente nel dettaglio
-dell'erogazione/fruizione è possibile accedere a configurazioni
-specifiche come descritto nella sezione :ref:`configSpecifica`. Accedendo in modalità avanzata compare
-una sezione precedentemente non documentata denominata *Opzioni
-Avanzate*. All'interno di tale sezione è possibile agire sulla
+A partire dall'erogazione o fruizione di una API, accedendo alla sezione Configurazione, descritta nella sezione :ref:`configSpecifica`, in modalità avanzata compare
+una sezione precedentemente non documentata denominata *Opzioni Avanzate*. All'interno di tale sezione è possibile agire sulla
 configurazione della voce *Metadati* nella sezione *Integrazione*. In
 tale campo, per default non impostato, è possibile attivare gli header
 di integrazione desiderati utilizzando le seguenti keyword separate da

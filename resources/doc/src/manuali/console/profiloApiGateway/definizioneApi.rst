@@ -63,10 +63,18 @@ Compilare il form (:numref:`apiNew`) inserendo i seguenti dati:
    il descrittore formale dell'interfaccia, analizzando il quale, il
    gateway produce la corrispondente configurazione. Nel caso di
    interfacce Soap si potrà caricare il relativo WSDL. Nel caso di
-   interfacce Rest si potrà scegliere tra i formati: WADL, Swagger 2.0 e
-   OpenAPI 3.0.
+   interfacce Rest si potrà scegliere tra i formati: WADL, Swagger 2.x e
+   OpenAPI 3.3.
 
    Nel caso non si disponga del descrittore dell'interfaccia è sempre
    possibile inserire manualmente la relativa configurazione seguendo le
    modalità descritte alla sezione :ref:`confManuale`.
 
+Effettuato il salvataggio, l'API sarà consultabile all'interno dell'elenco delle API registrate. Accedendo al dettaglio si potranno visionare, a seconda del tipo di API SOAP o REST, rispettivamente i servizi o le risorse che tale API dispone. Nella figura :numref:`quick_risorseAPI_fig` viene riporta l'elenco delle risorse di una API REST.
+
+   .. figure:: ../_figure_console/erogazioneRESTBaseConsultazioneRisorseAPI.png
+       :scale: 100%
+       :align: center
+       :name: risorseAPI_fig
+
+       Risorse di una API REST

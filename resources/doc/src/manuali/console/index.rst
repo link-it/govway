@@ -13,5 +13,6 @@ Guida alla Console di Gestione
         profiloFatturaPA/index
         strumenti/index
         configurazione/index
+	handling-errors/index
         avanzate/index
 

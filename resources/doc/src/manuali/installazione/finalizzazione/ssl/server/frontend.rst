@@ -62,4 +62,15 @@ Per abilitare il processamento degli header inoltrati dal frontend è necessario
                               
    inserendo al posto di #PRINCIPAL_HEADER-NAME# il nome dell'header http utilizzato dal frontend. 
 
+#. È possibile abilitare l'autenticazione del frontend in modo da accettare gli header http contenenti le credenziali solamente da un frontend autenticato tramite la seguente configurazione:
 
+   ::
+
+      # Modalità di autenticazione da parte di GovWay del webServer (none/ssl/basic/principal)
+      org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale=none
+      # Credenziali attese da GovWay (a seconda della modalità di autenticazione indicata) che identificano il webServer
+      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.username=Username
+      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.basic.password=Password
+      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.ssl.subject=Subject
+      #org.openspcoop2.pdd.services.pd.gestoreCredenziali.autenticazioneCanale.principal=Principal
+                              

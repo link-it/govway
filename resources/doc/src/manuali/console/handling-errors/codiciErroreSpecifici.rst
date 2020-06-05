@@ -1,11 +1,107 @@
-.. _codiciErrore:
+.. _codiciErroreSpecifici:
 
-Codici di Errore
-~~~~~~~~~~~~~~~~
+Codici di Errore Specifici
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Nella configurazione di default di GovWay, eventuali errori emersi durante la gestione di una richiesta, vengono segnalati al chiamante tramite uno dei codici di errore descritti nella sezione :ref:`gestioneErrori`. Questi codici rappresentano della categorie di errori che consentono al chiamante di decidere una eventuale schedulazione di un nuovo invio senza però fornirgli informazioni di dettaglio specifiche dell'errore avvenuto. Lo scopo è quello di evitare disclosure di informazioni riguardanti il domino interno.
+
+Quanto premesso, in ambienti di collaudo o dove lo si ritiene opportuno per motivi di supporto alla risoluzione di problemi, è possibile abilitare la generazione di un codice specifico dell'errore che viene ritornato al client nell'header http 'GovWay-Transaction-ErrorStatus' e nel claim 'govway_status' del :ref:`rfc7807`.
+
+È possibile abilitare temporaneamente la generazione dei codici specifici accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'Http Header / Problem Detail' nella sezione "Codici di errore 'GovWay-Transaction-ErrorStatus' (:numref:`govwayStatusSpecifici`)".
+
+   .. figure:: ../_figure_console/govwayStatusSpecifici.png
+    :scale: 50%
+    :align: center
+    :name: govwayStatusSpecifici
+
+    Attivazione temporanea dei codici di errore specifici di GovWay
+
+Una abilitazione permanente è invece attuabile agendo sul file di proprietà esterno /etc/govway/govway_local.properties abilitando la seguente proprietà:
+
+	::
+
+		org.openspcoop2.pdd.errori.status=true
+
+
+Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API REST, dove è stato abilitata la generazione di un codice di errore specifico:
+
+::
+
+    HTTP/1.1 400 Bad Request
+    Server: GovWay
+    Transfer-Encoding: chunked
+    GovWay-Transaction-ErrorType: InvalidRequestContent
+    GovWay-Transaction-ErrorStatus: integration:GOVWAY-418
+    GovWay-Transaction-ID: b76b4d1b-cd9d-43a0-bea2-1f352f1e71dd
+    Content-Type: application/problem+json
+    Date: Thu, 28 May 2020 15:59:14 GMT
+ 
+    {
+    	"type":"https://govway.org/handling-errors/400/InvalidRequestContent.html",
+	"title":"InvalidRequestContent",
+	"status":400,
+	"detail":"Request content not conform to API specification",
+	"govway_id":"b76b4d1b-cd9d-43a0-bea2-1f352f1e71dd",
+	"govway_status":"integration:GOVWAY-418"
+    }
+
+
+Il codice di errore specifico può essere generato anche all'interno del SOAP Fault come 'Fault Code' al posto di quello di default generato da GovWay e descritto nella sezione :ref:`gestioneErrori`.
+
+È possibile abilitare temporaneamente la generazione all'interno del SOAP Fault Code accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando 'SOAP Fault Code' nella sezione "Codici di errore 'GovWay-Transaction-ErrorStatus'" (:numref:`govwayStatusSpecificiSoapFault`).
+
+   .. figure:: ../_figure_console/govwayStatusSpecificiSoapFault.png
+    :scale: 50%
+    :align: center
+    :name: govwayStatusSpecificiSoapFault
+
+    Attivazione temporanea dei codici di errore specifici di GovWay come SOAP Fault Code
+
+Una abilitazione permanente è invece attuabile agendo sul file di proprietà esterno /etc/govway/govway_local.properties abilitando la seguente proprietà:
+
+	::
+
+		org.openspcoop2.pdd.errori.soap.useGovWayStatusAsFaultCode=true
+
+
+Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API SOAP, dove è stato abilitata sia la generazione di un codice di errore specifico che la generazione del SOAP Fault Code specifico:
+
+::
+
+    HTTP/1.1 500 Internal Server Error
+    Server: GovWay
+    Transfer-Encoding: chunked
+    GovWay-Transaction-ErrorType: InvalidRequestContent
+    GovWay-Transaction-ErrorStatus: integration:GOVWAY-418
+    GovWay-Transaction-ID: b76b4d1b-cd9d-43a0-bea2-1f352f1e71dd
+    Content-Type: text/xml
+    Date: Thu, 28 May 2020 15:59:14 GMT
+ 
+    <SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
+      <SOAP-ENV:Body>
+        <SOAP-ENV:Fault>
+          <faultcode xmlns:integration="http://govway.org/integration/fault">
+		integration:Client.GOVWAY-423
+	  </faultcode>
+          <faultstring>Received request is not conform to API specification</faultstring>
+          <faultactor>http://govway.org/integration</faultactor>
+          <detail>
+             <problem xmlns="urn:ietf:rfc:7807">
+                <type>https://govway.org/handling-errors/400/InvalidRequestContent.html</type>
+                <title>InvalidRequestContent</title>
+                <status>400</status>
+                <detail>Request content not conform to API specification</detail>
+                <govway_id>9876b03e-0377-4a02-9fb8-07094b0cdf06</govway_id>
+		<govway_status>integration:GOVWAY-418</govway_status>
+             </problem>
+          </detail>
+        </SOAP-ENV:Fault>
+      </SOAP-ENV:Body>
+    </SOAP-ENV:Envelope>
+
 
 Di seguito vengono riportate le casistiche di errore che possono
-avvenire sul Gateway, con i relativi codici utilizzati all'interno dei
-formati di errore come descritto nelle sezioni :ref:`rfc7807` e :ref:`soapFault`.
+avvenire sul Gateway, con i relativi codici.
 
 .. note::
     Alcuni degli errori riportati sono scaturiti da funzionalità
@@ -85,12 +181,16 @@ formati di errore come descritto nelle sezioni :ref:`rfc7807` e :ref:`soapFault`
    integration:GOVWAY-CP01         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichieste-RichiesteSimultanee' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
    integration:GOVWAY-ERR-CP01     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichieste-RichiesteSimultanee' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                        
    integration:GOVWAY-CP02         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado (sezione :ref:`configurazioneRateLimiting`).
-   integration:GOVWAY-ERR-CP02     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`).                                                                                                                                                                                                                        integration:GOVWAY-CP03        Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado (sezione :ref:`configurazioneRateLimiting`).
-   integration:GOVWAY-ERR-CP03     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`).                                                                                                                                                                                                                                        integration:GOVWAY-CP04        Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'TempoComplessivioRisposta' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
+   integration:GOVWAY-ERR-CP02     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichieste-ControlloRealtime\*' (sezione :ref:`rateLimiting`).                                                                                                                                                                                                                        
+   integration:GOVWAY-CP03         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado (sezione :ref:`configurazioneRateLimiting`).
+   integration:GOVWAY-ERR-CP03     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'OccupazioneBanda-\*' (sezione :ref:`rateLimiting`).                                                                                                                                                                                                                        
+   integration:GOVWAY-CP04         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'TempoComplessivioRisposta' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
    integration:GOVWAY-ERR-CP04     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'TempoComplessivioRisposta' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                                  
     integration:GOVWAY-CP05         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'TempoMedioRisposta-\*' (sezione :ref:`rateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
-   integration:GOVWAY-ERR-CP05     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'TempoMedioRisposta-\*' (sezione :ref:`rateLimiting`).                                                                                                                                                                                                                                      integration:GOVWAY-CP06        Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichiesteCompletateConSuccesso' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
-   integration:GOVWAY-ERR-CP06     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichiesteCompletateConSuccesso' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                       integration:GOVWAY-CP07        Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichiesteFallite' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
+   integration:GOVWAY-ERR-CP05     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'TempoMedioRisposta-\*' (sezione :ref:`rateLimiting`).
+   integration:GOVWAY-CP06         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichiesteCompletateConSuccesso' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
+   integration:GOVWAY-ERR-CP06     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichiesteCompletateConSuccesso' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                                  
+    integration:GOVWAY-CP07         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroRichiesteFallite' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
    integration:GOVWAY-ERR-CP07     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroRichiesteFallite' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                                     
    integration:GOVWAY-CP08         Indica che la funzionalità di Rate-Limiting ha rilevato una violazione di una policy di tipo 'NumeroFaultApplicativi' (sezione :ref:`configurazioneRateLimiting`). Il codice di errore può presentare il suffisso *-CC* se la policy è configurata insieme a controlli di congestione e/o il suffisso *-DP* se configurata con meccanismi di degrado.
    integration:GOVWAY-ERR-CP08     Errore emerso durante la gestione da parte del Gateway della policy di Rate-Limiting di tipo 'NumeroFaultApplicativi' (sezione :ref:`configurazioneRateLimiting`).                                                                                                                                                                                                                                     

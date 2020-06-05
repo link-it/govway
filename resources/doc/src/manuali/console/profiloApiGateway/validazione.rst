@@ -52,6 +52,15 @@ prima di effettuarne la validazione e ripristina il formato originale
 una volta completato il processo di validazione.
 
 .. note::
-    Si tenga presente che attivando la validazione dei messaggi, questa
-    riguarderà sia le richieste, inviate al servizio, che le conseguenti
-    risposte.
+    Per la validazione dei messaggi riguardanti API REST con specifiche di interfaccia OpenAPI 3.x, è possibile attuare una configurazione avanzata del tipo di validazione effettuato. Maggiori dettagli vengono forniti nella sezione :ref:`configAvanzataValidazione`.
+
+
+**Validazione differente tra richiesta e risposta**
+
+Attivando la validazione dei messaggi, questa riguarderà sia le richieste, inviate al servizio, che le conseguenti risposte.
+
+È possibile differenziare il tipo di validazione registrando le seguenti :ref:`configProprieta` sull'erogazione o sulla fruizione:
+
+- *validation.request.enabled* o *validation.response.enabled* : consentono di modificare l'impostazione configurata rispettivamente per la richiesta o la risposta. I valori associabili alle proprietà sono 'true', 'false' o 'warning'.
+- *validation.request.type* o *validation.response.type* : consentono di modificare il tipo di validazione. Per una validazione basata sulla Specifica dell'API utilizzare il valore 'interface', mentre per utilizzare solamente gli schemi indicare il valore 'xsd'.
+- *validation.request.acceptMtom* o *validation.response.acceptMtom* : consentono di modificare l'impostazione configurata per i messaggi che possiedono il formato MTOM. I valori associabili alle proprietà sono 'true' o 'false'.

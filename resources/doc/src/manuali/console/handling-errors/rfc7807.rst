@@ -1,0 +1,85 @@
+.. _rfc7807:
+
+REST Problem Details - RFC 7807
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Negli errori generati da GovWay, relativi alla gestione di richieste verso API di tipo REST, il payload http ritornato al chiamante contiene un oggetto *Problem Details* come definito
+nella specifica *RFC 7807* (https://tools.ietf.org/html/rfc7807).
+
+Gli elementi valorizzati sono i seguenti:
+
+- *type*: riferisce una pagina della seguente documentazione (:ref:`gestioneErrori`) che descrive l'errore.
+- *title*: contiene un codice che specifica la problematica rilevata dal gateway (es. AuthenticationRequired, TokenExpired, InvalidRequestContent ...). Tutti i codici di errore vengono descritti nella sezione :ref:`gestioneErrori`.
+- *status*: contiene il codice http ritornato al chiamante.
+- *detail*: fornisce informazioni di dettaglio sull'errore avvenuto.
+- *govway_id*: identificativo di transazione che permette di individuare la transazione terminata in errore tramite la Console di Monitoraggio.
+
+Di seguito viene riportato un esempio:
+
+::
+
+    {
+    	"type":"https://govway.org/handling-errors/400/InvalidRequestContent.html",
+	"title":"InvalidRequestContent",
+	"status":400,
+	"detail":"Request content not conform to API specification",
+	"govway_id":"b76b4d1b-cd9d-43a0-bea2-1f352f1e71dd"
+    }
+
+L'oggetto *Problem Details* generato dal Gateway possiede per default il formato *json*.
+
+Viene utilizzato il formato *xml* (Appendice 'A' del RFC 7807) solamente se la richiesta presenta anch'essa tale formato.
+
+.. note::
+      Un applicativo client può indicare al Gateway quale formato desidera attraverso l'header http *Accept*.
+
+Di seguito viene riportato un esempio di oggetto *Problem Details* nel formato xml:
+
+
+::
+
+    <problem xmlns="urn:ietf:rfc:7807">
+	<type>https://govway.org/handling-errors/400/InvalidRequestContent.html</type>
+	<title>InvalidRequestContent</title>
+	<status>400</status>
+	<detail>Request content not conform to API specification</detail>
+	<govway_id>a1e047bf-3775-4f74-9492-dba972e7afb2</govway_id>
+    </problem>
+
+
+
+**Claim aggiuntivi**
+
+Se viene abilitata la generazione di un codice specifico di errore, come descritto nella sezione :ref:`codiciErroreSpecifici`, viene valorizzato anche il claim *govway\_status*.
+
+È inoltre possibile valorizzare il claim *instance* con l'identificativo dell'erogazione o della fruizione invocata seguendo le indicazioni descritte di seguito. Per default tale elemento non viene valorizzato.
+
+È possibile abilitare temporaneamente la valorizzazione del claim *instance* accendendo alla voce 'Strumenti - Runtime' della console di gestione e abilitando lo stato della sezione "Claim 'instance' nei Problem    
+' (:numref:`govwayStatusSpecifici`)".
+
+   .. figure:: ../_figure_console/claimInstance.png
+    :scale: 50%
+    :align: center
+    :name: claimInstance
+
+    Attivazione temporanea del claim *instance* nel Problem Detail
+
+Una abilitazione permanente è invece attuabile agendo sul file di proprietà esterno /etc/govway/govway_local.properties abilitando la seguente proprietà:
+
+	::
+
+		org.openspcoop2.pdd.errori.instance=true
+
+Di seguito viene riportato un esempio di errore generato in seguito al rilevamento di una richiesta non conforme all'interfaccia API REST, dove è stato abilitata sia la generazione di un codice di errore specifico che la valorizzazione dell'elemento instance:
+
+::
+
+    {
+    	"type":"https://govway.org/handling-errors/400/InvalidRequestContent.html",
+	"title":"InvalidRequestContent",
+	"status":400,
+	"detail":"Request content not conform to API specification",
+	"instance":"gw_ENTE/gw_api-monitor/v1",
+	"govway_id":"b76b4d1b-cd9d-43a0-bea2-1f352f1e71dd",
+	"govway_status":"integration:GOVWAY-418"
+    }
